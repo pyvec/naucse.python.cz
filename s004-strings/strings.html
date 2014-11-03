@@ -22,10 +22,73 @@
                         <h1>Řetězce</h1>
                         <aside class="notes">
                             Teď se podíváme na zoubek řetězcům.
-                            Už je umíme spojovat dohromady:
+                            Už víme jak je zapisovat:
+                        </aside>
+<pre>
+'tohle je řetězec'
+"tohle taky"
+</pre>
+                        <aside class="notes">
+                            Někdy ale potřebujeme řetězce,
+                            které obsahují více řádků.
+                            Normální uvozovky nám to nedovolí,
+                            protože by to vypadalo jako že jsme zapomněly
+                            napsat koncovou uvozovku.
+                        </aside>
+                        <aside class="notes">
+                            Jedna možnost je použít speciální
+                            zápis <code>\n</code>, který Python
+                            nahradí za nový řádek.
+                        </aside>
+<pre class="fragment">
+print('Haló haló!\nCo se stalo?')
+</pre>
+                        <aside class="notes">
+                            Tahle vychytávka má jeden, někdy nepříjamný,
+                            důsledek: pokud chceme použít zpětné lomítko
+                            (třeba ve jménech souborů na Windows),
+                            musíme ho ve zdrojovém kódu zdvojit.
+                        </aside>
+<pre class="fragment">
+print('C:\\PyLadies\\Nesmysly')
+</pre>
+                        <aside class="notes">
+                            Další možnost je
+                            ohraničit řetězec <em>třemi</em> uvozovkami
+                            (jednoduchými nebo dvojitými)
+                            na každé straně.
+                        </aside>
+<pre class="fragment">
+basen = '''Haló haló!
+Co se stalo?
+Kolo se mi polámalo!'''
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Takové dlouhé texty nachází uplatnění
+                            třeba v dokumentačních řetězcích.
+                        </aside>
+<pre>
+def vynasob(a, b):
+    """Vynásobí argumenty, a vrátí výsledek.
+
+    Oba argumenty by měly být čísla
+    """
+    return a * b
+</pre>
+                    </section>
+                </section>
+                <section class="col-lg-12">
+                    <section>
+                        <h1>Výběr znaků</h1>
+                        <aside class="notes">
+                            Teď se podíváme na zoubek řetězcům.
+                            Řetězce už umíme spojovat dohromady:
                         </aside>
 <pre>
 spojeny_retezec = 'a' + 'b'
+dlouhy_retezec = 'ó' * 100
 </pre>
                         <aside class="notes">
                             Teď se podíváme na to, jak z dlouhého
@@ -126,28 +189,30 @@ print('Popokatepetl'[-4])  <span class="comment"># → p</span>
                             Řetězce umí i jiné triky.
                             Tady jsou některé základní operace:
                         </aside>
-                        <table class="table">
-                            <tr>
-                                <th>Zápis</th>
-                                <th>Popis</th>
-                                <th>Příklad</th>
-                            </tr>
-                            <tr>
-                                <td><code>x&nbsp;in&nbsp;r</code></td>
-                                <th>True pokud je řetězec <code>x</code> obsažen v <code>r</code></th>
-                                <td><code>'popo' in 'popokatepetl' == True</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>x&nbsp;not&nbsp;in&nbsp;r</code></td>
-                                <th>Opak <code>x in r</code></th>
-                                <td><code>'dub' not in 'popokatepetl' == True</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>len(r)</code></td>
-                                <th>Délka řetězce</th>
-                                <td><code>len('popokatepetl') == 12</code></td>
-                            </tr>
-                        </table>
+                        <aside class="notes">
+                            <table class="table">
+                                <tr>
+                                    <th>Zápis</th>
+                                    <th>Popis</th>
+                                    <th>Příklad</th>
+                                </tr>
+                                <tr>
+                                    <td><code>x&nbsp;in&nbsp;r</code></td>
+                                    <th>True pokud je řetězec <code>x</code> obsažen v <code>r</code></th>
+                                    <td><code>'okate' in 'popokatepetl' == True</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>x&nbsp;not&nbsp;in&nbsp;r</code></td>
+                                    <th>Opak <code>x in r</code></th>
+                                    <td><code>'dub' not in 'popokatepetl' == True</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>len(r)</code></td>
+                                    <th>Délka řetězce</th>
+                                    <td><code>len('popokatepetl') == 12</code></td>
+                                </tr>
+                            </table>
+                        </aside>
                         <aside class="notes">
                             Řetězce vždy berou v potaz velikost písmen,
                             takže např. <code>'POPO' in 'popokatepetl' == False</code>.
@@ -268,6 +333,16 @@ print('Iniciály:', (jmeno[0] + prijmeni[0]).upper())
                                     <td><code>'4.03'.replace('.', ',') == '4,03'</code></td>
                                 </tr>
                                 <tr>
+                                    <td><code>r.startswith(s)</code></td>
+                                    <th>True, pokud <code>r</code> začíná řetězcem <code>s</code></th>
+                                    <td><code>'popokatepetl'.startswith('pop') == True</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>r.endswith(s)</code></td>
+                                    <th>True, pokud <code>r</code> končí řetězcem <code>s</code></th>
+                                    <td><code>'popokatepetl'.endswith('petl') == True</code></td>
+                                </tr>
+                                <tr>
                                     <td><code>r.format(...)</code></td>
                                     <th>formátování</th>
                                     <td>viz níže</td>
@@ -374,7 +449,6 @@ print(retezec[-4:])
                 </section>
             </div>
             <div class="no-reveal footer">
-                <div>Částečně převzato z <a href="http://opentechschool.github.io/python-beginners/">Open Tech School</a></div>
                 <div>pro PyLadies Brno napsal Petr Viktorin, 2014</div>
                 <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
                 <div><a class="btn" href="javascript:start_reveal()">‣ slajdy</a></div>
