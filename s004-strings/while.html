@@ -1,0 +1,161 @@
+
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 04-01 – Cyklus while</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style></style>
+    </head>
+
+    <body class="no-reveal" oncopy="return false" oncut="return false">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="slides row stuff">
+                <section class="col-lg-12">
+                    <section>
+                        <h1>While</h1>
+                        <aside class="notes">
+                            Kromě cyklu <code>for</code> máme ještě druhý
+                            typ cyklu, uvozený příkazem <code>while</code>
+                            (angl. <em>dokud</em>).
+                            Na rozdíl od <code>for</code>,
+                            kde předem známe počet opakování,
+                            se while používá když cyklus závisí na nějaké
+                            podmínce.
+                            Tělo cyklu se opakuje, dokud není podmínka splněna.
+                        </aside>
+<pre>
+odpoved = input('Řekni Ááá! ')
+while odpoved != 'Ááá':
+    print('Špatně, zkus to znovu')
+    odpoved = input('Řekni Ááá! ')
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Ale pozor! Je velice jednoduché napsat cyklus,
+                            jehož podmínka bude vždy splněna.
+                            Takový cyklus se bude opakovat donekonečna.
+                        </aside>
+<pre>
+from random import randrange
+
+while True:
+    print('Číslo je', randrange(10000))
+    print('(Počkej, než se počítač unaví...)')
+</pre>
+                        <div>
+                            Program se dá přerušit zmáčknutím
+                            </code>Ctrl+C</code>.
+                        </div>
+                        <aside class="notes">
+                            Tahle klávesová zkratka vyvolá v programu chybu,
+                            a program se – jako po každé chybě – ukončí.
+                        </aside>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            A nakonec, existuje příkaz <code>break</code>,
+                            který z cyklu „vyskočí“;
+                            začnou se vykonávat příkazy za cyklem.
+                        </aside>
+<pre>
+while True:
+    odpoved = input('Řekni Ááá! ')
+    if odpoved == 'Ááá':
+        print('Bééé')
+        break
+    print('Špatně, zkus to znovu')
+
+print('Hotovo, ani to nebolelo.')
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Příkaz <code>break</code>
+                            se dá použít jenom v cyklu
+                            (<code>while</code> nebo <code>for</code>),
+                            a pokud máme víc cyklů zanořených v sobě,
+                            vyskočí jen z toho vnitřního.
+                        </aside>
+<pre>
+for i in range(10):  <span class="comment"># Vnější cyklus</span>
+    for j in range(10):  <span class="comment"># Vnitřní cyklus</span>
+        print(j * i, end=' ')
+        if i &lt;= j:
+            break
+    print()
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Ale zpátky k <code>while</code>!
+                            Dokážeš napsat tenhle program?
+                        </aside>
+                        <h2>Oko bere</h2>
+                        <ul>
+                            <li>Začínáš s 0 body.</li>
+                            <li>
+                                Počítač v každém kole vypíše, kolik máš bodů,
+                                a zeptá se, jestli chceš pokračovat.
+                            </li>
+                            <li>Pokud ne, hra končí.</li>
+                            <li>
+                                Pokud ano, počítač „otočí kartu“
+                                (náhodně vybere číslo od 2 do 10),
+                                a přičte její hodnotu k bodům.
+                            </li>
+                            <li>Pokud máš víc než 21 bodů, prohráváš.</li>
+                            <li>
+                                Cílem hry je získat co nejvíc bodů, ideálně 21.
+                            </li>
+                        </ul>
+<details class="solution notes"><h3>Řešení</h3>
+<pre>
+from random import randrange
+
+soucet = 0
+while soucet &lt; 21:
+    print('Máš', soucet, 'bodů')
+    odpoved = input('Otočit kartu? ')
+    if odpoved == 'ano':
+        karta = randrange(2, 11)
+        print('Otočila jsi', karta)
+        soucet = soucet + karta
+    elif odpoved == 'ne':
+        break
+    else:
+        print('Nerozumím! Odpovídej "ano" nebo "ne"')
+
+if soucet == 21:
+    print('Gratuluji! Vyhrála jsi!')
+elif soucet > 21:
+    print('Smůla!', soucet, 'bodů je moc!')
+else:
+    print('Chybělo jen', 21 - soucet, 'bodů!')
+</pre>
+</details>
+                    </section>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>Částečně převzato z <a href="http://opentechschool.github.io/python-beginners/">Open Tech School</a></div>
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2014</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+                <div><a class="btn" href="javascript:start_reveal()">‣ slajdy</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script src="../reveal.js/js/reveal.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+        <script type="text/javascript" src="../js/start_reveal.js"></script>
+
+    </body>
+</html>

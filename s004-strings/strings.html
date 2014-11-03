@@ -1,0 +1,390 @@
+
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 04-03 – Řetězce</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style></style>
+    </head>
+
+    <body class="no-reveal" oncopy="return false" oncut="return false">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="slides row stuff">
+                <section class="col-lg-12">
+                    <section>
+                        <h1>Řetězce</h1>
+                        <aside class="notes">
+                            Teď se podíváme na zoubek řetězcům.
+                            Už je umíme spojovat dohromady:
+                        </aside>
+<pre>
+spojeny_retezec = 'a' + 'b'
+</pre>
+                        <aside class="notes">
+                            Teď se podíváme na to, jak z dlouhého
+                            řetězce dostat jednotlivé znaky.
+                            Dělá se to operací <em>vybrání prvku</em>
+                            (angl. <em>subscripting</em>),
+                            která se píše podobně jako volání funkce,
+                            jen s hranatými závorkami:
+                        </aside>
+<pre class="fragment">
+sedme_pismeno = 'popokatepetl'[7]
+
+print(sedme_pismeno)
+sedme_pismeno = 'popokatepetl'[-11]
+
+print(sedme_pismeno)
+</pre>
+                        <aside class="notes">
+                            Funguje to? Dostala jsi opravdu sedmé písmeno?
+                        </aside>
+                    <section>
+                    </section>
+<details class="solution notes">
+                        <aside class="notes">
+                            Nedostala.
+                        </aside>
+</details>
+                        <aside class="notes">
+                            Dostala jsi osmé písmeno.
+                        </aside>
+                        <aside class="notes">
+                            Jak sis možná už všimla, programátoři
+                            počítají od nuly.
+                            První úloha měla vždy číslo nula,
+                            druhá číslo jedna, a tak dál.
+                        </aside>
+                        <aside class="notes">
+                            Stejně je to i s písmeny v řetězcích:
+                            první písmeno má číslo nula,
+                            druhé jedna, ... a osmé písmeno má číslo sedm.
+                        </aside>
+                        <aside class="notes">
+                            Proč je tomu tak?
+                            K úplnému pochopení důvodů by ses potřebovala
+                            naučit něco o ukazatelích a polích,
+                            což nebude hned, takže pro teď nám bude
+                            stačit vědět,
+                            že programátoři jsou prostě divní.
+                        </aside>
+                    </section>
+                    <section>
+<pre>
+   [0] [1] [2] [3] [4] [5] [6] [7] [8] [9] [10][11]
+
+  ╭───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───╮
+  │ P │ o │ p │ o │ k │ a │ t │ e │ p │ e │ t │ l │
+  ╰───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───╯
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Proč je tomu tak?
+                            K úplnému pochopení důvodů by ses potřebovala
+                            naučit něco o ukazatelích a polích,
+                            což nebude hned, takže pro teď nám bude
+                            stačit vědět,
+                            že programátoři jsou prostě divní.
+                        </aside>
+                        <aside class="notes">
+                            A nebo že mají rádi divná čísla, jako nulu.
+                        </aside>
+                        <aside class="notes">
+                            A když už jsme u divných čísel,
+                            co se asi stane, když budu chtít vybírat písmena
+                            pomocí záporných čísel?
+                        </aside>
+<details class="solution">
+<pre>
+print('Popokatepetl'[-1])  <span class="comment"># → l</span>
+print('Popokatepetl'[-2])  <span class="comment"># → t</span>
+print('Popokatepetl'[-3])  <span class="comment"># → e</span>
+print('Popokatepetl'[-4])  <span class="comment"># → p</span>
+</pre>
+</details>
+                        <aside class="notes">
+                            Záporná čísla vybírají písmenka od konce.
+                        </aside>
+<pre>
+   [0] [1] [2] [3] [4] [5] [6] [7] [8] [9] [10][11]
+  [-12|-11|-10][-9][-8][-7][-6][-5][-4][-3][-2][-1]
+  ╭───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───╮
+  │ P │ o │ p │ o │ k │ a │ t │ e │ p │ e │ t │ l │
+  ╰───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───╯
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Řetězce umí i jiné triky.
+                            Tady jsou některé základní operace:
+                        </aside>
+                        <table class="table">
+                            <tr>
+                                <th>Zápis</th>
+                                <th>Popis</th>
+                                <th>Příklad</th>
+                            </tr>
+                            <tr>
+                                <td><code>x&nbsp;in&nbsp;r</code></td>
+                                <th>True pokud je řetězec <code>x</code> obsažen v <code>r</code></th>
+                                <td><code>'popo' in 'popokatepetl' == True</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>x&nbsp;not&nbsp;in&nbsp;r</code></td>
+                                <th>Opak <code>x in r</code></th>
+                                <td><code>'dub' not in 'popokatepetl' == True</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>len(r)</code></td>
+                                <th>Délka řetězce</th>
+                                <td><code>len('popokatepetl') == 12</code></td>
+                            </tr>
+                        </table>
+                        <aside class="notes">
+                            Řetězce vždy berou v potaz velikost písmen,
+                            takže např. <code>'POPO' in 'popokatepetl' == False</code>.
+                            Kdybychom chtěly porovnávat bez ohledu na velikost písmen,
+                            musíme oba řetězce převést na malá písmena,
+                            a pak je porovnat.
+                        </aside>
+                        <aside class="notes">
+                            A jak se převádí na malá písmena?
+                        </aside>
+                    </section>
+                </section>
+                <section class="col-lg-12">
+                    <section>
+                        <h2>Metody</h2>
+                        <aside class="notes">
+                            Ukážeme si <em>metody</em>
+                            (angl. <em>methods</em>).
+                            Metoda je jako funkce, jen je svázaná
+                            s nějakým <em>objektem</em> (hodnotou).
+                            Volá se tak, že se za objekt dá tečka,
+                            za ní jméno metody,
+                            a za to celé se, jako u funkcí, dají závorky.
+                        </aside>
+                        <aside class="notes">
+                            Metody <code>upper()</code> a <code>lower()</code>
+                            převádí text na velká, respektive malá písmena.
+                        </aside>
+<pre>
+retezec = 'Ahoj'
+print(retezec.upper())
+print(retezec.lower())
+</pre>
+                        <aside class="notes">
+                            Všimni si že původní řetězec se nemění;
+                            metoda vrátí řetězec nový.
+                        </aside>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Zkus si, pro cvik, napsat tento program:
+                        </aside>
+                        <h3>Iniciály</h3>
+                        <div>
+                            Program se zeptá na jméno a příjmení,
+                            a vypíše iniciály – první písmena zadaných jmen.
+                            Iniciály jsou vždycky velkými písmeny
+                            (i kdyby byl uživatel líný mačkat Shift).
+                        </div>
+<details class="solution">
+<pre>
+jmeno = input('Zadej jméno: ')
+prijmeni = input('Zadej příjmení ')
+inicialy = jmeno[0] + prijmeni[0]
+print('Iniciály:', inicialy.upper())
+</pre>
+                        <div>
+                            Nebo to jde zapsat i takto –
+                            metoda se dá volat na výsledku jakéhokoli výrazu:
+                        </div>
+<pre>
+jmeno = input('Zadej jméno: ')
+prijmeni = input('Zadej příjmení ')
+print('Iniciály:', (jmeno[0] + prijmeni[0]).upper())
+</pre>
+</details>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Tady je pár metod řetězců,
+                            které můžou být užitečné:
+                        </aside>
+                        <aside class="notes">
+                            <table class="table">
+                                <tr>
+                                    <th>Metoda</th>
+                                    <th>Popis</th>
+                                    <th>Příklad</th>
+                                </tr>
+                                <tr>
+                                    <td><code>r.upper()</code></td>
+                                    <th>převod na velká písmena</th>
+                                    <td><code>'Abc'.upper() == 'ABC'</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>r.lower()</code></td>
+                                    <th>převod na malá písmena</th>
+                                    <td><code>'Abc'.upper() == 'abc'</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>r.count(s)</code></td>
+                                    <th>počet výskytů <code>s</code> v řetězci <code>r</code></th>
+                                    <td><code>'popokatepetl'.count('e') == 2</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>r.index(s)</code></td>
+                                    <th>pozice prvního výskytu <code>s</code> v řetězci <code>r</code></th>
+                                    <td><code>'popokatepetl'.index('k') == 4</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>r.lstrip()</code></td>
+                                    <th>odstraní mezery ze začátku řetězce</th>
+                                    <td><code>'  bum  '.lstrip() == 'bum  '</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>r.rstrip()</code></td>
+                                    <th>odstraní mezery z konce řetězce</th>
+                                    <td><code>'  bum  '.lstrip() == '  bum'</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>r.strip()</code></td>
+                                    <th>odstraní mezery ze začátku i konce</th>
+                                    <td><code>'  bum  '.lstrip() == 'bum'</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>r.replace(a,&nbsp;b)</code></td>
+                                    <th>nahradí <code>a</code> za <code>b</code></th>
+                                    <td><code>'4.03'.replace('.', ',') == '4,03'</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>r.format(...)</code></td>
+                                    <th>formátování</th>
+                                    <td>viz níže</td>
+                                </tr>
+                            </table>
+                        </aside>
+                        <aside class="notes">
+                            Všechny další jsou popsány v
+                            <a href="https://docs.python.org/2/library/stdtypes.html#string-methods">
+                                dokumentaci Pythonu
+                            </a> (anglicky; plné věcí které ještě neznáme).
+                        </aside>
+                        <aside class="notes">
+                            Všimni si že <code>len</code> není metoda,
+                            ale funkce;
+                            píše se <code>len(r)</code>,
+                            ne <code>r.len()</code>.
+                            Proč tomu tak je, to za nějakou dobu uvidíme.
+                        </aside>
+                    </section>
+                </section>
+                <section class="col-lg-12">
+                    <section>
+                        <h2>Formátování</h2>
+                        <aside class="notes">
+                            Obzvláště užitečná je metoda <code>format</code>,
+                            která nahradí čísla v kudrnatých závorkách
+                            za to, co dostane v parametrech.
+                        </aside>
+<pre>
+vypis = '{0}×{1} je {2}'.format(3, 4, 3 * 4)
+print(vypis)
+</pre>
+                        <aside class="notes">
+                            Pokud použijeme pojmenované argumenty,
+                            můžeme místo čísel psát i příslušná jména.
+                        </aside>
+<pre class="fragment">
+print('Ahoj, {jmeno}!'.format(jmeno='Elvíro'))
+</pre>
+                    </section>
+                </section>
+                <section class="col-lg-12">
+                    <section>
+                        <h2>Sekání řetězců</h2>
+                        <aside class="notes">
+                            Teď se vrátíme k vybírání kousků řetězců.
+                            Zkus co dělá tenhle program:
+                        </aside>
+<pre>
+retezec = 'popokatepetl'
+kousek = retezec[7:]
+print(kousek)
+</pre>
+                        <aside class="notes">
+                            Zápis <code>retezec[7:]</code> vybere
+                            <em>podřetězec</em> od znaku číslo 7 dál.
+                        </aside>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Dá se použít i <code>retezec[:7]</code>,
+                            který vybere všechno <em>až po</em> znak číslo 7.
+                            (Ale ne znak 7 samotný, takže
+                            <code>retezec[:7] + retezec[7:] == retezec</code>)
+                        </aside>
+                        <aside class="notes">
+                            Co asi udělá <code>retezec[2:7]</code>?<br>
+                            A co <code>retezec[-4:]</code>?<br>
+                        </aside>
+<pre>
+retezec = 'popokatepetl'
+print(retezec[:7])
+print(retezec[2:7])
+print(retezec[-4:])
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Určování vhodných čísel, <em>indexů</em>,
+                            občas vyžaduje trochu zamyšlení.<br>
+                            U podobného „sekání“ (angl. <em>string slicing</em>)
+                            je lepší číslovat „hranice“ mezi znaky.
+                            Takhle:
+                        </aside>
+<pre>
+  ╭───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───╮
+  │ p │ o │ p │ o │ k │ a │ t │ e │ p │ e │ t │ l │
+  ├───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┤
+  │   │   │   │   │   │   │   │   │   │   │   │   │
+  0   1   2   3   4   5   6   7   8   9  10  11  12
+ -12 -11 -10 -9  -8  -7  -6  -5  -4  -3  -2  -1
+
+  ╰───────────────────────────╯
+  'popokatepetl'[:7] == 'popokat'
+
+          ╰───────────────────╯
+        'popokatepetl'[2:7] == 'pokat'
+
+                                  ╰───────────────╯
+                      'popokatepetl'[-4:] == 'petl'
+</pre>
+                    </section>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>Částečně převzato z <a href="http://opentechschool.github.io/python-beginners/">Open Tech School</a></div>
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2014</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+                <div><a class="btn" href="javascript:start_reveal()">‣ slajdy</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script src="../reveal.js/js/reveal.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+        <script type="text/javascript" src="../js/start_reveal.js"></script>
+
+    </body>
+</html>

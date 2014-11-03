@@ -1,0 +1,297 @@
+
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 04-02 – Vlastní funkce</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style></style>
+    </head>
+
+    <body class="no-reveal" oncopy="return false" oncut="return false">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="slides row stuff">
+                <section class="col-lg-12">
+                    <section>
+                        <h1>Funkce</h1>
+                        <aside class="notes">
+                            Minule jsme volaly funkce, které napsal někdo jiný.
+                            Dnes si ukážeme, jak psát funkce vlastní.
+                        </aside>
+                        <aside class="notes">
+                            Není to tak složité.
+                        </aside>
+<pre>
+def obvod_obdelnika(sirka, vyska):
+    "Vrátí obvod obdélníka danćh rozměrů"
+    return 2 * (sirka + vyska)
+
+print(obvod_obdelnika(4, 2))
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Jak to funguje?
+                        </aside>
+<pre><span class="fragment comment">
+        jméno funkce
+           │
+    ╭──────┴──────╮</span>
+def obvod_obdelnika(sirka, vyska):<span class="fragment comment">
+                    ╰────┬─────╯
+                    seznam parametrů</span>
+
+    "Vrátí obvod obdélníka daných rozměrů"  <span class="fragment comment">
+    ╰────── Dokumentační řetězec. ───────╯</span>
+
+    return 2 * (sirka + vyska)<span class="fragment comment">
+           ╰────────┬────────╯
+                návratová hodnota</span>
+
+</pre>
+                        <aside class="notes">
+                            Funkce se <em>definuje</em> příkazem <code>def</code>,
+                            za nějž napíšeme jméno funkce, pak do závorky seznam
+                            <em>argumentů</em>, které funkce bere,
+                            a pak dvojtečku.<br>
+                            Potom následuje odsazené <em>tělo funkce</em>,
+                            které může začít <em>dokumentačním řetězcem</em>,
+                            který popisuje co funkce dělá.
+                            <br>
+                            Příkazem <code>return</code> pak můžeme z funkce
+                            vrátí nějakou hodnotu.
+                        </aside>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Tělo funkce může mít více příkazů, včetně podmínek,
+                            cyklů a podobně.
+                        </aside>
+<pre>
+def napis_hlasku(nazev, skore):
+    "Popíše skóre. Název má být přivlastňovací přídavné jméno."
+
+    print(nazev, 'skóre je', str(skore))
+    if skore > 1000:
+        print('Světový rekord!')
+    elif skore > 100:
+        print('Skvělé!')
+    elif skore > 10:
+        print('Ucházející.')
+    elif skore > 1:
+        print('Aspoň něco')
+    else:
+        print('Snad příště.')
+
+napis_hlasku('Tvoje', 256)
+napis_hlasku('Protivníkovo', 5)
+
+</pre>
+                        <aside class="notes">
+                            Při volání funkce se hodnoty, se kterými funkci
+                            voláme, přiřadí jednotlivým jménům argumentů.</br>
+                            Takže když zavoláme třeba
+                            <pre>napis_hlasku('Tvoje', 256)</pre>
+                            můžeme si představit, že funkce dělá následující:
+<pre>
+    nazev = 'Tvoje'
+    skore = 256
+
+    print(nazev, 'skóre je', str(skore))
+    if skore > 1000:
+        ... atd.
+</pre>
+                        </aside>
+                    </section>
+                    <section>
+                        <h2>Vracení</h2>
+                        <aside class="notes">
+                            Speciální příkaz <code>return</code>, který jde
+                            použít jenom ve funkcích,
+                            <em>ukončí</em> funkci a vrátí danou hodnotu
+                            ven z funkce.
+                        </aside>
+                        <aside class="notes">
+                            Chová se tedy trochu jako <code>break</code>,
+                            jen místo cyklu opouští celou funkci.
+                        </aside>
+<pre>
+def ano_nebo_ne(otazka):
+    "Vrátí True nebo False, podle odpovědi uživatele"
+    while True:
+        odpoved = input(otazka)
+        if odpoved == 'ano':
+            return True
+        elif odpoved == 'ne':
+            return False
+        else:
+            print('Nerozumím! Odpověz "ano" nebo "ne".')
+
+if ano_nebo_ne('Chceš si zahrát hru? '):
+    print('OK! Ale napřed si ji musíš naprogramovat.')
+else:
+    print('Škoda.')
+</pre>
+                        <aside class="notes">
+                            (Stejně jako <code>if</code> nebo
+                            <code>break</code>,
+                            <code>return</code> je <em>příkaz</em>, ne funkce.
+                            Kolem „své“ hodnoty nepotřebuje závorky.)
+                        </aside>
+                    </section>
+                    <section>
+                        <div>
+                            Zkus napsat funkci, která vrátí obsah elipsy
+                            daných rozměrů.<br>
+                            Funkci zavolej a (mimo funkci) výsledek vypiš.</br>
+                            Příslušný vzoreček je <i>A</i> = π<i>ab</i>,
+                            kde <i>a</i> a <i>b</i> jsou délky os.
+                        </div>
+<details class="solution notes"><h3>Řešení</h3>
+<pre>
+from math import pi
+
+def obsah_elipsy(a, b):
+    return pi * a * b
+
+print('Obsah elipsy s osami 3cm a 5cm je', obsah_elipsy(3, 5), 'cm²')
+</pre>
+</details>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            <h2>Proměnné ve funkcích</h2>
+                            Funkce může používat proměnné „zvnějšku“:
+                        </aside>
+<pre>
+pi = 3.1415926
+
+def obsah_kruhu(polomer):
+    return pi * polomer ** 2
+
+print(obsah_kruhu(100))
+</pre>
+                    </section>
+                    <section>
+                        <h3>Lokální proměnné</h3>
+                        <aside class="notes">
+                            ALE, všechny argumenty,
+                            a všechny proměnné do kterých funkce přiřazuje,
+                            jsou <em>úplně nové</em> proměnné, které nemají nic
+                            společného s tím, co je „venku“ kolem funkce.<br>
+                            Těm úplně novým proměnným se říká
+                            <em>lokální proměnné</em>
+                            (angl. <em>local variables</em>), protože existují
+                            jen místně, v rámci volání jedné jediné funkce.
+                        </aside>
+                        <aside class="notes">
+                            Takže tohle nebude fungovat tak, jak se zdá:
+                        </aside>
+<pre>
+x = 0
+
+def nastav_x(hodnota):
+    x = hodnota  <span class="comment"># Přiřazení do lokální proměnné!</span>
+
+nastav_x(40)
+print(x)
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Proměnné, které najsou lokální,
+                            jsou <em>globální</em> – ty
+                            existují v celém programu.
+                            (Jen ve funkcích, které mají náhodou
+                            lokální proměnnou stejného jména, „nejsou vidět“ –
+                            to jméno označuje lokální proměnnou.)
+                        </aside>
+                        <aside class="notes">
+                            <hr>
+                            Než spustíš tenhle program,
+                            zkus předpovědět, co bude dělat.
+                            Pak ho pusť, a pokud dělal něco jiného,
+                            zkus vysvětlit proč.</br>
+                            Pozor, je tam chyták!
+                        </aside>
+<pre>
+from math import pi
+obsah = 0
+a = 30
+b = 40
+
+def obsah_elipsy(a, b):
+    obsah = pi * a * b  <span class="comment"># Přiřazení do `obsah`</span>
+    a = a + 3  <span class="comment"># Přiřazení do `polomer`</span>
+    return obsah
+
+print(obsah_elipsy(a, b))
+print(obsah)
+print(a)
+</pre>
+                        <aside class="notes">
+                            <ul>
+                                <li>Je proměnná <code>pi</code> lokální nebo globální?</li>
+                                <li>Je proměnná <code>obsah</code> lokální nebo globální?</li>
+                                <li>Je proměnná <code>a</code> lokální nebo globální?</li>
+                                <li>Je proměnná <code>b</code> lokální nebo globální?</li>
+                            </ul>
+                        </aside>
+<details class="solution notes"><h3>Řešení</h3>
+<ul>
+    <li>
+        <code>pi</code> je globální – nepřiřazuje se do ní ve funkci;
+        je „vidět“ v celém programu.
+    </li>
+    <li>
+        Proměnné <code>obsah</code> jsou v programu dvě – jedna globální,
+        a jedna je lokální pro funkci <code>obsah_elipsy</code>,
+        protože do ní tahle funkce přiřazuje.
+    </li>
+    <li>
+        Proměnné <code>a</code> jsou taky dvě, podobně jako <code>obsah</code>.
+        Tady byl chyták: příkaz <code>a = a + 3</code> nemá žádný smysl;
+        do <code>a</code> se sice uloží větší číslo,
+        ale vzápětí funkce <code>obsah_elipsy</code> skončí
+        a její lokální proměnná <code>a</code> přestane existovat.
+    </li>
+    <li>
+        Proměnná <code>b</code> je jenom lokální – jako argument
+        funkce <code>obsah_elipsy</code>.
+    </li>
+</ul>
+</details>
+                        <aside class="notes">
+                            <hr>
+                            Jestli ti to celé připadá zmatené,
+                            stačí si zatím pamatovat tohle pravidlo:
+                            nepřiřazuj ve funkcích do proměnných,
+                            které existují i vně funkce.
+                        </aside>
+                        <aside class="notes">
+                            (Argument funkce se počítá za přiřazení.)
+                        </aside>
+                    </section>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>Částečně převzato z <a href="http://opentechschool.github.io/python-beginners/">Open Tech School</a></div>
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2014</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+                <div><a class="btn" href="javascript:start_reveal()">‣ slajdy</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script src="../reveal.js/js/reveal.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+        <script type="text/javascript" src="../js/start_reveal.js"></script>
+
+    </body>
+</html>
