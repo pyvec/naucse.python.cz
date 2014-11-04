@@ -3,4 +3,4 @@
 
 Viz http://python.cz/pyladies
 
-Je to dělané narychlo, a technicky to není moc uspokojivé, tak se neděste :)
+Je to dělané rychle a jednoduše – čisté HTML. Editujte!
