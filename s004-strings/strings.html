@@ -44,32 +44,43 @@
 print('Haló haló!\nCo se stalo?')
 </pre>
                         <aside class="notes">
+                            Zpětným lomítkem se dají přidávat i
+                            exotické znaky, které nemáme na klávesnici.
+                            Píšeme je jako \N a jméno znaku
+                            v kudrnatých závorkách. Třeba:
+                        </aside>
+<pre class="fragment">
+print('--\N{BLACK STAR}--')
+print('--\N{SNOWMAN}--')
+print('--\N{KATAKANA LETTER KO}--')
+</pre>
+                        <aside class="notes">
                             Tahle vychytávka má jeden, někdy nepříjamný,
                             důsledek: pokud chceme použít zpětné lomítko
                             (třeba ve jménech souborů na Windows),
                             musíme ho ve zdrojovém kódu zdvojit.
                         </aside>
 <pre class="fragment">
-print('C:\\PyLadies\\Nesmysly')
-</pre>
-                        <aside class="notes">
-                            Další možnost je
-                            ohraničit řetězec <em>třemi</em> uvozovkami
-                            (jednoduchými nebo dvojitými)
-                            na každé straně.
-                        </aside>
-<pre class="fragment">
-basen = '''Haló haló!
-Co se stalo?
-Kolo se mi polámalo!'''
+print('C:\\PyLadies\\Nový adresář')
 </pre>
                     </section>
                     <section>
                         <aside class="notes">
+                            Další možnost, jak dávat do řetězců nové řádky, je
+                            ohraničit řetězec <em>třemi</em> uvozovkami
+                            (jednoduchými nebo dvojitými)
+                            na každé straně.
+                        </aside>
+<pre>
+basen = '''Haló haló!
+Co se stalo?
+Prase kozu potrkalo!'''
+</pre>
+                        <aside class="notes">
                             Takové dlouhé texty nachází uplatnění
                             třeba v dokumentačních řetězcích.
                         </aside>
-<pre>
+<pre class="fragment">
 def vynasob(a, b):
     """Vynásobí argumenty, a vrátí výsledek.
 
@@ -83,7 +94,6 @@ def vynasob(a, b):
                     <section>
                         <h1>Výběr znaků</h1>
                         <aside class="notes">
-                            Teď se podíváme na zoubek řetězcům.
                             Řetězce už umíme spojovat dohromady:
                         </aside>
 <pre>
@@ -102,9 +112,6 @@ dlouhy_retezec = 'ó' * 100
 sedme_pismeno = 'popokatepetl'[7]
 
 print(sedme_pismeno)
-sedme_pismeno = 'popokatepetl'[-11]
-
-print(sedme_pismeno)
 </pre>
                         <aside class="notes">
                             Funguje to? Dostala jsi opravdu sedmé písmeno?
@@ -113,12 +120,9 @@ print(sedme_pismeno)
                     </section>
 <details class="solution notes">
                         <aside class="notes">
-                            Nedostala.
+                            Nedostala – dostala jsi <em>osmé</em> písmeno.
                         </aside>
 </details>
-                        <aside class="notes">
-                            Dostala jsi osmé písmeno.
-                        </aside>
                         <aside class="notes">
                             Jak sis možná už všimla, programátoři
                             počítají od nuly.
@@ -138,6 +142,9 @@ print(sedme_pismeno)
                             stačit vědět,
                             že programátoři jsou prostě divní.
                         </aside>
+                        <aside class="notes">
+                            A nebo že mají rádi divná čísla, jako nulu.
+                        </aside>
                     </section>
                     <section>
 <pre>
@@ -149,17 +156,6 @@ print(sedme_pismeno)
 </pre>
                     </section>
                     <section>
-                        <aside class="notes">
-                            Proč je tomu tak?
-                            K úplnému pochopení důvodů by ses potřebovala
-                            naučit něco o ukazatelích a polích,
-                            což nebude hned, takže pro teď nám bude
-                            stačit vědět,
-                            že programátoři jsou prostě divní.
-                        </aside>
-                        <aside class="notes">
-                            A nebo že mají rádi divná čísla, jako nulu.
-                        </aside>
                         <aside class="notes">
                             A když už jsme u divných čísel,
                             co se asi stane, když budu chtít vybírat písmena
@@ -187,7 +183,8 @@ print('Popokatepetl'[-4])  <span class="comment"># → p</span>
                     <section>
                         <aside class="notes">
                             Řetězce umí i jiné triky.
-                            Tady jsou některé základní operace:
+                            Třeba můžeme zjistit, jak je řetězec dlouhý,
+                            nebo jestli v sobě obsahuje daný menší řetězec.
                         </aside>
                         <aside class="notes">
                             <table class="table">
@@ -197,19 +194,19 @@ print('Popokatepetl'[-4])  <span class="comment"># → p</span>
                                     <th>Příklad</th>
                                 </tr>
                                 <tr>
+                                    <td><code>len(r)</code></td>
+                                    <td>Délka řetězce</td>
+                                    <td><code>len('popokatepetl') == 12</code></td>
+                                </tr>
+                                <tr>
                                     <td><code>x&nbsp;in&nbsp;r</code></td>
-                                    <th>True pokud je řetězec <code>x</code> obsažen v <code>r</code></th>
+                                    <td>True pokud je řetězec <code>x</code> obsažen v <code>r</code></td>
                                     <td><code>'okate' in 'popokatepetl' == True</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>x&nbsp;not&nbsp;in&nbsp;r</code></td>
-                                    <th>Opak <code>x in r</code></th>
+                                    <td>Opak <code>x in r</code></td>
                                     <td><code>'dub' not in 'popokatepetl' == True</code></td>
-                                </tr>
-                                <tr>
-                                    <td><code>len(r)</code></td>
-                                    <th>Délka řetězce</th>
-                                    <td><code>len('popokatepetl') == 12</code></td>
                                 </tr>
                             </table>
                         </aside>
@@ -245,6 +242,7 @@ print('Popokatepetl'[-4])  <span class="comment"># → p</span>
 retezec = 'Ahoj'
 print(retezec.upper())
 print(retezec.lower())
+print(retezec)
 </pre>
                         <aside class="notes">
                             Všimni si že původní řetězec se nemění;
@@ -294,57 +292,62 @@ print('Iniciály:', (jmeno[0] + prijmeni[0]).upper())
                                 </tr>
                                 <tr>
                                     <td><code>r.upper()</code></td>
-                                    <th>převod na velká písmena</th>
+                                    <td>převod na velká písmena</td>
                                     <td><code>'Abc'.upper() == 'ABC'</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>r.lower()</code></td>
-                                    <th>převod na malá písmena</th>
+                                    <td>převod na malá písmena</td>
                                     <td><code>'Abc'.upper() == 'abc'</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>r.count(s)</code></td>
-                                    <th>počet výskytů <code>s</code> v řetězci <code>r</code></th>
+                                    <td>počet výskytů <code>s</code> v řetězci <code>r</code></td>
                                     <td><code>'popokatepetl'.count('e') == 2</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>r.index(s)</code></td>
-                                    <th>pozice prvního výskytu <code>s</code> v řetězci <code>r</code></th>
-                                    <td><code>'popokatepetl'.index('k') == 4</code></td>
+                                    <td>pozice prvního výskytu <code>s</code> v řetězci <code>r</code></td>
+                                    <td><code>'popokatepetl'.index('o') == 1</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>r.index(s, n)</code></td>
+                                    <td>jako <code>r.index(s)</code>, ale hledá od pozice <code>n</code></td>
+                                    <td><code>'popokatepetl'.index('o', 2) == 3</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>r.lstrip()</code></td>
-                                    <th>odstraní mezery ze začátku řetězce</th>
+                                    <td>odstraní mezery ze začátku řetězce</td>
                                     <td><code>'  bum  '.lstrip() == 'bum  '</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>r.rstrip()</code></td>
-                                    <th>odstraní mezery z konce řetězce</th>
+                                    <td>odstraní mezery z konce řetězce</td>
                                     <td><code>'  bum  '.lstrip() == '  bum'</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>r.strip()</code></td>
-                                    <th>odstraní mezery ze začátku i konce</th>
+                                    <td>odstraní mezery ze začátku i konce</td>
                                     <td><code>'  bum  '.lstrip() == 'bum'</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>r.replace(a,&nbsp;b)</code></td>
-                                    <th>nahradí <code>a</code> za <code>b</code></th>
+                                    <td>nahradí <code>a</code> za <code>b</code></td>
                                     <td><code>'4.03'.replace('.', ',') == '4,03'</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>r.startswith(s)</code></td>
-                                    <th>True, pokud <code>r</code> začíná řetězcem <code>s</code></th>
+                                    <td>True, pokud <code>r</code> začíná řetězcem <code>s</code></td>
                                     <td><code>'popokatepetl'.startswith('pop') == True</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>r.endswith(s)</code></td>
-                                    <th>True, pokud <code>r</code> končí řetězcem <code>s</code></th>
+                                    <td>True, pokud <code>r</code> končí řetězcem <code>s</code></td>
                                     <td><code>'popokatepetl'.endswith('petl') == True</code></td>
                                 </tr>
                                 <tr>
                                     <td><code>r.format(...)</code></td>
-                                    <th>formátování</th>
+                                    <td>formátování</th>
                                     <td>viz níže</td>
                                 </tr>
                             </table>
@@ -370,7 +373,7 @@ print('Iniciály:', (jmeno[0] + prijmeni[0]).upper())
                         <aside class="notes">
                             Obzvláště užitečná je metoda <code>format</code>,
                             která nahradí čísla v kudrnatých závorkách
-                            za to, co dostane v parametrech.
+                            za to, co dostane v argumentech.
                         </aside>
 <pre>
 vypis = '{0}×{1} je {2}'.format(3, 4, 3 * 4)
@@ -445,6 +448,37 @@ print(retezec[-4:])
                                   ╰───────────────╯
                       'popokatepetl'[-4:] == 'petl'
 </pre>
+                    </section>
+                    <section>
+                        <div>
+                            Zkus napsat funkci
+                            <code>zamen(retezec, pozice, znak)</code>.
+                        </div>
+                        <div>
+                            Tato funkce vrátí řetězec, který má na dané pozici
+                            daný znak; jinak je stejný
+                            jako <code>retezec</code>. Např:
+                        </div>
+<pre>
+zamen('palec', 0, 'v') == 'valec'
+zamen('valec', 2, 'j') == 'vajec'
+</pre>
+                        <div>
+                            (Záporná pozice, nebo pozice která není v řetězci,
+                            může vést k chybě.)
+                        </div>
+<details class="solution"><h3>Řešení</h3>
+<pre>
+def zamen(retezec, pozice, znak):
+    """Zamění znak na dané pozici
+
+    Vrátí řetězec, který má na dané pozici daný znak;
+    jinak je stejný jako vstupní retezec
+    """
+
+    return retezec[:pozice] + znak + retezec[pozice + 1:]
+</pre>
+</details>
                     </section>
                 </section>
             </div>
