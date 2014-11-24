@@ -1,0 +1,217 @@
+% Typeset using lualatex
+
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{luainputenc}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+
+\usepackage[czech]{babel}
+
+\usepackage{fouriernc}
+\usepackage{tgpagella}
+\usepackage{xcolor}
+\usepackage[activate=true]{microtype}
+\usepackage{amssymb}
+\usepackage{fontspec}
+
+\usepackage{soul}
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{siunitx}
+\usepackage{colortbl}
+\usepackage{everypage}
+\usepackage[a4paper,margin=2cm,top=1cm]{geometry}
+
+\setmainfont[Numbers=OldStyle]{TeX Gyre Pagella}
+
+\definecolor{plpink}{HTML}{FF3232}
+\definecolor{plhome}{HTML}{CCEEFF}
+\definecolor{silver}{HTML}{888888}
+
+\sisetup{
+    output-decimal-marker={,}
+}
+\pagestyle{empty}
+
+\parskip=1ex
+\parindent=0pt
+
+\setlist[enumerate,1]{start=0}
+
+\AddEverypageHook{
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[opacity=0.1,below left,xshift=1cm,yshift=1cm] at (current page.north east) {\includegraphics[width=12cm]{../../images/pylady-pink}};
+        \node[below left,align=right,yshift=-1.5em] at (current page.north east) {\color{white} strana \thepage};
+        \node[below left,align=right] at (current page.north east) {\color{white} sada \plsetno};
+    \end{tikzpicture}
+}
+
+\newcommand\answerspace{\\\rule[0cm]{0pt}{1cm}}
+
+\newcommand\True{\texttt{True}}
+\newcommand\False{\texttt{False}}
+
+\usetikzlibrary{turtle}
+\newcommand\turtle[1]{\tikz[>=stealth,x=0.25mm,y=0.25mm]\draw[turtle={home,rt=90,#1}];}
+\newcommand\gulp[1]{}
+
+\newcommand\plsetno{6}
+
+\begin{document}
+
+\section*{Domácí úkoly \plsetno}
+
+Domácí zvířata jsou např.: \verb+"pes", "kočka", "králík", "had"+.
+
+\begin{enumerate}
+
+\item Napiš funkci, která vypíše jména domácích zvířat, která jsou kratší než 5 písmen.
+
+\item Napiš funkci, která vypíše jména domácích zvířat, která začínají na k.
+
+\item Napiš funkci, která dostane slovo a zjistí,
+    jestli je v seznamu domácích zvířat.
+
+\item Napiš funkci, který převede římské říslice na číslo (\verb+int+).
+    \\Napiš (a pusť) k této funkci testy, aby sis ověřila že funguje správně.
+
+\item Napiš funkci, která dostane dva seznamy jmen zvířat, a vrátí tři seznamy:
+    \begin{enumerate}
+        \item Zvířata, která jsou v obou seznamech
+        \item Zvířata, která jsou v jen prvním seznamu
+        \item Zvířata, která jsou v jen druhém seznamu
+    \end{enumerate}
+    Napiš (a pusť) k této funkci testy, aby sis ověřila že funguje správně.
+
+\end{enumerate}
+
+\hrule
+Dadaistický koutek.
+Vyber si básničku, která má aspoň tři sloky po aspoň třech verších.
+
+\begin{enumerate}[resume]
+
+\item Napiš program, který vypíše básničku ze souboru \verb+basnicka.txt+,
+    ale obrátí pořadí veršů (t.j. jako první vypíše poslední řádek, atd.)
+
+\item Napiš program, který obrátí pořadí slov v jednotlivých verších.
+
+\item Obrať pořadí slok (ty by měly být oddělené jedním prázdným řádkem).
+
+\item Vypiš slova básně v náhodném pořadí.
+    Snaž se co nejlépe zachovat strukturu básně
+    (sloky, verše, interpunkci, velká písmena, ...)
+
+\end{enumerate}
+
+\hrule
+Úkoly \ref{snakestart}-\ref{snakeend} závisí jeden na druhém, řeš je postupně.
+
+\begin{enumerate}[resume]
+
+\item \label{snakestart}
+    Napiš funkci, která dostane seznam souřadnic (párů čísel menších než 10),
+    a vypíše je jako mapu. Například:
+
+\verb+nakresli_mapu([(0, 0), (1, 0), (2, 2), (4, 3), (8, 9)])+
+\begin{verbatim}
+. . . . . . . . X .
+. . . . . . . . . .
+. . . . . . . . . .
+. . . . . . . . . .
+. . . . . . . . . .
+. . . . . . . . . .
+. . . . X . . . . .
+. . X . . . . . . .
+. . . . . . . . . .
+X X . . . . . . . .
+\end{verbatim}
+
+\item Napiš funkci \verb+pohyb+, která dostane seznam souřadnic a světovou stranu
+    (\verb+"s"+, \verb+"j"+, \verb+"v"+ nebo \verb+"z"+),
+    a přidá k seznamu poslední bod „posunutý“ v daném směru. Např.:
+
+\begin{verbatim}
+pohyb([(0, 0)], 's') == [(0, 0), (0, 1)]
+pohyb([(0, 0), (0, 1)], 's') == [(0, 0), (0, 1), (0, 2)]
+pohyb([(0, 0), (0, 1), (0, 2)], 'z') == [(0, 0), (0, 1), (0, 2), (1, 2)]
+pohyb([(0, 0), (0, 1), (0, 2), (1, 2)], 'j') == [(0, 0), (0, 1), (0, 2), (1, 2), (1, 1)]
+\end{verbatim}
+    Funkce by neměla nic vracet.
+    Nezapomeň na testy.
+
+\item Napiš cyklus, který se bude ptát uživatele na světovou stranu,
+    a podle ní zavolá \verb+pohyb+, vykreslí seznam jako mapu,
+    a opět se zeptá na stranu.
+    \\Začínej se seznamem \verb+[(0, 0), (0, 1), (0, 2)]+
+
+\item \label{snaketail}
+    Doplň funkci \verb+pohyb+ tak, aby při pohybu umazala první bod ze seznamu
+    souřadnic. Výsledný seznam tak bude mít stejnou délku, jako před voláním.
+    \\Uprav testy.
+
+\item Doplň funkci \verb+pohyb+ tak, aby zamezila
+    \begin{itemize}
+    \item pohybu ven z mapy
+    \item pohybu na políčko, které už v seznamu je
+    \end{itemize}
+    Vhodná výjimka pro tyto situace je \verb+ValueError('Game over')+.
+    \\Doplň i testy.
+
+\item Seznam ovoce obsahuje na začátku jedno ovoce, na políčku na kterém není had.
+    Když had sežere ovoce, vyroste („nesmaže“ se mu ocas, viz úkol \ref{snaketail}),
+    a pokud na mapě zrovna není další ovoce, na náhodném místě (kde není had) vyroste ovoce nové.
+    \\Každých 30 tahů vyroste nové ovoce samo od sebe.
+    \\Na mapě se toto tajemné ovoce zobrazuje jako otazník (\verb+?+).
+
+\item \label{snakeend}
+    Hadí hřiště musí mít libovolné rozměry větší než 1×4.
+    Třeba 20×20 nebo 10×30.
+
+\end{enumerate}
+
+\hrule
+
+\begin{enumerate}[resume]
+
+\item \label{kanacountstart}
+    Můj bratr, který píše japonské texty, mě požádal o program
+    který počítá znaky.
+    Program přečte soubor \verb+rozsypanycaj.txt+, a zjistí,
+    kolik znaků je psáno kterou z japonských slabikových abeced:
+    \begin{itemize}
+    \item {\fontspec{WenQuanYi Zen Hei} ひらがな \emph{(hiragana)}:
+        \\ ぁ あ ぃ い ぅ う ぇ え ぉ お か が き ぎ く
+        ぐ け げ こ ご さ ざ し じ す ず せ ぜ そ ぞ た
+        だ ち ぢ っ つ づ て で と ど な に ぬ ね の は
+        ば ぱ ひ び ぴ ふ ぶ ぷ へ べ ぺ ほ ぼ ぽ ま み
+        む め も ゃ や ゅ ゆ ょ よ ら り る れ ろ ゎ わ
+        ゐ ゑ を ん ゔ ゕ ゖ}
+    \item {\fontspec{WenQuanYi Zen Hei} カタカナ \emph{(katakana)}:
+        \\ ァ ア ィ イ ゥ ウ ェ エ ォ オ カ ガ キ ギ ク
+        グ ケ ゲ コ ゴ サ ザ シ ジ ス ズ セ ゼ ソ ゾ タ
+        ダ チ ヂ ッ ツ ヅ テ デ ト ド ナ ニ ヌ ネ ノ ハ
+        バ パ ヒ ビ ピ フ ブ プ ヘ ベ ペ ホ ボ ポ マ ミ
+        ム メ モ ャ ヤ ュ ユ ョ ヨ ラ リ ル レ ロ ヮ ワ
+        ヰ ヱ ヲ ン ヴ ヵ ヶ ヷ ヸ ヹ ヺ}
+    \end{itemize}
+    (Abecedy budou ke zkopírování na stránkách s materiály.)
+
+    Program vypíše dvě čísla – počet znaků pro každou z abeced.
+    Znaky, které nejsou v jedné z abeced, ignoruj.
+
+    Pro testování si jako \verb+rozsypanycaj.txt+ můžeš uložit stránku
+    \href{http://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%81%AE%E8%A1%A8%E8%A8%98%E4%BD%93%E7%B3%BB}{
+        http://ja.wikipedia.org/wiki/{\fontspec{WenQuanYi Zen Hei}日本語の表記体系}}
+    (odkaz bude také na stránkách).
+
+    Program pošli na soukromý e-mail organizátora (ne do diskusní skupiny).
+    Pošli ho jako přílohu, nekopíruj ho do textu e-mailu.
+    \emph{(Já ho pak přepošlu bráchovi.)}
+
+\end{enumerate}
+
+\end{document}
+

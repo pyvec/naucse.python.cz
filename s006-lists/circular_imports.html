@@ -1,0 +1,193 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 06-01 – Poznámka o importování</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style></style>
+    </head>
+
+    <body class="no-reveal" oncopy="return false" oncut="return false">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="slides row stuff">
+                <section class="col-lg-12">
+                    <section>
+                        <h1>Poznámka o importování</h1>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Pokud jsi udělala domácí úlohu,
+                            dostala jsi možná takovouhle struktutu modulů.
+                            (Šipky mezi moduly znázorňují importování.)
+                        </aside>
+<pre>
+┌──────────────────╮  ┌───────────────╮  ┌──────────────────╮ 
+│      ai.py       │◀-│ piskvorky.py  │◀-│    hra.py        │
+├──────────────────┤  ├───────────────┤  ├──────────────────┤
+│                  │  │ import ai     │  │ import piskvorky │
+├──────────────────┤  ├───────────────┤  ├──────────────────┤
+│ def tah_pocitace │  │ def vyhodnot  │  │                  │
+│                  │  │ def tah       │  │                  │
+└──────────────────┘  │ def tah_hrace │  └──────────────────┘
+                      │               │
+                      └───────────────┘  
+                          ▲
+                          │
+                    ┌───────────────────╮
+                    │ test_piskvorky.py │
+                    ├───────────────────┤
+                    │ import piskvorky  │
+                    ├───────────────────┤
+                    │ test_...          │
+                    │                   │
+                    └───────────────────┘
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            Jenže funkce <code>tah_pocitace</code>
+                            většinou potřebuje volat funkci <code>tah</code>.
+                            Co s tím?
+                            Můžeme importovat <code>ai</code>
+                            z <code>piskvorky</code>, a zároveň
+                            <code>piskvorky</code> z <code>ai</code>?
+                        </aside>
+<pre>
+┌──────────────────╮  ┌───────────────╮
+│      ai.py       │◀-│ piskvorky.py  │
+├──────────────────┤-▶├───────────────┤
+│ import piskvorky │  │ import ai     │
+├──────────────────┤  ├───────────────┤
+│ def tah_pocitace │  │ def vyhodnot  │
+│                  │  │ def tah       │
+└──────────────────┘  │ def tah_hrace │
+                      │               │
+                      └───────────────┘  
+</pre>
+                        <aside class="notes">
+                            Můžeme se na to podívat z hlediska Pythonu,
+                            který příkazy v souborech vykonává.
+                            Když má spustit (nebo importovat) soubor
+                            <code>piskvorky.py</code>, začne to dělat,
+                            zpracovává ho řádek po řádku,
+                            když tu (docela brzo) narazí na příkaz
+                            <code>import ai</code>.
+                            Otevře tedy soubor <code>ai.py</code>,
+                            a začne ho zpracovávat, řádek po řádku.
+                            Brzy narazí na příkaz
+                            <code>import piskvorky</code>. Co teď?
+                        </aside>
+                        <aside class="notes">
+                            Aby nenastala by situace podobná nekonečné smyčce –
+                            jeden soubor by importoval druhý, druhý zase první,
+                            a tak stále dokola,
+                            udělá Python taková malý „podvod“:
+                            když zjistí, že soubor <code>piskvorky.py</code>
+                            už importuje, zpřístupní v modulu <code>ai</code>
+                            modul <code>piskvorky</code> tak jak ho
+                            má: nekompletní, bez většiny funkcí co v něm mají
+                            být nadefinované.
+                            A až potom, co dokončí import <code>ai.py</code>,
+                            vrátí se k souboru <code>piskvorky.py</code>
+                            a pokračuje v provádění příkazů <code>def</code>
+                            které v něm jsou.
+                        </aside>
+                        <aside class="notes">
+                            Takový nekompletní modul může být občas užitečný,
+                            ale ve většině případů se chová skoro
+                            nepředvídatelně a tudíž nebezpečně.
+                            Budeme se ho chtít vyvarovat.
+                        </aside>
+                        <aside class="notes">
+                            Jak na to? Máme dvě možnosti.
+                        </aside>
+                    </section>
+                </section>
+                <section class="col-lg-12">
+                    <section>
+                        <aside class="notes">
+                            <h2 class="notes">Organizace modulů podle závislostí</h2>
+                            První možnost je importovat funkci
+                            <code>tah</code> v modulu <code>ai</code>,
+                            a používat ji odtam.
+                            To je jednoduché, ale můžeš namítnout, že
+                            to nerespektuje účel modulu <code>ai</code>.
+                        </aside>
+<pre>
+┌──────────────────╮  ┌───────────────╮
+│      ai.py       │◀-│ piskvorky.py  │
+├──────────────────┤  ├───────────────┤
+│                  │  │ import ai     │
+├──────────────────┤  ├───────────────┤
+│ def tah_pocitace │  │ def vyhodnot  │
+│ def tah          │  │ def tah_hrace │
+│                  │  │               │
+└──────────────────┘  └───────────────┘
+</pre>
+                    </section>
+                    <section>
+                        <aside class="notes">
+                            <h2 class="notes">Pomocný modul</h2>
+                            Druhá možnost je defunovat nový, sdílený modul,
+                            který se naimportuje jak z <code>piskvorky.py</code>
+                            tak z <code>ai.py</code>.
+                        </aside>
+                        <aside class="notes">
+                            Často se takový modul jmenuje
+                            <code>util.py</code> (z angl. <em>utility</em>,
+                            pomůcka, nástroj).
+                        </aside>
+<pre>
+            ┌──────────────────╮
+            │ util.py          │
+            ├──────────────────┤
+            ├──────────────────┤
+            │ def tah          │
+            └──────────────────┘
+                ▲        ▲
+                │        │
+┌──────────────────╮  ┌───────────────╮
+│      ai.py       │◀-│ piskvorky.py  │
+├──────────────────┤  ├───────────────┤
+│ import util      │  │ import ai     │
+│                  │  │ import util   │
+├──────────────────┤  ├───────────────┤
+│ def tah_pocitace │  │ def vyhodnot  │
+│                  │  │ def tah_hrace │
+│                  │  │               │
+└──────────────────┘  └───────────────┘
+</pre>
+                        <aside class="notes">
+                            Nevýhoda pomocného modulu je ta,
+                            že se z něj může stát neudržvané „odkladiště“
+                            všeho kódu, který byl jednou potřeba na dvou
+                            nebo více místech.
+                        </aside>
+                        <aside class="notes">
+                            Pro kterou z možností se rozhodnout, záleží
+                            na situaci.
+                            Programování není vždycky jen exaktní věda!
+                        </aside>
+                    </section>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2014</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+                <div><a class="btn" href="javascript:start_reveal()">‣ slajdy</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script src="../reveal.js/js/reveal.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+        <script type="text/javascript" src="../js/start_reveal.js"></script>
+
+    </body>
+</html>
