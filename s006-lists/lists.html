@@ -19,24 +19,295 @@
                 <section class="col-lg-12">
                     <section>
                         <h1>Seznamy</h1>
-                        <h2>Vybírání za seznamů</h2>
+<pre>
+fibonacciho_cisla = [1, 1, 2, 3, 5, 8, 13]
+</pre>
+<pre>
+for cislo in fibonacciho_cisla:
+    print(cislo)
+</pre>
+                        <h2>Vybírání ze seznamů</h2>
+<pre>
+print(fibonacciho_cisla[2])
+print(fibonacciho_cisla[2:-3])
+</pre>
                         <h2>Měnění seznamů</h2>
+<pre>
+fibonacciho_cisla.append(21)
+
+dalsi_prvosisla = [34, 55, 89]
+fibonacciho_cisla.extend(dalsi_prvosisla)
+</pre>
+<pre>
+fibonacciho_cisla[-1] = 0
+fibonacciho_cisla[3:5] = [0, 0, 0, 0]
+
+fibonacciho_cisla.pop()
+del fibonacciho_cisla[-1]
+del fibonacciho_cisla[3:5]
+
+fibonacciho_cisla.remove(13)
+</pre>
+<pre>
+seznam = [4, 7, 8, 3, 5, 2, 4, 8, 5]
+seznam.sort()
+print(seznam)
+</pre>
+                        <h2>Operace se seznamy</h2>
+<pre>
+melodie = ['C', 'E', 'G'] * 2 + ['E', 'E', 'D', 'E', 'F', 'D'] * 2 + ['E', 'D', 'C']
+
+print(len(melodie))         # Délka seznamu
+print(melodie.count('C'))   # Počet 'C' v seznamu
+print('D' in melodie)       # Je 'D' v seznamu?
+print(melodie.index('D'))   # Číslo prvního 'D'
+</pre>
+<pre>
+print('DE' in melodie)          # Je 'DE' v seznamu?
+print(['D', 'E'] in melodie)    # Je ['D', 'E'] v seznamu?
+</pre>
+<pre>
+if seznam:
+    print('V seznamu něco je!')
+else:
+    print('Seznam je prázdný!')
+</pre>
+                        <h2>Tvoření seznamů</h2>
+<pre>
+abeceda = list('abcdefghijklmnopqrstuvwxyz')
+cisla = list(range(100))
+</pre>
+<pre>
+mocniny_dvou = []
+for cislo in range(10):
+    mocniny_dvou.append(2 ** cislo)
+print(mocniny_dvou)
+</pre>
                         <h2>Seznamy a řetězce</h2>
-                            join
-                            flip_xo
+                            split a join
+<pre>
+slova = 'Tato věta je složitá, rozdělme ji na slova!'.split()
+print(slova)
+
+zaznamy = '3A,8B,2X,9D'.split(',')
+print(zaznamy)
+
+veta = ' '.join(slova)
+print(veta)
+</pre>
+                            zamen_xo
+<pre>
+def zamen_xo(retezec):
+    vysledek = []
+    for znak in retezec:
+        if znak == 'o':
+            vysledek.append('x')
+        elif znak == 'x':
+            vysledek.append('o')
+        else:
+            vysledek.append(znak)
+    return ''.join(vysledek)
+
+print(zamen_xo('---xo--xooxxox-'))
+
+def tah_pocitace(pole, symbol):
+    if symbol == 'x':
+        return tah_pocitace_x(pole)
+    else:
+        return zamen_xo(tah_pocitace_x(zamen_xo(pole)))
+</pre>
+                        <h2>Seznamy a náhoda</h2>
                             shuffle
+<pre>
+import random
+
+balicek = []
+for barva in '♠', '♥', '♦', '♣':
+    for hodnota in list(range(2, 11)) + ['J', 'K', 'Q', 'A']:
+        balicek.append((str(hodnota) + barva))
+random.shuffle(balicek)
+print('\n'.join(balicek))
+</pre>
                             choice
+<pre>
+import random
+mozne_tahy = ['kámen', 'nůžky', 'papír']
+tah_pocitace = random.choice(mozne_tahy)
+</pre>
                         <h2>Aliasy</h2>
-                        <h2>N-tice</h2>
-                        <h2>Kdy použít seznam, a kdy n-tici?</h2>
+<pre>
+a = [1, 2, 3]
+b = a
+
+b.append(4)
+
+print(a)
+</pre>
+<pre>
+def pridej_ctvertku(seznam):
+    seznam.append(4)
+
+a = [1, 2, 3]
+b = a
+
+pridej_ctvertku(b)
+
+print(a)
+</pre>
+                        <h2><i>N</i>-tice</h2>
+<pre>
+osoby = 'máma', 'teta', 'babička'
+for osoba in trojice:
+    print(''.format{osoba})
+</pre>
+<pre>
+seznam_dvojic = []
+for i in range(10):
+    seznam_dvojic.append((i, i**2))
+print(seznam_dvojic)
+</pre>
+<pre>
+def podil_a_zbytek(a, b):
+    return a // b, a % b
+
+podil, zbytek = podil_a_zbytek(12, 5)
+</pre>
+                            zip
+<pre>
+osoby = 'máma', 'teta', 'babička'
+vlastnosti = 'hodná', 'milá', 'laskavá'
+for osoba, vlastnost in zip(osoby, vlastnosti):
+    print('{} je {}'.format(osoba, vlastnost))
+</pre>
+                            enumerate
+<pre>
+prvocisla = [1, 1, 2, 3, 5, 8, 13]
+
+for i, prvocislo in enumerate(prvocisla):
+    print('Pvočíslo č.{} je {}'.format(i, prvocislo))
+</pre>
+                        <h2>Kdy použít seznam, a kdy <i>n</i>-tici?</h2>
+                        <div>
+                            Seznamy se používají, když předem nevíme,
+                            kolik v nich přesně bude hodnot,
+                            nebo když je hodnot mnoho.
+                            Například seznam slov ve větě,
+                            seznam účastníků soutěže, seznam tahů ve hře,
+                            nebo seznam karet v balíčku.
+                            Oproti tomu <code>for pozdrav in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN':</code>
+                            používá <i>n</i>-tici.
+                        </div>
+                        <div>
+                            Seznamy se taky používají,
+                            když v nich jsou všechny hodnoty stejného druhu.
+                            Například seznam použijeme na písmena abecedy,
+                            ale dvojice index–hodnota z <code>enumerate</code>
+                            je <i>n</i>-tice.
+                        </div>
+                        <div>
+                            Seznamy i n-tice mají i technické limity:
+                            <i>n</i>-tice nejdou měnit,
+                            a až se naučíme pracovat se slovníky,
+                            zjistíme že seznamy tam nepůjdou použít jako klíče.
+                        </div>
+                        <h2>Vnořené seznamy</h2>
+<pre>
+def vytvor_tabulku(velikost=11):
+    seznam_seznamu = []
+    for a in range(velikost):
+        seznam_cisel = []
+        for b in range(velikost):
+            seznam_cisel.append(a * b)
+        seznam_seznamu.append(seznam_cisel)
+    return seznam_seznamu
+
+nasobilka = vytvor_tabulku()
+
+for radek in nasobilka:
+    for cislo in radek:
+        print(cislo, end=' ')
+    print()
+
+print(nasobilka[3][4])
+</pre>
+<pre>
+nasobilka[9][7] = 8
+</pre>
                         <h2>Hra</h2>
+<pre>
+import random
+
+def jmeno_karty(karta):
+    cislo, barva = karta
+    if cislo == 11:
+        hodnota = 'J'
+    elif cislo == 12:
+        hodnota = 'Q'
+    elif cislo == 13:
+        hodnota = 'K'
+    elif cislo == 14:
+        hodnota = 'A'
+    else:
+        hodnota = str(cislo)
+    return hodnota + barva
+
+balicek = []
+for cislo in range(2, 15):
+    for barva in '♠', '♥', '♦', '♣':
+        balicek.append((cislo, barva))
+
+random.shuffle(balicek)
+
+polovina = len(balicek) // 2
+hrac1 = balicek[polovina:]
+hrac2 = balicek[:polovina]
+
+def vem_vrchni_karty(hrac1, hrac2):
+    try:
+        karta1 = hrac1.pop()
+    except IndexError:
+        raise ValueError('Hráč 1 nemá karty! Hráč 2 vyhrál!')
+    try:
+        karta2 = hrac2.pop()
+    except IndexError:
+        raise ValueError('Hráč 2 nemá karty! Hráč 1 vyhrál!')
+    print(jmeno_karty(karta1), 'vs.', jmeno_karty(karta2))
+    return karta1, karta2
+
+def tah(hrac1, hrac2):
+    hrane_karty = list(vem_vrchni_karty(hrac1, hrac2))
+    karta1, karta2 = hrane_karty
+    hodnota1, barva1 = karta1
+    hodnota2, barva2 = karta2
+    if hodnota2 &lt; hodnota1:
+        print('Hráč 1 vyhrál tah!')
+        vitez = hrac1
+    elif hodnota1 &lt; hodnota2:
+        print('Hráč 2 vyhrál tah!')
+        vitez = hrac2
+    else:
+        print('Válka!')
+        hrane_karty.extend(vem_vrchni_karty(hrac1, hrac2))
+        hrane_karty.extend(vem_vrchni_karty(hrac1, hrac2))
+        vitez = tah(hrac1, hrac2)
+    for karta in hrane_karty:
+        print('Vítěz bere', jmeno_karty(karta))
+        vitez.insert(0, karta)
+    return vitez
+
+kolo = 0
+while True:
+    kolo = kolo + 1
+    print('{}. kolo! Stav: {} proti {}'.format(kolo, len(hrac1), len(hrac2)))
+    tah(hrac1, hrac2)
+
+</pre>
                     </section>
                 </section>
             </div>
             <div class="no-reveal footer">
                 <div>pro PyLadies Brno napsal Petr Viktorin, 2014</div>
                 <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
-                <div><a class="btn" href="javascript:start_reveal()">‣ slajdy</a></div>
             </div>
         </div>
 

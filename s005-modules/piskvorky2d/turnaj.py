@@ -2,6 +2,10 @@
 
 Tento program otestuje strategie, které jsou v adresáři "strategie".
 Soubory se strategiemi by se měly jmenovat podle autorky, např "petra.py"
+
+Potřebné knihovny se dají doinstalovat pomocí:
+
+    pip install pytest blessings
 """
 
 # Tento program používá spoustu nových či složitých věcí.
@@ -16,7 +20,6 @@ import argparse
 
 import blessings
 import pytest
-import docopt
 
 import strategie
 
