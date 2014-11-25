@@ -1,0 +1,79 @@
+- štábní kultura
+- vysvětlení klávesových zkratek (hlavně terminál, editor?)
+
+- objekty, atributy (range, str, int)
+
+- a += b
+- list comprehensions
+
+* Funguje ''.join() na seznamy, které obsahují jiné hodnoty než řetězce?
+
+
+<pre>
+import random
+
+def jmeno_karty(karta):
+    cislo, barva = karta
+    if cislo == 11:
+        hodnota = 'J'
+    elif cislo == 12:
+        hodnota = 'Q'
+    elif cislo == 13:
+        hodnota = 'K'
+    elif cislo == 14:
+        hodnota = 'A'
+    else:
+        hodnota = str(cislo)
+    return hodnota + barva
+
+balicek = []
+for cislo in range(2, 15):
+    for barva in '♠', '♥', '♦', '♣':
+        balicek.append((cislo, barva))
+
+random.shuffle(balicek)
+
+polovina = len(balicek) // 2
+hrac1 = balicek[polovina:]
+hrac2 = balicek[:polovina]
+
+def vem_vrchni_karty(hrac1, hrac2):
+    try:
+        karta1 = hrac1.pop()
+    except IndexError:
+        raise ValueError('Hráč 1 nemá karty! Hráč 2 vyhrál!')
+    try:
+        karta2 = hrac2.pop()
+    except IndexError:
+        raise ValueError('Hráč 2 nemá karty! Hráč 1 vyhrál!')
+    print(jmeno_karty(karta1), 'vs.', jmeno_karty(karta2))
+    return karta1, karta2
+
+def tah(hrac1, hrac2):
+    hrane_karty = list(vem_vrchni_karty(hrac1, hrac2))
+    karta1, karta2 = hrane_karty
+    hodnota1, barva1 = karta1
+    hodnota2, barva2 = karta2
+    if hodnota2 &lt; hodnota1:
+        print('Hráč 1 vyhrál tah!')
+        vitez = hrac1
+    elif hodnota1 &lt; hodnota2:
+        print('Hráč 2 vyhrál tah!')
+        vitez = hrac2
+    else:
+        print('Válka!')
+        hrane_karty.extend(vem_vrchni_karty(hrac1, hrac2))
+        hrane_karty.extend(vem_vrchni_karty(hrac1, hrac2))
+        vitez = tah(hrac1, hrac2)
+    for karta in hrane_karty:
+        print('Vítěz bere', jmeno_karty(karta))
+        vitez.insert(0, karta)
+    return vitez
+
+kolo = 0
+while True:
+    kolo = kolo + 1
+    print('{}. kolo! Stav: {} proti {}'.format(kolo, len(hrac1), len(hrac2)))
+    tah(hrac1, hrac2)
+
+</pre>
