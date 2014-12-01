@@ -1,5 +1,7 @@
 import klondike
 
+import random; random.seed(0)
+
 hra = klondike.udelej_hru()
 klondike.vypis_hru(hra)
 while not klondike.hrac_vyhral(hra):

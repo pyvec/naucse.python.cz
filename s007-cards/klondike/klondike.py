@@ -197,21 +197,22 @@ def priprav_tah(hra, tah):
         if len(zdrojovy_balicek) < pocet:
             raise ValueError('Na to není v {} dost karet!'.format(MOZNOSTI_Z[z]))
         karty = zdrojovy_balicek[-pocet:]
+        for hodnota, barva, licem_nahoru in karty:
+            if not licem_nahoru:
+                raise ValueError('Nemůžeš přesouvat karty, které jsou rubem nahoru!')
         if na < 7:
             cilovy_balicek = sloupce[na]
             if cilovy_balicek:
-                zkontroluj_licovou_postupku([cilovy_balicek[-1]] + karty)
+                zkontroluj_postupku([cilovy_balicek[-1]] + karty)
             else:
                 if karty[0][0] != 13:
-                    raise ValueError('Na prázdné pole smí jen král, {} nesedí!'.format(
+                    raise ValueError('Do prázdného sloupečku smí jen král, {} nesedí!'.format(
                         popis_karty(karty[0])))
-                zkontroluj_licovou_postupku(karty)
+                zkontroluj_postupku(karty)
         else:
             if pocet != 1:
-                raise ValueError('Do cíle se nedá brát víc karet najednou')
+                raise ValueError('Do cíle se nedá dávat víc karet najednou')
             hodnota, barva, otoceni = karty[0]
-            if not otoceni:
-                raise ValueError('Nemůžeš přesouvat karty, co jsou rubem nahoru!')
             cilovy_balicek = cile[na - 7]
             if cilovy_balicek:
                 hodnota_p, barva_p, otoceni_p = cilovy_balicek[-1]
@@ -270,7 +271,7 @@ def druh_barvy(barva):
         return 'černá'
 
 
-def zkontroluj_licovou_postupku(karty):
+def zkontroluj_postupku(karty):
     for karta_a, karta_b in zip(karty[1:], karty):
         hodnota_a, barva_a, lic_a = karta_a
         hodnota_b, barva_b, lic_b = karta_b

@@ -270,15 +270,15 @@ Ctrl+C - Ukončí hru
                         <div>
                             Hodnota karty může být 2-10 nebo J, Q, K, A.
                             Ve hře ale budeme muset porovnávat hodnoty
-                            a kontrolovat postupky (kde následující karty musí
-                            mít hodnoty <i>x</i> a <i>x</i>+1),
+                            a kontrolovat postupky (kde po sobě následující
+                            karty musí mít hodnoty <i>x</i> a <i>x</i>+1),
                             což se dělá mnohem lépe
                             s čísly než s mixem čísel a řetězců.
                         </div>
                         <div>
                             Obecně bývá dobré „vevnitř“ v programu používat
                             takovou reprezentaci informací, se kterou se nejlíp
-                            počítá a řeší úlohy, a až když se ty hodnoty
+                            počítá, a teprve až když se ty hodnoty
                             ukazují uživatelům (nebo od nich dostávají),
                             tak se převedou na něco (nebo z něčeho) co dává
                             smysl lidem.
@@ -328,8 +328,11 @@ Ctrl+C - Ukončí hru
                         </div>
                         <h4>Práce s kartou</h4>
                         <div>
-                            Rychle si zopakujme, jak se tvoří <i>n</i>-tice,
-                            a jak se zase „rozkládají“ do jednotlivých částí:
+                            Kartu budeme tedy reprezentovat jako trojici čísla,
+                            řetězce, a <em>bool</em>u.
+                            Rychle si zopakujme, jak se taková <i>n</i>-tice
+                            tvoří, a jak se zase „rozkládá“ do
+                            jednotlivých částí:
                         </div>
 <pre>
 srdcova_kralovna = 12, 'Sr', True
@@ -341,8 +344,9 @@ hodnota, barva, licem_nahoru = schovane_eso
                             Vytvoř funkci <code>popis_karty</code>,
                             která dostane jako argument kartu (trojici),
                             a vrátí <code>[???]</code> pro kartu, která je
-                            rubem nahoru, nebo např. <code>[3♣ ]</code> či
-                            <code>[X ♥]</code> pokud je lícem nahoru.
+                            rubem nahoru, nebo příslušný řetězec (např.
+                            <code>[3♣ ]</code> či <code>[X ♥]</code>)
+                            pokud je lícem nahoru.
                         </div>
                         <div class="note">
                             Ve Windows s terminálem bez exotických znaků to
@@ -352,7 +356,7 @@ hodnota, barva, licem_nahoru = schovane_eso
                             Dále budeme potřebovat mechanismus na otáčení
                             karet – funkci, která změní otočení ale zachová
                             hodnotu a barvu.
-                            Protože trojice se nedají měnit, musíme ve funkci
+                            Protože <i>n</i>-tice se nedají měnit, musíme ve funkci
                             <code>otoc_kartu</code> udělat
                             <em>novou trojici</em> se stejnými hodnotami,
                             kterou pak vrátíme:
@@ -372,24 +376,26 @@ def otoc_kartu(karta, nove_otoceni):
                             Jak soubor s testy tak <code>klondike.py</code>
                             dej do stejného adresáře, a z toho samého adresáře
                             pusť <code>py.test</code>.
-                            Nezapomeň mít aktivované virtuální prostředí.
+                            Nezapomeň mít aktivované virtuální prostředí,
+                            kam jsi si před pár týdny <a href="../s005-modules/testing.html">nainstalovala pytest</a>.
                         </div>
                         <h3>Balíček</h3>
                         <div>
-                            Jak si pamatovat balíček či sloupec karet?
+                            Jak si repreentovat balíček či sloupec karet?
                             Je to nějaká sekvence karet, která může mít
                             různou délku.
                             Na takové věci je ideální použít seznam.
                         </div>
                         <div>
                             Seznamy mají spoustu metod které pracují s prvky
-                            na konci, jako například <code>append</code>
+                            na <em>konci</em>, jako například <code>append</code>
                             a <code>pop</code>.
-                            Na začátek seznamu se přidávají prvky složitěji.
+                            Oproti tomu na <em>začátek seznamu</em>
+                            se přidávají prvky složitěji.
                             Na posledním místě seznamu (<code>balicek[-1]</code>)
-                            proto budeme mít kartu, která je na vršku balíčku
-                            nebo na konci sloupce – prostě tam, kde se se
-                            seznamem bude nejvíc pracovat.
+                            tedy budeme mít karty, se kterými se bude
+                            víc pracovat – vršek balíčku
+                            nebo konec sloupce.
                         </div>
                         <div>
                             Sloupec C ze hry na začátku této kapitoly
@@ -768,6 +774,8 @@ def nacti_tah():
                             a necháme hráče přemisťovat karty dle libosti
                             – tak jako by hrál s opravdovými
                             papírovými kartami.
+                            Bude zatím na samotných hráčích,
+                            aby hráli podle pravidel.
                         </div>
 <pre>
 def priprav_tah(hra, tah):
@@ -803,7 +811,91 @@ def priprav_tah(hra, tah):
                     <section>
                         <h2>Provedení tahu</h2>
                         <div>
-                            ....
+                            Následuje funkce, která provede tah podle
+                            informací, kteŕe dostane z
+                            <code>priprav_tah</code>.
+                        </div>
+                        <div>
+                            Jak by tahle funkce měla fungovat:
+                            <ul>
+                                <li>
+                                    Pokud dostane 'U', a v balíčku U něco je,
+                                    lízne vrchní karu (pomocí metody
+                                    <code>pop</code>), otočí ji
+                                    (pomocí funkce <code>otock_kartu</code>),
+                                    a dá ji na vršek balíčku V
+                                    (pomocí metody <code>append</code>).
+                                </li>
+                                <li>
+                                    Pokud dostane 'U', a v balíčku U nic není,
+                                    postupně všechny karty z V lízne, otočí,
+                                    a dá na V.
+                                </li>
+                                <li>
+                                    Jinak trojici, kterou dostala, rozloží na
+                                    zdrojový_balíček, počet, a cílový_balíček.
+                                    Přidá <i>počet</i> karet ze zdrojového
+                                    balíčku, přidá je na cílový balíček
+                                    pomocí metody <code>extend</code>,
+                                    a smaže je ze zdrojového balíčku.
+                                    <br>
+                                    Potom, pokud je na vršku zdrojového balíčku
+                                    karta otočená rubem nahoru: obrátí tuhle
+                                    kartu (lízne, otočí, a přidá tam, odkud ji
+                                    lízla).
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            Funkci zase otestuj; testy stáhni
+                            <a href="klondike/test_udelej_tah.py">tady</a>.
+                        </div>
+                        <div>
+                            Povedlo se? Gratuluji! Máš funkčí hru!
+                            Zbývá k ní jen dopsat kontrolu pravidel.
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Kontrola pravidel</h2>
+                        <div>
+                            Všechno kontrolování bude probíhat ve funkci
+                            <code>priprav_tah</code>.
+                            Zkus do ní dopsat následující hlášky:
+                            <ul>
+                                <li><code>'Z balíčku V se nedá brát víc karet najednou!'</code></li>
+                                <li><code>'Na to není v {pismeno} dost karet!'</code></li>
+                                <li><code>'Nemůžeš přesouvat karty, které jsou rubem nahoru!'</code></li>
+
+                                <li><code>'Do prázdného sloupečku smí jen král!'</code></li>
+
+                                <li><code>'Do cíle se nedá dávat víc karet najednou!'</code></li>
+                                <li><code>'Do prázdného cíle smí jen eso!'</code></li>
+                                <li><code>'Cílová hromádka musí mít jednu barvu!'</code></li>
+                                <li><code>'Do cíle musíš skládat karty postupně od nejnižších!'</code></li>
+                            </ul>
+                        </div>
+                        <div>
+                            Testy jsou tuhle:
+                            <a href="klondike/test_priprav_tah.py">test_priprav_tah</a>.
+                        </div>
+                        <h3>Postupky</h3>
+                        <div>
+                            A nakonec to nejtěžší.
+                            Zkus, přijít na to, jak kontrolovat jestli je
+                            v seznamu karet postupka.
+                            Udělej na to funkci <code>zkontroluj_postupku</code>,
+                            která jako argument bere seznam karet,
+                            a buď nic nevrátí nebo vyvolá výjimku
+                            <code>ValueError</code> s jedním z textů:
+                            <ul>
+                                <li><code>'Musíš dělat sestupné postupky!'</code></li>
+                                <li><code>'Musíš střídat barvy!'</code></li>
+                            </ul>
+                            I na tuhle funkci pusť
+                            <a href="klondike/test_postupky.py">testy</a>.
+                        </div>
+                        <div>
+                            Potom, co tu funkci napíšeš, ji na vhodném místě zavolej.
                         </div>
                     </section>
                 </section>
