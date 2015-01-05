@@ -129,9 +129,9 @@ def nacti_tah():
 
     Může vrátit buď řetězec 'U' ("lízni z balíčku"), nebo trojici
     (z, pocet, na), kde:
-        - `z` je číslo místa, ze kterého karty vezmou (A-G: 0-7; V: 8)
+        - `z` je číslo místa, ze kterého karty vezmou (A-G: 0-6; V: 7)
         - `pocet` je počet karet, které se přemisťují
-        - `na` je číslo místa, kam se karty mají dát (A-G: 0-7, W-Z: 8-11)
+        - `na` je číslo místa, kam se karty mají dát (A-G: 0-6, W-Z: 7-10)
 
     Zadá-li uživatel špatný vstup, zeptá se znova.
     """

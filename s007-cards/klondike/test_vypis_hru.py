@@ -5,7 +5,7 @@ ASCII_ONLY = False
 
 def check(got, expected):
     if ASCII_ONLY:
-        expected = expected.replace('♠', 'K')
+        expected = expected.replace('♠', 'P')
         expected = expected.replace('♥', 'S')
         expected = expected.replace('♦', 'K')
         expected = expected.replace('♣', '+')

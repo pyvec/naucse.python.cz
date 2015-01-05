@@ -676,10 +676,12 @@ pprint.pprint(klondike.udelej_hru())
                             jsou králové.
                             Kterou variantu použiješ ve funkci
                             <code>hrac_vyhral</code>, to je na tobě.
+                            Funkce ale musí brát jako argument hru,
+                            a vracet <code>True</code> nebo <code>False</code>.
                         </div>
                         <div>
                             Odkaz na testy je
-                            <a href="klondike/test_vypis_hru.py">tady</a>.
+                            <a href="klondike/test_vitezstvi.py">tady</a>.
                         </div>
                     </section>
                     <section>
@@ -717,9 +719,9 @@ def nacti_tah():
 
     Může vrátit buď řetězec 'U' ("lízni z balíčku"), nebo trojici
     (z, pocet, na), kde:
-        - `z` je číslo místa, ze kterého karty vezmou (A-G: 0-7; V: 8)
+        - `z` je číslo místa, ze kterého karty vezmou (A-G: 0-6; V: 7)
         - `pocet` je počet karet, které se přemisťují
-        - `na` je číslo místa, kam se karty mají dát (A-G: 0-7, W-Z: 8-11)
+        - `na` je číslo místa, kam se karty mají dát (A-G: 0-6, W-Z: 7-10)
 
     Zadá-li uživatel špatný vstup, zeptá se znova.
     """
@@ -730,7 +732,7 @@ def nacti_tah():
             print(NAPOVEDA)
         elif retezec == 'U':
             return 'U'
-        elif len(retezec) &lt; 2:
+        elif len(retezec) < 2:
             print('Nerozumím tahu')
         elif retezec[0] in MOZNOSTI_Z and retezec[-1] in MOZNOSTI_NA:
             if len(retezec) == 2:
@@ -743,6 +745,7 @@ def nacti_tah():
                     continue
             tah = (MOZNOSTI_Z.index(retezec[0]), pocet,
                    MOZNOSTI_NA.index(retezec[-1]))
+            print(popis_tahu(tah))
             return tah
         else:
             print('Nerozumím tahu')
@@ -810,9 +813,11 @@ def priprav_tah(hra, tah):
                     <section>
                         <h2>Provedení tahu</h2>
                         <div>
-                            Následuje funkce, která provede tah podle
-                            informací, kteŕe dostane z
+                            Následuje funkce, <code>udelej_tah</code>, která
+                            provede tah podle informací, které dostane z
                             <code>priprav_tah</code>.
+                            Bere dva argumenty:
+                            <code>udelej_tah(hra, info_o_tahu)</code>.
                         </div>
                         <div>
                             Jak by tahle funkce měla fungovat:
