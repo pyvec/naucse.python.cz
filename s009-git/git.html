@@ -1,0 +1,539 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 09-01 – Git</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style>
+            .green  {   color:  #0A3;    }
+            .red    {   color:  #D30;    }
+            .yellow {   color:  #880;    }
+            .strong {   font-weight:  bold;    }
+            .blue   {   color:  #03D;    }
+        </style>
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <h1>Git</h1>
+                    <div>
+                        Ať už programuješ nebo píšeš dokumenty, stává se,
+                        že vytvoříš několik verzí.
+                        Tuhle chceš archivovat část, která už není potřeba,
+                        tamhle chceš svoji práci poslat k ohodnocení,
+                        nebo dokonce kolegům kteří na ni spolupracují.
+                        A když se verze začnou kupit, může být problém se v
+                        nich vyznat.
+                    </div>
+                    <div>
+                        Tento problém řeší nástroje na správu verzí
+                        (angl. version control system. VCS).
+                        Asi nejpopulárnější z nich je Git, se kterým
+                        se teď seznámíme.
+                    </div>
+                    <div class="note">
+                        Budeme hodně pracovat s příkazovou řádkou.
+                        Jestli se s ní ještě nekamarádíš, koukni se na
+                        <a href="../s001-install/cmdline.html">úvod</a> a
+                        případně
+                        <a href="../s005-modules/cmdline.html">doplnění</a>
+                        z minulých srazů.
+                        <br>
+                        Nezapomeň: <code>$</code> na začátku se nepíše;
+                        je tu proto, aby šlo poznat že jde o příkaz.
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h1>Instalace</h1>
+                    <div>
+                        Git je program, který je potřeba nainstalovat
+                        a nastavit.
+                        To se liší pro různé operační systémy:
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Linux</h2>
+                    Instalace na Linux zvládneme dvěma příkazy,
+                    ale já se tu trochu rozepíšu, aby to nebylo tak nudné...
+                </section>
+                <section class="col-lg-6">
+                    <div>
+                        Fedora, RHEL:
+                        <pre>$ sudo yum install git gitk git-gui nano</pre>
+                    </div>
+                </section>
+                <section class="col-lg-6">
+                    <div>
+                        Ubuntu, Debian:
+                        <pre>$ sudo apt-get install git gitk git-gui nano</pre>
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <div class="note">
+                        Proč tak složitě?
+                        <br>
+                        Git se často používá na serverech, které se ovládají
+                        jen příkazovou řádkou – neumí kreslit na obrazovku
+                        okýnka (pokud vůbec nějakou obrazovku mají).
+                        Programy <code>gitk</code> a <code>git gui</code>,
+                        které jsou „grafické“, je proto potřeba nainstalovat
+                        zvlášť.
+                        <br>
+                        No a <code>nano</code> je jednoduchý textový editor,
+                        který funguje v příkazové řádce.
+                        Git standardně používá <tt>vim</tt>, který je ovšem
+                        trochu složitější na naučení.
+                    </div>
+                    <div>
+                        Po instalaci nastavíme Nano jako editor (případně
+                        místo toho jeden z nich):
+                        <pre>$ git config --global core.editor nano</pre>
+                    </div>
+                    <div class="note">
+                        Pokud už umíš pracovat s editorem <code>vim</code> nebo
+                        <code>emacs</code>, zadej ho v nastavovacím příkazu
+                        místo <code>nano</code>.
+                    </div>
+                    <div>
+                        Jestli máš ještě čas, zkus si pohrát s novým editorem:
+                        <pre>$ nano mujsoubor.txt</pre>
+                        Text se píše jako v „normálním“ editoru.
+                        Pomocí <code>Ctrl+O</code> se soubor uloží;
+                        <code>Ctrl+X</code> ukončí editor.
+                        Kdybys zkratky zapoměla, dole má Nano malou nápovědu.
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Windows</h2>
+                    <div>
+                        Jdi na stránku
+                        <a href="http://git-scm.org">git-scm.org</a>, stáhni si
+                        Git, a nainstaluj si ho.
+                        Budeš chtít tohle nastavení:
+                        <ul>
+                            <li>Run Git from the Windows Command Prompt</li>
+                            <li>Checkout Windows-style, commit Unix-style line endings</li>
+                        </ul>
+                    </div>
+                    <div>
+                        Pak jdi na stránku programu
+                        <a href="https://github.com/github/GitPad">GitPad</a>,
+                        a nainstaluj i ten.
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Nastavení</h2>
+                    <div>
+                        Na projektu, který bude uložen v Gitu, může
+                        spolupracovat více lidí.
+                        Ke každé verzi se připojuje jméno autorky,
+                        aby potom šlo dohledat kdo ji má na svědomí.
+                        Proto je Gitu potřeba říct jméno a e-mail:
+<pre>
+$ git config --global user.name "Adéla Novotná"
+$ git config --global user.email adela.novotna@example.cz
+</pre>
+                        Můžeš samozřejmě použít i přezdívku, nebo dokonce
+                        falešný mail, ale v takovém případě budeš mít problémy,
+                        až se někdy zapojíš do týmového projektu.
+                    </div>
+                    <div class="note">
+                        Pokud se bojíš spamu, neboj: nezačneš ho dostávat víc
+                        než při normálním používání e-mailu.
+                        Adresa se zobrazí jen lidem, kteří si stáhnou projekt,
+                        do kterého jsi přispívala.
+                        Spammeři se většinou zaměřují na méně technicky zdatné
+                        lidi, než uživatele Gitu.
+                    </div>
+                    <div>
+                        Dále si můžeš nastavit barvičky – pokud si tedy
+                        (jako někteří autoři Gitu) nemyslíš, že příkazová
+                        řádka má být černobílá:
+                    </div>
+<pre>
+$ git config --global color.ui true
+</pre>
+                    <div>
+                        A to je vše! Git je nainstalovaný,
+                        pojďme ho začít používat!
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Repozitář</h2>
+                    <div>
+                        Každý projekt, který budeme verzovat, musí mít pro sebe
+                        vyhrazený adresář.
+                        Vytvoř si tedy nový adresář a přepni se do něj (pomocí
+                        <code>cd</code>).
+                        Pak vytvoř gitový <em>repozitář</em> (angl. repository):
+<pre>
+$ git init
+Initialized empty Git repository in /tmp/tepo/.git/
+</pre>
+                        Na první pohled to vypadá že se nic nestalo:
+                        tenhle příkaz vytvořil <em>skrytý</em> adresář
+                        <code>.git</code>, do kterého uložil nějaké informace.
+                        Přesvědč se přazem <code>ls -a</code> (Linux) nebo
+                        <code>dir /a</code> (Windows).
+                        Adresáře <code>.git</code> je schovaný proto, že
+                        ho spravuje Git. My v něm nebudeme nic měnit.
+                        <br>
+                        V našem repozitáři zatím nic není.
+                        Zkus to ověřit příkazem <code>git status</code>, který
+                        vypisuje informace o stavu repozitáře:
+<pre>
+$ git status
+On branch master
+
+Initial commit
+
+nothing to commit (create/copy files and use "git add" to track)
+</pre>
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>První revize</h2>
+                    <div>
+                        Vytvoř soubor <code>basnicka.txt</code> a napiš do něj
+                        nějakou básničku.
+                        Měla by mít aspoň pět řádků, ať pak máme s čím pracovat.
+                        Pak zkus znovu <code>git status</code>: Git oznámí,
+                        že v adresáři je soubor, o kterém ještě „neví“.
+<pre>
+$ git status
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+
+        <span class="red">basnicka.txt</span>
+
+nothing added to commit but untracked files present (use "git add" to track)
+</pre>
+                        U každého nového souboru musíme Gitu říct, že
+                        chceme jeho obsah sledovat.
+                        Proveď to se svojí básničkou:
+<pre>
+$ git add basnicka.txt
+</pre>
+                        a znovu zkontroluj stav repozitáře:
+<pre>
+$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+        <span class="green">new file:   basnicka.txt</font>
+
+</pre>
+                        To, co je zelené („changes to be committed“),
+                        se přidá do další revize (angl. <em>commit</em>,
+                        kterou vytvoříš.
+                        Pojď tedy vytvořit revizi:
+<pre>
+$ git commit
+</pre>
+                        Po zadání tohoto příkazu se otevře editor,
+                        do kterého musíš napsat nějaký popisek,
+                        abys věděla, co tahle revize obsahuje za změny.
+                        Pro začátek napiš jen <code>První revize</code>.
+                        Předvyplněné řádky začínající <code>#</code> nech být
+                        (nebo vymaž, podle chuti – Git je ignoruje).
+                        Pak soubor ulož, a zavři editor.
+                        <br>
+                        Znovu zkus vypsat stav repozitáře:
+<pre>
+$ git status
+On branch master
+nothing to commit, working directory clean
+</pre>
+                        Tenhle krátký výstup znamená:
+                        Od poslední revize (kterou jsi právě vytvořila)
+                        se nic nezměnilo.
+                    </div>
+                    <div>
+                        A co všechno je v téhle první/poslední revizi?
+                        To ti poví příkaz <code>git show</code>:
+<pre>
+$ git show
+<span class="yellow">commit e0419fedda0a85a945a05a31bd58c5196c8d3b1d</span>
+Author: Adéla Novotná &lt;adela.novotna@example.cz&gt;
+Date:   Sun Jan 18 23:41:31 2015 +0100
+
+    První revize
+<span class="strong">
+diff --git a/basnicka.txt b/basnicka.txt
+new file mode 100644
+index 0000000..8416aea
+--- /dev/null
++++ b/basnicka.txt</span><span class="blue">
+@@ -0,0 +1,11 @@</span><span class="green">
++Haló haló
++co se stalo?
++Kolo se mi polámalo
++
++Jaké kolo?
++Favoritka,
++přeletěl jsem přes řidítka
++
++Co jste dělal?
++Blbnul jsem,
++do příkopy zahnul jsem
+</span></pre>
+                        Vidíš unikátní
+                        <span class="yellow">označení revize</span>,
+                        pomocí kterého se vždy bude dát dostat k této konkrétní
+                        verzi projektu,
+                        jméno autorky a datum vytvoření,
+                        popisek,
+                        a nakonec shrnutí změn: byl přidán soubor
+                        <tt class="strong">basnicka.txt</tt> s nějakým
+                        <span class="green">obsahem</span>.
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Druhá revize</h2>
+                    <div>
+                        Udělej v básničce nějakou malou změnu – změň slovo,
+                        uprav interpunkci nebo přidej sloku.
+                        Pak se opět zeptej Gitu na stav repozitáře.
+<pre>
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+        <span class="red">modified:   basnicka.txt</span>
+
+no changes added to commit (use "git add" and/or "git commit -a")
+</pre>
+                        Soubor je opět červený! Něco se v něm změnilo!
+                        Ale co?
+                        Na to nám odpoví příkaz <code>git diff</code>.
+<pre>
+<span class="strong">$ git diff
+diff --git a/basnicka.txt b/basnicka.txt
+index 8416aea..333757f 100644
+--- a/basnicka.txt
++++ b/basnicka.txt</span><span class="blue">
+@@ -3,8 +3,7 @@</span> co se stalo?
+ Kolo se mi polámalo
+
+ Jaké kolo?<span class="red">
+-Favoritka,
+-přeletěl jsem přes řidítka</span><span class="green">
++Favoritka! Přeletěl jsem přes řidítka!</span>
+
+ Co jste dělal?
+ Blbnul jsem,
+</pre>
+                        Změny se ukazují po řádcích.
+                        Červeně, s <tt class="red">-</tt>, jsou ukázány
+                        odebrané řádky; zeleně s <tt class="green">+</tt>
+                        řádky přidané.
+                        <div class="note">
+                            Změnilo-li se na řádku jen jedno slovo nebo znak,
+                            celý řádek se ukáže jako smazaný a zase přidaný.
+                            To se dá změnit.
+                        </div>
+                        Takhle se dá jednoduše zjistit, co se dělo od poslední
+                        verze.
+                        Když ti program přestane fungovat (a v poslední uložené
+                        revizi fungoval), použij <code>git diff</code> –
+                        v jedné ze změn musí být chyba!
+                        <div class="note">
+                            Řádek začínající <tt class="blue">@@</tt> říká,
+                            kde v souboru změna je (u mě začínal vypsaný kousek
+                            souboru řádkem 3, a měl 8 řádků; v nové verzi je
+                            opět od 3. řádku, ale má už jen 7 řádků).
+                        </div>
+                        Jsi-li se změnami spokojená, řekni Gitu ať je
+                        použije v další revizi:
+<pre>
+$ git add basnicka.txt
+</pre>
+                        A pro úplnost se znovu koukni co říká
+                        <code>status</code> – co je zelené, přidá se do další
+                        revize.
+<pre>
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+       <span class="green"> modified:   basnicka.txt</span>
+
+</pre>
+                        Než uděláš druhou revizi, ještě řeknu něco o tom,
+                        jak správně psát popisky k verzím.
+                        Na to je totiž úzus, který téměř všichni programátoři
+                        respektují: na prvním řádku je krátké shrnutí změn,
+                        následuje prázdný řádek, a pak detailnější popis důvodů
+                        ke změně a případně změny samotné.
+                        Snaž se délku řádků držet do zhruba 70 znaků;
+                        vodítkem můžou být předvyplněné řádky začínající
+                        <code>#</code>.
+                        Nemá cenu popisovat co je jasné ze změn samotných,
+                        zajímavé jsou hlavně širší souvislosti a důvody
+                        ke změnám.
+                        Cokoli, co může přijít vhod až se revizi bude snažit
+                        někdo (třeba ty za pár let) pochopit.
+                        <br>
+                        Můj popisek bude znít takhle:
+<pre>
+Druhá sloka: Sloučení posledních dvou řádků
+
+Sloučení řádků rozbíjí monotónnost formy básně – nestejný počet
+veršů ve sloce je prý moderní. (Ale, co si budeme povídat, hlavní 
+důvod je líp ukázat co dělá `git diff`.)
+
+Použití vykřičníků místo čárky zdůrazňuje naléhavost situace.
+</pre>
+                        <div class="note">
+                            Nebude-li se ti někdy dařit shrnout změnu
+                            v 70 znacích, zamysli se, jestli neděláš moc velkou
+                            změnu najednou – např "přejmenování funkce X
+                            a dopsání funkce Y" by bylo lepší uložit jako dvě
+                            různé revize.
+                        </div>
+                        Pomocí <code>git commit</code> vytvoř druhou revizi.
+                        Pak ji zkontroluj:
+<pre>
+$ git show
+<span class="yellow">commit 207f72f43d4a45a0ecb477f74d9f83bf7ddb3200</span>
+Author: Adéla Novotná &lt;adela.novotna@example.cz&gt;
+Date:   Mon Jan 19 00:52:37 2015 +0100
+
+    Druhá sloka: Sloučení posledních dvou řádků
+    
+    Sloučení řádků rozbíjí monotónnost formy básně – nestejný počet
+    veršů ve sloce je prý moderní. (Ale, co si budeme povídat, hlavní
+    důvod je líp ukázat co dělá `git diff`.)
+    
+    Použití vykřičníků místo čárky zdůrazňuje naléhavost situace.
+<span class="strong">
+diff --git a/basnicka.txt b/basnicka.txt
+index 18b2f69..9290e0e 100644
+--- a/basnicka.txt
++++ b/basnicka.txt</span><span class="blue">
+@@ -3,8 +3,7 @@</span> co se stalo?
+ Kolo se mi polámalo
+ 
+ Jaké kolo?<span class="red">
+-Favoritka,
+-přeletěl jsem přes řidítka</span><span class="green">
++Favoritka! Přeletěl jsem přes řidítka!</span>
+ 
+ Co jste dělal?
+ Blbnul jsem,
+</pre>
+                        <div class="note TODO">
+                            Tady by měl být diagram pro zopakování.
+                            Na srazu ho nakreslím na tabuli.
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Log</h2>
+                    <div>
+                        Teď, když máme za sebou první(ch) pár revizí,
+                        si ukážeme několik příkazů, které nám umožní se
+                        v nich orientovat.
+                        První z nich je <code>git log</code>.
+<pre>
+$ git log
+<span class="yellow">commit 207f72f43d4a45a0ecb477f74d9f83bf7ddb3200</span>
+Author: Adéla Novotná &gt;adela.novotna@example.cz&lt;
+Date:   Mon Jan 19 00:52:37 2015 +0100
+
+    Druhá sloka: Sloučení posledních dvou řádků
+    
+    Sloučení řádku rozbíjí monotónnost formy básně – nestejný počet
+    veršů ve sloce je prý moderní. Ale, co si budeme povídat, hlavní
+    důvod je líp ukázat co dělá git diff.
+    
+    Použití vykřičníků místo čárky zdůrazňuje naléhavost situace, samozřejmě.
+
+<span class="yellow">commit 5ff0bba5ea8da3068be6491cd8f0069ddb321950</span>
+Author: Adéla Novotná &gt;adela.novotna@example.cz&lt;
+Date:   Sun Jan 18 23:41:31 2015 +0100
+
+    První revize
+</pre>
+                        Git log vypíše všecny revize od té nejnovější až po
+                        úplný začátek projektu.
+                        <br>
+                        Až budeš mít verzí tolik, že se nevejdou najednu
+                        na obrazovku, můžeš se v logu pohybovat pomocí šipek a
+                        <kbd>PageUp</kbd>/<kbd>PageDown</kbd>.
+                        „Ven“ se dostaneš klávesou <kbd>q</kbd>.
+                        <br>
+                        <div class="note">
+                            Je spousta možností jak vypisovat historii pomocí
+                            <cod>git log</code>.
+                            Všechno je podrobně – možná až moc podrobně –
+                            popsáno v dokumentaci; stačí zadat
+                            <code>git help log</code>.
+                            „Ven“ z dokumentace se opět dostaneš klávesou
+                            <kbd>q</kbd>.
+                            <br>
+                            Já často používám <code>git log --oneline --graph --decorate --cherry-mark --boundary</code>.
+                            Chceš-li tyhle možnosti studovat, začni v tomto
+                            pořadí, a dej si pauzu vždycky když přestaneš
+                            rozumět :)
+                        </div>
+                        Z příkazové řádky se dá vyčíst všechno potřebné,
+                        ale chce to trochu praxe.
+                        Protože začínáme, použijeme grafické „klikátko“ jménem
+                        <code>gitk</code>.
+<pre>
+$ gitk
+<img src="gitk.png">
+</pre>
+                        Tenhle program vypadá celkem šeredně (skoro jako by ho
+                        psali programátoři, které místo designu zajímá co je
+                        „vevnitř“), ale pro naše účely postačí.
+                        Zkus se v něm trochu zorientovat, pak ho zavři,
+                        udělej dalších pár revizí, a koukni se na ně přes
+                        <code>git log</code> a <code>gitk</code>.
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Větvení</h2>
+                    <div>
+                        TODO
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Github</h2>
+                    <div>
+                        TODO
+                    </div>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+                <div>Jako příklad básničky byl použit úryvek z <a href="http://www.nohavica.cz/cz/tvorba/texty/halo_halo.htm">„Haló Haló“ Jaromíra Nohavici</a>.</div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+
+    </body>
+</html>
