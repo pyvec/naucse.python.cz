@@ -1,0 +1,312 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 11-01 – Slovníky</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style>
+            .green  {   color:  #0A3;    }
+            .red    {   color:  #D30;    }
+            .yellow {   color:  #880;    }
+            .strong {   font-weight:  bold;    }
+            .blue   {   color:  #03D;    }
+            .metavar{   color:  #FF6464;    }
+            img     {   max-width: 100%; }
+        </style>
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <h1>Slovníky</h1>
+                    <div>
+                        Další základní datový typ, který si představíme –
+                        po číslech, řetězcích, seznamech a <em>n</em>-ticích –
+                        jsou <em>slovníky</em> (angl. <em>dictionary</em>,
+                        <code>dict</code>).
+                    </div>
+                    <div>
+                        Jako seznamy, slovníky obsahují další hodnoty.
+                        Na rozdíl od seznamů, ve kterých jsou všechny prvky
+                        uspořádané do sekvence, ve slovnících máme dva druhy
+                        prvků: takzvaný <em>klíč</em> (angl. <em>key</em>)
+                        a <em>hodnotu</em> (angl. <em>value</em>).
+                        Každému klíči je přiřazena nějaká hodnota.
+                    </div>
+                    <div>
+                        Slovník můžeš použít, když máš několik kousků
+                        informací, které se dají pojmenovat, ale chceš s nimi
+                        pracovat jako s jednou proměnnou.
+                    </div>
+                    <div>
+                        Tady je slovník, který má tři klíče, a k nim příslušné
+                        tři hodnoty:
+                    </div>
+<pre>
+ja = {'jméno': 'Anna', 'město': 'Brno', 'čísla': [3, 7]}
+</pre>
+                    <div class="note">
+                        Když slovník vypíšeš, pravděpodobně zjistíš,
+                        se klíče a hodnoty vypíšou v jiném pořadí.
+                        Slovníky totiž, na rozdíl od seznamů, nemají dané
+                        pořadí prvků – jen přiřazují hodnoty klíčům.
+                    </div>
+                    <div>
+                        Hodnoty ze slovníku můžeš získat podobně jako
+                        ze seznamu, jen místo indexu (pozice) použiješ klíč:
+                    </div>
+<pre>
+>>> ja['jméno']
+'Anna'
+</pre>
+                    <div>
+                        Zeptáš-li se na neexistující klíč, nebude se to Pythonu
+                        líbit:
+                    </div>
+<pre>
+>>> ja['věk']
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+KeyError: 'věk'
+</pre>
+                    <div>
+                        Hodnoty jdou podle klíče i měnit:
+                    </div>
+<pre>
+>>> ja['čísla'] = [3, 7, 42]
+>>> ja
+{'čísla': [3, 7, 42], 'jméno': 'Anna', 'město': 'Brno'}
+</pre>
+                    <div>
+                        ... nebo přidávat:
+                    </div>
+<pre>
+>>> ja['jazyk'] = 'Python'
+>>> ja
+{'jazyk': 'Python', 'čísla': [3, 7, 42], 'jméno': 'Anna', 'město': 'Brno'}
+</pre>
+                    <div>
+                        ... nebo ubírat
+                        (příkazem <code>del</code>, podobně jako u seznamů):
+                    </div>
+<pre>
+>>> del ja['čísla']
+>>> ja
+{'jazyk': 'Python', 'jméno': 'Anna', 'město': 'Brno'}
+</pre>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Vyhledávací tabulka</h2>
+                    <div>
+                        Trochu jiné použití slovníku, než sdružování
+                        „různých“ typů informací, je takzvaná
+                        <em>vyhledávací tabulka</em>
+                        (angl. <em>lookup table</em>).
+                        V ní mají typicky všechny hodnoty stejný typ.
+                        <!-- TODO: dopsat! -->
+                    </div>
+<pre>
+barvy = {
+    'hruška': 'zelená',
+    'jablko': 'červená',
+    'meloun': 'zelená',
+    'švestka': 'modrá',
+    'ředkvička': 'červená',
+    'zelí': 'zelená',
+    'mrkev': 'červená',
+}
+</pre>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Jak udělat slovník</h2>
+                    <div>
+                        Slovník se dá vytvořit dvěma způsoby.
+                        První, pomocí {složených závorek}, jsme už viděly;
+                        další využívají funkci <code>dict</code>.
+                        Ta, ve stylu <code>str</code>, <code>int</code>
+                        či <code>list</code>, převede cokoli, co jde,
+                        na slovník.
+                    </div>
+                    <div>
+                        Slovník je ovšem dost specifická struktura –
+                        čísla nebo typické seznamy na něj převádět nejdou.
+                        Můžeme ale na slovník převést <em>jiný slovník</em>.
+                        Nový slovník žije svým vlastním životem;
+                        následné změny se promítnou jen do něj.
+                    </div>
+<pre>
+barvy_po_tydnu = dict(barvy)
+for klic in barvy_po_tydnu:
+    barvy_po_tydnu[klic] = 'černo-hnědo-' + barvy_po_tydnu[klic]
+print(barvy['jablko'])
+print(barvy_po_tydnu['jablko'])
+</pre>
+                    <div>
+                        Druhá věc, která jde převést na slovník, je
+                        <em>sekvence dvojic</em> klíč/hodnota:
+                    </div>
+<pre>
+data = [(1, 'jedna'), (2, 'dva'), (3, 'tři')]
+nazvy_cisel = dict(data)
+</pre>
+                    <div>
+                        A to je vše, co se na slovník dá převést.
+                        Jako bonus umí funkce <code>dict</code> ještě
+                        brát pojmenované argumenty.
+                        Každé jméno argumentu převede na řetězec,
+                        použije ho jako klíč, a přiřadí danou hodnotu:
+                    </div>
+<pre>
+popisy_funkci = dict(len='délka', str='řetězec', dict='slovník')
+print(popisy_funkci['len'])
+</pre>
+                    <div class="note">
+                        Pozor na to, že v tomhle případě musí být klíče
+                        pythoní „jména“ – musí být použitelné jako jména
+                        proměnných.
+                        Například takhle nejde zadat klíč
+                        <code>"def"</code> či <code>"propan-butan"</code>.
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Iterace slovníků</h2>
+                    <div>
+                        -todo-
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Slovníkový tahák</h2>
+                    <div>
+                        Tady jsou operace, které slovníky podporují –
+                        od normálních po mírně exotické:
+                    </div>
+                    <table class="table">
+                        <tr>
+                            <th></th>
+                            <th>Popis</th>
+                            <th>Příklad</th>
+                        </tr>
+                        <tr>
+                            <td><code>{k: v, ...}</code></td>
+                            <td>Vytvoření slovníku</td>
+                            <td><code>d = {1: 'jedna', 2: 'dva'}</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>len(d)</code></td>
+                            <td>Počet záznamů</td>
+                            <td><code>len(d)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d[k]</code></td>
+                            <td>Hodnota přiřazená klíči <code>k</code></td>
+                            <td><code>d[1]</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d[k] = v</code></td>
+                            <td>Přiřazení hodnoty <code>v</code> klíči <code>k</code></td>
+                            <td><code>d[3] = 'tři'</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>del d[k]</code></td>
+                            <td>Odebrání klíče <code>k</code>, a příslušné hodnoty</td>
+                            <td><code>del d[2]</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.get(k)</code></td>
+                            <td>
+                                Hodnota příslušící klíči <code>k</code>;
+                                pokud ten klíč neexistuje,
+                                vrátí se <code>None</code>.
+                            </td>
+                            <td><code>d.get(4, '?')</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.get(k,d)</code></td>
+                            <td>
+                                Hodnota příslušící klíči <code>k</code>;
+                                pokud ten klíč neexistuje,
+                                vrátí se <code>d</code>.
+                            </td>
+                            <td><code>d.get(4, '?')</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.pop(k)</code></td>
+                            <td>Odebrání klíče <code>k</code>, vrácení příslušné hodnoty</td>
+                            <td><code>v = d.pop(3)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.pop(k, d)</code></td>
+                            <td>Jako <code>pop(k), ale pokud klíč neexistuje, místo chyby vrací <code>d</code></td>
+                            <td><code>v = d.pop(3, '?')</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.popitem()</code></td>
+                            <td>Odebrání a vrácení <em>některé</em> dvojice (klíč hodnota)</td>
+                            <td><code>k, v = d.popitem()</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.setdefault(k, v)</code></td>
+                            <td>
+                                Pokud klíč <code>k</code> není ve slovníku, přidá ho s hodnotou <code>v</code>;
+                                vrátí hodnotu příslušící klíči <code>k</code>
+                            </td>
+                            <td><code>d.setdefault(1, 'JEDNA')</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.update(d2)</code></td>
+                            <td>Přidá všechny klíče/hodnoty slovníku <code>d2</code></td>
+                            <td><code>d.update({7: 'sedm', 8: 'osm'})</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>for k in d:</code></td>
+                            <td>Iterace nad <em>klíči</em> slovníku</td>
+                            <td><code>list(d)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.keys()</code></td>
+                            <td>"Zobrazení" klíčů slovníku</td>
+                            <td><code>list(d.keys())</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.values()</code></td>
+                            <td>"Zobrazení" hodnot slovníku</td>
+                            <td><code>list(d.values())</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.items()</code></td>
+                            <td>"Zobrazení" dvojic (klíč, hodnota)</td>
+                            <td><code>for k, v in d.items():</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.copy()</code></td>
+                            <td>Kopie slovníku</td>
+                            <td><code>d2 = d.copy()</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>d.clear()</code></td>
+                            <td>Vyprázdnění slovníku</td>
+                            <td><code>d.clear()</code></td>
+                        </tr>
+                    </table>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
+                <div>Části převzaty z tutoriálu <a href="http://tutorial.djangogirls.org/en/python_introduction/README.html">Django Girls</a></div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+                <div>Jako příklad básničky byl použit úryvek z <a href="http://www.nohavica.cz/cz/tvorba/texty/halo_halo.htm">„Haló Haló“ Jaromíra Nohavici</a>.</div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+
+    </body>
+</html>
