@@ -1,0 +1,189 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 11-02 – JSON</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <h1>JSON</h1>
+                    <div>
+                        Existují i jiné programovací jazyky než Python.
+                    </div>
+                    <div>
+                        Ostatní jazyky neumí pracovat s Pythoními hodnotami.
+                        Budeme-li se chtít s takovými programy „domluvit” –
+                        předat jim nějaké informace ke zpracování,
+                        nebo od nich dostat výsledky –
+                        musíme informace předávat v nějaké zjednodušené podobě.
+                    </div>
+                    <h2>Typy</h2>
+                    <div>
+                        Většina programovacích jazyků má nějaká čísla,
+                        nějaký druh seznamů,
+                        nějakou odrůdu řetězců, a nějakou variaci na slovníky
+                        (nebo několik způsobů jak slovníky vytvořit).
+                        Dále má spousta jazyků způsob, jak zapsat
+                        <code>True</code>, <code>False</code>
+                        a <code>None</code>.
+                    </div>
+                    <div>
+                        Tyhle základní typy většinou stačí na předání
+                        jakékoli informace v rozumně čitelné podobě,
+                        i když ne ve všech jazycích mají přesné ekvivalenty
+                        (třeba samotný Python má dva základní druhy čísel –
+                        <code>int</code> a <code>float</code>).
+                        Často se proto v komunikaci omezíme na ně.
+                    </div>
+                    <h2>Kódování dat</h2>
+                    <div>
+                        Další problém je přenos dat:
+                        abychom mohly informace zapsat na disk nebo přenést
+                        přes Internet, musíme je převést na sekvenci
+                        <em>bytů</em> (čísel od 0 do 255).
+                        Zjednodušeně řečeno, musíme je převést na řetězec.
+                    </div>
+                    <div>
+                        Existuje spousta způsobů, jak zakódovat data.
+                        Každý způsob se snaží najít vhodnou rovnováhu mezi
+                        čitelností pro lidi/počítače, délkou zápisu,
+                        bezpečností, možnostmi a rozšířitelností.
+                        My už známe syntaxi Pythonu:
+                    </div>
+<pre>
+{
+    'jméno': 'Anna',
+    'město': 'Brno',
+    'jazyky': ['čeština', 'angličtina', 'Python'],
+    'věk': 26,
+}
+</pre>
+                    <div>
+                        Jiný způsob zápisu dat je
+                        <a href="http://www.yaml.org/">YAML</a>:
+                    </div>
+<pre>
+jméno: Anna
+město: Brno
+jazyky:
+  - čeština
+  - angličtina
+  - Python
+věk: 26
+</pre>
+                    <div>
+                        Nebo třeba
+                        <a href="http://en.wikipedia.org/wiki/Bencode">Bencode</a>:
+                    </div>
+<pre>
+d6:jazykyl9:čeština11:angličtina6:Pythone4:věki26e6:město4:Brno6:jméno4:Annae
+</pre>
+                    <div>
+                        Existují i netextové formáty, jako
+                        <a href="https://docs.python.org/3/library/pickle.html">Pickle 3</a>:
+                    </div>
+<pre>
+}q(XjmÃ©noqXAnnaqXmÄtoqXBrnoqXjazykyq]q(X       ÄeÅ¡tinaqX
+                                                          angliÄtinaXPythonq       eXvÄq
+K▒u.
+</pre>
+                    <div>
+                        A nakonec uvedu <a href="http://json.org/">JSON</a>
+                        (z angl. <em>Javascript Object Notation</em>
+                        „zápis Javascriptových objektů”),
+                        který se pro svou jednoduchost rozšířil na Internetu
+                        nejvíc:
+                    </div>
+<pre>
+{
+  "jméno": "Anna",
+  "město": "Brno",
+  "jazyky": ["čeština", "angličtina", "Python"],
+  "věk": 26
+}
+</pre>
+                    <div class="note">
+                        Pozor na to, že ačkoli JSON vypadá podobně jako zápis
+                        v Pythonu, je to jiný formát s vlastními pravidly.
+                        Nezaměňuj je!
+                    </div>
+                    <h2>JSON v Pythonu</h2>
+                    <div>
+                        Kódování objektů v JSONu je jednoduché:
+                        existuje modul <code>json</code>,
+                        jehož metoda <code>loads</code> načte data z řetězce:
+                    </div>
+<pre>
+json_retezec = """
+    {
+      "jméno": "Anna",
+      "město": "Brno",
+      "jazyky": ["čeština", "angličtina", "Python"],
+      "věk": 26
+    }
+"""
+
+import json
+data = json.loads(json_retezec)
+print(data)
+</pre>
+                    <div>
+                        A pak tu je metoda <code>dumps</code>,
+                        která naopak daná data zakóduje, a vrátí řetězec:
+                    </div>
+<pre>
+>>> print(json.dumps(data))
+{"v\u011bk": 26, "jm\u00e9no": "Anna", "jazyky": ["\u010de\u0161tina", "angli\u010dtina", "Python"], "m\u011bsto": "Brno"}
+</pre>
+                    <div>
+                        To, co vrátí jednoduché zavolání
+                        <code>dumps(data)</code> je vhodné pro počítačové
+                        zpracování;
+                        má-li výsledná data číst člověk, nastav
+                        <code>ensure_ascii=True</code> (aby se písmenka s
+                        diakritikou nekódovaly pomocí <code>\</code>)
+                        a <code>indent='  '</code> (odsazení dvěma mezerami).
+                    </div>
+<pre>
+>>> print(json.dumps(data, ensure_ascii=False, indent='  '))
+{
+  "věk": 26,
+  "jméno": "Anna",
+  "jazyky": [
+    "čeština",
+    "angličtina",
+    "Python"
+  ],
+  "město": "Brno"
+}
+</pre>
+                    <div>
+                        Kompletní popis modulu <code>json</code> –
+                        včetně funkcí zápis/čtení přímo do/ze souborů –
+                        je v příslušné
+                        <a href="https://docs.python.org/3/library/json.html">dokumentaci</a>.
+                    </div>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
+                <div>Části převzaty z tutoriálu <a href="http://tutorial.djangogirls.org/en/python_introduction/README.html">Django Girls</a></div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+
+    </body>
+</html>

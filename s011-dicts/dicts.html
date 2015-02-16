@@ -6,15 +6,6 @@
 
         <link rel="stylesheet" href="../css/bootstrap.css">
         <link rel="stylesheet" href="../css/pyladies.css">
-        <style>
-            .green  {   color:  #0A3;    }
-            .red    {   color:  #D30;    }
-            .yellow {   color:  #880;    }
-            .strong {   font-weight:  bold;    }
-            .blue   {   color:  #03D;    }
-            .metavar{   color:  #FF6464;    }
-            img     {   max-width: 100%; }
-        </style>
     </head>
 
     <body class="no-reveal">
@@ -125,6 +116,70 @@ barvy = {
 </pre>
                 </section>
                 <section class="col-lg-12">
+                    <h2>Iterace</h2>
+                    <div>
+                        Když dáš slovník do cyklu <code>for</code>,
+                        dostaneš klíče:
+                    </div>
+<pre>
+>>> popisy_funkci = {'len': 'délka', 'str': 'řetězec', 'dict': 'slovník')
+>>> for klic in popisy_funkci:
+...     print(klic)
+str
+dict
+len
+</pre>
+                    <div>
+                        Pokud chceš hodnoty, stačí použít metodu
+                        <code>values</code>:
+                    </div>
+<pre>
+>>> for hodnota in popisy_funkci.values():
+...     print(hodnota)
+řetězec
+slovník
+délka
+</pre>
+                    <div>
+                        Většinou ale potřebuješ jak klíče tak hodnoty.
+                        K tomu mají slovníky metodu <code>items</code>,
+                        která vrátí „něco jako seznam” dvojic:
+                    </div>
+<pre>
+>>> for klic, hodnota in popisy_funkci.items():
+...     print('{}: {}'.format(klic, hodnota))
+str: řetězec
+dict: slovník
+len: délka
+</pre>
+                    <div class="note">
+                        Existuje i metoda <code>keys()</code>,
+                        která vrací klíče.
+                        To, co <code>keys()</code>, <code>values()</code>
+                        a <code>items()</code> vrací, jsou speciální objekty,
+                        které kromě použití ve <code>for</code> umožňuje další
+                        operace: například pracovat s klíči jako s množinou.
+                        V <a href="https://docs.python.org/3.0/library/stdtypes.html#dictionary-view-objects">dokumentaci</a> Pythonu
+                        je to všechno popsáno.
+                    </div>
+                    <div>
+                        Slovník nesmíš v průběhu takového <code>for</code>
+                        cyklu měnit.
+                    </div>
+<pre>
+>>> for klic in popisy_funkci:
+...     del popisy_funkci[klic]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+RuntimeError: dictionary changed size during iteration
+</pre>
+                    <div class="note">
+                        Přesněji řečeno, můžeš měnit hodnoty u
+                        už existujících klíčů, ale nesmíš přidávat nebo ubírat
+                        záznamy.
+                    </div>
+                </section>
+                <section class="col-lg-12">
                     <h2>Jak udělat slovník</h2>
                     <div>
                         Slovník se dá vytvořit dvěma způsoby.
@@ -174,18 +229,16 @@ print(popisy_funkci['len'])
                         Například takhle nejde zadat klíč
                         <code>"def"</code> či <code>"propan-butan"</code>.
                     </div>
-                </section>
-                <section class="col-lg-12">
-                    <h2>Iterace slovníků</h2>
-                    <div>
-                        -todo-
+                    <div class="note">
+                        Pojmenované argumenty jde kombinovat s ostatními
+                        způsoby vytvoření <code>dict</code>.
                     </div>
                 </section>
                 <section class="col-lg-12">
                     <h2>Slovníkový tahák</h2>
                     <div>
                         Tady jsou operace, které slovníky podporují –
-                        od normálních po mírně exotické:
+                        včetně těch, které v úvodu výše nejsou.
                     </div>
                     <table class="table">
                         <tr>
@@ -243,12 +296,15 @@ print(popisy_funkci['len'])
                         </tr>
                         <tr>
                             <td><code>d.pop(k, d)</code></td>
-                            <td>Jako <code>pop(k), ale pokud klíč neexistuje, místo chyby vrací <code>d</code></td>
+                            <td>Jako <code>pop(k)</code>, ale pokud klíč neexistuje, místo chyby vrací <code>d</code></td>
                             <td><code>v = d.pop(3, '?')</code></td>
                         </tr>
                         <tr>
                             <td><code>d.popitem()</code></td>
-                            <td>Odebrání a vrácení <em>některé</em> dvojice (klíč hodnota)</td>
+                            <td>
+                                Odebere a vrátí některou dvojici (klíč, hodnota) ze slovníku.
+                                (Nedá se spolehnout na to, kterou přesně.)
+                            </td>
                             <td><code>k, v = d.popitem()</code></td>
                         </tr>
                         <tr>
@@ -295,13 +351,16 @@ print(popisy_funkci['len'])
                             <td><code>d.clear()</code></td>
                         </tr>
                     </table>
+                    <div>
+                        Kompletní popis slovníků najdeš
+                        v <a href="https://docs.python.org/3.0/library/stdtypes.html#mapping-types-dict">dokumentaci</a> Pythonu.
+                    </div>
                 </section>
             </div>
             <div class="no-reveal footer">
                 <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
                 <div>Části převzaty z tutoriálu <a href="http://tutorial.djangogirls.org/en/python_introduction/README.html">Django Girls</a></div>
                 <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
-                <div>Jako příklad básničky byl použit úryvek z <a href="http://www.nohavica.cz/cz/tvorba/texty/halo_halo.htm">„Haló Haló“ Jaromíra Nohavici</a>.</div>
             </div>
         </div>
 
