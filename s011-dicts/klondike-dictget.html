@@ -1,0 +1,107 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 14-01 – Klondike – popis_karty pomocí vyhledávacích tabulek</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <h1>popis_karty pomocí vyhledávacích tabulek</h1>
+                    <p>
+                        Na <a href="../s007-cards/klondike.html">jednom z předchozích srazů</a> jsme napsaly
+                        funkci <code>popis_karty</code>, která vypadala zhruba
+                        takhle:
+                    </p>
+<pre>
+def popis_karty(karta):
+    hodnota, barva, licem_nahoru = karta
+    if not licem_nahoru:
+        return '[???]'
+
+    if hodnota == 1:
+        znak_hodnoty = 'A'
+    elif hodnota == 10:
+        znak_hodnoty = 'X'
+    elif hodnota == 11:
+        znak_hodnoty = 'J'
+    elif hodnota == 12:
+        znak_hodnoty = 'Q'
+    elif hodnota == 13:
+        znak_hodnoty = 'K'
+    else:
+        znak_hodnoty = str(hodnota)
+
+    if barva == 'Pi':
+        znak_barvy = '♠ '
+    elif barva == 'Sr':
+        znak_barvy = ' ♥'
+    elif barva == 'Ka':
+        znak_barvy = ' ♦'
+    elif barva == 'Kr':
+        znak_barvy = '♣ '
+
+    return '[{}{}]'.format(znak_hodnoty, znak_barvy)
+</pre>
+                    <p>
+                        Teď, když známe <a href="../s011-dicts/dicts.html">slovníky</a>,
+                        můžeme tuhle funkci výrazně zjednodušit pomocí vyhledávacích tabulek.
+                    </p>
+                    <p>
+                        <ul>
+                            <li>
+                                Schovej si funkční verzi Klondike do <a href="../s009-git/git.html">Gitu</a>,
+                                pokud ji tam ještě nemáš.
+                            </li>
+                            <li>
+                                Přepiš funkci popis_karty tak, aby na zjištění
+                                znaku barvy používala místo několika ifů slovník.
+                            </li>
+                            <li>Pusť testy, a pokud projdou, schovej tuhle verzi do Gitu.</li>
+                            <li>
+                                Přepiš funkci popis_karty tak, aby používala slovník
+                                i na zjištění znaku pro hodnotu.
+                                Funkce by měla obsahovat jenom jeden if –
+                                <code>if not licem_nahoru:</code>.
+                            </li>
+                            <li>Pusť testy, a pokud projdou, schovej i tuhle verzi do Gitu.</li>
+                        </ul>
+                    </p>
+<details class="solution notes"><h3>Řešení</h3>
+<pre>
+def popis_karty(karta):
+    hodnota, barva, licem_nahoru = karta
+    if not licem_nahoru:
+        return '[???]'
+
+    barvy = {'Pi': '♠ ', 'Sr': ' ♥', 'Ka': ' ♦', 'Kr':'♣ '}
+    znak_barvy = barvy[barva]
+
+    hodnoty = {1: 'A', 10: 'X', 11: 'J', 12: 'Q', 13: 'K'}
+    znak_hodnoty = hodnoty.get(hodnota, str(hodnota))
+
+    return '[{}{}]'.format(znak_hodnoty, znak_barvy)
+</pre>
+</details>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+
+    </body>
+</html>

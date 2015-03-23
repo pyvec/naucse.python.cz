@@ -1,0 +1,300 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 14-02 – OOP</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <p class="note">
+                        Jestli jsi už <a href="../s007-cards/klondike.html">naprogramovala hru Klondike</a>,
+                        ale ve funkci <code>popis_karty</code> nepoužíváš slovníky,
+                        projdi si napřed <a href="../s011-dicts/klondike-dictget.html">tenhle návod</a>.
+                    </p>
+                    <h1>OOP</h1>
+                    <p>
+                        Zatím jsme programovaly v <em>procedurálním stylu</em>:
+                        měly jsme nějaká data (seznamy, slovníky, řetězce,
+                        čísla), a nějaké funkce které s těmito daty pracovaly.
+                        Teď se podíváme na jiný styl: <em>objektově orientované
+                        programování</em>
+                        (angl. <em>object-oriented programming</em>, OOP).
+                        To je založené na <em>objektech</em>: strukturách,
+                        které obsahují jak informace (data), tak funkce
+                        (metody), které s těmi daty umí pracovat.
+                    </p>
+                    <p>
+                        V Pythonu je všechno objekt.
+                        Přesněji řečeno: všechno, co můžeme
+                        uložit do Pythoní proměnné – každá hodnota – je
+                        objekt.
+                        Čísla, řetězce, funkce, seznamy, soubory, metody,
+                        moduly, třídy, matice – všechno jsou objekty.
+                    </p>
+                    <p>
+                        Třeba takový řetězec obsahuje jak informace (seznam
+                        znaků, ze kterých je složený), tak spoustu
+                        funkcionality – metody jako <code>lower()</code>,
+                        <code>split()</code> nebo <code>count()</code>.
+                        Všechno je obsaženo v jednom objektu; samotný řetězec
+                        je všechno, co potřebuješ k tomu, abys ho převedla
+                        na malá písmena.
+                    </p>
+                    <p>
+                        Ale i když je všechno objekt, je možné neprogramovat
+                        „objektově”.
+                    </p>
+                    <p>
+                        Ve hře Klondike jsme karty
+                        reprezentovaly jako trojice <code>(hodnota, barva,
+                        licem_nahoru)</code>, a funkce jako
+                        <code>popis_karty</code> a <code>otoc_kartu</code>
+                        byly zvlášť.
+                        Data v jednoduchých strukturách (n-tice, čísla,
+                        řetězce), a funkce, které s nimi pracují – to je
+                        procedurální přístup k programování.
+                    </p>
+                    <p>
+                        Jak by se pracovalo s kartou, kdybychom z ní udělaly
+                        specializovaný objekt?
+                    </p>
+<pre>
+karta = Karta(3, 'Sr', licem_nahoru=True)
+print(karta.hodnota)        # → 3
+print(karta.barva)          # → 'Sr'
+print(karta.licem_nahoru)   # → True
+print(karta)                # → [3 ♥]
+karta.otoc_licem_dolu()
+print(karta)                # → [???]
+karta.otoc_licem_nahoru()
+print(karta)                # → [3 ♥]
+</pre>
+                    <p>
+                        Každý objekt v Pythonu má svůj <em>typ</em>
+                        (angl. <em>type</em>).
+                        Zatím jsme poznaly pár základních, vestavěných
+                        (angl. <em>built-in</em>) typů jako <code>str</code>,
+                        <code>int</code>, <code>list</code>, <code>bool</code>.
+                        Jméno třídy funguje zároveň jako „funkce”, která
+                        vytváří nový objekt daného typu.
+                    </p>
+                    <p>
+                        Typy, které vytvoříme samy (t.j. nejsou vestavěné)
+                        se většinou pojmenovávají s velkým písmenem na začátku
+                        každého slova, bez oddělení slov: např.
+                        <code>Tabulka</code>, <code>VesmirnaLod</code>,
+                        <code>pyglet.text.Label</code>.
+                        (Je to konvence, kterou některé knihovny z různých
+                        důvodů nepoužívají, ale my se jí budeme držet.)
+                    </p>
+                    <p>
+                        Třída pro kartu se bude jmenovat <code>Karta</code>.
+                        Na vytvoření karty potřebujeme tři kousky informací –
+                        hodnotu, barvu, a otočení – které se „zabudují” do
+                        objektu.
+                        Z objektu pak budou přístupné jako
+                        <em>atributy</em>, pomocí tečky: podobně jako
+                        metodu "upper" pro řetězec "abc" dostaneme výrazem
+                        <code>"abc".upper</code>, hodnotu karty dostaneme
+                        výrazem <code>karta.hodnota</code>.
+                    </p>
+                    <p>
+                        Naše kartové objekty taky půjdou převést na řetězec
+                        (a tím pádem vypsat pomocí <code>print</code>),
+                        a budou mít metodu <code>otoc()</code>.
+                    </p>
+                </section>
+                <section class="col-lg-12">
+                    <h1>Třídy</h1>
+                    <p>
+                        Každý objekt má – jak už bylo řečeno – dvě součásti:
+                        nějaká data specifická pro ten daný objekt,
+                        a nějakou funkcionalitu – popis chování, které je
+                        většinou společné všem objektům daného typu.
+                    </p>
+                    <p>
+                        Každá karta má svoji vlastní hodnotu nebo barvu,
+                        ale postup otočení karty, nebo převodu na řetězec, či
+                        vytvoření karty, je společný všem
+                        kartám.
+                    </p>
+                    <p>
+                        To, co je společné pro všechny objekty nějakého typu,
+                        definuje <em>třída</em> (angl. <em>class</em>).
+                        Třídy se vytváří příkazem <code>class</code>,
+                        ke kterému se napíše jméno třídy, a pak,
+                        v odsazeném bloku, popis chování.
+                    </p>
+                    <p>
+                        První, co popíšeme, je jak se objekt Karta vytváří.
+                        Na to se používá trochu zvláštně pojmenovaná
+                        speciální metoda (angl. <em>special method</em>),
+                        <code>__init__</code> (s dvojitými podtržítky na začátku
+                        a na konci):
+                    </p>
+<pre>
+class Karta:
+    def __init__(self, hodnota, barva, licem_nahoru):
+        self.hodnota = hodnota
+        self.barva = barva
+        self.licem_nahoru = licem_nahoru
+</pre>
+                    <p>
+                        Když napíšeš <code>karta = Karta(3, 'Sr', licem_nahoru=True)</code>,
+                        zavolá se funkce <code>__init__</code> se
+                        <em>čtyřmi</em> argumenty: vznikajícím objektem
+                        (který se tradičně pojmenovává <code>self</code>),
+                        a pak s těmi ostatními, které byly předány přímo.
+                        Funkce <code>__init__</code> pak nastaví na vznikajícím
+                        objektu (<code>self</code>) tři atributy – stejně jako
+                        <code>seznam[2] = 'xyz'</code> nastaví <code>seznam[2]</code>,
+                        tak <code>karta.hodnota = 8</code> nastaví <code>karta.hodnota</code>.
+                    </p>
+                    <p>
+                        Vyzkoušej si, že funguje:
+                    </p>
+<pre>
+karta = Karta(3, 'Sr', licem_nahoru=True)
+print(karta.hodnota)        # → 3
+print(karta.barva)          # → 'Sr'
+print(karta.licem_nahoru)   # → True
+</pre>
+                    <p>
+                        Další speciální metoda je <code>__str__</code>,
+                        která převádí na řetězec.
+                        Tuhle metodu používají funkce jako
+                        <code>str(karta)</code> nebo <code>print(karta)</code>.
+                        Jako jediný argument bere objekt (kartu),
+                        který převádí; opět se tradičně používá jméno
+                        <code>self</code>.
+                        Bude vypadat nějak takhle
+                        (přidej ji do bloku <code>class Karta</code>):
+                    </p>
+<pre>
+    def __str__(self):
+        if not self.licem_nahoru:
+            return '[???]'
+
+        barvy = {'Pi': '♠ ', 'Sr': ' ♥', 'Ka': ' ♦', 'Kr':'♣ '}
+        znak_barvy = barvy[self.barva]
+
+        hodnoty = {1: 'A', 10: 'X', 11: 'J', 12: 'Q', 13: 'K'}
+        znak_hodnoty = hodnoty.get(self.hodnota, str(self.hodnota))
+
+        return '[{}{}]'.format(znak_hodnoty, znak_barvy)
+</pre>
+                    <p>
+                        Vyzkoušej si, že to funguje:
+                    </p>
+<pre>
+karta = Karta(3, 'Sr', licem_nahoru=True)
+print(karta)                # → [3 ♥]
+</pre>
+                    <p>
+                        Speciálních metod existuje víc, ale naprostá většina
+                        tříd si vystačí s těmito dvěma.
+                        Ostatní chování se dá napsat jako normální metody –
+                        takové, které namají ve jménech dvojitá podtržítka.
+                        Pořád ale budou nappsané v definici třídy,
+                        a jako první argument budou brát <code>self</code>,
+                        „svůj” objekt:
+                    </p>
+<pre>
+    def otoc_licem_nahoru(self):
+        self.licem_nahoru = True
+
+    def otoc_licem_dolu(self):
+        self.licem_nahoru = False
+</pre>
+                    <p>
+                        Při volání metody se argument <code>self</code> doplní
+                        automaticky, podle toho „na jakém objektu” metodu
+                        zavoláme. Vyzkoušej si to:
+                    </p>
+<pre>
+karta = Karta(3, 'Sr', licem_nahoru=True)
+print(karta)                # → [3 ♥]
+karta.otoc_licem_dolu()
+print(karta)                # → [???]
+karta.otoc_licem_nahoru()
+print(karta)                # → [3 ♥]
+</pre>
+                </section>
+                <section class="col-lg-12">
+                    <h1>A k čemu to je?</h1>
+                    <p>
+                        S objektem se většinou pracuje trochu líp než s n-ticí.
+                        Pamatuješ na všechny řádky typu
+                        <code>hodnota, barva, licem_nahoru = karta</code>,
+                        u kterých je potřeba si nesplést pořadí jednotlivých
+                        prvků? U objektů si stačí zapamatovat
+                        jména atributů.
+                    </p>
+                    <p>
+                        Další zjednodušení bude znát, až budeš mít
+                        v programu více podobných typů objektů.
+                        Složitější hra může mít místo funkcí
+                        <code>otoc_kartu</code> a <code>otoc_zeton</code>
+                        dva typy věcí, každý s metodou <code>otoc</code>.<a href="footnote-bad-dispatch">*</a>
+                    </p>
+                    <p>
+                        Ne vždycky je dobré používat vlastní třídy objektů.
+                        Nevýhoda je hlavně v tom, že se definují složitěji než
+                        jednoduché datové struktury.
+                        Na jednoduché věci, např. balíček karet či
+                        bod v prostoru, je často vhodnější požívat základní
+                        typy (seznam, resp. trojice čísel – x, y, z souřadnic).
+                    </p>
+                    <p>
+                        Další věc, kterou typy umožňují, je <em>dědičnost</em> –
+                        ale o tom zase příště.
+                    </p>
+                </section>
+            </div>
+            <hr>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <div class="note">
+                        <p>
+                            <a name="footnote-bad-dispatch"></a>* třetí varianta je
+                            napsat funkci <code>otoc_cokoli</code>:
+                        </p>
+<pre>
+def otoc_cokoli(neco):
+    if len(neco) == 3:  # karta má tři prvky: hodnotu, barvu, otočení
+        return otoc_kartu(neco)
+    else:  # žeton má jen dva prvky: jméno a otočení
+        return otoc_zeton(neco)
+</pre>
+                        <p>
+                            Podobný kód nikdy nepiš.
+                            Do takovéhle funkce se složitě přidávají další případy,
+                            špatně se to testuje, složitěji se mění (vylepšuje!)
+                            struktura programu.
+                            Když se přistihneš, že podobnou funkci píšeš,
+                            je čas přejít na třídy a metody.
+                        </p>
+                    </div>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+
+    </body>
+</html>
