@@ -36,6 +36,7 @@ function start_reveal() {
 
         transition: 'linear',
         transitionSpeed: 'fast',
+        backgroundTransition: 'linear',
 
         dependencies: [
             { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
