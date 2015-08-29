@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <style>
+  @font-face {
+    font-family: 'CabinSketchBold'; /*a name to be used later*/
+    src: url('./fonts/cabin-sketch.bold.ttf'); /*URL to font*/
+  }
+  </style>
+</head>
+
+<body>
+    <script src="./js/jquery-2.1.1.min.js"></script>
+    <script src="./js/d3.min.js"></script>
+    <script src="./js/d3.layout.cloud.js"></script>
+
+    <div style="padding: 5px;" id="word-cloud"></div>
+
+    <script>
+        var words = {{ words|safe }};
+        function drawWordCloud(rescale)
+        {
+            width = {{ width }};
+            height = {{ height }};
+            fontFamily = "CabinSketchBold";
+            var fill = d3.scale.category20();
+            d3.layout.cloud().size([width, height])
+                .words(Object.keys(words).map(function(d)
+                {
+                    return {
+                        text: d,
+                        size: 7 + words[d] * rescale
+                    };
+                }))
+                .padding(1)
+                .rotate(function()
+                {
+                    // Uncomment and change this line if you want the words to
+                    // be rotated. Returning 0 makes all the words horizontal.
+                    // return ~~(Math.random() * 2) * 90;
+                    return 0;
+                })
+                .font(fontFamily)
+                .fontSize(function(d)
+                {
+                    return d.size;
+                })
+                .on("end", draw)
+                .start();
+
+            function draw(words)
+            {
+                d3.select("#word-cloud").append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .append("g")
+                    .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")")
+                    .selectAll("text")
+                    .data(words)
+                    .enter().append("text")
+                    .style("font-size", function(d)
+                    {
+                        return d.size + "px";
+                    })
+                    .style("font-family", fontFamily)
+                    .style("fill", function(d, i)
+                    {
+                        return fill(i);
+                    })
+                    .attr("text-anchor", "middle")
+                    .attr("transform", function(d)
+                    {
+                        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                    })
+                    .text(function(d)
+                    {
+                        return d.text;
+                    });
+            }
+        }
+
+        drawWordCloud({{ rescale }});
+    </script>
+</body>
+
+</html>

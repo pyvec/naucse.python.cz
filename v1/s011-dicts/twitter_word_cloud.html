@@ -1,0 +1,429 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 11-05 – Vizualizace častých slov v tweetech</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style>
+            img {
+                display: block;
+                margin: 10px auto;
+            }
+        </style>
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Praha</h3>
+            </div>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <h1>Vizualizace častých slov ve tweetech</h1>
+                    <div>
+                        Nyní se pokusme o trochu praktičtější úlohu, při níž
+                        si zároveň procvičíš novou datovou strukturu, kterou
+                        jsi dnes poprvé potkala &mdash; <strong>slovníky</strong>.
+                    </div>
+                    <div>
+                        Naším cílem bude vytvořit vizualizaci dat z našeho Twitter
+                        účtu, ze které bude patrné, o kterých klíčových slovech
+                        nejčastěji tweetujeme. Čím se slovo vyskytuje častěji,
+                        tím větší ho v obrázku vykreslíme.
+                        Může to vypadat např. takto:
+                        <div><img src="mrak_jinja2.png" width="60%" align="middle"></div>
+                        Pro vytvoření takové vizualizace budeme muset
+                        <ol>
+                            <li>Získat text našich tweetů z timeline.</li>
+                            <li>Rozsekat text tweetů na jednotlivá slova.</li>
+                            <li>Odstranit interpunkci.</li>
+                            <li>Najít klíčová slova (tj. slova začínající na '@' nebo '#').</li>
+                            <li>Spočítat jejich relativní frekvence.</li>
+                            <li>Zobrazit vizualizaci.</li>
+                        </ol>
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Instalace knihoven</h2>
+                    <div>
+                        Abychom znovu nevynalézali kolo (a skončili včas),
+                        použijeme několik knihoven pro usnadnění práce.
+                        Postupuj podle instrukcí pro svůj operační systém.
+                    </div>
+                    <h3>Linux</h3>
+                    <div>
+                        V Linuxu by neměl být problém všechny potřebné knihovny
+                        nainstalovat ve virtuálním prostředí příkazem:
+                        <pre>$ pip install pandas twitter pyprind jinja2</pre>
+                        Pokud by instalace Pandas tímto způsobem selhala nebo
+                        byla příliš pomalá, můžeme tuto knihovnu nainstalovat
+                        přímo do systému z připravených balíčků naší distribuce,
+                        např. pro Ubuntu příkazem
+                        <pre>$ sudo apt-get install python3-pandas</pre> 
+                    </div>
+                    <h3>Windows a MacOS</h3>
+                    <div>
+                        Knihovny, které budeme potřebovat se na Windows a MacOS
+                        nedají snadno nainstalovat pomocí balíčkovače pip.
+                        Jednodušší je nainstalovat si alternativní distribuci
+                        Pythonu <em>Miniconda</em> a použít její balíčkovač.
+                        Instalátor je k dispozici
+                        <a href="http://conda.pydata.org/miniconda.html">zde</a>.
+                    </div>
+                    <span class="col-lg-6">
+                        <strong>Windows</strong>
+                        <div>
+                            Vyber si verzi pro Python 3.4 a buď 32-bitový nebo
+                            64-bitový instalátor podle toho, jakou verzi Windows
+                            máš. Pak se už stačí jen proklikat instalátorem.    
+                        </div>
+                    </span>
+                    <span class="col-lg-6">
+                        <strong>MacOS</strong>
+                        <div>
+                            Stáhni si instalátor pro Python 3 a MacOS.
+                            V terminálu se přesuň do složky, kam jsi ho stáhla,
+                            a spusť příkaz
+                            <pre>$ Miniconda-latest-MacOSX-x86_64.sh</pre> 
+                        </div>
+                    </span>
+                    <div>
+                       Můžeš ověřit, že instalace proběhla správně příkazem
+                       <pre>$ conda list</pre> 
+                       který ukáže seznam nainstalovaných Python balíků.
+                    </div>
+                    <div>
+                        Nyní je potřeba v Minicondě vytvořit nové virtuální
+                        prostředí. Otevři terminál a naviguj do složky, kde je
+                        Miniconda nainstalovaná. Pak spusť příkaz
+                        <pre>$ conda create -n venv python</pre>
+                        Aktivovat právě vytvořené prostředí můžeš (ať už jsi v
+                        jakékoliv složce) příkazem
+                        <pre>$ activate venv</pre>
+                    </div>
+                    <div>
+                        Nyní můžeš nainstalovat závislosti, které budeme potřebovat
+                        <pre>$ conda install pandas jinja2</pre>
+                        Ještě budeme potřebovat knihovnu na práci s Twitter API
+                        <pre>$ pip install pyprind twitter</pre>
+                    </div>
+                    <h2>Další závislosti</h2>
+                    <div>
+                        Kromě nainstalovaných knihoven budeme potřebovat
+                        HTML šablonu pro mrak slov, JavaScriptové knihovny,
+                        které v ní mrak vykreslí, nějaké pěkné
+                        fonty a ještě jeden Python modul pro komunikaci s
+                        Twitterem. Všechno si můžeš stáhnout v jednom
+                        <a href="twitter_word_cloud/zavislosti.zip">zip archivu</a>.
+                        Pozor, aby se archiv nerozbalil ještě do
+                        podsložky. Jeho obsah potřebujeme přímo ve složce,
+                        ve které budeme psát náš Python skript.
+                    </div>
+                </section>
+                <section class="col-lg-12">
+
+                    <h2>Vytvoření Twitter aplikace</h2>
+                    <div>
+                        Abychom mohli získat data z našeho Twitter účtu, musíme
+                        nejdřív v našem účtu vytvořit aplikaci, které dovolíme
+                        získat data z naší timeline.
+                        Jdi na <a href="https://apps.twitter.com">https://apps.twitter.com</a>
+                        a vytvoř novou aplikaci tlačítkem <em>Create New App</em>.
+                        Vyplň nějaké jméno, krátký popis a jako <em>Website</em>
+                        můžeš dát cokoliv, např. "http://pyladies.example".
+                        <em>Callback URL</em> nech prázdnou.
+                    </div>
+                    <div>
+                        Nás budou zajímat přístupové údaje k této aplikaci.
+                        Ty najdeš v nastavení aplikace, kam jsi byla
+                        přesměrována po jejím vytvoření, konkrétně v záložce
+                        <em>Keys and Access Tokens</em>. Už máme vygenerovaný
+                        <em>Consumer Key</em> a <em>Consumer Secret</em>,
+                        ale k přihlášení do aplikace je potřeba ještě přístupový
+                        token, vytvoř si ho tlačítkem <em>Create Access Token</em>.
+                    </div>
+                    <h2>Získání dat z Twitteru</h2>
+                    <div>
+                        S vytvořenou aplikací už budeme schopní získat tweety
+                        přímo v Pythonu. Vytvoř si nový Python skript ve složce,
+                        kam jsi předtím rozbalila zip archiv. Nejdřív
+                        naimportujeme modul pro získání dat z timeline
+                        a údaje pro přihlášení ze souboru <code>oauth_info.py</code>.
+<pre>
+import twitter_timeline
+import oauth_info
+</pre>
+                        <h3>Přihlášení k Twitter aplikaci</h3>
+                        Data z Twitteru umí vytěžit objekt
+                        <code>TimelineMiner</code>, který si vytvoříme takto:
+<pre>
+timeline = twitter_timeline.TimelineMiner(
+    oauth_info.ACCESS_TOKEN,
+    oauth_info.ACCESS_TOKEN_SECRET,
+    oauth_info.CONSUMER_KEY,
+    oauth_info.CONSUMER_SECRET,
+    oauth_info.USER_NAME
+)
+</pre>                  
+                        Nejdříve se musíme do Twitteru přihlásit. To uděláme
+                        zavoláním funkce <code>authenticate()</code> na objektu
+                        <code>TimelineMiner</code>. Rovnou můžeme vypsat do
+                        terminálu, že se přihlášení podařilo.
+<pre>
+if timeline.authenticate():
+    print('Prihlaseni do Twitteru probehlo uspesne.')
+</pre>
+                        Spusť svůj skript a sleduj, co se stane. Došlo k
+                        výjimce &mdash; přečti si pozorně popis výjimky.
+                        Nastala kvůli tomu, že jsme nepředali <code>TimelineMineru</code>
+                        přihlašovací údaje k naší Twitter aplikaci. Otevři si
+                        soubor <code>oauth_info.py</code> a doplň tam
+                        přihlašovací informace ke své aplikaci. Zkus pustit
+                        skript znovu, nyní by již mělo vše proběhnou v pořádku.
+                    </div>
+                    <h3>Získání textu tweetů</h3>
+                    <div>
+                        Nyní nám nic nebrání získat samotný text tweetů.
+                        Na objektu <code>TimelineMiner</code> zavoláme
+                        metodu <code>get_timeline()</code> a tweety se
+                        stáhnou z naší timeline.
+<pre>timeline.get_timeline(max=2000, keywords=[])</pre>
+                    </div>
+                    <div>
+                        Atribut timeline objektu <code>df</code> nyní obsahuje
+                        tabulku s dvěma sloupci &mdash;  <strong>timestamp</strong>
+                        a <strong>tweet</strong>.
+                        Jednotlivé sloupce můžeme vytáhnout pomocí slovníkové
+                        notace. Vytáhneme si tedy seznam textů všech tweetů
+                        a spojíme je pro pohodlnější práci do jednoho řetězce.
+<pre>text = ' '.join(timeline.df['tweet'])</pre>
+                    </div>
+                    <h3>Odstranění interpunkce</h3>
+                    <div>
+                        Aby byla vizualizace vypovídající, musíme provést alespoň
+                        drobnou normalizaci dat. Např. nechceme, aby program bral
+                        slovo s tečkou na konci a bez tečky jako 2 různá slova
+                        ("pes" a "pes," jsou vlastně stejná slova).
+                        Zkus proto navrhnout funkci <code>odstran_interpunkci</code>,
+                        která bude mít jeden argument (řetězec) a vracet bude
+                        tentýž řetězec jen s odstraněnou interpunkcí.
+                    </div>
+                    <div>
+                        <strong>Drobná nápověda:</strong>
+                        <ul>
+                            <li>
+                                Znaky interpunkce jsou v Pythonu dostupné v 
+                                knihovně <code>string</code> jako
+                                <code>string.punctuation</code>.
+                            </li>
+                            <li>
+                                Všechny výskyty znaku <em>x</em> můžeš v řetězci
+                                odstranit funkcí <code>retezec.replace('x', '')</code>.
+                            </li>
+                            <li>
+                                "@" a "#" jsou sice také interpunkční znaky,
+                                ale my je budeme potřebovat, jelikož jimi
+                                Twitter značí klíčová slova. Navrhni tedy funkci
+                                tak, aby tyto znaky v textu zůstaly.
+                            </li>
+                        </ul>
+                    </div>
+
+<details class="solution notes"><h4>Řešení</h4>
+<pre>
+import string
+
+def odstran_interpunkci(retezec):
+    znaky_interpunkce = string.punctuation.replace('#', '').replace('@', '')
+    for znak in znaky_interpunkce:
+        retezec = retezec.replace(znak, '')
+    return retezec
+</pre>
+</details>
+                    
+                </section>
+                <section>
+                    <h3>Získání klíčových slov</h3>
+                    <div>
+                       V textu bývá mnoho nezajímavých slov jako jsou
+                       spojky nebo běžná podstatná jména a slovesa.
+                       Ty by měly četnost větší než cokoliv zajímavého.
+                       Pracujeme ale s daty z Twitteru, kde jsou jasně označena
+                       klíčová slova ("#hashtag") a účty jiných uživatelů
+                       ("@uzivatel"). Elegantně se zbavíme problému s běžnými
+                       slovy tím, že budeme brát v úvahy jen tato zvýrazněná
+                       slova.
+                    </div>
+                    <div>
+                        Navrhni tedy funkci <code>najdi_klicova_slova</code>,
+                        která bere řetězec a vrátí seznam slov začínajících
+                        na "@" nebo "#".
+                    </div>
+                    <div>
+                        <strong>Nápověda:</strong>
+                        <ul>
+                            <li>
+                                Řetězec můžeš rozsekat na seznam jednotlivých
+                                slov funkcí <code>retezec.split()</code>.
+                            </li>
+                            <li>
+                                Otestovat, zda jeden řetězec začíná na jiný
+                                můžeme funkcí <code>retezec.startswith('bla')</code>.
+                            </li>
+                        </ul>
+                    </div>
+<details class="solution notes"><h4>Řešení</h4>
+<pre>
+def najdi_klicova_slova(text):
+    klicova_slova = []
+    for slovo in text.split():
+        if slovo.startswith('#') or slovo.startswith('@'):
+            klicova_slova.append(slovo.lower())
+    return klicova_slova
+</pre>
+</details>
+                </section>
+                <section>
+                    <h3>Spočítání frekvence slov</h3>
+                    <div>
+                        Teď trocha matematiky. Abychom věděli, která slova
+                        mají být v mraku větší, potřebujeme znát relativní
+                        frekvence všech slov. Na spočítání výskytu nějakého slova
+                        je ideální datovou strukturou slovník.
+                    </div>
+                    <div>
+                        Navrhni funkci <code>spocitej_frekvence</code>, která
+                        dostane seznam slov a vrátí slovník, ve kterém bude
+                        vždy klíčem dané slovo a hodnotou jeho relativní
+                        frekvence.
+                    </div>
+                    <div>
+                        <strong>Nápověda:</strong>
+                        <ul>
+                            <li>
+                                Nejdřív si do slovníku nasčítej počet výskytů 
+                                každého jednoho slova, teprve pak slovník
+                                projdi v cyklu a poděl počet výskytů slova
+                                celkovým počtem slov.
+                            </li>
+                            <li>
+                                Nezapomeň, že pokud chceš procházet v cyklu
+                                dvojice klíč-hodnota, musíš na slovníku zavolat
+                                funkci <code>slovnik.items()</code>
+                            </li>
+                        </ul>
+                    </div>
+<details class="solution notes"><h4>Řešení</h4>
+<pre>
+def spocitej_frekvence(slova):
+    # Napocitej vyskyt kazdeho slova
+    frekvence_slov = {}
+    for slovo in slova:
+        if slovo in frekvence_slov.keys():
+            frekvence_slov[slovo] += 1
+        else:
+            frekvence_slov[slovo] = 1
+
+    # Spocitej relativni frekvenci
+    for slovo, frekvence in frekvence_slov.items():
+        frekvence_slov[slovo] /= len(slova)
+
+    return frekvence_slov
+</pre>
+</details>
+                </section>
+                <section>
+                    <h3>Vykreslení mraku slov</h3>
+                    <div>
+                        Nyní už máme všechna data, která potřebujeme
+                        k vykreslení mraku slov. K tomu použijeme modul
+                        Jinja2, který do připravené šablony nasype z Pythonu
+                        slova a jejich frekvence a vytvoří z šablony běžnou
+                        HTML stránku. O vykreslení mraku se už v prohlížeči
+                        postará JavaScriptová knihovna <code>d3</code>.
+                        Nemáme čas vyložit Jinju detailněji, ale je to spíš
+                        implementační detail, který není až tak důležitý.
+                        Směle zkopíruj následující kód, ale prohlédni si ho
+                        a přečti si pozorně komentáře.
+                    </div>
+                    
+<pre>
+import json
+
+loader = jinja2.FileSystemLoader(searchpath='./')  # Kde ma Jinja2 hledat sablony?
+env = jinja2.environment.Environment(loader=loader)  # Inicializuj Jinja2 prostredi
+frekvence_json = json.dumps(frekvence_slov)  # Preved slovnik do formatu, kteremu rozumi JavaScript
+template = env.get_template('wordcloud.jinja2')  # Nacti pripravenou sablonu
+
+# Priprav data pro sablonu
+template_data = {
+    'words': frekvence_json,
+    'width': 1200,  # Sirka mraku
+    'height': 1200,  # Vyska mraku
+    'rescale': 1500  # Jake rozpeti velikosti ma byt mezi slovy?
+}
+
+# Vykresli HTML stranku a uloz do souboru
+with open('wordcloud.html', 'w') as result_file:
+    result_file.write(template.render(template_data))                       
+</pre>
+                    <div>
+                        Nyní bys už měla mít ve složce nový soubor
+                        <code>wordcloud.html</code>. Otevři ho a podívej se,
+                        o čem a o kom nejčastěji tweetuješ!
+                    </div>
+                </section>
+                <section>
+                    <h3>Rozšíření: Odstranění málo častých slov</h3>
+                    <div>
+                       Pokud máš tweetů hodně, možná je mrak dost nepřehledný
+                       a plný skoro nečitelných, a tedy málo častých slov.
+                       Aby byla vizualizace přehlednější, je rozumné zahodit
+                       málo častá slova.
+                    </div>
+                    <div>
+                        Navrhni funkci <code>odstran_malo_casta</code>,
+                        která dostane slovník relativních frekvencí a vrátí
+                        slovník obsahující pouze slova s častějším výskytem.
+                    </div>
+                    <div>
+                        <strong>Nápověda:</strong>
+                        <ul>
+                            <li>
+                                Raději než odstraňovat slova s malou frekvencí
+                                zkonstruuj slovník nový, který bude obsahovat
+                                jen častější slova, např. s četností větší než
+                                je 1/20 četnosti slova s maximální četností.
+                            </li>
+                            <li>
+                                Maximum ze seznamu hodnot získáš vestavěnou
+                                funkcí <code>max(seznam)</code>.
+                            </li>
+                        </ul>
+                    </div>
+<details class="solution notes"><h4>Řešení</h4>
+<pre>
+def odstran_malo_casta(frekvence_slov):
+    caste = {}
+    for slovo, frekvence in frekvence_slov.items():
+        if frekvence > max(frekvence_slov.values()) / 20:
+            caste[slovo] = frekvence
+    return caste
+</pre>
+</details>
+                </section>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Praha napsal Oskar Hollmann, 2015</div>
+                <div>Části převzaty z tutoriálů Sebastiana Raschka <a href="http://sebastianraschka.com/Articles/2014_twitter_wordcloud.html">zde</a> a Sahanda Saby <a href="http://sahandsaba.com/visualizing-philosophers-and-scientists-by-the-words-they-used-with-d3js-and-python.html">zde</a>.</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+
+    </body>
+</html>

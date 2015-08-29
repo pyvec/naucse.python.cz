@@ -1,0 +1,5 @@
+CONSUMER_KEY = 'Sem dopln sve udaje.'
+CONSUMER_SECRET = 'Sem dopln sve udaje.'
+ACCESS_TOKEN = 'Sem dopln sve udaje.'
+ACCESS_TOKEN_SECRET = 'Sem dopln sve udaje.'
+USER_NAME = 'Sem dopln sve udaje.'
