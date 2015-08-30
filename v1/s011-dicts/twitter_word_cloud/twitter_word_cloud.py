@@ -61,10 +61,10 @@ timeline = twitter_timeline.TimelineMiner(
 if timeline.authenticate():
     print('Prihlaseni do Twitteru probehlo uspesne.')
 
-timeline.get_timeline(max=2000, keywords=[])
+timeline.get_timeline(max=2000)
 
-# NORMALIZACE DAT A SPOCITANI FREKVENCI SLOV
-text = ' '.join(timeline.df['tweet'])
+# NORMALIZACE DAT A SPOCITANI FREKVENCE SLOV
+text = ' '.join(timeline.tweets)
 
 text = odstran_interpunkci(text)
 

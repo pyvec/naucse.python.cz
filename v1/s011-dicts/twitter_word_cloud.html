@@ -51,66 +51,10 @@
                     <div>
                         Abychom znovu nevynalézali kolo (a skončili včas),
                         použijeme několik knihoven pro usnadnění práce.
-                        Postupuj podle instrukcí pro svůj operační systém.
+                        Aktivuj si virtuální prostředí a nainstaluj si potřebné
+                        závislosti
+                        <pre>$ pip install jinja2 twitter</pre>
                     </div>
-                    <h3>Linux</h3>
-                    <div>
-                        V Linuxu by neměl být problém všechny potřebné knihovny
-                        nainstalovat ve virtuálním prostředí příkazem:
-                        <pre>$ pip install pandas twitter pyprind jinja2</pre>
-                        Pokud by instalace Pandas tímto způsobem selhala nebo
-                        byla příliš pomalá, můžeme tuto knihovnu nainstalovat
-                        přímo do systému z připravených balíčků naší distribuce,
-                        např. pro Ubuntu příkazem
-                        <pre>$ sudo apt-get install python3-pandas</pre> 
-                    </div>
-                    <h3>Windows a MacOS</h3>
-                    <div>
-                        Knihovny, které budeme potřebovat se na Windows a MacOS
-                        nedají snadno nainstalovat pomocí balíčkovače pip.
-                        Jednodušší je nainstalovat si alternativní distribuci
-                        Pythonu <em>Miniconda</em> a použít její balíčkovač.
-                        Instalátor je k dispozici
-                        <a href="http://conda.pydata.org/miniconda.html">zde</a>.
-                    </div>
-                    <span class="col-lg-6">
-                        <strong>Windows</strong>
-                        <div>
-                            Vyber si verzi pro Python 3.4 a buď 32-bitový nebo
-                            64-bitový instalátor podle toho, jakou verzi Windows
-                            máš. Pak se už stačí jen proklikat instalátorem.    
-                        </div>
-                    </span>
-                    <span class="col-lg-6">
-                        <strong>MacOS</strong>
-                        <div>
-                            Stáhni si instalátor pro Python 3 a MacOS.
-                            V terminálu se přesuň do složky, kam jsi ho stáhla,
-                            a spusť příkaz
-                            <pre>$ Miniconda-latest-MacOSX-x86_64.sh</pre> 
-                        </div>
-                    </span>
-                    <div>
-                       Můžeš ověřit, že instalace proběhla správně příkazem
-                       <pre>$ conda list</pre> 
-                       který ukáže seznam nainstalovaných Python balíků.
-                    </div>
-                    <div>
-                        Nyní je potřeba v Minicondě vytvořit nové virtuální
-                        prostředí. Otevři terminál a naviguj do složky, kde je
-                        Miniconda nainstalovaná. Pak spusť příkaz
-                        <pre>$ conda create -n venv python</pre>
-                        Aktivovat právě vytvořené prostředí můžeš (ať už jsi v
-                        jakékoliv složce) příkazem
-                        <pre>$ activate venv</pre>
-                    </div>
-                    <div>
-                        Nyní můžeš nainstalovat závislosti, které budeme potřebovat
-                        <pre>$ conda install pandas jinja2</pre>
-                        Ještě budeme potřebovat knihovnu na práci s Twitter API
-                        <pre>$ pip install pyprind twitter</pre>
-                    </div>
-                    <h2>Další závislosti</h2>
                     <div>
                         Kromě nainstalovaných knihoven budeme potřebovat
                         HTML šablonu pro mrak slov, JavaScriptové knihovny,
@@ -181,25 +125,24 @@ if timeline.authenticate():
                         Nastala kvůli tomu, že jsme nepředali <code>TimelineMineru</code>
                         přihlašovací údaje k naší Twitter aplikaci. Otevři si
                         soubor <code>oauth_info.py</code> a doplň tam
-                        přihlašovací informace ke své aplikaci. Zkus pustit
-                        skript znovu, nyní by již mělo vše proběhnou v pořádku.
+                        přihlašovací informace ke své aplikaci. Pozor na to, že
+                        tokeny jsou stringy, musí tedy být v uvozovkách.
+                        Zkus pustit skript znovu, nyní by již mělo vše proběhnou
+                        v pořádku.
                     </div>
                     <h3>Získání textu tweetů</h3>
                     <div>
                         Nyní nám nic nebrání získat samotný text tweetů.
                         Na objektu <code>TimelineMiner</code> zavoláme
-                        metodu <code>get_timeline()</code> a tweety se
-                        stáhnou z naší timeline.
-<pre>timeline.get_timeline(max=2000, keywords=[])</pre>
+                        metodu <code>get_timeline()</code> a tím se nám 
+                        tweety stáhnou.
+<pre>timeline.get_timeline(max=2000)</pre>
                     </div>
                     <div>
-                        Atribut timeline objektu <code>df</code> nyní obsahuje
-                        tabulku s dvěma sloupci &mdash;  <strong>timestamp</strong>
-                        a <strong>tweet</strong>.
-                        Jednotlivé sloupce můžeme vytáhnout pomocí slovníkové
-                        notace. Vytáhneme si tedy seznam textů všech tweetů
-                        a spojíme je pro pohodlnější práci do jednoho řetězce.
-<pre>text = ' '.join(timeline.df['tweet'])</pre>
+                        Atribut timeline objektu <code>tweets</code> nyní
+                        obsahuje seznam našich tweetů. Pro pohodlnější práci
+                        si je spojíme do jednoho řetězce.
+<pre>text = ' '.join(timeline.tweets)</pre>
                     </div>
                     <h3>Odstranění interpunkce</h3>
                     <div>
