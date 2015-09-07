@@ -1,0 +1,590 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 12-01 – Grafika</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <div style="text-align:center;">
+                    <img src="had.gif">
+                </div>
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <h1>Grafika</h1>
+                    <div>
+                        Dnes si ukážeme, jak s Pythonem napsat grafickou aplikaci.
+                    </div>
+                    <div>
+                        Použijeme tentokrát knihovnu, která
+                        (na rozdíl třeba od želví grafiky)
+                        není zabudovaná přímo v Pythonu.
+                        Musíme si ji nejdřív nainstalovat, a na to použijeme
+                        v zapnutém virtualenvu příkaz <code>pip</code> –
+                        konkrétně <code>pip install pyglet</code>.
+                        U mě vypadá instalace nějak takto:
+                    </div>
+<pre>
+(venv)$ pip install pyglet<span style="color:gray">
+Collecting pyglet
+  Downloading pyglet-1.2.4-py3-none-any.whl (964kB)
+Installing collected packages: pyglet
+Successfully installed pyglet-1.2.4</span>
+</pre>
+                    <div>
+                        Máš-li nainstalováno, zkus napsat a spustit
+                        následující program. Mělo by se objevit okýnko:
+                    </div>
+<pre>
+import pyglet
+window = pyglet.window.Window()
+pyglet.app.run()
+print('Hotovo!')
+</pre>
+                    <div>
+                        Hotovo? Pojďme si vysvětlit, co se tu vlastně děje.
+                    </div>
+                    <h2>Interaktivní programy</h2>
+                    <div>
+                        Podívejme se ještě jednou jak vypadá hlavní program pro
+                        Solitaire, který jsme napsaly
+                        <a href="../s007-cards/klondike.html">před několika srazy</a>.
+                        V komentářích je napsané, co která část kódu dělá:
+                    </div>
+<pre>
+import klondike                                 # Příprava hry
+
+import random; random.seed(0)
+
+hra = klondike.udelej_hru()
+klondike.vypis_hru(hra)
+while not klondike.hrac_vyhral(hra):            # Dokud hráč nevyhrál:
+    tah = klondike.nacti_tah()                  # 1. načti tah od uživatele
+    try:                                        # 2. zpracuj tah
+        info = klondike.priprav_tah(hra, tah)
+    except ValueError as e:
+        print(e)
+    else:
+        klondike.udelej_tah(hra, info)
+        klondike.vypis_hru(hra)                 # 3. vypiš stav hry
+</pre>
+                </section>
+                <section class="col-lg-12">
+                    <div>
+                        Stejnou strukturu jsme použily už dřív,
+                        třeba u hry kámen-nůžky-papír:
+                        <ul>
+                            <li>Nějaká příprava</li>
+                            <li>Dokud program nemá skončit:</li>
+                            <ul>
+                                <li>Načti vstup</li>
+                                <li>Nějak ten vstup vyhodnoť</li>
+                                <li>Vypiš výstup</li>
+                            </ul>
+                        </ul>
+                    </div>
+                    <div>
+                        A podobně funguje většina programů, které nějakým
+                        způsobem reagují na vustup od uživatele, nebo i na jiné
+                        události.
+                    </div>
+                    <div>
+                        Webový server čeká na <em>požadavek</em> (angl. request)
+                        o webovou stránku. Když nějaký přijme, zpracuje ho
+                        (např. přečte příslušnou stránku z disku),
+                        a jako výstup pošle odpověď.
+                    </div>
+                    <div>
+                        Složitější programy reagují na více druhů událostí,
+                        a co se stane ve „vyhodnocení vstupu” pak závisí
+                        na druhu události.
+                    </div>
+                    <div>
+                        Webový prohlížeč čeká na kliknutí myši nebo stisk klávesy,
+                        a zachová se podle něj – třeba pošle přes internet
+                        požadavek vzdálenému serveru.
+                        A potom čeká na odpověď od serveru, a až ta přijde,
+                        vykreslí příslušnou stránku na obrazovku.
+                    </div>
+                    <div>
+                        Prostě, podobná struktura programu – smyčka která
+                        načte vstup, zpracuje ho, a vyprodukuje výstup – je
+                        velice užitečná.
+                        Říká se jí <em>smyčka událostí</em> (angl. event loop),
+                        a programy na ní postavené jsou
+                        <em>řízené událostmi</em> (angl. event-driven).
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <div>
+                        Programátoři jsou líní.
+                        Když je něco užitečné pro více programů, nebývá
+                        zvykem, že to každý programátor v každém programu
+                        opakuje.
+                        Napíše se to jednou a dobře, zabalí se to jako knihovne,
+                        a ostatní to pak můžou používat.
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Pyglet 🐷</h2>
+                    <div>
+                        Jedna z takových knihoven je Pyglet.
+                        Obsahuje kromě smyčky událostí taky funkce na
+                        vykreslování 2D grafiky (pomocí knihovny OpenGL),
+                        nebo třeba načítání událostí z klávesnice a myši.
+                    </div>
+                    <div>
+                        Pojďme se vrátit k prográmku, který ukazuje okno:
+                    </div>
+<pre>
+import pyglet
+window = pyglet.window.Window()
+pyglet.app.run()
+print('Hotovo!')
+</pre>
+                    <div>
+                        Celá smyčka událostí se skrývá ve funkci
+                        <code>pyglet.app.run()</code>.
+                        Načtení vstupu (např. z klávesnice) dělá Pyglet sám,
+                        ale jejich zpracování, a vykreslení výsledků
+                        už je pro každý program jiné, takže si je budeme muset
+                        naprogramovat samy.
+                    </div>
+                    <div>
+                        Zatím pro nás Pyglet zpracovává jen dvě události:
+                        zavření okna (tlačítkem „×”, které k okýnkům přidává
+                        operační systém), a stisk klávesy <code>Esc</code>,
+                        který taky zavře okno.
+                        Po zavření všech oken skončí
+                        smyčka událostí (funkce <code>pyglet.app.run()</code>),
+                        a program může pokračovat.
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Text</h2>
+                    <div>
+                        Klávesa <code>esc</code> není příliš zajímavá.
+                        Zkusme reagovat i na jiné klávesy.
+                    </div>
+                    <div>
+                        V Pygletu se na události reaguje tak, že napíšeš
+                        funkci, a pak ji <em>zaregistruješ</em> (angl. register) – řekneš
+                        Pygletu, aby ji vždy v pravý čas zavolal.
+                        Události, která nastane když uživatel píše na klávesnici,
+                        se v Pygletu říká <code>on_text</code>,
+                        a zpracovává se takto:
+                    </div>
+<pre><span style="color:gray">
+import pyglet
+window = pyglet.window.Window()</span>
+
+def zpracuj_text(text):
+    print(text)
+
+window.push_handlers(on_text=zpracuj_text)<span style="color:gray">
+
+pyglet.app.run()</span>
+</pre>
+                    <div>
+                        Co to dělá? <code>window.push_handlers(on_text=zpracuj_text)</code>
+                        řekne Pygletu, že když uživatel něco napíše do našeho okna,
+                        má Pyglet zavolat funkci <code>zpracuj_text</code>.
+                        Tahle funkce pak dostane jako argument text, který uživatel napsal.
+                    </div>
+                    <div class="note">
+                        <div>
+                            Všimni si, že při registraci nepíšeme
+                            <code>zpracuj_text()</code> se závorkami.
+                        </div>
+                        <div>
+                            Asi už víš že
+                            je rozdíl mezi <code>print(int(8.2))</code>,
+                            což funkci <code>int</code> zavolá
+                            a <code>print</code> pak má k dispozici výsledek,
+                            a <code>print(int)</code>,
+                            což vypíše samotnou funkci <code>int</code>.
+                        </div>
+                        <div>
+                            Tady je to podobné:
+                            Pyglet potřebuje samotnou funkci <code>zpracuj_text</code>
+                            (protože ji bude sám volat),
+                            nikoli výsledek, který by vrátila (v tomhle případě <code>None</code>,
+                            protože <code>zpracuj_text</code> nic nevrací).
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Čas ⏲</h2>
+                    <div>
+                        Ještě jednu událost zpracujme,
+                        než se přesuneme ke grafice.
+                    </div>
+                    <div>
+                        Bude to takzvaný <em>tik</em> hodin (angl. clock tick).
+                        To je událost, která nastává pravidelně po nějakém čase.
+                    </div>
+                    <div>
+                        Funkce pro tiky se registruje takto:
+                    </div>
+<pre><span style="color:gray">
+import pyglet
+window = pyglet.window.Window()</span>
+
+def tik(t):
+    print(t)
+
+pyglet.clock.schedule_interval(tik, 1/30)<span style="color:gray">
+
+def zpracuj_text(text):
+    print(text)
+
+window.push_handlers(on_text=zpracuj_text)
+
+pyglet.app.run()</span>
+</pre>
+                    <div>
+                        Co to dělá? <code>pyglet.clock.schedule_interval(tik, 30)</code>
+                        řekne Pygletu, že má zavolat funkci <code>tik</code> každou
+                        třicetinu (<code>1/30</code>) vteřiny.
+                    </div>
+                    <div>
+                        A funkce <code>tik</code> dostane jeden argument – kolik času
+                        uplynulo od posledního zavolání.
+                        Většinou není přesně 1/30 vteřiny, ale něco víc.
+                        Počítač má i jiné věci na práci, takže se k naší aplikaci
+                        nemusí dostat hned; a taky Pythonu trvá nějakou tu
+                        tisícinu vteřiny než zpracuje zavolání naší funkce.
+                    </div>
+                    <div class="note">
+                        <div>
+                            A proč vlastně třicetina vteřiny?
+                            Je to kvůli tomu, že potom budeme stavět animace.
+                            Když se nám před očima vystřídá 30 obrázků za vteřinu,
+                            mozek si je spojí a vznikne iluze plynulého pohybu.
+                            <br>
+                            (Většina filmů používá jen 24 obrázků za vteřinu.)
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Vykreslování</h2>
+                    <img src="had.png" style="display:block;float:right;">
+                    <div>
+                        Program který vypisuje na terminál spoustu čísel,
+                        není asi zas tak zajímavý.
+                        Téma téhle stránky je ale grafika, tak se začněme od
+                        terminálu odpoutávat. Pojďme kreslit.
+                    </div>
+                    <div>
+                        Najdi si na internetu nějaký obrázek. Ne moc velký,
+                        tak 3cm, ať je kolem něj v černém okýnku dost místa.
+                        Ulož si ho do adresáře, odkud spouštíš svůj Pythoní
+                        program. Já mám třeba obrázek hada v souboru <code>had.png</code>.
+                    </div>
+                    <div>
+                        Pak obrázek vykresli (použij jméno souboru se svým obrázkem):
+                    </div>
+<pre><span style="color:gray">
+import pyglet
+window = pyglet.window.Window()
+
+def tik(t):
+    print(t)
+
+pyglet.clock.schedule_interval(tik, 1/30)
+
+def zpracuj_text(text):
+    print(text)</span>
+
+obrazek = pyglet.image.load(<span style="color:red">'had.png'</span>)
+had = pyglet.sprite.Sprite(obrazek)
+
+def vykresli():
+    window.clear()
+    had.draw()<span style="color:gray">
+
+window.push_handlers(
+    on_text=zpracuj_text,</span>
+    on_draw=vykresli,<span style="color:gray">
+)
+
+pyglet.app.run()</span>
+</pre>
+                    <div>
+                        Povedlo se?
+                    </div>
+                    <div>
+                        Vysvětleme si, co se tady děje:
+                        <ul>
+                            <li>
+                                <code>obrazek = pyglet.image.load('had.png')</code>
+                                načte ze souboru obrázek
+                            </li>
+                            <li>
+                                <code>had = pyglet.sprite.Sprite(obrazek)</code>
+                                vytvoří speciální objekt <a href="https://cs.wikipedia.org/wiki/Sprite_%28po%C4%8D%C3%ADta%C4%8Dov%C3%A1_grafika%29">Sprite</a>,
+                                který určuje, že tento obrázek chceme „posadit”
+                                na určité místo v černém okýnku.
+                                Když neuděláme nic dalšího, bude obrázek čekat v levém rohu.
+                            </li>
+                            <li>
+                                Funkce <code>vykresli()</code>
+                                se stará vykreslení okna – výstup našeho programu.
+                                Volá se vždycky, když je potřeba okno překreslit –
+                                například když okno minimalizuješ a pak vrátíš,
+                                nebo přesuneš částečně ven z obrazovky,
+                                a pak dáš zase zpět.
+                                <div class="note">
+                                    Některé operační systémy si pamatují i obsah oken,
+                                    které nejsou vidět, ale není radno na to spoléhat.
+                                </div>
+                            </li>
+                            <li>
+                                <code>window.clear()</code>
+                                vyčistí okno – natře ho černou barvou, a smaže
+                                všechno, co v něm bylo předtím.
+                                <div class="note">
+                                    Na spoustě počítačů tohle není potřeba.
+                                    Ale je lepší psát programy tak, aby
+                                    běžely kdekoli.
+                                </div>
+                            </li>
+                            <li>
+                                <code>had.draw()</code>
+                                nakreslí obrázek pomocí předpřipraveného objektu
+                                <code>had</code>.
+                            </li>
+                            <li>
+                                <code>window.push_handlers(on_draw=vykresli)</code>
+                                zaregistruje funkci <code>vykresli</code> – řekne
+                                Pygletu, aby ji volal vždy když je třeba.
+                                <br>
+                                Když potřebujeme zaregistrovat funkcí na obsluhu
+                                událostí víc,
+                                dají se dát funkci <code>push_handlers</code>
+                                takhle najednou.
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        Jakékoli kreslení se <em>musí</em> dělat v rámci kreslící funkce,
+                        kterou Pyglet volá z <code>on_draw</code>.
+                        Jinde funkce jako <code>clear</code> a <code>draw</code>
+                        nebudou fungovat.
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Animace</h2>
+                    <div>
+                        Pojďme si teď s naším Spritem trochu pohrát.
+                    </div>
+                    <div>
+                        Do funkce <code>zpracuj_text</code> dej místo printu tento příkaz:
+                    </div>
+<pre><span style="color:gray">
+def zpracuj_text(text):</span>
+    had.x = 150
+</pre>
+                    <div>
+                        Náš Sprite má <em>atribut</em> (angl. attribute)
+                        <code>x</code>, který určuje jeho <i>x</i>-ovou souřadnici –
+                        jak moc je vpravo od okraje okna.
+                        Tenhle atribut se dá nastavit, jak budeš chtít – nejčastěji
+                        v reakci na nějakou událost, ale často se nastavuje
+                        i na začátku programu.
+                    </div>
+                    <div>
+                        Zajímavé je zkusit k <code>x</code> něco přičíst
+                        při každém tiknutí hodin.
+                        Dokážeš předpovědět, co udělá tenhle kód?
+                    </div>
+<pre>
+def tik(t):
+    had.x = had.x + t * 20
+</pre>
+                    <div>
+                        Nebojíš-li se matematiky, naimportuj <code>math</code>
+                        a nech obrázek, ať se pohybuje podle nějaké funkce:
+                    </div>
+<pre>
+def tik(t):
+    had.x = had.x + t * 20
+    had.y = 20 + 20 * math.sin(had.x / 5)
+</pre>
+                    <div>
+                        Co se stane, když začneš měnit ta čísla?
+                    </div>
+                    <div>
+                        Co se stane, když zkusíš podobně nastavovat atribut
+                        <code>rotation</code>?
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Zavolej později</h2>
+                    <img src="had2.png" style="display:block;float:right;">
+                    <div>
+                        Pyglet umí kromě opakovaného „tikání” zavolat funkci
+                        jednorázově, za určitou dobu.
+                    </div>
+                    <div>
+                        Stáhni si (nebo vytvoř) druhý obrázek. (Já mám druhého
+                        hada, tentokrát s trochu natočenou hlavou a ocasem.)
+                    </div>
+                    <div>
+                        Až budeš mít obrázek v  adresáři s programem,
+                        přidej těsně před <code>pyglet.app.run()</code>
+                        tenhle kus kódu:
+                    </div>
+<pre>
+obrazek2 = pyglet.image.load(<span style="color:red">'had2.png'</span>)
+
+def zmen(t):
+    had.image = obrazek2
+
+pyglet.clock.schedule_once(zmen, 1)
+
+</pre>
+                    <div>
+                        Volání <code>schedule_once(zmen, 1)</code> říká Pygletu,
+                        že za jednu vteřinu má zavolat funkci <code>zmen</code>.
+                        A funkce změní obrázek – stejně jako se předtím měnily
+                        souřadnice.
+                    </div>
+                    <hr>
+                    <div>
+                        <code>schedule_once</code> se dá volat i v rámci
+                        obsluhy jiné události. Zkus funkci <code>zmen</code>
+                        nahradit tímhle:
+                    </div>
+<pre>
+def zmen(t):
+    had.image = obrazek2
+    pyglet.clock.schedule_once(zmen_zpatky, 0.2)
+
+def zmen_zpatky(t):
+    had.image = obrazek
+    pyglet.clock.schedule_once(zmen, 0.2)
+</pre>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Klik 🐭</h2>
+                    <div>
+                        Poslední věc, na kterou se tady naučíme reagovat,
+                        je klikání.
+                        Těsně před <code>window.push_handlers</code>
+                        napiš funkci:
+                    </div>
+<pre>
+def klik(x, y, tlacitko, mod):
+    had.x = x
+    had.y = y
+</pre>
+                    <div>
+                        Co znamená který argument, to zkus zjistit sama.
+                        <div class="note">
+                            Nápověda:
+                            <ul>
+                                <li>Dokud příkazovou řádku neopustíš úplně, bude fungovat <code>print</code>!</li>
+                                <li>Kolik má myš tlačítek?</li>
+                                <li>Jak se projeví Shift+klik?</li>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Pokračování příště</h2>
+                    <div>
+                        Koukám že kódu už je dnes tak akorát na ukončení lekce:
+                    </div>
+<pre>
+import math
+
+import pyglet
+
+window = pyglet.window.Window()
+
+def tik(t):
+    had.x = had.x + t * 20
+
+pyglet.clock.schedule_interval(tik, 1/30)
+
+def zpracuj_text(text):
+    had.x = 150
+    had.rotation = had.rotation + 10
+
+obrazek = pyglet.image.load('had.png')
+had = pyglet.sprite.Sprite(obrazek, x=10, y=10)
+
+def vykresli():
+    window.clear()
+    had.draw()
+
+def klik(x, y, tlacitko, mod):
+    print(tlacitko, mod)
+    had.x = x
+    had.y = y
+
+window.push_handlers(
+    on_text=zpracuj_text,
+    on_draw=vykresli,
+    on_mouse_press=klik,
+)
+
+obrazek2 = pyglet.image.load('had2.png')
+
+def zmen(t):
+    had.image = obrazek2
+    pyglet.clock.schedule_once(zmen_zpatky, 0.2)
+
+def zmen_zpatky(t):
+    had.image = obrazek
+    pyglet.clock.schedule_once(zmen, 0.2)
+
+pyglet.clock.schedule_once(zmen, 0.2)
+
+pyglet.app.run()
+</pre>
+                    <div>
+                        Se vstupem z klávesnice a myši, časováním, a vykreslováním
+                        Spritu si vystačíš u leckteré hry nebo grafické aplikace.
+                    </div>
+                    <div>
+                        Až budeš nějakou dělat, zkus postupovat jako u Solitaire:
+                        stav aplikace měj v seznamech, slovnících a n-ticích,
+                        které pak jedna funkce vykreslí, a jiné s ním budou
+                        manipulovat.
+                    </div>
+                    <div>
+                        Zajímá-li tě toto téma, zkus si zahrát přiloženou hru
+                        <a href="pong.py">Pong</a>, která ukazuje některé další
+                        možnosti Pygletu: psaní textu, kreslení obdélníků,
+                        a obsluhu jednotlivých kláves (např. šipek).
+                        Na první pohled může její kód vypadat složitě,
+                        ale zkus si k němu sednout, a s pomocí komentářů
+                        ho pochopit.
+                    </div>
+                    <div>
+                        A chceš-li se do Pygletu ponořit hlouběji,
+                        existuje pro něj <a href="http://pyglet.readthedocs.org/en/latest/index.html">dokumentace</a>.
+                        Nebude-li ti v ní něco jasné, zeptej se!
+                    </div>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+
+    </body>
+</html>
