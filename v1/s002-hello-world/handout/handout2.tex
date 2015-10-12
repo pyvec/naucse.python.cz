@@ -12,6 +12,8 @@
 \usepackage[activate=true]{microtype}
 \usepackage{amssymb}
 \usepackage{fontspec}
+\usepackage{titling}
+\usepackage{titlesec}
 
 \usepackage{calc}
 \usepackage{multicol}
@@ -49,6 +51,19 @@
 \newcommand\True{\texttt{True}}
 \newcommand\False{\texttt{False}}
 
+\newcommand\startsection[1]{
+     \vspace{0.2ex}
+    \hrule
+    {\fontspec{Oxygen} \tiny
+     \vspace{-1ex}
+     \emph{#1}
+     \vspace{-1.5em}
+    }
+}
+
+\newfontfamily\headingfont[]{Bree Serif}
+\titleformat*{\section}{\LARGE\headingfont}
+
 \begin{document}
 
 \plpage
@@ -58,25 +73,27 @@
 \begin{enumerate}
 \item Jakou používáš verzi Pythonu?
 
+\end{enumerate}
+
+\startsection{Následující úkoly procvičí orientaci v chybových hláškách. Doporučuji je udělat.}
+
+\begin{enumerate}[resume]
+
 \item Jak se jmenuje druh chyby, která nastane, když...
     \begin{itemize}
-        \item Zapomeneš dát uvozovky kolem řetězce? — \texttt{SyntaxError}
-        \item Zkusíš sečíst číslo a řetězec? —
+        \item Dáš uvozovky jen na jednu stranu řetězce? — \texttt{SyntaxError}
+        \item Zkusíš odečíst číslo od řetězce? —
         \item Dělíš nulou? —
-        \item Použiješ proměnnou, do které není nic přiřazené? —
+        \item Použiješ proměnnou, která neexistuje? —
         \item Stiskneš Ctrl+C, když se program ptá na vstup (pomocí \texttt{input})? —
         \item Odsadíš příkaz bez předchozího \texttt{if:}? —
         \item Po \texttt{if:} odsadíš jeden příkaz o čtyři mezery, a druhý jen o dvě? —
         \item Neuzavřeš závorku? –
-        \item Neuzavřeš uvozovky u řetězce? –
         \item Zkusíš použít vykřičník (\texttt{!}) jako operátor? —
         \item Napíšeš v příkazu \texttt{print(1, 2, 3)} čárku navíc? —
     \end{itemize}
 
 \item \emph{\small Podívej se na odpovědi na předchozí otázku, ale Python zkus použít jen na ověření.}
-    \\Jaká chyba nastane, když zkusíš odečíst číslo od řetězce?
-
-\item \emph{\small Podívej se na odpovědi na otázku 1, ale Python použij jen na ověření.}
     \\Jaká chyba nastane, když zkusíš použít proměnnou předtím, než do ní něco přiřadíš?
 
 \item \emph{\small Podívej se na odpovědi na otázku 1, ale Python použij jen na ověření.}
@@ -84,17 +101,19 @@
 
 \item Lomítko (\texttt{/}) je operátor, ale nedá se použít na řetězce. Vykřičník (\texttt{!}) v Pythonu není operátor.
     \\Jak se liší „jejich“ chyby? \emph{\small Rozdíly jsou aspoň dva.}
-    \\Je zavináč (\texttt{@}) v Pythonu operátor?  % odpověď na tohle se v Pythonu 3.5 změní. To bude sranda!
+
+\item Je zavináč (\texttt{@}) v Pythonu operátor?  % odpověď na tohle se v Pythonu 3.5 změní. To bude sranda!
 
 \end{enumerate}
 
-\hrule
+\startsection{Tenhle úkol by měl přivést k tomu, jak zjišťovat co v Pythonu jde a co ne.
+Druhá část je trochu na zamyšlení.}
 
 \begin{enumerate}[resume]
 \item Ne všechno se dá použít jako jméno proměnné.
     \\Fungují pro proměnné následující jména? Pokud ne, proč asi?
     {
-        \newcommand\varname[2][]{\varnameend[#1]{#2}\\[0.5cm]}
+        \newcommand\varname[2][]{\varnameend[#1]{#2}\\[0.25cm]}
         \newcommand\varnameend[2][]{\texttt{#2} #1}
         \begin{multicols}{4}
         \varname{x}
@@ -115,68 +134,85 @@
         \varnameend{while}
         \end{multicols}
     }
-    \hspace{0.5cm}
-\item Jaké nové druhy chyb jsi v předchozím úkolu viděla?
 
 \end{enumerate}
 
-\hrule
+\startsection{Následující úkoly jsou na procvičení toho, co jsme dělaly na srazu.
+Nemáš-li čas, zatím je přeskoč.}
 
 \begin{enumerate}[resume]
 
 \item \emph{\small Zkus se nedívat na programy ze srazu.}
     \\Napiš program, který spočítá povrch a obsah krychle o straně \SI{2852}{cm}.
     \\Abys nemusela tolik hledat v učebnici (vlastně Wikipedii): povrch $S=6a^2$, obsah $V=a^3$
-    \\Řešení, pro kontrolu: $S=\SI{48803424}{cm^2}$, $V=\SI{23197894208}{cm^3}$
-
-\item Doplň program z minulého úkolu, aby počítal i povrch a obsah koule o poloměru \SI{2852}{cm}.
-    \\Vzorečky: povrch $S=4\pi r^2$, obsah $V=\frac34\pi r^3$, $\pi \approx 3.1415926$
-    \\Řešení, pro kontrolu: $S\approx\SI{102213650,46}{cm^2}$, $V\approx\SI{54658749584,57}{cm^3}$
-
-\item Použila jsi operátor pro umocnění (\texttt{**})? Jestli ne, naprav to.
+    \\\emph{\small Řešení, pro kontrolu: $S=\SI{48803424}{cm^2}$, $V=\SI{23197894208}{cm^3}$}
 
 \item Změň program tak, aby stranu/poloměr mohl uživatel zadat.
+    \\\emph{\small Tady už se na materiály ke srazu klidně podívej.}
+
+\end{enumerate}
+
+\startsection{Další dva úkoly doplňují program ze srazu, a jsou úplně nepovinné.}
+
+\begin{enumerate}[resume]
+
+\item Zkus pustit tento program několikrát za sebou. Co dělá?
+    \\\verb+from random import randrange+
+    \\\verb+cislo = randrange(3)+
+    \\\verb+print(cislo)+
+    \\\emph{\small Jak to funguje, to se dozvíme příště; zatím to ber jako kouzelné zaříkadlo.}
+
+\item Zkombinuj program z předchozího úkolu s programem kámen–nůžky–papír, a nastav \verb+tah_pocitace+ na:
+    \begin{enumerate}
+        \item \verb+'kámen'+, \emph{pokud} je \verb+cislo+ 0
+        \item \verb+'nůžky'+, pokud je \verb+cislo+ 1
+        \item jinak na \verb+'papír'+
+    \end{enumerate}
 
 \end{enumerate}
 
 \plpage
 
+\startsection{Tyhle úkoly kombinují opakování a nové informace.
+Doporučuji si je projít.}
+
 \begin{enumerate}[resume]
 
-\item Které Pythoní operátory dokážeš z hlavy vyjmenovat?
+\item Které Pythoní \emph{operátory} dokážeš z hlavy vyjmenovat?
 
 \item Zkusila jsi porovnávat řetězce?
     \\Doplň tuhle tabulku tužkou; pak ověř odpovědi pomocí Pythonu:
 
     {
         \newcommand\rowend{\rule{0pt}{0.5cm}\\ \hline}
-        \begin{tabular}{c|c|c|c|c|c}
+        \begin{tabular}{c|c|c}
         \arrayrulecolor{silver}
-        \verb+a+ & \verb+b+ & \verb+a == b+ & \verb+a < b+ & \verb+a >= b+ \\
+        \verb+a+ &  & \verb+b+ \\
         \arrayrulecolor{black}\hline\arrayrulecolor{silver}
-        \verb+1+ & \verb+1+ & \True & \False & \True \rowend
-        \verb+1+ & \verb+2+ & \False & \True & \False \rowend
-        \verb+'abc'+ & \verb+'abc'+ & \True & \False & \True \rowend
-        \verb+'aaa'+ & \verb+'abc'+ & & & \rowend
-        \verb+'abc'+ & \verb+'Abc'+ & & & \rowend
-        \verb+'abC'+ & \verb+'abc'+ & & & \rowend
-        \verb+'abc'+ & \verb+'abcde'+ & & & \rowend
-        \verb+'abc'+ & \verb+'ábč'+ & & & \rowend
-        \verb+'abc'+ & \verb+10+ & & & \rowend
+        \verb+2+ & < & \verb+1+ \rowend
+        \verb+1+ & > & \verb+2+ \rowend
+        \verb+'abc'+ & == & \verb+'abc'+ \rowend
+        \verb+'aaa'+ &    & \verb+'abc'+ \rowend
+        \verb+'abc'+ &    & \verb+'Abc'+ \rowend
+        \verb+'abC'+ &    & \verb+'abc'+ \rowend
+        \verb+'abc'+ &    & \verb+'abcde'+ \rowend
+        \verb+'abc'+ &    & \verb+'ábč'+ \rowend
+        \verb+'abc'+ &    & \verb+10+ \rowend
         \end{tabular}
     }
 
-\item Jaká je hodnota proměnné po provedení příkazu: \hspace{1cm}\verb+promenna = 1 < 2+ \hspace{0.2cm}?
-    \\Co když do proměnné přiřadíš \verb+2 < 2+ ?
-    \\\verb+1 < 2 < 3+ ?
-    \\\verb+1 < 3 < 2+ ?
-    \\\verb+1 < 3 < 3+ ?
-    \\\verb+'abc' < 'ABC' < 'def' < 'zajíc'+ ?
-    \\Pokud je hodnota proměnné \False, dají se některé z porovnávaných hodnot vyměnit, aby byla \True?
+\item Jaká je hodnota proměnné po provedení příkazu:
+    \\\verb+promenna = 1 < 2+ \hspace{0.2cm}?
+    \\\verb+promenna = 2 < 2+ \hspace{0.2cm}?
+    \\\verb+promenna = 1 < 2 < 3+ \hspace{0.2cm}?
+    \\\verb+promenna = 1 < 3 < 2+ \hspace{0.2cm}?
+    \\\verb+promenna = 1 < 3 < 3+ \hspace{0.2cm}?
+    \\\verb+promenna = 'abc' < 'ABC' < 'def' < 'zajíc'+ \hspace{0.2cm}?
+    \\TTam kde je hodnota proměnné \False, dají se některé z porovnávaných hodnot vyměnit, aby byla \True?
 
 \end{enumerate}
 
-\hrule
+\startsection{Další dva úkoly ti umožní kreativně využít co ses naučila.}
 
 \begin{enumerate}[resume]
 
@@ -190,13 +226,20 @@
 \item Napiš program, který po zadání správného hesla vypíše nějakou tajnou informaci.
     \\\emph{\small Vhodné tajemství je třeba: V pátek jsem viděla černého havrana.}
 
+\end{enumerate}
+
+\startsection{Poslední úkoly jsou pokročilejší.
+Jestli nemáš čas, radši udělej pořádně ty ostatní.}
+
+\begin{enumerate}[resume]
+
 \item Projdi si \url{http://python.cz/pyladies/s002-hello-world/and-or.html}
 
 \item Doplň tuhle tabulku:
 
     {
         \newcommand\rowend{\rule{0pt}{0.5cm}\\ \hline}
-        \begin{tabular}{c|c|c|c|c}
+        \begin{tabular}{c|c||c|c|c}
         \arrayrulecolor{silver}
         \verb+a+ & \verb+b+ & \verb+a and b+ & \verb+a or b+ & \verb+not a+ \\
         \arrayrulecolor{black}\hline\arrayrulecolor{silver}
@@ -208,10 +251,9 @@
     }
 
     \emph{\small Tohle je takzvaná \emph{pravdivostní tabulka}.
-          Obsahuje všechny kombinace booleovských hodnot, které \texttt{a} a \texttt{b}
-          můžou mít.}
-
-\item Zkus program „šťastná/bohatá“ přepsat pomocí zanořených \texttt{if}ů. Která verze ti připadá čitelnější?
+          Obsahuje jeden řádek pro každou kombinaci booleovských hodnot, které \texttt{a} a \texttt{b}
+          můžou mít. Když se stane, že se v and a or ztratíš,
+          doporučuji napsat si podobnou tabulku, a na každý řádek se podívat zvlášť.}
 
 \item Zkus přepsat Kámen, Nůžky, Papír pomocí \texttt{and} a \texttt{or}.
     \\Dokážeš docílit toho, aby se každý z řetězců \texttt{'Plichta.'},
@@ -219,8 +261,8 @@
     aniž bys tyhle řetězce musela přiřazovat do proměnných?
     \\Pokud ano, gratuluji!
 
+\item Zkus program „šťastná/bohatá“ přepsat pomocí zanořených \texttt{if}ů. Která verze ti připadá čitelnější?
+
 \end{enumerate}
 
-
 \end{document}
-

@@ -19,8 +19,8 @@
                     <p>
                         Minule, a v domácím úkolu, jsme si ukázaly
                         základní aritmetické operátory.
-                        Přidáme-li dva další (<code>//</code> a <code>%</code>),
-                        dostaneme:
+                        Přidáme-li jeden další (<code>//</code>),
+                        jsou to tyhle:
                     </p>
                     <table class="table">
                         <tr>
@@ -81,17 +81,26 @@
                     <p>
                         Hodnoty provnání jsou takzvané <em>booleovské</em> hodnoty
                         (angl. <em>boolean</em>, podle <a href="http://en.wikipedia.org/wiki/George_Boole">G. Boolea</a>).
-                        Jsou jenom dvě – buď <code>True</code> (pravda),
-                        nebo <code>False</code> (nepravda).
-                        Je to druh hodnot, jako čísla nebo řetězce;
-                        dají se i přiřazovat do proměnných:
-<pre>
-pravda = 1 &lt;3
-print(pravda)
-</pre>
                         V Pythonu se používají vždycky,
                         když potřebujeme vědět jestli něco platí
                         nebo neplatí.
+                        Jsou jenom dvě – buď <code>True</code> (pravda),
+                        nebo <code>False</code> (nepravda).
+                    </p>
+                    <p>
+                        Jako všechny hodnoty, <code>True</code> a <code>False</code>
+                        se dají přiřazovat do proměnných:
+<pre>
+pravda = 1 &lt; 3
+print(pravda)
+
+nepravda = 1 == 3
+print(nepravda)
+</pre>
+                    </p>
+                    <p class="note">
+                        Všimni si, že rovnost zjušťujeme pomocí dvou rovnítek: <code>3 == 3</code>.
+                        Jedno rovnítko přiřazuje do proměnné; dvě rovnítka porovnávají.
                     </p>
                     <p>
                         Slova <code>True</code> a <code>False</code> jdou
@@ -117,28 +126,31 @@ print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm²')
 
                     </p>
                     <p>
-                        Zkus nastavit proměnnou,
-                        která bude <code>True</code> když uživatel zadal záporné číslo.
+                        Tady je vidět, jak počítač dělá přesně co se mu řekne,
+                        a nepřemýšlí o významu.
+                        Bylo by dobré uživateli, který zadá záporné číslo,
+                        přímo říct že zadal blbost. Jak na to?
+                    </p>
+                    <p>
+                        Nejdřív zkus nastavit proměnnou,
+                        která bude <code>True</code> když uživatel zadal kladné číslo nebo nulu.
                     </p>
 <details class="solution"><h3>Řešení</h3>
 <pre>
 strana = float(input('Zadej stranu v centimetrech: '))
-cislo_zaporne = strana &lt; 0
+cislo_je_spravne = strana &gt;= 0
 </pre></details>
                     <p>
                         A nyní řekneme počítači, aby tuhle proměnnou použil.
-                        Pokud je číslo záporné, tak program uživateli pořádně vynadá;
-                        jinak poslušně spočítá nějaká ta čísla.
-                    </p>
-                    <p>
                         K tomu se používá dvojice příkazů <code>if</code> (angl. <em>pokud</em>)
                         a <code>else</code> (angl. <em>jinak</em>).
-                        Jejich použití bude nejepší ukázat na příkadu:
+                        Nejepší bude je ukázat na příkadu:
                     </p>
 <pre>
 strana = float(input('Zadej stranu v centimetrech: '))
+cislo_je_spravne = strana &gt;= 0
 
-if strana &gt; 0:
+if cislo_je_spravne:
     print('Obvod čtverce se stranou', strana, 'je', 4 * strana, 'cm')
     print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm²')
 else:
@@ -156,13 +168,13 @@ print('Děkujeme za použití geometrické kalkulačky.')
                         Potom můžeme psát příkazy, které se provedou vždycky – ty odsazené nebudou,
                         podmíněná část programu už skončila.
                     </p>
-                    <p class="note"><small>
+                    <p class="note">
                         Čistě technicky, odsazení nemusí být o čtyři mezery, může být třeba o dvě nebo o jedenáct,
                         nebo dokonce o tabulátor.
                         V rámci jednoho bloku musí být ale odsazení vždycky stejné,
                         takže když pak na jednom programu spolupracuje více lidí, musí se shodnout.
                         No a na čtyřech mezerách se shodla většina světa.
-                    </small></p>
+                    </p>
                     <h2>Další podmíněné příkazy</h2>
                     <p>
                         Někdy není <code>else</code> vůbec potřeba.
@@ -185,13 +197,13 @@ print(cislo, '+ 3 =', cislo + 3)
                     </p>
 <pre>
 vek = int(input('Kolik ti je let? '))
-if vek &gt; 150:
+if vek &gt;= 150:
     print('A ze kterépak jsi planety?')
-elif vek &gt; 18:
+elif vek &gt;= 18:
     print('Můžeme nabídnout: víno, cider, nebo vodku.')
-elif vek &gt; 1:
+elif vek &gt;= 1:
     print('Můžeme nabídnout: mléko, čaj, nebo vodu')
-elif vek &gt; 0:
+elif vek &gt;= 0:
     print('Sunar už bohužel došel.')
 else:
     print('Návštěvníky z budoucnosti tady nevidíme rádi.')
@@ -234,8 +246,8 @@ else:
 </pre>
                     <p>
                         Vida, tvoje první hra!
-                        Sice je ještě potřeba před každým spuštěním přepsat řetězec na prvním řádku,
-                        ale i to časem vyřešíme.
+                        Jen je ještě potřeba před každým spuštěním přepsat řetězec na prvním řádku.
+                        Jak se to dělá, to si povíme do příště.
                     </p>
                 </div>
             </div>
