@@ -2,9 +2,9 @@
     var details = document.getElementsByTagName('details');
     function get_show_func(detail) {
         return function () {
-            console.log('data-innerhtml');
             detail.innerHTML = detail.getAttribute('data-innerhtml');
             detail.setAttribute('style', '');
+            detail.setAttribute('class', '');
         }
     }
     function show_all(detail) {
@@ -21,7 +21,8 @@
         btn.setAttribute('class', 'btn');
         btn.setAttribute('value', 'Řešení »');
         btn.addEventListener('click', get_show_func(details[i]));
-        console.log(get_show_func(details[i]));
+        get_show_func(details[i]);
+        details[i].setAttribute('class', 'detail-not-expanded');
         details[i].innerHTML = '';
         details[i].appendChild(btn);
     }
