@@ -1,0 +1,246 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 09-02 – Větvení</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style>
+            .green  {   color:  #0A3;    }
+            .red    {   color:  #D30;    }
+            .yellow {   color:  #880;    }
+            .strong {   font-weight:  bold;    }
+            .blue   {   color:  #03D;    }
+            .metavar{   color:  #FF6464;    }
+            img     {   max-width: 100%; }
+            img.screenshot {
+                display: block;
+                margin: 1em;
+                box-shadow: 1px 1px 3px black;
+            }
+        </style>
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <h2>Větvení v Gitu</h2>
+                    <div>
+                        Takže, Git už znáš! Teď to začne být trošku složitější.
+                        <br>
+                        Programátorky občas potřebují pracovat na dvou věcích
+                        zároveň.
+                        V projektu do práce se objeví se chyba,
+                        která musí být spravená
+                        ještě dnes, tak programátorka opustí co zrovna dělá,
+                        vrátí se k nějaké „stabilní” verzi, opraví chybu,
+                        a odešle ji zákazníkům.
+                        A pak se vrátí k tomu, co dělala předtím – jen ještě
+                        musí zakomponovat opravu chyby i do verze, na které
+                        pracuje dlouhodobě.
+                        <br>
+                        Git na to má takzvané <em>větve</em>
+                        (angl. <em> branches</em>).
+                        Na jedné „větvi” se pracuje, ale dá se přepnout do
+                        jiné (třeba starší) větve, udělat pár změn,
+                        a pak se zase přepnout do nové větve a
+                        pokračovat dál, nebo sloučit změny.
+                        <br>
+                        Větvení využijeme i při spolupráci více lidí – každý
+                        dělá na vlastní větvi, a když přijde čas,
+                        tak se různé změny sloučí dohromady.
+                    </div>
+                    <div>
+                        Podívej se, jaké máš větve ve svém repozitáři.
+                        K tomu slouží příkaz <code>git branch</code>.
+<pre>
+$ git branch
+* <span class="green">master</span>
+</pre>
+                        Je tam jenom jedna, a jmenuje se <code>master</code>
+                        – to je tradičně jméno „hlavní” větve.
+                    </div>
+                    <div>
+                        K vytvoření nové větve znovu použiješ
+                        <code>git branch</code>, jen tomu příkazu dáš navíc
+                        jméno nové větve.
+                        Třeba budeš chtít k básničce doplnit jméno autora,
+                        tak větev pojmenuješ <code>doplneni-autora</code>.
+<pre>
+$ git branch doplneni-autora
+$ git branch
+* <span class="green">master</span>
+  doplneni-autora
+</pre>
+                        Tenhle příkaz sice udělal novou větev,
+                        ale nepřepnul do ní.
+                        Hvězdička ve výstupu z <code>git branch</code> ukazuje,
+                        že stále pracuješ v <code>master</code>.
+                        Na přepnutí budeš potřebovat další příkaz:
+<pre>
+$ git checkout doplneni-autora
+$ git branch
+  master
+* <span class="green">doplneni-autora</span>
+</pre>
+                        Tak. Teď jsme „ve” větvi <code>doplneni-autora</code>.
+                        Doplň jméno do souboru <code>basnicka.txt</code>,
+                        a pomocí <code>git add</code> a <code>git commit</code>
+                        udělej novou revizi.
+                        Pak koukni na <code>gitk --all</code>, jak to vypadá:
+                        <div><img src="branch1.png"></div>
+                        Aktuální větev – <code>doplneni-autora</code> – je
+                        zvýrazněná tučně, a starší <code>master</code> je stále
+                        na původní revizi.
+                    </div>
+                    <div>
+                        Opusťme teď na chvíli práci na doplňování autora.
+                        Vrať se do větve <code>master</code>, a vytvoř z ní
+                        větev <code>doplneni-jmena</code>.
+                        Pak se na tuhle novou větev přepni.
+<pre>
+$ git checkout master
+$ git branch doplneni-jmena
+$ git checkout doplneni-jmena
+$ git branch
+  master
+  doplneni-autora
+* <span class="green">doplneni-jmena</span>
+</pre>
+                        Doplň do souboru jméno básně, a pomocí
+                        <code>git add</code>, <code>git commit</code>
+                        ulož revizi.
+                        Všechno zkontroluj přes <code>gitk --all</code>.
+                        <div><img src="branches.png"></div>
+                        <hr>
+                        Takhle nějak se dá postupovat v situaci popsané v úvodu:
+                        opuštění rozpracované verze, přechod na „stabilní”
+                        verzi <code>master</code>, a začátek práce v jiné
+                        části projektu.
+                        <br>
+                        Mezi jednotlivými větvemi se dá podle libosti přepínat,
+                        jen je vždycky dobré před přepnutím udělat novou revizi
+                        (<code>git commit</code>), a pomocí
+                        <code>git status</code> zkontrolovat, jestli je všechno
+                        uložené v Gitu.
+                        <br>
+                        Na stejném priincipu funguje i spolupráce několika lidí
+                        na jednom projektu: je nějaký společný základ
+                        (<code>master</code>), a každý dělá na vlastní větvi,
+                        dokud není se svými změnami spokojený.
+                        <br>
+                        A až je některá větev hotová, může se začlenit
+                        zpátky do <code>master</code>. Podívejme se jak na to.
+                    </div>
+                    <h2>Sloučení</h2>
+                    <div>
+                        Nedávalo by smysl historii projektu rozdvojovat,
+                        kdyby pak jednotlivé větve nešly zase sloučit dohromady.
+                        Naštěstí je v Gitu slučování poměrně jednoduché.
+                        <br>
+                        Přepni se zpátky na <code>master</code>,
+                        a použij příkaz <code>git merge</code>, který
+                        sloučí jinou větev s tou aktuální.
+                        Příkazu musíš dát jméno větve, kterou chceš sloučit.
+<pre>
+$ git checkout master
+$ git merge doplneni-jmena
+Updating c33e43e..561d3ab
+Fast-forward
+ basnicka.txt | 3 <span class="green">+++</span>
+ 1 file changed, 3 insertions(+)
+</pre>
+                        Sloučeno! Ono „<code>Fast-forward</code>” znamená, že
+                        vlastně nebylo co slučovat – jen se do větve
+                        <code>master</code> přidaly nové změny.
+                        Zkontroluj v <code>gitk --all</code>, jak to vypadá.
+                        <br>
+                        A pak zkus sloučit i druhou větev:
+                        <code>git merge doplneni-autora</code>.
+                        Tady to bude složitější: Může se stát, že změny nepůjdou
+                        automaticky sloučit, a ve výstupu se objeví hláška
+                        <code>merge conflict</code> (slučovací konflikt).
+                        V tom případě obnov soubor v editoru, kde se objeví
+                        obsah z obou konfliktních verzí. Soubor uprav ho tak,
+                        jak by měl vypadat, ulož, a zadej
+                        <code>git commit</code>
+                        <br>
+                        Ať nastal konflikt nebo ne, vytvoří se slučovací revize”
+                        (angl. <em>merge commit</em>), které můžeš dát popisek.
+<pre>
+$ git merge doplneni-autora
+Auto-merging basnicka.txt
+Merge made by the 'recursive' strategy.
+ basnicka.txt | 1 <span class="green">+</span>
+ 1 file changed, 1 insertion(+)
+</pre>
+                        Povedlo se?
+                        <div><img src="merge.png"></div>
+                        Pokud ano, můžeš staré větve vymazat – všechny jejich
+                        změny jsou v <code>master</code>, a nemá na nich cenu
+                        pracovat dál.
+<pre>
+$ git branch -d doplneni-autora
+Deleted branch doplneni-autora (was 230ace8).
+$ git branch -d doplneni-jmena
+Deleted branch doplneni-jmena (was 561d3ab).
+$ git branch
+* <span class="green">master</span>
+</pre>
+                    </div>
+                </section>
+                <section class="col-lg-12">
+                    <h2>Závěr</h2>
+                    <div>
+                        Bylo toho moc?
+                        To nevadí; větve zatím používat nemusíš.
+                        Ale je dobré do budoucna vědět, co ten Git vlastně umí.
+                    </div>
+                </section>
+                <!-- (later)
+                <section class="col-lg-12">
+                    <h2>Github</h2>
+                    <div>
+                        <a href="http://github.com">github.com</a>
+                        <br>
+                        Založit repozitář – Create new repository (ikonka "+")
+<pre>
+$ git remote add origin <em class="var">URL</em>
+</pre>
+<pre>
+$ git push origin master
+</pre>
+
+<pre>
+$ cd ..
+$ git checkout https://github.com/encukou/pyladies pyladies-web
+</pre>
+                        Tlačítko "Fork" na
+                        <a href="https://github.com/encukou/pyladies">stránce repozitáře</a>
+<pre>
+$ git remote add mojekopie <em class="var">URL</em>
+$ git push mojekopie master
+</pre>
+                        "Pull Request" na vlastní kopii repozitáře
+                    </div>
+                </section>
+                -->
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+                <div>Jako příklad básničky byl použit úryvek z <a href="http://www.nohavica.cz/cz/tvorba/texty/halo_halo.htm">„Haló Haló“ Jaromíra Nohavici</a>.</div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+
+    </body>
+</html>

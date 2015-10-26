@@ -14,6 +14,11 @@
             .blue   {   color:  #03D;    }
             .metavar{   color:  #FF6464;    }
             img     {   max-width: 100%; }
+            img.screenshot {
+                display: block;
+                margin: 1em;
+                box-shadow: 1px 1px 3px black;
+            }
         </style>
     </head>
 
@@ -42,7 +47,7 @@
                         lidmi nebo se můžeš vrátit k dřívější verzi dokumentu,
                         když něco pokazíš a nemůžeš si vzpomenout, jak to bylo
                         předtím. Příklad toho, jak to může vypadat, je zde:
-                        <img src="dropbox.png">
+                        <img src="dropbox.png" class="screenshot" alt="Verzovací Rozhraní služby Dropbox">
                     </div>
                     <div>
                         Vidíme ale pouze verze <i>jednoho dokumentu</i> a navíc
@@ -135,14 +140,18 @@
                         Jdi na stránku
                         <a href="http://git-scm.org">git-scm.org</a>, stáhni si
                         Git, a nainstaluj si ho.
-                        Budeš chtít tohle nastavení:
+                        Při instalaci zadej tohle nastavení:
                         <ul>
                             <li>Run Git from the Windows Command Prompt</li>
                             <li>Checkout Windows-style, commit Unix-style line endings</li>
                         </ul>
                     </div>
                     <div>
-                        Pak jdi na stránku programu
+                        Počkej prosím na kouče, aby zkusil a zkontroloval, jestli na Windows funguje:
+                        <pre>$ git config --global core.editor notepad</pre>
+                    </div>
+                    <div>
+                        Jestli to nefunguje, jdi na stránku programu
                         <a href="https://github.com/github/GitPad">GitPad</a>,
                         a nainstaluj i ten.
                     </div>
@@ -199,11 +208,12 @@ Initialized empty Git repository in /tmp/tepo/.git/
                         Na první pohled to vypadá že se nic nestalo:
                         tenhle příkaz vytvořil <em>skrytý</em> adresář
                         <code>.git</code>, do kterého uložil nějaké informace.
-                        Přesvědč se přazem <code>ls -a</code> (Linux) nebo
+                        Přesvědč se příkazem <code>ls -a</code> (Linux) nebo
                         <code>dir /a</code> (Windows).
-                        Adresáře <code>.git</code> je schovaný proto, že
-                        ho spravuje Git. My v něm nebudeme nic měnit.
-                        <br>
+                        Adresář <code>.git</code> je schovaný proto, že
+                        ho spravuje Git a my bychom v něm neměly nic měnit.
+                    <div>
+                    </p>
                         V našem repozitáři zatím nic není.
                         Zkus to ověřit příkazem <code>git status</code>, který
                         vypisuje informace o stavu repozitáře:
@@ -215,10 +225,13 @@ Initial commit
 
 nothing to commit (create/copy files and use "git add" to track)
 </pre>
-                    </div>
+                    </p>
                 </section>
                 <section class="col-lg-12">
                     <h2>První revize</h2>
+                    <p>
+                        Teď si zkusme do Gitu něco přidat!
+                    </p>
                     <div>
                         Vytvoř soubor <code>basnicka.txt</code> a napiš do něj
                         nějakou básničku.
@@ -366,7 +379,8 @@ index 8416aea..333757f 100644
                         <div class="note">
                             Změnilo-li se na řádku jen jedno slovo nebo znak,
                             celý řádek se ukáže jako smazaný a zase přidaný.
-                            To se dá změnit.
+                            To se dá změnit, když je potřeba,
+                            ale je dobré si na tento standard zvyknout.
                         </div>
                         Takhle se dá jednoduše zjistit, co se dělo od poslední
                         verze.
@@ -408,8 +422,9 @@ Changes to be committed:
                         Nemá cenu popisovat co je jasné ze změn samotných,
                         zajímavé jsou hlavně širší souvislosti a důvody
                         ke změnám.
-                        Cokoli, co může přijít vhod až se revizi bude snažit
-                        někdo (třeba ty za pár let) pochopit.
+                        Cokoli, co může přijít vhod až se změny bude snažit
+                        někdo pochopit.
+                        (Ten někdo můžeš být klidně ty, za pár měsíců.)
                         <br>
                         Můj popisek bude znít takhle:
 <pre>
@@ -419,14 +434,14 @@ Sloučení řádků rozbíjí monotónnost formy básně – nestejný počet
 veršů ve sloce je prý moderní. (Ale, co si budeme povídat, hlavní 
 důvod je líp ukázat co dělá `git diff`.)
 
-Použití vykřičníků místo čárky zdůrazňuje naléhavost situace.
+Použití vykřičníku místo čárky zdůrazňuje naléhavost situace.
 </pre>
                         <div class="note">
                             Nebude-li se ti někdy dařit shrnout změnu
                             v 70 znacích, zamysli se, jestli neděláš moc velkou
-                            změnu najednou – např "přejmenování funkce X
-                            a dopsání funkce Y" by bylo lepší uložit jako dvě
-                            různé revize.
+                            změnu najednou – např. "změna řetězce X
+                            a dopsání nového cyklu Y" by bylo lepší uložit
+                            jako dvě různé revize.
                         </div>
                         Pomocí <code>git commit</code> vytvoř druhou revizi.
                         Pak ji zkontroluj:
@@ -500,7 +515,8 @@ Date:   Sun Jan 18 23:41:31 2015 +0100
                         Až budeš mít verzí tolik, že se nevejdou najednu
                         na obrazovku, můžeš se v logu pohybovat pomocí šipek a
                         <kbd>PageUp</kbd>/<kbd>PageDown</kbd>.
-                        „Ven“ se dostaneš klávesou <kbd>q</kbd>.
+                        „Ven“ se dostaneš klávesou <kbd>q</kbd> (stejně jako
+                        u výpisu z Pythoní funkce <code>help()</code>).
                         <br>
                         <div class="note">
                             Je spousta možností jak vypisovat historii pomocí
@@ -516,10 +532,17 @@ Date:   Sun Jan 18 23:41:31 2015 +0100
                             pořadí, a dej si pauzu vždycky když přestaneš
                             rozumět :)
                         </div>
+                        Když se na nějakou verzi budeš chtít podívat podrobněji,
+                        napiš <code>git show 5ff0b</code>, kde <code>5ff0b</code>
+                        nahraď prvními pár čísly z
+                        <span class="yellow">označení revize</span>.
+                    </div>
+                    <h2>gitk</h2>
+                    <div>
                         Z příkazové řádky se dá vyčíst všechno potřebné,
                         ale chce to trochu praxe.
-                        Protože začínáme, použijeme grafické „klikátko“ jménem
-                        <code>gitk</code>.
+                        Někdy je přehlednější, použít grafické „klikátko“ jménem
+                        <code>gitk</code>:
 <pre>
 $ gitk --all
 <img src="gitk.png">
@@ -533,146 +556,38 @@ $ gitk --all
                     </div>
                 </section>
                 <section class="col-lg-12">
-                    <h2>Větvení</h2>
+                    <h2>Závěr</h2>
                     <div>
-                        Máš procvičeno? Teď to začne být trošku složitější.
-                        <br>
-                        Programátorky občas potřebují pracovat na dvou věcích
-                        zároveň.
-                        Objeví se chyba, která musí být spravená
-                        ještě dnes, tak programátorka opustí co zrovna dělá,
-                        vrátí se k nějaké „stabilní” verzi, opraví chybu,
-                        a odešle ji zákazníkům.
-                        A pak se vrátí k tomu, co dělala předtím – jen ještě
-                        musí zakomponovat opravu chyby i do verze, na které
-                        pracuje dlouhodobě.
-                        <br>
-                        Git na to má takzvané <em>větve</em>
-                        (angl. <em> branches</em>).
-                        Na jedné „větvi” se pracuje, ale dá se přepnout do
-                        jiné (třeba starší) větve, udělat pár změn,
-                        a pak se zase přepnout do staré větve a
-                        pokračovat dál, nebo sloučit změny.
-                        <br>
-                        Větvení využijeme i při spolupráci více lidí – každý
-                        dělá na vlastní větvi, a když přijde čas,
-                        tak se různé změny sloučí dohromady.
+                        A to je všechno, co z Gitu zatím budeš potřebovat.
+                        Vždycky, když uděláš <code>git commit</code>,
+                        aktuální verze souborů se uloží, a už nejde (jednoduše)
+                        smazat (pokud nesmažeš celý adresář <code>.git</code>).
+                        Jednotlivé verze, a změny od posledního uložení,
+                        si umíš i prohlížet.
                     </div>
                     <div>
-                        Podívej se, jaké máš větve ve svém repozitáři.
-                        K tomu slouží příkaz <code>git branch</code>.
-<pre>
-$ git branch
-* <span class="green">master</span>
-</pre>
-                        Je tam jenom jedna, a jmenuje se <code>master</code>
-                        – to je tradičně jméno „hlavní” větve.
+                        Možná to všechno zní jako zbytečně moc práce.
+                        Máš tak trochu pravdu – naše projekty jsou zatím
+                        dost malé na to, aby se pro ně Git vyplatil.
+                        Ale je dobré ho používat už od začátku.
+                        Až bude správa verzí opravdu potřeba, bude se tenhle
+                        trénink hodit.
                     </div>
                     <div>
-                        K vytvoření nové větve znovu použiješ
-                        <code>git branch</code>, jen tomu příkazu dáš navíc
-                        jméno nové větve.
-                        Třeba budeš chtít k básničce doplnit jméno autora,
-                        tak větev pojmenuješ <code>doplneni-autora</code>.
-<pre>
-$ git branch doplneni-autora
-$ git branch
-* <span class="green">master</span>
-  doplneni-autora
-</pre>
-                        Tenhle příkaz sice udělal novou větev,
-                        ale nepřepnul do ní.
-                        Hvězdička ve výstupu z <code>git branch</code> ukazuje,
-                        že stále pracuješ v <code>master</code>.
-                        Na přepnutí budeš potřebovat další příkaz:
-<pre>
-$ git checkout doplneni-autora
-$ git branch
-  master
-* <span class="green">doplneni-autora</span>
-</pre>
-                        Tak. Teď jsme „ve” větvi <code>doplneni-autora</code>.
-                        Doplnit jméno do souboru <code>basnicka.txt</code>,
-                        a pomocí <code>git add</code> a <code>git commit</code>
-                        udělej novou revizi.
-                        Pak koukni na <code>gitk --all</code>, jak to vypadá:
-                        <div><img src="branch1.png"></div>
-                        Aktuální větev je zvýrazněná tučně,
-                        a <code>master</code> je stále na starší revizi.
+                        Takže, odteď, kdykoliv uděláš v rámci PyLadies funkční
+                        verzi nějakého programu, pomocí
+                        <code>git add</code> a <code>git commit</code>
+                        si ji ulož do Gitu.
                     </div>
                     <div>
-                        Opusťme teď na chvíli práci na doplňování autora.
-                        Vrať se do větve <code>master</code>, a vytvoř z ní
-                        větev <code>doplneni-jmena</code>.
-                        Pak se na tuhle novou větev přepni.
-<pre>
-$ git checkout master
-$ git branch doplneni-jmena
-$ git checkout doplneni-jmena
-$ git branch
-  master
-  doplneni-autora
-* <span class="green">doplneni-jmena</span>
-</pre>
-                        Doplň do souboru jméno básně, a pomocí
-                        <code>git add</code>, <code>git commit</code>
-                        ulož revizi.
-                        Všechno zkontroluj přes <code>gitk --all</code>.
-                        <div><img src="branches.png"></div>
-                        Dává to smysl?
-                    <hr>
-                        Nakonec změny sloučíme dohromady,
-                        protože bez sloučení by nemělo smysl takhle
-                        rozdvojovat vývoj.
-                        <br>
-                        Přepni se zpátky na <code>master</code>,
-                        a použij příkaz <code>git merge</code>, který
-                        sloučí jinou větev s tou aktuální.
-                        Příkazu musíš dát jméno větve, kterou chceš sloučit.
-<pre>
-$ git checkout master
-$ git merge doplneni-jmena
-Updating c33e43e..561d3ab
-Fast-forward
- basnicka.txt | 3 <span class="green">+++</span>
- 1 file changed, 3 insertions(+)
-</pre>
-                        Sloučeno! To „Fast-forward” znamená, že
-                        vlastně nebylo co slučovat – jen se do větve
-                        <code>master</code> přidaly nové změny.
-                        Zkontroluj v <code>gitk --all</code>, jak to vypadá.
-                        <br>
-                        A pak zkus sloučit i druhou větev.
-                        Tady to bude složitější: Může se stát, že změny nepůjdou
-                        automaticky sloučit, a ve výstupu se objeví hláška
-                        <code>merge conflict</code> (slučovací konflikt).
-                        V tom případě obnov soubor v editoru, kde se objeví
-                        obsah z obou konfliktních verzí. Soubor uprav ho tak,
-                        jak by měl vypadat, ulož, a zadej
-                        <code>git commit</code>
-                        <br>
-                        Ať nastal konflikt nebo ne, vytvoří se slučovací revize”
-                        (angl. <em>merge commit</em>), které můžeš dát popisek.
-<pre>
-$ git merge doplneni-autora
-Auto-merging basnicka.txt
-Merge made by the 'recursive' strategy.
- basnicka.txt | 1 <span class="green">+</span>
- 1 file changed, 1 insertion(+)
-</pre>
-                        Povedlo se?
-                        <div><img src="merge.png"></div>
-                        Pokud ano, můžeš staré větve vymazat – všechny jejich
-                        změny jsou v <code>master</code>, a nemá na nich cenu
-                        pracovat dál.
-<pre>
-$ git branch -d doplneni-autora
-Deleted branch doplneni-autora (was 230ace8).
-$ git branch -d doplneni-jmena
-Deleted branch doplneni-jmena (was 561d3ab).
-$ git branch
-* <span class="green">master</span>
-</pre>
+                        Zbyl-li čas, můžeme se podívat na další možnosti:
+                        <ul>
+                            <li>
+                                <a href="branching.html">Větvení</a> a vracení
+                                se ke starším verzím
+                            </li>
+                            <li>Sdílení a spolupráce</li>
+                        </ul>
                     </div>
                 </section>
                 <!-- (later)
