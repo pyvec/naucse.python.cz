@@ -10,7 +10,7 @@
         <style></style>
     </head>
 
-    <body class="no-reveal" oncopy="return false" oncut="return false">
+    <body class="no-reveal">
 
         <div class="container">
             <div class="no-reveal header">
@@ -23,15 +23,10 @@
                         <div>
                             Testy jsou funkce, které zkontrolují, že náš
                             program funguje správně.
-                            Výhoda psaní testů je ta, že je můžeme kdykoli
-                            spustit a ověřit si, že jsme v programu
-                            nic nerozbily.
-                        </div>
-                        <div>
-                            Testy se hodí psát, protože si pak můžeme být jisté
-                            (nebo jistější) jednak že to, co napíšeme,
-                            funguje správně, ale hlavně že když v kódu uděláme
-                            nějakou změnu, bude dál fungovat,
+                            Výhoda psaní testů je ta, že je můžeš kdykoli
+                            spustit a automaticky ověřit jednak že nově napsaný
+                            kód funguje správně, ale hlavně že i když jsi v kódu
+                            udělala nějakou změnu, nic jsi nerozbila,
                         </div>
                     </section>
                     <section>
@@ -39,7 +34,7 @@
                         <div>
                             Následující příkaz nainstaluje do aktivního
                             virtuálního prostředí knihovnu <code>pytest</code>,
-                            kterou bueme používat na testování.
+                            kterou budeme používat na testování.
                         </div>
 <pre>
 (venv)$ pip install pytest
@@ -53,7 +48,7 @@
                     <section>
                         <h2>Psaní testů</h2>
                         <div>
-                            Testy se píšou se takhle (kód dej do souboru
+                            Testy se píšou takhle (kód dej do souboru
                             <code>test_secteni.py</code>):
                         </div>
 <pre>
@@ -65,8 +60,8 @@ def test_secti():
 </pre>
                         <div>
                             Příkaz <code>assert</code> vyhodnotí výraz za ním,
-                            a pokud není pravdivý, vyvolá výjimku.
-                            Následující dva příkazy tedy dělají to samé:
+                            a pokud výsledek není pravdivý, vyvolá výjimku.
+                            Následující dva příkazy tedy dělají (skoro) to samé:
                         </div>
 <pre>
 assert a == b
@@ -94,12 +89,12 @@ test_secteni.py:4: test_secti PASSED
                         <div>
                             Tento příkaz projde všechny soubory v aktuálním
                             adresáři, jejichž jméno začíná na <code>test_</code>,
-                            a zavolá v nich všechny funkce,
+                            zavolá v nich všechny funkce,
                             jejichž jméno začíná na <code>test_</code>,
                             a ověří, že nevyvolají žádnou výjimku.
                             Pokud výjimka nastane, dá to velice červeně
                             najevo, a přidá několik informací které můžou
-                            usnadnit opravu chyby.
+                            usnadnit nalezení a opravu chyby.
                         </div>
                     </section>
                     <section>
@@ -125,8 +120,12 @@ def test_tah():
                             kód, který není ve funkcích
                             (t.j. samotné volání funkce <code>piskvorky1d</code>).
                             Příkazem <code>py.test</code> teď můžeme
-                            otestovat funkci <code>tah_pocitace</code>!
+                            otestovat, že funkce <code>tah_pocitace</code>
+                            funguje (s prázdným hracím polem)!
                         </div>
+                    </section>
+                    <section>
+                        <h2>Spouštěcí moduly</h2>
                         <div>
                             Kód, který není ve funkcích, vynecháváme proto,
                             že <code>import</code> provede všechny příkazy,
@@ -135,17 +134,18 @@ def test_tah():
                             (<code>def</code>-y a všechno v nich)
                             jen definují funkce, nemají žádný další účinek,
                             ale <em>volání</em> funkce <code>piskvorky1d</code>
-                            spustí hru, zavolá se <code>tah_hrace</code>
-                            a v ní i <code>input</code>. Testy ale nemají jak
+                            spustí hru: zavolá se <code>tah_hrace</code>
+                            a z ní i <code>input</code>. Testy ale nemají jak
                             se ptát uživatele na vstup, takže by neuspěly.
                         </div>
-                    </section>
-                    <section>
-                        <h2>Spouštěcí moduly</h2>
                         <div>
-                            Teď vytvoř modul <code>hra.py</code>, který
-                            bude obsahovat jen volání funkce
-                            <code>piskvorky1d</code>:
+                            No jo, ale po odstranění volání <code>piskvorky1d</code>
+                            už nejde jednoduše spustit hra! Co s tím?
+                        </div>
+                        <div>
+                            Můžeme na to vytvořit nový modul.
+                            Pojmenuj ho <code>hra.py</code>, a napiš do něj
+                            jenom to volání:
                         </div>
 <pre>
 import piskvorky
@@ -153,10 +153,12 @@ import piskvorky
 piskvorky.piskvorky1d()
 </pre>
                         <div>
-                            Tenhle modul nebudeme testovat, protože
-                            nepřímo pustí funkci <code>input()</code>.
-                            Budeme ho jen spouštět, když si budeme
+                            Tenhle modul nebudeme testovat (protože
+                            nepřímo volá funkci <code>input()</code>),
+                            ale můžeme ho spustit, když si budeme
                             chtít zahrát.
+                            Protože k němu nejsou testy, měl by být
+                            co nejjednodušší.
                         </div>
                     </section>
                     <section>
@@ -172,9 +174,9 @@ piskvorky.piskvorky1d()
                             Na to použijeme příkaz <code>with</code>
                             a funkci <code>raises</code> naimportovanou
                             z modulu <code>pytest</code>.
-                            Jak tento příkaz přesně funguje se dozvíme později,
+                            Jak tento příkaz přesně funguje se dozvíme později;
                             teď stačí říct, že tehnle příkaz
-                            ověří že odsazený blok kódu
+                            ověří, že odsazený blok kódu
                             pod ním vyvolá danou výjimku:
                         </div>
 <pre>
@@ -190,10 +192,10 @@ def test_tah_chyba():
                             Testy, které kontrolují reakci na špatný vstup,
                             se jmenují <em>negativní testy</em>.
                             Většinou kontrolují že nastane (správná) chyba.
-                            Když náš kód pak použijeme ve větším programu,
-                            můžeme si být jisty, že při špatném volání
-                            dostaneme chyby – a srozumitelné chyby
-                            se lépe opravují.
+                            Když náš kód pak použiješ ve větším programu,
+                            můžeš si být jistá, že při špatném volání
+                            dostaneš srozumitelnou chybu – tedy takovou,
+                            která se snadno opravuje.
                         </div>
                     </section>
                 </section>

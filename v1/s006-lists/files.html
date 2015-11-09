@@ -9,7 +9,7 @@
         <style></style>
     </head>
 
-    <body class="no-reveal" oncopy="return false" oncut="return false">
+    <body class="no-reveal">
 
         <div class="container">
             <div class="no-reveal header">
@@ -85,7 +85,7 @@ print('Jak se ti líbí?')
 </pre>
                         <aside class="notes">
                             Když to zkusíš, zjistíš, že trochu nesedí
-                            řádkování. Umíš vysvětlit, proč tomu tak je?
+                            řádkování. Zkusíš vysvětlit, proč tomu tak je?
 <details class="solution"><h3>Vysvětlení</h3>
 Každý řádek končí znakem nového řádku (<code>'\n'</code>).
 Při procházení souboru Python tento znak nechává na konci řetězce
@@ -97,7 +97,7 @@ To je jeden způso jak řádkování „spravit“; další je použít metodu
 
 <div class="note"><small>
 ¹ Proč to dělá? Kdyby <code>'\n'</code> na konci řádků nebylo,
-nedalo by se dobře rozlišit např. jestli poslední řádek
+nedalo by se např. dobře rozlišit jestli poslední řádek
 končí na <code>'\n'</code>.
 </small></div>
 </details>
@@ -107,19 +107,26 @@ končí na <code>'\n'</code>.
                         <h2>Zavírání souborů</h2>
                         <aside class="notes">
                             Je docela důležité soubory potom, co s nimi
-                            přestaneme pracovat, zavřít.
-                            Operační systémy zase mají limity na počet
+                            přestaneme pracovat, zavřít
+                            (pomocí metody <code>close()</code>).
+                            Operační systémy mají limity na počet
                             současně otevřených souborů, které se nezavíráním
                             dají snadno překročit.
-                            Na Windows navíc nemůžeš soubor, který je právě
-                            otevřený (byť jen proto, žes jej zapoměla zavřít),
-                            otevřít znovu.
+                            Na Windows navíc nemůžeš soubor, který je stále
+                            otevřený, otevřít znovu.
+                        </aside>
+                        <aside class="notes">
+                            Soubory se dají přirovnat k ledničce: abychom něco
+                            mohly z ledničky vzít, nebo dát dovnitř, musíme
+                            ji napřed otevřít, a nakonec zavřít.
+                            Bez zavření to sice na první pohled funguje taky,
+                            ale pravděpodobně potom brzo něco zplesniví.
                         </aside>
                         <aside class="notes">
                             Zapomenout zavřít soubor je docela jednoduché:
                             například pokud by v rámci zpracování souboru
-                            nastane výjimka nebo by se ukončilo provádění
-                            funkce pomocí <code>return</code>, náš předchozí
+                            nastane výjimka nebo kdybys vyskočila z funkce
+                            pomocí <code>return</code>, náš předchozí
                             kód by <code>close</code> nezavolal,
                             a soubor by zůstal otevřený.
                         </aside>
@@ -127,7 +134,7 @@ končí na <code>'\n'</code>.
                             K tomu, abychom soubor nezapomněly v podobných
                             příkazech zavřít, slouží příkaz
                             <code>try/finally</code>, který jsme si ukázaly
-                            minule v souvislosti s výjimkami.
+                            v souvislosti s výjimkami.
                         </aside>
                         <aside class="notes">
                             Pro připomenutí, <code>finally</code> se provede
@@ -144,12 +151,9 @@ def iniciala():
 print(iniciala())
 </pre>
                         <aside class="notes">
-                            Blok <code>finally</code> se v praxi používá vždycky,
+                            Blok <code>finally</code> se dá v praxi použít vždycky,
                             když je potřeba něco ukončit nebo zavřít – ať už
-                            je to soubor, nebo třeb připojení k databázi.
-                            Přechodné soubory, do kterých si program odkládá
-                            informace, se v blocích <code>finally</code>
-                            často nejen zavřou, ale i smažou z disku.
+                            je to soubor, nebo třeba připojení k databázi.
                         </aside>
                     </section>
                     <section>

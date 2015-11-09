@@ -25,11 +25,17 @@
                 <section class="col-lg-12">
                     <section>
                         <h1>Výjimky</h1>
+                        <p>
+                            Výjimky už známe: Python si postěžuje, řekne kde
+                            je chyba, a ukončí program.
+                            To ale není všechno, co výjimky umí.
+                            Pojďme si o nich ukázat něco víc.
+                        </p>
                     </section>
                     <section>
                         <h2>Výpisy chyb</h2>
                         <div>
-                            Na začátku našeho povídání o chybách si ukážeme,
+                            Na začátku si ukážeme (nebo zopakujeme),
                             jak se vypisuje chyba, která nastane v zanořené
                             funkci:
                         </div>
@@ -45,7 +51,7 @@ print(vnejsi_funkce())
 
 <pre>
 Traceback (most recent call last):          
-  File "/tmp/ukazka.py", line <span class="err-lineno">7</span>, in <module>
+  File "/tmp/ukazka.py", line <span class="err-lineno">7</span>, in &lt;module&gt;
     print(vnejsi_funkce())
   File "/tmp/ukazka.py", line <span class="err-lineno">2</span>, in vnejsi_funkce
     return vnitrni_funkce(0)
@@ -55,13 +61,13 @@ ZeroDivisionError: division by zero
 </pre>
 
                         <div>
-                            Všimni si, že každá funkce, jejíš volání vedlo
+                            Všimni si, že každá funkce, jejíž volání vedlo
                             k chybě, je uvedena ve výpisu.
                             Skutečná chyba (tedy místo, které musíme opravit)
                             je pravděpodobně poblíž některého z těchto volání.
                             V našem případě bychom asi neměly volat
                             <code>vnitrni_funkce</code> s argumentem
-                            <code>0</code> – a nebo by
+                            <code>0</code>. A nebo by
                             <code>vnitrni_funkce</code> měla být na nulu
                             připravená a dělat v tomto případě něco jiného.
                         </div>
@@ -79,7 +85,7 @@ ZeroDivisionError: division by zero
 VELIKOST_POLE = 20
 
 def over_cislo(cislo):
-    if 0 &lt; cislo &lt;= VELIKOST_POLE:
+    if 0 &lt;= cislo &lt; VELIKOST_POLE:
         print('OK!')
     else:
         raise ValueError('Čislo {n} není v poli!'.format(n=cislo))
@@ -88,13 +94,13 @@ def over_cislo(cislo):
                             Všechny typy výjimek, které jsou zabudované
                             v Pythonu, jsou popsané
                             <a href="https://docs.python.org/3.2/library/exceptions.html#exception-hierarchy">
-                                v dokumentaci Pythonu
-                            </a>.
-                            Pro nás jsou důležité tyto:
+                                v dokumentaci.
+                            </a>
+                            Pro nás jsou (nebo budou) důležité tyto:
                         </div>
 <pre>
 BaseException
- ├── SystemExit                     vyvolá funkce exit()
+ ├── SystemExit                     vyvolána funkcí exit()
  ├── KeyboardInterrupt              vyvolána po stisknutí Ctrl+C
  ╰── Exception
       ├── ArithmeticError
@@ -115,6 +121,13 @@ BaseException
                     </section>
                     <section>
                         <h2>Ošetření chyby</h2>
+                        <p>
+                            A proč jich je tolik druhů?
+                            Abychom je mohly chytat!
+                            Následující program je připravený na to, že
+                            funkce <code>int</code> může selhat, pokud
+                            uživatel nezadá číslo:
+                        </p>
 <pre>
 def nacti_cislo():
     odpoved = input('Zadej číslo: ')
@@ -133,7 +146,33 @@ def nacti_cislo():
                         </div>
                     </section>
                     <section>
-                        <h2>Všechny příkazy</h2>
+                        <h2>Nechytej je všechny!</h2>
+                        <div>
+                            Většinu chyb není potřeba ošetřovat.
+                        </div>
+                        <div>
+                            Nastane-li nečekaná situace, je téměř vždy
+                            <em>mnohem</em> lepší program ukončit, než se snažit
+                            pokračovat dál počítat se špatnými hodnotami.
+                            Navíc chybový výstup který Python standardně
+                            připraví, může hodně ulehčit hledání chyby.
+                        </div>
+                        <div>
+                            „Ošetřování” chyb jako <code>KeyboardInterrupt</code>
+                            je ještě horší: může způsobit, že program nepůjde
+                            ukončit, když bude potřeba.
+                        </div>
+                        <div>
+                            Příkaz <code>try/except</code> proto používej
+                            jen v situacích, kdy víš přesně která chyba může
+                            nastat a proč, a máš možnost ji opravit.
+                            Pro nás to typicky bude načítání vstupu
+                            od uživatele, kdy máme po špatném pokusu
+                            o zadání možnost zeptat se znovu.
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Další přílohy k <code>try</code></h2>
                         <div>
                             Kromě <code>except</code> existují dva jiné bloky,
                             které k <code>try</code> můžeme přilepit:
@@ -162,7 +201,7 @@ finally:
                         <h2>Úkol</h2>
                         <div>
                             Doplň do 1-D piškvorek ošetření chyby, která
-                            nastane když uživatel nezadal číslo.
+                            nastane když uživatel nezadá číslo.
                         </div>
 <details class="solution notes"><h3>Řešení</h3>
 <pre>
