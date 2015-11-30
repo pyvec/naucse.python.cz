@@ -1,0 +1,642 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 06-03 – Seznamy</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style>
+            .new { background-color: #fee; margin: -10px -1000px; padding: 10px 1000px; }
+        </style>
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="slides row stuff">
+                <section class="col-lg-12">
+                    <section>
+                        <p>
+                            Tahle kapitola je plná nových věcí.
+                            Doufám že vydržíš až do konce. A kdyby něco
+                            zatím nedávalo úlně smysl, nevěš hlavu: na příště
+                            máme naplánováno praktické využití věcí,
+                            které se teď naučíme.
+                            <div>
+                                Všechno z této stránky shrnuje
+                                <a href="https://github.com/encukou/cheatsheets/blob/master/lists/lists-cs.svg">Tahák na seznamy</a>,
+                                který si doporučuju vytisknout.
+                            </div>
+                        </p>
+                        <h1>Seznamy</h1>
+                        <p>
+                            Dnes si ukážeme, jak pracovat se <em>seznamy</em>
+                            (angl. <em>lists</em>).
+                            Doufám že víš, kde máš na klávesnici hranaté
+                            závorky, protože právě těmi se seznamy vytváří:
+<pre>
+fibonacciho_cisla = [1, 1, 2, 3, 5, 8, 13]
+print(fibonacciho_cisla)
+</pre>
+                        </p>
+                        <div class="note">
+                            Nemůžeš najít hranaté závorky?
+                            Na české klávesnici zkus pravý Alt + F a G.
+                        </div>
+                        <p>
+                            Seznam je hodnota, která může obsahovat spoustu
+                            dalších hodnot.
+                            Tak jako řetězec obsahuje sekvenci znaků,
+                            seznam obsahuje sekvenci... čehokoliv.
+                            A tak jako můžeme pomocí cyklu <code>for</code>
+                            procházet řetězec po znacích,
+                            seznam můžeme procházet po jednotlivých prvcích:
+<pre>
+for cislo in fibonacciho_cisla:
+    print(cislo)
+</pre>
+                        </p>
+                        <p>
+                            Seznamy se v programech vyskytují velice často:
+                            soubor se dá načíst jako seznam řetězců
+                            s jednotlivými řádky,
+                            seznam řetězců jako <code>'7♥'</code>
+                            a <code>'K♣'</code> může posloužit jako balíček karet,
+                            matematika je plná číselných řad,
+                            každá online služba má seznam uživatelů.
+                        </p>
+                        <p>
+                            Hodnoty v seznamu můžou být jakéhokoli typu,
+                            dokonce můžeme různé typy míchat v jednom seznamu
+                            (i když s takovými namixovanými seznamy se
+                            příliš často nesetkáme – více se používají v
+                            <i>n</i>-ticích, o kterých si povíme později):
+<pre>
+seznam = [1, 'abc', True, None, range(10), len]
+print(seznam)
+</pre>
+                        </p>
+                        <h2>Vybírání ze seznamů</h2>
+                        <p>
+                            Nejzákladnější operaci se seznamy,
+                            cyklus <code>for</code>, už jsme si ukázaly;
+                            druhá nejdůležitější operace je vybírání
+                            prvků seznamu.
+                            To funguje jako u řetězců: do hranatých závorek
+                            se dá číslo prvku. Čísluje se, jako u řetězců,
+                            od nuly; záporná čísla označují prvky od konce.
+<pre>
+print(fibonacciho_cisla[2])
+</pre>
+                        </p>
+                        <p>
+                            Hranatými závorkami můžeme získávat podseznamy.
+                            <a href="../s004-strings/strings.html#slicing-diagram">
+                                Diagram z materiálů k řetězcům
+                            </a>
+                            ukazuje, jak u takového „sekání” číslovat:
+                            funguje to stejně, jen místo menšího řetězce
+                            dostaneme menší seznam.
+<pre>
+print(fibonacciho_cisla[2:-3])
+</pre>
+                        </p>
+                        <h2>Měnění seznamů</h2>
+                        <p>
+                            Důležitá vlastnost seznamů,
+                            kterou nemají ani čísla, ani řetězce
+                            (a True/False/None už vůbec ne), je,
+                            že seznamy se dají měnit.
+                        </p>
+                        <p>
+                            Čísla měnit nejdou – máme-li <code>a = 3</code> a
+                            napíšeme <code>a = a + 1</code>;
+                            číslo <code>3</code> se nezmění.
+                            Vypočítá se nové
+                            číslo <code>4</code> a proměnná <code>a</code>
+                            se nastaví na toto nové číslo.
+                        </p>
+                        <p>
+                            Oproti tomu seznamy se dají měnit bez nastavování
+                            proměnné.
+                            Základní způsob, jak změnit seznam, je přidání
+                            prvku na konec pomocí metody <code>append</code>.
+                            Ta <em>nic nevrací</em> (resp. vrací None),
+                            ale „na místě” (angl. <em>in place</em>) změní
+                            seznam, na kterém pracuje:
+<pre>
+prvocisla = [2, 3, 5, 7, 11, 13, 17]
+print(prvocisla)
+prvocisla.append(19)
+print(prvocisla)
+</pre>
+                        </p>
+                        <p>
+                            Takové měnění hodnoty může být občas překvapující,
+                            protože stejnou hodnotu může mít více proměnných.
+                            Protože se mění hodnota samotná, můžeme „změnit
+                            proměnnou” aniž na ni „sáhneme”:
+                        </p>
+<pre>
+a = [1, 2, 3]   # vytvoření seznamu
+b = a           # tady se nový seznam nevytváří
+
+# seznam vytvořený v prvním řádku má teď dvě jména: "a" a "b",
+# ale stále pracujeme jenom s jedním seznamem.
+
+print(b)
+a.append(4)
+print(b)
+</pre>
+                        <h2>Další způsoby, jak měnit seznamy</h2>
+                        <p>
+                            Kromě metody <code>append</code>, která přidává
+                            jediný prvek, existuje metoda <code>extend</code>,
+                            která umí přidávat prvků víc.
+                            Prvky k přidání ji předáme ve formě seznamu:
+<pre>
+dalsi_prvocisla = [23, 29, 31]
+prvocisla.extend(dalsi_prvocisla)
+print(prvocisla)
+</pre>
+                        </p>
+                        <p>
+                            Metoda <code>extend</code> umí pracovat i s jinými
+                            typy než se seznamy – ráda zpracuje cokoli, přes
+                            co umí cykilt <code>for</code>: např.
+                            jednotlivé znaky řetězců, řádky souborů, nebo čísla
+                            z <code>range()</code>.
+                        </p>
+<pre>
+seznam = []
+seznam.extend('abcdef')
+seznam.extend(range(10))
+print(seznam)
+</pre>
+                        <h3>Měnění prvků</h3>
+                        <p>
+                            Ale dost přidávání.
+                            Seznamům se dají i měnit jednotlivé prvky,
+                            a to jednoduše tak, že do prvku přiřadíme
+                            jako by to byla proměnná:
+<pre>
+cisla = [1, 0, 3, 4]
+cisla[1] = 2
+print(cisla)
+</pre>
+                        </p>
+                        <p>
+                            Přiřazovat se dá i do podseznamu – v tomto případě
+                            se podseznam nahradí jednotlivými prvky z toho,
+                            co přiřazujeme.
+                            Jako u <code>extend</code>,
+                            do podseznamu můžeme opět přiřadit cokoli, co umí
+                            zpracovat <code>for</code> – seznam, řetězec,
+                            <code>range()</code> apod.
+<pre>
+cisla = [1, 2, 3, 4]
+cisla[1:-1] = [6, 5]
+print(cisla)
+</pre>
+                        </p>
+                        <h3>Mazání prvků</h3>
+                        <p>
+                            Přiřazením do podseznamu se dá i změnit délka
+                            seznamu, nebo některé prvky úplně odstranit:
+<pre>
+cisla = [1, 2, 3, 4]
+cisla[1:-1] = [0, 0, 0, 0, 0, 0]
+print(cisla)
+cisla[1:-1] = []
+print(cisla)
+</pre>
+                        </p>
+                        <p>
+                            Tenhle zápis pro mazání prvků je ale docela
+                            nepřehledný, a proto na to máme zvláštní příkaz
+                            jménem <code>del</code>.
+                            Jak už jeho název (z angl. <em>delete</em>, smazat)
+                            napovídá, smaže, co mu přijde pod ruku – jednotlivé
+                            prvky seznamů, podseznamy, … a dokonce i proměnné!
+<pre>
+cisla = [1, 2, 3, 4, 5, 6]
+del cisla[-1]
+print(cisla)
+del cisla[3:5]
+print(cisla)
+del cisla
+print(cisla)
+</pre>
+                        </p>
+                        <p>
+                            Další mazací metody jsou:
+                            <ul>
+                                <li>
+                                    <code>pop</code>, která odstraní <em>a vrátí</em>
+                                    poslední prvek v seznamu – například pokud
+                                    mám seznam karet v balíčku, jde takhle
+                                    jednoduše „líznout” kartu,
+                                </li>
+                                <li>
+                                    <code>remove</code>, která najde v seznamu
+                                    daný prvek a odstraní ho,
+                                </li>
+                                <li>
+                                    <code>clear</code>, která vyprázdní celý
+                                    seznam.
+                                </li>
+                            </ul>
+                        </p>
+<pre>
+cisla = [1, 2, 3, 'abc', 4, 5, 6, 12]
+posledni = cisla.pop()
+print(posledni)
+print(cisla)
+
+cisla.remove('abc')
+print(cisla)
+
+cisla.clear()
+print(cisla)
+</pre>
+                        <h3>Řazení</h3>
+                        <p>
+                            A taky tu máme metodu <code>sort</code>,
+                            která prvky seznamu seřadí.
+<pre>
+seznam = [4, 7, 8, 3, 5, 2, 4, 8, 5]
+seznam.sort()
+print(seznam)
+</pre>
+                        </p>
+                        <p>
+                            Aby se daly seřadit, musí být prvky seznamu
+                            <em>porovnatelné</em> – konktrétně na ně musí fungovat
+                            operátor <code>&lt;</code>.
+                            Seznam s mixem čísel a řetězců tedy
+                            seřadit nepůjde.
+                            Operátor <code>&lt;</code> definuje i
+                            jak přesně se řadí (např. čísla podle velikosti;
+                            řetězce podle speciální „abecedy” která řadí
+                            velká písmena za malá, česká až za anglická, atd.).
+                        </p>
+                        <p>
+                            Metoda <code>sort</code> zná pojmenovaný argument
+                            <code>reverse</code>. Pokud ho nastavíme
+                            na <em>true</em>, řadí se „naopak”.
+                        </p>
+<pre>
+seznam = [4, 7, 8, 3, 5, 2, 4, 8, 5]
+seznam.sort(reverse=True)
+print(seznam)
+</pre>
+                        <h2>Známé operace se seznamy</h2>
+                        <p>
+                            Spousta toho, co můžeme dělat s řetězci, má stejný
+                            účinek i u seznamů.
+                            Třeba sečítání a násobení číslem:
+<pre>
+melodie = ['C', 'E', 'G'] * 2 + ['E', 'E', 'D', 'E', 'F', 'D'] * 2 + ['E', 'D', 'C']
+print(melodie)
+</pre>
+                        </p>
+                        <p>
+                            Stejně jako u řetězců, sečítat jde jen seznam
+                            se seznamem – ne třeba seznam s řetězcem.
+                        </p>
+                        <p>
+                            Další staří známí jsou funkce <code>len</code>,
+                            metody <code>count</code> a <code>index</code>,
+                            a operátor <code>in</code>.
+<pre>
+print(len(melodie))         # Délka seznamu
+print(melodie.count('D'))   # Počet 'D' v seznamu
+print(melodie.index('D'))   # Číslo prvního 'D'
+print('D' in melodie)       # Je 'D' v seznamu?
+</pre>
+                        </p>
+                        <p>
+                            Poslední tři se ale přece jen chovají kapku jinak:
+                            u řetězců pracují s <em>podřetězci</em>,
+                            u seznamů jen s <em>jednotlivými</em> prvky.
+                            Takže ačkoliv naše melodie obsahuje prvky
+                            <code>'D'</code> a <code>'E'</code>
+                            vedle sebe, <code>'DE'</code> v seznamu není:
+                        </p>
+<pre>
+print('DE' in melodie)
+print(melodie.count('DE'))
+print(melodie.index('DE'))
+</pre>
+                        <h2>Seznam jako podmínka</h2>
+                        <p>
+                            Seznam se dá použít v příkazu <code>if</code>
+                            (nebo <code>while</code>) jako podmínka,
+                            která platí když v tom seznamu něco je.
+                            Jinými slovy, <code>seznam</code> je tu zkratka pro
+                            <code>len(seznam) &gt; 0</code>.
+<pre>
+if seznam:
+    print('V seznamu něco je!')
+else:
+    print('Seznam je prázdný!')
+</pre>
+                        </p>
+                        <p>
+                            Podobně se dají v podmínce použít i řetězce.
+                            A dokonce i čísla –
+                            ty jako podmínka platí, pokud jsou nenulová.
+                        </p>
+                        <h2>Tvoření seznamů</h2>
+                        <p>
+                            Tak jako funkce <code>int</code> převádí na
+                            celá čísla a <code>str</code> na řetězce,
+                            funkce <code>list</code> (angl. <em>seznam</em>)
+                            převádí na seznam.
+                            Jako argument jí předáme jakoukoli hodnotu,
+                            kterou umí zpracovat příkaz <code>for</code>.
+                            Z řetězců udělá seznam znaků, z otevřeného souboru
+                            udělá seznam řádků, z <code>range</code> udělá
+                            seznam čísel.
+<pre>
+abeceda = list('abcdefghijklmnopqrstuvwxyz')
+cisla = list(range(100))
+print(abeceda)
+print(cisla)
+</pre>
+                        </p>
+                        <p>
+                            I ze seznamu udělá funkce <code>list</code> seznam.
+                            To může znít zbytečně, ale není – vytvoří se
+                            totiž <em>nový</em> seznam.
+                            Bude mít sice stejné prvky ve stejném pořadí,
+                            ale nebude to ten samý seznam:
+                            měnit se bude nezávisle na tom starém.
+<pre>
+a = [1, 2, 3]
+b = list(a)
+
+print(b)
+a.append(4)
+print(b)
+</pre>
+                        </p>
+                        <p>
+                            Další způsob, jak tvořit seznamy
+                            (zvláště složitější), je nejdřív udělat prázdný
+                            seznam, a pak ho postupně naplnit pomocí funkce
+                            <code>append</code>.
+                            Třeba pokud z nějakého důvodu chceš seznam
+                            mocnin dvou, projdi čísla kterými chceme mocnit
+                            cyklem <code>for</code>, a pro každé z nich
+                            do seznamu přidej příslušnou mocninu:
+<pre>
+mocniny_dvou = []
+for cislo in range(10):
+    mocniny_dvou.append(2 ** cislo)
+print(mocniny_dvou)
+</pre>
+                        </p>
+                        <p>
+                            Chceš-li seznam, který reprezentuje balíček karet,
+                            zavolej <code>append</code> pro všechny kombinace
+                            barev a hodnot.
+<pre>
+balicek = []
+for barva in '♠', '♥', '♦', '♣':  # (Na Windows použij textová jména)
+    for hodnota in list(range(2, 11)) + ['J', 'K', 'Q', 'A']:
+        balicek.append((str(hodnota) + barva))
+print(balicek)
+</pre>
+                        </p>
+                        <h2>Seznamy a řetězce</h2>
+                        <p>
+                            Seznamy a řetězce jsou druhy „sekvencí”,
+                            takže snad nepřekvapí, že se dá různě převádět
+                            z jednoho typu na druhý.
+                            Funkce <code>list</code> vytvoří z řetězce
+                            seznam znaků.
+                            Když chceme dostat seznam slov, použijeme
+                            na řetězci metodu <code>split</code>
+                            (angl. <em>rozdělit</em>):
+<pre>
+slova = 'Tato věta je složitá, rozdělme ji na slova!'.split()
+print(slova)
+</pre>
+                        </p>
+                        <p>
+                            Metoda <code>split</code> umí brát i argument.
+                            Pokud ho předáme, místo mezer (a nových řádků)
+                            se řetězec „rozseká” daným oddělovačem.
+                            Takže když máme nějaká data oddělená čárkami,
+                            není nic jednoduššího než použít <code>split</code>
+                            s čárkou:
+<pre>
+zaznamy = '3A,8B,2X,9D'.split(',')
+print(zaznamy)
+</pre>
+                        </p>
+                        <p>
+                            Chceme-li spojit seznam řetězců zase dohromady,
+                            do jediného řetězce, použijeme metodu
+                            <code>join</code> (angl. <em>spojit</em>).
+                            Pozor, tahle metoda se volá na <em>oddělovači</em>,
+                            tedy řetězci, kterým se jednotlivé kousky „slepí”
+                            dohromady; a jako argument bere seznam jednotlivých
+                            řetězců.
+                        </p>
+<pre>
+veta = ' '.join(slova)
+print(veta)
+</pre>
+                        <h2>Úkol</h2>
+                        <p>
+                            Některé z vás pro 1-D piškvorky udělali funkci
+                            <code>tah_pocitace</code>, která umí hrát jen
+                            za křížky.
+                            Takové funkce se nedají přímo použít v turnaji,
+                            kde jeden z hráčů musí hrát za kolečka.
+                        </p>
+                        <p>
+                            Jedno z možných řešení je napsat funkci, která
+                            zamění v řetězci všechna <code>'x'</code> za
+                            <code>'o'</code> a naopak.
+                        </p>
+<pre>
+print(zamen_xo('---xo--xooxxox-'))  <span class="comment"># → '---ox--oxxooxo-'</span>
+</pre>
+                        <p>
+                            Pak se dá napsat funkce, která pokud má hrát
+                            za kolečka,
+                            <ul>
+                                <li>zamění v hracím poli 'x'↔'o',</li>
+                                <li>na výsledek zavolá funkci, která zahraje křížek,</li>
+                                <li>a ve výsledku opět zamění 'x'↔'o'.</li>
+                            </ul>
+                            Původní křížky a kolečka tak zůstanou na svých
+                            místech, ale nově přidaný křížek se nahradí
+                            za kolečko.
+                        </p>
+<pre>
+def tah_pocitace(pole, symbol):
+    if symbol == 'x':
+        return tah_pocitace_x(pole)
+    else:
+        return zamen_xo(tah_pocitace_x(zamen_xo(pole)))
+</pre>
+                        <p>
+                            Zkus napsat funkci <code>zamen_xo</code>.
+                            Udělej v ní seznam jednotlivých znaků
+                            (viz sekce Tvoření seznamů),
+                            a pak ho převéď na řetězec pomocí
+                            <code>join</code>.
+                        </p>
+<details class="solution notes"><h3>Řešení</h3>
+<pre>
+def zamen_xo(retezec):
+    vysledek = []
+    for znak in retezec:
+        if znak == 'o':
+            vysledek.append('x')
+        elif znak == 'x':
+            vysledek.append('o')
+        else:
+            vysledek.append(znak)
+    return ''.join(vysledek)
+</pre>
+                        <p>
+                            Prázdný oddělovač způsobí, že se jednotlivé
+                            prvky seznamu „nalepí” těsně vedle sebe.
+                        </p>
+</details>
+                        <h2>Seznamy a náhoda</h2>
+                        <p>
+                            Modul <code>random</code> obsahuje dvě funkce,
+                            které se hodí k seznamům.
+                            Jako <code>random.randrange</code>, obě mají něco
+                            společného s náhodou.
+                        </p>
+                        <p>
+                            Funkce <code>shuffle</code> seznam „zamíchá” –
+                            všechny prvky náhodně popřehází.
+                            Jako metoda <code>sort</code>, i funkce
+                            <code>shuffle</code> nic nevrací.
+<pre>
+import random
+
+balicek = []
+for barva in '♠', '♥', '♦', '♣':
+    for hodnota in list(range(2, 11)) + ['J', 'K', 'Q', 'A']:
+        balicek.append((str(hodnota) + barva))
+print(balicek)
+
+random.shuffle(balicek)
+print(balicek)
+</pre>
+                        </p>
+                        <p>
+                            A funkce <code>choice</code> ze seznamu vybere
+                            jeden náhodný prvek.
+                            S použitím seznamu tak můžeme výrazně zjednodušit
+                            úvodní část naší staré hry kámen/nůžky/papír :
+<pre>
+import random
+mozne_tahy = ['kámen', 'nůžky', 'papír']
+tah_pocitace = random.choice(mozne_tahy)
+</pre>
+                        </p>
+                        <h2>Vnořené seznamy</h2>
+                        <p>
+                            A perlička na konec!
+                            Na začátku tohoto textu je napsáno, že v seznam
+                            může obsahovat jakýkoli typ hodnot.
+                            Samozřejmě může obsahovat i další seznamy:
+<pre>
+seznam_seznamu = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+</pre>
+                        </p>
+                        <p>
+                            Takový seznam se chová docela normálně – jdou
+                            z něj třeba brát jednotlivé prvky
+                            (které jsou ovšem taky seznamy):
+<pre>
+prvni_seznam = seznam_seznamu[0]
+print(prvni_seznam)
+</pre>
+                        </p>
+                        <p>
+                            A protože jsou prvky samy seznamy,
+                            můžeme mluvit o věcech jako „první prvek
+                            druhého seznamu”:
+<pre>
+druhy_seznam = seznam_seznamu[1]
+prvni_prvek_druheho_seznamu = druhy_seznam[0]
+print(prvni_prvek_druheho_seznamu)
+</pre>
+                        </p>
+                        <p>
+                            A protože výraz <code>seznam_seznamu[1]</code>
+                            označuje seznam, můžeme brát prvky přímo z něj:
+<pre>
+prvni_prvek_druheho_seznamu = (seznam_seznamu[1])[0]
+</pre>
+                        </p>
+                        <p>
+                            Neboli:
+<pre>
+prvni_prvek_druheho_seznamu = seznam_seznamu[1][0]
+</pre>
+                        </p>
+                        <p>
+                            A má tahle věc nějaké použití, ptáš se?
+                            Stejně jako vnořené cykly <code>for</code>
+                            nám umožnily vypsat tabulku, vnořené seznamy
+                            nám umožní si tabulku „zapamatovat”.
+<pre>
+def vytvor_tabulku(velikost=11):
+    seznam_radku = []
+    for a in range(velikost):
+        radek = []
+        for b in range(velikost):
+            radek.append(a * b)
+        seznam_radku.append(radek)
+    return seznam_radku
+
+nasobilka = vytvor_tabulku()
+
+print(nasobilka[2][3])
+print(nasobilka[5][2])
+print(nasobilka[8][7])
+
+for radek in nasobilka:
+    for cislo in radek:
+        print(cislo, end=' ')
+    print()
+</pre>
+                        </p>
+                        <p>
+                            Co s takovou „zapamatovanou” tabulkou?
+                            Můžeš si do ní uložit třeba pozice
+                            figurek na šachovnici, nebo křížků a koleček
+                            ve <em>2D</em> piškvorkách.
+                        </p>
+                    </section>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2014</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script src="../reveal.js/js/reveal.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+        <script type="text/javascript" src="../js/start_reveal.js"></script>
+
+    </body>
+</html>

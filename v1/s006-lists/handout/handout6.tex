@@ -12,6 +12,8 @@
 \usepackage[activate=true]{microtype}
 \usepackage{amssymb}
 \usepackage{fontspec}
+\usepackage{titling}
+\usepackage{titlesec}
 
 \usepackage{calc}
 \usepackage{multicol}
@@ -56,15 +58,35 @@
 \newcommand\turtle[1]{\tikz[>=stealth,x=0.25mm,y=0.25mm]\draw[turtle={home,rt=90,#1}];}
 \newcommand\gulp[1]{}
 
-\newcommand\plsetno{6}
+\newcommand\plsetno{8}
+
+\newcommand\startsection[1]{
+     \vspace{0.2ex}
+    \hrule
+    {\fontspec{Oxygen} \tiny
+     \vspace{-1ex}
+     \emph{#1}
+     \vspace{-1.5em}
+    }
+}
+
+\newfontfamily\headingfont[]{Bree Serif}
+\titleformat*{\section}{\LARGE\headingfont}
 
 \begin{document}
 
 \section*{Domácí úkoly \plsetno}
 
-Domácí zvířata jsou např.: \verb+"pes", "kočka", "králík", "had"+.
+\startsection{Na začátek trocha práce se seznamy.
+    Některé z úkolů – a zvlášť ten poslední – potřebují trochu přemýšlení;
+    nebudeš-li vědět jak dál, zeptej se na Internetu nebo na sraze ostatních,
+    a řešte společně!}
 
 \begin{enumerate}
+
+\item Udělej si seznam domácích zvířat. Budeš ho potřebovat v dalších úlohách.
+    \\Domácí zvířata jsou např.: \verb+"pes", "kočka", "králík", "had"+.
+
 
 \item Napiš funkci, která vypíše jména domácích zvířat, která jsou kratší než 5 písmen.
 
@@ -101,7 +123,7 @@ Domácí zvířata jsou např.: \verb+"pes", "kočka", "králík", "had"+.
         \begin{itemize}
             \item Máš seznam \emph{hodnot}, které chceš seřadit podle nějakého
                 \emph{klíče}. Klíč se dá z každé hodnoty vypočítat.
-            \item Vytvoř seznam dvojic (klíč, hodnota).
+            \item Vytvoř seznam dvojic \texttt{[klíč, hodnota]}.
             \item Seřaď tento seznam dvojic – dvojice se řadí nejdřív podle
                 prvního prvku, pak druhého, atd.
             \item Nakonec vytvoř ze seznamu dvojic opět jen seznam hodnot.
@@ -111,14 +133,17 @@ Domácí zvířata jsou např.: \verb+"pes", "kočka", "králík", "had"+.
 
 \end{enumerate}
 
-\hrule
-Dadaistický koutek.
-Vyber si básničku, která má aspoň tři sloky po aspoň třech verších.
+\startsection{Dadaistický koutek: procvičení práce se seznamy, řetězci,
+    a soubory. Tyhle úkoly opět vyžadují přemýšlení.}
 
 \begin{enumerate}[resume]
 
+\item Vyber si básničku, která má aspoň tři sloky po aspoň třech verších.
+    Ulož ji do souboru \verb+basnicka.txt+,
+
 \item Napiš program, který vypíše básničku ze souboru \verb+basnicka.txt+,
     ale obrátí pořadí veršů (t.j. jako první vypíše poslední řádek, atd.)
+    \\\emph{Nápověda: Každý seznamy má metodu \texttt{reverse}, která ho „obrátí”.}
 
 \item Napiš program, který obrátí pořadí slov v jednotlivých verších.
 
@@ -131,7 +156,10 @@ Vyber si básničku, která má aspoň tři sloky po aspoň třech verších.
 \end{enumerate}
 
 \hrule
-Úkoly \ref{snakestart}-\ref{snakeend} závisí jeden na druhém, řeš je postupně.
+\startsection{Úkoly \ref{snakestart}-\ref{snakeend} závisí jeden na druhém,
+    řeš je postupně. Až to uděláš, můžeš si zahrát hru!
+    Tahle sekce není jednoduchá (a poslední dva úkoly jsou obzvláště náročné),
+    ale můžeš zkusit spojit síly s ostatními.}
 
 \begin{enumerate}[resume]
 
@@ -191,8 +219,12 @@ Vyber si básničku, která má aspoň tři sloky po aspoň třech verších.
     Vhodná výjimka pro tyto situace je \verb+ValueError('Game over')+.
     \\Doplň i testy.
 
-\item Seznam ovoce obsahuje na začátku jedno ovoce, na políčku na kterém není had.
-    Když had sežere ovoce, vyroste („nesmaže“ se mu ocas, viz úkol \ref{snaketail}),
+\item Přidej do hry hadí potravu. Tady jsou pravidla pro vegetariánského hada,
+    ale můžeš :
+    \\ Seznam ovoce obsahuje na začátku jedno ovoce, na políčku na kterém není had.
+    (například: \texttt{[(2, 3)]} znamená jedno ovoce na pozici (2, 3).)
+    Když had sežere ovoce, vyroste („nesmaže“ se mu ocas, tedy neprovede se to,
+    cos přidala v úkolu \ref{snaketail}),
     a pokud na mapě zrovna není další ovoce, na náhodném místě (kde není had) vyroste ovoce nové.
     \\Každých 30 tahů vyroste nové ovoce samo od sebe.
     \\Na mapě se toto tajemné ovoce zobrazuje jako otazník (\verb+?+).
@@ -203,47 +235,7 @@ Vyber si básničku, která má aspoň tři sloky po aspoň třech verších.
 
 \end{enumerate}
 
-\hrule
-
-\begin{enumerate}[resume]
-
-\item \label{kanacountstart}
-    Můj bratr, který píše japonské texty, mě požádal o program
-    který počítá znaky.
-    Program přečte soubor \verb+rozsypanycaj.txt+, a zjistí,
-    kolik znaků je psáno kterou z japonských slabikových abeced:
-    \begin{itemize}
-    \item {\fontspec{WenQuanYi Zen Hei} ひらがな \emph{(hiragana)}:
-        \\ ぁ あ ぃ い ぅ う ぇ え ぉ お か が き ぎ く
-        ぐ け げ こ ご さ ざ し じ す ず せ ぜ そ ぞ た
-        だ ち ぢ っ つ づ て で と ど な に ぬ ね の は
-        ば ぱ ひ び ぴ ふ ぶ ぷ へ べ ぺ ほ ぼ ぽ ま み
-        む め も ゃ や ゅ ゆ ょ よ ら り る れ ろ ゎ わ
-        ゐ ゑ を ん ゔ ゕ ゖ}
-    \item {\fontspec{WenQuanYi Zen Hei} カタカナ \emph{(katakana)}:
-        \\ ァ ア ィ イ ゥ ウ ェ エ ォ オ カ ガ キ ギ ク
-        グ ケ ゲ コ ゴ サ ザ シ ジ ス ズ セ ゼ ソ ゾ タ
-        ダ チ ヂ ッ ツ ヅ テ デ ト ド ナ ニ ヌ ネ ノ ハ
-        バ パ ヒ ビ ピ フ ブ プ ヘ ベ ペ ホ ボ ポ マ ミ
-        ム メ モ ャ ヤ ュ ユ ョ ヨ ラ リ ル レ ロ ヮ ワ
-        ヰ ヱ ヲ ン ヴ ヵ ヶ ヷ ヸ ヹ ヺ}
-    \end{itemize}
-    (Abecedy budou ke zkopírování na stránkách s materiály.)
-
-    Program vypíše dvě čísla – počet znaků pro každou z abeced.
-    Znaky, které nejsou v jedné z abeced, ignoruj.
-
-    Pro testování si jako \verb+rozsypanycaj.txt+ můžeš uložit stránku
-    \href{http://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%81%AE%E8%A1%A8%E8%A8%98%E4%BD%93%E7%B3%BB}{
-        http://ja.wikipedia.org/wiki/{\fontspec{WenQuanYi Zen Hei}日本語の表記体系}}
-    (odkaz bude také na stránkách).
-
-    Program pošli na soukromý e-mail organizátora (ne do diskusní skupiny).
-    Pošli ho jako přílohu, nekopíruj ho do textu e-mailu.
-
-\end{enumerate}
-
-\hrule
+\startsection{A nakonec úkol na přemýšlení.}
 
 \begin{enumerate}[resume]
 

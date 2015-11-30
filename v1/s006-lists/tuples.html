@@ -1,0 +1,242 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 06-04 – Seznamy</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style>
+            .new { background-color: #fee; margin: -10px -1000px; padding: 10px 1000px; }
+        </style>
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="slides row stuff">
+                <section class="col-lg-12">
+                    <section>
+                        <h2><i>N</i>-tice</h2>
+                        <p>
+                            Když už známe seznam, podívejme se na jeho
+                            sestřičku: takzvanou <i>n</i>-tici
+                            (angl. <em>tuple</em>).
+                        </p>
+                        <p>
+                            <i>N</i>-tice, podobně jako seznam,
+                            může obsahovat <i>n</i> prvků. 
+                            <i>N</i>-tice se dvěma prvky je <em>dvojice</em>
+                            neboli <em>pár</em> (angl. <em>pair</em>); se třemi
+                            prvky <em>trojice</em> (angl. <em>3-tuple</em>),
+                            se čtyřmi <em>čtveřice</em> (angl. <em>4-tuple</em>),
+                            atd.
+                        </p>
+                        <p class="note">
+                            <small>
+                                Existují i <i>n</i>-tice s jedním prvkem
+                                (hmm... „jednice”?)
+                                a nula prvky (prázdné n-tice, angl. <em>empty tuple</em>),
+                                ale těmi se ze začátku nebudeme zabývat.
+                            </small>
+                        </p>
+                        <p>
+                            <i>N</i>-tice se tvoří jako seznamy, jen kolem sebe
+                            nemají hranaté závorky.
+                            Stačí čárky mezi prvky.
+                        </p>
+                        <p>
+                            Chovají skoro stejně jako seznamy,
+                            jen nejdou měnit.
+                            Nemají tedy metody jako <code>append</code>
+                            a <code>pop</code>, a nedá se jim přiřazovat
+                            do prvků.
+                            Dají se ale použít v cyklu <code>for</code>,
+                            a dájí se z nich brát jednotlivé prvky.
+<pre>
+osoby = 'máma', 'teta', 'babička'
+for osoba in osoby:
+    print(osoba)
+print('První je {}'.format(osoby[0]))
+</pre>
+                        <div class="note">
+                            <small>
+                                Vypadá to povědomě? Aby ne!
+                                <em>N</em>-tice jsme už použily dříve:
+                                <code>for jmeno in 'Hynek', 'Vilém', 'Jarmila':</code>
+                                ve skutečnosti používá <em>n</em>-tici!
+                            </small>
+                        </div>
+                        </p>
+                        <p>
+                            Když chceme <i>n</i>-tici předat funkci,
+                            narazíme na problém, že čárka odděluje jednotlivé
+                            argumenty funkce.
+                            V takových případech musíme <i>n</i>-tici
+                            uzavřít do závorky, aby bylo jasné že jde o jednu
+                            hodnotu (byť složenou).
+                        </p>
+<pre>
+seznam_dvojic = []
+for i in range(10):
+    #<span class="comment"> `append` bere jen jeden argument; dáme mu jednu dvojici</span>
+    seznam_dvojic.append((i, i**2))
+print(seznam_dvojic)
+</pre>
+                        <p>
+                            <i>N</i>-tice se hodí, pokud chceme z funkce vrátit
+                            víc než jednu hodnotu.
+                            Prostě v příkazu <code>return</code> oddělíme
+                            vracené hodnoty čárkou.
+                            Vypadá to, že vracíme několik hodnot, ale
+                            ve skutečnosti vrací jen jedna <i>n</i>-tice.
+                        </p>
+<pre>
+def podil_a_zbytek(a, b):
+    return a // b, a % b
+</pre>
+                        <p class="note">
+                            Tahle funkce už mimochodem v Pythonu je: jmenuje se
+                            <code>divmod</code> a je vždy k dispozici
+                            (nemusí se importovat).
+                        </p>
+                        <p>
+                            Python umí ještě jeden trik: pokud chceme přiřadit
+                            do několika proměnných najednou, stačí je na levé
+                            straně rovnítka oddělit čárkou, a na pravou stranu
+                            dát nějakou „složenou” hodnotu – třeba právě
+                            <i>n</i>-tici.
+                        </p>
+<pre>
+podil, zbytek = podil_a_zbytek(12, 5)
+</pre>
+                        <p>
+                            <i>N</i>-tice se k tomuto účelu hodí nejvíc, ale
+                            jde to se všemi hodnotami, které jdou použít ve
+                            <code>for</code>:
+                        </p>
+<pre>
+x, o = 'xo'
+jedna, dva, tri = [1, 2, 3]
+</pre>
+                        <h2>Funkce, které vracejí <i>n</i>-tice</h2>
+                        <p>
+                            <code>zip</code> je zajímavá funkce.
+                            Používá se ve <code>for</code> cyklech, podobně
+                            jako funkce <code>range</code> která „dává” čísla.
+                        <p>
+                        </p>
+                            Když funkce <code>zip</code> dostane dva seznamy
+                            (či jiné věci použitelné ve <code>for</code>),
+                            „dává” dvojice, a to tak, že nejdřív spáruje
+                            první prvek jednoho seznamu s prvním prvkem
+                            druhého seznamu,
+                            pak druhý s druhým, třetí s třetím a tak dál.
+                        </p>
+                        <p>
+                            Hodí se to, když máme dva seznamy se stejnou
+                            strukturou – příslušné prvky k sobě „patří”,
+                            a chceme je zpracovávat společně:
+                        </p>
+<pre>
+osoby = 'máma', 'teta', 'babička', 'vrah'
+vlastnosti = 'hodná', 'milá', 'laskavá', 'zákeřný'
+for osoba, vlastnost in zip(osoby, vlastnosti):
+    print('{} je {}'.format(osoba, vlastnost))
+</pre>
+                        <p>
+                            Když <code>zip</code> dostane tři seznamy,
+                            bude tvořit trojice, ze čtyř seznamů nadělá
+                            čtveřice, a tak dále.
+                        </p>
+                        <p>
+                            Další funkce, která vrací dvojice, je
+                            <code>enumerate</code>.
+                            Jako argument bere seznam (či jinou věc použitelnou
+                            ve <code>for</code>), a vždy spáruje index
+                            (pořadí v seznamu) s příslušným prvkem.
+                            Jako první tedy dá
+                            (0, <em>první prvek seznamu</em>), potom
+                            (1, <em>první prvek seznamu</em>),
+                            (2, <em>třetí prvek seznamu</em>),
+                            a tak dále.
+                        </p>
+<pre>
+prvocisla = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+
+for i, prvocislo in enumerate(prvocisla):
+    print('Pvočíslo č.{} je {}'.format(i, prvocislo))
+</pre>
+                        <h2>Malé <i>n</i>-tice</h2>
+                        <p>
+                            Odpověď na obligátní otázku:
+                            jak vytvořit <i>n</i>-tici s žádným nebo
+                            jedním prvkem? Takhle:
+<pre>
+prazdna_ntice = ()
+jednoprvkova_ntice = ('a', )
+</pre>
+                            Druhý příklad jde i bez závorek –
+                            <code>jednoprvkova_ntice = 'a',</code> –
+                            ale to vypadá jako zapomenutá čárka.
+                            Když budeš <em>opravdu</em> potřebovat jednoprvkovou
+                            <i>n</i>-tici, radši ji pro přehlednost ozávorkuj.
+                        </p>
+                        <h2>Kdy použít seznam, a kdy <i>n</i>-tici?</h2>
+                        <p>
+                            Seznamy se používají, když předem nevíme,
+                            kolik v nich přesně bude hodnot,
+                            nebo když je hodnot mnoho.
+                            Například seznam slov ve větě,
+                            seznam účastníků soutěže, seznam tahů ve hře,
+                            nebo seznam karet v balíčku.
+                            Oproti tomu <code>for pozdrav in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN':</code>
+                            používá <i>n</i>-tici.
+                        </p>
+                        <p>
+                            <i>N</i>-tice se často používají na hodnoty
+                            různých typů, kdy má každá „pozice”
+                            v <i>n</i>-tici úplně jiný význam.
+                            Například seznam můžeme použít na písmena abecedy,
+                            ale dvojice index–hodnota z <code>enumerate</code>
+                            je <i>n</i>-tice.
+                        </p>
+                        <p>
+                            Prázdné <i>n</i>-tice a <i>n</i>-tice s jedním
+                            prvkem se zapisují trochu divně, a má to své důvody:
+                            může-li nastat situace, kdy takovou sekvenci budeš
+                            potřebovat, většinou je lepší sáhnout po seznamu.
+                            Například seznam hracích karet v ruce nebo
+                            seznam lidí aktuálně přihlášených do soutěže
+                            může být občas prázdný.
+                        </p>
+                        <p>
+                            Seznamy i n-tice mají i technické limity:
+                            <i>n</i>-tice nejdou měnit,
+                            a až se naučíme pracovat se slovníky,
+                            zjistíme že seznamy tam nepůjdou použít jako klíče.
+                        </p>
+                        <p>
+                            Často ale není úplně jasné, který typ použít
+                            – v takovém případě je to pravděpodobně jedno.
+                            Řiď se instinktem :)
+                        </p>
+                    </section>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2014</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script src="../reveal.js/js/reveal.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+        <script type="text/javascript" src="../js/start_reveal.js"></script>
+
+    </body>
+</html>
