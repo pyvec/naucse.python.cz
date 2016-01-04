@@ -31,7 +31,10 @@ def test_nevyhral_prazdne_sloupecky():
 
 def test_vyhral():
     balicky = [], []
-    hromadky = [(13, 'Pi', True)], [(13, 'Sr', True)], [(13, 'Ka', True)], [(13, 'Kr', True)]
+    hromadky = ([(n, 'Pi', True) for n in range(1, 14)],
+                [(n, 'Sr', True) for n in range(1, 14)],
+                [(n, 'Ka', True) for n in range(1, 14)],
+                [(n, 'Kr', True) for n in range(1, 14)])
     sloupecky = [], [], [], [], [], [], []
     hra = balicky, hromadky, sloupecky
     assert klondike.hrac_vyhral(hra)

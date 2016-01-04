@@ -39,7 +39,9 @@
                     <div>
                         Ale protože my <em>ještě</em> neumíme kreslit obrázky,
                         ani pracovat s počítačovou myší,
-                        naše verze bude vypadat takto:
+                        v první verzi si zobrazování a zadávání tahů
+                        trochu zjednodušíme.
+                        Výsledek bude vypadat takto:
                     </div>
 <pre>
   U     V          W     X     Y     Z
@@ -57,7 +59,34 @@
 Zadej tah: <blink>_</blink>
 </pre>
                     <section>
+                        <div>
+                            Tohle je mnohem větší a složitější projekt,
+                            než jaké jsme dělaly doposud.
+                            Pojďme si upřesnit, co bude náš program dělat.
+                        </div>
+                        <div>
+                            Takováhle <i>specifikace</i> je důležitá část
+                            tvorby programu, a většinou se nezískává snadno,
+                            protože na začátku není nikomu – ani programátorovi,
+                            ani možným uživatelům či zákazníkovi – jasné,
+                            co je přesně potřeba udělat.
+                            Náš projekt bude tedy zjednodušený v tom,
+                            že budeme od začátku vědět co chceme udělat.
+                        </div>
+                        <div>
+                            (Další rozšíření, třeba grafická verzi s obrázky
+                            a taháním karet myší, už ale budou jen na tobě.)
+                        </div>
+                    </section>
+                    <section>
                         <h2>Pravidla</h2>
+                        <div>
+                            Neznáš-li tuhle hru, zkus si ji zahrát (nějaká
+                            verze by měla  být k dispozici na všechny operační
+                            systémy, nebo se dá najít na internetu).
+                            Přesná pravidla hry jsou tady (s použitím písmenek
+                            v „diagramu” výše).
+                        </div>
                         <ul>
                             <li>
                                 Hra se hraje s náhodně zamíchaným balíčkem
@@ -73,15 +102,16 @@ Zadej tah: <blink>_</blink>
                                 hodnoty: A=1, J=11, Q=12, K=13.
                             </li>
                             <li>
-                                28 karet se rozdá do sedmi sloupců (A-G),
+                                Na začátku hry se všechny karty zamíchají.
+                                28 karet se pak rozdá do sedmi <em>sloupců</em> (A-G),
                                 přičemž první sloupec má jednu kartu,
                                 druhý dvě, třetí tři, atd.
                                 Vrchní karta každého sloupce se otočí
                                 lícem nahoru, ostatní jsou lícem dolů.
-                                Zbylé karty tvoří balíček (U).
+                                Zbylé karty tvoří <em>balíček</em> (U).
                                 Kromě sloupců a balíčku je na stole
-                                vyhrazené místo pro otočený balíček (V)
-                                a cílové hromádky (W-Z).
+                                vyhrazené místo pro otočený <em>balíček</em> (V)
+                                a <em>cílové hromádky</em> (W-Z).
                             </li>
                             <li>
                                 V každém tahu může hráč udělat jednu
@@ -220,11 +250,6 @@ Ctrl+C - Ukončí hru
                             Snad to pro rozlišení červené a černé bude stačit.
                         </div>
                         <div>
-                            Aby se nám hodnota vešla do jednoho znaku,
-                            desítku budeme ukazovat římsky.
-                            Třeba <code>[X♣ ]</code> je piková desítka.
-                        </div>
-                        <div>
                             Na Windows možná budeš mít problémy s vypisováním
                             znaků ♠, <span class="red">♥</span>,
                             <span class="red">♦</span>, ♣ – některé windowsí
@@ -237,21 +262,89 @@ Ctrl+C - Ukončí hru
                             <span class="red">♦</span> za <code>K</code>,
                             a ♣ za <code>+</code>.
                         </div>
+                        <div>
+                            Skoro všechny hodnoty karet (2-9, J, Q, K, A) se
+                            vejdou do jednoho znaku. Aby se vešla i desítka,
+                            budeme ji ukazovat římským číslem, <code>X</code>.
+                            Třeba <code>[X♣ ]</code> je piková desítka.
+                             (na Windows to bude <code>[XP ]</code>)
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Jak to bude fungovat</h2>
+                        <div>
+                            Možná už sis všimla, že všechny hry, které jsme
+                            zatím udělaly, ať už Oko bere,
+                            šibenice, 1D piškvorky nebo Had, fungují na
+                            podobném principu:
+                            <ul>
+                                <li>
+                                    <em>Inicializace</em> – na začátku se
+                                    nastaví počáteční stav, například u
+                                    1D piškvorek <code>pole = '--------------------'</code>.
+                                </li>
+                                <li>A pak pořád dokola, dokud hra neskončí:
+                                    <ol>
+                                        <li>
+                                            <em>Vypsání stavu</em> – aby hráč věděl,
+                                            na čem je, stav se vypíše.
+                                        </li>
+                                        <li>
+                                            <em>Načtení vstupu</em> – dostaneme od
+                                            hráče informace o tom, jak chce hrát.
+                                        </li>
+                                        <li>
+                                            <em>Zpracování</em> – na základě informací
+                                            od hráče změníme stav.
+                                        </li>
+                                    </ol>
+                                </li>
+                            </ul>
+                            <div class="note">
+                                Podobný princip se používá i ve složitějších programech,
+                                od webových serverů po textové editory,
+                                takže stojí za to se ho držet :)
+                            </div>
+                            Pro nás to znamená, že si můžeme návrh programu
+                            rozdělit na několik částí:
+                            <ul>
+                                <li>
+                                    Jak popsat stav hry?
+                                </li>
+                                <li>Kdy hra končí?
+                                    <ol>
+                                        <li>
+                                            Jak vypsat stav hry?
+                                        </li>
+                                        <li>
+                                            Jak načíst vstup od hráče?
+                                        </li>
+                                        <li>
+                                            Jak vstup zkontrolovat a aplikovat
+                                            na hru?
+                                        </li>
+                                    </ol>
+                                </li>
+                            </ul>
+                            Pojďme si je postupně projít.
+                        </div>
                     </section>
                     <section>
                         <h2>Datové struktury</h2>
                         <div>
-                            Nejdůležitější věc, kterou musíme při psaní této
-                            hry udělat, je rozmyslet si, jak si program bude
-                            „pamatovat“ stav hry.
+                            První a nejdůležitější věc, kterou musíme při psaní
+                            této hry udělat, je rozmyslet si, jak si program
+                            bude „pamatovat“ stav hry.
                         </div>
                         <div>
                             Potřebujeme ten stav nějak poskládat z datových
                             typů které známe – čísla, řetězce, seznamy,
                             <i>n</i>-tice.
-                        </div>
-                        <div>
-                            Tentokrát si tuhle část projdeme společně.
+                            To je stále trochu míň než má k dispozici
+                            profesionální programátor, ale na hru s balíčkem
+                            karet to rozhodně stačí.
+                            Začněme od toho nejmenšího, co potřebujeme
+                            „namodelovat”: od karty.
                         </div>
                         <h3>Karta</h3>
                         <div>
@@ -300,7 +393,7 @@ Ctrl+C - Ukončí hru
                             řetězce (nebo jiný typ), je dobré použít
                             krátké řetězce – když pak něco nepovede,
                             je lepší si v chybové hlášce mít
-                            „piky“ než „barva 3“.
+                            „"piky"“ než „barva 3“.
                         </div>
                         <div>
                             V našem programu tedy použijeme jako barvu vždy
@@ -341,19 +434,7 @@ schovane_eso = 1, 'Kr', False
 hodnota, barva, licem_nahoru = schovane_eso
 </pre>
                         <div>
-                            Vytvoř funkci <code>popis_karty</code>,
-                            která dostane jako argument kartu (trojici),
-                            a vrátí <code>[???]</code> pro kartu, která je
-                            rubem nahoru, nebo příslušný řetězec (např.
-                            <code>[3♣ ]</code> či <code>[X ♥]</code>)
-                            pokud je lícem nahoru.
-                        </div>
-                        <div class="note">
-                            Ve Windows s terminálem bez exotických znaků to
-                            bude <code>[3+ ]</code> a <code>[X S]</code>.
-                        </div>
-                        <div>
-                            Dále budeme potřebovat mechanismus na otáčení
+                            Budeme potřebovat mechanismus na otáčení
                             karet – funkci, která změní otočení ale zachová
                             hodnotu a barvu.
                             Protože <i>n</i>-tice se nedají měnit, musíme ve funkci
@@ -367,6 +448,18 @@ def otoc_kartu(karta, nove_otoceni):
     return hodnota, barva, nove_otoceni
 </pre>
                         <div>
+                            Dále vytvoř funkci <code>popis_karty</code>,
+                            která dostane jako argument kartu (trojici),
+                            a vrátí <code>[???]</code> pro kartu, která je
+                            rubem nahoru, nebo příslušný řetězec (např.
+                            <code>[3♣ ]</code> či <code>[X ♥]</code>)
+                            pokud je lícem nahoru.
+                        </div>
+                        <div class="note">
+                            Ve Windows s terminálem bez exotických znaků to
+                            bude <code>[3+ ]</code> a <code>[X S]</code>.
+                        </div>
+                        <div>
                             Soubor s funkcemi ulož jako <code>klondike.py</code>,
                             a pomocí
                             <a href="klondike/test_popis_karty.py">těchto testů</a>
@@ -377,13 +470,14 @@ def otoc_kartu(karta, nove_otoceni):
                             dej do stejného adresáře, a z toho samého adresáře
                             pusť <code>py.test</code>.
                             Nezapomeň mít aktivované virtuální prostředí,
-                            kam jsi si před pár týdny <a href="../s005-modules/testing.html">nainstalovala pytest</a>.
+                            kam sis před pár týdny <a href="../s005-modules/testing.html">nainstalovala pytest</a>.
                         </div>
                         <h3>Balíček</h3>
                         <div>
-                            Jak si repreentovat balíček či sloupec karet?
+                            Jak si reprezentovat balíček či sloupec karet?
                             Je to nějaká sekvence karet, která může mít
-                            různou délku.
+                            různou délku (počet karet). Počet karet ve sloupci
+                            se navíc může měnit.
                             Na takové věci je ideální použít seznam.
                         </div>
                         <div>
@@ -394,8 +488,9 @@ def otoc_kartu(karta, nove_otoceni):
                             se přidávají prvky složitěji.
                             Na posledním místě seznamu (<code>balicek[-1]</code>)
                             tedy budeme mít karty, se kterými se bude
-                            víc pracovat – vršek balíčku
-                            nebo konec sloupce.
+                            častěji pracovat – vršek balíčku (ze kterého se
+                            karty dobírají) nebo konec sloupce (kam se karty
+                            přikládají nebo odkud se berou).
                         </div>
                         <div>
                             Sloupec C ze hry na začátku této kapitoly
@@ -414,6 +509,7 @@ sloupec_c = [
                             která dostane jako argument balíček (seznam trojic),
                             a vrátí popis vrchní karty, nebo
                             <code>[ &nbsp; ]</code> pokud je balíček prázdný.
+                            Nezapomeň použít funkci, kterou už máš napsanou!
                         </div>
                         <div>
                             Pomocí
@@ -474,8 +570,7 @@ vrchni_karta = balicek_U[-1]
 hodnota, barva, licem_nahoru = vrchni_karta
 </pre>
                         <div>
-                            Ale dost přemýšlení o datových strukturách,
-                            začněme dělat hru.
+                            Dává-li to smysl, můžeš začít psát hru!
                         </div>
                     </section>
                     <section>
@@ -483,12 +578,17 @@ hodnota, barva, licem_nahoru = vrchni_karta
                         <div>
                             Takhle bude vypadá soubor <code>hra.py</code>,
                             který budeme spouštět abychom si zahrály.
-                            Funguje velice podobně jako u 1D piškvorek:
-                            je tam smyčka, která vypíše stav, načte tah,
+                            Funguje podle principu výše: napřed je inicializace,
+                            a pak je tam smyčka, která vypíše stav, načte tah,
                             provede tah, a tak stále dokola.
+                        </div>
+                        <div>
                             Jediné co je navíc je funkce
                             <code>priprav_tah</code>, která bude mimo jiné
                             kontrolovat, jestli je tah v pořádku.
+                            (To by se dalo dělat i v rámci funkce
+                            <code>nacti_tah</code>, ale, jak později zjistíme,
+                            takhle se to bude lépe testovat.)
                         </div>
 <pre>
 import klondike
@@ -530,8 +630,8 @@ random.shuffle(balicek)
                             <ul>
                                 <li>Vytvoř zamíchaný balíček 52 karet</li>
                                 <li>
-                                    Vytvoř (pomocí for/append) seznam sedmi
-                                    sloupečků.
+                                    Vytvoř (pomocí for/append) <em>seznam</em>
+                                    sedmi sloupečků.
                                     Do každého dej při vytváření určitý počet
                                     karet.
                                     Kartu vždy lízni ze zamíchaného balíčku
@@ -568,8 +668,9 @@ random.shuffle(balicek)
                                     pomocí funkce <code>tuple</code>.
                                 </li>
                                 <li>
-                                    Vytvoř dvojici balíčků, čtveřici
-                                    prázdných hromádek,
+                                    Vytvoř dvojici balíčků
+                                    (jeden se zbytkem karet, druhý prázdný),
+                                    čtveřici prázdných hromádek,
                                     a sedm sloupečků, a ty vrať.
                                 </li>
                             </ul>
@@ -674,6 +775,8 @@ pprint.pprint(klondike.udelej_hru())
                             nezbývá žádná karta.
                             A nebo pokud na vršku všech cílových hromádek
                             jsou králové.
+                            A nebo pokud je ve všech cílových hromádkách po 13
+                            kartách.
                             Kterou variantu použiješ ve funkci
                             <code>hrac_vyhral</code>, to je na tobě.
                             Funkce ale musí brát jako argument hru,
@@ -692,7 +795,7 @@ pprint.pprint(klondike.udelej_hru())
                             Tahle funkce příliš nepracuje s <i>n</i>-ticemi
                             a seznamy, tak ji sem pro zrychlení napíšu.
                             Přečti si ale její dokumentační řetězec,
-                            ať víš co dělá:
+                            ať víš co dělá, a doma si ji pak projdi:
                         </div>
 <pre>
 MOZNOSTI_Z = 'ABCDEFGV'
@@ -863,8 +966,10 @@ def priprav_tah(hra, tah):
                         <h2>Kontrola pravidel</h2>
                         <div>
                             Všechno kontrolování bude probíhat ve funkci
-                            <code>priprav_tah</code>.
-                            Zkus do ní dopsat následující hlášky:
+                            <code>priprav_tah</code>, a v případě špatného
+                            tahu vyhodí <code>ValueError</code> s příslušnou
+                            hláškou.
+                            Zkus dopsat kontroly pro následující hlášky:
                             <ul>
                                 <li><code>'Z balíčku V se nedá brát víc karet najednou!'</code></li>
                                 <li><code>'Na to není v {pismeno} dost karet!'</code></li>
