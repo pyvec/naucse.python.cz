@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Hra typu Pong
 
 Graficka hra pro dva hrace. Kazdy hrac ovlada "palku" na sve strane hriste,
