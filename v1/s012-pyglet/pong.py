@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Hra typu Pong
 
 Graficka hra pro dva hrace. Kazdy hrac ovlada "palku" na sve strane hriste,
@@ -37,6 +37,12 @@ Pozor pokud mate zkusenosti s nekterymi grafickymi programy, nebo 2D
 knihovnami. OpenGL pouziva matematicky souradny system, nula je vlevo *dole*.
 
 """
+
+# Prvni radek (#!/usr/bin/env python3) je takzvany "shebang": na systemech
+# zalozenych na Unixu (Linux, OS X) umoznuje spustit tenhle soubor jednoduse
+# pomoci prikazu: ./pong.py
+
+# A ted uz k samotne hre: napred naimportujeme potrebne veci z knihovny pyglet
 
 import random
 
