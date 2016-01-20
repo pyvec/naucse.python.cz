@@ -79,7 +79,7 @@ if __name__ == "__main__":
             description='A command line tool to download your personal twitter timeline.',
             formatter_class=argparse.RawTextHelpFormatter,
     epilog='\nExample:\n'\
-                './twitter_timeline.py -o my_timeline.csv -k Python,Github')
+                './twitter_timeline.py -o my_timeline.csv -k Python,GitHub')
 
     parser.add_argument('-o', '--out', help='Filename for creating the output CSV file.')
     parser.add_argument('-m', '--max', help='Maximum number (integer) of timeline tweets query (searches all by default)')
