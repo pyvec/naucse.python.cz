@@ -1,0 +1,152 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 11-03 – Github API</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <h1>Webové API</h1>
+                    <div>
+                        Jak už <a href="json.html">bylo řečeno</a>, hlavní výhoda
+                        formátu JSON je, že se na Internetu rozšířil nejvíc.
+                        Pojďme toho využít!
+                    </div>
+                    <div>
+                        Spousta webových služeb poskytuje takzvané
+                        <em>API</em> (<em>application programming interface</em>,
+                        programátorské rozhraní), přes které je možné s danou
+                        službou komunikovat programově.
+                        Místo klikání na tlačítek a čtení stránek „očima”
+                        dostaneme data ve formátu, kterým rozumí počítače –
+                        a v dnešní době to bude většinou formát JSON.
+                    </div>
+                    <div>
+                        Z minulých srazů máme otevřený účet na github.com,
+                        tak se zkusme zeptat Githubu, co o nás ví.
+                    </div>
+                    <h2>Autorizace</h2>
+                    <div>
+                        První, a mnohdy nejsložitější, krok k použití API
+                        je přihlášení. Počítače se totiž přihlašují jinak
+                        než lidi, a problematika bezpečnosti a oprávnění by
+                        vydala na samostatný kurz.
+                        My to uděláme co nejjednodušeji, ať se rychle dostaneme
+                        k jádru věci:
+                        <ol>
+                            <li>
+                                Přihlaš se na <a href="https://github.com">github.com</a>.
+                            </li>
+                            <li>
+                                Jdi na <a href="https://github.com/settings/tokens">nastavení Personal Accesss Tokens</a>
+                            </li>
+                            <li>
+                                Vytvoř si nový token ("Generate new token"). Nezaškrtávej žádná oprávnění navíc.
+                            </li>
+                            <li>
+                                Zkopíruj si heslo, které takto dostaneš, do souboru <code>token.txt</code>.
+                            </li>
+                        </ol>
+                    </div>
+                    <div class="note">
+                        Pozor! Vygenerovaný kód je heslo, které držitele
+                        opravňuje pracovat s Githubem pod tvým jménem!
+                        Drž ho v tajnosti, a kdyby se dostalo „ven”, na stránce
+                        <a href="https://github.com/settings/tokens">Personal Accesss Tokens</a>
+                        ho deaktivuj.
+                    </div>
+                    <h2>Requests</h2>
+                    <div>
+                        K práci s internetovými stránkami použijeme knihovnu Requests.
+                        V aktivovaném virtuálním prostředí si ji nainstaluj příkazem:
+                        <pre>$ pip install requests</pre>
+                    </div>
+                    <div>
+                        A potom v Pythonu zkus stáhnout nějakou stránku:
+<pre>
+import requests
+
+stranka = requests.get('https://github.com')
+print(stranka.text)
+</pre>
+                        Měl by se vypsat obsah stránky
+                        <a href="https://github.com">https://github.com</a> –
+                        HTML kód; který se objeví když v prohlížeči dáš
+                        „Ukázat zdroj” (<em>View Page Source</em>, většinou Ctrl+U),
+                        a ze kterého prohlížeč umí vykreslit stránku.
+                    </div>
+                    <div>
+                        Ale my nechceme obsah pro lidi.
+                        Podívejme se, co Github zpřístupňuje lidem.
+                    </div>
+                    <h2>Uživatelský účet</h2>
+                    <div>
+                        Zkus, co dělá tento kód:
+<pre>
+import requests
+
+with open('token.txt') as soubor:
+    token = soubor.read().strip()
+
+headers = {'Authorization': 'token ' + token}
+
+stranka = requests.get('https://api.github.com/user', headers=headers)
+print(stranka.text)
+</pre>
+                        Co se stalo? Tím, že jsi Githubu dala svůj token,
+                        (načtený ze souboru, předaný přes slovník <code>headers</code>),
+                        poznal že jde dotaz od tebe, a vrátil nějaké informace
+                        ve formátu JSON.
+                    </div>
+                    <div>
+                        Zkusíme řetězec <code>stranka.text</code>
+                        převést z JSON na slovník, a vypsat trochu srozumitelněji:
+<pre>
+data = json.loads(stranka.text)
+
+print(json.dumps(data, ensure_ascii=True, indent=2))
+</pre>
+                        Teď už je lépe vidět celý tvůj profil
+                        (včetně neveřejných informací – proto musíš svůj token
+                        udržovat v tajnosti).
+                    </div>
+                    <div>
+                        S profilem, který máš v proměnné <data>data</data>,
+                        se dá pracovat jako s každým jiným slovníkem.
+                        Třeba adresu svého obrázku můžeš vypsat pomocí:
+<pre>
+print(data['avatar_url'])
+</pre>
+                    </div>
+                    <h2>API Githubu</h2>
+                    <div>
+                        API Githubu toho umí mnohem víc. Třeba na adrese
+                        <code>https://api.github.com/emojis</code> na tebe čeká
+                        slovník s adresami malých obrázků.
+                        Celé API je zdokumentováno na adrese
+                        <a href="https://developer.github.com/v3/">developer.github.com</a>.
+                    </div>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
+                <div>Části převzaty z tutoriálu <a href="http://tutorial.djangogirls.org/en/python_introduction/README.html">Django Girls</a></div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+
+    </body>
+</html>
