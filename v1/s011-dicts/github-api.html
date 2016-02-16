@@ -76,7 +76,13 @@
 <pre>
 import requests
 
+# stažení stránky
 stranka = requests.get('https://github.com')
+
+# ověření, že dotaz proběhl v pořádku
+stranka.raise_for_status()
+
+# vypsání obsahu
 print(stranka.text)
 </pre>
                         Měl by se vypsat obsah stránky
@@ -101,6 +107,7 @@ with open('token.txt') as soubor:
 headers = {'Authorization': 'token ' + token}
 
 stranka = requests.get('https://api.github.com/user', headers=headers)
+stranka.raise_for_status()
 print(stranka.text)
 </pre>
                         Co se stalo? Tím, že jsi Githubu dala svůj token,
@@ -133,9 +140,72 @@ print(data['avatar_url'])
                         API Githubu toho umí mnohem víc. Třeba na adrese
                         <code>https://api.github.com/emojis</code> na tebe čeká
                         slovník s adresami malých obrázků.
+                        (Tenhle slovník funguje jako vyhledávací tabulka.)
                         Celé API je zdokumentováno na adrese
                         <a href="https://developer.github.com/v3/">developer.github.com</a>.
                     </div>
+                    <h2>Interakce</h2>
+                    <p>
+                        Pomocí webových API se dají informace nejen číst, ale
+                        i měnit.
+                    </p>
+                    <p>
+                        Na stránce
+                        <a href="https://github.com/PyLadiesCZ/pyladies/stargazers">github.com/PyLadiesCZ/pyladies/stargazers</a>
+                        je seznam lidí, kteří „ohvězdičkovali” tyto učební ateriály.
+                        Je jich zatím málo; pojďme se k nim pomocí webového API přidat.
+                    </p>
+                    <p>
+                        Napřed svéhmu tokenu (na Githubu v nastavení
+                        <a href="https://github.com/settings/tokens">Personal Accesss Tokens</a>)
+                        přidej právo <code>public_repo</code>.
+                        Od teď token střež obzvlášť pečlivě, protože se pomocí
+                        něj dají informace na Githubu i měnit.
+                    </p>
+                    <p>
+                        Chceme-li měnit informace, musíme knihovně Requests
+                        říct, aby použila jinou „HTTP metodu” než <code>GET</code>.
+                        Co to přesně jsou HTTP metody je na trochu delší povídání
+                        (viz <a href="https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods">Wikipedia</a>),
+                        ale stručně řečeno, pomocí <code>GET</code> se většinou stahuje
+                        obsah, pomocí <code>POST</code> se přidává nový,
+                        <code>PUT</code> mění něco, co už na webové službě existuje,
+                        a <code>DELETE</code> něco maže.
+                        Jakou, to závisí na tom, co chceme udělat;
+                        většinou to bude <code>POST</code>, <code>PUT</code>
+                        nebo <code>DELETE</code>
+                    </p>
+                    <p>
+                        Podle <a href="https://developer.github.com/v3/activity/starring/#star-a-repository">dokumentace Githubu</a>
+                        se přidání hvězdičky dělá pomocí <code>PUT</code>
+                        dotazu na adresu <code>/user/starred/:owner/:repo</code>.
+                        Za <code>:owner</code> a <code>:repo</code>
+                        dosadíš vlastníka a jméno repozitáře
+                        (v našem případě <code>pyladiescz</code> a <code>pyladies</code>),
+                        a <code>PUT</code> metodu zvolíš tak, že zavoláš místo
+                        <code>get</code> funkci <code>put</code>:
+                    </p>
+                    <p>
+<pre>
+import requests
+
+with open('token.txt') as soubor:
+    token = soubor.read().strip()
+
+headers = {'Authorization': 'token ' + token}
+
+stranka = requests.put('https://api.github.com/user/starred/pyladiescz/pyladies', headers=headers)
+stranka.raise_for_status()
+</pre>
+                        Tenhle dotaz nevrátí žádný text, ale na
+                        <a href="https://github.com/PyLadiesCZ/pyladies/stargazers">github.com/PyLadiesCZ/pyladies/stargazers</a>
+                        se můžeš přesvědčit, že to funguje.
+                    </p>
+                    <p>
+                        Chceš-li hvězdičku zase odstranit, použij metodu
+                        <code>DELETE</code> na stejnou adresu.
+                        (Ale nezapomeň tam pak ★ zase vrátit! ☺)
+                    </p>
                 </section>
             </div>
             <div class="no-reveal footer">
