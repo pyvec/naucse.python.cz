@@ -1,0 +1,415 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Závěrečný projekt</title>
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h3 class="text-muted">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <div class="col-lg-12">
+                    <h1>Hra typu Asteroids</h1>
+                    <div class="note">
+                        <strong>Tato sekce není dokončená!</strong>
+                        <br>
+                        Je to tu zatím v odrážkách, takže se to nehodí na samostudium.
+                        Jestli jsi sama došla až sem, ozvi se nám prosím;
+                        rádi to s projektem pomůžeme!
+                    </div>
+                    <p>
+                        Dnes to všechno – třídy, grafiku, slovníky i seznam –
+                        spojíme dohromady do závěrečného projektu.
+                        Doufám, že se ti bude líbit!
+                    </p>
+                    <p>
+                        Zkusíme udělat klon hry <a href="https://en.wikipedia.org/wiki/Asteroids_%28video_game%29">Asteroids</a>, která poprvé vyšla
+                        na konci sedmdesátých let.
+                        V našem podání bude hra nakonec vypadat nějak takhle:
+                        <img src="screenshot.png">
+                    </p>
+                    <p>
+                        Projekt je to docela složitý, a – jako většina
+                        praktických projektů – využívá i některých
+                        věcí, které ještě na kurzu nebyly.
+                        Věřím, že ale přesto zvládneš všechno pochopit
+                        nebo dohledat!
+                    </p>
+                    <p>
+                        A ještě jedna věc: protože začátečnický kurz končí,
+                        začneme kód psát v angličtině, aby se pak dal sdílet
+                        s celým světem.
+                    </p>
+                    <h2>Vesmírná loď</h2>
+                    <p>(asteroids1.py)</p>
+                    <ul>
+                        <li>
+                            Loď bude reprezentovat objekt třídy
+                            <code>Spaceship</code>.
+                        </li>
+                        <li>
+                            Každá loď má vlastní atributy
+                            <code>x</code> a <code>y</code> (pozice),
+                            <code>x_speed</code> a <code>y_speed</code> (rychlost),
+                            <code>rotation</code> (úhel natočení),
+                            <code>sprite</code> (obrázek pro Pyglet),
+                            a <code>window</code> (okno, ve kterém se hraje).
+                        </li>
+                        <li>
+                            Loď má metodu <code>tick</code>, která obstarává
+                            mechaniku týkající se lodi – posouvání, natáčení,
+                            a ovládání.
+                        </li>
+                        <li>
+                            Všechny objekty ve hře si budeme dávat do seznamu
+                            <code>objects</code>. Zatím tam bude jenom vesmírná
+                            loď.
+                        </li>
+                        <li>
+                            Co se ovládání týče, stisknuté klávesy si budeme
+                            uchovávat v <em>množině</em> (angl. <code>set</code>),
+                            což je datový typ podobný seznamu, jen nemá dané přadí
+                            prvků a každý prvek v ní může být pouze jednou.
+                            (Na množinu se dá dívat i jako na slovník bez
+                            hodnot.)
+                            Pythoní dokumentace obsahuje k množinám
+                            <a href="https://docs.python.org/3/tutorial/datastructures.html#sets">tutoriál</a> i
+                            <a href="https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset">podrbný popis</a>.
+                            <br>
+                            Vesmírná loď se pak do množiny „podívá” v rámci
+                            své metody <code>tick</code>.
+                        </li>
+                        <li>
+                            Můžeš použít <a href="http://opengameart.org/content/space-shooter-redux">sadu obrázků</a>,
+                            které nakreslil <a href="http://kenney.nl">Kenney Vleugels</a>
+                            a zpřístupnil je zadarmo komukoli.
+                        </li>
+                        <li>
+                            Ve hře později použijeme velké množství
+                            <code>Sprite</code>-ů, a vykreslovat je jeden po
+                            druhém by trvalo docela dlouho.
+                            Všechny <code>Sprite</code>-y proto přidáme do kolekce
+                            <a href="https://pythonhosted.org/pyglet/api/pyglet.graphics.Batch-class.html">pyglet.graphics.Batch</a>,
+                            kterou pak Pyglet umí efektivně vykreslit najednou.
+                            Do „batche” jde přidávat pomocí
+                            argumentu při vytváření <code>Sprite()</code>,
+                            a odebírat pomocí <code>sprite.delete()</code>
+                        </li>
+                        <li>
+                            Základní pohyb raketky je jednoduchý: k x-ové
+                            souřadnici se přičte x-ová rychlost krát uplunulý čas,
+                            a to samé v y-ové souřadnici i pro úhel otočení.
+                        </li>
+                        <li>
+                            Zrychlení je trochu složitější: k x-ové rychlosti
+                            se přičte kosinus úhlu oročení krát uplunulý čas;
+                            u y-ové osy se použije sinus.
+                        </li>
+                        <li>
+                            Když raketka vyletí z okýnka, vrátíme
+                            ji zpátky do hry na druhé straně okýnka.
+                            (Zkontroluj si, že to funguje na věch čtyřech
+                            stranách.)
+                        </li>
+                        <li>
+                            <strong>Bonus 1</strong>: Zkus si přidat několik raketek,
+                            každou trochu jinak natočenou.
+                            <br>
+                            Každý jednotlivý objekt třídy <code>Spaceship</code>
+                            si udržuje vlastní stav, takě není problém jich
+                            vytvořit víc (a všechny ovládat najednou).
+                        </li>
+                        <li>
+                            <strong>Bonus 2</strong> (pro pokročilé):
+                            Možná sis všimla „skoku” když
+                            raketa vyletí z okýnka a vrátí se na druhé straně.
+                            Tomu se dá zabránit tak,
+                            vlevo, vpravo, nahoře i dole vedne naší „scény”
+                            vykreslíme celo scénu ještě jednou.
+                            <br>
+                            Pyglet na to má speciální nízkoúrovňové funkce,
+                            kterými můžeš říct „tady kresli všechno posunuté o
+                            X pixelů vlevo”; úplné vysvětlení by bylo na dlouho
+                            takže si zatím jen zkopíruj kód.
+                            <br>
+                            Dokumentace k použitým funkcím:
+                            <a href="https://www.opengl.org/sdk/docs/man2/xhtml/glPushMatrix.xml">glPushMatrix, glPopMatrix</a>;
+                            <a href="https://www.opengl.org/sdk/docs/man2/xhtml/glTranslate.xml">glTranslatef</a>.
+                        </li>
+                    </ul>
+                    <p>
+                        Povedlo se? Můžeš létat vesmírem?
+                        Čas to všechno dát do Gitu!
+                    </p>
+                    <h2>Asteroidy</h2>
+                    <p>(asteroids2.py)</p>
+                    <ul>
+                        <li>
+                            Přidáme druhý typ vesmírného objektu: <code>Asteroid</code>.
+                        </li>
+                        <li>
+                            Asteroidy a vesmírné lodě mají mnoho společného:
+                            každý takový vesmírný objekt bude mít polohu,
+                            rychlost, natočení, a pravidla jak se pohybuje.
+                            Vytvoříme proto třídu <code>SpaceObject</code>,
+                            ve které bude všechno to společné, a z ní podědíme
+                            třídu <code>Spaceship</code>, ve které zůstane
+                            kód specifický pro vesmírnou loď (t.j. ovládání
+                            klávesnicí, obrázek lodě, začátek v prostředku
+                            obrazovky).
+                        </li>
+                        <li>
+                            Definuješ-li v <em>podtřídě</em>
+                            (např. <code>Spaceship</code>) funkci
+                            stejného jména jako v <em>nadtřídě</em>
+                            (<code>SpaceObject</code>),
+                            zavolá se jen ta z potřídy.
+                            <br>
+                            Potřebuješ-li zavolat metodu z nadtřídy
+                            (např. <code>SpaceObject.__init__</code> z
+                            <code>Spaceship.__init__</code>), můžeš na to
+                            využít speciální funkci <code>super</code>.
+                            <div class="note">
+                                pozn. Tohle mělo být řečeno už v lekci o třídách.
+                            </div>
+                        </li>
+                        <li>
+                            Napiš ještě třídu <code>Asteroid</code>,
+                            která taky dědí z <code>Spaceship</code>,
+                            ale má svoje vlastní chování:
+                            může mít jednu ze čtyř velikostí,
+                            začíná buď na levé nebo spodní straně obrazovky*
+                            s náhodnou rychlostí,
+                            a ke každému asteroidu se přiřadí
+                            náhodně vybraný obrázek.
+                            <div class="note">
+                                V Asteroidech je levý a pravý okraj v podstatě
+                                to samé; a stejně tak horní a spodní.
+                            </div>
+                        </li>
+                        <li>
+                            A pak pár asterojdíků různých velikostí přidej
+                            na začátku hry do <code>objects</code>.
+                        </li>
+                    </ul>
+                    <p>
+                        Povedlo se? Máš dva typy objektů?
+                        Čas to všechno dát do Gitu!
+                    </p>
+                    <h2>Kolize</h2>
+                    <p>(asteroids3.py)</p>
+                    <ul>
+                        <li>
+                            Naše asteroidy jsou zatím docela neškodné.
+                            Pojďme to změnit.
+                        </li>
+                        <li>
+                            V této sekci bude naším úkolem zjistit, kdy
+                            loď narazila do asteroidu.
+                            Pro zjednodušení si každý objekt nahradíme
+                            kolečkem, a budeme počítat kdy se srazí kolečka.
+                        </li>
+                        <li>
+                            Každý objekt tedy potřebuje poloměr.
+                        </li>
+                        <li>
+                            Aby bylo vidět co si hra o objektech „myslí”,
+                            nakreslíme si nad každým objektem příslušné kolečko.
+                            Nejlepší je to udělat pomocí
+                            <a href="http://pyglet.readthedocs.org/en/latest/programming_guide/gl.html">pyglet.gl</a>
+                            a trochy matematiky; pro teď si stačí opsat funkci
+                            <code>circle</code> a pro každý objekt ji zavolat.
+                        </li>
+                        <li>
+                            Když asteroid narazí do lodi, loď exploduje a zmizí.
+                            Explozi necháme na později, teď je důležité odebrání
+                            objektu ze hry.
+                            Dejme ho do metody <code>SpaceObject.delete</code>,
+                            protože 
+                            <br>
+                            V této metodě musíme objekt jednak odstranit
+                            ze seznamu <code>objects</code>, a pak
+                            zrušit jeho <code>Sprite</code>, aby se už v rámci
+                            <code>batch</code> nevykresloval.
+                        </li>
+                        <li>
+                            A jak udělat ono narážení?
+                            V rámci <code>Spaceship.tick</code> projdi
+                            každý objekt, zjisti jestli vzdálenost mezi lodí
+                            a objektem je menší naž součet poloměrů
+                            (t.j. narazily do sebe), a pokud jo,
+                            zavolej na objektu funkci
+                            <code>hit_by_spaceship</code>.
+                            <br>
+                            Zjišťování vzdálenost v naší hře, kde se
+                            <a href="https://en.wikipedia.org/wiki/Wraparound_%28video_games%29">
+                                objekty které vyletí ven vrací na druhé straně</a>,
+                            není úplně přímočaré, takže si příslušný kód pro
+                            teď jen zkopíruj.
+                            <br>
+                            Většina objektů s lodí nebude kolidovat,
+                            takže metoda <code>SpaceObject.hit_by_spaceship</code>
+                            by neměla dělat nic.
+                            Ale asteroid loď rozbije, takže
+                            <code>Asteroid.hit_by_spaceship</code> by měla
+                            zavolat <code>delete</code> lodi.
+                        </li>
+                    </ul>
+                    <p>
+                        Povedlo se? Konečně se dá prohrát?
+                        Čas to všechno dát do Gitu!
+                    </p>
+                    <h2>Útok</h2>
+                    <p>(asteroids4.py)</p>
+                    <ul>
+                        <li>
+                            Teď zkusíme asteroidy rozbíjet.
+                        </li>
+                        <li>
+                            Raketka umí jednou za 0,3s vystřelit laser.
+                            Uložíme si pro každou raketku číslo,
+                            které po každém výstřelu nastavíme na 0,3
+                            a pak ho necháme klesat o 1 za vteřinu.
+                            Když bude záporné, může hráč vystřelit znovu.
+                        </li>
+                        <li>
+                            Když hráč drží mezerník a může vystřelit,
+                            vystřelí.
+                            Ve hře se to projeví tak, že se přidá objekt
+                            nové třídy <code>Laser</code>.
+                            Začne na souřadnicích raketky, s natočením raketky,
+                            a s rychlostí raketky plus něco navíc ve směru
+                            natočení.
+                        </li>
+                        <li>
+                            Každý objekt třídy <code>Laser</code> si pamatuje,
+                            jak dlouho ještě bude ve hře.
+                            Na začátku se tohle číslo nastaví tak, aby přeletěl
+                            zhrube něco víc než jednu obrazovku.
+                            Když dojde čas, <code>Laser</code> zmizí.
+                        </li>
+                        <li>
+                            Ve své metodě <code>tick</code> laser projde
+                            všechny objekty, a pokud se s některým překrývá
+                            tak na něm zavolá metodu <code>hit_by_laser</code>.
+                            U většiny objektů tahle metoda nedělá nic,
+                            jen asteroidy bude rozbíjet.
+                        </li>
+                        <li>
+                            Když se laser dotkne asteroidu, asteroid se
+                            rozdělí na dva menší (nebo, je-li už příliš
+                            malý, zmizí úplně).
+                            <br>
+                            Rychlosti nových asteroidů si můžeš nastavit
+                            podle sebe – důležité je jen aby každý menší
+                            asteroid letěl jinam.
+                            Většinou bývají nové asteroidy rychlejší než ten
+                            původní.
+                        </li>
+                        <li>
+                            A to je vše! Máš funkční hru!
+                        </li>
+                    </ul>
+                    <p>
+                        Povedlo se? Dá se i vyhrát?
+                        Čas to všechno dát do Gitu!
+                    </p>
+                    <h2>Dokončení a rozšíření (za domácí úkol)</h2>
+                    <p>(asteroids5.py)</p>
+                    <p>
+                        Chceš-li ve hře pokračovat, tady jsou další nápady.
+                        Můžeš je dělat v jakémkoli pořadí – nebo si vymysli
+                        vlastní rozšíření!
+                    </p>
+                    <ul>
+                        <li>
+                            Je hra příliš těžká?
+                            <br>
+                            Můžeš přidat životy: na začátku jsou tři,
+                            a dokud nějaký zbývá, raketka se po zásahu
+                            asteroidem objeví znovu uprostřed,
+                            s nulovou rychlostí.
+                            Hra by taky při tomto „restartu” měla ignorovat
+                            držené klávesy, dokud je hráč znovu nezmáčkne
+                            (nejlépe pomocí <code>pressed_keys.clear()</code>).
+                            <br>
+                            Počet náhradních lodí můžeš ukázat ikonkami
+                            na spodku obrazovky.
+                            <br>
+                            <strong>Bonus:</strong> Několik vteřin po
+                            „restartu” může být raketka nezničitelná,
+                            aby měla čas odletět když je zrovna uprostřed
+                            okýnka asteroid.
+                        </li>
+                        <li>
+                            Je hra příliš lehká?
+                            <br>
+                            Přidej úrovně: až hráč vystřílí všechny asteroidy,
+                            postoupí na další úroveň, kde je asteroidů víc
+                            než v té předchozí.
+                            <br>
+                            Číslo úrovně můžeš ukázat pomocí
+                            <a href="http://pyglet.readthedocs.org/en/latest/programming_guide/text.html">pyglet.text.Label</a>.
+                        </li>
+                        <li>
+                            Je pozadí příliš černé?
+                            <br>
+                            V sadě obrázků v adresáři <code>Backgrounds</code>
+                            si vyber pozadí, a vytapetuj s ním celý vesmír.
+                        </li>
+                        <li>
+                            Je hra moc strohá?
+                            <br>
+                            Přidej oheň a exploze!
+                            Chovají se podobně jako <code>Laser</code>,
+                            jen nic neničí, a můžou třeba měnit barvu podle
+                            toho, jak dlouho už jsou ve hře.
+                            <br>
+                            Na efekty můžeš použít
+                            <a href="http://opengameart.org/content/smoke-particle-assets">obrázky „Smoke particle assets”</a>,
+                            které nakreslil opět
+                            <a href="http://kenney.nl">Kenney Vleugels</a>.
+                            Doporučuju „White Puff”, které můžeš zmenšit
+                            (např. <code>sprite.scale = 1/10</code>),
+                            přibarvit
+                            (např. <code>sprite.color = 255, 100, 0</code>),
+                            nebo částečně zprůhlednit
+                            (např. <code>sprite.opacity = 100</code>).
+                            <br>
+                            Doporučuju si na efekty udělat nový <code>Batch</code>
+                            a vykreslit ho před tím hlavním, aby efekty
+                            nepřekrývaly herní objekty.
+                        </li>
+                        <li>
+                            Nepoznáš kdy jsi prohrála?
+                            <br>
+                            Na konci můžeš ukázat veliký nápis GAME OVER.
+                        </li>
+                        <li>
+                            Nudíš se?
+                            <br>
+                            V původní hře se občas objeví UFO, které občas
+                            vystřelí na místo kde je právě hráčova raketka,
+                            takže pokud hráč stojí pořád na jednom místě a
+                            jenom se točí dokola, UFO ho sestřelí.
+                            Můžeš zkusit dodělat třídy <code>Ufo</code>
+                            a z <code>Laser</code> podědit
+                            <code>ShipLaser</code> a <code>UfoLaser</code>.
+                        </li>
+                    </ul>
+                    <p>
+                        Povedlo se? Vypadá to a chová se to profesionálně?
+                        Čas to všechno dát do Gitu!
+                    </p>
+                </div>
+            </div>
+            <div class="footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+    </body>
+</html>
