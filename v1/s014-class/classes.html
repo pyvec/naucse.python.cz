@@ -1,0 +1,325 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>PyLadies 14-03 – Třídy</title>
+
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+    </head>
+
+    <body class="no-reveal">
+
+        <div class="container">
+            <div class="no-reveal header">
+                <h3 class="text-muted" id="show-all">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <section class="col-lg-12">
+                    <p class="note">
+                        Omlouvám se! Tahle sekce ještě není dokončená,
+                        takže se nehodí na samostudium.
+                        Dostala-li ses až sem, ozvi se nám; rádi pomůžeme!
+                    </p>
+                    <h1>Hodnoty a objekty</h1>
+                    <p>
+                        Než se dnes začneme zabývat třídami,
+                        podíváme na objekty.
+                        <br>
+                        Co pro programátory znamená slovo <em>objekt</em>?
+                    </p>
+                    <p>
+                        V Pythonu je to jednoduché – každá hodnota
+                        (t.j. něco, co můžeme uložit do proměnné, vrátit
+                        z funkce, nebo třeba seznamu) je objekt.
+                        Existují jazyky kde existují i jiné hodnoty než objekty
+                        (třeba Javascript, C++, nebo Java), i jazyky kde
+                        objekty vůbec nejsou (třeba C).
+                        Ale v Pythonu mezi hodnotou a objektem není rozdíl,
+                        takže je na jednu stranu trošku složitější pochopit
+                        v čem spočívá ta „objektovitost”, ale na druhou stranu
+                        to zase moc potřeba vědět do detailů.
+                    </p>
+                    <p>
+                        Základní vlastnost objektů je to, že obsahují jak data
+                        (informace), tak „chování” – instrukce nebo metody
+                        které s těmito daty pracují.
+                        Třeba řetězce v Pythonu obsahují jak informace
+                        (nějakou sekvenci znaků), tak užitečné metody jako
+                        <code>upper</code> nebo <code>count</code>.
+                        Kdyby řetězce nebyly objekty, musel by Python mít
+                        spoustu funkcí jako <code>str_upper</code>
+                        a <code>str_count</code>.
+                        Objekty spojují data a funckčnost dohromady.
+                    </p>
+                    <p class="note">
+                        Možná namítneš že <code>len</code> je funkce.
+                        Je to tak, Python není „stoprocentně” objektový jazyk.
+                        Funkce <code>len</code> ale funguje i na
+                        typech, které s řetězci nemají nic společného.
+                    </p>
+                    <h1>Třídy</h1>
+                    <p>
+                        Data každého objektu jsou specifická pro konkrétní
+                        objekt (<code>"abc"</code> obsahuje jiné znaky než
+                        <code>"def"</code>), ale funkčnost – metody – bývají
+                        společné pro všechny objekty daného typu.
+                        Třeba metoda <code>count()</code> by se dala napsat
+                        zhruba jako:
+<pre>
+def count(retezec, znak):
+    pocet = 0
+    for c in retezec:
+        if c == znak:
+            pocet = pocet + 1
+    return pocet
+</pre>
+                        a ačkoliv bude vracet jinou hodnotu pro každý řetězec,
+                        samotná metoda je společná všem řetězcům.
+                    </p>
+                    <p>
+                        Tohle společné chování určuje
+                        <em>typ</em> (angl. <em>type</em>) neboli
+                        <em>třída</em> (angl. <code>class</code>) daného
+                        objektu.
+                    </p>
+                    <p class="note">
+                        Ve historických verzích Pythonu byl rozdíl mezi „typem”
+                        a „třídou”, ale dnes už jsou to synonyma.
+                    </p>
+                    <p>
+                        Typ objektu umí zjistit funkce <code>type</code>:
+<pre>
+>>> type(0)
+&lt;class 'int'>
+>>> type(True)
+&lt;class 'bool'>
+>>> type("abc")
+&lt;class 'str'>
+>>> with open('soubor.txt') as f:
+...     type(f)
+... 
+&lt;class '_io.TextIOWrapper'>
+</pre>
+                    </p>
+                    <p>
+                        Takže <code>type</code> vrací nějaké třídy.
+                        A co je to třída? Popis, jak se chovají všechny objekty
+                        daného typu.
+                    </p>
+                    <div class="note">
+                        Třída řetězců obsahuje všechny řetězcové
+                        metody, ale když bys je chtěla zavolat musíš doplnit
+                        konkrétní data.
+                        Jde to vyzkoušet takhle:
+<pre>
+>>> trida_retezcu = type("abc")
+>>> metoda_upper = trida_retezcu.upper
+>>> metoda_upper('def')
+'DEF'
+>>> metoda_upper('xyz')
+'XYZ'
+</pre>
+                    </div>
+                    <p>
+                        Většinu tříd jde navíc v Pythonu zavolat, jako by
+                        to byly funkce, a vytvořit tak nový objekt dané třídy:
+<pre>
+>>> trida_retezcu = type("abc")
+>>> trida_retezcu(8)
+'8'
+>>> trida_retezcu([1, 2, 3])
+'[1, 2, 3]'
+</pre>
+                    </p>
+                    <p>
+                        Chová se to stejně jako funkce <code>str</code>!
+                        Není to podivné?
+                    </p>
+                    <p>
+                        Tady se musím omluvit:
+                        <a href="../s003-looping/functions.html">materiály k třetímu srazu</a>
+                        tak trochu lhaly. Funkce <code>str</code>,
+                        <code>int</code>, <code>float</code> apod. totiž vůbec
+                        nejsou funkce – jsou to právě třídy.
+<pre>
+>>> str
+&lt;class 'str'>
+>>> type('abcdefgh')
+&lt;class 'str'>
+>>> type('abcdefgh') == str
+True
+</pre>
+                        Ale dají se, podobně jako funkce, zavolat.
+                        Třída tedy většinou obsahuje nejen popis, jak se
+                        objekty daného typu budou chovat, ale i návot jak
+                        takové objekty vytvořit.
+                    </p>
+                    <h1>Vlastní třídy</h1>
+                    <p>
+                        A proč najednou tolik informací o třídách?
+                        Protože si zkusíme napsat vlastní třídu.
+                    </p>
+                    <p>
+                        Třídu se hodí napsat, když plánuješ mít ve svém
+                        programu více objektů s podobným chováním.
+                        Třeba karetní hra by mohla mít třídu Karta,
+                        webová aplikace třídu Uživatel,
+                        tabulkový procesor třídu Řádek.
+                    </p>
+                    <p>
+                        My teď potřebujeme napsat program o zvířátkách,
+                        tak si napíšeme třídu pro koťátka, která umí mňoukat:
+<pre>
+class Kotatko:
+    def zamnoukej(self):
+        print("Mňau!")
+</pre>
+                        Tak jako se funkce definují pomocí <code>def</code>,
+                        třídy mají klíčové slovo <code>class</code>,
+                        za který napíšeme jméno třídy, dvojtečku,
+                        a pak odsazené tělo třídy.
+                        Podobně jako <code>def</code> dělá funkce, příkaz
+                        <code>class</code> udělá novou třídu a přiřadí ji
+                        do proměnné daného jména (u nás <code>Kotatko</code>).
+                    </p>
+                    <p>
+                        Třídy se tradičně pojmenovávají s velkým písmenem,
+                        aby se nepletly s „normálními” hodnotami.
+                    </p>
+                    <p class="note">
+                        Základní třídy (<code>str</code>, <code>int</code> atd.)
+                        velká písmena nemají, a to hlavně z historických
+                        důvodů – původně to byly opravdu funkce.
+                    </p>
+                    <p>
+                        V těle třídy můžeme definovat metody, které vypadají
+                        úplně jako funkce – jen mají jakýsi argument
+                        <code>self</code>.
+                        Ten si ale vysvětlíme později – zamňoukání má přednost:
+<pre>
+# Vytvoření konkrétního objektu
+kotatko = Kotatko()
+
+# Volání metody
+kotatko.zamnoukej()
+</pre>
+                    </p>
+                    <p>
+                        Mňau!
+                    </p>
+                    <h1>Atributy</h1>
+                    <p>
+                        Objekty vytvořené z „vlastních” tříd mají jednu
+                        vlastnost, kterou třídy jako <code>str</code>
+                        nedovolují: možnost si definovat vlastní
+                        <em>atributy</em> – informace, které se uloží k danému
+                        objektu.
+<pre>
+mourek = Kotatko()
+mourek.jmeno = 'Mourek'
+
+micka = Kotatko()
+micka.jmeno = 'Micka'
+
+print(mourek.jmeno)
+print(micka.jmeno)
+</pre>
+                    </p>
+                    <p>
+                        Takhle funguje je ta druhá část objektů: třída určuje
+                        obecné chování; v atributech jednotlivých objektů
+                        se schovávají data, podle kterých jednotlivá koťátka
+                        můžeme rozlišit.
+                    </p>
+                    <div class="note">
+                        Asi sis všimla, že tečkou se dostaneš jak k metodám
+                        převzaným z třídy, tak k atributům specifickým
+                        pro konkrétní objekt.
+                        Co se stane, když má atribut stejné jméno jako
+                        metoda z třídy? Vyzkoušej si to:
+<pre>
+drapek = Kotatko()
+drapek.zamnoukej = 12345
+drapek.zamnoukej()
+</pre>
+                    </div>
+                    <h1>self</h1>
+                    <p>
+                        A teď se na chvíli vrátíme k metodám,
+                        konkrétně k parametru <code>self</code>.
+                    </p>
+                    <p>
+                        Každá metoda má přístup ke konkrétnímu objektu, na
+                        kterém pracuje, právě přes argument <code>self</code>.
+                        Teď, když máme pojmenovaná koťátka,
+                        můžeme pomocí <code>self</code> rozjet dialog:
+<pre>
+class Kotatko:
+    def zamnoukej(self):
+        print("{}: Mňau!".format(self.jmeno))
+
+mourek = Kotatko()
+mourek.jmeno = 'Mourek'
+
+micka = Kotatko()
+micka.jmeno = 'Micka'
+
+mourek.zamnoukej()
+micka.zamnoukej()
+</pre>
+                    </p>
+                    <p>
+                        Co se stalo? Výraz <code>mourek.zamnoukej</code>
+                        udělá <em>metodu</em>, která, když ji zavoláme,
+                        předá objekt <code>mourek</code> jako první argument
+                        funkce <code>zamnoukej</code>.
+                    </p>
+                    <p class="note">
+                        Tohle je to, čím se <em>metoda</em> liší od
+                        normální <em>funkce</em>: metoda má v sobě
+                        „zapamatovaný” objekt, na kterém pracuje.
+                    </p>
+                    <p>
+                        A takový první argument, který obsahuje konkrétní
+                        objekt právě definované třídy, se tradičně pojmenovává
+                        <code>self</code>.
+                        (Není to nutné, ale když ho pojmenuješ jinak,
+                        ostatní programátoři  se na tebe budou koukat hodně
+                        divně.)
+                    </p>
+                    <p>
+                        A může taková metoda brát víc než jeden argument?
+                        Může – <code>self</code> se doplní na první místo,
+                        a zbytek argumentů se vezme z volání metody.
+                        Třeba:
+<pre>
+class Kotatko:
+    def zamnoukej(self):
+        print("{}: Mňau!".format(self.jmeno))
+
+    def snez(self, jidlo):
+        print("{}: Mňau mňau! {} mi chutná!".format(self.jmeno, jidlo))
+
+mourek = Kotatko()
+mourek.jmeno = 'Mourek'
+mourek.snez('ryba')
+</pre>
+                    </p>
+                    <h1>__init__</h1>
+                    <p>
+                        [XXX: dopsat sekci o __init__]
+                    </p>
+                </section>
+            </div>
+            <div class="no-reveal footer">
+                <div>pro PyLadies Brno napsal Petr Viktorin, 2015</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+
+        <script src="../reveal.js/lib/js/head.min.js"></script>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+
+    </body>
+</html>
