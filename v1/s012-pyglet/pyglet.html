@@ -55,32 +55,38 @@ print('Hotovo!')
                     </div>
                     <h2>Interaktivní programy</h2>
                     <div>
-                        Podívejme se ještě jednou jak vypadá hlavní program pro
-                        Solitaire, který jsme napsaly
-                        <a href="../s007-cards/klondike.html">před několika srazy</a>.
+                        Podívejme se ještě jednou jak zhruba vypadá hlavní
+                        program pro Piškvorky, který jsme napsaly
+                        na úkolech.
                         V komentářích je napsané, co která část kódu dělá:
                     </div>
 <pre>
-import klondike                                 # Příprava hry
 
-import random; random.seed(0)
+def piskvorky1d():
+    pole = '-' * 20                 # Příprava hry
+    while True:                     # Pořád dokola:
+        pole = tah_hrace(pole)      # 1. Zeptej se na tah
+        if vyhodnot(pole) != '-':   # 2. Zpracuj tah
+            break
+        print(pole)                 # 3. Vypiš stav hry
 
-hra = klondike.udelej_hru()
-klondike.vypis_hru(hra)
-while not klondike.hrac_vyhral(hra):            # Dokud hráč nevyhrál:
-    tah = klondike.nacti_tah()                  # 1. načti tah od uživatele
-    try:                                        # 2. zpracuj tah
-        info = klondike.priprav_tah(hra, tah)
-    except ValueError as e:
-        print(e)
-    else:
-        klondike.udelej_tah(hra, info)
-        klondike.vypis_hru(hra)                 # 3. vypiš stav hry
+                                    # A znova:
+        pole = tah_pocitace(pole)   # 1. Zeptej se na tah
+        if vyhodnot(pole) != '-':   # 2. Zpracuj tah
+            break
+        print(pole)                 # 3. Vypiš stav hry
 </pre>
                 </section>
                 <section class="col-lg-12">
                     <div>
-                        Stejnou strukturu jsme použily už dřív,
+                        V tohmle programu máme dva druhy akcí, které se
+                        pravidelně střídají.
+                        Jakmile taková akce nastane, ať vstup od člověka, nebo
+                        od počítače, tak se zpracuje, a výsledný stav se
+                        oznámí.
+                    </div>
+                    <div>
+                        Podobnou strukturu „reakcí” jsme použily už dřív,
                         třeba u hry kámen-nůžky-papír:
                         <ul>
                             <li>Nějaká příprava</li>
@@ -104,7 +110,8 @@ while not klondike.hrac_vyhral(hra):            # Dokud hráč nevyhrál:
                         a jako výstup pošle odpověď.
                     </div>
                     <div>
-                        Složitější programy reagují na více druhů událostí,
+                        Složitější programy reagují na spoustu druhů událostí
+                        (jen na „požadavek” nebo „tah hráče”/„tah počítače”
                         a co se stane ve „vyhodnocení vstupu” pak závisí
                         na druhu události.
                     </div>
@@ -112,8 +119,14 @@ while not klondike.hrac_vyhral(hra):            # Dokud hráč nevyhrál:
                         Webový prohlížeč čeká na kliknutí myši nebo stisk klávesy,
                         a zachová se podle něj – třeba pošle přes internet
                         požadavek vzdálenému serveru.
-                        A potom čeká na odpověď od serveru, a až ta přijde,
-                        vykreslí příslušnou stránku na obrazovku.
+                        A potom čeká na další akci. Může přijít odpověď od
+                        serveru, a až ta přijde, vykreslí příslušnou stránku
+                        na obrazovku. Nebo může uživatel zmáčknout „STOP”,
+                        a požadavek se zruší.
+                    </div>
+                    <div>
+                        Textový editor čeká na různé druhy vstupu z klávesnice
+                        či myši, a každý musí nějak zpracovat.
                     </div>
                     <div>
                         Prostě, podobná struktura programu – smyčka která
@@ -164,8 +177,8 @@ print('Hotovo!')
                         zavření okna (tlačítkem „×”, které k okýnkům přidává
                         operační systém), a stisk klávesy <code>Esc</code>,
                         který taky zavře okno.
-                        Po zavření všech oken skončí
-                        smyčka událostí (funkce <code>pyglet.app.run()</code>),
+                        Po zavření okna skončí smyčka událostí
+                        (funkce <code>pyglet.app.run()</code>),
                         a program může pokračovat.
                     </div>
                 </section>
@@ -286,7 +299,9 @@ pyglet.app.run()</span>
                     </div>
                     <div>
                         Najdi si na internetu nějaký obrázek. Ne moc velký,
-                        tak 3cm, ať je kolem něj v černém okýnku dost místa.
+                        tak 3cm, ať je kolem něj v černém okýnku dost místa,
+                        a nejlépe ve formátu PNG. Začni třeba na
+                        <a href="https://www.google.cz/search?tbs=ift:png&amp;tbm=isch&amp;q=snake+icon">téhle stránce</a>.
                         Ulož si ho do adresáře, odkud spouštíš svůj Pythoní
                         program. Já mám třeba obrázek hada v souboru <code>had.png</code>.
                     </div>
@@ -343,6 +358,7 @@ pyglet.app.run()</span>
                                 například když okno minimalizuješ a pak vrátíš,
                                 nebo přesuneš částečně ven z obrazovky,
                                 a pak dáš zase zpět.
+                                A nebo když budeme něco animovat.
                                 <div class="note">
                                     Některé operační systémy si pamatují i obsah oken,
                                     které nejsou vidět, ale není radno na to spoléhat.
@@ -557,10 +573,11 @@ pyglet.app.run()
                         Spritu si vystačíš u leckteré hry nebo grafické aplikace.
                     </div>
                     <div>
-                        Až budeš nějakou dělat, zkus postupovat jako u Solitaire:
-                        stav aplikace měj v seznamech, slovnících a n-ticích,
-                        které pak jedna funkce vykreslí, a jiné s ním budou
-                        manipulovat.
+                        Až budeš nějakou dělat, zkus mít:
+                        stav aplikace měj v seznamech a n-ticích (případně
+                        slovnících a třídách, které se naučíme později).
+                        Jedna funkce by měla umět takový stav vykreslit, a
+                        jiné s ním pak budou manipulovat.
                     </div>
                     <div>
                         Zajímá-li tě toto téma, zkus si zahrát přiloženou hru
@@ -570,6 +587,8 @@ pyglet.app.run()
                         Na první pohled může její kód vypadat složitě,
                         ale zkus si k němu sednout, a s pomocí komentářů
                         ho pochopit.
+                        Kdyby komentáře nestačily, jsou k Pongu připravené
+                        i <a href="pong.html">podrobné materiály</a>.
                     </div>
                     <div>
                         A chceš-li se do Pygletu ponořit hlouběji,
