@@ -16,11 +16,6 @@
             </div>
             <div class="row stuff">
                 <section class="col-lg-12">
-                    <p class="note">
-                        Omlouvám se! Tahle sekce ještě není dokončená,
-                        takže se nehodí na samostudium.
-                        Dostala-li ses až sem, ozvi se nám; rádi pomůžeme!
-                    </p>
                     <h1>Hodnoty a objekty</h1>
                     <p>
                         Než se dnes začneme zabývat třídami,
@@ -32,9 +27,9 @@
                         V Pythonu je to jednoduché – každá hodnota
                         (t.j. něco, co můžeme uložit do proměnné, vrátit
                         z funkce, nebo třeba seznamu) je objekt.
-                        Existují jazyky kde existují i jiné hodnoty než objekty
-                        (třeba Javascript, C++, nebo Java), i jazyky kde
-                        objekty vůbec nejsou (třeba C).
+                        Některé jazyky mají i jiné hodnoty než objekty
+                        (třeba Javascript, C++, nebo Java), v některých
+                        jazycích objekty vůbec nejsou (třeba v C).
                         Ale v Pythonu mezi hodnotou a objektem není rozdíl,
                         takže je na jednu stranu trošku složitější pochopit
                         v čem spočívá ta „objektovitost”, ale na druhou stranu
@@ -56,7 +51,7 @@
                         Možná namítneš že <code>len</code> je funkce.
                         Je to tak, Python není „stoprocentně” objektový jazyk.
                         Funkce <code>len</code> ale funguje i na
-                        typech, které s řetězci nemají nic společného.
+                        objektech, které s řetězci nemají nic společného.
                     </p>
                     <h1>Třídy</h1>
                     <p>
@@ -64,8 +59,8 @@
                         objekt (<code>"abc"</code> obsahuje jiné znaky než
                         <code>"def"</code>), ale funkčnost – metody – bývají
                         společné pro všechny objekty daného typu.
-                        Třeba metoda <code>count()</code> by se dala napsat
-                        zhruba jako:
+                        Třeba řetězcová metoda <code>count()</code> by se dala
+                        napsat zhruba jako:
 <pre>
 def count(retezec, znak):
     pocet = 0
@@ -74,7 +69,7 @@ def count(retezec, znak):
             pocet = pocet + 1
     return pocet
 </pre>
-                        a ačkoliv bude vracet jinou hodnotu pro každý řetězec,
+                        … a ačkoliv bude vracet jinou hodnotu pro každý řetězec,
                         samotná metoda je společná všem řetězcům.
                     </p>
                     <p>
@@ -109,7 +104,7 @@ def count(retezec, znak):
                     </p>
                     <div class="note">
                         Třída řetězců obsahuje všechny řetězcové
-                        metody, ale když bys je chtěla zavolat musíš doplnit
+                        metody, ale když bys je chtěla zavolat, musíš doplnit
                         konkrétní data.
                         Jde to vyzkoušet takhle:
 <pre>
@@ -151,14 +146,14 @@ def count(retezec, znak):
 True
 </pre>
                         Ale dají se, podobně jako funkce, zavolat.
-                        Třída tedy většinou obsahuje nejen popis, jak se
-                        objekty daného typu budou chovat, ale i návot jak
+                        Třída tedy většinou obsahuje nejen „popis”, jak se
+                        objekty daného typu budou chovat, ale i „návod” jak
                         takové objekty vytvořit.
                     </p>
                     <h1>Vlastní třídy</h1>
                     <p>
                         A proč najednou tolik informací o třídách?
-                        Protože si zkusíme napsat vlastní třídu.
+                        Protože si zkusíme napsat třídu vlastní.
                     </p>
                     <p>
                         Třídu se hodí napsat, když plánuješ mít ve svém
@@ -206,6 +201,16 @@ kotatko.zamnoukej()
 </pre>
                     </p>
                     <p>
+                        Pozor na velikost písmen: <code>Kotatko</code>
+                        (s velkým K) je třída – popis jak se koťátka chovají.
+                        <code>kotatko</code> (s malým k) je konkrétní objekt
+                        (angl. <em>instance</em>) té třídy: hodnota která
+                        reprezentuje kotě.
+                        Onen konkrétní objekt vytvoříme zavoláním třídy,
+                        stejně jako zavoláním <code>str()</code> se dá vytvořit
+                        konkrétní řetězec.
+                    </p>
+                    <p>
                         Mňau!
                     </p>
                     <h1>Atributy</h1>
@@ -215,6 +220,8 @@ kotatko.zamnoukej()
                         nedovolují: možnost si definovat vlastní
                         <em>atributy</em> – informace, které se uloží k danému
                         objektu.
+                        Atributy se označují tak, že mezi hodnotu a jméno
+                        jejího atributu napíšeme tečku:
 <pre>
 mourek = Kotatko()
 mourek.jmeno = 'Mourek'
@@ -227,10 +234,12 @@ print(micka.jmeno)
 </pre>
                     </p>
                     <p>
-                        Takhle funguje je ta druhá část objektů: třída určuje
-                        obecné chování; v atributech jednotlivých objektů
-                        se schovávají data, podle kterých jednotlivá koťátka
-                        můžeme rozlišit.
+                        Na začátku jsme si řekly, že objekty spojují chování
+                        a data.
+                        Chování je definováno ve třídě, data se schovávají
+                        právě v atributech jednotlivých objektů.
+                        Podle atributů jako jméno můžeme jednotlivá koťátka
+                        rozlišit.
                     </p>
                     <div class="note">
                         Asi sis všimla, že tečkou se dostaneš jak k metodám
@@ -320,12 +329,11 @@ mourek = Kotatko(jmeno='Mourek')
 </pre>
                     </p>
                     <p>
-                        Na tohle používá Python speciální metodu,
+                        Na tohle používá Python metodu,
                         která se jmenuje <code>__init__</code> (dvě podtržítka,
                         <code>init</code>, dvě podtržítka).
-                        To „opodtžítkování” znamená, že tohle jméno používá
-                        přímo Python, a tahle metoda je nějakým způsobem
-                        speciální.
+                        To „opodtžítkování” znamená, že tohle jméno je nějakým
+                        způsobem speciální.
                         Metoda <code>__init__</code> se totiž zavolá
                         automaticky, když se vytvoří nový objekt.
                         Dá se tedy napsat:
