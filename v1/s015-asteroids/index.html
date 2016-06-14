@@ -47,7 +47,7 @@
                     <p>(asteroids1.py)</p>
                     <ul>
                         <li>
-                            Loď bude reprezentovat objekt třídy
+                            Vesmírnou loď bude reprezentovat objekt třídy
                             <code>Spaceship</code>.
                         </li>
                         <li>
@@ -86,6 +86,7 @@
                             Můžeš použít <a href="http://opengameart.org/content/space-shooter-redux">sadu obrázků</a>,
                             které nakreslil <a href="http://kenney.nl">Kenney Vleugels</a>
                             a zpřístupnil je zadarmo komukoli.
+                            Nebo si nakresli/stáhni vlastní!
                         </li>
                         <li>
                             Ve hře později použijeme velké množství
@@ -96,7 +97,15 @@
                             kterou pak Pyglet umí efektivně vykreslit najednou.
                             Do „batche” jde přidávat pomocí
                             argumentu při vytváření <code>Sprite()</code>,
-                            a odebírat pomocí <code>sprite.delete()</code>
+                            a odebírat pomocí <code>sprite.delete()</code>.
+                            Například:
+<pre>
+batch = pyglet.graphics.Batch()
+sprite1 = pyglet.sprite.Sprite(obrazek, batch=batch)
+sprite2 = pyglet.sprite.Sprite(obrazek, batch=batch)
+
+# a potom můžeš vykreslit všechny najednou:
+batch.draw()
                         </li>
                         <li>
                             Základní pohyb raketky je jednoduchý: k x-ové
@@ -105,11 +114,18 @@
                         </li>
                         <li>
                             Zrychlení je trochu složitější: k x-ové rychlosti
-                            se přičte kosinus úhlu oročení krát uplunulý čas;
-                            u y-ové osy se použije sinus.
+                            se přičte kosinus úhlu otočení krát uplunulý čas.
+                            U y-ové osy se použije sinus.
+                            Je ale potřeba převést úhel na radiány, protože
+                            Pyglet (a naše hra) používá stupně:
+<pre>
+rotation_radians = math.radians(self.rotation)
+self.x_speed += dt * ACCELERATION * math.cos(rotation_radians)
+self.y_speed += dt * ACCELERATION * math.sin(rotation_radians)
+</pre>
                         </li>
                         <li>
-                            Když raketka vyletí z okýnka, vrátíme
+                            Když raketka vyletí z okýnka ven, vrátíme
                             ji zpátky do hry na druhé straně okýnka.
                             (Zkontroluj si, že to funguje na věch čtyřech
                             stranách.)
@@ -119,11 +135,11 @@
                             každou trochu jinak natočenou.
                             <br>
                             Každý jednotlivý objekt třídy <code>Spaceship</code>
-                            si udržuje vlastní stav, takě není problém jich
-                            vytvořit víc (a všechny ovládat najednou).
+                            si udržuje vlastní stav, takže by nemělo být složité
+                            jich vytvořit víc (a všechny ovládat najednou).
                         </li>
                         <li>
-                            <strong>Bonus 2</strong> (pro pokročilé):
+                            <strong>Bonus 2</strong>:
                             Možná sis všimla „skoku” když
                             raketa vyletí z okýnka a vrátí se na druhé straně.
                             Tomu se dá zabránit tak,
@@ -133,9 +149,21 @@
                             Pyglet na to má speciální nízkoúrovňové funkce,
                             kterými můžeš říct „tady kresli všechno posunuté o
                             X pixelů vlevo”; úplné vysvětlení by bylo na dlouho
-                            takže si zatím jen zkopíruj kód.
-                            <br>
-                            Dokumentace k použitým funkcím:
+                            takže si zatím jen zkopíruj kód a zkus si domyslet
+                            co která funkce dělá:
+<pre>
+def draw():
+    window.clear()
+
+    for x_offset in (-window.width, 0, window.width):
+        for y_offset in (-window.height, 0, window.height):
+            gl.glPushMatrix()
+            gl.glTranslatef(x_offset, y_offset, 0)
+            batch.draw()
+            gl.glPopMatrix()
+</pre>
+                            Pro přehled, dokumentace k použitým funkcím je
+                            tady:
                             <a href="https://www.opengl.org/sdk/docs/man2/xhtml/glPushMatrix.xml">glPushMatrix, glPopMatrix</a>;
                             <a href="https://www.opengl.org/sdk/docs/man2/xhtml/glTranslate.xml">glTranslatef</a>.
                         </li>
@@ -162,19 +190,11 @@
                             obrazovky).
                         </li>
                         <li>
-                            Definuješ-li v <em>podtřídě</em>
-                            (např. <code>Spaceship</code>) funkci
-                            stejného jména jako v <em>nadtřídě</em>
-                            (<code>SpaceObject</code>),
-                            zavolá se jen ta z potřídy.
-                            <br>
-                            Potřebuješ-li zavolat metodu z nadtřídy
-                            (např. <code>SpaceObject.__init__</code> z
-                            <code>Spaceship.__init__</code>), můžeš na to
-                            využít speciální funkci <code>super</code>.
-                            <div class="note">
-                                pozn. Tohle mělo být řečeno už v lekci o třídách.
-                            </div>
+                            Část kódu pro pohyb bude společná pro všechny
+                            vesmírné objekty (např. věci kolem zrychlení);
+                            část bude specifická jen pro raketku (ovládání
+                            pomocí klávesnice).
+                            Využij funkci <code>super()</code> z minulé lekce.
                         </li>
                         <li>
                             Napiš ještě třídu <code>Asteroid</code>,
@@ -186,7 +206,7 @@
                             a ke každému asteroidu se přiřadí
                             náhodně vybraný obrázek.
                             <div class="note">
-                                V Asteroidech je levý a pravý okraj v podstatě
+                                * V Asteroidech je levý a pravý okraj v podstatě
                                 to samé; a stejně tak horní a spodní.
                             </div>
                         </li>
@@ -222,14 +242,27 @@
                             <a href="http://pyglet.readthedocs.org/en/latest/programming_guide/gl.html">pyglet.gl</a>
                             a trochy matematiky; pro teď si stačí opsat funkci
                             <code>circle</code> a pro každý objekt ji zavolat.
+<pre>
+def circle(x, y, radius):
+    iterations = 20
+    s = math.sin(2*math.pi / iterations)
+    c = math.cos(2*math.pi / iterations)
+
+    dx, dy = radius, 0
+
+    gl.glBegin(gl.GL_LINE_STRIP)
+    for i in range(iterations+1):
+        gl.glVertex2f(x+dx, y+dy)
+        dx, dy = (dx*c - dy*s), (dy*c + dx*s)
+    gl.glEnd()
+</pre>
                         </li>
                         <li>
                             Když asteroid narazí do lodi, loď exploduje a zmizí.
                             Explozi necháme na později, teď je důležité odebrání
                             objektu ze hry.
                             Dejme ho do metody <code>SpaceObject.delete</code>,
-                            protože 
-                            <br>
+                            protože
                             V této metodě musíme objekt jednak odstranit
                             ze seznamu <code>objects</code>, a pak
                             zrušit jeho <code>Sprite</code>, aby se už v rámci
@@ -248,7 +281,20 @@
                             <a href="https://en.wikipedia.org/wiki/Wraparound_%28video_games%29">
                                 objekty které vyletí ven vrací na druhé straně</a>,
                             není úplně přímočaré, takže si příslušný kód pro
-                            teď jen zkopíruj.
+                            teď jen zkopíruj:
+<pre>
+def distance(a, b, wrap_size):
+    result = abs(a - b)
+    if result > wrap_size / 2:
+        result = wrap_size - result
+    return result
+
+def overlaps(a, b):
+    distance_squared = (distance(a.x, b.x, window.width) ** 2 +
+                        distance(a.y, b.y, window.height) ** 2)
+    max_distance_squared = (a.radius + b.radius) ** 2
+    return distance_squared &lt; max_distance_squared
+</pre>
                             <br>
                             Většina objektů s lodí nebude kolidovat,
                             takže metoda <code>SpaceObject.hit_by_spaceship</code>
@@ -270,7 +316,7 @@
                         </li>
                         <li>
                             Raketka umí jednou za 0,3s vystřelit laser.
-                            Uložíme si pro každou raketku číslo,
+                            Uložíme si pro každou raketku (jako atribut) číslo,
                             které po každém výstřelu nastavíme na 0,3
                             a pak ho necháme klesat o 1 za vteřinu.
                             Když bude záporné, může hráč vystřelit znovu.
@@ -317,7 +363,7 @@
                         Povedlo se? Dá se i vyhrát?
                         Čas to všechno dát do Gitu!
                     </p>
-                    <h2>Dokončení a rozšíření (za domácí úkol)</h2>
+                    <h2>Dokončení a rozšíření</h2>
                     <p>(asteroids5.py)</p>
                     <p>
                         Chceš-li ve hře pokračovat, tady jsou další nápady.
