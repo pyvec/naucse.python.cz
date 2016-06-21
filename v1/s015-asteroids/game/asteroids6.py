@@ -253,7 +253,7 @@ class Ufo(SpaceObject):
             self.x_speed = random.uniform(0, UFO_SPEED)
             self.y_speed = random.uniform(-UFO_SPEED, UFO_SPEED)
         super().tick(dt, wrap_x=False)
-        if self.y > self.window.height+UFO_RADIUS:
+        if self.x > self.window.width+UFO_RADIUS:
             self.delete()
 
     def hit_by_laser(self, laser):
