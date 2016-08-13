@@ -1,0 +1,489 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>MicroPython</title>
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <link rel="stylesheet" href="../css/pyladies.css">
+        <style>
+            .part-green  { outline: 2px solid hsla(113, 100%, 50%, 1);
+                           background-color:  hsla(113, 100%, 50%, 0.25); }
+            .part-cyan   { outline: 2px solid hsla(180, 100%, 50%, 1);
+                           background-color:  hsla(180, 100%, 50%, 0.25); }
+            .part-blue   { outline: 2px solid hsla(236, 100%, 50%, 1);
+                           background-color:  hsla(236, 100%, 50%, 0.25); }
+            .part-yellow { outline: 2px solid hsla( 60, 100%, 50%, 1);
+                           background-color:  hsla( 60, 100%, 50%, 0.25); }
+            .part-orange { outline: 2px solid hsla( 42, 100%, 50%, 1);
+                           background-color:  hsla( 42, 100%, 50%, 0.25); }
+            .part-red    { outline: 2px solid hsla(  0, 100%, 50%, 1);
+                           background-color:  hsla(  0, 100%, 50%, 0.25); }
+            .pull-right, .pull-left { margin: 1em; }
+            .highlight   { background-color:  hsla(  0, 100%, 50%, 0.1); }
+            .img-fluid   { max-width: 100%; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h3 class="text-muted">PyLadies Brno</h3>
+            </div>
+            <div class="row stuff">
+                <div class="col-lg-12">
+                    <h1>MicroPython a malé počítače</h1>
+                    <div class="note">
+                        <strong>Tahle sekce bohužel nejde jednoduše projít z domu.</strong>
+                        <br>
+                        Využíváme speciální vybavení, které je potřeba nejdřív
+                        sehnat. Máš-li možnost se dostat na sraz, nebo
+                        aspoň kontaktovat organizátory, doporučujeme shánět
+                        spíš tímto způsobem.
+                        Případně jde případný hardware objednat přes Internet,
+                        typicky z čínských e-shopů.
+                    </div>
+                    <div class="clearfix">
+                        <figure class="well pull-right">
+                            <img class="img-fluid" src="nodemcuv3.jpg">
+                            <figcaption class="text-center text-xs-right">
+                                LoLin NodeMCU v3 – Vývojová deska s čipem ESP8266
+                            </figcaption>
+                        </figure>
+                        <p>
+                            Dnes budeme programovat malý počítač – konkrétně
+                            tak malý počítač, že se ho pohodlně schováš v ruce.
+                            Konkrétně budeme používat desku zvanou
+                            <i>NodeMCU</i>, která by měla ležet před tebou.
+                            Než ji vyndáš z obalu, měla by ses <em>vybít</em>:
+                            dotkni se něčeho kovového, co je spojeno se zemí,
+                            třeba radiátoru nebo kovové části scránky nějakého
+                            spotřebiče, který je zapojený do zásuvky.
+                            Tím se zbavíš statické elektřiny, která by mohla
+                            malinký počítač poškodit.
+                            Pak přístroj vyndej z obalu. Snaž se ho držet za
+                            hrany a příliš se nedotýkat elektroniky a kovových
+                            částí.
+                        </p>
+                        <p class="note">
+                            Obal bude nejspíš roztržený, protože organizátoři
+                            do počítače před začátkem kurzu nainstalovali
+                            MicroPython.
+                        </p>
+                        <p>
+                            Teď, když malý počítač držíš v ruce, si
+                            pojďme projít jeho základní součásti.
+                        </p>
+                    </div>
+                    <div class="clearfix">
+                        <img src="nodemcu-popisky.png" class="img-fluid clear clearfix pull-left">
+                        <p>
+                            Nejdůležitější část našeho počítače je oplechovaná
+                            krabička s logem "Wi-Fi" a "FCC":
+                            <span class="part-green">mikroprocesor ESP8266</span>.
+                            To je „mozek” celého zařízení, který – když je
+                            správně naprogramován – umí provádět Pythoní
+                            příkazy a programy.
+                            Procesor sedí na malé destičce, na které je ještě
+                            <span class="part-cyan">anténa</span>, kterou
+                            přístroj může komunikovat s okolím.
+                        </p>
+                        <p>
+                            Tahle malá destička se dá použít i samostatně;
+                            všechno ostatní, co kolem ní zabírá tolik místa,
+                            nám jen ulehčí hraní a umožní s malým počítačem
+                            jednoduše komunikovat a krmit ho elektřinou.
+                        </p>
+                        <p>
+                            Komunikace a „krmení” se děje přes
+                            <span class="part-red">μUSB konektor</span>,
+                            do kterého zapojíš kabel do svého velkého počítače.
+                            Když je modul naprogramovaný, stačí ho místo do
+                            počítače zapojit do nabíječky či externího zdroje
+                            (powerbanky), a bude fungovat samostatně.
+                        </p>
+                        <p>
+                            Kolem USB konektoru jsou dvě tlačítka:
+                            <code class="part-orange">RST</code>, kterým se
+                            počítač restartuje
+                            (jako kdybys ho odpojila a zase zapojila, což se
+                            hodí když něco uděláš špatně a počítač „zamrzne”),
+                            a <code class="part-yellow">FLASH</code>, o kterém
+                            si povíme později.
+                        </p>
+                        <p>
+                            Po stranách modulu jsou dvě řady
+                            <span class="part-blue">„nožiček”</span>, na které
+                            se dá napojit celá řada nejrůznějších hraček.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Instalace</h1>
+                    <p>
+                        Bohužel se dnes neobejdeme bez instalace. Musíš naučit
+                        svůj velký počítač, aby si povídal s tím malým.
+                    </p>
+                    <p>
+                        Propoj oba počítače přes USB kabel, jako kdybys
+                        připojovala třeba mobil.
+                    </p>
+                    <p class="note">
+                        Je potřeba použít kvalitní datový kabel.
+                        Nekvalitní kabely (např. spousta kabelů k
+                        nabíječkám) jsou často nepoužitelné.
+                    </p>
+                    <p>
+                        Dál postupuj podle operačního systému na svém velkém
+                        počítači. Kdyby něco nefungovalo, poraď se s koučem.
+                        Původní (anglický) návod k této části je na
+                        <a href="http://docs.micropython.org/en/latest/pyboard/pyboard/tutorial/repl.html">stránkách MicroPythonu</a>.
+                    </p>
+                    <h2>Linux</h2>
+                    <div>
+                        Nainstaluj příkaz <code>picocom</code> (např.
+                        <code>sudo dnf install picocom</code>,
+                        <code>sudo apt-get install picocom</code>).
+                        Potom spusť:
+<pre>
+$ sudo picocom -b 115200 /dev/ttyUSB0 
+</pre>
+                        a stiskni Enter.
+                        Měly by se objevit tři zobáčky, <code>&gt;&gt;&gt;</code>.
+                    </div>
+                    <div>
+                        Kdyby to nefungovalo, použij příkaz
+                        <code>dmesg | tail</code>, který vypíše něco jako:
+<pre>
+$ dmesg|tail
+[703169.886296] ch341 1-1.1:1.0: device disconnected
+[703176.972781] usb 1-1.1: new full-speed USB device number 45 using ehci-pci
+[703177.059448] usb 1-1.1: New USB device found, idVendor=1a86, idProduct=7523
+[703177.059454] usb 1-1.1: New USB device strings: Mfr=0, Product=2, SerialNumber=0
+[703177.059457] usb 1-1.1: Product: USB2.0-Serial
+[703177.060474] ch341 1-1.1:1.0: ch341-uart converter detected
+[703177.062781] usb 1-1.1: ch341-uart converter now attached to <span class="highlight">ttyUSB0</span>
+</pre>
+                        V předchozím příkazu pak zaměň <code>ttyUSB</code> za to,
+                        co ti tento příkaz ukázal.
+                    </div>
+                    <div>
+                        Nechceš-li pro <code>picocom</code> používat
+                        <code>sudo</code>, přidej se do skupiny
+                        <code>dialout</code> nebo <code>uucp</code>, podle
+                        svého systḿu. Kouč ti kdyžtak poradí.
+                    </div>
+                    <h2>Windows</h2>
+                        <div>
+                            MicroPython se přihlásí jako COM port. Otevři
+                            správce zařízení, a zjisti který COM port to je
+                            (kouč s tím pomůže).
+                            Pak si nainstaluj si program
+                            <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">PuTTY</a>
+                            (<code>putty.exe</code>), a spusť ho.
+                            V konfiguračním okýnku zaškrtni
+                            <em>Connection Type: Serial</em>,
+                            do <em>Serial line:</em> zadej svůj COM port,
+                            a nastav <em>Speed: 115200</em>.
+                            Klikni <em>Open</em>. Mělo by se otevřít
+                            okýnko podobné konzoli, kde se, když stiskneš
+                            Enter, objeví tři zobáčky:
+                            <code>&gt;&gt;&gt;</code>.
+                        </div>
+                    <h2>Mac</h2>
+                        <div>
+                            V příkazové řádce zadej:
+<pre>
+$ screen /dev/tty.usbmodem* 115200
+</pre>
+                        a stiskni Enter.
+                        Měly by se objevit tři zobáčky, <code>&gt;&gt;&gt;</code>.
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <h1>MicroPython – taky Python</h1>
+                    <p>
+                        Tak jako máš na velkém počítači nainstalovaný operační
+                        systém, na malém počítači je takzvaný <em>firmware</em>,
+                        program, který ovládá všechny ty drátky,
+                        čipy a světýlka co v počítači jsou.
+                        My používáme firmware zvaný <em>MicroPython</em>,
+                        který navíc rozumí jazyku Python a umí provádět pythoní
+                        příkazy. Zkus si to!
+                        Tři zobáčky, které vyskočily v minulém kroku, přišly
+                        z malého počítače, který teď netrpělivě čeká na příkaz.
+                    </p>
+<pre>
+>>> 1+1
+2
+>>> print('Hello World')
+Hello World
+</pre>
+                    <p>
+                        Téměř vše, co používáš v Pythonu na velkém počítači,
+                        umí MicroPython taky: čísla, řetězce, seznamy, třídy,
+                        výjimky, moduly, a tak dál.
+                        Některé detaily jsou trochu osekané, aby se všechno
+                        vešlo do extrémně malého prostoru.
+                        Zkus si, jak se liší efekt následujících příkazů
+                        od Pythonu na velkém počítači:
+                    </p>
+<pre>
+>>> print
+>>> help(print)
+>>> import math
+>>> math.pi
+</pre>
+                    <p>
+                        Najdůležitější věc, která je osekaná, je <em>standardní
+                        knihovna</em> – většina modulů, které na velkém
+                        počítači můžeš naimportovat, v MicroPythonu chybí.
+                        U modulů jako <code>turtle</code> je to pochopitelné;
+                        ale v rámci šetření místem chybí i moduly jako
+                        <code>random</code>.
+                        Většinou to příliš nevadí – malé počítače se používají
+                        na jiné věci než ty velké – ale je potřeba si na to
+                        dát pozor.
+                    </p>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Vstup</h1>
+                    <p>
+                        MicroPython na našem malém počítači obsahuje některé
+                        moduly, které jinde nenajdeme. Ten hlavní se jmenuje
+                        <code>machine</code>, a dává nám přístup k základním
+                        funkcím zařízení. Zkus si:
+                    </p>
+<pre>
+from machine import Pin
+pin = Pin(0, Pin.IN)
+print(pin.value())
+</pre>
+                    <p>
+                        Zmáčkni a drž tlačítko <code>FLASH</code> vedle USB
+                        konektoru. Jak se změní <code>pin.value()</code>?
+                    </p>
+                    <p>
+                        Jak tomuhle kódu rozumět?
+                        Třída <code>Pin</code> ti umožňuje ovládat jednotlivé
+                        „nožičky”, kterými malý počítač: komunikuje s vnějším
+                        světem: buď na nich nastavovat napětí, nebo zkoumat
+                        jestli na nich nějaké napětí je.
+                    </p>
+                    <p>
+                        <code>Pin(0, Pin.IN)</code> vytvoří objekt třídy Pin,
+                        který bude načítat data z „nožičky” číslo 0.
+                        (<code>IN</code> znamená načítání – informace jdou
+                        <em>do</em> procesoru).
+                        Funkce <code>pin.value()</code> změří napětí na dané
+                        „nožičce”, a vrátí buď 1 nebo 0 podle toho,
+                        jestli nějaké naměřila.
+                    </p>
+                    <p>
+                        No a „nožička” číslo 0 je připojená k tlačítku
+                        <code>RESET</code>.
+                        Informace o tom, která nožička je kam připojená,
+                        máš na taháku <!--XXX--> – můžeš si zkontrolovat,
+                        že Pin(0) u sebe má poznámku FLASH.
+                    </p>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Obvod</h1>
+                    <p>
+                        Teď na chvíli necháme programování a postavíme si
+                        elektrický obvod.
+                        Vezmi si červenou svítivou diodu (LED, „světýlko”),
+                        rezistor, nepájivé pole („hloupou destičku”),
+                        a propojovací drátky.
+                        Zkusíme světýlko rozsvítit.
+                    </p>
+                    <p>
+                        LED rozsvítíš tak, že ji připojíš ke zdroji napětí,
+                        například k tužkové baterce. Ale má to dva háčky:
+                    </p>
+                    <p>
+                        Zaprvé musíš diodu zapojit správným směrem: plus
+                        na plus (+1.5 voltů), mínus na mínus (0 voltů. „zem”).
+                        Opačně dioda svítit nebude. Dobrá zpráva je, že
+                        když diodu otočíš špatně, nic se jí nestane.
+                    </p>
+                    <p class="note">
+                        Základní vlastnost <em>diody</em> je ta, že pustí
+                        elektrický proud jen jedním směrem. Svítící dioda
+                        – <em>angl. Light Emitting Diode, LED</em> – ještě k
+                        tomu navíc svítí.
+                    </p>
+                    <p>
+                        Druhý problém je, že většina zdrojů napětí je na LED
+                        příliš silná. 
+                        typická LED potřebuje zhruba 1.8 V. Tužková baterka
+                        dává 1.5V, což je málo – dioda bude svítit slabě.
+                        Náš počítač ale poskytne 3.3 voltů, což je moc: dioda
+                        by chvilku svítila příliš, a po chvíli by se nenávratně
+                        zničila.
+                        Proto před diodu zapojíme <em>rezistor</em> –
+                        součástku, která napětí pro diodu sníží.
+                    </p>
+                    <p class="note">
+                        Rezistor, který dostaneš, je správný pro použitou LED
+                        a zdroj. Kdybys někdy chtěla použít jiné součástky,
+                        najdi si na internetu jak vypočítat správnou hodnotu
+                        rezistoru podle Ohmova zákona – nebo si nech poradit
+                        od nějakého fanouška elektrotechniky.
+                    </p>
+                    <p>
+                        A jak to všechno spojit dohromady?
+                        K tomu použijeme „hloupou destičku”:
+                        <em>nepájivé pole</em> (angl. <em>breadboard</em>).
+                        Je v ní spousta dírek, do kterých se dají strkat dráty.
+                        V rámci každé poloviny destičky je každá řada dírek –
+                        tedy každá pětice – spojená dohromady.
+                        Když zapojíš drátky do stejné řady, spojíš je tím.
+                    </p>
+                    <p>
+                        Zapojuj postupně:
+                    </p>
+                    <ol>
+                        <li>
+                            Odpoj USB kabel – nikdy bys neměla zapojovat
+                            součástky, které jsou pod proudem.
+                        </li>
+                        <li>
+                            Najdi, kde má dioda <em>katodu</em> (<code>-</code>):
+                            je to ta kratší nožička.
+                            Červené pouzdro diody je u katody trochu seříznuté,
+                            a vevnitř má katoda větší plíšek.
+                            <br>
+                            Té druhé nožičce se říká anoda (<code>+</code>).
+                        </li>
+                        <li>
+                            Zastrč do nepájivého pole obě nožičky diody tak,
+                            aby nebyly ve stejném řádku.
+                            Pamatuj si, která je která.
+                        </li>
+                        <li>
+                            Ke katodě (tedy do řádku nepájivého pole, kde
+                            máš katodu) zastrč jednu nožičku rezistoru.
+                            Druhou dej do nepoužitého řádku.
+                            (U rezistoru je jedno, kterým směrem ho zapojíš.)
+                        </li>
+                        <li>
+                            Anodu diody spoj drátkem s nožičkou počítače
+                            označenou <code>3V3</code> (to znamená 3,3 volty).
+                        </li>
+                        <li>
+                            Volnou nožičku rezistoru spoj s nožičkou
+                            počítače označenou <code>G</code> (nebo
+                            <code>GND</code>: <em>Ground</em>, země).
+                        </li>
+                        <li>
+                            Zkontroluj si, že obvod vypadá jako na obrázku:
+                        </li>
+                    </ol>
+                    <p>
+                        <img src="circuits/led_bb.png" class="img-fluid"
+                            alt="diagram zapojení">
+                    </p>
+                    <p>
+                        Potom zapoj USB kabel. Dioda by se měla rozsvítit.
+                    </p>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Výstup</h1>
+                    <p>
+                        Když světýlko svítí, určitě s ním půjde i blikat.
+                    </p>
+                    <p>
+                        Přepoj drát k anodě z <code>3V3</code> na
+                        <code>D1</code>.
+                    </p>
+                    <p>
+                        Máš-li zapojeno, znovu se připoj k MicroPythonu a
+                        zadej následující kód:
+                    </p>
+<pre>
+from machine import Pin
+pin = Pin(5, Pin.OUT)
+pin.value(1)
+</pre>
+                    <p>
+                        Když objekt Pin vytvoříš s <code>Pin.OUT</code>,
+                        MicroPython na něm bude nastavovat napětí –
+                        buď 3,3V (<code>value(1)</code>) nebo 0 voltů
+                        (zem, <code>value(0)</code>).
+                        Když je LED zapojená mezi 3,3V (+) a zemí (-), svítí.
+                    </p>
+                    <p class="note">
+                        Číslování nožiček je bohužel dvojí – nožička
+                        označená jako <code>D1</code> má v procesoru přiřazené
+                        číslo 5. Třída <code>Pin</code> v MicroPythonu
+                        používá číslování procesoru.
+                        Naštěstí máš tahák, kde snadno dohledáš že
+                        <code>D1</code> a <code>Pin(5)</code> jsou dvě jména
+                        stejné nožičky.
+                    </p>
+                    <p>
+                        Zvládneš napsat program, který zařídí, aby dioda
+                        svítila když je zmáčknuté tlačítko <code>FLASH</code>,
+                        jinak ne?
+                    </p>
+                    <p class="note">
+                        Nápověda: Můžeš pořád dokola zjišťovat stav tlačítka
+                        a nastavovat podle něj stav LED.
+                    </p>
+<details class="solution"><h3>Řešení</h3>
+<pre>
+from machine import Pin
+pin_diody = Pin(5, Pin.OUT)
+pin_tlacitka = Pin(0, Pin.IN)
+while True:
+    pin_diody.value(1 - pin_tlacitka.value())
+</pre>
+</details>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Triky MicroPythoní konzole</h1>
+                    <p>
+                        Jak začneš psát trochu složitější programy,
+                        mohlo by se stát, že tě konzole MicroPythonu začne
+                        trovhu štvát.
+                        Špatně se v ní opravují chyby a automatické odsazování
+                        funguje jen většinou.
+                    </p>
+                    <p>
+                        Doporučuju si větší kousky kódu – a určitě takové,
+                        ve kterých je nějaký cyklus, podmínka či funkce –
+                        psát vedle do editoru, a pro provedení je vždycky
+                        zkopírovat a vložit do konzole.
+                    </p>
+                    <p>
+                        Máš-li v kódu odsazení, zmáčkni před vložením
+                        <kbd>Ctrl</kbd>+<kbd>E</kbd>, a po něm
+                        <kbd>Ctrl</kbd>+<kbd>D</kbd>.
+                        Tím vypneš automatické odsazování, které při vkládání
+                        jenom vadí.
+                    </p>
+                    <p>
+                        Možná sis toho už všimla u minulé nekonečné smyčky, ale
+                        <kbd>Ctrl</kbd>+<kbd>C</kbd>, funguje jako v Pythonu
+                        na velkých počítačích.
+                    </p>
+                    <p>
+                        A dobrá zpráva pro Windowsářky: když zmáčkneš v PuTTY
+                        prostřední tlačítko myši, vloží se obsah schránky.
+                        Nemusíš tedy, jako v příkazové řádce Windows,
+                        vkládat přes menu.
+                    </p>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Příliš rychle blikat</h1>
+                    <p>
+                        Když světýlko svítí, určitě s ním půjde i blikat.
+                    </p>
+                </div>
+            </div>
+            <div class="footer">
+                <div>pro PyLadies CZ napsal Petr Viktorin, 2015</div>
+                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
+            </div>
+        </div>
+        <script type="text/javascript" src="../js/solutions.js"></script>
+    </body>
+</html>
