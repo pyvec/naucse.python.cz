@@ -481,10 +481,157 @@ while True:
                     </p>
                 </div>
                 <div class="col-lg-12">
-                    <h1>Příliš rychlé blikání</h1>
+                    <h1>Velice rychle blikat</h1>
                     <p>
-                        Když světýlko svítí, určitě s ním půjde i blikat.
+                        Jedna z nevýhod „našeho” čipu ESP8266 je, že na svých
+                        nožičkách umí nastavovat jen dvě hodnoty – 3,3V a zem,
+                        jedničku a nulu.
+                        Naše dioda tak buď svítí, nebo nesvítí – nedá se
+                        nastavit poloviční intenzita, nedá se
+                        plynule rozsvěcet nebo zhasínat.
                     </p>
+                    <p>
+                        Tuhle nevýhodu ale můžeme obejít s využitím dvou faktů.
+                        Ten první je, že diodám – na rozdíl od žárovek nebo
+                        zářivek – nevadí, časté vypínání a zapínání.
+                        Opotřebovávají se svícením a časem. 
+                        Druhý je, že lidské oko nestačí zaznamenat pohyby a
+                        změny, které probíhají rychleji než zhruba za
+                        šedesátinu vteřiny.
+                    </p>
+                    <p>
+                        Pojďme tedy velice rychle blikat – a oblafnout tak naše
+                        oči a mozky!
+                        Využijeme k tomu funkci <code>time.sleep()</code>,
+                        která počká daný počet vteřin.
+                        Třeba <code>time.sleep(1/60)</code> zastaví program
+                        na jednu šedesátinu sekundy.
+                    </p>
+<pre> <!-- XXX: Test -->
+from machine import Pin
+from time import sleep
+pin_diody = Pin(5, Pin.OUT)
+while True:
+    pin_diody.value(0)
+    sleep(1/60)
+    pin_diody.value(1)
+    sleep(1/60)
+</pre>
+                    <p>
+                        Zkus si pohrát shodnotami pro <code>time.sleep</code>.
+                    </p>
+                    <p>
+                        Dokážeš napsat program, který diodu postupně, plynule
+                        rozsvítí?
+                    </p>
+                    <p class="note">
+                        Takhle fungují prakticky všechna stmívatelná LED
+                        světla – rychlé blikání je ekonomičtější a přesnější
+                        než např. nastavování nižšího napětí.
+                    </p>
+                    <p>
+                        Protože je takovéhle rychlé blikání užitečné ve spoustě
+                        různých situací, obsahuje náš počítač speciální obvod,
+                        který umí blikat samostatně.
+                        Nastavíme jak rychle má blikat, a jak dlouho má trvat
+                        každé bliknutí, a počítač pak bude blikat automaticky,
+                        zatímco náš program se může věnovat něčemu jinému.
+                    </p>
+                    <p>
+                        Téhle funkci se říká <em>modulace šířky pulzu</em> –
+                        angl. <em>Pulse With Modulation</em>, neboli
+                        <em>PWM</em>.
+                        Z MicroPythonu jde tahle funkce ovládat pomocí třídy
+                        <code>machine.PWM</code>.
+                        Každý objekt téhle třídy umí ovládat jednu nožičku,
+                        a dají se u něj nastavit dva parametry:
+                    </p>
+                    <ul>
+                        <li>
+                            <code>freq</code> – frekvence, tedy kolikrát za
+                            sekundu se LED rozsvítí a zase zhasne, a
+                        </li>
+                        <li>
+                            <code>duty</code> – šířka pulzu, tedy jak dlouho
+                            bude dioda při každém bliknutí svítit.
+                            Hodnota <code>duty</code> může být od 0,
+                            kdy nesvítí vůbec, do 1024, kdy svítí celou dobu.
+                            Nastavíš-li tedy <code>duty=256</code>, bude dioda
+                            svítit s poloviční intenzitou (256 = 1024/2).
+                        </li>
+                    </ul>
+                    <p>
+                        Nastavíš-li <code>PWM(freq=50, duty=256)</code>,
+                        dioda bude blikat 50× za sekundu.
+                        Vždycky jednu setinu vteřiny bude svítit a na jednu
+                        setinu vteřiny zhasne.
+                    </p>
+<pre> <!-- XXX: Test -->
+from machine import Pin, PWM
+from time import sleep
+
+pin_diody = Pin(5, Pin.OUT)
+pwm = PWM(pin_diody, freq=100, duty=256)
+</pre>
+                    <p>
+                        Zkus nastavit i nižší frekvenci, třeba 3 nebo 1, ať
+                        blikání vidíš přímo!
+                    </p>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Tóny a melodie</h1>
+                    <p>
+                        Vezmi si další součástku – piezobudič, neboli
+                        „bzučítko”.
+                    </p>
+                    <p>
+                        Tahle malá věc obsahuje speciální materiál, který se,
+                        když ho připojíme ke zdroji napětí, trošku roztáhne.
+                        Roztažením zatlačí na okolní vzduch, a vytvoří tlakovou
+                        vlnu, která může doputovat až k našim uším.
+                    </p>
+                    <p>
+                        Zkus si to – když bzučítko připojíš na <code>3V</code>
+                        a <code>G</code> (tentokrát je jedno kterým směrem),
+                        uslyšíš tiché lupnutí.
+                        A podobné lupnutí uslyšíš když součástku zase odpojíš.
+                    </p>
+                    <p>
+                        Co se stane, když budeš napětí připojovat
+                        a odpojovat, řekněme, 32× za vteřinu?
+                    </p>
+                    <p>
+                        Nebo 65×?
+                    </p>
+                    <p>
+                        Nebo některou z těchto frekvencí?
+                    </p>
+                    <table class="table">
+                        <tr><th>Nota</th><th>Frekvence</th></tr>
+                        <tr><td>C1 </td><td>32.70</td></tr>
+                        <tr><td>D  </td><td>36.71</td></tr>
+                        <tr><td>E  </td><td>41.20</td></tr>
+                        <tr><td>F  </td><td>43.65</td></tr>
+                        <tr><td>G  </td><td>49.00</td></tr>
+                        <tr><td>A  </td><td>55.00</td></tr>
+                        <tr><td>H  </td><td>61.74</td></tr>
+                        <tr><td>C2 </td><td>65.41</td></tr>
+                    </table>
+                    <p>
+                        Naprogramuj písničku!
+                        Potřebuješ-li víc not, pusť si
+                        <a href="noty.py">program</a>, který vypočítá
+                        další frekvence.
+                    </p>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Rotace</h1>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Další ovládání</h1>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Barevná světýlka</h1>
                 </div>
             </div>
             <div class="footer">
