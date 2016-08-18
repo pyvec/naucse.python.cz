@@ -20,6 +20,10 @@
             .pull-right, .pull-left { margin: 1em; }
             .highlight   { background-color:  hsla(  0, 100%, 50%, 0.1); }
             .img-fluid   { max-width: 100%; }
+            .highlight-nocolor{ background-color:  hsla( 60, 100%, 99%, 0.5); }
+            .highlight-red    { background-color:  hsla(  0, 100%, 50%, 0.25); }
+            .highlight-green  { background-color:  hsla(113, 100%, 50%, 0.25); }
+            .highlight-blue   { background-color:  hsla(236, 100%, 50%, 0.25); }
         </style>
     </head>
     <body>
@@ -636,6 +640,12 @@ pwm = PWM(pin_diody, freq=50, duty=512)
                         další frekvence.
                     </p>
                 </div>
+                <!--
+                <div class="col-lg-12">
+                    <h1>Další ovládání</h1>
+                    XXX: 2, tlačítka, ovládání tónu
+                </div>
+                -->
                 <div class="col-lg-12">
                     <h1>Rotace</h1>
                     <p>
@@ -707,13 +717,209 @@ pwm.duty(35)
                     </p>
                 </div>
                 <div class="col-lg-12">
-                    <h1>Poznámka o napětí a napájení</h1>
+                    <h1>Poznámka o napájení a napětí</h1>
+                    <p>
+                        K tomu, aby se otočil motor, je potřeba mnohem víc
+                        energie, než k rozsvícení světýlka.
+                        Z USB z počítače té energie dostaneš docela málo,
+                        proto můžou být s motorkem problémy.
+                    </p>
+                    <p>
+                        Jak to řešit, až si přestaneme hrát a budeš chtít
+                        motorkem otáčet „doopravdy”?
+                    </p>
+                    <p>
+                        Elektronika, která je na našem malém počítači mimo
+                        malou destičku s „mozkem” má dva hlavní úkoly:
+                    </p>
+                    <ul>
+                        <li>
+                            Převádět <em>komunikaci</em> z USB, která je
+                            celkem složitě zakódovaná, na něco čemu malý
+                            počítač rozumí (konkrétně „UART”
+                            přes nožičky <code>TX</code> a <code>RX</code>).
+                        </li>
+                        <li>
+                            Převádět napětí 5V, které poskytuje USB,
+                            na 3,3V na které potřebuje malý počítač.
+                        </li>
+                    </ul>
+                    <p>
+                        Když energie z USB přestane stačit, dá se koupit
+                        zařízení, které zvládne převádět komunikaci,
+                        a napájení vyřešit z jiného zdroje 5V.
+                        Kdybys to někdy zkoušela, příslušné zařízení
+                        koupíš pod názvem <em>USB-TTL adapter</em>, a vypadá
+                        nejčastěji takhle:
+                    </p>
+                    <img src="usb-ttl.png">
+                    <p>
+                        K malému počítač pak tento převodník a zdroj napětí
+                        připojíš takto:
+                    </p>
+                    <ul>
+                        <li>
+                            <code>GND</code> na převodníku – <code>G</code> na počítači
+                        </li>
+                        <li>
+                            <code>RX</code> na převodníku – <code>TX</code> (!) na počítači
+                        </li>
+                        <li>
+                            <code>TX</code> na převodníku – <code>RX</code> (!) na počítači
+                        </li>
+                        <li>
+                            <code>+5V</code> na zdroji napětí na <code>VIN</code> na počítači
+                        </li>
+                        <li>
+                            Zem na zdroji napětí na <code>G</code> na počítači
+                        </li>
+                    </ul>
+                    <p>
+                        Pozor, 5V nepřipojuj jinam než na <code>VIN</code>!
+                    </p>
+                    <h2>Napětí</h2>
+                    <p>
+                        Další důvod, proč nám servomotor někdy nefunguje dobře,
+                        je to, že je stavěný na 5 voltů, ne na 3,3 které
+                        poskytuje malý počítač.
+                    </p>
+                    <p>
+                        Když připojíš zařízení k menšímu napětí, než
+                        potřebuje, většinou buď nebude fungovat, nebo bude
+                        dělat „míň” než by mělo: LED bude míň svítit,
+                        reproduktor bude tišší, motorek se bude točit pomaleji
+                        nebo s menší silou.
+                    </p>
+                    <p>
+                        Když naopak připojíš zařízení k <em>většímu</em> napětí,
+                        než na jaké je stavěno, nejspíš ho nadobro zničíš.
+                        Když připojíš červenou LED nepřipojuj přímo na 3,3 V,
+                        přestane fungovat;
+                        když připojíš malý servomotorek na zdroj 24V, může
+                        začít hořet.
+                        A ačkoli lidem malá napětí jako 5V nevadí,
+                        když připojíš do zásuvky s 230V sama sebe, můžeš umřít.
+                        Takže na velká napětí pozor!
+                    </p>
+                    <p>
+                        My motorek připojujeme na malé napětí, a zmenšený
+                        výkon nám příliš nevadí – dokud se to
+                        otáčí, víc rychlosti ani síly nepotřebujeme.
+                    </p>
+                    <p>
+                        Až to ale potřebovat budeš – například až budeš
+                        servomotorkem pohánět ruku robota, která bude zvedat
+                        těžké náklady, budeš potřebovat dvě věci:
+                    </p>
+                    <ul>
+                        <li>
+                            Externí napájení – jako předtím bude motorek
+                            potřebovat zvláštní zdroj 5V.
+                        </li>
+                        <li>
+                            Na datový signál je potřeba použít <em>převodník
+                            úrovní</em> (angl. <em>logic level converter</em>),
+                            který převede třívoltový signál na pětivoltový.
+                        </li>
+                    </ul>
+                    <p>
+                        Kdybys to někdy potřebovala, ozvi se koučům – i po
+                        workshopu ti určitě rádi poradí, nebo ti aspoň řeknou
+                        koho se zeptat!
+                    </p>
                 </div>
+                <!--
                 <div class="col-lg-12">
-                    <h1>Další ovládání</h1>
+                    XXX: main.py
                 </div>
+                -->
                 <div class="col-lg-12">
                     <h1>Barevná světýlka</h1>
+                    <p>
+                        Tak, dost teorie; vem si novou hračku!
+                        Tentokrát to bude LED pásek, neboli „blikátko”.
+                    </p>
+                    <p>
+                        Na pásku máš 8 malých čtverečků.
+                        Každý z nich obsahuje docela hodně elektroniky:
+                        tři barevné LED (červenou, zelenou, a modrou),
+                        a čip který je umí ovládat pomocí informací,
+                        které dostane přes jediný drátek z malého počítače.
+                    </p>
+                    <p>
+                        Takové pásky se prodávají po metrech, a dají se
+                        nastříhat – mezi jednotlivými světýlky si všimni čárky,
+                        naznačující kde máš střihnout.
+                        Energie z USB stačí zhruba na osm světýlek, proto jsi
+                        jich dostala tolik.
+                    </p>
+                    <p>
+                        Tenhle LED pásek je, podobně jako servomotorek, stavěný
+                        na pět voltů. Na rozdíl od motorku, který se s 3,3V
+                        trochu roztočil, se ale s nižším napětím ani
+                        nerozsvítí.
+                        Naštěstí ale potřebuje 5V jen na <em>napájení</em>;
+                        řídící signál s informacemi o barvičkách může mít
+                        3,3V.
+                    </p>
+                    <p>
+                        Pojďme pásek zapojit:
+                    </p>
+                    <ul>
+                        <li>
+                            <code>GND</code> pásku (bílý drátek)
+                            připoj na <code>G</code>
+                        </li>
+                        <li>
+                            <code>DI</code> (<em>data in</em> – zelený drátek)
+                            připoj na <code>D4</code>
+                        </li>
+                        <li>
+                            <code>+5V</code> (červený drátek)
+                            připoj na <code>VU</code>
+                        </li>
+                    </ul>
+                    <p>
+                        Nožička <code>VU</code> poskytuje 5 voltů.
+                        Pozor na ni: nepřipojuj na ni zařízení, které se s
+                        pěti volty nevyrovnají.
+                    </p>
+                    <p>
+                        Máš-li zapojeno, můžeš začít programovat.
+                        „Jazyk”, kterým „mluví” tenhle LED pásek je trošku
+                        složitější než signál PWM, ale MicroPython obsahuje
+                        speciální knihovnu, která s páskem komunikovat
+                        umí.
+                        Vypadá to nějak takhle:
+                    </p>
+<pre>
+from machine import Pin
+from neopixel import NeoPixel
+
+POCET_LED = 8
+pin = Pin(2, Pin.OUT)
+np = NeoPixel(pin, POCET_LED)
+np[<span class="highlight-nocolor">0</span>] = (<span class="highlight-red">255</span>, <span class="highlight-green">255</span>, <span class="highlight-blue">255</span>)
+np.write()
+</pre>
+                    <p>
+                        Co znamenají vyznačené hodnoty (<code>0</code> a
+                        ty <code>255</code>), na to už jistě přijdeš sama.
+                        Jen při experimentování nezapomeň zavolat
+                        <code>np.write()</code>, tím se informace pošlou do
+                        LED pásku.
+                    </p>
+                    <p>
+                        Zvládneš naprogramovat semafor?
+                    </p>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Wi-fi</h1>
+                    (XXX)
+                </div>
+                <div class="col-lg-12">
+                    <h1>Kam dál?</h1>
+                    (XXX)
                 </div>
             </div>
             <div class="footer">
