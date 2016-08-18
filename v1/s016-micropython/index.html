@@ -400,7 +400,7 @@ print(pin.value())
                     </p>
                     <p>
                         Přepoj drát k anodě z <code>3V3</code> na
-                        <code>D4</code>.
+                        <code>D5</code>.
                     </p>
                     <p>
                         Máš-li zapojeno, znovu se připoj k MicroPythonu a
@@ -408,7 +408,8 @@ print(pin.value())
                     </p>
 <pre>
 from machine import Pin
-pin = Pin(2, Pin.OUT)
+pin = Pin(14, Pin.OUT)
+pin.value(0)
 pin.value(1)
 </pre>
                     <p>
@@ -420,11 +421,11 @@ pin.value(1)
                     </p>
                     <p class="note">
                         Číslování nožiček je bohužel dvojí – nožička
-                        označená jako <code>D4</code> má v procesoru přiřazené
-                        číslo 2. Třída <code>Pin</code> v MicroPythonu
+                        označená jako <code>D5</code> má v procesoru přiřazené
+                        číslo 14. Třída <code>Pin</code> v MicroPythonu
                         používá číslování procesoru.
                         Naštěstí máš tahák, kde snadno dohledáš že
-                        <code>D4</code> a <code>Pin(2)</code> jsou dvě jména
+                        <code>D5</code> a <code>Pin(14)</code> jsou dvě jména
                         stejné nožičky.
                     </p>
                     <p>
@@ -439,7 +440,7 @@ pin.value(1)
 <details class="solution"><h3>Řešení</h3>
 <pre>
 from machine import Pin
-pin_diody = Pin(5, Pin.OUT)
+pin_diody = Pin(14, Pin.OUT)
 pin_tlacitka = Pin(0, Pin.IN)
 while True:
     pin_diody.value(1 - pin_tlacitka.value())
@@ -497,25 +498,25 @@ while True:
                         Opotřebovávají se svícením a časem. 
                         Druhý je, že lidské oko nestačí zaznamenat pohyby a
                         změny, které probíhají rychleji než zhruba za
-                        šedesátinu vteřiny.
+                        setinu vteřiny.
                     </p>
                     <p>
                         Pojďme tedy velice rychle blikat – a oblafnout tak naše
                         oči a mozky!
                         Využijeme k tomu funkci <code>time.sleep()</code>,
                         která počká daný počet vteřin.
-                        Třeba <code>time.sleep(1/60)</code> zastaví program
-                        na jednu šedesátinu sekundy.
+                        Třeba <code>time.sleep(1/100)</code> zastaví program
+                        na jednu setinu sekundy.
                     </p>
-<pre> <!-- XXX: Test -->
+<pre>
 from machine import Pin
 from time import sleep
-pin_diody = Pin(5, Pin.OUT)
+pin_diody = Pin(14, Pin.OUT)
 while True:
     pin_diody.value(0)
-    sleep(1/60)
+    sleep(1/100)
     pin_diody.value(1)
-    sleep(1/60)
+    sleep(1/200)
 </pre>
                     <p>
                         Zkus si pohrát shodnotami pro <code>time.sleep</code>.
@@ -524,6 +525,7 @@ while True:
                         Dokážeš napsat program, který diodu postupně, plynule
                         rozsvítí?
                     </p>
+                     <!-- XXX: Solution? -->
                     <p class="note">
                         Takhle fungují prakticky všechna stmívatelná LED
                         světla – rychlé blikání je ekonomičtější a přesnější
@@ -538,7 +540,10 @@ while True:
                         zatímco náš program se může věnovat něčemu jinému.
                     </p>
                     <p>
-                        Téhle funkci se říká <em>modulace šířky pulzu</em> –
+                        Téhle funkci se říká <em>pulzně šířkové modulace</em> –
+                        <!-- XXX: to je hnusný překlad, já bych řekl „modulace
+                        šířky pulzu”, ale je to, zdá se,  technický termín...
+                        -->
                         angl. <em>Pulse With Modulation</em>, neboli
                         <em>PWM</em>.
                         Z MicroPythonu jde tahle funkce ovládat pomocí třídy
@@ -552,30 +557,37 @@ while True:
                             sekundu se LED rozsvítí a zase zhasne, a
                         </li>
                         <li>
-                            <code>duty</code> – šířka pulzu, tedy jak dlouho
-                            bude dioda při každém bliknutí svítit.
-                            Hodnota <code>duty</code> může být od 0,
-                            kdy nesvítí vůbec, do 1024, kdy svítí celou dobu.
-                            Nastavíš-li tedy <code>duty=256</code>, bude dioda
-                            svítit s poloviční intenzitou (256 = 1024/2).
+                            <code>duty</code> – anglicky <em>duty cycle</em>,
+                            česky <em>střída</em>, nastavuje „šířku pulzu”,
+                            tedy jak dlouho bude dioda při každém bliknutí
+                            svítit.
+                            Hodnota <code>duty</code> může být od 0, kdy LED
+                            nesvítí vůbec, do 1024, kdy svítí celou dobu.
+                            Nastavíš-li <code>duty=512</code>, bude dioda
+                            svítit s poloviční intenzitou (512 = 1024/2).
                         </li>
                     </ul>
                     <p>
-                        Nastavíš-li <code>PWM(freq=50, duty=256)</code>,
+                        Nastavíš-li <code>PWM(freq=50, duty=512)</code>,
                         dioda bude blikat 50× za sekundu.
                         Vždycky jednu setinu vteřiny bude svítit a na jednu
                         setinu vteřiny zhasne.
                     </p>
-<pre> <!-- XXX: Test -->
+<pre>
 from machine import Pin, PWM
 from time import sleep
 
-pin_diody = Pin(5, Pin.OUT)
-pwm = PWM(pin_diody, freq=100, duty=256)
+pin_diody = Pin(14, Pin.OUT)
+pwm = PWM(pin_diody, freq=50, duty=512)
 </pre>
                     <p>
                         Zkus nastavit i nižší frekvenci, třeba 3 nebo 1, ať
                         blikání vidíš přímo!
+                    </p>
+                    <p>
+                        PWM se dá zrušit metodou <code>pwm.deinit()</code>.
+                        Jako s otvíráním souborů, je dobré po sobě uklidit –
+                        i když zatím můžeš jednoduše restartovat celý počítač.
                     </p>
                 </div>
                 <div class="col-lg-12">
@@ -608,14 +620,14 @@ pwm = PWM(pin_diody, freq=100, duty=256)
                     </p>
                     <table class="table">
                         <tr><th>Nota</th><th>Frekvence</th></tr>
-                        <tr><td>C1 </td><td>32.70</td></tr>
-                        <tr><td>D  </td><td>36.71</td></tr>
-                        <tr><td>E  </td><td>41.20</td></tr>
-                        <tr><td>F  </td><td>43.65</td></tr>
-                        <tr><td>G  </td><td>49.00</td></tr>
-                        <tr><td>A  </td><td>55.00</td></tr>
-                        <tr><td>H  </td><td>61.74</td></tr>
-                        <tr><td>C2 </td><td>65.41</td></tr>
+                        <tr><td>C1 </td><td>32.70 Hz</td></tr>
+                        <tr><td>D  </td><td>36.71 Hz</td></tr>
+                        <tr><td>E  </td><td>41.20 Hz</td></tr>
+                        <tr><td>F  </td><td>43.65 Hz</td></tr>
+                        <tr><td>G  </td><td>49.00 Hz</td></tr>
+                        <tr><td>A  </td><td>55.00 Hz</td></tr>
+                        <tr><td>H  </td><td>61.74 Hz</td></tr>
+                        <tr><td>C2 </td><td>65.41 Hz</td></tr>
                     </table>
                     <p>
                         Naprogramuj písničku!
@@ -626,6 +638,76 @@ pwm = PWM(pin_diody, freq=100, duty=256)
                 </div>
                 <div class="col-lg-12">
                     <h1>Rotace</h1>
+                    <p>
+                        Čas na další součástku! Tentokrát to bude servomotor,
+                        neboli „točítko”.
+                    </p>
+                    <p>
+                        Servomotor je součástka, která má v sobě zabudovaný
+                        ovladač, se kterým si náš počítač může povídat
+                        jednoduchým „elektronickým jazykem” –
+                        <em>protokolem</em>.
+                        Točítku budeme posílat impulzy, a podle délky impulzu
+                        se servomotor natočí.
+                        Při krátkých impulzech se natočí víc na jednu stranu,
+                        při dlouhých na druhou.
+                        Impulzy musíš posílat neustále, jinak se servomotor
+                        vypne.
+                    </p>
+                    <p>
+                        Na rozdíl od bzučítka, kde o výšce tónu rozhodovala
+                        frekvence (<code>freq</code>) – kolikrát za vteřinu
+                        se ozve lupnutí – a LED, kde o intenzitě rozhodovala
+                        střída (<code>duty</code>) – poměr mezi dobou kdy
+                        dioda svítí a kdy nesvítí, u servomotoru rozhoduje
+                        tzv. <em>šířka pulzu</em>: jak dlouho se napětí udrží
+                        na 3,3V, než se přepne zpátky na 0V.
+                        <!-- XXX: Actual typical pulse widths -->
+                    </p>
+                    <p>
+                        V praxi to znamená, že můžeme nastavit <code>freq</code>
+                        na 50 Hz, a <code>duty</code> měnit cca od 35
+                        (úplně vlevo) přes 77 (uprostřed) po 120 (úplně vpravo).
+                    </p>
+                    <p>
+                        Dost ale teorie, pojďme si to vyzkoušet!
+                        Napřed musíš motorek zapojit:
+                    </p>
+                    <ul>
+                        <li>
+                            hnědý drát (zem) na <code>G</code>,
+                        </li>
+                        <li>
+                            červený drát (napájení) na <code>3V</code>, a
+                        </li>
+                        <li>
+                            oranžový drát (data) na <code>D4</code>.
+                        </li>
+                    </ul>
+                    <p>
+                        Nožička <code>D4</code> odpovídá <code>Pin(2)</code>,
+                        takže kód k otáčení motorku je:
+                    </p>
+<pre>
+from machine import Pin, PWM
+from time import sleep
+
+pin_diody = Pin(2, Pin.OUT)
+pwm = PWM(pin_diody, freq=50, duty=77)
+pwm.duty(35)
+</pre>
+                    <p>
+                        Zkus motorkem otáčet nastavováním <code>duty</code>
+                        na 35 do 123.
+                        Kdyby se náhodou stalo, že se počítač restartuje a
+                        konzole přestane fungovat, zkus ho odpojit a znovu
+                        připojit. Kdyby to nepomohlo, motorek ti dneska
+                        nebude fungovat. Za chvíli si řekneme proč; zatím
+                        se přidej k sousedce :)
+                    </p>
+                </div>
+                <div class="col-lg-12">
+                    <h1>Poznámka o napětí a napájení</h1>
                 </div>
                 <div class="col-lg-12">
                     <h1>Další ovládání</h1>
@@ -635,7 +717,7 @@ pwm = PWM(pin_diody, freq=100, duty=256)
                 </div>
             </div>
             <div class="footer">
-                <div>pro PyLadies CZ napsal Petr Viktorin, 2015</div>
+                <div>pro PyLadies CZ napsal Petr Viktorin, 2016</div>
                 <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
             </div>
         </div>
