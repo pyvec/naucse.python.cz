@@ -54,7 +54,7 @@
                         <p>
                             Dnes budeme programovat malý počítač – konkrétně
                             tak malý počítač, že se ho pohodlně schováš v ruce.
-                            Konkrétně budeme používat desku zvanou
+                            Konkrétně budeme používat „chytrou destičku” zvanou
                             <i>NodeMCU</i>, která by měla ležet před tebou.
                             Než ji vyndáš z obalu, měla by ses <em>vybít</em>:
                             dotkni se něčeho kovového, co je spojeno se zemí,
@@ -116,6 +116,9 @@
                             Po stranách modulu jsou dvě řady
                             <span class="part-blue">„nožiček”</span>, na které
                             se dá napojit celá řada nejrůznějších hraček.
+                            Zkontroluj si, jestli jsou všechny nožičky rovné;
+                            kdyby byla některá ohnutá, tak ji (nejlépe s pomocí
+                            kouče) narovnej nebo si vezmi jiný počítač.
                         </p>
                     </div>
                 </div>
@@ -282,9 +285,10 @@ print(pin.value())
                     </p>
                     <p>
                         No a „nožička” číslo 0 je připojená k tlačítku
-                        <code>RESET</code>.
+                        <code>FLASH</code>.
                         Informace o tom, která nožička je kam připojená,
-                        máš na taháku <!--XXX--> – můžeš si zkontrolovat,
+                        máš na <a href="https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf">taháku</a> –
+                        můžeš si zkontrolovat,
                         že Pin(0) u sebe má poznámku FLASH.
                     </p>
                 </div>
@@ -351,7 +355,7 @@ print(pin.value())
                         do dírky ve stejné řadě, kde je nožička
                         <code>3V</code> počítače, a podobně anodu k
                         <code>G</codE>.
-                        Pělo by to vypadat jako na tomto obrázku:
+                        Mělo by to vypadat jako na tomto obrázku:
                     </p>
                     <p>
                         <img src="circuits/led_bb.svg" class="img-fluid"
@@ -428,7 +432,8 @@ pin.value(1)
                         označená jako <code>D5</code> má v procesoru přiřazené
                         číslo 14. Třída <code>Pin</code> v MicroPythonu
                         používá číslování procesoru.
-                        Naštěstí máš tahák, kde snadno dohledáš že
+                        Naštěstí máš <a href="https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf">tahák</a>,
+                        kde snadno dohledáš že
                         <code>D5</code> a <code>Pin(14)</code> jsou dvě jména
                         stejné nožičky.
                     </p>
@@ -548,7 +553,7 @@ while True:
                         <!-- XXX: to je hnusný překlad, já bych řekl „modulace
                         šířky pulzu”, ale je to, zdá se,  technický termín...
                         -->
-                        angl. <em>Pulse With Modulation</em>, neboli
+                        angl. <em>Pulse Width Modulation</em>, neboli
                         <em>PWM</em>.
                         Z MicroPythonu jde tahle funkce ovládat pomocí třídy
                         <code>machine.PWM</code>.
@@ -566,7 +571,7 @@ while True:
                             tedy jak dlouho bude dioda při každém bliknutí
                             svítit.
                             Hodnota <code>duty</code> může být od 0, kdy LED
-                            nesvítí vůbec, do 1024, kdy svítí celou dobu.
+                            nesvítí vůbec, do 1023, kdy svítí celou dobu.
                             Nastavíš-li <code>duty=512</code>, bude dioda
                             svítit s poloviční intenzitou (512 = 1024/2).
                         </li>
@@ -702,8 +707,8 @@ pwm = PWM(pin_diody, freq=50, duty=512)
 from machine import Pin, PWM
 from time import sleep
 
-pin_diody = Pin(2, Pin.OUT)
-pwm = PWM(pin_diody, freq=50, duty=77)
+pin_motorku = Pin(2, Pin.OUT)
+pwm = PWM(pin_motorku, freq=50, duty=77)
 pwm.duty(35)
 </pre>
                     <p>
@@ -741,7 +746,7 @@ pwm.duty(35)
                         </li>
                         <li>
                             Převádět napětí 5V, které poskytuje USB,
-                            na 3,3V na které potřebuje malý počítač.
+                            na 3,3V které potřebuje malý počítač.
                         </li>
                     </ul>
                     <p>
@@ -757,6 +762,7 @@ pwm.duty(35)
                         K malému počítač pak tento převodník a zdroj napětí
                         připojíš takto:
                     </p>
+                    <!-- XXX: obrázek -->
                     <ul>
                         <li>
                             <code>GND</code> na převodníku – <code>G</code> na počítači
@@ -793,8 +799,8 @@ pwm.duty(35)
                     <p>
                         Když naopak připojíš zařízení k <em>většímu</em> napětí,
                         než na jaké je stavěno, nejspíš ho nadobro zničíš.
-                        Když připojíš červenou LED nepřipojuj přímo na 3,3 V,
-                        přestane fungovat;
+                        Když připojíš červenou LED přímo na 3,3 V, přestane
+                        fungovat;
                         když připojíš malý servomotorek na zdroj 24V, může
                         začít hořet.
                         A ačkoli lidem malá napětí jako 5V nevadí,
@@ -930,39 +936,3 @@ np.write()
         <script type="text/javascript" src="../js/solutions.js"></script>
     </body>
 </html>
-
-<!--
-XXX: Remove
-from machine import Pin
-import time
-
-for i in range(16):
-    if i in (1,6,7,8,9): continue
-    print(i)
-    pin = Pin(i, Pin.OUT)
-    pin.value(0)
-    time.sleep(0.1)
-    pin.value(1)
-    time.sleep(0.1)
-
-    
-    
-    
-from machine import Pin
-from neopixel import NeoPixel
-
-N = 8
-pin = Pin(0, Pin.OUT)   # set GPIO0 to output to drive NeoPixels
-np = NeoPixel(pin, N)   # create NeoPixel driver on GPIO0 for 8 pixels
-for i in range(N): np[i] = (255, 255, 255) # set the first pixel to white
-
-np.write()              # write data to all pixels
-
-
-import machine
-servo = machine.PWM(machine.Pin(2), freq=50)
-servo.duty(40)
-
-servo.duty(115)
-servo.duty(77)
--->
