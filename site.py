@@ -40,9 +40,7 @@ def index():
 
 @app.route('/courses/<path:path>/')
 def course(path):
-    print(path)
-    template_paths = ["courses/"+path+'.html']
-    template_paths.append("courses/"+path+'/index.html')
+    template_paths = ["courses/"+path+'.html', "courses/"+path+'/index.html']
     for template_path in template_paths:
         if os.path.exists(os.path.join(app.root_path, template_path)):
             return render_template(template_path)
