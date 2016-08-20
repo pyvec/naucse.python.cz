@@ -17,7 +17,7 @@ from elsa import cli
 app = Flask('naucsepythoncz', template_folder="")
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-COURSES = "install".split() # TODO scrape directory
+COURSES = os.listdir(app.root_path+"/courses/")
 
 # Hacky blueprints for static directories
 
@@ -29,6 +29,7 @@ for course in COURSES:
 
 
 def course_url(path):
+    path = path.rstrip('/')
     return url_for('course', path=path)
 
 app.jinja_env.globals['course_url'] = course_url
@@ -37,12 +38,11 @@ app.jinja_env.globals['course_url'] = course_url
 def index():
     return render_template("templates/index.html")
 
-@app.route('/courses/<path:path>')
+@app.route('/courses/<path:path>/')
 def course(path):
     print(path)
     template_paths = ["courses/"+path+'.html']
-    if path.endswith("/"):
-        template_paths.append("courses/"+path+'/index.html')
+    template_paths.append("courses/"+path+'/index.html')
     for template_path in template_paths:
         if os.path.exists(os.path.join(app.root_path, template_path)):
             return render_template(template_path)
