@@ -27,6 +27,12 @@ for course in COURSES:
         static_folder=app.root_path+"/courses/"+course+"/static")
     app.register_blueprint(blueprint)
 
+
+def course_url(path):
+    return url_for('course', path=path)
+
+app.jinja_env.globals['course_url'] = course_url
+
 @app.route('/')
 def index():
     return render_template("templates/index.html")
