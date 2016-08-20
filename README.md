@@ -1,6 +1,5 @@
+# Nauč se Python
 
-# Materiály pro Pyladies Brno
+Materiály pro české PyLadies vytažené do samostatného repa.
 
-Viz http://python.cz/pyladies
-
-Je to dělané rychle a jednoduše – čisté HTML. Editujte!
+Brzy dostupné na naucse.python.cz.
