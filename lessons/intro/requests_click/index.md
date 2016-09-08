@@ -70,6 +70,10 @@ hlavičky.
 >>> r = session.get('http://httpbin.org/cookies')
 >>> r.json()
 {'cookies': {'mipyt': 'best'}}
+>>> session.headers.update({'x-test': 'true'})
+>>> r = session.get('http://httpbin.org/headers', headers={'x-test2': 'true'})
+>>> r.json()
+{'headers': {'Accept': '*/*', 'User-Agent': 'python-requests/2.10.0', 'X-Test2': 'true', 'Host': 'httpbin.org', 'Accept-Encoding': 'gzip, deflate', 'X-Test': 'true', 'Cookie': 'mipyt=best'}}
 ```
 
 ### Twitter API
