@@ -146,7 +146,7 @@ Pak už by mělo API fungovat:
 >>> for tweet in r.json()['statuses']:
 ...     print(tweet['text'])
 ... 
-Download our Guide to Python for quick hints and tips when learning to code in #Python https://t.co/sKnX7yaAKv https://t.co/cndHnBBbfh
+Once a framework decides to abstract the HTML layer from you. Customizing your UI becomes sorcery. #django #Python
 ...
 ```
 
