@@ -34,9 +34,10 @@ vrhneme se rovnou na příklad:
 ```python
 >>> import getpass
 >>> import requests
+>>> username = input('Username: ')
+Username: hroncok
 >>> password = getpass.getpass()
 Password: 
->>> username = 'hroncok'
 >>> r = requests.get('https://api.github.com/user', auth=(username, password))
 >>> r.status_code
 200
