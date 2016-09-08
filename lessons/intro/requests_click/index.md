@@ -347,8 +347,9 @@ Pomocí argumentů půjde nastavit:
 
 ### Vlastní nápad
 
-Můžete využít i jiné API (např. [KOSapi]) a vymyslet vlastní aplikaci.
+Můžete využít i jiné API (např. místní [Sirius] či [KOSapi]) a vymyslet vlastní aplikaci.
 Zadání vám ale musí schválit cvičící, protože v dalších cvičeních na tuto
 aplikaci budeme nabalovat další a další funkce.
 
+[Sirius]: https://github.com/cvut/sirius/wiki
 [KOSapi]: https://kosapi.fit.cvut.cz/projects/kosapi/wiki
