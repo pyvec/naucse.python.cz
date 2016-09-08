@@ -237,7 +237,7 @@ My ale věříme, že ji odebrat nechcete :)
 
 Když ukládáte skript do gitu, mějte na paměti, že tokeny a klíče do něj nikdy
 nepatří. Můžete je uložit do konfiguračního souboru, který bude gitem ignorován,
-například takto:
+například takhle:
 
 ```
 [twitter]
@@ -256,7 +256,14 @@ token = xxxxxxx
 D4HJp6PKmpon9eya1b2c3d4e5
 ```
 
-V takovém přídě je vhodné vložit do gitu například soubor `auth.cfg.sample` s
+Do souboru `.gitignore` je pak třeba přidat název ignorovaného souboru, např.:
+
+```
+auth.cfg
+```
+
+Jelikož ostatní váš konfigurační soubor neuvidí,
+je vhodné vložit do gitu například soubor `auth.cfg.sample` s
 vymyšlenými údaji, či příklad uvést v README.
 
 click
