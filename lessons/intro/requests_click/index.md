@@ -228,7 +228,10 @@ Případně vyhodit výjimku, pokud je stavový kód divný:
 Pokud hvězdičku chcete odebrat, použijte metodu DELETE.
 My ale věříme, že ji odebrat nechcete :)
 
+[Dokumentace] ke GitHub API.
+
 [nastavení]: https://github.com/settings/tokens
+[Dokumentace]: https://developer.github.com/v3/
 
 ### Chraňte své tokeny
 
