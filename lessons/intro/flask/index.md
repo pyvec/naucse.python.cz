@@ -176,6 +176,48 @@ if __name__ == "__main__":
     app.run(debug=True)
 ```
 
+### Filtry
+
+Není úplně elegantní vzít nějaká data (např. tweety z Twitter API) a před
+předáním šabloně do nich cpát svoje úpravy (např. HTML).
+Od toho jsou tu filtry. Filtr je funkce na transformaci řetězce, kterou lze
+použít v šabloně.
+
+Zde například funkce, která načte čas v určitém formátu a převede do jiného:
+
+```python
+@app.template_filter('time')
+def convert_time(text):
+    """Convert the time format to a different one"""
+    dt = datetime.strptime(text, '%a %b %d %H:%M:%S %z %Y')
+    return dt.strftime('%c')
+```
+
+V šabloně:
+
+```html
+{{ tweet.created_at|time }}
+```
+
+Pokud by však filtr přidával nějaké HTML značky, Jinja2 by pro jistotu tyto
+značky znehodnotila (vyescapovala):
+
+```python
+@app.template_filter('time')
+def convert_time(text):
+    """Convert the time format to a different one"""
+    dt = datetime.strptime(text, '%a %b %d %H:%M:%S %z %Y')
+    return dt.strftime('<strong>%c</strong>')  # &lt;strong&gt;...
+```
+
+Proto je potřeba říct Jinje, že náš řetězec je bezpečný:
+
+```python
+import jinja2
+...
+return jinja2.Markup(text_with_html)
+```
+
 ### Statické soubory
 
 Pokud budete potřebovat nějaké statické soubory (např. css soubory nebo
@@ -322,7 +364,8 @@ doplňte do aplikace webový frontend, který bude zobrazovat
 výsledky hledání. Hledaný pojem by měl jít zadat pomocí URL.
 
 Pro plný počet bodů  musí rozhraní zobrazovat avatary uživatelů
-a zpracovávat [entity] jako obrázky, odkazy a hash tagy.
+a zpracovávat [entity] jako obrázky, odkazy, zmínky a hash tagy.
+Ideální je k tomu využít filtr.
 
 [entity]: https://dev.twitter.com/overview/api/entities-in-twitter-objects
 
