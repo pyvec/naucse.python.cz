@@ -176,14 +176,14 @@ if __name__ == "__main__":
     app.run(debug=True)
 ```
 
-### Filtry
+#### Filtry
 
 Není úplně elegantní vzít nějaká data (např. tweety z Twitter API) a před
 předáním šabloně do nich cpát svoje úpravy (např. HTML).
 Od toho jsou tu filtry. Filtr je funkce na transformaci řetězce, kterou lze
 použít v šabloně.
 
-Zde například funkce, která načte čas v určitém formátu a převede do jiného:
+Zde je například filtr, který načte čas v určitém formátu a převede do jiného:
 
 ```python
 @app.template_filter('time')
@@ -199,23 +199,42 @@ V šabloně:
 {{ tweet.created_at|time }}
 ```
 
-Pokud by však filtr přidával nějaké HTML značky, Jinja2 by pro jistotu tyto
-značky znehodnotila (vyescapovala):
+#### Escaping
+
+V textu, který se vkládá do šablon, jsou automaticky nahrazeny znaky, které
+mají v HTML speciální význam.
+Zabraňuje se tak bezpečnostním rizikům, kdy se vstup od uživatele interpretuje
+jako HTML.
+
+Například když v aplikaci výše navštívíme URL `/hello/<script>alert("Foo")`,
+bude výsledné HTML vypadat takto:
+
+```html
+<!doctype html>
+<title>Hello from Flask</title>
+
+  <h1>Hello &lt;script&gt;alert(&#34;Foo&#34;)!</h1>
+```
+
+Někdy je ovšem potřeba do stránky opravdu vložit HTML.
+To se dá zajistit dvěma způsoby. Nejjednodušší je vestavěný filtr `safe`:
+
+```
+{{ "<em>Text</em>" | safe }}
+```
+
+Z Pythonu pak lze použít [`jinja2.Markup`](http://jinja.pocoo.org/docs/dev/api/#jinja2.Markup),
+čímž se daný text označí jako „bezpečný”.
 
 ```python
+import jinja2
+
 @app.template_filter('time')
 def convert_time(text):
     """Convert the time format to a different one"""
     dt = datetime.strptime(text, '%a %b %d %H:%M:%S %z %Y')
-    return dt.strftime('<strong>%c</strong>')  # &lt;strong&gt;...
-```
-
-Proto je potřeba říct Jinje, že náš řetězec je bezpečný:
-
-```python
-import jinja2
-...
-return jinja2.Markup(text_with_html)
+    result = dt.strftime('<strong>%c</strong>')
+    return jinja2.Markup(result)
 ```
 
 ### Statické soubory
@@ -332,7 +351,7 @@ Twitter vyžaduje před vydáním API klíčů zadání a potvrzení telefonníh
 Úkol
 ----
 
-Vaším úkolem za 5 bodů je vytvořit rozšířit command line aplikaci z minulého
+Vaším úkolem za 5 bodů je rozšířit command line aplikaci z minulého
 cvičení o webové rozhraní. Stávající funkcionalita ale musí být zachována,
 k tomu můžete použít například podpříkazy pro click:
 
