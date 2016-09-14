@@ -223,7 +223,7 @@ To se dá zajistit dvěma způsoby. Nejjednodušší je vestavěný filtr `safe`
 {{ "<em>Text</em>" | safe }}
 ```
 
-Z Pythonu pak lze použít [`jinja2.Markup`](http://jinja.pocoo.org/docs/dev/api/#jinja2.Markup),
+Z Pythonu pak lze použít [jinja2.Markup](http://jinja.pocoo.org/docs/dev/api/#jinja2.Markup),
 čímž se daný text označí jako „bezpečný”.
 
 ```python
