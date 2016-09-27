@@ -38,6 +38,11 @@ app.jinja_env.globals['course_url'] = course_url
 def index():
     return render_template("templates/index.html")
 
+@app.route('/courses/')
+def courses():
+    # XXX: Better list
+    return redirect(url_for('index'))
+
 @app.route('/courses/<path:path>/')
 def course(path):
     template_paths = ["courses/"+path+'.html', "courses/"+path+'/index.html']
