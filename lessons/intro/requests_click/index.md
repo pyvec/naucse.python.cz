@@ -7,7 +7,7 @@ Pro instalaci na školní počítače (i na svoje) můžeme využít virtualenv:
 
 ```
 $ mkdir project && cd $_
-$ python3 -m venv env  # vytvoření virtualenvu
+$ python3.5 -m venv env  # vytvoření virtualenvu
 $ . env/bin/activate  # aktivace
 (env)$ python -m pip install requests click  # příkaz na instalaci balíčků puštěný ve virtualenvu
 (env)$ ...  # práce "uvnitř"
