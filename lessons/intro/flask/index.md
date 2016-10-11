@@ -361,7 +361,7 @@ def cli():
     pass
 
 @cli.command()
-def wev():
+def web():
     """Run the web app"""
     click.echo('Running the web app')
 
