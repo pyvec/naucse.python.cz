@@ -265,7 +265,8 @@ My použijeme [Python Anywhere], protože je pro limitované použití zdarma.
 K posílání kódu na produkční prostědí budeme používat Git.
 Nejprve proto uložte celý projekt do Gitu a nahrajte na Github.
 
-Potom se zaregistrujte na [https://www.pythonanywhere.com/] a vyberte
+Potom se zaregistrujte na
+[https://www.pythonanywhere.com/](www.pythonanywhere.com) a vyberte
 Beginner Account.
 Po přihlášení se ukáže záložka "Consoles", kde vytvoříme "Bash" konzoli.
 V té vytvořte a aktivujte virtuální prostředí, a nainstalujte Flask (plus
