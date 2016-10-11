@@ -268,7 +268,7 @@ Nejprve proto uložte celý projekt do Gitu a nahrajte na Github.
 Potom se zaregistrujte na [https://www.pythonanywhere.com/] a vyberte
 Beginner Account.
 Po přihlášení se ukáže záložka "Consoles", kde vytvoříme "Bash" konzoli.
-V té vytvoříme a aktivujeme virtuální prostředí, a nainstalujeme Flask.
+V té vytvořte a aktivujte virtuální prostředí, a nainstalujte Flask.
 (Příkaz vypadá kvůli balíčkovací politice Debianu
 trochu jinak než na našich počítačích.)
 
@@ -278,15 +278,15 @@ virtualenv --python=python3.5 env
 python -m pip install flask
 ```
 
-Následně naklonujeme na PythonAnywhere náš kód.
+Následně naklonujte na PythonAnywhere náš kód.
 
 ```bash
 git clone https://github.com/<github-username>/<github-repo>
 ```
 
-Následně přejdi na stránkách PythonAnywhere do Dashboard do záložky Web,
-a vytvoř novou aplikaci.
-V nastavení zvol Manual Configuration a Python 3.5.
+Následně přejděte na stránkách PythonAnywhere do Dashboard do záložky Web,
+a vytvořte novou aplikaci.
+V nastavení zvolte Manual Configuration a Python 3.5.
 
 V konfiguraci vzniklé webové aplikace je potřeba nastavit "Virtualenv"
 na cestu k virtuálnímu prostředí (`/home/<jméno>/env`),
