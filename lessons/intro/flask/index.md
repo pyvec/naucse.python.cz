@@ -260,89 +260,59 @@ Deployment
 
 Aplikace běží na našem počítači, ale jak ji dostat do internetu?
 Existují různé možnosti, jednou z nich je nasadit ji do cloudu.
-My použijeme [OpenShift], protože je pro limitované použití zdarma,
-protože je jednoduchý a protože jsme z Red Hatu :)
+My použijeme [Python Anywhere], protože je pro limitované použití zdarma.
 
-Nejprve se zaregistrujte na [OpenShift], poté jděte do [OpenShift Web Console].
+K posílání kódu na produkční prostědí budeme používat Git.
+Nejprve proto uložte celý projekt do Gitu a nahrajte na Github.
 
-Dole na stránce je tlačítko *Add Application...*, použijte ho a zvolte
-*Python 3.3* (novější bohužel zatím není).
+Potom se zaregistrujte na [https://www.pythonanywhere.com/] a vyberte
+Beginner Account.
+Po přihlášení se ukáže záložka "Consoles", kde vytvoříme "Bash" konzoli.
+V té vytvoříme a aktivujeme virtuální prostředí, a nainstalujeme Flask.
+(Příkaz vypadá kvůli balíčkovací politice Debianu
+trochu jinak než na našich počítačích.)
 
-Aplikaci můžete přejmenovat, také můžete přidat adresu svého git repozitáře,
-pokud je veřejný (použijte HTTPS adresu).
-
-Potvrďte tlačítkem *Add Application* a vyčkejte.
-
-Mezitím můžete v [nastavení](https://openshift.redhat.com/app/console/settings)
-přidat svůj veřejný SSH klíč.
-
-Až se aplikace vytvoří, zkopírujte si git URL, něco jako:
-
-    ssh://123456789123456789123456@flask-hroncok.rhcloud.com/~/git/flask.git/
-
-Přidejte ho jako remote do svého repozitáře s kódem:
-
-    git add remote openshift ssh://123456789123456789123456@flask-hroncok.rhcloud.com/~/git/flask.git/
-
-Aby naše aplikace běžela na OpenShiftu, musíme do repozitáře přidat dva soubory.
-Soubor `requirements.txt` se závislostmi:
-
-```
-Flask
-requests
-click
+```bash
+virtualenv --python=python3.5 env
+. env/bin/activate
+python -m pip install flask
 ```
 
-A soubor `wsgi.py`, který slouží jako vstupní soubor pro OpenShift.
-V něm je třeba importovat naší aplikaci jako `application`.
-Zde předpokládáme, že soubor s aplikací se jmenuje `hello.py`.
+Následně naklonujeme na PythonAnywhere náš kód.
+
+```bash
+git clone https://github.com/<github-username>/<github-repo>
+```
+
+Následně přejdi na stránkách PythonAnywhere do Dashboard do záložky Web,
+a vytvoř novou aplikaci.
+V nastavení zvol Manual Configuration a Python 3.5.
+
+V konfiguraci vzniklé webové aplikace je potřeba nastavit "Virtualenv"
+na cestu k virtuálnímu prostředí (`/home/<jméno>/env`),
+a obsah "WSGI Configuration File" přepsat na:
 
 ```python
-from hello import app as application
+import sys
+path = '/home/encukou/flapp'
+if path not in sys.path:
+    sys.path.append(path)
+
+from flapp import app as application
 ```
 
-Nové commity pushněte na OpenShift:
+To jde buď kliknutím na odkaz v konfiguraci (otvíře se webový editor),
+nebo zpět v Bashové konzoli pomocí editoru jako `vi` nebo `nano`.
 
-    git push openshift master
+[Python Anywhere]: https://www.pythonanywhere.com/
 
-Pokud jste při vytváření aplikace nepřidali váš repozitář,
-možná budete muset použít sílu:
 
-    git push --force openshift master
+### Deployment API klíčů
 
-To je vše, aplikace by měla běžet na
-[flask-hroncok.rhcloud.com](https://flask-hroncok.rhcloud.com/) (či podobně).
-Nezapomeňte nové commity pushovat do hlavního repozitáře s kódem
-(na Githubu nebo GiLabu) i na OpenShift:
-
-    git push  # pushuje do původního repozitáře
-    git push openshift master
-
-[OpenShift]: https://www.openshift.com/
-[OpenShift Web Console]: https://openshift.redhat.com/app/console/applications
-
-### API klíče na OpenShiftu
-
-Protože vaše tajné klíče nejsou v repozitáři, nabízí se otázka, jak je předat
-OpenShiftu, aby o nich věděl. Kromě přístupu přes git můžete k aplikaci
-přistupovat i přes ssh. Konfigurační soubor s API klíči tak můžete nakopírovat
-do adresáře k tomu určenému (ten je soukromý, vidíte ho jen vy):
-
-    scp auth.cfg 123456789123456789123456@flask-hroncok.rhcloud.com:app-root/data/
-
-Z aplikace k němu přistoupíte třeba takto:
-
-```python
-import os
-
-authfile = 'auth.cfg'
-
-if 'OPENSHIFT_DATA_DIR' in os.environ:
-    authfile = os.path.join(os.environ['OPENSHIFT_DATA_DIR'], authfile)
-```
-
-Stejnou složku použijte, bude-li vaše aplikace potřebovat nějaké trvalé
-úložiště pro zapisování dat (databázím se zde věnovat nebudeme).
+Protože vaše tajné klíče nejsou v repozitáři, je nutné je předat aplikaci
+zvlášť.
+Konfigurační soubor jde nahrát v záložce Files, nebo opět vytvořit
+a editovat ve webové konzoli.
 
 **Poznámka:** Doporučujeme pro tyto potřeby stejně raději nepoužívat API klíče
 k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
@@ -371,7 +341,7 @@ def console():
     click.echo('Running the console app')
 ```
 
-Výslednou aplikaci nasaďte na OpenShift.
+Výslednou aplikaci nasaďte na PythonAnywhere, nebo jiný veřejný hosting.
 Odkaz na běžící aplikaci a repozitář nám pošlete e-mailem.
 V repozitáři prosím nastavte tag `v0.2`.
 Termín odevzdání je začátek příštího cvičení (dřívější paralelky).
