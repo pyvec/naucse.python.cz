@@ -340,6 +340,13 @@ a editovat ve webové konzoli.
 k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
 Twitter vyžaduje před vydáním API klíčů zadání a potvrzení telefonního čísla.
 
+
+### Aktualizace
+
+Když nahrajeme nový kód na Github, je vždy potřeba provést na PythonAnywhere
+`git pull` a aplikaci restartovat.
+
+
 Úkol
 ----
 
