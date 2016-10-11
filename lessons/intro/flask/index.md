@@ -320,8 +320,8 @@ from <jméno-modulu> import app as application
 (Za `<uživatelské-jméno>` a `<jméno-modulu>` je samozřejmě potřeba doplnit
 vaše údaje.)
 
-To jde buď kliknutím na odkaz v konfiguraci (otvíře se webový editor),
-nebo zpět v Bashové konzoli pomocí editoru jako `vi` nebo `nano`.
+To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor),
+nebo zpět v bashové konzoli pomocí editoru jako `vi` nebo `nano`.
 
 Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce Web,
 a na adrese `<uživatelské-jméno>.pythonanywhere.com` si ji můžete
