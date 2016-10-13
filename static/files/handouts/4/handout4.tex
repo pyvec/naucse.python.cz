@@ -1,0 +1,307 @@
+% Typeset using lualatex
+
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{luainputenc}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+
+\usepackage[czech]{babel}
+
+\usepackage{fouriernc}
+\usepackage{tgpagella}
+\usepackage{xcolor}
+\usepackage[activate=true]{microtype}
+\usepackage{amssymb}
+\usepackage{fontspec}
+\usepackage{titling}
+\usepackage{titlesec}
+
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{siunitx}
+\usepackage{colortbl}
+\usepackage{everypage}
+\usepackage[a4paper,margin=2cm,top=1cm]{geometry}
+
+\setmainfont[Numbers=OldStyle]{TeX Gyre Pagella}
+
+\definecolor{plpink}{HTML}{FF3232}
+\definecolor{plhome}{HTML}{CCEEFF}
+\definecolor{silver}{HTML}{888888}
+
+\sisetup{
+    output-decimal-marker={,}
+}
+\pagestyle{empty}
+
+\parskip=1ex
+\parindent=0pt
+
+\setlist[enumerate,1]{start=0}
+
+\AddEverypageHook{
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[opacity=0.1,below left,xshift=1cm,yshift=1cm] at (current page.north east) {\includegraphics[width=12cm]{../../images/pylady-pink}};
+        \node[below left,align=right,yshift=-1.5em] at (current page.north east) {\color{white} strana \thepage};
+        \node[below left,align=right] at (current page.north east) {\color{white} sada \plsetno};
+    \end{tikzpicture}
+}
+
+\newcommand\answerspace{\\\rule[0cm]{0pt}{1cm}}
+
+\newcommand\True{\texttt{True}}
+\newcommand\False{\texttt{False}}
+
+\usetikzlibrary{turtle}
+\newcommand\turtle[1]{\tikz[>=stealth,x=0.25mm,y=0.25mm]\draw[turtle={home,rt=90,#1}];}
+\newcommand\gulp[1]{}
+
+\newcommand\plsetno{5}
+
+\newcommand\startsection[1]{
+     \vspace{0.2ex}
+    \hrule
+    {\fontspec{Oxygen} \tiny
+     \vspace{-1ex}
+     \emph{#1}
+     \vspace{-1.5em}
+    }
+}
+
+\newfontfamily\headingfont[]{Bree Serif}
+\titleformat*{\section}{\LARGE\headingfont}
+
+\begin{document}
+
+\section*{Domácí projekty \plsetno}
+
+Nezapomeň: Když něco funguje, přidej to do Gitu!
+\\\emph{\small Pokud materiály procházíš v jiném pořadí než my na srazech, a Git ještě neznáš, můžeš všechny poznámky o Gitu ignorovat.}
+
+\vspace{1cm}
+
+\startsection{Trocha experimentování. Zkus se zamyslet, jestli jsi „dobře” pochopila otázku.}
+
+\begin{enumerate}[resume]
+
+\item Co se stane, když tělo nějaké funkce necháme prázdné?
+
+\item Co se stane, když necháme prázdné tělo cyklu?
+
+\end{enumerate}
+
+\startsection{Procvičení funkcí. Jestli jsi Pythoní funkce nepsala už před kurzem, tak první z těchto projektů určitě udělej. Druhý jen pokud máš ráda geometrii :)}
+
+\begin{enumerate}[resume]
+
+\item Napiš funkci, která vykreslí domeček dané velikosti.
+    \\\emph{\small (t.j. velikost se zadá argumentem)}
+
+\gulp{
+from math import sqrt
+from texturtle import ctx, forward, left, right
+
+def domecek(velikost):
+    for i in range(4):
+        forward(velikost)
+        left(90)
+    left(45)
+    for n in 1, 2, 2, 1:
+        forward(velikost*sqrt(2)/n)
+        left(90)
+    right(45)
+
+with ctx():
+    for n in 10, 20, 50:
+        domecek(n)
+        forward(n + 10)
+}
+\turtle{fd=10,lt=90,fd=10,lt=90,fd=10,lt=90,fd=10,lt=90,lt=45,fd=14.142135623730951,lt=90,fd=7.0710678118654755,lt=90,fd=7.0710678118654755,lt=90,fd=14.142135623730951,lt=90,rt=45,fd=20,fd=20,lt=90,fd=20,lt=90,fd=20,lt=90,fd=20,lt=90,lt=45,fd=28.284271247461902,lt=90,fd=14.142135623730951,lt=90,fd=14.142135623730951,lt=90,fd=28.284271247461902,lt=90,rt=45,fd=30,fd=50,lt=90,fd=50,lt=90,fd=50,lt=90,fd=50,lt=90,lt=45,fd=70.71067811865476,lt=90,fd=35.35533905932738,lt=90,fd=35.35533905932738,lt=90,fd=70.71067811865476,lt=90,rt=45,fd=60,}
+    \\\emph{\small Funguje? Do Gitu s tím!}
+
+\item Máš-li ráda geometrii*, můžeš zkusit dávat domečkové funkci dva argumenty:
+    šířku a výšku.
+    \\\emph{\small
+        Je potřeba si vzpomenout na Pythagorovu větu a funkci tangens.
+        Pozor, funkce \texttt{tan} vrací výsletek v radiánech;
+        je potřeba ho převést na stupně.
+    }
+    \\\emph{\small
+        * t.j. jestli nemáš ráda geometrii, tak tenhle projekt přeskoč
+    }
+
+\gulp{
+from math import sqrt, degrees, atan
+from texturtle import ctx, forward, left, right
+
+def domecek(sirka, vyska):
+    for i in range(2):
+        forward(sirka)
+        left(90)
+        forward(vyska)
+        left(90)
+
+    uhel = degrees(atan(vyska / sirka))
+    uhlopricka = sqrt(sirka**2 + vyska**2)
+    left(uhel)
+    forward(uhlopricka)
+    left(180 - 2 * uhel)
+    forward(uhlopricka / 2)
+    left(2 * uhel)
+    forward(uhlopricka / 2)
+    left(180 - 2 * uhel)
+    forward(uhlopricka)
+    left(uhel)
+
+with ctx():
+    for a, b in (20, 20), (10, 50), (60, 20):
+        domecek(a, b)
+        forward(a + 10)
+}
+\turtle{fd=20,lt=90,fd=20,lt=90,fd=20,lt=90,fd=20,lt=90,lt=45.0,fd=28.284271247461902,lt=90.0,fd=14.142135623730951,lt=90.0,fd=14.142135623730951,lt=90.0,fd=28.284271247461902,lt=45.0,fd=30,fd=10,lt=90,fd=50,lt=90,fd=10,lt=90,fd=50,lt=90,lt=78.69006752597979,fd=50.99019513592785,lt=22.61986494804043,fd=25.495097567963924,lt=157.38013505195957,fd=25.495097567963924,lt=22.61986494804043,fd=50.99019513592785,lt=78.69006752597979,fd=20,fd=60,lt=90,fd=20,lt=90,fd=60,lt=90,fd=20,lt=90,lt=18.43494882292201,fd=63.245553203367585,lt=143.13010235415598,fd=31.622776601683793,lt=36.86989764584402,fd=31.622776601683793,lt=143.13010235415598,fd=63.245553203367585,lt=18.43494882292201,fd=70,}
+
+\end{enumerate}
+
+\startsection{Procvičení programování. Často je jednoduché něco napsat, ale dotažení do konce může být časově náročné. Nemáš-li čas, zkus se aspoň zamyslet jak bys projekt vyřešila.}
+
+\begin{enumerate}[resume]
+
+\item Změň program Kámen, Nůžky, Papír tak, aby opakoval hru dokud
+    uživatel nezadá \texttt{"konec"}.
+
+\item Změň funkci \texttt{ano\_nebo\_ne} tak,
+    aby se místo \texttt{"ano"} se dalo použít i \texttt{"a"},
+    místo \texttt{"ne"} i \texttt{"n"},
+    a aby se nebral ohled na velikost písmen a mezery před/za odpovědí.
+    \\\emph{\small
+        Textům jako \texttt{"možná"} nebo \texttt{"no tak určitě"}
+        by počítač dál neměl rozumět.
+    }
+
+\end{enumerate}
+
+\startsection{Sada zajímavých (snad) prográmků, které bys teď měla být schopná napsat. Nemáš-li čas, zatím je přeskoč.}
+
+\begin{enumerate}[resume]
+
+\item Napiš program, který se zeptá na příjmení uživatelky/uživatele,
+    a zkusí podle něj uhodnout její/jeho pohlaví.
+    \\\emph{\small Připomínám: Až to bude fungovat, dej to do Gitu!}
+
+\item Najdi na internetu text své oblíbené písně, zkopíruj si ho do řetězce,
+    a zjisti, kolikrát je v něm použito písmeno K.
+    \\\emph{\small Připomínám: Až to bude fungovat, dej to do Gitu!}
+
+\item Napiš program, který simuluje tuto hru:
+    \\První hráč hází kostkou
+    \emph{(t.j. vybírají se náhodná čísla od 1 do 6)},
+    dokud nepadne šestka.
+    Potom hází další hráč, dokud nepadne šestka i jemu.
+    Potom hází hráč třetí, a nakonec čtvrtý.
+    Vyhrává ten, kdo na hození šestky potřeboval nejvíc hodů.
+    (V případě shody vyhraje ten, kdo házel dřív.)
+    \\Program by měl vypisovat všechny hody, a nakonec napsat, kdo vyhrál.
+    \\\emph{\small Připomínám: Až to bude fungovat, dej to do Gitu!}
+
+\end{enumerate}
+
+\vfill
+
+Pokračování na další straně. \hfill \emph{\%}
+
+\newpage
+
+\startsection{Nakonec trošku delší projekt. Budeme na něm stavět dál; nedokončíš-li ho teď, budeš ho muset dodělat před příští sadou projektů.}
+
+\begin{center}
+\fbox{
+\begin{minipage}{8cm}
+1-D piškvorky se hrají na řádku s dvaceti políčky.
+    \\Hráči střídavě přidávají kolečka (\texttt{o}) a křížky (\texttt{x}),
+        třeba:
+    \\1. kolo: \texttt{-------\textcolor{plpink}{x}------------}
+    \\2. kolo: \texttt{-------x--\textcolor{plpink}{o}---------}
+    \\3. kolo: \texttt{-------x\textcolor{plpink}{x}-o---------}
+    \\4. kolo: \texttt{-------xx\textcolor{plpink}{o}o---------}
+    \\5. kolo: \texttt{------\textcolor{plpink}{x}xxoo---------}
+    \\Hráč, která dá tři své symboly vedle sebe, vyhrál.
+\end{minipage}
+}
+\end{center}
+
+\begin{enumerate}[resume]
+
+\item Napiš funkci \texttt{vyhodnot}, která dostane řetězec
+    s herním polem 1-D piškvorek,
+    a vrátí jednoznakový řetězec podle stavu hry:
+    \begin{enumerate}
+    \item[\texttt{"x"}] – Vyhrál hráč s křížky (pole obsahuje \texttt{xxx})
+    \item[\texttt{"o"}] – Vyhrál hráč s kolečky (pole obsahuje \texttt{ooo})
+    \item[\texttt{"!"}] – Remíza (pole neobsahuje \texttt{-}, a nikdo nevyhrál)
+    \item[\texttt{"-"}] – Ani jedna ze situací výše
+    \end{enumerate}
+    \emph{\small Připomínám: Až to bude fungovat, dej to do Gitu!}
+
+\item Napiš funkci \texttt{tah}, která dostane řetězec s herním polem,
+    číslo políčka (0-19), a symbol (\texttt{x} nebo \texttt{o}),
+    a vrátí herní pole \emph{(t.j. řetězec)} s daným symbolem umístěným na danou pozici.
+
+    Hlavička funkce by tedy měla vypadat nějak takhle:
+\\\verb+    def tah(pole, cislo_policka, symbol):+
+\\\verb+        "Vrátí herní pole s daným symbolem umístěným na danou pozici"+
+\\\verb+        ...+
+    \\\emph{Můžeš využít nějakou funkci, kterou jsme napsaly už na sraze?}
+
+\item Napiš funkci \texttt{tah\_hrace}, která dostane řetězec s herním polem,
+    zeptá se hráče, na kterou pozici chce hrát, a vrátí herní pole
+    se zaznamenaným tahem hráče.
+    \\Funkce by měla odmítnout záporná nebo příliš velká čísla,
+    a tahy na obsazená políčka.
+    Pokud uživatel zadá špatný vstup, funkce mu vynadá a zeptá se znova.
+    \\\emph{\small Funguje? Do Gitu s tím!}
+
+\item Napiš funkci \texttt{tah\_pocitace}, která dostane řetězec s herním polem,
+    vybere pozici, na kterou hrát, a vrátí herní pole
+    se zaznamenaným tahem počítače.
+    \\Použij jednoduchou náhodnou „strategii”:
+    \begin{enumerate}
+    \item[1.] Vyber číslo od 0 do 19
+    \item[2.] Pokud je dané políčko volné, hrej na něj
+    \item[3.] Pokud ne, opakuj od bodu 1
+    \end{enumerate}
+
+    Hlavička funkce by tedy měla vypadat nějak takhle:
+\\\verb+    def tah_pocitace(pole):+
+\\\verb+        "Vrátí herní pole se zaznamenaným tahem počítače"+
+\\\verb+        ...+
+
+\item Napiš funkci \texttt{piskvorky1d}, která vytvoří řetězec s herním polem,
+    a střídavě volá funkce \texttt{tah\_hrace} a \texttt{tah\_pocitace},
+    dokud někdo nevyhraje nebo nedojde k remíze.
+    \\Nezapomeň kontrolovat stav hry po každém tahu.
+    \\\emph{\small Funguje? Do Gitu s tím!}
+
+\end{enumerate}
+
+\startsection{Poslední projekt je nepovinný, ale, jak to u podobných projektů bývá, můžeš na něj dostat zpětnou vazbu. Doporučuju toho využít!}
+
+\begin{enumerate}[resume]
+
+\item Zvládneš pro počítač naprogramovat lepší strategii?
+    Třeba aby se snažil hrát vedle svých existujících symbolů,
+    nebo aby bránil protihráčovi?
+    \\Stačí jen docela malé vylepšení!
+
+    Podle toho, jak jste se na sraze domluvili, pošli řešení e-mailem
+    (např. organizátorům, koučovi, nebo vůbec).
+    Posílej ho jako přílohu, nekopíruj ho do textu e-mailu.
+    \\Jestli procházíš-li kurz sama a můžeš programování konzultovat s někým
+    zkušenějším, je tento úkol na takovou konzultaci ideální téma.
+
+    \emph{\small A do Gitu to samozřejmě dej taky...}
+
+\end{enumerate}
+
+\end{document}
