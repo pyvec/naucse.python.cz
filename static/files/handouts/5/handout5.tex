@@ -1,0 +1,179 @@
+% Typeset using lualatex
+
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{luainputenc}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+
+\usepackage[czech]{babel}
+
+\usepackage{fouriernc}
+\usepackage{tgpagella}
+\usepackage{xcolor}
+\usepackage[activate=true]{microtype}
+\usepackage{amssymb}
+\usepackage{fontspec}
+\usepackage{titling}
+\usepackage{titlesec}
+
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{siunitx}
+\usepackage{colortbl}
+\usepackage{everypage}
+\usepackage[a4paper,margin=2cm,top=1cm]{geometry}
+
+\setmainfont[Numbers=OldStyle]{TeX Gyre Pagella}
+
+\definecolor{plpink}{HTML}{FF3232}
+\definecolor{plhome}{HTML}{CCEEFF}
+\definecolor{silver}{HTML}{888888}
+
+\sisetup{
+    output-decimal-marker={,}
+}
+\pagestyle{empty}
+
+\parskip=1ex
+\parindent=0pt
+
+\setlist[enumerate,1]{start=0}
+
+\AddEverypageHook{
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[opacity=0.1,below left,xshift=1cm,yshift=1cm] at (current page.north east) {\includegraphics[width=12cm]{../../images/pylady-pink}};
+        \node[below left,align=right,yshift=-1.5em] at (current page.north east) {\color{white} strana \thepage};
+        \node[below left,align=right] at (current page.north east) {\color{white} sada \plsetno};
+    \end{tikzpicture}
+}
+
+\newcommand\answerspace{\\\rule[0cm]{0pt}{1cm}}
+
+\newcommand\True{\texttt{True}}
+\newcommand\False{\texttt{False}}
+
+\usetikzlibrary{turtle}
+\newcommand\turtle[1]{\tikz[>=stealth,x=0.25mm,y=0.25mm]\draw[turtle={home,rt=90,#1}];}
+\newcommand\gulp[1]{}
+
+\newcommand\plsetno{6}
+
+\newcommand\startsection[1]{
+     \vspace{0.2ex}
+    \hrule
+    {\fontspec{Oxygen} \tiny
+     \vspace{-1ex}
+     \emph{#1}
+     \vspace{-1.5em}
+    }
+}
+
+\newfontfamily\headingfont[]{Bree Serif}
+\titleformat*{\section}{\LARGE\headingfont}
+
+\begin{document}
+
+\section*{Domácí projekty \plsetno}
+
+\startsection{Dnešní projekty jsou součástí projektu 1D Piškvorky. Dělej je jeden po druhém.}
+
+\begin{enumerate}
+\item Rozděl 1D Piškvorky na čtyři moduly:
+    \begin{itemize}
+        \item \texttt{ai.py}, kde bude funkce \texttt{tah\_pocitace}
+        \item \texttt{piskvorky.py}, kde budou ostatní funkce
+        \item \texttt{hra.py}, kde bude import a volání hlavní funkce z \texttt{piskvorky.py} (a nic jiného)
+        \item \texttt{test\_piskvorky.py}, kde budou testy
+    \end{itemize}
+    \emph{\small Připomínám: Až to bude fungovat, dej to do Gitu! A kdybys něco nedopatřením rozbila \texttt{git diff HEAD} ukáže změny od poslední revize.}
+
+\item Napiš \emph{aspoň} dva testy na každou funkci z Piškvorek, ke které testy napsat umíš.
+    \\\emph{\small Testy pravděpodobně neumíš napsat na funkci \texttt{input}, a všechny funkce které ji (byť nepřímo) volají.
+            A taky asi neumíš otestovat účinek funkce \texttt{print}}
+
+\item Zkus program přepsat tak, aby část která není pokrytá automatickými testy byla co nejmenší
+    \\\emph{\small Místo volání \texttt{print} můžeš vracet řetězec;
+            místo volání \texttt{imput} můžeš vstup brát jako argument.
+            Samotný \texttt{print} nebo \texttt{input} tak může být až ve volající funkci.}
+
+\item Doplň funkci \texttt{tah\_pocitace} tak, aby brala jako argument symbol, který má udělat – buď \texttt{'x'} nebo \texttt{'o'}.
+    \\Dopiš testy.
+    \\\emph{\small Nezapomínáš na Git?}
+
+\item Ověř, že se funkce \texttt{tah\_pocitace} se umí vyrovnat s jinou délkou hracího pole, než 20.
+    \\\emph{\small „Ověření” znamená napsání příslušného testu.}
+
+\item Ověř si, že se \texttt{tah\_pocitace} chová rozumně když dostane plné hrací pole, nebo pole s délkou 0.
+    \\\emph{\small Rozumné chování v tomto případě znamená vyvolání rozumné výjimky.}
+
+    Podle toho, jak jste se na sraze domluvili, pošli
+    soubor \texttt{ai.py} (s funkcí \texttt{tah\_pocitace})
+    e-mailem (např. organizátorům, koučovi, nebo vůbec).
+    Posílej ho jako přílohu, nekopíruj ho do textu e-mailu.
+    \\Jestli procházíš-li kurz sama a můžeš programování konzultovat s někým
+    zkušenějším, je tento úkol na takovou konzultaci ideální téma.
+
+    Dozvíš se, jak si tvá strategie stojí proti ostatním – a proti testům, které napíše organizátor :)
+    \\Strategii je možné i vylepšovat, a poslat několik různých verzí, takže se neboj!
+    \\\emph{\small Neboj se funkci poslat, i kdyby ještě nebyla úplně dodělaná.}
+
+    Na dalším srazu bude turnaj o ceny!
+
+\end{enumerate}
+
+\newpage
+
+\startsection{Máš-li Piškvorky hotové, můžeš si naprogramovat ještě jednu hru! Jestli na to tedy máš čas a chuť.}
+
+\begin{enumerate}[resume]
+
+\item Vytvoř hru \texttt{sibenice} podle následujícího popisu.
+    Snaž se projekt rozdělit do funkcí a modulů s hezkými jmény,
+    piš testy a dokumentační řetězce, a funkční kousky dávej postupně do Gitu.
+
+    \begin{itemize}
+        \item Počítač náhodně zvolí slovo (zatím třeba ze tří možností).
+            Pro jednoduchost používej malá písmena, a nepoužívej slova
+            ve kterých se stejné písmeno opakuje dvakrát
+            (třeba č\textcolor{plpink}{o}k\textcolor{plpink}{o}láda).
+        \item Nastav výchozí stav: řetězec s tolika podtržítky, kolik je
+             ve vybraném slově písmen.
+        \item Nastav počet neúspěšných pokusů na nulu
+        \item Každý tah:
+            \begin{itemize}
+                \item Zeptej se hráče na písmeno
+                \item Pokud je to písmeno ve vybraném slově, zaměň příslušná
+                    podtržítka za ono písmeno.
+                    \\\emph{\small Bude se hodit řetězcová metoda \texttt{index},
+                    a funkce \texttt{zamen} z piškvorek.}
+                \item Pokud dané písmeno \emph{není} ve vybraném slově,
+                    započítej neúspěšný pokus.
+                \item Vypiš stav (slovo s případnými podtržítky)
+                \item Pokud už ve slově nejsou podtržítka, pogratuluj hráči
+                    a ukonči hru.
+                \item Podle počtu neúspěšných pokusů vypiš „obrázek”.
+                    Obrázky jsou ke stažení na \\\url{http://pyladies.cz/v1/s005-modules/obrazky.txt}
+                    a můžeš je dát do víceřádkových řetězců (s trojitými uvozovkami).
+                \item Pokud jsi právě vypsala poslední obrázek, hráč prohrál.
+                    Dej mu to najevo, a ukonči program.
+            \end{itemize}
+    \end{itemize}
+
+\begin{verbatim}
++---.
+|   |
+|   O
+| --|--
+|  /
+|
+~~~~~~~
+
+p_t__n
+
+\end{verbatim}
+
+\end{enumerate}
+
+\end{document}
