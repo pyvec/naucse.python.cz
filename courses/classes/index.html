@@ -51,6 +51,7 @@
                         společné pro všechny objekty daného typu.
                         Třeba řetězcová metoda <code>count()</code> by se dala
                         napsat zhruba jako:
+                    </p>
 <pre>
 def count(retezec, znak):
     pocet = 0
@@ -59,6 +60,7 @@ def count(retezec, znak):
             pocet = pocet + 1
     return pocet
 </pre>
+                    <p>
                         … a ačkoliv bude vracet jinou hodnotu pro každý řetězec,
                         samotná metoda je společná všem řetězcům.
                     </p>
@@ -74,6 +76,7 @@ def count(retezec, znak):
                     </p>
                     <p>
                         Typ objektu umí zjistit funkce <code>type</code>:
+                    </p>
 <pre>
 >>> type(0)
 &lt;class 'int'>
@@ -86,7 +89,6 @@ def count(retezec, znak):
 ... 
 &lt;class '_io.TextIOWrapper'>
 </pre>
-                    </p>
                     <p>
                         Takže <code>type</code> vrací nějaké třídy.
                         A co je to třída? Popis, jak se chovají všechny objekty
@@ -109,6 +111,7 @@ def count(retezec, znak):
                     <p>
                         Většinu tříd jde navíc v Pythonu zavolat, jako by
                         to byly funkce, a vytvořit tak nový objekt dané třídy:
+                    </p>
 <pre>
 >>> trida_retezcu = type("abc")
 >>> trida_retezcu(8)
@@ -116,7 +119,6 @@ def count(retezec, znak):
 >>> trida_retezcu([1, 2, 3])
 '[1, 2, 3]'
 </pre>
-                    </p>
                     <p>
                         Chová se to stejně jako funkce <code>str</code>!
                         Není to podivné?
@@ -127,6 +129,7 @@ def count(retezec, znak):
                         tak trochu lhaly. Funkce <code>str</code>,
                         <code>int</code>, <code>float</code> apod. totiž vůbec
                         nejsou funkce – jsou to právě třídy.
+                    </p>
 <pre>
 >>> str
 &lt;class 'str'>
@@ -135,6 +138,7 @@ def count(retezec, znak):
 >>> type('abcdefgh') == str
 True
 </pre>
+                    <p>
                         Ale dají se, podobně jako funkce, zavolat.
                         Třída tedy většinou obsahuje nejen „popis”, jak se
                         objekty daného typu budou chovat, ale i „návod” jak
@@ -155,11 +159,13 @@ True
                     <p>
                         My teď potřebujeme napsat program o zvířátkách,
                         tak si napíšeme třídu pro koťátka, která umí mňoukat:
+                    </p>
 <pre>
 class Kotatko:
     def zamnoukej(self):
         print("Mňau!")
 </pre>
+                    <p>
                         Tak jako se funkce definují pomocí <code>def</code>,
                         třídy mají klíčové slovo <code>class</code>,
                         za který napíšeme jméno třídy, dvojtečku,
@@ -182,6 +188,7 @@ class Kotatko:
                         úplně jako funkce – jen mají jakýsi argument
                         <code>self</code>.
                         Ten si ale vysvětlíme později – zamňoukání má přednost:
+                    </p>
 <pre>
 # Vytvoření konkrétního objektu
 kotatko = Kotatko()
@@ -189,7 +196,6 @@ kotatko = Kotatko()
 # Volání metody
 kotatko.zamnoukej()
 </pre>
-                    </p>
                     <p>
                         Pozor na velikost písmen: <code>Kotatko</code>
                         (s velkým K) je třída – popis jak se koťátka chovají.
@@ -212,6 +218,7 @@ kotatko.zamnoukej()
                         objektu.
                         Atributy se označují tak, že mezi hodnotu a jméno
                         jejího atributu napíšeme tečku:
+                    </p>
 <pre>
 mourek = Kotatko()
 mourek.jmeno = 'Mourek'
@@ -222,7 +229,6 @@ micka.jmeno = 'Micka'
 print(mourek.jmeno)
 print(micka.jmeno)
 </pre>
-                    </p>
                     <p>
                         Na začátku jsme si řekly, že objekty spojují chování
                         a data.
@@ -253,6 +259,7 @@ micka.zamnoukej()
                         kterém pracuje, právě přes argument <code>self</code>.
                         Teď, když máme pojmenovaná koťátka,
                         můžeme pomocí <code>self</code> rozjet dialog:
+                    </p>
 <pre>
 class Kotatko:
     def zamnoukej(self):
@@ -267,7 +274,6 @@ micka.jmeno = 'Micka'
 mourek.zamnoukej()
 micka.zamnoukej()
 </pre>
-                    </p>
                     <p>
                         Co se stalo? Výraz <code>mourek.zamnoukej</code>
                         udělá <em>metodu</em>, která, když ji zavoláme,
@@ -292,6 +298,7 @@ micka.zamnoukej()
                         Může – <code>self</code> se doplní na první místo,
                         a zbytek argumentů se vezme z volání metody.
                         Třeba:
+                    </p>
 <pre>
 class Kotatko:
     def zamnoukej(self):
@@ -304,7 +311,6 @@ mourek = Kotatko()
 mourek.jmeno = 'Mourek'
 mourek.snez('ryba')
 </pre>
-                    </p>
                     <h1>__init__</h1>
                     <p>
                         A když jsme u argumentů, je ještě jedno místo,
@@ -314,10 +320,10 @@ mourek.snez('ryba')
                         v předchozím kódu: aktuálně každé koťátko potřebuje,
                         aby se mu po vytvoření nastavilo jméno.
                         Můžeme jméno nastavit už při vytváření?
+                    </p>
 <pre>
 mourek = Kotatko(jmeno='Mourek')
 </pre>
-                    </p>
                     <p>
                         Na tohle používá Python metodu,
                         která se jmenuje <code>__init__</code> (dvě podtržítka,
@@ -327,6 +333,7 @@ mourek = Kotatko(jmeno='Mourek')
                         Metoda <code>__init__</code> se totiž zavolá
                         automaticky, když se vytvoří nový objekt.
                         Dá se tedy napsat:
+                    </p>
 <pre>
 class Kotatko:
     def __init__(self, jmeno):
@@ -338,7 +345,6 @@ class Kotatko:
 mourek = Kotatko('Mourek')
 mourek.zanoukej()
 </pre>
-                    </p>
                     <p>
                         A teď už není možnost, jak vytvořit koťátko bez jména,
                         takže <code>zamnoukej</code> bude vždycky fungovat.
@@ -347,6 +353,7 @@ mourek.zanoukej()
                         Podobných „opodtržítkovaných” metod je víc,
                         třeba <code>__str__</code> umí převést objekt na
                         řetězec:
+                    </p>
 <pre>
 class Kotatko:
     def __init__(self, jmeno):
@@ -361,7 +368,6 @@ class Kotatko:
 mourek = Kotatko('Mourek')
 print(mourek)
 </pre>
-                    </p>
                     <p>
                         A to je o samotných třídách zatím vše.
                         Příště si něco řekneme o dědičnosti.
