@@ -10,10 +10,17 @@ import os
 from flask import Flask, render_template, url_for, send_from_directory
 from flask import redirect, abort
 from elsa import cli
+from jinja2 import PrefixLoader, FileSystemLoader
+from jinja2.exceptions import TemplateNotFound
 
 app = Flask('naucsepythoncz', template_folder="")
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
+
+app.jinja_loader = PrefixLoader({
+    'templates': FileSystemLoader(os.path.join(app.root_path, 'templates')),
+    'courses': FileSystemLoader(os.path.join(app.root_path, 'courses')),
+})
 
 def template_function(func):
     app.jinja_env.globals[func.__name__] = func
@@ -45,14 +52,14 @@ def courses():
 @app.route('/courses/<course>/', defaults={'page': 'index'})
 @app.route('/courses/<course>/<page>/')
 def course_page(course, page):
-    filename = os.path.join('courses', course, page + '.html')
-    print(filename)
-    if os.path.exists(filename):
-        def course_static(f):
-            return url_for('course_static', course=course, path=f)
-        return render_template(filename,
+    template = 'courses/{}/{}.html'.format(course, page)
+    def course_static(path):
+        return url_for('course_static', course=course, path=path)
+
+    try:
+        return render_template(template,
                                static=course_static)
-    else:
+    except TemplateNotFound:
         abort(404)
 
 
