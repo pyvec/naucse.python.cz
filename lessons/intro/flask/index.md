@@ -310,15 +310,15 @@ a obsah "WSGI Configuration File" přepsat na:
 
 ```python
 import sys
-path = '/home/<uživatelské-jméno>/<jméno-modulu>'
+path = '/home/<uživatelské-jméno>/<jméno-adresáře>'
 if path not in sys.path:
     sys.path.append(path)
 
-from <jméno-modulu> import app as application
+from <jméno-souboru> import app as application
 ```
 
-(Za `<uživatelské-jméno>` a `<jméno-modulu>` je samozřejmě potřeba doplnit
-vaše údaje.)
+(Za `<uživatelské-jméno>`, `<jméno-adresáře>` a `<jméno-souboru>` je samozřejmě potřeba doplnit
+vaše údaje. Jméno souboru je zde bez přípony.)
 
 To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor),
 nebo zpět v bashové konzoli pomocí editoru jako `vi` nebo `nano`.
