@@ -7,54 +7,61 @@ if sys.version_info[0] <3 :
 
 import os
 
-from flask import Flask, render_template, url_for, Blueprint
+from flask import Flask, render_template, url_for, send_from_directory
 from flask import redirect, abort
-from flask_frozen import Freezer
-import yaml
-
 from elsa import cli
 
 app = Flask('naucsepythoncz', template_folder="")
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-COURSES = os.listdir(app.root_path+"/courses/")
 
-# Hacky blueprints for static directories
-
-for course in COURSES:
-    blueprint = Blueprint('course_'+course, __name__,
-        static_url_path='/courses/'+course+'/static',
-        static_folder=app.root_path+"/courses/"+course+"/static")
-    app.register_blueprint(blueprint)
+def template_function(func):
+    app.jinja_env.globals[func.__name__] = func
+    return func
 
 
-def course_url(path):
-    path = path.rstrip('/')
-    return url_for('course', path=path)
+@template_function
+def course_url(course):
+    course = course.rstrip('/')
+    return url_for('course_page', course=course)
 
-app.jinja_env.globals['course_url'] = course_url
+
+@template_function
+def static(filename):
+    return url_for('static', filename=filename)
+
 
 @app.route('/')
 def index():
     return render_template("templates/index.html")
+
 
 @app.route('/courses/')
 def courses():
     # XXX: Better list
     return redirect(url_for('index'))
 
-@app.route('/courses/<path:path>/')
-def course(path):
-    template_paths = ["courses/"+path+'.html', "courses/"+path+'/index.html']
-    for template_path in template_paths:
-        if os.path.exists(os.path.join(app.root_path, template_path)):
-            return render_template(template_path)
-    
-    
-    abort(404)
 
-freezer = Freezer(app)
+@app.route('/courses/<course>/', defaults={'page': 'index'})
+@app.route('/courses/<course>/<page>/')
+def course_page(course, page):
+    filename = os.path.join('courses', course, page + '.html')
+    print(filename)
+    if os.path.exists(filename):
+        def course_static(f):
+            return url_for('course_static', course=course, path=f)
+        return render_template(filename,
+                               static=course_static)
+    else:
+        abort(404)
+
+
+@app.route('/courses/<course>/static/<path:path>')
+def course_static(course, path):
+    directory = os.path.join(app.root_path, 'courses')
+    filename = os.path.join(course, 'static', path)
+    return send_from_directory(directory, filename)
+
 
 if __name__ == '__main__':
-    cli(app, freezer=freezer, base_url='http://naucse.python.cz')
-
+    cli(app, base_url='http://naucse.python.cz')
