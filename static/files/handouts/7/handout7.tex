@@ -1,0 +1,142 @@
+% Typeset using lualatex
+
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{luainputenc}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+
+\usepackage[czech]{babel}
+
+\usepackage{fouriernc}
+\usepackage{tgpagella}
+\usepackage{xcolor}
+\usepackage[activate=true]{microtype}
+\usepackage{amssymb}
+\usepackage{fontspec}
+\usepackage{titling}
+\usepackage{titlesec}
+
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{siunitx}
+\usepackage{colortbl}
+\usepackage{everypage}
+\usepackage[a4paper,margin=2cm,top=1cm]{geometry}
+
+\setmainfont[Numbers=OldStyle]{TeX Gyre Pagella}
+
+\definecolor{plpink}{HTML}{FF3232}
+\definecolor{plhome}{HTML}{CCEEFF}
+\definecolor{silver}{HTML}{888888}
+
+\sisetup{
+    output-decimal-marker={,}
+}
+\pagestyle{empty}
+
+\parskip=1ex
+\parindent=0pt
+
+\setlist[enumerate,1]{start=0}
+
+\AddEverypageHook{
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[opacity=0.1,below left,xshift=1cm,yshift=1cm] at (current page.north east) {\includegraphics[width=12cm]{../../images/pylady-pink}};
+        \node[below left,align=right,yshift=-1.5em] at (current page.north east) {\color{white} strana \thepage};
+        \node[below left,align=right] at (current page.north east) {\color{white} sada \plsetno};
+    \end{tikzpicture}
+}
+
+\newcommand\answerspace{\\\rule[0cm]{0pt}{1cm}}
+
+\newcommand\True{\texttt{True}}
+\newcommand\False{\texttt{False}}
+
+\usetikzlibrary{turtle}
+\newcommand\turtle[1]{\tikz[>=stealth,x=0.25mm,y=0.25mm]\draw[turtle={home,rt=90,#1}];}
+\newcommand\gulp[1]{}
+
+\newcommand\plsetno{7}
+
+\newcommand\startsection[1]{
+     \vspace{0.2ex}
+    \hrule
+    {\fontspec{Oxygen} \tiny
+     \vspace{-1ex}
+     \emph{#1}
+     \vspace{-1.5em}
+    }
+}
+
+\newfontfamily\headingfont[]{Bree Serif}
+\titleformat*{\section}{\LARGE\headingfont}
+
+\begin{document}
+
+\section*{Domácí projekty \plsetno}
+
+\startsection{Dnešní projekty jsou tak trochu navíc. Udělej je, pokud už máš hotové 1-D piškvorky.}
+
+\begin{enumerate}[resume]
+
+\item
+    Napiš program, který zkoupíruje soubor na jiné místo.
+    (Zeptá se na půodní jméno a nové jméno, načte původní soubor,
+    a zapíše obsah do nového.)
+    \\\emph{\small Program zkoušej v adresáři, který neobsahuje nic
+        důležitého – pro Python není těžké přepsat soubor,
+        ve kterém jsou důležité informace!}
+
+\item
+    Můj bratr, který píše japonské texty, mě požádal o program
+    který počítá znaky.
+    Program přečte soubor \verb+rozsypanycaj.txt+, a zjistí,
+    kolik znaků je psáno kterou z japonských slabikových abeced:
+    \begin{itemize}
+    \item {\fontspec{WenQuanYi Zen Hei} ひらがな \emph{(hiragana)}:
+        \\ ぁ あ ぃ い ぅ う ぇ え ぉ お か が き ぎ く
+        ぐ け げ こ ご さ ざ し じ す ず せ ぜ そ ぞ た
+        だ ち ぢ っ つ づ て で と ど な に ぬ ね の は
+        ば ぱ ひ び ぴ ふ ぶ ぷ へ べ ぺ ほ ぼ ぽ ま み
+        む め も ゃ や ゅ ゆ ょ よ ら り る れ ろ ゎ わ
+        ゐ ゑ を ん ゔ}
+    \item {\fontspec{WenQuanYi Zen Hei} カタカナ \emph{(katakana)}:
+        \\ ァ ア ィ イ ゥ ウ ェ エ ォ オ カ ガ キ ギ ク
+        グ ケ ゲ コ ゴ サ ザ シ ジ ス ズ セ ゼ ソ ゾ タ
+        ダ チ ヂ ッ ツ ヅ テ デ ト ド ナ ニ ヌ ネ ノ ハ
+        バ パ ヒ ビ ピ フ ブ プ ヘ ベ ペ ホ ボ ポ マ ミ
+        ム メ モ ャ ヤ ュ ユ ョ ヨ ラ リ ル レ ロ ヮ ワ
+        ヰ ヱ ヲ ン ヴ ヵ ヶ ヷ ヸ ヹ ヺ}
+    \end{itemize}
+    (Abecedy budou ke zkopírování na stránkách s materiály.)
+
+    Program vypíše dvě čísla – počet znaků pro každou z abeced.
+    Znaky, které nejsou v jedné z abeced, ignoruj.
+
+    Pro testování si jako \verb+rozsypanycaj.txt+ můžeš uložit stránku
+    \href{http://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%81%AE%E8%A1%A8%E8%A8%98%E4%BD%93%E7%B3%BB}{
+        http://ja.wikipedia.org/wiki/{\fontspec{WenQuanYi Zen Hei}日本語の表記体系}}
+    (odkaz bude také na stránkách).
+
+    Podle toho, jak jste se na sraze domluvili, pošli řešení e-mailem
+    (např. organizátorům, koučovi, nebo vůbec).
+    Posílej ho jako přílohu, nekopíruj ho do textu e-mailu.
+    \\Jestli procházíš-li kurz sama a můžeš programování konzultovat s někým
+    zkušenějším, je tento úkol na takovou konzultaci ideální téma.
+
+\end{enumerate}
+
+\startsection{Další projekt je rozšíření Šibenice z minulé sady. Jestli ji ještě
+    nemáš hotovou, vrať se nejdřív zpět.}
+
+\begin{enumerate}[resume]
+
+\item
+    Načítej „obrázky” v Šibenici ze souborů, místo řetězců ve zdrojovém kódu.
+    \\\emph{\small Funguje? Nasdílej to na GitHub!}
+
+\end{enumerate}
+
+\end{document}
