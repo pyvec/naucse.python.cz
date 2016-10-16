@@ -408,7 +408,8 @@ def hook():
     return ''
 ```
 
-Ve výchozí routě `/` by aplikace měla informovat uživatele, jak lze použít.
+Ve výchozí routě `/` by měla být jednoduchá
+HTML stránka, která bude informovat uživatele, jak lze aplikaci použít.
 
 [webhook]: https://developer.github.com/webhooks/
 
