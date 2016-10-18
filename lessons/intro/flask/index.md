@@ -411,7 +411,25 @@ def hook():
 Ve výchozí routě `/` by měla být jednoduchá
 HTML stránka, která bude informovat uživatele, jak lze aplikaci použít.
 
+#### Zabezpečení webhooku
+
+Protože příjmání událostí z internetu může být riskantní,
+nabízí Github možnost doplnit do vašeho webhooku `secret` položku.
+
+Abyste rozpoznali, že vám událost poslal právě Github, je ke každému
+requestu z Githubu přiložená hlavička `X-Hub-Signature`, např:
+```
+X-Hub-Signature: sha1=0b861d9a594a4f421cabcdef75d5aefc46df8967
+```
+která vám říká, že pokud použijete HMAC hexdigest
+s odpovídající hash funkcí a s klíčem, který je právě uvedený v položce `secret`,
+na celé tělo requestu a vámi spočítaný výsledek se shoduje s tím v hlavičce
+`X-Hub-Signature`, tak tento request přišel z Githubu, z vámi zabezpečeného hooku
+a dá se mu tedy věřit.
+Více informací a příklad v Ruby je na [github securing].
+
 [webhook]: https://developer.github.com/webhooks/
+[github securing]: https://developer.github.com/webhooks/securing/
 
 ### Vlastní zadání
 
