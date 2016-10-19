@@ -11,6 +11,19 @@ můžeme volat z Pythonu, tak lze volat z příkazové řádky.
 
  * [oskar456/isholiday.py](https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e)
 
+
+Volání z příkazové řádky, pomocí příkazu `python isholiday.py` nebo
+`python -m isholiday`, zajišťuje blok `if __name__ == '__main__':`.
+Toto je rychlý způsob, jak napsat modul který jde jak importovat, tak spustit.
+Když nějaký modul importujeme, má v proměnné `__name__` k dispozici své jméno.
+„Hlavní” modul ale není importován, a jeho jméno není vždy k dispozici
+(např. v `cat isholiday.py | python`).
+Python proto `__name__` „hlavního” modulu nastavuje na `'__main__'`,
+čehož se často využívá.
+
+Později se podíváme na elegantnější způsob jak to zařídit; teď se vraťme
+zpět k balíčkování.
+
 setup.py
 --------
 
