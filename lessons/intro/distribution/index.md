@@ -218,6 +218,30 @@ __all__ = ['getholidays', 'isholiday']
 
 Do `__init__.py` ideálně nepatří žádný kód kromě tohoto.
 
+
+Spouštění balíčku
+-----------------
+
+Pokusíme-li se teď program spustit pomocí `python -m isholiday`,
+narazíme na problém: na rozdíl od souboru se složka s kódem takto spustit nedá.
+Namísto spuštění souboru (typicky s blokem `if __name__ == '__main__':`) totiž
+Python v tomto případě hledá *soubor* pojmenovaný `__main__.py`, a spustí ten.
+
+Soubor `__main__.py` není určený k tomu, aby se z něho importovalo, proto
+by měl obsahovat co nejméně kódu – ideálně jen volání funkce, která je
+definovaná jinde. Vytvořte proto `__main__.py` s následujícím obsahem:
+
+```python
+from .holidays import main
+
+main()
+```
+
+a v `holidays.py` zaměňte `if __name__ == '__main__':` za `def main():`.
+
+Skript teď bude možné použít pomocí `python -m isholiday`.
+
+
 Programy pro příkazovou řádku
 -----------------------------
 
@@ -230,25 +254,20 @@ použít [entrypoints]:
 setup(
     entry_points={
         'console_scripts': [
-            'executable_name = isholiday.__main__:main'
+            'executable_name = isholiday.holidays:main'
         ]
     },
 )
 ```
 
-`isholiday.__main__:main` je cesta k funkci ve tvaru `modul:funkce`, funkce může
+`isholiday.holidays:main` je cesta k funkci ve tvaru `modul:funkce`, funkce může
 být v modulu definovaná nebo importovaná.
 
-Všimněte si, že je zde použito `__main__`, což předpokládá existenci souboru
-`__main__.py` v modulu. Tento soubor by měl vykonávat funkci skriptu.
-
-Skript bude možné použít takto:
+Skript bude možné použít, je-li aktivní prostředí kde je nainstalován, jen
+zadáním jména *entrypointu*:
 
     $ executable_name
 
-I takto:
-
-    $ python -m module_name
 
 Specifikace závislostí
 ----------------------
