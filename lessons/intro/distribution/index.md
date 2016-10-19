@@ -348,6 +348,9 @@ password = <your password goes here>
 
 Hesla můžete vynechat, pokud je budete chtít pokaždé zadávat.
 
+Používáte-li Windows, je potřeba nastavit proměnnou prostředí `HOME` na adresář
+se souborem `.pypirc`.
+
 Registrace projektu a nahrání na testovací PyPI se provádí pomocí:
 
 ```bash
