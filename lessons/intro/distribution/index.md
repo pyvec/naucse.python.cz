@@ -153,7 +153,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Libraries',
-        ]
+        ],
 )
 ```
 
@@ -274,8 +274,8 @@ použít [entrypoints]:
 setup(
     entry_points={
         'console_scripts': [
-            'executable_name = isholiday.holidays:main'
-        ]
+            'executable_name = isholiday.holidays:main',
+        ],
     },
 )
 ```
