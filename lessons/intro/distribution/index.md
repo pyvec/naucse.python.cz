@@ -188,6 +188,9 @@ V takovém případě uděláme modul ve formě složky. V našem případě sou
 1 directory, 5 files
 ```
 
+Soubor `__init__.py` jednak značí, že adresář `isholiday` je Pythoní modul,
+také obsahuje kód, který se spustí při importu modulu `isholiday`.
+
 Musíme ještě mírně upravit `setup.py`:
 
 ```patch
@@ -230,6 +233,10 @@ __all__ = ['getholidays', 'isholiday']
 ```
 
 Do `__init__.py` ideálně nepatří žádný kód kromě tohoto.
+
+Tečka v příkazu `import` není chyba: je to zkratka pro aktuální modul.
+Můžeme psát i `from isholiday.holidays import ...`,
+což ale trochu ztěžuje případné přejmenování modulu.
 
 
 Spouštění balíčku
