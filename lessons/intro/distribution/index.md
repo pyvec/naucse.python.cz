@@ -266,6 +266,26 @@ setup(
 )
 ```
 
+Kromě závislostí v `setup.py` se u Pythoních projektů často setkáme se souborem
+`requirements.txt`, který obsahuje přesné verze všech závislosti, včetně
+tranzitivních – t.j. závisí-li náš balíček na `Flask`, a `Flask` na `Jinja2`,
+najdeme v `requirements.txt` mimojiné řádky:
+
+```
+Flask==0.11.1
+Jinja2==2.8
+```
+
+Tento soubor se používá, když je potřeba přesně replikovat prostředí, kde
+program běží, například mezi testovacím strojem a produkčním nasazením
+webové aplikace.
+Tento soubor se dá vygenerovat z aktuálního prostředí zadáním
+`python -m pip freeze > requirements.txt`, a nainstalovat pomocí
+`python -m pip install -r requirements.txt`.
+My ho používat nebudeme, vystačíme si s volnější specifikací závislostí
+v `setup.py`.
+
+
 Upload na PyPI
 --------------
 
