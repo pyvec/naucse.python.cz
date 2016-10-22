@@ -373,7 +373,52 @@ Uploading <soubor>
 Registrace se zdaří jen pokud jméno projektu již není zabrané.
 Po úspěšném nahrání lze nahrát už jen novější verze modulu.
 
-Pro nahrání na opravdovou PyPi stačí vynechat `-r pypitest`.
+Pro nahrání na opravdovou PyPI stačí vynechat `-r pypitest`.
+
+Instalace pomocí pip
+--------------------
+
+Projekt nahraný na PyPI by mělo jít nainstalovat pomocí pipu.
+V případě použití ostré verze PyPI stačí k instalaci zadat název balíčku:
+
+```bash
+(env)$ python -m pip install <název_balíčku>
+```
+
+Pokud však použijeme testovací PyPI, je nutné pipu říct, aby balíček hledal tam.
+[Postup](https://wiki.python.org/moin/TestPyPI) uvedený v dokumentaci není
+v tomto případě nejvhodnější, protože z testovací PyPI vezme jak náš balíček,
+tak i případné závislosti, které mohou být zastaralé, rozbité či jinak škodlivé.
+
+Lepší by bylo, kdyby pip nainstaloval závislosti z ostré PyPI a na testovací
+hledal jen náš projekt. Toho se dá docílit přepínačem `--extra-index-url`.
+
+```bash
+(env)$ python -m pip install --extra-index-url https://testpypi.python.org/pypi <název_balíčku>
+```
+
+V tomto případě pip nejdřív prohledá ostrou PyPI, a pokud nenajde požadovaný
+balíček, použije testovací PyPI. Zde je potřeba dávat pozor na název projektu,
+protože případné konflikty mezi ostrou a testovací PyPI se nekontrolují.
+Pokud tedy máme projekt na testovací PyPI a na ostré existuje projekt se
+stejným názvem, nainstaluje se ten z ostré verze.
+
+V případě, že tento problém nastane, je možné ho částečně obejít specifikací
+verze instalovaného balíčku:
+
+```bash
+(env)$ python -m pip install --extra-index-url https://testpypi.python.org/pypi <název_balíčku>==0.3
+```
+
+Pokud u duplicitního projektu na ostré PyPI neexistuje požadovaná verze,
+nainstaluje se náš projekt z testovací PyPI.
+
+Jiná možnost je zadat přímo cestu k archivu s balíčkem místo jeho názvu.
+Zde pak na umístění balíčku ani verzi nezáleží:
+
+```bash
+(env)$ python -m pip install https://testpypi.python.org/packages/.../<název_balíčku>-0.3.tar.gz
+```
 
 Další
 -----
