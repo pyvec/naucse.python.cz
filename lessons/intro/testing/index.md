@@ -42,7 +42,10 @@ test/test_holidays.py .
 
 Všimněte si několika věcí:
 
- * Stačí funkci pojmenovat `test_*` a `pytest` pozná, že se jedná o test.
+ * Testy jsou v souborech pojmenovaných `test*`, v adresářích pojmenovaných
+   `test*`.
+ * V takovém souboru stačí mít funkci pojmenovanou `test_*` a `pytest` pozná,
+   že se jedná o test.
  * Pokud balíček nemáme nainstalovaný, je třeba nastavit `PYTHONPATH`. Vždy je ale lepší testovat nainstalovaný balíček.
  * V ukázce je použit obyčejný `assert` a žádná metoda z `unittest`.
 
@@ -88,12 +91,12 @@ Více o základním použití pytestu najdete v [dokumentaci].
 
 ### Parametrické testy
 
-Jednou z vlastností pytestu, která často přichází vhod jsou [parametrické testy].
+Jednou z vlastností pytestu, která často přichází vhod, jsou [parametrické testy].
 Pokud bychom například chtěli otestovat, jestli je štědrý den svátkem nejen
-v roce 2016, ale v jiných letech, nemusíme spát testů více ani použít forcyklus.
+v roce 2016, ale v jiných letech, nemusíme spát testů více ani použít cyklus.
 
-Nevýhoda více téměř stejných testů je patrná sama o sobě, nevýhoda forcyklu je 
-v tom, že celý test selže, i pokud selže jen jeden průběh cyklem, zároveň se
+Nevýhoda více téměř stejných testů je patrná sama o sobě, nevýhoda cyklu je
+v tom, že celý test selže, i pokud selže jen jeden průběh cyklem. Zároveň se
 průběh testu při selhání ukončí.
 
 Místo toho tedy použijeme parametrický test:
@@ -128,7 +131,7 @@ test/test_holidays.py::test_xmas[2048] PASSED
 
 Vždy je dobré pokusit se nějaký test rozbít v samotném kódu, který testujeme,
 abychom se ujistili, že testujeme správně.
-Přidám tedy na konec funkce `getholidays()` tento pesimistický kus kódu:
+Přidám tedy dočasně na konec funkce `getholidays()` tento pesimistický kus kódu:
 
 ```python
     if year > 2020:
@@ -158,6 +161,7 @@ inicializace objektu pro komunikaci s nějakým API.
 V pytestu k tomuto účelu nejlépe slouží tz. [fixtures], které se v samotných
 testech používají jako argumenty funkcí.
 
+
 [fixtures]: http://doc.pytest.org/en/latest/fixture.html
 
 ```python
@@ -173,6 +177,12 @@ def test_seacrh_python(client):
     assert len(tweets) == 1
     assert 'python' in tweets[0].text.lower()
 ```
+
+Fixtures se hledají pomocí jména.
+Můžou být definovány v aktuálním souboru,
+v [pluginu](http://doc.pytest.org/en/latest/plugins.html),
+[konfiguračním souboru](http://doc.pytest.org/en/latest/writing_plugins.html#conftest-py-local-per-directory-plugins),
+a některé jsou zabudované přímo v pytestu.
 
 Pokud potřebujete po použití s fixturou ještě něco udělat, můžete místo `return`
 použít `yield`. Zde příklad, který si můžete rovnou vyzkoušet:
@@ -206,8 +216,8 @@ def test_with_fixture(dummy, arg):
     assert arg == dummy.forward(arg)
 ```
 
-Pro zobrazení věcí, co se v testech něco vypisují na standardní výstup, je třeba
-použít `pytest -s`.
+Standardní výstup z testů se normálně zobrazuje jen když test selže.
+Chceme-li výstup vidět u všech testů, je třeba použít `pytest -s`.
 
 Hromadu dalších příkladů použití pytestu najdete dokumentaci, v
 [sekci s příklady](http://doc.pytest.org/en/latest/example/index.html).
@@ -218,7 +228,7 @@ flexmock
 Při psaní testů se občas hodí trochu podvádět. Například když nechceme,
 aby testy měli nějaký vedlejší účinek, když chceme testovat něco, co závisí na
 náhodě a podobně. Obecně se tomuto říká *mocking* \*, a existuje více různých
-knihoven, které to umožňují, jednou z nich je [flexmock].
+knihoven, které to umožňují. Jednou z nich je [flexmock].
 
 [flexmock]: https://flexmock.readthedocs.io/
 
@@ -282,7 +292,7 @@ Můžete tak zfalšovat i volání *builtin* funkcí, jako je například `open(
 ### Očekávání (mocks, spies)
 
 Pomocí flexmocku můžete zároveň [kontrolovat], že se vaší implementaci něco
-zavolalo, a to dvojím způsob, buďto zároveň změníte výsledek funkce (mocks),
+zavolalo, a to dvojím způsobem: buďto zároveň změníte výsledek funkce (mocks),
 nebo jen sledujete, jestli se zavolala (spies).
 (Příklady na odkazu.)
 
@@ -290,15 +300,20 @@ nebo jen sledujete, jestli se zavolala (spies).
 
 ### Varování
 
-Podvádění při testech je občas potřebné. Pokud například vaše funkce čte soubor
-`/etc/passwd` a vy chcete testovat, že se zachová správně, pokud bude obsahovat
-daný obsah, musíte si trochu zapodvádět, protože nemůžete vědět, co v tom
-souboru je doopravdy na daném systému, v daný čas.
+Podvádění při testech občas vypadá nevyhnutelně. Pokud například vaše funkce
+čte soubor `/etc/passwd` a vy chcete testovat, že se zachová správně, pokud
+bude obsahovat daný obsah, musíte si trochu zapodvádět, protože nemůžete vědět,
+co v tom souboru je doopravdy na daném systému, v daný čas.
 
 Je ale jednoduché sklouznout do fáze, kdy jsou vaše testy natolik přemockované,
 že už ani neplní svůj účel. Buďto proto, že příliš podvádíte a testy vždy
 projdou, i když je implementace rozbitá; nebo proto, že při sebemenší úpravě
 vnitřní implementace musíte vždy upravit i testy.
+
+Mějte toto na paměti, a k mockování se uchylujte až po vyčerpání „slušnějších”
+možností.
+Často jde trochu změnit kód, aby byl testovatelnější – například napsat funkci,
+která čte soubor formátu `/etc/passwd`, ale jméno souboru jí předat argumentem.
 
 betamax
 -------
@@ -306,7 +321,7 @@ betamax
 Vaše úlohy používají webová API. Při testování funkcionality API klientů
 se vynoří řada problémů:
 
- * výsledku volání API mohou být pokaždé různé
+ * výsledky volání API mohou být pokaždé různé
  * k některým volání API je potřeba mít přístupové údaje
  * API může být zrovna nedostupné
 
@@ -340,8 +355,9 @@ def test_get(betamax_session):
     betamax_session.get('https://httpbin.org/get')
 ```
 
-Po spuštění testu prozkoumejte složku `tests/fixtures/cassettes`,
-měla by obsahovat soubor `test_filename.test_get.json`.
+Před spuštěním testu vytvořte složku `tests/fixtures/cassettes`.
+Po spuštění testu ji prozkoumejte.
+Měla by obsahovat soubor `test_filename.test_get.json`.
 To je nahraná kazeta. Každý další průběh testu nevykoná GET požadavek,
 ale pouze přehraje danou kazetu. Pokud chcete kazetu opět nahrát, prostě ji
 smažte a pusťte test znovu.
@@ -389,7 +405,7 @@ Na obě otázky se pokusím odpovědět jedním okomentovaným kódem:
 ```python
 with betamax.Betamax.configure() as config:
     if 'AUTH_FILE' in os.environ:
-        # If the test are invoked with AUTH_FILE environ
+        # If the tests are invoked with an AUTH_FILE environ variable
         TOKEN = my_auth_parsing_func(os.environ['AUTH_FILE'])
         # Always re-record the cassetes
         # https://betamax.readthedocs.io/en/latest/record_modes.html
@@ -419,7 +435,7 @@ nenachází žádný citlivý údaj, a pokud tam je, přepsat kód tak, aby se t
 Testování aplikací ve Flasku
 ----------------------------
 
-Pro testování aplikací ve Flasku se používá `test_client()`:
+Pro testování aplikací ve Flasku se používá `app.test_client()`:
 
 ```python
 import pytest
@@ -444,7 +460,7 @@ Jak to zapadá do našeho balíčku (odkazy)
 
 [Kam dát testy?](http://doc.pytest.org/en/latest/goodpractices.html#choosing-a-test-layout-import-rules)
 Tady pozor na to, aby testy byly součástí archivu s balíčkem (`setup.py sdist`), ale
-pokud zvolíte první variantu umístění, aby se neinstalovali (`setup.py install`),
+pokud zvolíte první variantu umístění, aby se neinstalovaly (`setup.py install`),
 protože by tam kolidovali s ostatními testy z jiných balíčků.
 Případné soubory potřebné k testování bývá zvykem dávat do složky `fixtures` ve
 složce s testy.
@@ -492,6 +508,10 @@ Kvíz
 Co je špatně na této testovací sadě k funkci `is_even()`?
 
 ```python
+def is_even(n):
+    return n % 2 == 0
+
+
 @pytest.mark.parametrize('n', range(0, 1000, 2))
 def test_is_even(n):
     assert is_even(n)
