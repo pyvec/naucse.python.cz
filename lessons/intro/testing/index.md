@@ -529,7 +529,7 @@ Podmínky:
  * Musí fungovat `setup.py test` a to nejen z gitu, ale i při rozbalení archivu z PyPI.
  * Všechny testovací závislosti se musí při uvedeném příkazu nainstalovat.
  * Testy samotné musí fungovat offline a bez nutnosti mít přístupové údaje k API.
- * Spuštění testl i znovu-nahrání kazet musí být zdokumentováno v README.
+ * Spuštění testů i znovu-nahrání kazet musí být zdokumentováno v README.
  * Nahrané kazety musí být v gitu a být součástí balíčku (ale neinstalují se).
  * Žádné nahrané kazety (ani jiné soubory) nesmí obsahovat citlivé údaje.
  * Alespoň část testu by měla být parametrická.
