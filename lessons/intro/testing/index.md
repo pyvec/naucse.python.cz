@@ -29,7 +29,7 @@ nainstalujeme a spustíme `pytest`:
 
 ```bash
 (env)$ python -m pip install pytest
-(env)$ PYTHONPATH=. pytest
+(env)$ PYTHONPATH=. python -m pytest
 =============================== test session starts ================================
 platform linux -- Python 3.5.2, pytest-3.0.3, py-1.4.31, pluggy-0.4.0
 rootdir: ..isholiday, inifile: 
@@ -119,7 +119,7 @@ iterovat, tedy i např. volání `range()`.)
 Pro více podrobný výpis výsledku testů můžete použít přepínač `-v`:
 
 ```bash
-(env)$ PYTHONPATH=. pytest -v
+(env)$ PYTHONPATH=. python -m pytest -v
 ...
 test/test_holidays.py::test_xmas[2015] PASSED
 test/test_holidays.py::test_xmas[2016] PASSED
@@ -140,7 +140,7 @@ Přidám tedy dočasně na konec funkce `getholidays()` tento pesimistický kus 
 ```
 
 ```bash
-(env)$ PYTHONPATH=. pytest -v
+(env)$ PYTHONPATH=. python -m pytest -v
 ...
 test/test_holidays.py::test_xmas[2015] PASSED
 test/test_holidays.py::test_xmas[2016] PASSED
