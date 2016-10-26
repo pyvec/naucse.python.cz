@@ -498,19 +498,82 @@ z requests.
 
 [Response]: http://flask.pocoo.org/docs/0.11/api/#flask.Response
 
-Jak to zapadá do našeho balíčku (odkazy)
-----------------------------------------
+Kam dát testy?
+--------------
 
-[Kam dát testy?](http://doc.pytest.org/en/latest/goodpractices.html#choosing-a-test-layout-import-rules)
-Tady pozor na to, aby testy byly součástí archivu s balíčkem (`setup.py sdist`), ale
+[Dokumentace pytestu](http://doc.pytest.org/en/latest/goodpractices.html#choosing-a-test-layout-import-rules)
+uvádí dvě možnosti, kam dát adresář s testy. Buď vedle adresáře s modulem:
+
+```
+setup.py
+mypkg/
+    __init__.py
+    appmodule.py
+tests/
+    test_app.py
+    ...
+```
+
+nebo do něj:
+
+```
+setup.py
+mypkg/
+    __init__.py
+    appmodule.py
+    ...
+    test/
+        test_app.py
+        ...
+```
+
+První způsob je preferovaný, protože pomáhá udržovat kód a testy oddělené.
+
+Ve druhém případě mějte na paměti, že pytest pouští testy jako samostatné
+moduly, ne jako součást vašeho balíčku.
+Relativní importy (`from ..appmodule import xyz`) v testech nebudou fungovat.
+
+Pozor na to, aby testy byly součástí archivu s balíčkem (`setup.py sdist`), ale
 pokud zvolíte první variantu umístění, aby se neinstalovaly (`setup.py install`),
-protože by tam kolidovali s ostatními testy z jiných balíčků.
+protože by tam kolidovaly s ostatními testy z jiných balíčků.
+
 Případné soubory potřebné k testování bývá zvykem dávat do složky `fixtures` ve
 složce s testy.
 
-Spouštění testů pomocí
-[setup.py test](http://doc.pytest.org/en/latest/goodpractices.html#integrating-with-setuptools-python-setup-py-test-pytest-runner).
-Zde se také přidávají další testovací závislosti (`flexmock`, `betamax`...) do `tests_require`.
+Spouštění testů pomocí `setup.py test`
+--------------------------------------
+
+Standardně se testy v Pythonu nespouští pomocí `python -m pytest`, ale
+`python setup.py test`, což funguje i s jinými nástroji než je pytest.
+Pokud pytest používáme, je proto dobré `setup.py` naučit spouštět pytest.
+
+K tomu potřeujeme nakonfigurovat závislosti: v `setup_requires` musí být
+`pytest-runner`, a v `tests_require` pak `pytest` a další testovací závislosti
+(`flexmock`, `betamax`...).
+
+```python
+from setuptools import setup
+
+setup(
+    ...,
+    setup_requires=['pytest-runner', ...],
+    tests_require=['pytest', ...],
+    ...,
+)
+```
+
+a přidat následující sekci do `setup.cfg`:
+
+```
+[aliases]
+test=pytest
+```
+
+Příkaz `python setup.py test` by měl fungovat, ale neočekává se, že bude
+podporovat další argumenty pytestu (jako `-v`).
+Na to uživatel spustí pytest samotný.
+
+Další informace jsou v [dokumentaci pytestu](http://doc.pytest.org/en/latest/goodpractices.html#integrating-with-setuptools-python-setup-py-test-pytest-runner).
 
 Travis CI
 ---------
