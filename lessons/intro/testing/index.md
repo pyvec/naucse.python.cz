@@ -24,18 +24,18 @@ def test_xmas_2016():
     assert (24, 12) in holidays
 ```
 
-Test uložíme někam do projektu, třeba do souboru `test/test_holidays.py` a
+Test uložíme někam do projektu, třeba do souboru `tests/test_holidays.py` a
 nainstalujeme a spustíme `pytest`:
 
 ```bash
 (env)$ python -m pip install pytest
-(env)$ PYTHONPATH=. python -m pytest test/test_holidays.py
+(env)$ PYTHONPATH=. python -m pytest tests/test_holidays.py
 =============================== test session starts ================================
 platform linux -- Python 3.5.2, pytest-3.0.3, py-1.4.31, pluggy-0.4.0
 rootdir: ..isholiday, inifile: 
 collected 1 items 
 
-test/test_holidays.py .
+tests/test_holidays.py .
 
 ============================= 1 passed in 0.24 seconds =============================
 ```
@@ -71,7 +71,7 @@ __________________________________ test_xmas_2016 ______________________________
 >       assert (23, 12) in holidays
 E       assert (23, 12) in {(1, 1), (1, 5), (5, 7), (6, 7), (8, 5), (17, 11), ...}
 
-test/test_holidays.py:6: AssertionError
+tests/test_holidays.py:6: AssertionError
 ============================= 1 failed in 0.24 seconds =============================
 ```
 
@@ -126,11 +126,11 @@ Pro více podrobný výpis výsledku testů můžete použít přepínač `-v`:
 ```bash
 (env)$ PYTHONPATH=. python -m pytest -v
 ...
-test/test_holidays.py::test_xmas[2015] PASSED
-test/test_holidays.py::test_xmas[2016] PASSED
-test/test_holidays.py::test_xmas[2017] PASSED
-test/test_holidays.py::test_xmas[2033] PASSED
-test/test_holidays.py::test_xmas[2048] PASSED
+tests/test_holidays.py::test_xmas[2015] PASSED
+tests/test_holidays.py::test_xmas[2016] PASSED
+tests/test_holidays.py::test_xmas[2017] PASSED
+tests/test_holidays.py::test_xmas[2033] PASSED
+tests/test_holidays.py::test_xmas[2048] PASSED
 ...
 ```
 
@@ -168,11 +168,11 @@ Přidám tedy dočasně na konec funkce `getholidays()` tento pesimistický kus 
 ```bash
 (env)$ PYTHONPATH=. python -m pytest -v
 ...
-test/test_holidays.py::test_xmas[2015] PASSED
-test/test_holidays.py::test_xmas[2016] PASSED
-test/test_holidays.py::test_xmas[2017] PASSED
-test/test_holidays.py::test_xmas[2033] FAILED
-test/test_holidays.py::test_xmas[2048] FAILED
+tests/test_holidays.py::test_xmas[2015] PASSED
+tests/test_holidays.py::test_xmas[2016] PASSED
+tests/test_holidays.py::test_xmas[2017] PASSED
+tests/test_holidays.py::test_xmas[2033] FAILED
+tests/test_holidays.py::test_xmas[2048] FAILED
 ...
 ```
 
@@ -529,6 +529,8 @@ mypkg/
 ```
 
 První způsob je preferovaný, protože pomáhá udržovat kód a testy oddělené.
+Pokud ho použijete, nedávejte do něj `__init__.py` – není to importovatelný
+Pythoní modul, ale jen sada souborů s testy.
 
 Ve druhém případě mějte na paměti, že pytest pouští testy jako samostatné
 moduly, ne jako součást vašeho balíčku.
