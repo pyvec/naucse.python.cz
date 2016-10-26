@@ -134,6 +134,27 @@ test/test_holidays.py::test_xmas[2048] PASSED
 ...
 ```
 
+Potřebujeme-li parametrizovat více argumentů, můžeme předat seznam jmen
+argumentů a seznam jejich hodnot:
+
+```python
+import pytest
+import isholiday
+
+@pytest.mark.parametrize(
+    ['year', 'month', 'day'],
+    [(2015, 12, 24),
+     (2016, 12, 24),
+     (2017, 1, 1),
+     (2033, 7, 5),
+     (2048, 7, 6)],
+)
+def test_some_holidays(year, month, day):
+    """Test a few sample holidays"""
+    holidays = isholiday.getholidays(year)
+    assert (day, month) in holidays
+```
+
 Vždy je dobré pokusit se nějaký test rozbít v samotném kódu, který testujeme,
 abychom se ujistili, že testujeme správně.
 Přidám tedy dočasně na konec funkce `getholidays()` tento pesimistický kus kódu:
@@ -154,6 +175,7 @@ test/test_holidays.py::test_xmas[2033] FAILED
 test/test_holidays.py::test_xmas[2048] FAILED
 ...
 ```
+
 
 [parametrické testy]: http://doc.pytest.org/en/latest/parametrize.html
 
