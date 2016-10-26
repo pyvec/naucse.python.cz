@@ -29,7 +29,7 @@ nainstalujeme a spustíme `pytest`:
 
 ```bash
 (env)$ python -m pip install pytest
-(env)$ PYTHONPATH=. python -m pytest
+(env)$ PYTHONPATH=. python -m pytest test/test_holidays.py
 =============================== test session starts ================================
 platform linux -- Python 3.5.2, pytest-3.0.3, py-1.4.31, pluggy-0.4.0
 rootdir: ..isholiday, inifile: 
@@ -42,12 +42,17 @@ test/test_holidays.py .
 
 Všimněte si několika věcí:
 
- * Testy jsou v souborech pojmenovaných `test*`, v adresářích pojmenovaných
-   `test*`.
- * V takovém souboru stačí mít funkci pojmenovanou `test_*` a `pytest` pozná,
+ * V testovacím souboru stačí mít funkci pojmenovanou `test_*` a `pytest` pozná,
    že se jedná o test.
  * Pokud balíček nemáme nainstalovaný, je třeba nastavit `PYTHONPATH`. Vždy je ale lepší testovat nainstalovaný balíček.
  * V ukázce je použit obyčejný `assert` a žádná metoda z `unittest`.
+
+Co se má testovat se pytestu dá zadat argumenty příkazové řádky.
+Buď to můžou být jednotlivé soubory, nebo adresáře, ve kterých pytest
+rekurzivně hledá všechny soubory začínající na `test_`.
+Vynecháme-li argumenty úplně, projdou se testy z aktuálního adresáře.
+(To se často hodí, ale obsahuje-li aktuální adresář i vaše virtuální prostředí,
+pytest prohledá i to a často v něm najde neprocházející testy.)
 
 Pytest upravuje chování assertu, což oceníte především, pokud test selže:
 
