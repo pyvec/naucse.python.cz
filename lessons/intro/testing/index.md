@@ -213,35 +213,38 @@ v [pluginu](http://doc.pytest.org/en/latest/plugins.html),
 a některé jsou zabudované přímo v pytestu.
 
 Pokud potřebujete po použití s fixturou ještě něco udělat, můžete místo `return`
-použít `yield`. Zde příklad, který si můžete rovnou vyzkoušet:
+použít `yield`.
+Často se to používá u zdrojů, které je po použití potřeba nějak finalizovat či
+zavřít, například u databázových spojení.
+Zde je ilustrační příklad, který si můžete rovnou vyzkoušet:
 
 ```python
 import pytest
 
 
-class Dummy:
-    def __init__(self):
-        print('Creating Dummy instance')
+class DBConnection:
+    def __init__(self, name):
+        print('Creating connection for ' + name)
         ...
 
-    def forward(self, arg):
+    def select(self, arg):
         return arg
 
     def cleanup(self):
-        print('Cleaning up Dummy instance')
+        print('Cleaning up connection')
         ...
 
 
 @pytest.fixture
-def dummy():
-    d = Dummy()
+def connection():
+    d = DBConnection('sqlite')
     yield d
     d.cleanup()
 
 
 @pytest.mark.parametrize('arg', (1, float, None))
-def test_with_fixture(dummy, arg):
-    assert arg == dummy.forward(arg)
+def test_with_fixture(connection, arg):
+    assert arg == connection.select(arg)
 ```
 
 Standardní výstup z testů se normálně zobrazuje jen když test selže.
