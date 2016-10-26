@@ -154,6 +154,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Libraries',
         ],
+    zip_safe=False,
 )
 ```
 
@@ -164,6 +165,12 @@ v podstatě takové tagy nebo strukturované informace o balíčku.
 Nevymýšlíme je sami, ale hledáme je v
 [seznamu](https://pypi.python.org/pypi?%3Aaction=list_classifiers).
 Tyto informace jsou později vidět na [PyPI](https://pypi.python.org/pypi).
+
+Argument `zip_safe=False` zajistí, že se modul nainstaluje do adresáře.
+Setuptool totiž mají nepříjemný zlozvyk instalovat moduly jako `zip`,
+což komplikuje práci s datovými soubory jako *templates*.
+Je proto lepší `zip_safe=False` uvést.
+
 
 Více souborů s Python kódem
 ---------------------------
