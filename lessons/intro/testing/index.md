@@ -205,8 +205,9 @@ def test_search_python(client):
     assert 'python' in tweets[0].text.lower()
 ```
 
-Fixtures se hledají pomocí jména.
-Můžou být definovány v aktuálním souboru,
+Fixtures se hledají pomocí jména: když má testovací funkce (nebo i jiná
+fixture) parametr, podle jména tohoto parametru se najde odpovídající fixture.
+Fixtures můžou být definovány v aktuálním souboru,
 v [pluginu](http://doc.pytest.org/en/latest/plugins.html),
 [konfiguračním souboru](http://doc.pytest.org/en/latest/writing_plugins.html#conftest-py-local-per-directory-plugins),
 a některé jsou zabudované přímo v pytestu.
