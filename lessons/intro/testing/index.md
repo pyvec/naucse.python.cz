@@ -323,8 +323,9 @@ Můžete tak zfalšovat i volání *builtin* funkcí, jako je například `open(
 ```python
 >>> import sys
 >>> import flexmock
+>>> import builtins
 >>> from io import StringIO
->>> flexmock(sys.modules['builtins'], open=StringIO('fake content'))
+>>> flexmock(builtins, open=StringIO('fake content'))
 <module 'builtins' (built-in)>
 >>> with open('/etc/passwd') as f:
 ...     f.readlines()
