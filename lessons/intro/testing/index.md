@@ -199,7 +199,7 @@ def client():
     import twitter
     return twitter.Client(...)
 
-def test_seacrh_python(client):
+def test_search_python(client):
     tweets = client.search('python', size=1)
     assert len(tweets) == 1
     assert 'python' in tweets[0].text.lower()
