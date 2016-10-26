@@ -250,6 +250,18 @@ def test_with_fixture(connection, arg):
 Standardní výstup z testů se normálně zobrazuje jen když test selže.
 Chceme-li výstup vidět u všech testů, je třeba použít `pytest -s`.
 
+I fixtury jdou parametrizovat, jen trochu jiným způsobem než testovací funkce:
+parametry předané dekorátoru `pytest.fixture`, získáme ze zabudované
+fixtury `request`:
+
+```python
+@pytest.fixture(params=('sqlite', 'postgres'))
+def connection(request):
+    d = DBConnection(request.param)
+    yield d
+    d.cleanup()
+```
+
 Hromadu dalších příkladů použití pytestu najdete dokumentaci, v
 [sekci s příklady](http://doc.pytest.org/en/latest/example/index.html).
 
