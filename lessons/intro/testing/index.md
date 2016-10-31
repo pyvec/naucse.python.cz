@@ -476,6 +476,23 @@ Na tuto otázku podrobněji odpovídá
 V každém případě je moudré před uložením do gitu zkontrolovat, že se v kazetách
 nenachází žádný citlivý údaj, a pokud tam je, přepsat kód tak, aby se tam nenacházel.
 
+#### Komprimované citlivé údaje
+
+Problém může nastat, pokud je token či jiná citlivá informace uložena jako část v těle 
+odpovědi (případně i požadavku) a zároveň je toto tělo zprávy zkomprimováno (defaultní
+chování, viz [dokumentace](http://betamax.readthedocs.io/en/latest/implementation_details.html#gzip-content-encoding)). 
+V takovém případě je potřeba k tomu, aby šlo v kazetě nahradit citlivé údaje, upravit 
+hlavičku `Accept-Encoding` v `betamax_session` tak, aby neobsahovala `*`, `gzip`, 
+`compress` ani `deflate`:
+
+```
+betamax_session.headers.update({'Accept-Encoding': 'identity'})
+```
+
+(_Poznámka_: `'identity'` má shodné chování jako `''` a to, že data ve zprávě nejsou 
+nijak transformována, více viz [wikipedia](https://en.wikipedia.org/wiki/HTTP_compression#Content-Encoding_tokens) 
+a [specifikace HTTP](https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3))
+
 Testování aplikací ve Flasku
 ----------------------------
 
