@@ -451,7 +451,7 @@ modulů, tříd, funkcí apod. Všechny tyto věci musí mít v kódu dokumenta�
 Jak sestavit a testovat dokumentaci by mělo být jasné z `README.rst`
 (a to musí mít reStructuredText syntaxi).
 
-Generování dokumnetace nesmí způsobit chybu ani varování.
+Generování dokumnetace ani doctesty nesmí způsobit chybu ani varování.
 Potlačení chybových a varovných hlášek (např. konfigurací, přesměrováním
 *stderr*, apod.) je povoleno jen po konzultaci s cvičícím.
 
