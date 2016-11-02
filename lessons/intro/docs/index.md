@@ -75,7 +75,11 @@ složité triky, jak docílit nějaké konverze.
 reStructuredText se od Markdownu liší v syntaxi, která je komplikovanější na
 psaní, ale umožňuje dělat komplexnější věci.
 
+Pro přehled o tom, co reStructuredText umí a jakou má syntaxi,
+můžete použít [tahák].
+
 [reStructuredText]: http://www.sphinx-doc.org/en/stable/rest.html
+[tahák]: https://github.com/ralsina/rst-cheatsheet
 
 V `index.rst` je seznam kapitol:
 
@@ -100,7 +104,7 @@ Soubory s kapitolami je třeba vytvořit ve složce `docs` s příponou `.rst`.
 Obsah (ve smyslu *content*) lze pak přidávat samozřejmě do těchto souborů i do
 `index.rst`.
 
-Mezi sekcemi a napříč soubory můžete odkazovat pomocí [konstrukce ref]:
+Chcete-li odkazovat na některou sekci, označíme si ji pomocí `.. _label:`:
 
 ```rst
 .. _my-reference-label:
@@ -109,7 +113,12 @@ Section to cross-reference
 --------------------------
 
 This is the text of the section.
+```
 
+Poté na ni lze odkazovat, odkudkoli z dokumentace, odkazovat pomocí
+[konstrukce ref]:
+
+```rst
 It refers to the section itself, see :ref:`my-reference-label`.
 It could refer to a different section as well :)
 ```
@@ -122,17 +131,18 @@ doctest
 `doctest` je modul ze standardní knihovny, který najde v dokumentaci bloky kódu
 a otestuje, jestli se váš kód chová tak, jak je to ukázáno v dokumentaci.
 
-V kombinaci se Sphinxem se dá použít `doctest` rozšíření, které jsme v průvodci
-aktivovali. Můžete to dělat dvěma způsoby, buďto budeme mít v dokumentaci
-příklad vypadající jako interaktivní konzole:
+V kombinaci se Sphinxem se dá použít rozšíření `doctest`, které jsme v průvodci
+aktivovali. Můžete to dělat dvěma způsoby. První je mít v dokumentaci
+příklad vypadající jako interaktivní konzole.
+Takový příklad nemusí být odsazený ani ničím uvozený; stačí `>>>` na začátku.
 
 ```python
 >>> 1 + 1
 2
 ```
 
-...a testovat, že vše funguje, jak má. V tomto případě se provede součet a
-zkontroluje se, zda výsledek je 2.
+Doctest v tomto případě otestuje, že vše funguje, jak má.
+V tomto případě se provede součet a zkontroluje se, zda výsledek je 2.
 
 Druhý způsob je mít v dokumentaci nejdříve kód:
 
@@ -281,7 +291,7 @@ Neexistuje žádný unifikovaný způsob, jak specifikovat závislosti pro sesta
 dokumentace. Proto, pokud chcete mít nějaký jednoduchý způsob, jak pouštět
 doctesty na Travisu, vytvořte například soubor `docs/requirements.txt`
 a do něj dejte závislosti potřebné pro sestavení dokumentace.
-Je na vás, jestli tma budou pouze extra závislosti oproti těm v `setup.py`
+Je na vás, jestli tam budou pouze extra závislosti oproti těm v `setup.py`
 (většinou pouze `sphinx`), nebo všechny závislosti, aby šel použít soubor
 samostatně.
 
@@ -371,6 +381,28 @@ Zvídavým studentům doporučujeme podívat se na rozšíření [Napoleon].
 
 [Napoleon]: http://www.sphinx-doc.org/en/1.4.8/ext/napoleon.html
 
+
+Odkazy na třídy a moduly
+------------------------
+
+Máte-li zdokumentovaný modul, funkci, třídu, metodu apod., je možné na ni
+odkázat pomocí konstrukce `:mod:`, `:func:`, `:cls:`, `:meth:` a dalších
+ze Sphinxové [domény Python]:
+
+```rst
+To test the parrot's electrical resistance, use :meth:`parrot.voom()`.
+```
+
+V této části dokumentace Sphinxu též najdete způsob, jak dokumnetovat API
+bez použití `autodoc`.
+
+Všechny zdokumnetované objekty se automaticky přidávají do rejstříku.
+Chcete-li do rejstříku přidat něco navíc, použijte direktivu [index].
+
+[domény Python]: http://www.sphinx-doc.org/en/1.4.8/domains.html#cross-referencing-python-objects
+[index]: http://www.sphinx-doc.org/en/1.4.8/markup/misc.html#index-generating-markup
+
+
 README.rst
 ----------
 
@@ -408,15 +440,20 @@ Pokud hypoteticky ukážeme dokumentaci kolegům, kteří nikdy neviděli zadán
 vašeho úkolu, musí to pro ně být stejně pochopitelné.
 
 Dále by dokumentace měla obsahovat textovou část s ukázkami kódu, které se
-testují pomocí doctestu. tato část může vysvětlovat, jak váš kód použít pro
+testují pomocí doctestu. Tato část může vysvětlovat, jak váš kód použít pro
 výrobu jiné aplikace, nebo může popisovat, jak aplikace uvnitř funguje.
 
 V dokumentaci by měla existovat kapitola s kompletní API dokumentací vašich
-modulů, tříd, funkcí apod. Všechny tyto věci v kódu pochopitelně musí
-mít vysvětlující dokumentační řetězce.
+modulů, tříd, funkcí apod. Všechny tyto věci musí mít v kódu dokumentační
+řetězce, které v dokumentaci musí být zobrazeny (t.j. změna dokumentačního
+řetězce se automaticky promítne ve vygenerované dokumnetaci).
 
 Jak sestavit a testovat dokumentaci by mělo být jasné z `README.rst`
 (a to musí mít reStructuredText syntaxi).
+
+Generování dokumnetace nesmí způsobit chybu ani varování.
+Potlačení chybových a varovných hlášek (např. konfigurací, přesměrováním
+*stderr*, apod.) je povoleno jen po konzultaci s cvičícím.
 
 Na Travis CI spouštějte dokumentační testy.
 
@@ -426,5 +463,7 @@ Dosavadní funkcionalita aplikace musí být samozřejmě zachována.
 
 Úkol odevzdáváte tradičně s tagem v0.5 a nahráním nové verze na
 (testovací či pravou) PyPI.
+(Nahrání je nutné – čtenář dokumentace k verzi 0.5 se bude dívat po balíčku
+této verze.)
 
 Za fungující publikaci smysluplné dokumentace na [Read the Docs] je bod navíc.
