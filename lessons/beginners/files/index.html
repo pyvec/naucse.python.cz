@@ -46,6 +46,19 @@ soubor.close()
                         <div>
                             Obsah souboru se vypíše!
                         </div>
+                        <div>
+                            Co se tu děje?
+                            Tak jako <code>int()</code> vrací čísla a
+                            <code>input()</code> řetězce, funkce
+                            <code>open()</code> vrací hodnotu, která
+                            představuje <em>otevřený soubor</em>.
+                            Tahle hodnota má vlastní metody.
+                            Tady používáme metodu <code>read()</code>, která
+                            najednou přečte celý obsah souboru a vrátí ho jako
+                            řetězec.
+                            Na metodu <code>close()</code>, která otevřený
+                            soubor zavírá, se podíváme později.
+                        </div>
                     </section>
                     <section>
                         <h2>Iterace nad soubory</h2>
@@ -53,7 +66,15 @@ soubor.close()
                             Otevřené soubory se, jako např. řetězce či
                             <code>range</code>, dají použít s příkazem
                             <code>for</code>.
-                            Například můžeme básničku odsadit,
+                            Tak jako <code>for i in range</code> poskytuje za
+                            sebou jdoucí čísla a <code>for c in 'abcd'</code>
+                            poskytuje jednotlivé znaky řetězce,
+                            <code>for radek in soubor</code> bude do proměnné
+                            <code>radek</code> dávat jednotlivé řádky
+                            čtené ze souboru.
+                        </aside>
+                        <aside class="notes">
+                            Můžeme tak například básničku odsadit,
                             aby se vyjímala v textu:
                         </aside>
 <pre>
@@ -121,7 +142,10 @@ končí na <code>'\n'</code>.
                         </aside>
                         <aside class="notes">
                             Pro připomenutí, <code>finally</code> se provede
-                            vždycky – i po vrácení z funkce.
+                            vždycky – i když <code>try</code> skončí normálně,
+                            i když v něm nastane výjimka, i když z něj
+                            „vyskočíme” pomocí <code>return</code> či
+                            <code>break</code>.
                         </aside>
 <pre>
 def iniciala():
@@ -134,7 +158,7 @@ def iniciala():
 print(iniciala())
 </pre>
                         <aside class="notes">
-                            Blok <code>finally</code> se dá v praxi použít vždycky,
+                            Blok <code>finally</code> se takhle dá použít vždycky,
                             když je potřeba něco ukončit nebo zavřít – ať už
                             je to soubor, nebo třeba připojení k databázi.
                         </aside>
@@ -160,6 +184,9 @@ print(iniciala())
                             nastala a jestli je toho správného typu.
                             V našem případě se po skončení bloku
                             zavře soubor, ať už výjimka nastala nebo ne.
+                            Podobně jako <code>finally</code> se zavře vždycky
+                            – ať už blok <code>with</code> skončil normálně,
+                            výjimkou, nebo, jako tady, „vyskočením” ven.
                         </aside>
                         <aside class="notes">
                             V naprosté většině příkazů je pro práci se soubory
@@ -177,11 +204,12 @@ print(iniciala())
                             <code>write</code>.
                         </aside>
                         <aside class="notes">
-                            Pozor na to, že pokud soubor už existuje, otevření
-                            pro zápis jej bez milosti přepíše.
+                            Pozor na to, že pokud soubor už existuje, otevřením
+                            pro zápis ho bez milosti přepíšeš.
                         </aside>
                         <aside class="notes">
-                            A taky nezapomeň ukončovat řádky – Python to za
+                            A taky nezapomeň ukončovat řádky – metoda
+                            <code>write()</code> to za
                             tebe neudělá, <code>'\n'</code> je potřeba
                             přidávat „ručně“.
                         </aside>
@@ -189,6 +217,20 @@ print(iniciala())
 with open('basnicka.txt', mode='w', encoding='utf-8') as soubor:
     soubor.write('Naše staré hodiny\n')
     soubor.write('Bijí čtyři hodiny\n')
+</pre>
+                        <aside class="notes">
+                            Případně se dá použít funkce <code>print</code>,
+                            která kromě do terminálu umí vypisovat i do
+                            otevřeného souboru pomocí pojmenovaného argumentu
+                            <code>file</code>.
+                            Ostatní možnosti printu – automatické odřádkování a
+                            převádnění na řetězce, možnost vypsat víc
+                            hodnot najednou apod. – samozřejmě zůstávají.
+                        </aside>
+<pre>
+with open('basnicka.txt', mode='w', encoding='utf-8') as soubor:
+    print('Naše staré hodiny', file=soubor)
+    print('Bijí', 2+2, 'hodiny', file=soubor)
 </pre>
                     </section>
                 </section>
