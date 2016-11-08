@@ -295,7 +295,7 @@ Je na vás, jestli tam budou pouze extra závislosti oproti těm v `setup.py`
 (většinou pouze `sphinx`), nebo všechny závislosti, aby šel použít soubor
 samostatně.
 
-Poté na Trvaisu můžete udělat něco jako:
+Poté na Travisu můžete udělat něco jako:
 
 ```yaml
 language: python
