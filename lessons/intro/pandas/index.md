@@ -5,6 +5,12 @@ Materiály k tomuto cvičení jsou k dispozici [na GitHubu][nb].
 
 [nb]: https://github.com/cvut/MI-PYT/blob/master/tutorials/06-pandas/pandas-intro.ipynb
 
+Budete si potřebovat stáhnout tři soubory:
+[actors.csv](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/06-pandas/actors.csv),
+[spouses.csv](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/06-pandas/spouses.csv), a
+[style-table.css](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/06-pandas/style-table.css).
+
+
 ---
 
 Vašim úkolem za pět bodů je odpovědět na otázky a vyřešit úkoly níže.
