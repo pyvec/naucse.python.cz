@@ -1,3 +1,6 @@
+Pandas
+======
+
 Materiály k tomuto cvičení jsou k dispozici [na GitHubu][nb].
 
 [nb]: https://github.com/cvut/MI-PYT/blob/master/tutorials/06-pandas/pandas-intro.ipynb
