@@ -65,6 +65,8 @@ právě je.
 Případné výjimky (např. jméno `titanic` už používáte na něco jiného)
 řešte e-mailem.
 
+Termín je začátek příštího prvního cvičení (23.11.2016 11:00). Budemme kontorlovat větev master, není třeba vytvářet speciální tag.
+
 Otázky a úkoly:
 
 * O kolika pasažérech Titanicu víme?
