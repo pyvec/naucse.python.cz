@@ -23,7 +23,8 @@ Successfully installed pyglet-1.2.4</span>
 </pre>
                     <div>
                         Máš-li nainstalováno, zkus napsat a spustit
-                        následující program. Mělo by se objevit okýnko:
+                        následující program. Mělo by se objevit černé
+                        okýnko:
                     </div>
 <pre>
 import pyglet
@@ -31,6 +32,14 @@ window = pyglet.window.Window()
 pyglet.app.run()
 print('Hotovo!')
 </pre>
+                    <div class="note">
+                        Jestli okýnko není černé ale je v něm nějaký
+                        „nepořádek“, představuj si zatím, že černé je.
+                        Stává se to hlavně na počítačích s Mac OS a některými
+                        druhy Linuxu.
+                        Než do okýnka začneme kreslit obrázky, nepořádek
+                        uklidíme.
+                    </div>
                     <div>
                         Hotovo? Pojďme si vysvětlit, co se tu vlastně děje.
                     </div>
@@ -67,7 +76,7 @@ def piskvorky1d():
                         oznámí.
                     </div>
                     <div>
-                        Podobnou strukturu „reakcí” jsme použily už dřív,
+                        Podobnou strukturu „reakcí“ jsme použily už dřív,
                         třeba u hry kámen-nůžky-papír:
                         <ul>
                             <li>Nějaká příprava</li>
@@ -93,9 +102,9 @@ def piskvorky1d():
                         a jako výstup pošle odpověď.
                     </div>
                     <div>
-                        Složitější programy reagují na spoustu druhů událostí
-                        (jen na „požadavek” nebo „tah hráče”/„tah počítače”
-                        a co se stane ve „vyhodnocení vstupu” pak závisí
+                        Složitější programy reagují na spoustu druhů událostí,
+                        ne jen na „požadavek“ nebo „tah hráče“/„tah počítače“.
+                        Co se stane ve „vyhodnocení vstupu“ pak závisí
                         na druhu události.
                     </div>
                     <div>
@@ -104,7 +113,7 @@ def piskvorky1d():
                         požadavek vzdálenému serveru.
                         A potom čeká na další akci. Může přijít odpověď od
                         serveru, a až ta přijde, vykreslí příslušnou stránku
-                        na obrazovku. Nebo může uživatel zmáčknout „STOP”,
+                        na obrazovku. Nebo může uživatel zmáčknout „STOP“,
                         a požadavek se zruší.
                     </div>
                     <div>
@@ -115,9 +124,10 @@ def piskvorky1d():
                         Prostě, podobná struktura programu – smyčka která
                         načte vstup, zpracuje ho, a vyprodukuje výstup – je
                         velice užitečná.
-                        Říká se jí <em>smyčka událostí</em> (angl. event loop),
+                        Říká se jí <em>smyčka událostí</em>
+                        (angl. <em>event loop</em>),
                         a programy na ní postavené jsou
-                        <em>řízené událostmi</em> (angl. event-driven).
+                        <em>řízené událostmi</em> (angl. <em>event-driven</em>).
                     </div>
                 </section>
                 <section class="col-lg-12">
@@ -126,7 +136,8 @@ def piskvorky1d():
                         Když je něco užitečné pro více programů, nebývá
                         zvykem, že to každý programátor v každém programu
                         opakuje.
-                        Napíše se to jednou a dobře, zabalí se to jako knihovna
+                        Napíše se to jednou a dobře, zabalí se to jako tzv.
+                        <em>knihovna</em> (angl. <em>library</em>),
                         a ostatní to pak můžou používat.
                     </div>
                 </section>
@@ -135,8 +146,9 @@ def piskvorky1d():
                     <div>
                         Jedna z takových knihoven je Pyglet.
                         Obsahuje kromě smyčky událostí taky funkce na
-                        vykreslování 2D grafiky (pomocí knihovny OpenGL),
-                        nebo třeba načítání událostí z klávesnice a myši.
+                        vykreslování 2D grafiky (pomocí jiné knihovny zvané
+                        OpenGL), nebo třeba načítání událostí z klávesnice
+                        a myši.
                     </div>
                     <div>
                         Pojďme se vrátit k prográmku, který ukazuje okno:
@@ -157,7 +169,7 @@ print('Hotovo!')
                     </div>
                     <div>
                         Zatím pro nás Pyglet zpracovává jen dvě události:
-                        zavření okna (tlačítkem „×”, které k okýnkům přidává
+                        zavření okna (tlačítkem „✕“, které k okýnkům přidává
                         operační systém), a stisk klávesy <code>Esc</code>,
                         který taky zavře okno.
                         Po zavření okna skončí smyčka událostí
@@ -196,26 +208,51 @@ pyglet.app.run()</span>
                         má Pyglet zavolat funkci <code>zpracuj_text</code>.
                         Tahle funkce pak dostane jako argument text, který uživatel napsal.
                     </div>
-                    <div class="note">
-                        <div>
-                            Všimni si, že při registraci nepíšeme
-                            <code>zpracuj_text()</code> se závorkami.
-                        </div>
-                        <div>
-                            Asi už víš, že
-                            je rozdíl mezi <code>print(int(8.2))</code>,
-                            což funkci <code>int</code> zavolá
-                            a <code>print</code> pak má k dispozici výsledek,
-                            a <code>print(int)</code>,
-                            což vypíše samotnou funkci <code>int</code>.
-                        </div>
-                        <div>
-                            Tady je to podobné:
-                            Pyglet potřebuje samotnou funkci <code>zpracuj_text</code>
-                            (protože ji bude sám volat),
-                            nikoli výsledek, který by vrátila (v tomhle případě <code>None</code>,
-                            protože <code>zpracuj_text</code> nic nevrací).
-                        </div>
+                    <div>
+                        Všimni si, že při registraci nepíšeme
+                        <code>zpracuj_text</code> se závorkami, ačkoli jsme si
+                        <a href="../s003-looping/functions.html">kdysi</a>
+                        říkali, že funkce se mají volat.
+                        Vzpomínáš na tenhle příklad? Možná ti tehdy připadal
+                        zvláštní.
+                    </div>
+<pre>
+from math import sin
+print(sin(1))
+print(sin)
+print(sin + 1)
+</pre>
+                    <div>
+                        Teď, když známe kromě čísel, řetězců a
+                        <code>True</code>/<code>False</code> i soubory, seznamy
+                        <i>n</i>-tice, a kdo ví jaké jiné typy, si můžeme říct,
+                        že funkce je v Pythonu hodnota jako každá jiná.
+                        Čísla se dají násobit, řetězce zapisovat do souboru,
+                        ze souborů se dá číst – a funkce jsou zvláštní jen tím,
+                        že se dají zavolat.
+                        Než ale takovou funkci zavoláme, můžeme ji, tu samotnou
+                        funkci, třeba přiřadit do proměnné:
+                    </div>
+<pre>
+vypis = print
+vypis("Ahoj světe!")
+</pre>
+                    <div>
+                        nebo předat jako argument jiné funkci:
+                    </div>
+<pre>
+print(print)
+</pre>
+                    <div>
+                        No a funkce <code>window.push_handlers</code> je přímo
+                        dělaná na to, že jí předáš funkci.
+                        Proč?
+                        Pyglet nepotřebuje jeden výsledek funkce
+                        <code>zpracuj_text</code> – ten moc k ničemu není.
+                        A navíc tu funkci teď ani nemůžeme zavolat; nemáme
+                        vhodný argument <code>text</code>.
+                        Proto Pygletu dáme samotnou funkci, kterou bude sám
+                        volat, kdykoli uživatel stiskne klávesu.
                     </div>
                 </section>
                 <section class="col-lg-12">
@@ -225,11 +262,13 @@ pyglet.app.run()</span>
                         než se přesuneme ke grafice.
                     </div>
                     <div>
-                        Bude to takzvaný <em>tik</em> hodin (angl. clock tick).
+                        Bude to takzvaný <em>tik</em> hodin
+                        (angl. <em>clock tick</em>).
                         To je událost, která nastává pravidelně po nějakém čase.
                     </div>
                     <div>
-                        Funkce pro tiky se registruje takto:
+                        Funkce pro tiky se registruje trochu jinak než
+                        <code>on_text</code>:
                     </div>
 <pre><span style="color:gray">
 import pyglet
@@ -255,10 +294,10 @@ pyglet.app.run()</span>
                     <div>
                         A funkce <code>tik</code> dostane jeden argument – kolik času
                         uplynulo od posledního zavolání.
-                        Většinou není přesně 1/30 vteřiny, ale něco víc.
+                        Většinou to není přesně 1/30 vteřiny, ale něco víc.
                         Počítač má i jiné věci na práci, takže se k naší aplikaci
                         nemusí dostat hned; a taky Pythonu trvá nějakou tu
-                        tisícinu vteřiny než zpracuje zavolání naší funkce.
+                        tisícinu vteřiny než zařídí samotné zavolání naší funkce.
                     </div>
                     <div class="note">
                         <div>
@@ -267,7 +306,8 @@ pyglet.app.run()</span>
                             Když se nám před očima vystřídá 30 obrázků za vteřinu,
                             mozek si je spojí a vznikne iluze plynulého pohybu.
                             <br>
-                            (Většina filmů používá jen 24 obrázků za vteřinu.)
+                            Většina filmů používá jen 24 obrázků za vteřinu;
+                            realistické 3D hry až 60.
                         </div>
                     </div>
                 </section>
@@ -283,8 +323,8 @@ pyglet.app.run()</span>
                     </div>
                     <div>
                         Najdi si na internetu nějaký obrázek. Ne moc velký,
-                        tak 3cm, ať je kolem něj v černém okýnku dost místa,
-                        a nejlépe ve formátu PNG. Začni třeba na
+                        tak 3cm, ať je kolem něj v našem černém okýnku dost
+                        místa, a nejlépe ve formátu PNG. Začni třeba na
                         <a href="https://www.google.cz/search?tbs=ift:png&amp;tbm=isch&amp;q=snake+icon">téhle stránce</a>.
                         Ulož si ho do adresáře, odkud spouštíš svůj Pythoní
                         program. Já mám třeba obrázek hada v souboru <code>had.png</code>.
@@ -331,7 +371,7 @@ pyglet.app.run()</span>
                             <li>
                                 <code>had = pyglet.sprite.Sprite(obrazek)</code>
                                 vytvoří speciální objekt <a href="https://cs.wikipedia.org/wiki/Sprite_%28po%C4%8D%C3%ADta%C4%8Dov%C3%A1_grafika%29">Sprite</a>,
-                                který určuje, že tento obrázek chceme „posadit”
+                                který určuje, že tento obrázek chceme „posadit“
                                 na určité místo v černém okýnku.
                                 Když neuděláme nic dalšího, bude obrázek čekat v levém rohu.
                             </li>
@@ -355,21 +395,21 @@ pyglet.app.run()</span>
                                 <div class="note">
                                     Na spoustě počítačů tohle není potřeba.
                                     Ale je lepší psát programy tak, aby
-                                    běžely kdekoli.
+                                    běžely správně kdekoli.
                                 </div>
                             </li>
                             <li>
                                 <code>had.draw()</code>
-                                nakreslí obrázek pomocí předpřipraveného objektu
-                                <code>had</code>.
+                                nakreslí obrázek pomocí předpřipraveného
+                                <em>spritu</em> <code>had</code>.
                             </li>
                             <li>
                                 <code>window.push_handlers(on_draw=vykresli)</code>
                                 zaregistruje funkci <code>vykresli</code> – řekne
                                 Pygletu, aby ji volal vždy když je třeba.
                                 <br>
-                                Když potřebujeme zaregistrovat funkcí na obsluhu
-                                událostí víc,
+                                Když potřebujeme zaregistrovat pro jedno okno
+                                víc funkcí na obsluhu událostí,
                                 dají se dát funkci <code>push_handlers</code>
                                 takhle najednou.
                             </li>
@@ -379,7 +419,7 @@ pyglet.app.run()</span>
                         Jakékoli kreslení se <em>musí</em> dělat v rámci kreslící funkce,
                         kterou Pyglet volá z <code>on_draw</code>.
                         Jinde funkce jako <code>clear</code> a <code>draw</code>
-                        nebudou fungovat.
+                        nebudou fungovat správně.
                     </div>
                 </section>
                 <section class="col-lg-12">
@@ -433,12 +473,12 @@ def tik(t):
                     <img src="{{ static('had2.png') }}" alt=""
                         style="display:block;float:right;">
                     <div>
-                        Pyglet umí kromě opakovaného „tikání” zavolat funkci
+                        Pyglet umí kromě opakovaného „tikání“ zavolat funkci
                         jednorázově, za určitou dobu.
                     </div>
                     <div>
-                        Stáhni si (nebo vytvoř) druhý obrázek. (Já mám druhého
-                        hada, tentokrát s trochu natočenou hlavou a ocasem.)
+                        Stáhni si (nebo vytvoř) druhý obrázek. Já mám druhého
+                        hada, tentokrát s trochu natočenou hlavou a ocasem.
                     </div>
                     <div>
                         Až budeš mít obrázek v  adresáři s programem,
@@ -498,7 +538,12 @@ def klik(x, y, tlacitko, mod):
                         <div class="note">
                             Nápověda:
                             <ul>
-                                <li>Dokud příkazovou řádku neopustíš úplně, bude fungovat <code>print</code>!</li>
+                                <li>
+                                    Dokud příkazovou řádku neopustíš úplně,
+                                    bude fungovat <code>print</code>!
+                                    Kdykoliv budeš chtít zjistit nějakou
+                                    hodnotu, prostě si ji vypiš.
+                                </li>
                                 <li>Kolik má myš tlačítek?</li>
                                 <li>Jak se projeví Shift+klik?</li>
                             </ul>
@@ -563,11 +608,13 @@ pyglet.app.run()
                         Spritu si vystačíš u leckteré hry nebo grafické aplikace.
                     </div>
                     <div>
-                        Až budeš nějakou dělat, zkus mít:
-                        stav aplikace měj v seznamech a n-ticích (případně
+                        Až budeš nějakou dělat, zkus udržovat
+                        stav aplikace v seznamech a n-ticích (případně
                         slovnících a třídách, které se naučíme později).
                         Jedna funkce by měla umět takový stav vykreslit, a
                         jiné s ním pak budou manipulovat.
+                        Tyhle dvě sady funkcí můžeš mít i v jiných souborech,
+                        aby se nezapletly dohromady.
                     </div>
                     <div>
                         Zajímá-li tě toto téma, zkus si zahrát přiloženou hru
