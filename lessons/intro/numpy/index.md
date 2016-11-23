@@ -37,6 +37,7 @@ K funkci napište testy pomocí pytestu, hezká bludiště na testování může
 Odevzdávání:
 
 * vytvořte si nový privátní git repozitář s názvem `maze` (do něj nás pozvěte, případné kolize s existujícími repozitáři řešte e-mailem)
+* pokud ještě nemáte v tabulce hodnocení link na váš GitHub, pošlete nám jej na e-mail
 * na tuto úlohu budou navazovat další, všechny se budou tématicky věnovat bludišti
 * v repozitáři odevzdávejte pomocí tagu `v0.1`
 * všechny závislosti (včetně `numpy` a `pytest`) uveďte v souboru `requirements.txt` (nemusí být s konkrétní verzí)
