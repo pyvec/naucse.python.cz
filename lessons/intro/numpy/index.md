@@ -20,7 +20,7 @@ Na vstupu bude bludiště uložené v matici, kde:
 
 * záporné honoty představují zeď (kterou nejde projít)
 * nezáporné hodnoty předstvaují průchozí prostor
-* 1 představuje cíl
+* 1 představuje cíl (ten je jen jeden, ale můžete to napsat i tak, aby jich mohlo být víc)
 
 V bludišti se lze pohybovat pouze horizontálně nebo veritkálně. Hranice matice jsou neprůchozí.
 
