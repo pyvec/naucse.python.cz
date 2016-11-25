@@ -27,7 +27,7 @@ V bludišti se lze pohybovat pouze horizontálně nebo veritkálně. Hranice mat
 Funkce vrátí objekt, který má:
 
 * atribut `distances`: matice, kde pro každé políčko, ze kterého se dá dostat do cíle, bude délka nejkratší cesty k cíli, jinak -1
-* atribut `directions`, matice, kde je pro každé takové políčko směr, kterým se odtud dá nejrychleji dostat do cíle, jako ASCII byte `^`, `v`, `<` nebo `>`; pro nedostupná políčka mezeru, pro cíl `X` a pro zeď `#`
+* atribut `directions`, matice, kde je pro každé takové políčko směr, kterým se odtud dá nejrychleji dostat do cíle, jako ASCII byte `^`, `v`, `<` nebo `>`; pro nedostupná políčka (ale průchozí, ne zdi) mezeru, pro cíl `X` a pro zeď `#`
 * atribut `is_reachable`: `True` pokud se dá z každého políčka, kde není zeď, dostat do cíle, jinak `False`
 * metodu `path(row, column)`: vrátí souřadnice nejkratší cesty z políčka `(row, column)` jako seznam dvojic včetně cíle a startu (pro souřadnice zdí a nedostupných políček vyhodí výjimku)
 
