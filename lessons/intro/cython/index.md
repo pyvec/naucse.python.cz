@@ -509,12 +509,35 @@ Cythonu.
 Tři typy funkcí
 ---------------
 
-XXX
+Funkce jdou deklarovat třemi způsoby:
+
+ * `def func(...):` je funkce, která jde volat z Pythonu i z Cythonu, ale volání z Cythonu je pomalé (převod na pythonní objekty a zpět)
+ * `cdef <type> func(...):` je funkce, která jde volat pouze z Cythonu, ale volání je rychlé (pracuje se s C typy)
+ * `cpdef <type> func(...):` je funkce, která se z Cythonu volá rychle ale jde volat i z Pythonu (ve skutečnosti Cython vytvoří dva druhy této funkce)
 
 Třídy
 -----
 
-XXX
+```python
+cdef class Foo:
+    # Tady si musím nadefinovat všechny členské proměnné
+    # Není možné dynamicky na selfu vytvářet nové atributy
+    cdef int foo
+    ...
+
+    def __cinit__(self, int f):
+        self.foo = f
+        ...
+
+    def __dealloc__(self):
+        ...
+
+    cpdef int method(self):
+        ...
+        return self.foo
+```
+
+Více o třídách v [dokumentaci](http://cython.readthedocs.io/en/latest/src/tutorial/cdef_classes.html).
 
 Používání NumPy
 ---------------
@@ -686,7 +709,21 @@ cdef coord d = {'x':2.0,
 Použití knihoven z C
 --------------------
 
-XXX příklad s rand()
+Pro použití C knihoven z Pythonu je lepší použít [CFFI].
+Ale když už píšete kód v Cythonu
+a potřebujete zavolat nějakou C funkci, můžete to udělat takto:
+
+```python
+cdef extern from "stdlib.h":
+    int rand()
+    void srand(long int seedval)
+
+cdef extern from "time.h":
+    long int time(int)
+
+srand(time(0))
+print(randd())
+```
 
 
 pyximport a %%cython
