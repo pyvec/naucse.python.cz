@@ -1,3 +1,13 @@
+Dnes budeme potřebovat do virtuálního prostředí nainstalovat tyto knihovny:
+
+    python -m pip install --upgrade pip
+    python -m pip install notebook numpy cython pytest-profiling
+
+Také je potřeba nainstalovat překladač jazyka C (`gcc`)
+a hlavičkové soubory Pythonu (`python3-dev`/`python3-devel`).
+
+---
+
 C API
 =====
 
@@ -9,31 +19,28 @@ Interpretů tohoto jazyka je více, například:
 * CPython, referenční implementace napsaná v C; interpret, který spouštíme příkazem `python3`
 * PyPy, implementace zaměřená na rychlost, napsaná v Pythonu
 * MicroPython, implementace pro mikroprocesory a zařízení s minimem paměťi
-* Jython, implementace napsaná v Javě, která umožňuje využívat Javovské třídy
+* Jython, implementace napsaná v Javě, která umožňuje využívat javovské třídy
 * IronPython, napsaný v C#, s integrací do .NET
-* Batavia, Brython, pyjs – různé pokusy o integraci do Javascriptu
+* Batavia, Brython, pyjs – různé pokusy o integraci do JavaScriptu
 
 Jednotlivé interprety se liší v detailech jako jsou přesnost reálných čísel,
 vypisování chybových hlášek, řazení záznamů ve slovnících nebo přístup
 k interním strukturám interpretu.
-Správně napsaný Pythoní program by neměl na takových detailech záviset, pokud
+Správně napsaný pythonní program by neměl na takových detailech záviset, pokud
 není k nekompatibilitě mezi interprety dobrý důvod.
 
-Někdy to ale je potřeba, a dnešní přednáška specifická pro CPython,
+Někdy to ale je potřeba, a dnešní přednáška specifická pro CPython
 a přímé využití jeho API pro jazyk C.
 
 
 Rychlost
 --------
 
-Častý důvod proč sáhnout k C API je rychlost: CPython je celkem pomalý,
-a tradiční metoda optimalizace je zjistit, které části jsou kritické, a přepsat
+Častý důvod proč sáhnout k C API je rychlost: CPython je celkem pomalý.
+Tradiční metoda optimalizace je zjistit, které části jsou kritické, a přepsat
 je do C.
 Využijí se tak výhody obou jazyků: Python pro rychlý vývoj, snadné
 prototypování, a přehlednost kódu, a C pro rychlost.
-
-Jiná možnost, jak program zrychlit, je ho pustit tak jak je pod interpretem
-PyPy, který obsahuje optimalizovaný překladač. To je ale jiná kapitola.
 
 Když je náš program příliš pomalý, je potřeba ho optimalizovat.
 První krok k tomu je vždy zkontrolovat, co zabírá více času, než by mělo.
@@ -50,6 +57,9 @@ Profilovat běh pytest testů se dá jednoduše pomocí modulu [pytest-profiling
 
 Když máme představu o tom, co nás brzdí, můžeme začít přepisovat do C způsoby
 popsanými níže.
+
+Jiná možnost, jak program zrychlit, je ho pustit tak jak je pod interpretem
+PyPy, který obsahuje optimalizovaný překladač. To je ale jiná kapitola.
 
 
 Externí knihovny
@@ -73,14 +83,11 @@ CPython
 
 Třetí důvod, proč použít C API, je práce s CPythonem samotným.
 Když člověk zabředne do složitého problému, může na CPython pustit C debugger
-jako [gdb] nebo [Valgrind] a prozkoumat potíže na nižší úrovni.
-
-Případné chyby v CPythonu pak se znalostmi C API jdou i
-[pomoci opravit][devguide]. tenhle kus není hotový?
+jako [gdb] nebo [Valgrind], prozkoumat potíže na nižší úrovni,
+a zjistit kde přesně se chyba nachází.
 
 [gdb]: https://en.wikipedia.org/wiki/GNU_Debugger]
 [valgrind]: http://valgrind.org/
-[devguide]: https://docs.python.org/devguide/
 
 
 Modul v C
@@ -91,7 +98,7 @@ Vytvořte si následující soubory, který implementuje rozšíření
 (importovatelný modul) s jednou funkcí.
 
 (Nebudeme chtít, abyste podobný kód uměli napsat, ale měli byste být schopní
-porozumět tomu, co dělá)
+porozumět tomu, co dělá.)
 
 demo.c:
 
@@ -146,7 +153,7 @@ PyInit_demo(void)
 
 Z tohoto souboru by měla být patrná struktura podobných rozšíření:
 máme funkci (`demo_system`), která převádí objekty Pythonu
-na datové typy C, volá samotnou funkci, a výsledek převádí zpět na Pythoní
+na datové typy C, volá samotnou funkci, a výsledek převádí zpět na pythonní
 objekt.
 
 Dále máme pole záznamů o funkcích (`DemoMethods`), kde je ke každé funkci
@@ -155,7 +162,7 @@ METH_VARARGS, tedy volání s proměnným počtem nepojmenovaných argumentů,
 podobně jako bychom v Pythonu napsali  `def system(*args)`).
 
 Další potřebná proměnná, `demo_module`, obsahuje  informace o modulu:
-jméno, dokumnetační řetězec, a seznam funkcí.
+jméno, dokumentační řetězec, a seznam funkcí.
 Kdybychom potřebovali kromě funkcí definovat i třídy nebo konstanty,
 zde bychom pomocí [slotů][PyModuleDef_Slot] definovali funkci, která modul
 inicializuje, t.j. má podobnou funkci jako `__init__` u třídy v Pythonu.
@@ -164,8 +171,8 @@ inicializuje, t.j. má podobnou funkci jako `__init__` u třídy v Pythonu.
 
 Poslední část je funkce `PyInit`, jediná která není definována jako `static`,
 takže jediná, která je exportována jako API knihovny, kterou vytváříme.
-Až bute Python tento modul importovat, najde tuto funkci podle jména, spustí ji,
-a podle vrácené struktury typu `PyModuleDef` vytvoří Pythoní objekt s modulem.
+Až bude Python tento modul importovat, najde tuto funkci podle jména, spustí ji,
+a podle vrácené struktury typu `PyModuleDef` vytvoří pythonní objekt s modulem.
 
 
 Překlad
@@ -176,13 +183,13 @@ z něj sdílenou knihovnu – soubor .so (nebo .dll) – s názvem modulu:
 buď jen `demo.so`, nebo i s identifikací architektury a verze Pythonu,
 např. `demo.cpython-35m-x86_64-linux-gnu.so`.
 (Výhoda delších názvů je v tom, že v jednom adresáři může být víc modulů pro
-různé archirektury, a že se Python nebude snažit načíst nekompatibilní moduly.)
+různé architektury, a že se Python nebude snažit načíst nekompatibilní moduly.)
 
 Překlad je nutné provést se správnými přepínači a volbami, nejlépe takovými,
 s jakými byl sestaven samotný Python.
 
-Pro zjednodušení tohoto procesu můžeme použít Setuptools: do nám už známého
-souboru setup.py přidáme argument `ext_modules` se seznamem rozšířovacích modulů.
+Pro zjednodušení tohoto procesu můžeme použít setuptools: do nám už známého
+souboru `setup.py` přidáme argument `ext_modules` se seznamem rozšiřovacích modulů.
 Podrobný popis třídy `Extension` je v [dokumentaci][Extension]; nám bude stačit
 jen jméno a seznam zdrojových souborů:
 
@@ -213,14 +220,14 @@ Aby uživatelé překladač mít nemuseli, můžeme nainstalovat knihovnu `wheel
 např. `dist/demo-0.1-cp35-cp35m-linux_x86_64.whl`. Tento archiv jde nahrát na PyPI a následně
 nainstalovat, ovšem jen na architektuře a verzi Pythonu, pro které byl vytvořen.
 
-Wheels jdou vytvářet i pro moduly tvořené jen Pythoním kódem.
+Wheels jdou vytvářet i pro moduly tvořené jen pythonním kódem.
 Nejsou pak vázané na verzi a architekturu.
 Jejich výhoda oproti `sdist` archivům spočívá v tom, že se rychleji instalují.
 
 Alternativa k instalaci, alespoň pro lokální vývoj, je rozšíření jen přeložit a dát do
 aktuálního adresáře (nebo jakéhokoli jiného adresáře, odkud se importují moduly).
 K tomu slouží příkaz `python setup.py build_ext --inplace`.
-Pozor na to, že po každé změně zdrojového kódu je potřeba rozříření znovu přeložit.
+Pozor na to, že po každé změně zdrojového kódu je potřeba rozšíření znovu přeložit.
 
 Příkaz `python setup.py develop` bude fungovat jako dřív (používá `build_ext --inplace`),
 jen je opět potřeba příkaz po každé změně znovu spustit.
@@ -236,12 +243,12 @@ Základní datová struktura, která reprezentuje jakýkoli objekt Pythonu, je P
 [definice](https://github.com/python/cpython/blob/3.5/Include/object.h#L106)).
 Skládá se ze dvou prvků:
 
-    typedef struct _object {
-        Py_ssize_t ob_refcnt;
-        struct _typeobject *ob_type;
-
-     } PyObject;
-
+```c
+typedef struct _object {
+    Py_ssize_t ob_refcnt;
+    struct _typeobject *ob_type;
+} PyObject;
+```
 
 První je počet referencí (*reference count*), který se dá popsat jako počet míst,
 ze kterých je možné k tomuto objektu přistoupit.
@@ -252,31 +259,33 @@ Když počet referencí dosáhne nuly, znamená to, že se k objektu už nedá d
 uvolní z paměti.
 
 Druhý prvek struktury PyObject je ukazatel na typ.
-Typ je Pythoní objekt (`class`), který definuje chování třídy objektů: operátory,
+Typ je pythonní objekt (`class`), který definuje chování třídy objektů: operátory,
 atributy a metody, které ten který objekt má.
 
 Struktura PyObject slouží jako hlavička, za kterou pak následují data interpretovaná podle
 typu daného objektu.
-Například Pythoní [objekt typu `float`][float] vypadá následovně:
-    
-    typedef struct {
-        PyObject ob_base;
-        double ob_fval;
-    } PyFloatObject;
+Například pythonní [objekt typu float][float] vypadá následovně:
 
-tedy struktura PyObject, za kterou je v paměti číselná hodnota.
+```c
+typedef struct {
+    PyObject ob_base;
+    double ob_fval;
+} PyFloatObject;
+```
+
+...tedy struktura PyObject, za kterou je v paměti číselná hodnota.
 
 [Seznamy][list] obsahují za hlavičkou např. velikost a (ukazatel na) pole ukazatelů na jednotlivé
 prvky.
-Podobně [objekty typu `int`][int] (které mají v Pythonu neomezený rozsah) mají délku a pole
-jednotlivých 30-bitových "číslic".
-NumPy matice mají metadata (velikost, typ, druh rozložení v paměti) a ukazatel na pole hodnot.
+Podobně [objekty typu int][int] (které mají v Pythonu neomezený rozsah) mají délku a pole
+jednotlivých 30bitových "číslic".
+NumPy matice mají metadata (velikost, typ, popis rozložení v paměti) a ukazatel na pole hodnot.
 
 [float]: https://github.com/python/cpython/blob/3.5/Include/floatobject.h#L15
 [list]: https://github.com/python/cpython/blob/3.5/Include/listobject.h#L23
 [int]: https://github.com/python/cpython/blob/3.5/Include/longintrepr.h#L89
 
-To základní, co potřebujeme vědět, je že na úrovni C je každý Pythoní objekt reprezentován
+To základní, co potřebujeme vědět, je že na úrovni C je každý pythonní objekt reprezentován
 jako struktura počtu referencí, ukazatele na typ, a dat specifických pro daný typ.
 
 
@@ -285,38 +294,38 @@ Reference counting
 ------------------
 
 Tak jako v C je důležité správně alokovat a dealokovat paměť, při tvorbě rozšíření do CPythonu
-je třeba správně pracovat s referencemi: ke kažému [Py_INCREF] (přičtení 1 k počtu referencí)
+je třeba správně pracovat s referencemi: ke každému [Py_INCREF] (přičtení 1 k počtu referencí)
 je potřeba později zavolat [Py_DECREF] (odečtení 1, a případné uvolnění objektu).
 Jakákoli práce s objektem se smí provádět jen mezi INCREF a příslušným DECREF.
 
 Platí konvence, že argumenty funkcí se předávají jako tzv. *borrowed reference*: o počitadlo
 se stará volající, a v průběhu volané funkce se objekt dá používat.
 Pokud bychom ale argument potřebovali i po skončení volané funkce (např. si ho uložíme
-do globální proměnné), je potřeba mu počitadlo zvýšit (a po skončení proáce zase snížit).
+do globální proměnné), je potřeba mu počitadlo zvýšit (a po skončení práce zase snížit).
 
-V našem modulu `demo` přebíráme nako parametr n-tici.
+V našem modulu `demo` přebíráme jako parametr n-tici.
 Zodpovědnost zavolat na tuto n-tici Py_DECREF má ale volající, ne my.
-Zavoláním funkce PyArg_ParseTuple získáme `char*`, který ale můžeme používat jen v rámci naší
+Zavoláním funkce `PyArg_ParseTuple` získáme `char*`, který ale můžeme používat jen v rámci naší
 funkce: po jejím skončení může volající argumenty funkce uvolnit, a tím řetězec zrušit.
 
-Funkce, které vracejí Pythoní objekty, předpokládají že volající provede příslušný DECREF.
-V modulu `demo` voláme funkci [PyLong_FromLong], která vytvoří nové Pythoní číslo.
+Funkce, které vracejí pythonní objekty, předpokládají, že na vrácenou hodnotu provede DECREF volající.
+V modulu `demo` voláme funkci [PyLong_FromLong], která vytvoří nové pythonní číslo.
 Za vzniklou referenci naše funkce přebírá zodpovědnost, je tedy na nás, abychom se postarali
 o zavolání Py_DECREF.
 Vrácením výsledku tuto zodpovědnost ale předáváme na funkci, která volá tu naši.
 
-[`Py_INCREF`]: https://docs.python.org/3/c-api/refcounting.html#c.Py_INCREF
-[`Py_DECREF`]: https://docs.python.org/3/c-api/refcounting.html#c.Py_DECREF
+[Py_INCREF]: https://docs.python.org/3/c-api/refcounting.html#c.Py_INCREF
+[Py_DECREF]: https://docs.python.org/3/c-api/refcounting.html#c.Py_DECREF
 [PyLong_FromLong]: https://docs.python.org/3/c-api/long.html#c.PyLong_FromLong
 
 
 Hodnoty a výjimky
 -----------------
 
-Další konvence, kterou většina funkcí v C API dodržují, je způsob vracení výjimek.
+Další konvence, kterou většina funkcí v C API dodržuje, je způsob vracení výjimek.
 
-Funkce, které vrací Pythoní objekty, na úrovni C vrací `PyObject*`.
-Nastane-li výjimka, objekt výjimky se zaznamená se do globální (přesněji, *thread-local*)
+Funkce, které vrací pythonní objekty, na úrovni C vrací `PyObject*`.
+Nastane-li výjimka, objekt výjimky se zaznamená do globální (přesněji, *thread-local*)
 proměnné, a funkce vrátí NULL.
 
 V našem modulu `demo` voláme funkci `PyArg_ParseTuple`, která může vyvolat výjimku: typicky
@@ -334,14 +343,14 @@ GIL
 
 Poslední omezení, kterého si autor rozšíření musí být vědom, je *Global Interpreter Lock*.
 Stručně řečeno, s objekty `PyObject*` může pracovat pouze jedno vlákno.
-Toto vlákno drží globální zámek, který čas od času odemče a znovu se pokusí zamknout,
+Toto vlákno drží globální zámek, který čas od času odemkne a znovu se pokusí zamknout,
 aby mohly běžet i ostatní vlákna.
 
 Díky GIL je vícevláknové programování v Pythonu relativně bezpečné: nemůže např. nastat souběh
 (*race condition*), kdy by se nastavilo počitadlo referencí na špatnou hodnotu.
 Na druhou stranu tento zámek ale omezuje paralelismus, a tedy i rychlost programu.
 
-Globální zámek se dá odemčít v situacích, kdy nepracujeme s `PyObject*` a nevoláme Pythoní kód.
+Globální zámek se dá odemknout v situacích, kdy nepracujeme s `PyObject*` a nevoláme pythonní kód.
 Například čtení ze souboru nebo sítě ostatní vlákna neblokuje.
 Stejně tak maticové operace v NumPy typicky nedrží GIL zatímco počítají na úrovni C nebo Fortranu.
 
@@ -369,6 +378,11 @@ Kompilace Pythonu
 
 Když chceme převést modul z Pythonu do Cythonu, nejjednodušší začátek je přejmenovat soubor `.py`
 na `.pyx`, aby bylo jasné, že jde o jiný jazyk, který nepůjde naimportovat přímo.
+
+
+Jazyky Python a Cython nejsou 100% kompatibilní, ale zvláště u kódu, který pracuje hlavně s
+čísly, se nekompatibilita neprojeví.
+Vývojáři Cythonu považují každou odchylku od specifikace jazyka za chybu, kterou je nutno opravit.
 
 Jako příklad můžete použít tuto naivní implementaci celočíselného a maticového násobení:
 
@@ -408,8 +422,7 @@ import numpy
 
 setup(
     name='matmul',
-    ext_modules=cythonize('matmul.pyx', language_level=3),
-    include_dirs=[numpy.get_include()],
+    ext_modules=cythonize('matmul.pyx', language_level=3, include_dirs=[numpy.get_include()]),
     install_requires=[
         'Cython',
         'NumPy',
@@ -417,12 +430,16 @@ setup(
 )
 ```
 
-Po zadání `python setup.py develop` nebo `python setup_matmul.py build_ext --inplace` atp.
+Po zadání `python setup.py develop` nebo `python setup.py build_ext --inplace` atp.
 se modul `matmul.pyx` zkompiluje s použitím nainstalovaného NumPy a bude připraven na použití.
 
-Jazyky Python a Cython nejsou 100% kompatibilní, ale zvláště u kódu, který pracuje hlavně s
-čísly, se nekompatibilita neprojeví.
-Vývojáři Cythonu považují každou odchylku od specifikace jazyka za chybu, kterou je nutno opravit.
+Nevýhoda tohoto přístupu je, že k spuštění takového `setup.py` je již potřeba
+mít nainstalovaný `cython` a `numpy`.
+Instalace z archivu `sdist` se tedy nemusí povést – je potřeba uživatelům říct,
+že dané moduly už musí mít nainstalované.
+Tento problém aktuálně řeší PyPA (správci `pip` a `setuptools`).
+
+Instalace z archivů `wheel` by měla být bezproblémová.
 
 
 Anotace
@@ -430,8 +447,8 @@ Anotace
 
 Kód, který takto vznikne, není o moc rychlejší než původní Python.
 Je to tím, že sekvence příkazů ve funkci je sice převedená do C a přeložená do strojového kódu,
-ale každá operace pracuje s generickými Pythoními objekty, takže musí pro každé číslo
-číslo z matice zkonstruovat Pythoní objekt, vyhledat implementaci sečítání pro dvě celá čísla,
+ale každá operace pracuje s generickými pythonními objekty, takže musí pro každé číslo
+číslo z matice zkonstruovat pythonní objekt, vyhledat implementaci sčítání pro dvě celá čísla,
 a výsledek převést zpět na `int64` a uložit do matice.
 
 Na situaci se můžeme podívat pomocí přepínače `--annotate`:
@@ -446,7 +463,7 @@ maker).
 Obecně nebývá problém mít "žluté" řádky na úrovni funkce, kde se provádí pouze jednou.
 Ale v cyklech, zvláště těch třikrát zanořených, se autor rozšíření typicky snaží žlutým řádkům
 vyhnout.
-Nejjednoduší způsob, jak toho docílit, je doplnění statických informací o typech.
+Nejjednodušší způsob, jak toho docílit, je doplnění statických informací o typech.
 
 
 Doplnění typů
@@ -480,17 +497,26 @@ cpdef int intmul(int a, int b):
 ```
 
 Tím se zbavíme nákladného převodu výsledku na PyObject.
-Bohužel ale toto zrychlení pocíte jen kdycz takovou funkci zavoláme z jiné funkce napsané v
+Bohužel ale toto zrychlení pocíte jen když takovou funkci zavoláme z jiné funkce napsané v
 Cythonu.
 
+Tři typy funkcí
+---------------
 
-Používání numpy
+XXX
+
+Třídy
+-----
+
+XXX
+
+Používání NumPy
 ---------------
 
 Pro funkci `matmul` můžeme nadefinovat číselné proměnné (`n`, `m`, `p`, `i`, `j`, `k`, `x`, `y`)
 jako `int`, ale tím si moc nepomůžeme: většinu času program stráví vybíráním a ukládáním hodnot
 z/do matic, a protože Cython nemá informace o tom, že jsou to NumPy matice, používá obecný
-protokol pro Pythoní kontejnery, takže se každá hodnota převede na Pythoní objekt.
+protokol pro pythonní kontejnery, takže se každá hodnota převede na pythonní objekt.
 
 Je tedy potřeba říct Cythonu, že používáme NumPy matice.
 Naštěstí v NumPy existuje integrace s Cythonem, takže můžeme na úrovni C "naimportovat"
@@ -513,38 +539,198 @@ cpdef numpy.ndarray[numpy.int64_t, ndim=2] matmul(
 ```
 
 Kdybychom si nebyli jistí typem matice, můžeme si ho nadefinovat pomocí `ctypedef`:
-    
 
-     ctypedef numpy.int64_t DATATYPE
+```python
+ctypedef numpy.int64_t DATATYPE
+```
 
-
-... a pak používat tento alias.
+...a pak používat tento alias.
 Na maticové typy bohužel typedef zatím nefunguje.
 
+Pro práci s maticí ASCII znaků lze použít typ `numpy.int8_t`, ale je třeba při zapisování přímo na konkrétní pozice zapisovat typ `char`:
 
-Vypínání kontrol
-----------------
+```python
+cdef numpy.ndarray[numpy.int8_t, ndim=2]  directions = numpy.full((h, w), b'#', dtype=('a', 1))
+directions[maze >= 0] = b' '  # Python level, using b' '
+directions[1, 2] == ord('x')  # C level, using char
+```
 
-XXX
+Direktivy
+---------
+
+Anotací typů matic se naše demo maticového násobení dostalo skoro na úroveň
+C, ale ne úplně: řádky, které pracují s maicemi, jsou ve výstupu `--annotate`
+stále trochu žluté.
+Cython totiž při každém přístupu k matici kontroluje, jestli nečteme nebo
+nezapisujeme mimo pole, a případně vyvolá `IndexError`.
+
+Pokud víme – jako v našem případě – že je takové kontrola zbytečná,
+můžeme Cythonu říct aby ji nedělal.
+Přístupy mimo pole pak způsobí nedefinované chování (většinou program spadne,
+nebo hůř, bude pracovat se špatnými daty).
+Kontrola se vypíná direktivou `boundscheck`, která se dá zadat dvěma hlavními
+způsoby: dekorátorem:
+
+    @cython.boundscheck(False)
+    cpdef funkce():
+        ...
+
+... nebo příkazem `with`:
+
+    with cython.boundscheck(False):
+        ...
+
+... případně i pro celý soubor, viz [dokumnetace][set-directives].
+
+Další zajímavá direktiva je `cython.wraparound(False)`, která podobným způsobem
+vypíná pythonní způsob indexování zápornými čísly: místo indexování od konce
+s ní dostaneme nedefinované chování.
+
+Seznam dalších direktiv najdete v [dokumentaci][directives].
+
+Cython podporuje ještě blok `with cython.nogil:`, který je podobný direktivám,
+ale dá se použít jen s `with`.
+V rámci tohoto bloku je odemčený GIL (globální zámek).
+Smí se použít pouze pokud nepracujeme s pythonnímmi objekty – například když
+operujeme jen na obsahu už existujících maticí.
+Opak je `with cython.gil:`, kterým zámek zase zamkneme – například když
+potřebujeme vyhodit výjimku.
+
+[set-directives]: http://cython.readthedocs.io/en/latest/src/reference/compilation.html#how-to-set-directives
+[directives]: http://cython.readthedocs.io/en/latest/src/reference/compilation.html#compiler-directives
+
+
+Struktury, ukazatele, a dynamická alokace
+-----------------------------------------
+
+Přestože v Cythonu můžete používat pythonní tuply, slovníky, seznamy a další podobné nehomogenní typy, jejich použití je pomalé, protože vždy pracují s pythoními objekty.
+
+Pokud máte kód, který potřebuje dočasné pole takových záznamů,
+je pro časově kritické části kódu lepší k problému přistoupit spíše céčkovsky,
+přes alokaci paměti a ukazatele.
+
+Následující příklad ukazuje, jak naplnit pole heterogenních záznamů:
+
+```python
+# Import funkcí pro alokaci paměti – chovají se jako malloc() apod.
+from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
+
+# Definice struktury
+cdef struct coords:
+    int row
+    int column
+    char data
+
+MAXSIZE = ...
+
+def path(...):
+    # Definice ukazatele, přetypování
+    cdef coords * path = <coords *>PyMem_Malloc(MAXSIZE*sizeof(coords))
+    if path == NULL:
+        # no available memory left
+        raise MemoryError()
+
+    cdef int used = 0
+    for ...:
+        ...
+
+        #
+        path[used] = coords(row, column, data)
+        used += 1
+
+    # pole můžeme používat
+    ...
+
+    PyMem_Free(path)
+    return lpath
+```
+
+Pro homogenní pole ale doporučujeme spíše NumPy matice.
+
+Následující příklad ukazuje, jak lze přiřazovat do struktur:
+
+```python
+cdef struct coord:
+    float x
+    float y
+    float z
+
+cdef coord a = coord(0.0, 2.0, 1.5)
+
+cdef coord b = coord(x=0.0, y=2.0, z=1.5)
+
+cdef coord c
+
+c.x = 42.0
+c.y = 2.0
+c.z = 4.0
+
+cdef coord d = {'x':2.0,
+                'y':0.0,
+                'z':-0.75}
+```
+
+Použití knihoven z C
+--------------------
+
+XXX příklad s rand()
 
 
 pyximport a %%cython
 --------------------
 
-XXX
+Pro interaktivní práci vJupyter Notebook má Cython vlastní „magii“.
+Na začátku Notebooku můžeme zadat:
+
+    %load_ext cython
+
+a potom můžeme na začátku kterékoli buňky zadad ``%%cython`:
+
+    %%cython
+
+    cpdef int mul(int a, int b):
+        return a * b
+
+Kód v takové buňce pak Notebook zkompiluje Cythonem, a funkce/proměnné v něm
+nadefinované dá k dispozici.
+
+Můžeme použít i `%%cython --annotate`, což vypíše anotace přímo do Notebooku.
+
+Další zkratka je modul `pyximort`, který dává možnost importovat moduly `.pyx`
+přímo: hledají se podobně jako `.py` nebo `.so`, a před importem se zkompilují.
+Zapíná se to následovně:
+
+    import pyximport
+    pyximport.install()
+
+    import demo
+
+
+Video
+-----
+
+Před nedávnem měl @hroncok na Středisku unixových technologií nahrávanou ukázku přepsání
+úlohy ruksaku z předmětu MI-PAA z Pythonu do Cythonu (včetně nepříjemného záseku a live
+ukázky debugování problému).
+Na [video] se můžete podívat, mohlo by vám prozradit spustu tipů, které se vám mohou hodit
+ke splnění úlohy.
+K obsahu jen dodáme, že místo `malloc` a `free` je lepší použít `PyMem_Malloc` a
+`PyMem_Free` z ukázky výše.
+
+[video]: https://www.youtube.com/watch?v=Ksv4RA6yhkY
 
 
 Úkol
 ====
 
-Vaším úkolem za 5 bodů je zrychlit pomocí Cythonu úkol z předchozího cvičení tak, aby zvládal řešit i bludiště o rozměrech v řádech XXX × XXX na moderním počítači (srovnatelném s těmi ve školní učebně) v průměrném čase maximálně 1 sekundu. Úkol musí formálně splňovat všechny náležitosti z minulého týdne + podmínku na čas (která platí pro volání funkce `analyze()` i metody `.path()`).
+Vaším úkolem za 5 bodů je zrychlit pomocí Cythonu úkol z předchozího cvičení tak, aby zvládal řešit i bludiště o rozměrech v řádech *nižší jednotky tisíců* × *nižší jednotky tisíců* na moderním počítači (srovnatelném s těmi ve školní učebně) v průměrném čase maximálně 1 sekundu (a volání `.path()` by se u takového bludiště mělo stihnout za sekundu aspoň 50). Úkol musí splňovat všechny náležitosti z minulého týdne + podmínku na čas.
 
-Odevzdávajte s tagem v0.2. Následující příkazy musí po instalaci závislostí z `requirements.txt` fungovat:
+Odevzdávejte s tagem v0.2. Následující příkazy musí po instalaci závislostí z `requirements.txt` fungovat:
 
 ```
 python setup.py build_ext -i  # sestaví modul napsaný v Cythonu
 python -m pytest  # pustí testy
-python -c 'from maze import analyze; analyze(...)'  # lze importovat a použitít z Pythonu
+python -c 'from maze import analyze; analyze(...)'  # lze importovat a použít z Pythonu
 ```
  
-
+Nepoužívejte pyximport.
