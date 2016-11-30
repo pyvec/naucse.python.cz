@@ -682,28 +682,38 @@ pyximport a %%cython
 Pro interaktivní práci vJupyter Notebook má Cython vlastní „magii“.
 Na začátku Notebooku můžeme zadat:
 
-    %load_ext cython
+```python
+%load_ext cython
+```
 
-a potom můžeme na začátku kterékoli buňky zadad ``%%cython`:
+a potom můžeme na začátku kterékoli buňky zadat `\%\%cython`:
 
-    %%cython
+(Omlouváme se za zpětná lomítka – ta tam být nemají, ale Edux používá znak
+procenta pro speciální účel a bez nich se to rozbije.
+Uvítáme fix v pull requestu.)
 
-    cpdef int mul(int a, int b):
-        return a * b
+```python
+%%cython
+
+cpdef int mul(int a, int b):
+    return a * b
+```
 
 Kód v takové buňce pak Notebook zkompiluje Cythonem, a funkce/proměnné v něm
 nadefinované dá k dispozici.
 
-Můžeme použít i `%%cython --annotate`, což vypíše anotace přímo do Notebooku.
+Můžeme použít i `\%\%cython --annotate`, což vypíše anotace přímo do Notebooku.
 
 Další zkratka je modul `pyximort`, který dává možnost importovat moduly `.pyx`
 přímo: hledají se podobně jako `.py` nebo `.so`, a před importem se zkompilují.
 Zapíná se to následovně:
 
-    import pyximport
-    pyximport.install()
+```python
+import pyximport
+pyximport.install()
 
-    import demo
+import demo
+```
 
 
 Video
