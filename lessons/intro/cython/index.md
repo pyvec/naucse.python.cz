@@ -748,3 +748,5 @@ Nepoužívejte pyximport.
 Pokud řešení úlohy z minula nemáte, nebo si např. chcete rozšířit testy o ty naše,
 můžete použít [naše řešení minulé úlohy](https://github.com/encukou/maze).
 Nezapomeňte na splnění podmínek licence.
+
+Termín je jako obvykle začátek příštího **prvního** cvičení, tedy středa 11:00.
