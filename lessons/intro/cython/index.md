@@ -744,3 +744,7 @@ python -c 'from maze import analyze; analyze(...)'  # lze importovat a použít 
 ```
  
 Nepoužívejte pyximport.
+
+Pokud řešení úlohy z minula nemáte, nebo si např. chcete rozšířit testy o ty naše,
+můžete použít [naše řešení minulé úlohy](https://github.com/encukou/maze).
+Nezapomeňte na splnění podmínek licence.
