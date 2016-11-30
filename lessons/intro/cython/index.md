@@ -641,6 +641,13 @@ def path(...):
     # pole můžeme používat
     ...
 
+    # a musíme ho před vrácením předělat na list
+    lpath = []
+    cdef int i
+    for i in range(used):
+        lpath.append(path[i])
+
+    # a uvolnit
     PyMem_Free(path)
     return lpath
 ```
