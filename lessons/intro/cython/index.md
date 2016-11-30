@@ -722,7 +722,7 @@ cdef extern from "time.h":
     long int time(int)
 
 srand(time(0))
-print(randd())
+print(rand())
 ```
 
 
