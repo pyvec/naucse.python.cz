@@ -20,6 +20,8 @@ Virtualenv pak může vytvořit s přepínačem `--system-site-packages`, který
 Pokud nic z toho nepomůže, můžete zkusit přeložit PyQt5 ze [zdrojových souborů](https://www.riverbankcomputing.com/software/pyqt/download5)
 ([návod](http://pyqt.sourceforge.net/Docs/PyQt5/installation.html#building-and-installing-from-source)).
 
+*První jednoduchá aplikace* níže by vám měla fungovat.
+
 Pokud narazíte na chybu `Could not find or load the Qt platform plugin "xcb"`, podívejte se do [naší issue](https://github.com/cvut/MI-PYT/issues/57).
 
 ### Qt5 Designer
@@ -34,3 +36,28 @@ Pokud používáte na Macu `homebrew`, můžete to udělat i takto:
 
     brew install qt5
     brew linkapps qt5
+
+
+První jednoduchá aplikace
+-------------------------
+
+```python
+import sys
+from PyQt5 import QtWidgets
+
+
+class Gui:
+    def __init__(self):
+        self.app = QtWidgets.QApplication([])  # vytvoření aplikace
+        self.win = QtWidgets.QMainWindow()  # vytvoření hlavního okna
+        self.win.setWindowTitle('MI-PYT')  # nastavení titulku okna
+
+    def run(self):
+        self.win.show()  # okno musíme zobrazit
+        return self.app.exec_()  # a aplikaci spustit
+
+
+if __name__ == '__main__':
+    gui = Gui()
+    sys.exit(gui.run())
+```
