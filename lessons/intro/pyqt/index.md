@@ -18,7 +18,7 @@ Pokud budete používat svůj počítač, prosíme vás o instalaci již předem
 
 Pokud máte Python 3.5 a jednu z platforem, pro které je připraven [wheel na PyPI](https://pypi.python.org/pypi/PyQt5), stačí udělat:
 
-    python -m pip install --update pip
+    python -m pip install --upgrade pip
     python -m pip install PyQt5
 
 Pro starší verzi Pythonu nebo 32bitový Linux to ale nebude fungovat.
