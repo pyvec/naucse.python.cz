@@ -284,7 +284,7 @@ V panelu *ActionEditor* najdeme položky pro *New* a *Quit* a nastavíme jim *ob
 Potom přes pravé tlačítko na nevyužité ploše okna přidáme lištu nástrojů (*Add Toolbar*) a z panelu
 *Action Editor* do něj akci *actionQuit* přetáhnéme.
 
-Pomocí *Ctrl+R* opět zkontrolujeme, jak okno vypadá, a jak po nastavení *sizePolicy* reaguje na změny velikosti .
+Pomocí <kbd>Ctrl+R</kbd> opět zkontrolujeme, jak okno vypadá, a jak po nastavení *sizePolicy* reaguje na změny velikosti .
 
 V Designeru jde i napojovat signály. V panelu *Signal/Slot Editor* přidáme tento řádek:
 
@@ -293,7 +293,7 @@ V Designeru jde i napojovat signály. V panelu *Signal/Slot Editor* přidáme te
     Receiver: MainWindow
     Slot: close()
 
-Pomocí *Ctrl+R* jde ověřit, že zavírání okna funguje.
+Pomocí <kbd>Ctrl+R</kbd> jde ověřit, že zavírání okna funguje.
 
 Návrh okna uložíme do souboru `mainwindow.ui`.
 
@@ -782,7 +782,7 @@ Rozhraní umožní:
 * prohlížet bludiště v grafické podobě
     * včetně všech objektů v něm a vizualizace cest (viz níže)
     * pokud se bludiště celé nevejde do okna, musí mít posuvníky (jako na cvičení)
-    * zoom (např Ctrl + kolečko myši) není nutný, ale je příjemný
+    * zoom (např <kbd>Ctrl</kbd> + kolečko myši) není nutný, ale je příjemný
 * klást do bludiště objekty (zdi, cíle, postavy) a odebírat je (tyto změny se projeví v paměti na úrovni NumPy matice)
 * automaticky zobrazovat cesty mezi postavami a cílem
 * Nabídka *Help | About* vyvolá okno s informacemi o aplikaci:
@@ -854,6 +854,6 @@ python -m maze
 
 Doporučujeme si sekvenci těchto příkazů vyzkoušet v novém virtualenvu, ať nedochází ke zbytečným chybám.
 
-Aplikace nesmí při žádné akci uživatele zhavarovat (tím nemyslíme, když uživatel udělá z terminálu Ctrl+C, ale když např. klikne někam, kde jste to nečekali, nebo zruší dialog pro výběr jména souboru).
+Aplikace nesmí při žádné akci uživatele zhavarovat (tím nemyslíme, když uživatel udělá z terminálu <kbd>Ctrl+C</kbd> ale když např. klikne někam, kde jste to nečekali, nebo zruší dialog pro výběr jména souboru).
 Pokud se vám zdá v zadání něco nelogické, prosím, zeptejte se.
 
