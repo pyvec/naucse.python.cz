@@ -119,7 +119,7 @@ PyQt tuto konvenci nemění: je užitečnější používat identická jména, a
 Hledáte-li dokumentaci, doporučuji zadat do vyhledávače "qt5 <hledaný objekt>".
 Dostanete se tak na dokumentaci pro C++ (např. [QObject](http://doc.qt.io/qt-5/qobject.html)).
 Hledáte-li "pyqt5 <hledaný objekt>", dostanete se k dokumentaci pro Python, která ale většinou jen odkazuje
-na verzi pro C++ (např. [pro QObject](http://pyqt.sourceforge.net/Docs/PyQt5/api/qobject.html).
+na verzi pro C++ (např. [pro QObject](http://pyqt.sourceforge.net/Docs/PyQt5/api/qobject.html)).
 
 Rozdíly mezi C a Pythoní verzí jsou většinou intuitivní (např. None místo NULL), ale jsou popsány
 v [dokumentaci PyQT](http://pyqt.sourceforge.net/Docs/PyQt5/index.html)
