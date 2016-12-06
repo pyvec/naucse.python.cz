@@ -453,7 +453,7 @@ Nyní by již bludiště mělo být v okně vidět barevně.
 
 Protože barvičky jsou příliš nudné, přidáme do bludiště obrázky.
 
-Veškerou ke cvičení i k úkolu potřebnou grafiku najdete na XXX.
+Veškerou ke cvičení i k úkolu potřebnou grafiku najdete na [Githubu](https://github.com/cvut/MI-PYT/tree/master/tutorials/09-qt/pics).
 Je k dispozici pod public domain (tj. „dělej si s tím, co chceš“), pochází ze studia [Kenney],
 a je (společně se další volně licencovanou grafikou) ke stažení z [OpenGameArt.org].
 
@@ -831,7 +831,7 @@ Zobrazování cesty
     * matici šipek máte opět z úloh z minula, stačí je zobrazit pouze tam, kde jsou čáry
 * od některých postav logicky cesta k cíli nemusí existovat, od nich tedy žádnou nevykreslujte (aplikace s takovou situací musí počítat a nesmí spadnout)
 
-XXX obrázek https://churchyard.fedorapeople.org/mazepic.png
+![Obrázek bludiště](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/09-qt/mazepic.png)
 
 Odevzdání
 ---------
