@@ -1,7 +1,7 @@
 GUI v Pythonu: PyQt5
 ====================
 
-Způsobů, jak dělat v Pythonu aplikace s GUI je mnoho. Dá se použít zabudovaný, ale ošklivý Tkinter, nebo nějaký externí framework.
+Způsobů, jak dělat v Pythonu aplikace s GUI, je mnoho. Dá se použít zabudovaný, ale ošklivý Tkinter, nebo nějaký externí framework.
 
 V tomto cvičení budeme používat framework Qt, protože je multiplatformní, používá se i v jiných oblastech, než je Python,
 je dostatečně robustní a (například na rozdíl od GTK3) nemění API téměř s každou vydanou verzí.
@@ -28,7 +28,7 @@ Virtualenv pak může vytvořit s přepínačem `--system-site-packages`, který
 Pokud nic z toho nepomůže, můžete zkusit přeložit PyQt5 ze [zdrojových souborů](https://www.riverbankcomputing.com/software/pyqt/download5)
 ([návod](http://pyqt.sourceforge.net/Docs/PyQt5/installation.html#building-and-installing-from-source)).
 
-*První jednoduchá aplikace* níže by vám měla fungovat.
+*První aplikace* níže by vám měla fungovat.
 
 Pokud narazíte na chybu `Could not find or load the Qt platform plugin "xcb"`, podívejte se do [naší issue](https://github.com/cvut/MI-PYT/issues/57).
 
@@ -121,14 +121,14 @@ Dostanete se tak na dokumentaci pro C++ (např. [QObject](http://doc.qt.io/qt-5/
 Hledáte-li "pyqt5 <hledaný objekt>", dostanete se k dokumentaci pro Python, která ale většinou jen odkazuje
 na verzi pro C++ (např. [pro QObject](http://pyqt.sourceforge.net/Docs/PyQt5/api/qobject.html)).
 
-Rozdíly mezi C a Pythoní verzí jsou většinou intuitivní (např. None místo NULL), ale jsou popsány
-v [dokumentaci PyQT](http://pyqt.sourceforge.net/Docs/PyQt5/index.html)
+Rozdíly mezi C a pythonní verzí jsou většinou intuitivní (např. None místo NULL), ale jsou popsány
+v [dokumentaci PyQt](http://pyqt.sourceforge.net/Docs/PyQt5/index.html).
 
 ### Atributy
 
 Qt zásadně používá pro přístup k atributům objektů funkce.
 Funkce pro čtení se typicky jmenuje podle atributu, funkce pro nastavení má předponu `set`.
-Namísto pythoního `c = obj.color` a `obj.color = ...` tedy použijeme `c = obj.color()` a `obj.setColor(...)`.
+Namísto pythonního `c = obj.color` a `obj.color = ...` tedy použijeme `c = obj.color()` a `obj.setColor(...)`.
 
 ### Správa paměti
 
