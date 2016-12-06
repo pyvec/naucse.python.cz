@@ -272,7 +272,7 @@ Do něj si z palety přidáme *Scroll Area* a doprava vedle něj *List Widget*.
 Poté aplikujeme layout: na volnou plochu okna klikneme pravým tlačítkem a vybereme *Lay Out ‣ Horizontally*.
 (Dá se to udělat i tlačítkem v liště.)
 
-Pomocí <kbd>Ctrl+R</kbd> lze zkontrolovat, jak okno vypadá a jak reaguje na změny velikosti.
+Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> lze zkontrolovat, jak okno vypadá a jak reaguje na změny velikosti.
 
 Potom přidáme položku do menu: místo *Type Here* napíšeme *Map*, a pod něj podobně přidáme položky *New* a *Quit*.
 
@@ -284,7 +284,7 @@ V panelu *ActionEditor* najdeme položky pro *New* a *Quit* a nastavíme jim *ob
 Potom přes pravé tlačítko na nevyužité ploše okna přidáme lištu nástrojů (*Add Toolbar*) a z panelu
 *Action Editor* do něj akci *actionQuit* přetáhnéme.
 
-Pomocí <kbd>Ctrl+R</kbd> opět zkontrolujeme, jak okno vypadá, a jak po nastavení *sizePolicy* reaguje na změny velikosti .
+Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> opět zkontrolujeme, jak okno vypadá, a jak po nastavení *sizePolicy* reaguje na změny velikosti .
 
 V Designeru jde i napojovat signály. V panelu *Signal/Slot Editor* přidáme tento řádek:
 
@@ -293,7 +293,7 @@ V Designeru jde i napojovat signály. V panelu *Signal/Slot Editor* přidáme te
     Receiver: MainWindow
     Slot: close()
 
-Pomocí <kbd>Ctrl+R</kbd> jde ověřit, že zavírání okna funguje.
+Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> jde ověřit, že zavírání okna funguje.
 
 Návrh okna uložíme do souboru `mainwindow.ui`.
 
@@ -385,7 +385,7 @@ import numpy
 
 Po spuštění aplikace zatím nic nového neuvidíte, maximálně se trochu změní posuvníky.
 Potřebujeme ještě zařídit, aby se data z matice vykreslovala do gridu.
-Nejlepší je vykreslovat kdykoliv nás OS (nebo Qt) vyzve, potřebuje kus okna překreslit:
+Nejlepší je vykreslovat, kdykoliv nás OS (nebo Qt) vyzve, že potřebuje kus okna překreslit:
 při prvním zobrazení, odminimalizování okna, ukázání nové části bludiště přes scrollování.
 Také je zbytečně vykreslovat obrázky mimo oblast, která je vidět na obrazovce.
 
@@ -453,7 +453,7 @@ Nyní by již bludiště mělo být v okně vidět barevně.
 
 Protože barvičky jsou příliš nudné, přidáme do bludiště obrázky.
 
-Veškerou ke cvičení i k úkolu potřebnou grafiku najdete na [Githubu](https://github.com/cvut/MI-PYT/tree/master/tutorials/09-qt/pics).
+Veškerou ke cvičení i k úkolu potřebnou grafiku najdete na [GitHubu](https://github.com/cvut/MI-PYT/tree/master/tutorials/09-qt/pics).
 Je k dispozici pod public domain (tj. „dělej si s tím, co chceš“), pochází ze studia [Kenney],
 a je (společně se další volně licencovanou grafikou) ke stažení z [OpenGameArt.org].
 
@@ -678,18 +678,19 @@ Ukážeme si, jak vytvořit modální dialog pro volby (šířka a výška nové
 Layout okna nejprve naklikáme v Qt Designeru:
 
  1. Po spuštění zvolíme *Dialog with Buttons Bottom* a *Create*.
- 2. Přes pravé tlačítko pro dialog zvolíme *Lay Out ‣ Vertically*
- 3. Nad tlačítka *Cancel* a *OK* přetáhneme z *Widet Box* *Form Layout* (layouty lze takto přímo vnořovat)
+ 2. Přes pravé tlačítko pro dialog zvolíme *Lay Out ‣ Vertically*.
+ 3. Nad tlačítka *Cancel* a *OK* přetáhneme z *Widet Box* *Form Layout* (layouty lze takto přímo vnořovat).
  4. Do něj přetáhneme postupně dvakrát *Label* a *Spin Box*, abychom vytvořili formulář.
- 5. Přejmenujeme v panelu *Property Editor* jednotlivé přidané položky tak, aby dávaly v kódu smysl (`widthBox`, `heightBox`)
+ 5. Přejmenujeme v panelu *Property Editor* jednotlivé přidané položky tak, aby dávaly v kódu smysl (`widthBox`, `heightBox`).
  6. Poklikáním na *Labely* změníme jejich text.
  7. Nastavíme v panelu *Property Editor* rozumné limity a výchozí hodnoty pro *Spin Boxy*.
  8. Okno případně zmenšíme, aby nebylo zbytečně velké.
  9. V menu zvolíme *Edit ‣ Edit Buddies* a táhnutím z *Labelu* na *Spin Box* nastavíme, ke kterému prvku se *Label* vztahuje.
 10. V menu zvolíme *Edit ‣ Edit Tab Order* a zkontrolujeme, že pořadí ve kterém bude prvky vybírat klávesa `Tab` je rozumné.
 11. Můžeme se vrátit zpět na *Edit ‣ Edit Widgets*.
+12. Dialog uložíme jako `newmaze.ui`.
 
-Poté připravíme metodu pro zobrazení dialogu a pro jeho vyhodnocení:
+Poté připravíme funkci pro zobrazení dialogu a pro jeho vyhodnocení:
 
 ```python
 def new_dialog(window, grid):
@@ -782,10 +783,10 @@ Rozhraní umožní:
 * prohlížet bludiště v grafické podobě
     * včetně všech objektů v něm a vizualizace cest (viz níže)
     * pokud se bludiště celé nevejde do okna, musí mít posuvníky (jako na cvičení)
-    * zoom (např <kbd>Ctrl</kbd> + kolečko myši) není nutný, ale je příjemný
+    * zoom (např. <kbd>Ctrl</kbd> + kolečko myši) není nutný, ale je příjemný
 * klást do bludiště objekty (zdi, cíle, postavy) a odebírat je (tyto změny se projeví v paměti na úrovni NumPy matice)
 * automaticky zobrazovat cesty mezi postavami a cílem
-* Nabídka *Help | About* vyvolá okno s informacemi o aplikaci:
+* nabídka *Help ‣ About* vyvolá okno s informacemi o aplikaci:
     * název
     * stručný popis
     * autor/autoři (vy, případně i my, pokud používáte náš kód)
@@ -820,7 +821,7 @@ array = numpy.loadtxt(path, dtype=numpy.int8)
 Zobrazování cesty
 -----------------
 
-* nejkratší cestu od všech postav k cíli zobrazte pomocí obrázků čar ze cvičení
+* nejkratší cesty od všech postav k cíli zobrazte pomocí obrázků čar z materiálů
 * výpočet cesty pro jednu postavu máte připraven z minulých úkolů
 * musíte si zvolit vhodný způsob, jaky více cest od více postav složit do jedné tak, abyste mohli použít křižovatky apod.
     * *tip:* názvy souborů s čarami nejsou náhodné
@@ -854,6 +855,6 @@ python -m maze
 
 Doporučujeme si sekvenci těchto příkazů vyzkoušet v novém virtualenvu, ať nedochází ke zbytečným chybám.
 
-Aplikace nesmí při žádné akci uživatele zhavarovat (tím nemyslíme, když uživatel udělá z terminálu <kbd>Ctrl+C</kbd> ale když např. klikne někam, kde jste to nečekali, nebo zruší dialog pro výběr jména souboru).
+Aplikace nesmí při žádné akci uživatele zhavarovat (tím nemyslíme, když uživatel udělá z terminálu <kbd>Ctrl</kbd>+<kbd>C</kbd>, ale když např. klikne někam, kde jste to nečekali, nebo zruší dialog pro výběr jména souboru).
 Pokud se vám zdá v zadání něco nelogické, prosím, zeptejte se.
 
