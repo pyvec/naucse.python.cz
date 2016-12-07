@@ -720,15 +720,15 @@ def new_dialog(window, grid):
         return
 
     # Načtení hodnot ze SpinBoxů
-    w = dialog.findChild(QtWidgets.QSpinBox, 'widthBox').value()
-    h = dialog.findChild(QtWidgets.QSpinBox, 'heightBox').value()
+    cols = dialog.findChild(QtWidgets.QSpinBox, 'widthBox').value()
+    rows = dialog.findChild(QtWidgets.QSpinBox, 'heightBox').value()
 
     # Vytvoření nového bludiště
-    grid.array = numpy.zeros((h, w), dtype=numpy.int8)
+    grid.array = numpy.zeros((rows, cols), dtype=numpy.int8)
 
     # Bludiště může být jinak velké, tak musíme změnit velikost Gridu;
     # (tento kód používáme i jinde, měli bychom si na to udělat funkci!)
-    size = logical_to_pixels(h, w)
+    size = logical_to_pixels(rows, cols)
     grid.setMinimumSize(*size)
     grid.setMaximumSize(*size)
     grid.resize(*size)
