@@ -690,9 +690,9 @@ Layout okna nejprve naklikáme v Qt Designeru:
  7. Nastavíme v panelu *Property Editor* rozumné limity a výchozí hodnoty pro *Spin Boxy*.
  8. Okno případně zmenšíme, aby nebylo zbytečně velké.
  9. V menu zvolíme *Edit ‣ Edit Buddies* a táhnutím z *Labelu* na *Spin Box* nastavíme, ke kterému prvku se *Label* vztahuje.
-10. V menu zvolíme *Edit ‣ Edit Tab Order* a zkontrolujeme, že pořadí ve kterém bude prvky vybírat klávesa `Tab` je rozumné.
-11. Můžeme se vrátit zpět na *Edit ‣ Edit Widgets*.
-12. Dialog uložíme jako `newmaze.ui`.
+ 10. V menu zvolíme *Edit ‣ Edit Tab Order* a zkontrolujeme, že pořadí ve kterém bude prvky vybírat klávesa `Tab` je rozumné.
+ 11. Můžeme se vrátit zpět na *Edit ‣ Edit Widgets*.
+ 12. Dialog uložíme jako `newmaze.ui`.
 
 Poté připravíme funkci pro zobrazení dialogu a pro jeho vyhodnocení:
 
