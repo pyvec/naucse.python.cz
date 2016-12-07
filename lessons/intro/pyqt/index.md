@@ -75,7 +75,7 @@ app.exec()
 ```
 
 
-O Qt, PyQT a PySide
+O Qt, PyQt a PySide
 -------------------
 
 [Qt](https://www.qt.io/) je aplikační framework napsaný v C++, který zjednodušuje psaní multiplatformních aplikací (od počítačů s Linuxem, Mac OS či Windows po různá vestavěná zařízení).
