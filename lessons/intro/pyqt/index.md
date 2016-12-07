@@ -830,6 +830,7 @@ Zobrazování cesty
 
 * nejkratší cesty od všech postav k cíli zobrazte pomocí obrázků čar z materiálů
 * výpočet cesty pro jednu postavu máte připraven z minulých úkolů
+    * aplikaci nebudeme testovat na bludiště tisíce krát tisíce jako minulý úkol, ale pro rozumné velikosti (cca do 200 na 200) výpočet musí proběhnout dostatečně svižně, aby aplikace byla použitelná
 * musíte si zvolit vhodný způsob, jaky více cest od více postav složit do jedné tak, abyste mohli použít křižovatky apod.
     * *tip:* názvy souborů s čarami nejsou náhodné
     * *tip:* jelikož cesta vede přes políčka, na kterých může být postava nebo cíl, nemůžete cestu ukládat do matice s bludištěm
