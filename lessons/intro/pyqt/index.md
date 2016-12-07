@@ -359,6 +359,7 @@ class GridWidget(QtWidgets.QWidget):
         # nastavíme velikost podle velikosti matice, jinak je náš widget příliš malý
         size = logical_to_pixels(*array.shape)
         self.setMinimumSize(*size)
+        self.setMaximumSize(*size)
         self.resize(*size)
 ```
 
@@ -727,6 +728,7 @@ def new_dialog(window, grid):
     # (tento kód používáme i jinde, měli bychom si na to udělat funkci!)
     size = logical_to_pixels(h, w)
     grid.setMinimumSize(*size)
+    grid.setMaximumSize(*size)
     grid.resize(*size)
 
     # Překreslení celého Gridu
