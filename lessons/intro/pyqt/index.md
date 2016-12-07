@@ -792,7 +792,7 @@ Rozhraní umožní:
     * pokud se bludiště celé nevejde do okna, musí mít posuvníky (jako na cvičení)
     * zoom (např. <kbd>Ctrl</kbd> + kolečko myši) není nutný, ale je příjemný
 * klást do bludiště objekty (zdi, cíle, postavy) a odebírat je (tyto změny se projeví v paměti na úrovni NumPy matice)
-* automaticky zobrazovat cesty mezi postavami a cílem
+* automaticky zobrazovat nejkratší cesty mezi postavami a cílem
 * nabídka *Help ‣ About* vyvolá okno s informacemi o aplikaci:
     * název
     * stručný popis
