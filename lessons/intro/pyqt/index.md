@@ -34,7 +34,7 @@ Pokud narazíte na chybu `Could not find or load the Qt platform plugin "xcb"`, 
 
 ### Qt5 Designer
 
-Na Linuxu najdete Qt5 Designer v balíčkách, třeba `qt5-designer` na Fedoře.
+Na Linuxu najdete Qt5 Designer v balíčkách, třeba `qt5-designer` na Fedoře nebo `qttools5-dev-tools` na Debianu.
 
 Na Windows (i na Macu) si můžete [stáhnout] instalátor Qt 5, který (doufáme) nainstaluje i Designer.
 
