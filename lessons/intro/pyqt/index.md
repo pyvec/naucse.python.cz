@@ -487,6 +487,9 @@ A poté je na správných místech vyrendrujeme:
                     SVG_WALL.render(painter, rect)
 ```
 
+* [grass.svg](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/09-qt/pics/grass.svg)
+* [wall.svg](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/09-qt/pics/wall.svg)
+
 
 Model/View
 ----------
