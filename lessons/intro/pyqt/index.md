@@ -25,6 +25,8 @@ Pro starší verzi Pythonu nebo 32bitový Linux to ale nebude fungovat.
 V takovém případě můžete PyQt5 zkusit najít v balíčkovacím systému vaší distribuce (např. balíček `python3-qt5` ve Fedoře nebo `python3-pyqt5` v Debianu).
 Virtualenv pak může vytvořit s přepínačem `--system-site-packages`, který zajistí, že i z virtualenvu uvidíte PyQt5 nainstalované z distribučního balíčku.
 
+    python3 -m venv --system-site-packages env
+
 Pokud nic z toho nepomůže, můžete zkusit přeložit PyQt5 ze [zdrojových souborů](https://www.riverbankcomputing.com/software/pyqt/download5)
 ([návod](http://pyqt.sourceforge.net/Docs/PyQt5/installation.html#building-and-installing-from-source)).
 
