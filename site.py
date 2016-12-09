@@ -32,6 +32,7 @@ def template_function(func):
     return func
 
 
+# Handling static files in the main dirq.
 @template_function
 def static(filename):
     return url_for('static', filename=filename)
@@ -48,6 +49,7 @@ def index():
 def about():
     return render_template("templates/about.html")
 
+
 # Online courses page.
 @app.route('/courses/')
 def courses():
@@ -60,10 +62,29 @@ def course(course):
     return render_template("courses/" + course + "/index.html", plan=read_yaml("courses/" + course + "/plan.yml"))
 
 
-# Lection page.
-@app.route('/courses/<course>/<lection>/')
-def course_url(course, lection):
-    return render_template("courses/" + course + "/" + lection + "/" + "/index.html")
+# Course lection
+@app.route('/courses/<course>/<lection>/', defaults={'page': 'index'})
+@app.route('/courses/<course>/<lection>/<page>')
+def course_lection(course, lection, page):
+    template = 'courses/{}/{}/{}.html'.format(course, lection, page)
+
+
+    # Static in the specific lection.
+    def course_static(path):
+        return url_for('course_static', course=course, lection=lection, path=path)
+
+
+    # Link to the specific lection.
+    def lection_url(lection):
+        return url_for('lection_url', course=course, lection=lection, page=page)
+
+
+    try:
+        return render_template(template, static=course_static, lection=lection_url)
+
+    except TemplateNotFound:
+        abort(404)
+
 
 # Provide static files in lectures.
 @app.route('/courses/<course>/<lection>/static/<path:path>')
@@ -73,12 +94,21 @@ def course_static(course, lection, path):
     return send_from_directory(directory, filename)
 
 
+# Provide lection url.
+@app.route('/courses/<course>/<lection>/', defaults={'page': 'index'})
+@app.route('/courses/<course>/<lection>/<page>')
+def lection_url(course, lection, page):
+    directory = os.path.join(app.root_path, 'courses', course, lection)
+    return send_from_directory(directory, page)
+
+
 # Markdown is working.
 @app.template_filter('markdown')
 def convert_markdown(text):
     text = textwrap.dedent(text)
     result = jinja2.Markup(markdown(text))
     return result
+
 
 # How to read yaml file.
 def read_yaml(filename):
