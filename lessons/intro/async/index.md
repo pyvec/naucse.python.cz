@@ -416,7 +416,7 @@ class Blinky:
             time.sleep(random.uniform(0.5, 1))
 
 
-Blinky()
+Blinky().run()
 ```
 
 Chceme-li spustit několik takových animací, můžeme to udělat ve vláknech:
