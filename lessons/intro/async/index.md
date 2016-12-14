@@ -1112,9 +1112,9 @@ Do vizualizátoru bludiště doplňte funkcionalitu hry. V režimu hry:
   * v případě že libovolná postava dojde do libovolného cíle, hra končí
    * v takovém případě informujte hráče o tom, jak dlouho vydržel odolávat náporu postav
 
-Máte k dispozici základní třídu `Actor`, která reprezentuje aktora (postavu v bludišti).
+Máte k dispozici základní třídu `Actor`, která reprezentuje aktora (postavu v bludišti):
 
-XXX class Actor
+ * [class Actor](https://github.com/cvut/MI-PYT/blob/master/tutorials/10-async/actor.py)
 
 Tato třída definuje rozhraní jednotlivých postav a zároveň implementuje základní chování postavy - jde nejkratší cestou k cíli rychlostí jedno políčko za sekundu.
 Aby to mohlo fungovat, musí kód, který postavu používá:
