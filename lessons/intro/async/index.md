@@ -1037,7 +1037,7 @@ jako hlavní smyčku událostí:
 ```python
 from quamash import QEventLoop
 
-app = QApplication(sys.argv)
+app = QtWidgets.QApplication([])
 loop = QEventLoop(app)
 asyncio.set_event_loop(loop)
 ```
@@ -1053,6 +1053,35 @@ pomocí `asyncio.ensure_future`, `await`, atd.
 
 [uvloop]: https://pypi.python.org/pypi/uvloop/
 [Quamash]: https://pypi.python.org/pypi/Quamash
+
+Ukázka:
+
+```python
+import asyncio
+
+from PyQt5 import QtGui, QtWidgets
+from quamash import QEventLoop
+
+app = QtWidgets.QApplication([])
+loop = QEventLoop(app)
+asyncio.set_event_loop(loop)
+
+display = QtWidgets.QLCDNumber()
+display.setWindowTitle('Stopwatch')
+
+display.show()
+
+async def update_time():
+    value = 0
+    while True:
+        display.display(value)
+        await asyncio.sleep(1)
+        value += 1
+
+asyncio.ensure_future(update_time())
+
+loop.run_forever()
+```
 
 
 Úkol
