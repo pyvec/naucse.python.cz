@@ -715,16 +715,18 @@ loop.close()
 V Pythonu verze 3.4 a nižší neexistují klíčová slova `async` a `await`, takže je potřeba
 místo:
 
-    async def ...:
-
+```python
+async def ...:
     await ...
-
+```
 
 psát:
 
-    @asyncio.coroutine
-    def ...:
-        yield from ...
+```python
+@asyncio.coroutine
+def ...:
+    yield from ...
+```
 
 (Zajímavé je, že dekorátor `asyncio.coroutine` toho nedělá mnoho: označí funkci
 jako *coroutine*, v *debug* módu zapne něco navíc, a pokud ve funkci není `yield`,
@@ -1032,20 +1034,19 @@ známými z `asyncio`.
 *Event loop* z `quamash` je potřeba na začátku programu naimportovat a nastavit
 jako hlavní smyčku událostí:
 
+```python
+from quamash import QEventLoop
 
-    from quamash import QEventLoop
-
-
-    app = QApplication(sys.argv)
-
-    loop = QEventLoop(app)
-
-    asyncio.set_event_loop(loop)
-
+app = QApplication(sys.argv)
+loop = QEventLoop(app)
+asyncio.set_event_loop(loop)
+```
 
 a poté ji, místo Qt-ovského `app.exec()`, spustit:
 
-    loop.run_forever()
+```python
+loop.run_forever()
+```
 
 Jednotlivé asynchronní funkce se pak používají jako v čistém `asyncio`:
 pomocí `asyncio.ensure_future`, `await`, atd.
@@ -1075,7 +1076,8 @@ Do vizualizátoru bludiště doplňte funkcionalitu hry. V režimu hry:
  * nebudou zobrazeny čáry od postav k cíli
  * půjde pouze bořit či stavět zdi
   * pokud máte více typů zdí, půjde bořit/stavět pouze jeden druh z nich (`-1`)
-  * postavit zeď půjde pouze tehdy, pokud by to žádnou postavu neodřízlo od cíle
+  * zeď nepůjde stavět na políčko, kde je aktuálně nějaké postava
+  * postavit zeď půjde pouze tehdy, pokud to žádnou postavu neodřízne od cíle
  * nebude vidět paleta
  * úkolem hráče je měnit bludiště tak, aby co nejdéle bránil postavám dojít do cíle
   * v případě že libovolná postava dojde do libovolného cíle, hra končí
@@ -1096,6 +1098,7 @@ Aby to mohlo fungovat, musí kód, který postavu používá:
 Je třeba použít smyčku událostí z `quamash`.
 
 Rozhraní je definováno tak, aby nezáviselo na konkrétní implementaci vizualizace, uvnitř aktorů byste tedy neměli používat nic z Qt.
+Některé charaktery (viz další sekce) možná budou potřebovat použít další API vašeho gridu.
 
 Kromě úpravy rozhraní musíte implementovat několik aktorů, kteří dědí z třídy Actor a chovají se trochu jinak.
 
@@ -1148,7 +1151,7 @@ Zmatkář s určitou pravděpodobností místo kroku směrem k cíli provede kro
 ### Sprinter
 
 Sprinter zrychluje na rovných trasách.
-Pokud půjde klikatou cestou, je stejně pomalý jako základní aktor. Pokud ale půjde rovně, může být velmi rychlý.
+Pokud půjde klikatou cestou, je stejně pomalý jako základní aktor. Pokud ale půjde déle rovně, může být velmi rychlý.
 Na začátku hry a po každé změně směru má rychlost jako základní aktor.
 Každý další pohyb ve stejném směru ale vykonává rychleji, než ten předchozí.
 Pohyb v jiném směru je opět základní rychlostí.
@@ -1176,7 +1179,7 @@ Při dobíjení si jednou za sekundu poskočí, aby hráč věděl, že tato pos
 ### Tanečník
 
 Před každým krokem zkontroluje políčko před sebou (tj. ve směru cesty k cíli),
-diagonálně vpravo před sebou, a vpravo od sebe. Pokud jsou volná, projde je
+diagonálně vpravo před sebou, a vpravo od sebe. Pokud jsou všechna tři volná, projde je
 a vrátí se zpět na původní políčko.
 Poté to samé udělá s políčky před sebou, diagonálně vlevo před sebou, a vlevo
 od sebe.
@@ -1187,7 +1190,7 @@ Tanečník poskočí, zbytek aktuálního "tance" neprovede, a pokračuje z aktu
 
 ### Tlusťoch \*
 
-Pohybuje se o 25% pomaleji než základní aktor.
+Pohybuje se o 25 % pomaleji než základní aktor.
 
 Nesmí vstoupit na políčko, na kterém je právě jiný aktor.
 Měl-li by to udělat, stojí místo toho na místě a odpočívá.
@@ -1201,6 +1204,28 @@ Teleportér se na Tlusťocha nesmí teleportovat.)
 
 Tlusťoch ale nemá vliv na hráčovu schopnost stavět zdi, tj. pro tento účel se
 nepočítá jako překážka.
+
+### Smraďoch \*
+
+Smraďoch všem kromě ostatních Smraďochů smrdí, a chtějí od něj pryč.
+Pokud je v bezprostředním okolí (určete sami) ostatních aktorů (jiných charakterů), tito aktoři, pokud mohou, jdou směrem pryč od Smraďocha
+(bez ohledu na svou plánovanou trasu), až dokud se z dosahu Smraďocha nedostanou.
+Pokud nemohou pryč, se smradem se smíří a chovají se normálně.
+
+Při chůzi směrem pryč od Smraďocha se aktoři pohybují rychlostí dle svého charakteru.
+Tanečník (pokud může) tančí, Dobíječ (pokud musí) se dobíjí atp.
+
+Je na vás, jestli Smraďoch smrdí i přes zdi. Chcete-li, můžete rozsah smradu vizualizovat.
+
+### Vlastní
+
+Implementujte jiné netriviální chovaní. Svůj záměr popište v README.
+
+Vyhněte se i triviálním variantám jiných chování, které jste již implementovali
+(např. máte-li Rychlíka, nedělejte v rámci vlastního zadání "Pomalíka", který je jen o trochu pomalejší než základní aktor.)
+
+Nakolik je chování netriviální, určujeme při hodnocení my.
+V případě pochybností se zeptejte pomocí issue nebo na cvičení.
 
 
 Odevzdání, deadliny apod.
@@ -1216,4 +1241,3 @@ A zároveň je to poslední úkol kromě semestrálky.
 Proto na něj máte čas až do středy 28.12. 11:00. Nekažte si ale prosím kvůli úkolu Vánoce (a ani od nás v průběhu svátků nečekejte velkou komunikaci).
 
 Odevzdávejte standardně s tagem `v0.4`. V případě potřeby opět můžete využít naše [řešení](http://github.com/encukou/maze) minulého úkolu.
-
