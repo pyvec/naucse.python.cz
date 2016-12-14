@@ -1,3 +1,4 @@
+"""This file has been placed in the public domain"""
 import asyncio
 import contextlib
 import time
