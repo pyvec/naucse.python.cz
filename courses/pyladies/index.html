@@ -1,0 +1,48 @@
+{% extends 'templates/_base.html' %}
+
+{% block title %}Začátečnický kurz PyLadies{% endblock %}
+
+{% block content %}
+
+    <h2>Začátečnický kurz PyLadies</h2>
+    <p><a href="http://pyladies.cz/" alt="Pyladies"> Pyladies</a> jsou (mezinárodní) aktivita, která se snaží přiblížit IT ženám a ženy k IT. K tomuto účelu využívá programovací jazyk Python. Zde najdeš materiály, které se používají na začátečnických kurzech v Praze, Brně a Ostravě.</p>
+    <p>Jednotlivé lekce jsou určeny naprostým začátečníkům, žádné předchozí znalosti nejsou nutné. Instrukce jsou uvedeny pro operační systémy Linux, Windows i macOS.</p>
+
+    <!-- Course description -->
+    <section class="course-city container">
+        <div class="row">
+            <div class="sections col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                {% for lesson in plan %}
+                <div class="section-box" id="section{{ loop.index }}">
+                    <h4 class="section-heading">
+                        {% if 'date' in lesson %}
+                            Lekce {{ loop.index }} - {{ lesson['name'] }}
+                        {% else %}
+                            {{ lesson['name'] }}
+                        {% endif %}
+                    </h4>
+                    {% if 'description' in lesson %}
+                        <p class="section-info course-city-p">
+                            {{ lesson['description'] }}
+                        </p>
+                    {% endif %}
+                    {% for mat in lesson['materials'] %}
+                        {% set done = mat.get('done', lesson.get('done', False)) %}
+                        {% set done_class = 'section-done' if done else 'section-todo' %}
+                        <div class="section-info">
+                            {% set icon_class = 'glyphicon-pencil' %}
+                            <span class="glyphicon {{ icon_class }} section-icon"></span>
+                            {% if 'link' in mat %}
+                                <a href="{{ mat['link'] }}">{{ mat['name'] }}</a>
+                            {% else %}
+                                {{ mat['name'] }}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    
+{% endblock content %}
