@@ -27,16 +27,31 @@ app.jinja_loader = PrefixLoader({
 })
 
 
+################################
+###### @TEMPLATE_FUNCTION ######
+
 def template_function(func):
     app.jinja_env.globals[func.__name__] = func
     return func
 
 
-# Handling static files in the main dirq.
 @template_function
 def static(filename):
     return url_for('static', filename=filename)
 
+
+@template_function
+def course_url(course):
+    return url_for('course_page', course=course)
+
+
+@template_function
+def lection_url(course, lection, page='index'):
+    return url_for('course_lection', course=course, lection=lection, page=page)
+
+
+########################
+###### @APP.ROUTE ######
 
 # Index page.
 @app.route('/')
@@ -50,57 +65,56 @@ def about():
     return render_template("templates/about.html")
 
 
-# Online courses page.
+# Page with listed online courses.
 @app.route('/courses/')
 def courses():
-    return render_template("templates/courses.html")
+    return render_template("courses/index.html", courses=read_yaml("courses/courses.yml"))
 
 
 # Course page.
 @app.route('/courses/<course>/')
-def course(course):
-    return render_template("courses/" + course + "/index.html", plan=read_yaml("courses/" + course + "/plan.yml"))
+def course_page(course):
+    template = 'courses/{}/index.html'.format(course)
+
+    try:
+        return render_template(template, plan=read_yaml("courses/" + course + "/plan.yml"))
+    except TemplateNotFound:
+        abort(404)
 
 
-# Course lection
+# Lection page.
 @app.route('/courses/<course>/<lection>/', defaults={'page': 'index'})
-@app.route('/courses/<course>/<lection>/<page>')
+@app.route('/courses/<course>/<lection>/<page>/')
 def course_lection(course, lection, page):
     template = 'courses/{}/{}/{}.html'.format(course, lection, page)
 
 
     # Static in the specific lection.
-    def course_static(path):
-        return url_for('course_static', course=course, lection=lection, path=path)
+    def lection_static_url(path):
+        return url_for('lection_static', course=course, lection=lection, path=path)
 
 
     # Link to the specific lection.
     def lection_url(lection):
-        return url_for('lection_url', course=course, lection=lection, page=page)
+        return url_for('course_lection', course=course, lection=lection, page=page)
 
 
     try:
-        return render_template(template, static=course_static, lection=lection_url)
-
+        return render_template(template, static=lection_static_url, lection=lection_url)
     except TemplateNotFound:
         abort(404)
 
 
-# Provide static files in lectures.
+# Static files in lectures.
 @app.route('/courses/<course>/<lection>/static/<path:path>')
-def course_static(course, lection, path):
+def lection_static(course, lection, path):
     directory = os.path.join(app.root_path, 'courses')
     filename = os.path.join(course, lection, 'static', path)
     return send_from_directory(directory, filename)
 
 
-# Provide lection url.
-@app.route('/courses/<course>/<lection>/', defaults={'page': 'index'})
-@app.route('/courses/<course>/<lection>/<page>')
-def lection_url(course, lection, page):
-    directory = os.path.join(app.root_path, 'courses', course, lection)
-    return send_from_directory(directory, page)
-
+###################
+###### OTHER ######
 
 # Markdown is working.
 @app.template_filter('markdown')

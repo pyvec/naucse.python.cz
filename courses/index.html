@@ -1,0 +1,29 @@
+{% extends 'templates/_base.html' %}
+
+{% block title %}Seznam online kurzů Pythonu{% endblock %}
+
+{% block content %}
+    <p>Momentálně jsou dostupné tyto kurzy:</p>
+
+    <section class="course-city container">
+        <div class="row">
+            <div class="sections col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                {% for course in courses %}
+                <div class="section-box" id="section{{ loop.index }}">
+                    {% if 'link' in course %}
+                        <h4><a href="{{ course_url(course['link']) }}">{{ course['name'] }}</a></h4>
+                    {% else %}
+                        {{ course['name'] }}
+                    {% endif %}
+
+                    {% if 'description' in course %}
+                        <p class="section-info course-city-p"> {{ course['description'] }} </p>
+                    {% endif %}
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
