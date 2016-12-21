@@ -86,7 +86,8 @@ def course_page(course):
 @app.route('/courses/<course>/<lection>/', defaults={'page': 'index'})
 @app.route('/courses/<course>/<lection>/<page>/')
 def course_lection(course, lection, page):
-    template = 'courses/{}/{}/{}.html'.format(course, lection, page)
+    info = read_yaml("courses/" + course + "/" + lection + "/info.yml")
+    template = 'courses/{}/{}/{}.{}'.format(course, lection, page, info['style'])
 
 
     # Static in the specific lection.
@@ -99,10 +100,36 @@ def course_lection(course, lection, page):
         return url_for('course_lection', course=course, lection=lection, page=page)
 
 
-    try:
-        return render_template(template, static=lection_static_url, lection=lection_url)
-    except TemplateNotFound:
-        abort(404)
+    if info['style'] == "md":
+        file = open(template, 'r')
+        content = file.read()
+        title = info['course'] + ': ' + info['title']
+
+        try:
+            return render_template('templates/markdown_page.html', static=lection_static_url, lection=lection_url, title=title, content=content)
+
+        except TemplateNotFound:
+            abort(404)
+
+        file.close()
+
+    elif info['style'] == "ipynb":
+        file = open(template, 'r')
+        content = file.read()
+        title = info['course'] + ': ' + info['title']
+
+        try:
+            return render_template('templates/ipython_page.html', static=lection_static_url, lection=lection_url, title=title, content=content)
+
+        except TemplateNotFound:
+            abort(404)
+
+    else:
+        try:
+            return render_template(template, static=lection_static_url, lection=lection_url)
+
+        except TemplateNotFound:
+            abort(404)
 
 
 # Static files in lectures.
@@ -121,6 +148,10 @@ def lection_static(course, lection, path):
 def convert_markdown(text):
     text = textwrap.dedent(text)
     result = jinja2.Markup(markdown(text))
+
+    # Markdown code blocks are translated literally, this solves problem with entities.
+    result = result.replace('&amp;', '&').replace('&gt;', '>').replace('&#39;', "'").replace('&#34;', '"').replace('&lt;', '<')
+    
     return result
 
 

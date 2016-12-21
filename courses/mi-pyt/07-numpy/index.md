@@ -1,11 +1,3 @@
-{% extends 'templates/_base.html' %}
-
-{% block title %}MI-PYT: NumPy{% endblock %}
-
-{% block content %}
-
-{% filter markdown %}
-
 NumPy
 =====
 
@@ -47,7 +39,3 @@ Požadavky:
 * všechny závislosti (včetně `numpy` a `pytest`) uveďte v souboru `requirements.txt` (nemusí být s konkrétní verzí)
 * příkaz `python -m pytest` musí po instalaci závislostí spouštět testy
 * z kořenového adresáře repozitáře musí jít po instalaci závislostí udělat v Pythonu `from maze import analyze` a `analyze(array)`
-
-{% endfilter %}
-
-{% endblock %}

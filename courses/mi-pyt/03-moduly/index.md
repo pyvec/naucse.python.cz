@@ -1,11 +1,3 @@
-{% extends 'templates/_base.html' %}
-
-{% block title %}MI-PYT: Moduly{% endblock %}
-
-{% block content %}
-
-{% filter markdown %}
-
 Moduly
 ======
 
@@ -424,7 +416,3 @@ napište to do souboru vlastní podmínky. Nevymýšlejte si ale prosím vlastn�
 open-source licence.
 
 [choosealicense.com]: http://choosealicense.com/
-
-{% endfilter %}
-
-{% endblock %}

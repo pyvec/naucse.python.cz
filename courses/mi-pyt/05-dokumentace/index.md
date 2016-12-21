@@ -1,11 +1,3 @@
-{% extends 'templates/_base.html' %}
-
-{% block title %}MI-PYT: Dokumentace{% endblock %}
-
-{% block content %}
-
-{% filter markdown %}
-
 Dokumentace
 ===========
 
@@ -436,7 +428,3 @@ Na Travis CI spouštějte dokumentační testy.
 Dokumentace musí být v angličtině.
 
 Dosavadní funkcionalita aplikace musí být samozřejmě zachována.
-
-{% endfilter %}
-
-{% endblock %}

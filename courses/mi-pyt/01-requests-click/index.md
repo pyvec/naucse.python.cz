@@ -1,12 +1,3 @@
-{% extends 'templates/_base.html' %}
-
-{% block title %}MI-PYT: Requests a click{% endblock %}
-
-{% block content %}
-
-{% filter markdown %}
-
-
 requests a click
 ================
 
@@ -316,7 +307,3 @@ Můžete využít i jiné API (např. [Sirius] či [KOSapi]) a vymyslet vlastní
 
 [Sirius]: https://github.com/cvut/sirius/wiki
 [KOSapi]: https://kosapi.fit.cvut.cz/projects/kosapi/wiki
-
-{% endfilter %}
-
-{% endblock %}

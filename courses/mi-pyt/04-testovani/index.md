@@ -1,11 +1,3 @@
-{% extends 'templates/_base.html' %}
-
-{% block title %}MI-PYT: Testování{% endblock %}
-
-{% block content %}
-
-{% filter markdown %}
-
 Testování
 =========
 
@@ -614,7 +606,3 @@ Podmínky:
 \* Záměrně nestanovujeme podmínku na 100% pokrytí kódu testy.
 Otestujte prostě kód tak, aby byly otestovány všechny podstatné součásti
 včetně webové aplikace.
-
-{% endfilter %}
-
-{% endblock %}

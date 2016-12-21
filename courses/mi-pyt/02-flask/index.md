@@ -1,11 +1,3 @@
-{% extends 'templates/_base.html' %}
-
-{% block title %}MI-PYT: Flask{% endblock %}
-
-{% block content %}
-
-{% filter markdown %}
-
 Webové aplikace: Flask
 ======================
 
@@ -138,7 +130,6 @@ Lepší je použít šablony:
 
 Pak je třeba vedle souboru vytvořit složku `templates` a v ní `hello.html`:
 
-{% raw %}
     <!doctype html>
     <title>Hello from Flask</title>
     {% if name %}
@@ -146,7 +137,6 @@ Pak je třeba vedle souboru vytvořit složku `templates` a v ní `hello.html`:
     {% else %}
       <h1>Hello, World!</h1>
     {% endif %}
-{% endraw %}
 
 Šablony používají v Pythonu velmi oblíbený [Jinja2].
 (Základní použití najdete na odkaze.)
@@ -179,9 +169,7 @@ Zde je například filtr, který načte čas v určitém formátu a převede do 
 
 V šabloně:
 
-{% raw %}
     {{ tweet.created_at|time }}
-{% endraw %}
 
 #### Escaping
 
@@ -201,9 +189,7 @@ bude výsledné HTML vypadat takto:
 Někdy je ovšem potřeba do stránky opravdu vložit HTML.
 To se dá zajistit dvěma způsoby. Nejjednodušší je vestavěný filtr `safe`:
 
-{% raw %}
     {{ "<em>Text</em>" | safe }}
-{% endraw %}
 
 Z Pythonu pak lze použít [jinja2.Markup](http://jinja.pocoo.org/docs/dev/api/#jinja2.Markup),
 čímž se daný text označí jako „bezpečný”.
@@ -226,9 +212,7 @@ obrázky), dejte je do složky `static` a přistupujte k nim pomocí:
 
 V šabloně pak například:
 
-{% raw %}
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
-{% endraw %}
 
 Další věci, které možná budete potřebovat, jako například zpracování formulářů,
 najdete [v dokumentaci](http://flask.pocoo.org/docs/0.11/quickstart/).
@@ -391,7 +375,3 @@ Více informací a příklad v Ruby je na [github securing].
 
 [webhook]: https://developer.github.com/webhooks/
 [github securing]: https://developer.github.com/webhooks/securing/
-
-{% endfilter %}
-
-{% endblock %}

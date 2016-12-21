@@ -1,11 +1,3 @@
-{% extends 'templates/_base.html' %}
-
-{% block title %}MI-PYT: Pandas{% endblock %}
-
-{% block content %}
-
-{% filter markdown %}
-
 Pandas
 ======
 
@@ -79,7 +71,3 @@ Otázky a úkoly:
   0-9 let, 10-19 let, atd.).
 * Závisí na sobě třída a věk pasažéra? Jak? Vykreslete graf(y), které tuto
   závislost znázorňují.
-
-{% endfilter %}
-
-{% endblock %}

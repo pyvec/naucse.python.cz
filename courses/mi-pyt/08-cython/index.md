@@ -1,11 +1,3 @@
-{% extends 'templates/_base.html' %}
-
-{% block title %}MI-PYT: Cython{% endblock %}
-
-{% block content %}
-
-{% filter markdown %}
-
 Dnes budeme potřebovat do virtuálního prostředí nainstalovat tyto knihovny:
 
     python -m pip install --upgrade pip
@@ -110,54 +102,52 @@ porozumět tomu, co dělá.)
 
 demo.c:
 
-```c
-#include <Python.h>
+    #include <Python.h>
 
-PyDoc_STRVAR(
-    mod_docstring, 
-    "Demo extension module with a Python wrapper for the system(3) function");
+    PyDoc_STRVAR(
+        mod_docstring, 
+        "Demo extension module with a Python wrapper for the system(3) function");
 
-static PyObject *demo_system(PyObject *self, PyObject *args){
-    const char *command;
-    int retval;
+    static PyObject *demo_system(PyObject *self, PyObject *args){
+        const char *command;
+        int retval;
 
-    /* Parse the given arguments: expect one string, convert to char* */
-    if (!PyArg_ParseTuple(args, "s", &command)) {
-        /* Error handling: if PyArg_ParseTuple returns zero, return NULL */
-        return NULL;
+        /* Parse the given arguments: expect one string, convert to char* */
+        if (!PyArg_ParseTuple(args, "s", &command)) {
+            /* Error handling: if PyArg_ParseTuple returns zero, return NULL */
+            return NULL;
+        }
+
+        /* Call the C function */
+        retval = system(command);
+
+        /* Return result as Python int (error handling built in) */
+        return PyLong_FromLong(retval);
     }
 
-    /* Call the C function */
-    retval = system(command);
+    /* List of all methods in the module */
+    static PyMethodDef DemoMethods[] = {
+        {"system",  demo_system, METH_VARARGS,
+                PyDoc_STR("Execute a shell command.")},
+        {NULL, NULL, 0, NULL}        /* Sentinel */
+    };
 
-    /* Return result as Python int (error handling built in) */
-    return PyLong_FromLong(retval);
-}
-
-/* List of all methods in the module */
-static PyMethodDef DemoMethods[] = {
-    {"system",  demo_system, METH_VARARGS,
-            PyDoc_STR("Execute a shell command.")},
-    {NULL, NULL, 0, NULL}        /* Sentinel */
-};
-
-/* Module specification */
-static struct PyModuleDef demo_module = {
-   PyModuleDef_HEAD_INIT,
-   "demo",          /* name of module */
-   mod_docstring,   /* dosctring (may be NULL) */
-   0,               /* size of per-interpreter state of the module */
-   DemoMethods,     /* list of methods */
-};
+    /* Module specification */
+    static struct PyModuleDef demo_module = {
+       PyModuleDef_HEAD_INIT,
+       "demo",          /* name of module */
+       mod_docstring,   /* dosctring (may be NULL) */
+       0,               /* size of per-interpreter state of the module */
+       DemoMethods,     /* list of methods */
+    };
 
 
-/* Module entrypoint */
-PyMODINIT_FUNC
-PyInit_demo(void)
-{
-    return PyModuleDef_Init(&demo_module);
-}
-```
+    /* Module entrypoint */
+    PyMODINIT_FUNC
+    PyInit_demo(void)
+    {
+        return PyModuleDef_Init(&demo_module);
+    }
 
 Z tohoto souboru by měla být patrná struktura podobných rozšíření:
 máme funkci (`demo_system`), která převádí objekty Pythonu
@@ -205,21 +195,19 @@ jen jméno a seznam zdrojových souborů:
 
 setup.py:
 
-```python
-from setuptools import setup, Extension
+    from setuptools import setup, Extension
 
-module1 = Extension(
-    'demo',
-    sources=['demo.c'],
-)
+    module1 = Extension(
+        'demo',
+        sources=['demo.c'],
+    )
 
-setup(
-    name = 'demo',
-    version = '0.1',
-    description = 'Demo package',
-    ext_modules = [module1]
-)
-```
+    setup(
+        name = 'demo',
+        version = '0.1',
+        description = 'Demo package',
+        ext_modules = [module1]
+    )
 
 Příkazy `python setup.py sdist` a `python setup.py install` budou fungovat jako normálně,
 jen je na instalaci potřeba překladač jazyka C.
@@ -251,12 +239,10 @@ Základní datová struktura, která reprezentuje jakýkoli objekt Pythonu, je P
 [definice](https://github.com/python/cpython/blob/3.5/Include/object.h#L106)).
 Skládá se ze dvou prvků:
 
-```c
-typedef struct _object {
-    Py_ssize_t ob_refcnt;
-    struct _typeobject *ob_type;
-} PyObject;
-```
+    typedef struct _object {
+        Py_ssize_t ob_refcnt;
+        struct _typeobject *ob_type;
+    } PyObject;
 
 První je počet referencí (*reference count*), který se dá popsat jako počet míst,
 ze kterých je možné k tomuto objektu přistoupit.
@@ -274,12 +260,10 @@ Struktura PyObject slouží jako hlavička, za kterou pak následují data inter
 typu daného objektu.
 Například pythonní [objekt typu float][float] vypadá následovně:
 
-```c
-typedef struct {
-    PyObject ob_base;
-    double ob_fval;
-} PyFloatObject;
-```
+    typedef struct {
+        PyObject ob_base;
+        double ob_fval;
+    } PyFloatObject;
 
 ...tedy struktura PyObject, za kterou je v paměti číselná hodnota.
 
@@ -394,28 +378,26 @@ Vývojáři Cythonu považují každou odchylku od specifikace jazyka za chybu, 
 
 Jako příklad můžete použít tuto naivní implementaci celočíselného a maticového násobení:
 
-```python
-import numpy
+    import numpy
 
-def intmul(a, b):
-    result = a * b
-    return result
+    def intmul(a, b):
+        result = a * b
+        return result
 
-def matmul(a, b):
-    n = a.shape[0]
-    m = a.shape[1]
-    if b.shape[0] != m:
-        raise ValueError('incompatible sizes')
-    p = b.shape[1]
-    result = numpy.zeros((n, p))
-    for i in range(n):
-        for j in range(p):
-            for k in range(m):
-                x = a[i, k]
-                y = b[k, j]
-                result[i, j] += x * y
-    return result
-```
+    def matmul(a, b):
+        n = a.shape[0]
+        m = a.shape[1]
+        if b.shape[0] != m:
+            raise ValueError('incompatible sizes')
+        p = b.shape[1]
+        result = numpy.zeros((n, p))
+        for i in range(n):
+            for j in range(p):
+                for k in range(m):
+                    x = a[i, k]
+                    y = b[k, j]
+                    result[i, j] += x * y
+        return result
 
 Výsledek můžeme převést na C pomocí příkazu `cython -3 soubor.pyx`, čímž vznikne `soubor.c`, který
 můžeme přeložit výše uvedeným způsobem.
@@ -423,21 +405,19 @@ můžeme přeložit výše uvedeným způsobem.
 Jednodušší varianta je použít Cython v `setup.py`.
 Pro naše účely bude `setup.py` s Cythonem a NumPy vypadat takto:
 
-```python
-from setuptools import setup
-from Cython.Build import cythonize
-import numpy
+    from setuptools import setup
+    from Cython.Build import cythonize
+    import numpy
 
-setup(
-    name='matmul',
-    ext_modules=cythonize('matmul.pyx', language_level=3, include_dirs=[numpy.get_include()]),
-    include_dirs=[numpy.get_include()],
-    install_requires=[
-        'Cython',
-        'NumPy',
-    ],
-)
-```
+    setup(
+        name='matmul',
+        ext_modules=cythonize('matmul.pyx', language_level=3, include_dirs=[numpy.get_include()]),
+        include_dirs=[numpy.get_include()],
+        install_requires=[
+            'Cython',
+            'NumPy',
+        ],
+    )
 
 Poznámka: `include_dirs` je tady dvakrát. Ale na některých platformách (Mac OS X)
 se jako parametr funkce `setup()` z nějakého důvodu neaplikuje a musí se použít
@@ -488,12 +468,10 @@ Začneme u funkce `intmul`, kde doplníme informaci o tom, že parametry `a` a `
 Parametrům stačí doplnit typ podobně jako v C, ostatní lokální proměnné potřebují definici pomocí
 příkazu `cdef`:
 
-```python
-def intmul(int a, int b):
-    cdef int result
-    result = a * b
-    return result
-```
+    def intmul(int a, int b):
+        cdef int result
+        result = a * b
+        return result
 
 Teď bude funkce nepatrně rychlejší, ale také méně obecná: nejde jí násobit řetězec číslem,
 ale ani reálná čísla (`float`), a dokonce ani celá čísla, která se nevejdou do 64 bitů (příp.
@@ -502,13 +480,11 @@ Typ int v Cythonu je totiž int z C, ne ten neomezený z Pythonu.
 
 Další věc, kterou můžeme udělat, je změnit příkaz `def` na `cpdef`, a doplnit typ návratové
 hodnoty:
-    
-```python
-cpdef int intmul(int a, int b):
-    cdef int result
-    result = a * b
-    return result
-```
+
+    cpdef int intmul(int a, int b):
+        cdef int result
+        result = a * b
+        return result
 
 Tím se zbavíme nákladného převodu výsledku na PyObject.
 Bohužel ale toto zrychlení pocíte jen když takovou funkci zavoláme z jiné funkce napsané v
@@ -526,24 +502,22 @@ Funkce jdou deklarovat třemi způsoby:
 Třídy
 -----
 
-```python
-cdef class Foo:
-    # Tady si musím nadefinovat všechny členské proměnné
-    # Není možné dynamicky na selfu vytvářet nové atributy
-    cdef int foo
-    ...
-
-    def __cinit__(self, int f):
-        self.foo = f
+    cdef class Foo:
+        # Tady si musím nadefinovat všechny členské proměnné
+        # Není možné dynamicky na selfu vytvářet nové atributy
+        cdef int foo
         ...
 
-    def __dealloc__(self):
-        ...
+        def __cinit__(self, int f):
+            self.foo = f
+            ...
 
-    cpdef int method(self):
-        ...
-        return self.foo
-```
+        def __dealloc__(self):
+            ...
+
+        cpdef int method(self):
+            ...
+            return self.foo
 
 Více o třídách v [dokumentaci](http://cython.readthedocs.io/en/latest/src/tutorial/cdef_classes.html).
 
@@ -559,38 +533,31 @@ Je tedy potřeba říct Cythonu, že používáme NumPy matice.
 Naštěstí v NumPy existuje integrace s Cythonem, takže můžeme na úrovni C "naimportovat"
 rozšíření pro NumPy:
 
-```python
-cimport numpy
-```
+    cimport numpy
 
 ... a potom použít typ "dvourozměrná matice celých čísel", který se v Cythonu jmenuje
 `numpy.ndarray[numpy.int64_t, ndim=2]`.
 Naše funkce tedy bude začínat takto:
 
-```python
-cpdef numpy.ndarray[numpy.int64_t, ndim=2] matmul(
-        numpy.ndarray[numpy.int64_t, ndim=2] a,
-        numpy.ndarray[numpy.int64_t, ndim=2] b):
-    cdef numpy.ndarray[numpy.int64_t, ndim=2] result
-    ...
-```
+    cpdef numpy.ndarray[numpy.int64_t, ndim=2] matmul(
+            numpy.ndarray[numpy.int64_t, ndim=2] a,
+            numpy.ndarray[numpy.int64_t, ndim=2] b):
+        cdef numpy.ndarray[numpy.int64_t, ndim=2] result
+        ...
 
 Kdybychom si nebyli jistí typem matice, můžeme si ho nadefinovat pomocí `ctypedef`:
 
-```python
-ctypedef numpy.int64_t DATATYPE
-```
+    ctypedef numpy.int64_t DATATYPE
+
 
 ...a pak používat tento alias.
 Na maticové typy bohužel typedef zatím nefunguje.
 
 Pro práci s maticí ASCII znaků lze použít typ `numpy.int8_t`, ale je třeba při zapisování přímo na konkrétní pozice zapisovat typ `char`:
 
-```python
-cdef numpy.ndarray[numpy.int8_t, ndim=2]  directions = numpy.full((h, w), b'#', dtype=('a', 1))
-directions[maze >= 0] = b' '  # Python level, using b' '
-directions[1, 2] == ord('x')  # C level, using char
-```
+    cdef numpy.ndarray[numpy.int8_t, ndim=2]  directions = numpy.full((h, w), b'#', dtype=('a', 1))
+    directions[maze >= 0] = b' '  # Python level, using b' '
+    directions[1, 2] == ord('x')  # C level, using char
 
 Direktivy
 ---------
@@ -648,71 +615,67 @@ přes alokaci paměti a ukazatele.
 
 Následující příklad ukazuje, jak naplnit pole heterogenních záznamů:
 
-```python
-# Import funkcí pro alokaci paměti – chovají se jako malloc() apod.
-from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
+    # Import funkcí pro alokaci paměti – chovají se jako malloc() apod.
+    from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
 
-# Definice struktury
-cdef struct coords:
-    int row
-    int column
-    char data
+    # Definice struktury
+    cdef struct coords:
+        int row
+        int column
+        char data
 
-MAXSIZE = ...
+    MAXSIZE = ...
 
-def path(...):
-    # Definice ukazatele, přetypování
-    cdef coords * path = <coords *>PyMem_Malloc(MAXSIZE*sizeof(coords))
-    if path == NULL:
-        # no available memory left
-        raise MemoryError()
+    def path(...):
+        # Definice ukazatele, přetypování
+        cdef coords * path = <coords *>PyMem_Malloc(MAXSIZE*sizeof(coords))
+        if path == NULL:
+            # no available memory left
+            raise MemoryError()
 
-    cdef int used = 0
-    for ...:
+        cdef int used = 0
+        for ...:
+            ...
+
+            #
+            path[used] = coords(row, column, data)
+            used += 1
+
+        # pole můžeme používat
         ...
 
-        #
-        path[used] = coords(row, column, data)
-        used += 1
+        # a musíme ho před vrácením předělat na list
+        lpath = []
+        cdef int i
+        for i in range(used):
+            lpath.append(path[i])
 
-    # pole můžeme používat
-    ...
-
-    # a musíme ho před vrácením předělat na list
-    lpath = []
-    cdef int i
-    for i in range(used):
-        lpath.append(path[i])
-
-    # a uvolnit
-    PyMem_Free(path)
-    return lpath
-```
+        # a uvolnit
+        PyMem_Free(path)
+        return lpath
 
 Pro homogenní pole ale doporučujeme spíše NumPy matice.
 
 Následující příklad ukazuje, jak lze přiřazovat do struktur:
 
-```python
-cdef struct coord:
-    float x
-    float y
-    float z
+    cdef struct coord:
+        float x
+        float y
+        float z
 
-cdef coord a = coord(0.0, 2.0, 1.5)
+    cdef coord a = coord(0.0, 2.0, 1.5)
 
-cdef coord b = coord(x=0.0, y=2.0, z=1.5)
+    cdef coord b = coord(x=0.0, y=2.0, z=1.5)
 
-cdef coord c
+    cdef coord c
 
-c.x = 42.0
-c.y = 2.0
-c.z = 4.0
+    c.x = 42.0
+    c.y = 2.0
+    c.z = 4.0
 
-cdef coord d = {'x':2.0,
-                'y':0.0,
-                'z':-0.75}
-```
+    cdef coord d = {'x':2.0,
+                    'y':0.0,
+                    'z':-0.75}
 
 Použití knihoven z C
 --------------------
@@ -721,17 +684,15 @@ Pro použití C knihoven z Pythonu je lepší použít [CFFI].
 Ale když už píšete kód v Cythonu
 a potřebujete zavolat nějakou C funkci, můžete to udělat takto:
 
-```python
-cdef extern from "stdlib.h":
-    int rand()
-    void srand(long int seedval)
+    cdef extern from "stdlib.h":
+        int rand()
+        void srand(long int seedval)
 
-cdef extern from "time.h":
-    long int time(int)
+    cdef extern from "time.h":
+        long int time(int)
 
-srand(time(0))
-print(rand())
-```
+    srand(time(0))
+    print(rand())
 
 
 pyximport a %%cython
@@ -740,9 +701,7 @@ pyximport a %%cython
 Pro interaktivní práci vJupyter Notebook má Cython vlastní „magii“.
 Na začátku Notebooku můžeme zadat:
 
-```python
-%load_ext cython
-```
+    %load_ext cython
 
 a potom můžeme na začátku kterékoli buňky zadat `\%\%cython`:
 
@@ -750,12 +709,10 @@ a potom můžeme na začátku kterékoli buňky zadat `\%\%cython`:
 procenta pro speciální účel a bez nich se to rozbije.
 Uvítáme fix v pull requestu.)
 
-```python
-%%cython
+    %%cython
 
-cpdef int mul(int a, int b):
-    return a * b
-```
+    cpdef int mul(int a, int b):
+        return a * b
 
 Kód v takové buňce pak Notebook zkompiluje Cythonem, a funkce/proměnné v něm
 nadefinované dá k dispozici.
@@ -766,13 +723,10 @@ Další zkratka je modul `pyximort`, který dává možnost importovat moduly `.
 přímo: hledají se podobně jako `.py` nebo `.so`, a před importem se zkompilují.
 Zapíná se to následovně:
 
-```python
-import pyximport
-pyximport.install()
+    import pyximport
+    pyximport.install()
 
-import demo
-```
-
+    import demo
 
 Video
 -----
@@ -795,18 +749,12 @@ Vaším úkolem je zrychlit pomocí Cythonu úkol z předchozího cvičení tak,
 
 Následující příkazy musí po instalaci závislostí z `requirements.txt` fungovat:
 
-```
-python setup.py build_ext -i  # sestaví modul napsaný v Cythonu
-python -m pytest  # pustí testy
-python -c 'from maze import analyze; analyze(...)'  # lze importovat a použít z Pythonu
-```
+    python setup.py build_ext -i  # sestaví modul napsaný v Cythonu
+    python -m pytest  # pustí testy
+    python -c 'from maze import analyze; analyze(...)'  # lze importovat a použít z Pythonu
  
 Nepoužívejte pyximport.
 
 Pokud řešení úlohy z minula nemáte, nebo si např. chcete rozšířit testy o ty naše,
 můžete použít [naše řešení minulé úlohy](https://github.com/encukou/maze).
 Nezapomeňte na splnění podmínek licence.
-
-{% endfilter %}
-
-{% endblock %}
