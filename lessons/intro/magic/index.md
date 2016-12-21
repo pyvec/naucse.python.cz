@@ -167,7 +167,7 @@ add = register_operator(add)
 Chování samotného `@` je tedy celkem triviální.
 Magie (složitost) spočívá v tom, že dekorátor je většinou funkce vyššího řádu:
 bere jinou funkci jako argument, a taky jinou funkci vrací.
-V případě registrace vrací stejnou funkci jako dostala – ale to není vyžadováno.
+V případě registrace vrací stejnou funkci jako dostala – ale to není povinné.
 
 Často se setkáme s dekorátory, které dekorovanou funkci nějak modifikují.
 Například můžeme napsat dekorátor, který dělá něco velice nepythonistického:
@@ -194,8 +194,8 @@ print(add(1.0, 2.0))
 
 Takto funguje většina dekorátorů, které nějak mění chování dané funkce:
 nadefinují funkci novou.
-S ale narazí na jeden problém: nově nadefinovaná funkce má vlastní jméno
-(a dokuentační řetězec, a podobné informace), což kazí iluzi, že jsme
+S tím ale narazí na jeden problém: nově nadefinovaná funkce má vlastní jméno
+(a dokumentační řetězec, a podobné informace), což kazí iluzi, že jsme
 původní funkci jen trošku změnili:
 
 ```python
@@ -309,7 +309,7 @@ print(palette.dark_red)
 
 Metoda `__getattr__` je většinou tak trochu kanón na vrabce: ve většině případů nepotřebujeme nastavit chování *všech* neexistujících atributů, ale jenom jednoho.
 Například máme třídu pro 2D bod s atributy `x` a `y`, a potřebujeme i atribut pro dvojici `(x, y)`.
-Toto se čast dělá pomocí dekorátoru `property`:
+Toto se často dělá pomocí dekorátoru `property`:
 
 ```python
 class Point:
@@ -334,8 +334,7 @@ Nejlépe se deskriptory vysvětlí na příkladu:
 # (Omluvte prosím češtinu v kódu)
 
 class Descriptor2D:
-    """Popisuje atribut, který kombinuje dva jiné atributy do dvojice
-    """
+    """Popisuje atribut, který kombinuje dva jiné atributy do dvojice"""
 
     def __init__(self, name1, name2):
         self.name1 = name1
@@ -371,10 +370,10 @@ print(rect.size)
 print(Rect.pos)
 ```
 
-Deskriptory jsou tedy součást třídy – atributy s nějakým jménem. Popisují jak se bude přistupovat k atributu daného jména.
+Deskriptory jsou tedy součást třídy – atributy s nějakým jménem. Popisují, jak se bude přistupovat k atributu daného jména.
 
 Existují dva druhy deskriptorů: *data descriptor* a *non-data descriptor*.
-Liší se v tom, jestli popisují jen jak se daný atribut *čte*, nebo i jak se do něj *zapisuje*.
+Liší se v tom, jestli popisují jen, jak se daný atribut *čte*, nebo i jak se do něj *zapisuje*.
 Výše uvedený deskriptor je *non-data*: ovládá jen čtení; zápis funguje jako u normálních atributů:
 přepíše aktuální hodnotu:
 
@@ -383,7 +382,7 @@ rect.pos = 'haha'
 print(rect.pos)
 ```
 
-Abychom tomu zabránili, můžeme na deskriptoru nadefinovat speciální metodu `__set__` (nebo `__delete__`), která popisuje
+Abychom tomu zabránili, můžeme na deskriptoru nadefinovat speciální metodu `__set__` (nebo `__delete__`), která popisuje,
 jak se atribut nastavuje (resp. maže), a tím z něj vytvořit *data descriptor*:
 
 
@@ -421,15 +420,15 @@ Popisuje jak čtení, tak zápis atributu – pokud mu nenastavíme funkci pro z
 
 Častý příklad *non-data* deskriptoru je *funkce*.
 Každá funkce totiž funguje jako deskriptor: má speciální metodu `__get__`, která zajišťuje, že pokud je nastavena na třídě, daným atributem nedostaneme *funkci*, ale *metodu* s „předvyplněným“ parametrem `self`.
-Kdyby byly funkce definované jako třída v Pythonu (což samozřejmě nejsou), mohly by vypadat nějak takto:
+Kdyby byly funkce (XXX metody?) definované jako třída v Pythonu (což samozřejmě nejsou), mohly by vypadat nějak takto:
 
 ```python
 class Function:
     def __init__(self, code):
-        self.code
+        self.code = code  # XXX ?
 
     def __call__(self, *args, **kwargs):
-        code.run(*args, **kwargs)
+        self.code.run(*args, **kwargs)  # XXX ?
 
     def __get__(self, instance, cls):
         if instance is not None:
