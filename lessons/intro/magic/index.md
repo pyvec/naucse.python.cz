@@ -541,7 +541,7 @@ class Singleton:
 assert Singleton() is Singleton()
 ```
 
-Podobný trik použít pro třídu podobnou `bool`, která má pouze dvě instance:
+Podobný trik lze použít pro třídu podobnou `bool`, která má pouze dvě instance:
 `bool(1) is bool(2)`.
 
 Metoda `__new__` se hodí, když chceme dědit z neměnitelné (*immutable*)
