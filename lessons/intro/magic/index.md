@@ -681,6 +681,53 @@ Toho se dá využít třeba v mapování objektů na databázi (např. v Django 
 nebo SQLAlchemy), kdy chceme, aby pořadí sloupců tabulky odpovídalo
 tomu, jak jsou sloupce/atributy nadefinovány ve třídě.
 
+A další
+-------
+
+Další (bohužel?) oblíbený trik je vnuknutí magických schopností modulu.
+
+Naimportované moduly Python ukládá do slovníku `sys.modules`, aby při dalším
+importu nemusel načítat znovu – `sys.modules` tedy slouží jako cache.
+A tuto cache můžeme změnit (tzv. *cache poisoning*) – přidat si do ní
+vlastní „modul“, který ovšem vůbec nemusí být modul, a tudíž může umět věci,
+které moduly normálně neumí:
+
+```python
+import sys
+
+sys.modules['fake'] = 'a string'
+
+...
+
+import fake
+
+print(fake[2])
+```
+
+Když toto uděláme přímo z modulu, uživatel naší knihovny dostane podstrčený
+objekt hned při prvním importu.
+K tomu se hodí proměnná `__name__`, jméno aktuálního modulu:
+
+```python
+sys.modules[__name__] = ReplacementModule()
+```
+
+
+Jiný trik je registrace „built-in“ („superglobální”) proměnné:
+
+```
+import builtins
+builtins.ANSWER = 42
+
+...
+
+# Třeba v jiném modulu
+print(ANSWER)
+```
+
+Tímto způsobem se dají i předefinovat vestavěné funkce, což může být někdy
+užitečné pro ladění. V produkčním kódu to ale, prosím, nedělejte.
+
 
 Úkol
 ----
