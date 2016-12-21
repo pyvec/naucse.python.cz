@@ -519,8 +519,167 @@ Kompletní implementace je např. ve frameworku Pyramid jako [pyramid.decorator.
 Metatřídy
 ---------
 
-XXX: Metaclass
-XXX: __init__, __new__, __prepare__
+Poslední věc, na kterou se podíváme, jsou metatřídy.
+
+Začneme zlehka: pokud při definici třídy zadáme nějakou funkci jako pojemnovaný
+parametr `metaclass`, funkce se zavolá s informacemi potřebnými pro vytvoření
+třídy.
+Ty můžeme použít, nebo úplně ignorovat a vrátit něco jiného:
+
+```python
+def fake_metaclass(name, bases, namespace):
+    return 42
+
+class NotAClass(metaclass=fake_metaclass):
+    pass
+
+print(NotAClass)
+```
+
+Argumenty, které „metatřída” dostane, jsou tři: jméno třídy, *n*-tice
+nadtříd, a jmenný prostor – slovník s proměnnými, které vznikly vykonáním
+těla příkazu `class`.
+(Ve jmenném prostoru jsou implicitně nastavené záznamy `__module__`
+a `__qualname__`, které přidává samotný příkaz `class`.)
+
+```python
+def fake_metaclass(name, bases, namespace):
+    print('name:', name)
+    print('bases:', bases)
+    print('namespace:', namespace)
+    return 42
+
+class NotAClass(int, metaclass=fake_metaclass):
+    foo = 123
+    def inc(self):
+        return self + 1
+```
+
+Když `metaclass` nezadáme, použije se výchozí *metatřída*, tedy třída třídy.
+V Pythonu je to `type`.
+Pokud ji zavoláme s vhodnými argumenty, dostaneme normální třídu:
+
+```python
+MyInt = type('MyInt', (int, ), {'foo': 123, 'inc': lambda self: self + 1})
+
+three = MyInt(3)
+print(three.inc())
+```
+
+Kromě toho se `type` dá zavolat i s jedním argumentem; v tom případě vrátí
+typ (třídu) daného argumentu.
+(Tohle chování – funkce která dělá úplně různé věci v závislosti na počtu
+argumentů – v Pythonu čast nevidíme.
+Je to nešťastná výjimka, která přežívá z historických důvodů.)
+
+Pojďme se podívat na třídy několika základích objektů:
+
+```python
+# Třída základních objektů
+print(type(1))
+print(type("abc"))
+
+# Třída třídy – metatřída.
+# Třída většiny tříd v Pythonu je `type`
+print(type(int))
+print(type(type(1)))
+
+# Třída třídy třídy
+# Samotná `type` je jedna z té většiny tříd; její třída je `type`
+print(type(type))
+print(type(type(type(1))))
+```
+
+Objekty třídy `type` (tedy třídy) se normálně tvoří příkazem `class`.
+Explicitně to můžeme nasat takto:
+
+```python
+class NormalClass(metaclass=type):
+    foo = 123
+```
+
+Když budeme chtít chování třídy změnit, budeme postupovat podobně jako
+u jiných objektů.
+Kdybych chtěl celé číslo, přes které jde iterovat, podědím z `int`
+a předefiuji `__iter__`.
+Pokud chci třídu, přes kterou jde iterovat (tedy ne přes objekty dané
+třídy – přes třídu samotnou!), podědím z `type` a předefiuji `__iter__`:
+
+```python
+class IterableMeta(type):
+    def __init__(cls, name, bases, namespace):
+        cls.items = sorted(n for n in namespace
+                           if not n.startswith('__'))
+
+    def __iter__(cls):
+        return iter(cls.items)
+
+class SimpleEnum(metaclass=IterableMeta):
+    a = 1
+    b = 2
+    c = 3
+    d = 4
+
+print(SimpleEnum.a)
+print(list(SimpleEnum))
+```
+
+(V metatřídě se většinou používá `cls` místo `self`, aby bylo jasné že
+instance, se kterou pracujeme, je třída – ale to je jen konvence.)
+
+Metatřídy se dědí.
+Pokud v příkazu `class` nezadám explicitně `metaclass`, použije
+se metatřída nadtřídy:
+
+```python
+class AnotherEnum(SimpleEnum):
+    x = 10
+    y = 20
+    z = 30
+
+print(AnotherEnum.a)
+print(list(AnotherEnum))
+```
+
+Tímto způsobem lze vnuknout třídám magické schopnosti, bez toho aby
+uživatel naší knihovny musel použít `metaclass` – stačí mu podědit z námi
+připravené třídy.
+
+Další věc kterou metatřídy umí, je připravit počáteční jmenný prostor.
+Medoda `__init__` (nebo `__new__`) v metatřídě normálně dostane slovník,
+což nemusí být vždy to, co potřebuji.
+Můžu si chtít třeba „zapamatovat” pořadí, v jakém byly jednotlivé atributy
+vytvořeny – a slovník toto pořadí neuchovává.
+
+Na to existuje speciální metoda `__prepare__`, která se, když na metatřídě
+existuje, zavolá pro vytvoření jmenného prostoru:
+
+```python
+from collections import OrderedDict
+
+class OrderRememberingMeta(type):
+    def __prepare__(self, name):
+        return OrderedDict()
+
+    def __init__(cls, name, bases, namespace):
+        cls.items = list(namespace)
+
+    def __iter__(cls):
+        return iter(cls.items)
+
+class OrderedEnum(metaclass=OrderRememberingMeta):
+    first = 1
+    second = 2
+    third = 3
+    fourth = 4
+    fifth = 5
+
+print(list(OrderedEnum))
+```
+
+Toho se dá využít třeba v mapování objektů na databázi (např. v Django Models
+nebo SQLAlchemy), kdy chceme, aby pořadí sloupců tabulky odpovídalo
+tomu, jak jsou sloupce/atributy nadefinovány ve třídě.
 
 
 Úkol
