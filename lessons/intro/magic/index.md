@@ -39,7 +39,7 @@ Zvlášť složité je promyslet interakci několika „magických“ principů 
 
 Následující principy proto není dobré při psaní knihoven používat příliš často.
 
-\* *Taková třída dokonce (existuje ve standardní knihovně)[https://docs.python.org/3/library/pathlib.html]*
+\* *Taková třída dokonce [existuje ve standardní knihovně](https://docs.python.org/3/library/pathlib.html).*
 
 
 Speciální metody
@@ -52,7 +52,7 @@ Speciální metody jsou popsané v [dokumentaci](https://docs.python.org/3/refer
 Doporučuji si předtím, než nějakou naimplementujete, dokumentaci přečíst.
 
 Metody pro předefinování aritmetických operátorů:
-`__add__`, `__sub__`, `__mul__`, `__div__`, `__floordiv__`, `__pow__`, `__matmul__`, `__lshift__`, `__rshift__`, `__or__`, __xor__` a varianty s `r` a `i` (`__radd__`, `__iadd__`, atd.)
+`__add__`, `__sub__`, `__mul__`, `__div__`, `__floordiv__`, `__pow__`, `__matmul__`, `__lshift__`, `__rshift__`, `__or__`, `__xor__` a varianty s `r` a `i` (`__radd__`, `__iadd__`, atd.)
 `__neg__`, `__pos__`, `__abs__`, `__invert__`.
 
 Metody pro předefinování porovnávání:
