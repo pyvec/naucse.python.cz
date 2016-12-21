@@ -516,6 +516,51 @@ print(vect.length)
 Kompletní implementace je např. ve frameworku Pyramid jako [pyramid.decorator.reify](http://docs.pylonsproject.org/projects/pyramid/en/latest/_modules/pyramid/decorator.html).
 
 
+Konstruktor
+-----------
+
+Třídy v Pythonu můžou mít *konstruktor* – funkci, která se zavolá, aby
+vytvořila objekt daného typu.
+Toto není známá metoda `__init__` – ta objekt nevytváří, ta dostane už
+předpřipravený `self`, který jen naplní atributy.
+Opravdový konstruktor se jmenuje `__new__`, a chová se jako `classmethod`:
+místo `self` bere třídu, jejíž instanci má vytvořit.
+
+Opravdový konstruktor se „hodí“ pro vytváření *singletonů*, tříd které mají jen
+jednu instanci:
+
+```python
+class Singleton:
+    def __new__(cls):
+        try:
+            return cls._instance
+        except AttributeError:
+            cls._instance = super().__new__(cls)
+            return cls._instance
+
+assert Singleton() is Singleton()
+```
+
+Podobný trik použít pro třídu podobnou `bool`, která má pouze dvě instance:
+`bool(1) is bool(2)`.
+
+Metoda `__new__` se hodí, když chceme dědit z neměnitelné (*immutable*)
+třídy jako `tuple`.
+Metoda `__init__` sice dostane `self`, ale cokoli z nadtřídy už nemůže měnit.
+Je ale možné předefinovat `__new__`.
+
+Normálně bere `tuple` jediný argument, `tuple([1, 2])`.
+Chceme-li brát dva, dá se to udělat takto:
+
+```python
+class Point(tuple):
+    def __new__(cls, x, y):
+        return super().__new__(cls, (x, y))
+
+print(Point(3, 4))
+```
+
+
 Metatřídy
 ---------
 
