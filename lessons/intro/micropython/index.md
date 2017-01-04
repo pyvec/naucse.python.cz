@@ -202,6 +202,7 @@ ESSID = ...
 PASSWORD = ...
 CHANNEL = 3
 
+import network
 ap_if = network.WLAN(network.AP_IF)
 ap_if.active(True)
 ap_if.config(essid=ESSID, password=PASSWORD, authmode=network.AUTH_WEP, channel=CHANNEL)
@@ -215,13 +216,66 @@ import webrepl_setup
 S počítačem se připojte na stejnou síť, a na stránce webrepl otevřené výše se připojte k IP vypsané z `ifconfig()`.
 Měli byste dostat konzoli, jako přes USB.
 
-
-## Webová komunikace
-
-XXX: stahování přes HTTP; #cheerlights
-
-
 ## Souborový systém
 
-XXX: main.py
+Pomocí WebREPL lze nejen zadávat interaktivní příkazy, ale i nahrávat soubory.
+MicroPython pro ESP8266 obsahuje souborový systém nad flash pamětí,
+se kterým pracují standardní pythonní funkce jako `open` a `os.listdir`.
+Nahrajete-li soubor s příponou `.py`, lze jej pak v kódu importovat.
+
+Existuje-li soubor `main.py`, naimportuje se automaticky po zapnutí (či resetu)
+zařízení.
+Není ho pak potřeba připojovat k počítači – stačí powerbanka nebo 3,3V zdroj.
+
+
+## Komunikace
+
+MicroPython pro ESP8266 nemá (z důvodu šetření místem) knihovnu pro HTTP.
+Dá se buď nějaká stáhnout a nainstalovat, nebo použít nízkoúrovňový `socket`.
+Následující kód (převzatý z velké míry z [oficiální dokumentace]) stáhne data
+ze stránky [api.thingspeak.com/channels/1417/field/2/last.txt](http://api.thingspeak.com/channels/1417/field/2/last.txt), kde se objevuje poslední barva tweetnutá s hashtagem `#cheerlights`.
+
+[oficiální dokumentace]: http://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/network_tcp.html#http-get-request
+
+```python
+import socket
+
+host = 'api.thingspeak.com'
+path = 'channels/1417/field/2/last.txt'
+
+url = 'http://{}/{}'.format(host, path)
+ai = socket.getaddrinfo(host, 80)
+print('Address infos:', ai)
+addr = ai[0][-1]
+
+print('Connect address:', addr)
+
+def download_color():
+    s = socket.socket()
+    s.connect(addr)
+    s.send(bytes('GET /%s HTTP/1.0\r\nHost: %s\r\n\r\n' % (path, host), 'utf8'))
+    color = ''
+    data = ''
+    while True:
+        chunk = s.recv(100)
+        if chunk:
+            data += chunk.decode('utf-8')
+        else:
+            break
+    s.close()
+
+    head, body = data.split('\r\n\r\n', 2)
+
+    if body and body[0] == '#':
+        color = body[1:7]
+
+        red = int(color[0:2], 16)
+        green = int(color[2:4], 16)
+        blue = int(color[4:6], 16)
+
+        return red, green, blue
+    return 0, 0, 0
+```
+
+Opravdové projekty používají lehčí protokoly než HTTP, například MQTT.
 
