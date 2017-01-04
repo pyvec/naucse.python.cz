@@ -29,7 +29,7 @@ V paměti je už nahraný firmware MicroPython; pojďme se k němu připojit.
 ## Drivery a připojení
 
 Postup připojení je jiný pro každý systém:
-* Linux: Driver už je nainstalovaný; nainstalujte `picocom`, přidejte se do skupiny jako `dialout` (Fedora, nové Ubuntu) nebo `uucp` (nějaký Debian) a zadej `picocom -b 115200 --flow n /dev/ttyUSB0`
+* Linux: Driver už je nainstalovaný; nainstalujte `picocom`, přidejte se do skupiny jako `dialout` (Fedora, nové Ubuntu) nebo `uucp` (nějaký Debian) (správnou skupinu zjistíte pomocí `ls -l /dev/ttyUSB0`) a zadejte `picocom -b 115200 --flow n /dev/ttyUSB0`
 * Windows: Připojte se pomocí [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html) (`putty.exe`). Nastavení:
   * Session:Connection Type: Serial
   * Serial/Serial line: COM port (najdeš ve správci zařízení)
