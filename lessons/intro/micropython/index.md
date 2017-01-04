@@ -163,7 +163,7 @@ Pokud tento příkaz ještě nefunguje, je potřeba použít vývojovou verzi p�
 
 Po instalaci esptool si stáhněte nejnovější stabilní firmware pro ESP8266 z [micropython.org/download](http://micropython.org/download#esp8266), a zadejte:
 
-    esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash 0 ~/dev/esptool/esp8266-20161110-v1.8.6.bin
+    esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash 0 esp8266-20161110-v1.8.6.bin
 
 Hodnotu pro `--port` doplňte podle svého systému – např. `/dev/tty.wchusbserial1420` na Macu, `COM3` na Windows.
 
