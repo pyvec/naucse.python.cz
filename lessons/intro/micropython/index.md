@@ -139,9 +139,9 @@ Kód:
 from machine import Pin
 from neopixel import NeoPixel
 
-POCET_LED = 8
+NUM_LEDS = 8
 pin = Pin(2, Pin.OUT)
-np = NeoPixel(pin, POCET_LED)
+np = NeoPixel(pin, NUM_LEDS)
 np[0] = (255, 255, 255)
 np.write()
 ```
