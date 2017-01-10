@@ -153,13 +153,9 @@ Co znamenají čísla 0 a 255 na posledním řádku, jistě zjistíte experiment
 
 Na našich destičkách je MicroPython už nahraný, ale kdybyste si koupili vlastní NodeMCU, nebo chtěli firmware aktualizovat, budete ho potřebovat umět nahrát.
 
-K tomu je potřeba nástroj `esptool`, který se, až vyjde verze 1.3, bude dát nainstalovat pomocí:
+K tomu je potřeba nástroj `esptool`, který se dá nainstalovat pomocí:
 
     python -m pip install esptool
-
-Pokud tento příkaz ještě nefunguje, je potřeba použít vývojovou verzi přímo z GitHubu:
-
-    python -m pip install git+https://github.com/espressif/esptool
 
 Po instalaci esptool si stáhněte nejnovější stabilní firmware pro ESP8266 z [micropython.org/download](http://micropython.org/download#esp8266), a zadejte:
 
