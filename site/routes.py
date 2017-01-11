@@ -80,36 +80,21 @@ def course_lection(course, lection, page):
         return url_for('course_lection', course=course, lection=lection, page=page)
 
 
-    if info['style'] == "md":
-        file = open(template, 'r')
-        content = file.read()
-        title = info['course'] + ': ' + info['title']
+    file = open(template, 'r')
+    content = file.read()
+    title = info['course'] + ': ' + info['title']
 
-        try:
+    try:
+        if info['style'] == "md":
             return render_template('templates/markdown_page.html', static=lection_static_url, lection=lection_url, title=title, content=content)
-
-        except TemplateNotFound:
-            abort(404)
-
-        file.close()
-
-    elif info['style'] == "ipynb":
-        file = open(template, 'r')
-        content = file.read()
-        title = info['course'] + ': ' + info['title']
-
-        try:
+        elif info['style'] == "ipynb":
             return render_template('templates/ipython_page.html', static=lection_static_url, lection=lection_url, title=title, content=content)
-
-        except TemplateNotFound:
-            abort(404)
-
-    else:
-        try:
+        else:
             return render_template(template, static=lection_static_url, lection=lection_url)
+    except TemplateNotFound:
+        abort(404)
 
-        except TemplateNotFound:
-            abort(404)
+    file.close()
 
 
 # Static files in lectures.
@@ -118,4 +103,3 @@ def lection_static(course, lection, path):
     directory = os.path.join(app.root_path, 'courses')
     filename = os.path.join(course, lection, 'static', path)
     return send_from_directory(directory, filename)
-
