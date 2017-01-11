@@ -1,21 +1,12 @@
-"""Create or serve the naucse.python.cz website
-"""
-
-import sys
-if sys.version_info[0] <3 :
-    raise RuntimeError('We love Python 3.')
-
 import os
-
 from flask import Flask, render_template, url_for, send_from_directory
-from flask import redirect, abort
-from elsa import cli
+from flask import abort
 from jinja2 import PrefixLoader, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound
-from markdown import markdown
-import textwrap
-import jinja2
-import yaml
+
+
+from utils import read_yaml
+
 
 app = Flask('naucsepythoncz', template_folder="")
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -25,29 +16,6 @@ app.jinja_loader = PrefixLoader({
     'templates': FileSystemLoader(os.path.join(app.root_path, 'templates')),
     'courses': FileSystemLoader(os.path.join(app.root_path, 'courses')),
 })
-
-
-################################
-###### @TEMPLATE_FUNCTION ######
-
-def template_function(func):
-    app.jinja_env.globals[func.__name__] = func
-    return func
-
-
-@template_function
-def static(filename):
-    return url_for('static', filename=filename)
-
-
-@template_function
-def course_url(course):
-    return url_for('course_page', course=course)
-
-
-@template_function
-def lection_url(course, lection, page='index'):
-    return url_for('course_lection', course=course, lection=lection, page=page)
 
 
 ########################
@@ -63,6 +31,18 @@ def index():
 @app.route('/about/')
 def about():
     return render_template("templates/about.html")
+
+
+#  Organizer's Guide of Czech Python Community 
+@app.route('/organizing/')
+def organizing():
+    return render_template("templates/organizing.html")
+
+
+#  Links to more courses and materials.
+@app.route('/links/')
+def links():
+    return render_template("templates/links.html")
 
 
 # Page with listed online courses.
@@ -139,28 +119,3 @@ def lection_static(course, lection, path):
     filename = os.path.join(course, lection, 'static', path)
     return send_from_directory(directory, filename)
 
-
-###################
-###### OTHER ######
-
-# Markdown is working.
-@app.template_filter('markdown')
-def convert_markdown(text):
-    text = textwrap.dedent(text)
-    result = jinja2.Markup(markdown(text))
-
-    # Markdown code blocks are translated literally, this solves problem with entities.
-    result = result.replace('&amp;', '&').replace('&gt;', '>').replace('&#39;', "'").replace('&#34;', '"').replace('&lt;', '<')
-    
-    return result
-
-
-# How to read yaml file.
-def read_yaml(filename):
-    with open(filename, encoding='utf-8') as file:
-        data = yaml.safe_load(file)
-    return data
-
-
-if __name__ == '__main__':
-    cli(app, base_url='http://naucse.python.cz')
