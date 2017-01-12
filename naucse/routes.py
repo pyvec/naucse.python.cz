@@ -8,13 +8,13 @@ from jinja2.exceptions import TemplateNotFound
 from utils import read_yaml
 
 
-app = Flask('naucsepythoncz', template_folder="")
+app = Flask('naucsepythoncz')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
 app.jinja_loader = PrefixLoader({
-    'templates': FileSystemLoader(os.path.join(app.root_path, 'templates')),
-    'courses': FileSystemLoader(os.path.join(app.root_path, 'courses')),
+    'templates': FileSystemLoader(os.path.join(app.root_path, 'naucse/templates')),
+    'courses': FileSystemLoader(os.path.join(app.root_path, 'courses'))
 })
 
 
@@ -31,18 +31,6 @@ def index():
 @app.route('/about/')
 def about():
     return render_template("templates/about.html")
-
-
-#  Organizer's Guide of Czech Python Community 
-@app.route('/organizing/')
-def organizing():
-    return render_template("templates/organizing.html")
-
-
-#  Links to more courses and materials.
-@app.route('/links/')
-def links():
-    return render_template("templates/links.html")
 
 
 # Page with listed online courses.
