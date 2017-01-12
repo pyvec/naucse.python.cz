@@ -1,8 +1,8 @@
 from flask import url_for
 
 
-from routes import app
-from filters import convert_markdown
+from naucse.routes import app
+from naucse.filters import convert_markdown
 
 
 def template_function(func):

@@ -5,7 +5,7 @@ from jinja2 import PrefixLoader, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound
 
 
-from utils import read_yaml
+from naucse.utils import read_yaml
 
 
 app = Flask('naucsepythoncz')

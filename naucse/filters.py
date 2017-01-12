@@ -2,7 +2,7 @@ from markdown import markdown
 from textwrap import dedent
 from jinja2 import Markup
 
-from routes import app
+from naucse.routes import app
 
 
 # Markdown is working.

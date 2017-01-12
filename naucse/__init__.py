@@ -4,10 +4,10 @@ if sys.version_info[0] <3 :
 
 from elsa import cli
 
-from routes import app
-from templates import template_function, static, course_url, lection_url
-from filters import convert_markdown
-from utils import read_yaml
+from naucse.routes import app
+from naucse.templates import template_function, static, course_url, lection_url
+from naucse.filters import convert_markdown
+from naucse.utils import read_yaml
 
 
 def main():
