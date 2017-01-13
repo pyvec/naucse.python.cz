@@ -43,9 +43,18 @@ def courses():
 @app.route('/courses/<course>/')
 def course_page(course):
     template = 'courses/{}/index.html'.format(course)
+    plan = read_yaml("courses/" + course + "/plan.yml")
+
+    lesson_dict = {}
+
+    # Load dictionary of lessons names.
+    for lesson in plan:
+        for mat in lesson['materials']:
+            info_file = read_yaml("courses/" + course + "/" + mat['link'] + "/info.yml")
+            lesson_dict[mat['link']] = info_file['title']
 
     try:
-        return render_template(template, plan=read_yaml("courses/" + course + "/plan.yml"))
+        return render_template(template, plan=read_yaml("courses/" + course + "/plan.yml"), names=lesson_dict)
     except TemplateNotFound:
         abort(404)
 
@@ -91,3 +100,4 @@ def lesson_static(course, lesson, path):
     directory = os.path.join(app.root_path, 'courses')
     filename = os.path.join(course, lesson, 'static', path)
     return send_from_directory(directory, filename)
+
