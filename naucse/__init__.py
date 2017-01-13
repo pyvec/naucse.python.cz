@@ -5,7 +5,7 @@ if sys.version_info[0] <3 :
 from elsa import cli
 
 from naucse.routes import app
-from naucse.templates import template_function, static, course_url, lection_url
+from naucse.templates import template_function, static, course_url, lesson_url
 from naucse.filters import convert_markdown
 from naucse.utils import read_yaml
 

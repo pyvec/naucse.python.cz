@@ -50,22 +50,22 @@ def course_page(course):
         abort(404)
 
 
-# Lection page.
-@app.route('/courses/<course>/<lection>/', defaults={'page': 'index'})
-@app.route('/courses/<course>/<lection>/<page>/')
-def course_lection(course, lection, page):
-    info = read_yaml("courses/" + course + "/" + lection + "/info.yml")
-    template = 'courses/{}/{}/{}.{}'.format(course, lection, page, info['style'])
+# Lesson page.
+@app.route('/courses/<course>/<lesson>/', defaults={'page': 'index'})
+@app.route('/courses/<course>/<lesson>/<page>/')
+def course_lesson(course, lesson, page):
+    info = read_yaml("courses/" + course + "/" + lesson + "/info.yml")
+    template = 'courses/{}/{}/{}.{}'.format(course, lesson, page, info['style'])
 
 
-    # Static in the specific lection.
-    def lection_static_url(path):
-        return url_for('lection_static', course=course, lection=lection, path=path)
+    # Static in the specific lesson.
+    def lesson_static_url(path):
+        return url_for('lesson_static', course=course, lesson=lesson, path=path)
 
 
-    # Link to the specific lection.
-    def lection_url(lection):
-        return url_for('course_lection', course=course, lection=lection, page=page)
+    # Link to the specific lesson.
+    def lesson_url(lesson):
+        return url_for('course_lesson', course=course, lesson=lesson, page=page)
 
 
     file = open(template, 'r')
@@ -74,20 +74,20 @@ def course_lection(course, lection, page):
 
     try:
         if info['style'] == "md":
-            return render_template('templates/markdown_page.html', static=lection_static_url, lection=lection_url, title=title, content=content)
+            return render_template('templates/markdown_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
         elif info['style'] == "ipynb":
-            return render_template('templates/ipython_page.html', static=lection_static_url, lection=lection_url, title=title, content=content)
+            return render_template('templates/ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
         else:
-            return render_template(template, static=lection_static_url, lection=lection_url)
+            return render_template(template, static=lesson_static_url, lesson=lesson_url)
     except TemplateNotFound:
         abort(404)
 
     file.close()
 
 
-# Static files in lectures.
-@app.route('/courses/<course>/<lection>/static/<path:path>')
-def lection_static(course, lection, path):
+# Static files in lessons.
+@app.route('/courses/<course>/<lesson>/static/<path:path>')
+def lesson_static(course, lesson, path):
     directory = os.path.join(app.root_path, 'courses')
-    filename = os.path.join(course, lection, 'static', path)
+    filename = os.path.join(course, lesson, 'static', path)
     return send_from_directory(directory, filename)
