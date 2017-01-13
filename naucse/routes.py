@@ -50,8 +50,14 @@ def course_page(course):
     # Load dictionary of lessons names.
     for lesson in plan:
         for mat in lesson['materials']:
-            info_file = read_yaml("courses/" + course + "/" + mat['link'] + "/info.yml")
-            lesson_dict[mat['link']] = info_file['title']
+            if len(mat['link'].split('/')) != 1:
+                the_course = mat['link'].split('/')[0]
+                link = mat['link'].split('/')[1]
+            else:
+                link = mat['link']
+                the_course = course
+            info_file = read_yaml("courses/" + the_course + "/" + link + "/info.yml")
+            lesson_dict[mat['link']] = (the_course, info_file['title'])
 
     try:
         return render_template(template, plan=read_yaml("courses/" + course + "/plan.yml"), names=lesson_dict)
@@ -100,4 +106,3 @@ def lesson_static(course, lesson, path):
     directory = os.path.join(app.root_path, 'courses')
     filename = os.path.join(course, lesson, 'static', path)
     return send_from_directory(directory, filename)
-
