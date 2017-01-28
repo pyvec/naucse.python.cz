@@ -125,7 +125,7 @@ pwm = PWM(led_pin, freq=50, duty=512)
 Na destičku se dá připojit spousta různých komponent. Jen je vždy potřeba ověřit v [dokumentaci], že existuje knihovna pro daný protokol na MicroPython *pro ESP8266*.
 My připojíme pásek s moduly WS2812. Každý modul obsahuje tři LED a čip, který umožňuje celý pásek ovládat jedním datovým pinem.
 
-[dokumnetaci]:http://docs.micropython.org/en/latest/esp8266/
+[dokumentaci]:http://docs.micropython.org/en/latest/esp8266/
 
 Zapojení:
     
