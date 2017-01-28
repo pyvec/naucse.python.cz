@@ -348,7 +348,7 @@ Pomocí argumentů půjde nastavit:
 ### Vlastní nápad
 
 Můžete využít i jiné API (např. místní [Sirius] či [KOSapi]) a vymyslet vlastní aplikaci.
-Zadání vám ale musí schválit cvičící, protože v dalších cvičeních na tuto
+Zadání vám ale musí schválit cvičící **už na cvičení**, protože v dalších cvičeních na tuto
 aplikaci budeme nabalovat další a další funkce.
 
 [Sirius]: https://github.com/cvut/sirius/wiki
