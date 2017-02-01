@@ -36,7 +36,7 @@ def about():
 # Page with listed online courses.
 @app.route('/courses/')
 def courses():
-    return render_template("courses/index.html", courses=read_yaml("courses/courses.yml"))
+    return render_template("courses/index.html", courses=read_yaml("courses/courses.yml"), title="Seznam online kurzů Pythonu")
 
 
 # Course page.
@@ -44,6 +44,7 @@ def courses():
 def course_page(course):
     template = 'courses/{}/index.html'.format(course)
     plan = read_yaml("courses/" + course + "/plan.yml")
+    title = (read_yaml("courses/courses.yml"))[course]['title']
 
     lesson_dict = {}
 
@@ -60,7 +61,7 @@ def course_page(course):
             lesson_dict[mat['link']] = (the_course, info_file['title'])
 
     try:
-        return render_template(template, plan=read_yaml("courses/" + course + "/plan.yml"), names=lesson_dict)
+        return render_template(template, plan=read_yaml("courses/" + course + "/plan.yml"), names=lesson_dict, title=title)
     except TemplateNotFound:
         abort(404)
 
@@ -93,7 +94,7 @@ def course_lesson(course, lesson, page):
         elif info['style'] == "ipynb":
             return render_template('templates/ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
         else:
-            return render_template(template, static=lesson_static_url, lesson=lesson_url)
+            return render_template(template, static=lesson_static_url, lesson=lesson_url, title=title)
     except TemplateNotFound:
         abort(404)
 
