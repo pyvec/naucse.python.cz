@@ -29,12 +29,12 @@ Nakonec vytvoř virtuální prostředí.
 {% set rootname = 'naucse-python' %}
 {%- endif -%}
 
-Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
+Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
 Může to být třeba <code>/home/<i>jméno</i>/{{ rootname }}</code>,
 neboli <code class="pythondir">~/{{ rootname }}</code>.
 Vytvoř ho a poznamenej si, kde je.
 
-Vytváříš-li adresář jinde, nebo s jiným názvem, tak kdykoli ve zbytku
+Vytváříš-li adresář jinde, nebo s jiným názvem, tak kdykoli ve zbytku
 materiálů uvidíš <code class="pythondir">~/{{ rootname }}</code>, doplň
 místo toho „svůj“ adresář.
 
@@ -60,7 +60,7 @@ $ python3 -m venv venv
 ```
 
 Tím se ti vytvořil adresář <code><span class="pythondir">~/{{ rootname }}</span>/venv</code>,
-ve kterém jsou soubory s virtuálním prostředím.
+ve kterém jsou soubory s virtuálním prostředím.
 Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
 Teď máš Python a virtuální prostředí nainstalované!

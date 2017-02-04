@@ -6,7 +6,7 @@ vylepšení, která se nám budou hodit, a proto stahuj jen verzi **3.6.0 nebo n
 
 Jak poznat, který instalátor je ten pravý?
 Pokud má tvůj počítač 64bitovou verzi Windows, stáhni si *Windows x86-64 executable installer*.
-Pokud máš starší počítač s 32bitovými Windows, stáhni si *Windows x86 executable installer*.
+Pokud máš starší počítač s 32bitovými Windows, stáhni si *Windows x86 executable installer*.
 
 !!! note ""
     Kde zjistíš, zda máš 32bitové nebo 64bitové Windows? Stačí otevřít nabídku
@@ -42,7 +42,7 @@ Až bude Python nainstalovaný, vytvoř virtuální prostředí.
 {% set rootname = 'naucse-python' %}
 {%- endif -%}
 
-Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
+Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
 Může to být třeba `C:\{{ rootname }}`.
 
 Zvolený adresář po vytvoření nesmíš přesouvat jinam – když to uděláš,
@@ -67,7 +67,7 @@ Pak vytvoř virtuální prostředí:
 ```
 
 Tím se nám vytvořil adresář <code><span class="pythondir">~/{{ rootname }}</span>\venv</code>,
-ve kterém jsou soubory s virtuálním prostředím.
+ve kterém jsou soubory s virtuálním prostředím.
 Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
 Tím máš Python a virtuální prostředí nainstalované!

@@ -1,7 +1,7 @@
 # Instalace Pythonu na Linux
 
 Nainstalovat Pyhon na Linux je většinou jednoduché.
-Jen existuje spousta druhů Linuxu, a máme s ním největší zkušenosti,
+Jen existuje spousta druhů Linuxu, a máme s ním největší zkušenosti,
 tak jsou tyhle instrukce trochu delší.
 Nezalekni se – většinu sekcí pravděpodobně přeskočíš :)
 
@@ -22,7 +22,7 @@ Objeví-li se „Python“ a verze nižší než 3.3,
 {% if var('run') -%}
 poraď se s koučem.
 {%- else -%}
-aktualizuj systém (nebo se poraď s někým, kdo to umí) a zkus to znovu.
+aktualizuj systém (nebo se poraď s někým, kdo to umí) a zkus to znovu.
 {%- endif %}
 
 Objeví-li se `bash: python3: command not found` nebo podobná chyba,
@@ -58,10 +58,10 @@ Abys zjistil{{a}} jestli je už je nainstalovaná, zadej příkaz:
 $ python3 -m tkinter
 ```
 
-Objeví-li se okýnko, je všechno v pořádku.
+Objeví-li se okýnko, je všechno v pořádku.
 Zavři ho a přejdi na [doinstalování `virtualenv`](#install-virtualenv).
 
-Jestli ne, nainstaluj ještě modul tkinter:
+Jestli ne, modul `tkinter` ještě nainstaluj:
 
 * Fedora:
   {% filter markdown(inline=True) %}
@@ -82,11 +82,11 @@ Používáš-li jinou distribuci, musíš si správné jméno blíčku najít na
 ## Doinstalování Virtualenv
 
 Novější verze Pythonu mají zabudovaný nástroj `venv`, který použijeme níže.
-Starší verze ho ale nemají (a některé distribuce Linuxu ho dokonce z Pythonu
+Starší verze ho ale nemají (a některé distribuce Linuxu ho dokonce z Pythonu
 vyřadily).
 Potřebuješ proto zjistit, jestli `venv` máš, a kdyžtak nainstalovat alternativu.
 
-Spusť v příkazové řádce příkaz:
+Spusť v příkazové řádce příkaz:
 
 ```console
 $ python3 -m venv --help
@@ -97,7 +97,7 @@ Přejdi na sekci [vytvoření virtuálního prostředí](#setup-venv).
 
 Objeví-li se nápis `No module named venv`, je potřeba doinstalovat alternativu,
 Virtualenv.
-Zapamatuj si, že Virtualenv budeš muset v dalším kroku použít,
+Zapamatuj si, že Virtualenv budeš muset v dalším kroku použít,
 a nainstaluj ho:
 
 <!-- na Fedoře se tohle nestává -->
@@ -126,12 +126,12 @@ Nakonec vytvoř virtuální prostředí.
 {% set rootname = 'naucse-python' %}
 {%- endif -%}
 
-Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
+Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
 Může to být třeba <code>/home/<i>jméno</i>/{{ rootname }}</code>,
 neboli <code class="pythondir">~/{{ rootname }}</code>.
 Vytvoř ho a poznamenej si, kde je.
 
-Vytváříš-li adresář jinde, nebo s jiným názvem, tak kdykoli ve zbytku
+Vytváříš-li adresář jinde, nebo s jiným názvem, tak kdykoli ve zbytku
 materiálů uvidíš <code class="pythondir">~/{{ rootname }}</code>, doplň
 místo toho „svůj“ adresář.
 
@@ -150,7 +150,7 @@ $ cd ~/{{ rootname }}
 ```
 
 Pak virtuální prostředí vytvoř.
-Pokud jsi v předchozím kroku neinstalovala `virtualenv`, zadej:
+Pokud jsi v předchozím kroku neinstalovala `virtualenv`, zadej:
 
 ```console
 $ python3 -m venv venv
@@ -163,7 +163,7 @@ $ virtualenv -p python3 venv
 ```
 
 Tím se ti vytvořil adresář <code><span class="pythondir">~/{{ rootname }}</span>/venv</code>,
-ve kterém jsou soubory s virtuálním prostředím.
+ve kterém jsou soubory s virtuálním prostředím.
 Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
 Teď máš Python a virtuální prostředí nainstalované!

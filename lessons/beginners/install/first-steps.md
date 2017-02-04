@@ -1,4 +1,4 @@
-## První příkazy v Pythonu
+## První příkazy v Pythonu
 
 Vítej!
 
@@ -6,7 +6,7 @@ Zkontroluj si, že máš aktivované virtuální prostředí (na začátku pří
 řádky ti svítí `(env)`).
 
 Je-li tomu tak, nezbývá než – konečně – pustit Python!
-K tomu pužijeme příkaz `python`:
+K tomu pužijeme příkaz `python`:
 
 ``` plain
 (venv)$ python
@@ -17,9 +17,9 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 
 Příkaz vypíše několik informací.
-Z prvního řádku se můžeš ujistit, že používáš Python 3.
+Z prvního řádku se můžeš ujistit, že používáš Python 3.
 Třemi zobáčky `>>>` pak Python poprosí o instrukce.
-Je to jako v příkazové řádce, ale místo příkazů jako
+Je to jako v příkazové řádce, ale místo příkazů jako
 `cd` a `mkdir` budeme psát příkazy Pythonu.
 
 Nejjednodušší příkaz Pythonu je prosté číslo. Zkus to:
@@ -44,7 +44,7 @@ Nejjednodušší příkaz Pythonu je prosté číslo. Zkus to:
 10
 ```
 
-Všimni si, že příkazy z příkazové řádky v Pythonu nefungují,
+Všimni si, že příkazy z příkazové řádky v Pythonu nefungují,
 ačkoli okýnko vypadá skoro stejně:
 
 ```pycon
@@ -56,12 +56,12 @@ NameError: name 'whoami' is not defined
 
 Tohle je *chybová hláška*, která se objeví vždycky,
 když uděláš něco špatně.
-V průběhu kurzu jich uvidíš ještě spoustu,
+V průběhu kurzu jich uvidíš ještě spoustu,
 takže si ji dobře prohlédni, ať ji příště poznáš.
 
 Pokud ses dostala až sem, gratuluji! To nejhorší – instalaci – máš za sebou.
 Stačí už jen zavřít Python a pak i samotnou příkazovou řádku.
-V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.
+V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.
 
 ```plain
 >>> quit()
