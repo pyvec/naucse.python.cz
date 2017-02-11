@@ -28,7 +28,7 @@ $ . env/bin/activate
 (env)$ python -m pip install Flask
 ```
 
-Základní použití Flasku je poměrné primitivní:
+Základní použití Flasku je poměrně primitivní:
 
 ```python
 from flask import Flask
