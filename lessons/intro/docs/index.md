@@ -393,10 +393,10 @@ ze Sphinxové [domény Python]:
 To test the parrot's electrical resistance, use :meth:`parrot.voom()`.
 ```
 
-V této části dokumentace Sphinxu též najdete způsob, jak dokumnetovat API
+V této části dokumentace Sphinxu též najdete způsob, jak dokumentovat API
 bez použití `autodoc`.
 
-Všechny zdokumnetované objekty se automaticky přidávají do rejstříku.
+Všechny zdokumentované objekty se automaticky přidávají do rejstříku.
 Chcete-li do rejstříku přidat něco navíc, použijte direktivu [index].
 
 [domény Python]: http://www.sphinx-doc.org/en/1.4.8/domains.html#cross-referencing-python-objects
@@ -446,7 +446,7 @@ výrobu jiné aplikace, nebo může popisovat, jak aplikace uvnitř funguje.
 V dokumentaci by měla existovat kapitola s kompletní API dokumentací vašich
 modulů, tříd, funkcí apod. Všechny tyto věci musí mít v kódu dokumentační
 řetězce, které v dokumentaci musí být zobrazeny (t.j. změna dokumentačního
-řetězce se automaticky promítne ve vygenerované dokumnetaci).
+řetězce se automaticky promítne ve vygenerované dokumentaci).
 
 Jak sestavit a testovat dokumentaci by mělo být jasné z `README.rst`
 (a to musí mít reStructuredText syntaxi).
