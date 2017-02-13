@@ -11,12 +11,20 @@
                 {% for lesson in plan %}
                 <div class="section-box" id="section{{ loop.index }}">
                     <h4 class="section-heading">
-                        {{ lesson['name'] }}
-                    </h4>
+                        {% if 'date' in lesson %}
+                             Lekce {{ loop.index }} - {{ lesson['name'] }} ({{ lesson['date'] }})
+                        {% else %}
+                            {{ lesson['name'] }}
+                        {% endif %}
+                     </h4>
                     {% for mat in lesson['materials'] %}
                         <div class="section-info">
                             <span class="glyphicon {{ 'glyphicon-pencil' }} section-icon"></span>
-                            <a href="{{ lesson_url(names.get(mat['link'])[0], mat['link'].split('/')[-1]) }}">{{ names.get(mat['link'])[1] }}</a>
+                        {% if mat['link'].split('/')[0] == "lessons" %}
+                            <a href="{{ lesson_url(mat['link'].split('/')[1], mat['link'].split('/')[2]) }}">{{ mat['name'] }}</a>
+                        {% else %}
+                            <a href={{ mat['link'] }}>{{ mat['name'] }}</a> 
+                        {% endif %}
                         </div>
                     {% endfor %}
                 </div>
