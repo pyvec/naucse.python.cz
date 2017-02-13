@@ -1,0 +1,283 @@
+{% extends 'templates/_base.html' %}
+
+{% block style %}
+.changed {
+    background-color: #eef560;
+}
+.note em {
+    font-style: normal;
+}
+{% endblock %}
+
+{% block content %}
+
+<div class="row stuff">
+                <section class="col-lg-12">
+                    <h1>Dědičnost</h1>
+                    <p>
+                        Minule jsme probraly třídy – jako příklad jsme si
+                        ukázaly třídu pro koťátka:
+                    </p>
+<pre>
+class Kotatko:
+    def __init__(self, jmeno):
+        self.jmeno = jmeno
+
+    def snez(self, jidlo):
+        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+
+    def zamnoukej(self):
+        print("{}: Mňau!".format(self.jmeno))
+</pre>
+                    <p>
+                        Zkus si udělat podobnou třídu pro štěňátka:
+                    </p>
+<pre>
+class Stenatko:
+    def __init__(self, jmeno):
+        self.jmeno = jmeno
+
+    def snez(self, jidlo):
+        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+
+    def zastekej(self):
+        print("{}: Haf!".format(self.jmeno))
+</pre>
+                    <p>
+                        Většina kódu je stejná!
+                        Kdybys měla napsat i třídu pro kuřátka, kůzlátka,
+                        slůňátka a háďátka, bez Ctrl+C by to bylo docela nudné.
+                        A protože jsou programátoři líní psát stejný kód
+                        několikrát (a hlavně ho potom udržovat), vymysleli
+                        mechanismus, jak se toho vyvarovat. Jak?
+                    </p>
+                    <p>
+                        I koťátka i štěňátka jsou zvířátka.
+                        Můžeme si vytvořit třídu společnou pro všechny
+                        zvířátka, a do ní napsat všechno, co je společné.
+                        Ve třídách pro jednotlivé druhy zvířat pak zbude jen
+                        to, co se liší.
+                        V Pythonu se to dělá takto:
+                    </p>
+<pre>
+class Zviratko:
+    def __init__(self, jmeno):
+        self.jmeno = jmeno
+
+    def snez(self, jidlo):
+        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+
+
+class Kotatko(Zviratko):
+    def zamnoukej(self):
+        print("{}: Mňau!".format(self.jmeno))
+
+
+class Stenatko(Zviratko):
+    def zastekej(self):
+        print("{}: Haf!".format(self.jmeno))
+
+
+micka = Kotatko('Micka')
+azorek = Stenatko('Azorek')
+micka.zamnoukej()
+azorek.zastekej()
+micka.snez('myš')
+azorek.snez('kost')
+</pre>
+                    <p>
+                        Jak to funguje?
+                        Příkazem <code>class Kotatko(Zviratko):</code>
+                        říkáš Pythonu, že třída <code>Kotatko</code>
+                        <em>dědí</em> ze třídy <code>Zviratko</code>
+                        (angl. <em>inherits</em> from <code>Zviratko</code>).
+                        Případně se můžeš setkat s jinými termíny:
+                        „je odvozená” ze třídy <code>Zviratko</code>,
+                        (angl. <em>derived from</em>),
+                        nebo ji rozšiřuje, angl. <em>extends</em>).
+                        A když už jsme u terminologie, odvozeným třídám se
+                        říká taky <em>podtřídy</em> (angl. <em>subclasses</em>),
+                        a <code>Zviratko</code> je tu <em>nadtřída</em>
+                        (angl. <em>superclass</em>).
+                    </p>
+                    <p>
+                        Když potom Python hledá nějakou metodu
+                        (nebo jiný atribut), třeba <code>micka.snez</code>,
+                        a nenajde ji přímo ve třídě daného objektu (u nás
+                        <code>Kotatko</code>), podívá se do nadtřídy.
+                        Takže všechno, co je definované pro
+                        <code>Zviratko</code>, platí i pro koťátka.
+                        Pokud to tedy výslovně nezměníš.
+                    </p>
+                    <h1>Přepisování metod a <code>super()</code></h1>
+                    <p>
+                        Když se ti nebude líbit chování některé metody
+                        v nadtřídě, stačí dát metodu stejného jména do
+                        podtřídy:
+                    </p>
+<pre>
+class Kotatko(Zviratko):
+    def snez(self, jidlo):
+        print("{}: {} mi vůbec nechutná!".format(self.jmeno, jidlo))
+
+
+micka = Kotatko('Micka')
+micka.snez('granule')
+</pre>
+                    <p class="note">
+                        Je to podobné jako když jsme minule přeisovali atribut
+                        pomocí <code>micka.zamnoukej = 12345</code>.
+                        Python atributy hledá napřed na samotném objektu,
+                        potom na třídě toho objektu, a pak na nadtřídě
+                        (a případně dalších nadtřídách té nadtřídy).
+                    </p>
+                    <p>
+                        Občas se může stát, že v takovéto přepsané metodě budeš
+                        potřebovat použít původní funkčnost, jen budeš chtít
+                        udělat ještě něco navíc.
+                        To umí zařídit speciální funkce <code>super()</code>,
+                        na kterém můžeme volat metody z nadtřídy.
+                        Třeba takhle:
+                    </p>
+<pre>
+class Kotatko(Zviratko):
+    def snez(self, jidlo):
+        print("({} na {} chvíli fascinovaně kouká)".format(self.jmeno, jidlo))
+        super().snez(jidlo)
+
+
+micka = Kotatko('Micka')
+micka.snez('granule')
+</pre>
+                    <p>
+                        Pozor na to, že takhle volané metodě musíš dát všechny
+                        argumenty, které potřebuje (kromě <code>self</code>,
+                        který se jako obvykle doplní automaticky).
+                        Toho se dá i využít – můžeš použít i jiné argumenty
+                        než dostala původní funkce:
+                    </p>
+<pre>
+class Hadatko(Zviratko):
+    def __init__(self, jmeno):
+        jmeno = jmeno.replace('s', 'sss')
+        jmeno = jmeno.replace('S', 'Sss')
+        super().__init__(jmeno)
+
+
+standa = Hadatko('Stanislav')
+standa.snez('myš')
+</pre>
+                    <p>
+                        Jak je vidět, <code>super()</code> se dá bez problémů
+                        kombinovat se speciálními metodami jako
+                        <code>__init__</code>.
+                        Dokonce se to dělá poměrně často!
+                    </p>
+                    <h1>Polymorfismus</h1>
+                    <p>
+                        Programátoři nezavedli dědičnost jen proto, že jsou
+                        líní a nechcou psát dvakrát stejný kód.
+                        To je sice dobrý důvod, ale nadtřídy mají jednu
+                        důležitou vlastnost: když víme, že každé
+                        <code>Kotatko</code> nebo <code>Stenatko</code>
+                        nebo jakákoli jiná podtřída je zvířátko,
+                        můžeme si udělat seznam zvířátek s tím,
+                        že nám pak bude jedno jaká přesně zvířátka to jsou:
+                    </p>
+<pre>
+class Zviratko:
+    def __init__(self, jmeno):
+        self.jmeno = jmeno
+
+    def snez(self, jidlo):
+        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+
+
+class Kotatko(Zviratko):
+    def zamnoukej(self):
+        print("{}: Mňau!".format(self.jmeno))
+
+
+class Stenatko(Zviratko):
+    def zastekej(self):
+        print("{}: Haf!".format(self.jmeno))
+
+<span class="changed">zviratka = [Kotatko('Micka'), Stenatko('Azorek')]
+
+for zviratko in zviratka:
+    zviratko.snez('flákota')</span>
+</pre>
+                    <p>
+                        Tohle je docela důležitá vlastnost podtříd:
+                        když mám nějaké <code>Kotatko</code>, můžu ho použít
+                        kdekoliv kde program očekává <code>Zviratko</code>,
+                        protože každé koťátko <em>je</em> zvířátko.
+                    </p>
+                    <p class="note">
+                        Tohle je docela dobrá pomůcka, až nebudeš vědět
+                        kterou třídu podědit z které.
+                        Každé <em>koťátko</em> nebo <em>štěňátko</em>
+                        je <em>zvířátko</em>; každá <em>chata</em>
+                        nebo <em>panelák</em> je <em>stavení</em>.
+                        V takových případech dává dědičnost smysl.
+                        <br>
+                        Někdy se ale stane, že tuhle pomůcku použiješ a narazíš
+                        na nesmysl jako „každé auto je volant”.
+                        V takovém případě dědičnost nepoužívej.
+                        I když jak auto tak volant se dají „otočit doprava”,
+                        u každého to znamená něco jiného – a určitě nejde auto
+                        použít kdekoli, kde bych chtěl použít volant.
+                        Takže v tomle případě je lepší si říct „každé auto
+                        <strong>má</strong> volant”, stejně jako „každé kotě
+                        <strong>má</strong> jméno”, udělat dvě nezávislé třídy,
+                        a do <code>Auto.__init__</code> napsat něco jako
+                        <code>self.volant = Volant()</code>.
+                        <br>
+                        (A až bude nějaký vystudovaný informatik nespokojený
+                        s tím, že porušuješ
+                        <a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskovové substituční princip</a>,
+                        jde o právě tento problém.)
+                    </p>
+                    <p>
+                        Když se teď podíváš na funkce <code>zamnoukej</code>
+                        a <code>zastekej</code>, možná tě napadne, že by se
+                        daly pojmenovat lépe, aby se daly použít pro všechna
+                        zvířata, podobně jako <code>snez</code>.
+                        Bude nejlepší je přejmenovat:
+                    </p>
+<pre>
+class Zviratko:
+    def __init__(self, jmeno):
+        self.jmeno = jmeno
+
+    def snez(self, jidlo):
+        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+
+
+class Kotatko(Zviratko):
+    def <span class="changed">udelej_zvuk</span>(self):
+        print("{}: Mňau!".format(self.jmeno))
+
+
+class Stenatko(Zviratko):
+    def <span class="changed">udelej_zvuk</span>(self):
+        print("{}: Haf!".format(self.jmeno))
+
+
+zviratka = [Kotatko('Micka'), Stenatko('Azorek')]
+
+for zviratko in zviratka:
+    <span class="changed">zviratko.udelej_zvuk()</span>
+    zviratko.snez('flákota')
+</pre>
+                    <p>
+                        A to je zatím o třídách vše! Už toho víš dost na to,
+                        aby sis napsala vlastní zoo :)
+                    </p>
+                    <p>
+                        Nebo <a href="{{ lesson('projects/asteroids') }}">hru</a>?
+                    </p>
+                </section>
+            </div>
+
+{% endblock %}

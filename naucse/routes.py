@@ -49,7 +49,7 @@ def courses():
 # Static files in lessons.
 @app.route('/lessons/<lesson_type>/<lesson>/static/<path:path>')
 def lesson_static(lesson_type, lesson, path):
-    directory = os.path.join(app.root_path, 'courses')
+    directory = os.path.join(app.root_path, 'lessons')
     filename = os.path.join(lesson_type, lesson, 'static', path)
     return send_from_directory(directory, filename)
 
@@ -114,7 +114,7 @@ def lesson(lesson_type, lesson, page):
 
     # Link to the specific lesson.
     def lesson_url(lesson):
-        return url_for('lesson', lesson_type=lesson_type, lesson=lesson, page=page)
+        return url_for('lesson', lesson_type=lesson.split('/')[0], lesson=lesson.split('/')[1], page=page)
 
 
     file = open(template, 'r')
