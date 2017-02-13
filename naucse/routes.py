@@ -14,74 +14,106 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 app.jinja_loader = PrefixLoader({
     'templates': FileSystemLoader(os.path.join(app.root_path, 'naucse/templates')),
-    'courses': FileSystemLoader(os.path.join(app.root_path, 'courses'))
+    'courses': FileSystemLoader(os.path.join(app.root_path, 'courses')),
+    'runs': FileSystemLoader(os.path.join(app.root_path, 'runs')),
+    'lessons': FileSystemLoader(os.path.join(app.root_path, 'lessons'))
 })
 
 
-########################
-###### @APP.ROUTE ######
-
-# Index page.
 @app.route('/')
 def index():
+    """Index page."""
     return render_template("templates/index.html")
 
 
-# About page.
 @app.route('/about/')
 def about():
+    """About page."""
     return render_template("templates/about.html")
 
 
-# Page with listed online courses.
+@app.route('/runs/')
+def runs():
+    """Runs page."""
+    return render_template("runs/index.html", runs=read_yaml("runs/runs.yml"), title="Seznam offline kurzů Pythonu")
+
+
 @app.route('/courses/')
 def courses():
+    """Page with listed online courses."""
     return render_template("courses/index.html", courses=read_yaml("courses/courses.yml"), title="Seznam online kurzů Pythonu")
 
 
-# Course page.
-@app.route('/courses/<course>/')
-def course_page(course):
-    template = 'courses/{}/index.html'.format(course)
-    plan = read_yaml("courses/" + course + "/plan.yml")
-    title = (read_yaml("courses/courses.yml"))[course]['title']
+@app.route('/lessons/<lesson_type>/<lesson>/static/<path:path>')
+def lesson_static(lesson_type, lesson, path):
+    """Static files in lessons."""
+    directory = os.path.join(app.root_path, 'lessons')
+    filename = os.path.join(lesson_type, lesson, 'static', path)
+    return send_from_directory(directory, filename)
+
+
+def title_loader(plan):
+    """Loads a dictionary of lessons names."""
 
     lesson_dict = {}
 
-    # Load dictionary of lessons names.
     for lesson in plan:
         for mat in lesson['materials']:
-            if len(mat['link'].split('/')) != 1:
-                the_course = mat['link'].split('/')[0]
-                link = mat['link'].split('/')[1]
-            else:
-                link = mat['link']
-                the_course = course
-            info_file = read_yaml("courses/" + the_course + "/" + link + "/info.yml")
-            lesson_dict[mat['link']] = (the_course, info_file['title'])
+            lesson_link = mat['link']
+            if lesson_link.split('/')[0] == "lessons":
+                lesson_type = lesson_link.split("/")[1]
+                info_file = read_yaml(lesson_link + "/info.yml")
+                lesson_dict[mat['link']] = (lesson_type, info_file['title'])
+    return lesson_dict
+
+
+@app.route('/courses/<course>/')
+def course_page(course):
+    """Course page."""
+    template = 'courses/{}/index.html'.format(course)
+    plan = read_yaml("courses/{}/plan.yml".format(course))
+    title = (read_yaml("courses/courses.yml"))[course]['title']
+
+    lesson_dict = title_loader(plan)
 
     try:
-        return render_template(template, plan=read_yaml("courses/" + course + "/plan.yml"), names=lesson_dict, title=title)
+        return render_template(template, plan=plan, names=lesson_dict, title=title)
     except TemplateNotFound:
         abort(404)
 
 
-# Lesson page.
-@app.route('/courses/<course>/<lesson>/', defaults={'page': 'index'})
-@app.route('/courses/<course>/<lesson>/<page>/')
-def course_lesson(course, lesson, page):
-    info = read_yaml("courses/" + course + "/" + lesson + "/info.yml")
-    template = 'courses/{}/{}/{}.{}'.format(course, lesson, page, info['style'])
+@app.route('/runs/<year>/<run>/')
+def run_page(year, run):
+    """Run's page."""
+    template = "runs/{}/{}/index.html".format(year, run)
+    plan = read_yaml("runs/{}/{}/plan.yml".format(year, run))
+    title = (read_yaml("runs/runs.yml"))[int(year)][run]['title']
+
+    lesson_dict = title_loader(plan)
+
+    try:
+        return render_template(template, plan=plan, names=lesson_dict, title=title)
+    except TemplateNotFound:
+        abort(404)
 
 
-    # Static in the specific lesson.
+@app.route('/lessons/<lesson_type>/<lesson>/', defaults={'page': 'index'})
+@app.route('/lessons/<lesson_type>/<lesson>/<page>/')
+def lesson(lesson_type, lesson, page):
+    """Lesson page."""
+    info = read_yaml("lessons/{}/{}/info.yml".format(lesson_type, lesson))
+
+    template = 'lessons/{}/{}/{}.{}'.format(lesson_type, lesson, page, info['style'])
+
+
     def lesson_static_url(path):
-        return url_for('lesson_static', course=course, lesson=lesson, path=path)
+        """Static in the specific lesson."""
+        return url_for('lesson_static', lesson_type=lesson_type, lesson=lesson, path=path)
 
 
-    # Link to the specific lesson.
     def lesson_url(lesson):
-        return url_for('course_lesson', course=course, lesson=lesson, page=page)
+        """Link to the specific lesson."""
+        return url_for('lesson', lesson_type=lesson.split('/')[0], lesson=lesson.split('/')[1], page=page)
 
 
     file = open(template, 'r')
@@ -90,20 +122,12 @@ def course_lesson(course, lesson, page):
 
     try:
         if info['style'] == "md":
-            return render_template('templates/markdown_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
+            return render_template('templates/_markdown_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
         elif info['style'] == "ipynb":
-            return render_template('templates/ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
+            return render_template('templates/_ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
         else:
             return render_template(template, static=lesson_static_url, lesson=lesson_url, title=title)
     except TemplateNotFound:
         abort(404)
 
     file.close()
-
-
-# Static files in lessons.
-@app.route('/courses/<course>/<lesson>/static/<path:path>')
-def lesson_static(course, lesson, path):
-    directory = os.path.join(app.root_path, 'courses')
-    filename = os.path.join(course, lesson, 'static', path)
-    return send_from_directory(directory, filename)

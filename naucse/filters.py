@@ -5,7 +5,6 @@ from jinja2 import Markup
 from naucse.routes import app
 
 
-# Markdown is working.
 @app.template_filter('markdown')
 def convert_markdown(text):
     text = dedent(text)
