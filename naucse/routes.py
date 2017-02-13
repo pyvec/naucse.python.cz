@@ -16,47 +16,45 @@ app.jinja_loader = PrefixLoader({
     'templates': FileSystemLoader(os.path.join(app.root_path, 'naucse/templates')),
     'courses': FileSystemLoader(os.path.join(app.root_path, 'courses')),
     'runs': FileSystemLoader(os.path.join(app.root_path, 'runs')),
-    'terms': FileSystemLoader(os.path.join(app.root_path, 'terms')),
-    'videos': FileSystemLoader(os.path.join(app.root_path, 'videos')),
     'lessons': FileSystemLoader(os.path.join(app.root_path, 'lessons'))
 })
 
 
-# Index page.
 @app.route('/')
 def index():
+    """Index page."""
     return render_template("templates/index.html")
 
 
-# About page.
 @app.route('/about/')
 def about():
+    """About page."""
     return render_template("templates/about.html")
 
 
-# Runs page.
 @app.route('/runs/')
 def runs():
+    """Runs page."""
     return render_template("runs/index.html", runs=read_yaml("runs/runs.yml"), title="Seznam offline kurzů Pythonu")
 
 
-# Page with listed online courses.
 @app.route('/courses/')
 def courses():
+    """Page with listed online courses."""
     return render_template("courses/index.html", courses=read_yaml("courses/courses.yml"), title="Seznam online kurzů Pythonu")
 
 
-# Static files in lessons.
 @app.route('/lessons/<lesson_type>/<lesson>/static/<path:path>')
 def lesson_static(lesson_type, lesson, path):
+    """Static files in lessons."""
     directory = os.path.join(app.root_path, 'lessons')
     filename = os.path.join(lesson_type, lesson, 'static', path)
     return send_from_directory(directory, filename)
 
 
-# Course page.
 @app.route('/courses/<course>/')
 def course_page(course):
+    """Course page."""
     template = 'courses/{}/index.html'.format(course)
     plan = read_yaml("courses/{}/plan.yml".format(course))
     title = (read_yaml("courses/courses.yml"))[course]['title']
@@ -67,12 +65,12 @@ def course_page(course):
         abort(404)
 
 
-# Run's page.
 @app.route('/runs/<year>/<run>/')
 def run_page(year, run):
+    """Run's page."""
     template = "runs/{}/{}/index.html".format(year, run)
     plan = read_yaml("runs/{}/{}/plan.yml".format(year, run))
-    title = (read_yaml("runs/runs.yml"))[run]['title']
+    title = (read_yaml("runs/runs.yml"))[int(year)][run]['title']
 
     try:
         return render_template(template, plan=plan, title=title)
@@ -80,22 +78,22 @@ def run_page(year, run):
         abort(404)
 
 
-# Lesson page.
 @app.route('/lessons/<lesson_type>/<lesson>/', defaults={'page': 'index'})
 @app.route('/lessons/<lesson_type>/<lesson>/<page>/')
 def lesson(lesson_type, lesson, page):
+    """Lesson page."""
     info = read_yaml("lessons/{}/{}/info.yml".format(lesson_type, lesson))
 
     template = 'lessons/{}/{}/{}.{}'.format(lesson_type, lesson, page, info['style'])
 
 
-    # Static in the specific lesson.
     def lesson_static_url(path):
+        """Static in the specific lesson."""
         return url_for('lesson_static', lesson_type=lesson_type, lesson=lesson, path=path)
 
 
-    # Link to the specific lesson.
     def lesson_url(lesson):
+        """Link to the specific lesson."""
         return url_for('lesson', lesson_type=lesson.split('/')[0], lesson=lesson.split('/')[1], page=page)
 
 
