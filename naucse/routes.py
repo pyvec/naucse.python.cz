@@ -52,6 +52,21 @@ def lesson_static(lesson_type, lesson, path):
     return send_from_directory(directory, filename)
 
 
+def title_loader(plan):
+    """Loads a dictionary of lessons names."""
+
+    lesson_dict = {}
+
+    for lesson in plan:
+        for mat in lesson['materials']:
+            lesson_link = mat['link']
+            if lesson_link.split('/')[0] == "lessons":
+                lesson_type = lesson_link.split("/")[1]
+                info_file = read_yaml(lesson_link + "/info.yml")
+                lesson_dict[mat['link']] = (lesson_type, info_file['title'])
+    return lesson_dict
+
+
 @app.route('/courses/<course>/')
 def course_page(course):
     """Course page."""
@@ -59,8 +74,10 @@ def course_page(course):
     plan = read_yaml("courses/{}/plan.yml".format(course))
     title = (read_yaml("courses/courses.yml"))[course]['title']
 
+    lesson_dict = title_loader(plan)
+
     try:
-        return render_template(template, plan=plan, title=title)
+        return render_template(template, plan=plan, names=lesson_dict, title=title)
     except TemplateNotFound:
         abort(404)
 
@@ -72,8 +89,10 @@ def run_page(year, run):
     plan = read_yaml("runs/{}/{}/plan.yml".format(year, run))
     title = (read_yaml("runs/runs.yml"))[int(year)][run]['title']
 
+    lesson_dict = title_loader(plan)
+
     try:
-        return render_template(template, plan=plan, title=title)
+        return render_template(template, plan=plan, names=lesson_dict, title=title)
     except TemplateNotFound:
         abort(404)
 
