@@ -97,6 +97,34 @@ def run_page(year, run):
         abort(404)
 
 
+def prv_nxt_teller(year, run, lesson):
+    """Determine the previous and the next lesson."""
+    plan = read_yaml("runs/{}/{}/plan.yml".format(year, run))
+
+    tmp_prv = None
+    nxt = None
+    next_one = False
+
+    for l in plan:
+        for mat in l["materials"]:
+            if next_one:
+                nxt = "/".join(mat["link"].split("/")[-2:])
+                break
+
+            if mat["link"].split("/")[-1] == lesson:
+                prv = tmp_prv
+                next_one = True
+            else:
+                tmp_prv = "/".join(mat["link"].split("/")[-2:])
+
+    if prv != None and prv[-3:] == "pdf":
+        prv = None
+    if nxt != None and nxt[-3:] == "pdf":
+        nxt = None
+
+    return (prv, nxt)
+
+
 @app.route('/runs/<year>/<run>/<lesson_type>/<lesson>/', defaults={'page': 'index'})
 @app.route('/runs/<year>/<run>/<lesson_type>/<lesson>/<page>/')
 def run_lesson(year, run, lesson_type, lesson, page):
@@ -116,6 +144,8 @@ def run_lesson(year, run, lesson_type, lesson, page):
         return url_for('run_lesson', year=year, run=run, lesson_type=lesson.split('/')[0], lesson=lesson.split('/')[1], page=page)
 
 
+    prv, nxt = prv_nxt_teller(year, run, lesson)
+
     file = open(template, 'r')
     content = file.read()
     title = info['course'] + ': ' + info['title']
@@ -126,7 +156,7 @@ def run_lesson(year, run, lesson_type, lesson, page):
         elif info['style'] == "ipynb":
             return render_template('templates/_ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
         else:
-            return render_template(template, static=lesson_static_url, lesson=lesson_url, title=title)
+            return render_template(template, static=lesson_static_url, lesson=lesson_url, title=title, nxt=nxt, prv=prv)
     except TemplateNotFound:
         abort(404)
 
