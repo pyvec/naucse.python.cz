@@ -91,8 +91,12 @@ def run_page(year, run):
 
     lesson_dict = title_loader(plan)
 
+    def lesson_url(lesson_type, lesson):
+        """Link to the specific lesson."""
+        return url_for('run_lesson', year=year, run=run, lesson_type=lesson_type, lesson=lesson)
+
     try:
-        return render_template(template, plan=plan, names=lesson_dict, title=title)
+        return render_template(template, plan=plan, names=lesson_dict, title=title, lesson_url=lesson_url)
     except TemplateNotFound:
         abort(404)
 
