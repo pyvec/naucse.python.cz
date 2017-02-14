@@ -59,10 +59,10 @@ def title_loader(plan):
 
     for lesson in plan:
         for mat in lesson['materials']:
-            lesson_link = mat['link']
-            if lesson_link.split('/')[0] == "lessons":
+            lesson_link = "/".join(mat['link'].split("/")[-2:])
+            if lesson_link[-3:] != "pdf":
                 lesson_type = lesson_link.split("/")[1]
-                info_file = read_yaml(lesson_link + "/info.yml")
+                info_file = read_yaml("lessons/" + lesson_link + "/info.yml")
                 lesson_dict[mat['link']] = (lesson_type, info_file['title'])
     return lesson_dict
 
@@ -84,7 +84,7 @@ def course_page(course):
 
 @app.route('/runs/<year>/<run>/')
 def run_page(year, run):
-    """Run's page."""
+    """Run page."""
     template = "runs/{}/{}/index.html".format(year, run)
     plan = read_yaml("runs/{}/{}/plan.yml".format(year, run))
     title = (read_yaml("runs/runs.yml"))[int(year)][run]['title']
@@ -95,6 +95,42 @@ def run_page(year, run):
         return render_template(template, plan=plan, names=lesson_dict, title=title)
     except TemplateNotFound:
         abort(404)
+
+
+@app.route('/runs/<year>/<run>/<lesson_type>/<lesson>/', defaults={'page': 'index'})
+@app.route('/runs/<year>/<run>/<lesson_type>/<lesson>/<page>/')
+def run_lesson(year, run, lesson_type, lesson, page):
+    """Run's lesson page."""
+    info = read_yaml("lessons/{}/{}/info.yml".format(lesson_type, lesson))
+
+    template = 'lessons/{}/{}/{}.{}'.format(lesson_type, lesson, page, info['style'])
+
+
+    def lesson_static_url(path):
+        """Static in the specific lesson."""
+        return url_for('lesson_static', lesson_type=lesson_type, lesson=lesson, path=path)
+
+
+    def lesson_url(lesson):
+        """Link to the specific lesson."""
+        return url_for('run_lesson', year=year, run=run, lesson_type=lesson.split('/')[0], lesson=lesson.split('/')[1], page=page)
+
+
+    file = open(template, 'r')
+    content = file.read()
+    title = info['course'] + ': ' + info['title']
+
+    try:
+        if info['style'] == "md":
+            return render_template('templates/_markdown_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
+        elif info['style'] == "ipynb":
+            return render_template('templates/_ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
+        else:
+            return render_template(template, static=lesson_static_url, lesson=lesson_url, title=title)
+    except TemplateNotFound:
+        abort(404)
+
+    file.close()
 
 
 @app.route('/lessons/<lesson_type>/<lesson>/', defaults={'page': 'index'})
