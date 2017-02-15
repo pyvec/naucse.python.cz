@@ -3,42 +3,74 @@
     <head>
         <meta charset="utf-8">
         <title>
-        {% if title is defined %}
-            {{ title }}
-        {% else %}
-            Nauč se Python
-        {% endif %}
-
+            {% if title is defined %}
+                {{ title }}
+            {% else %}
+                Nauč se Python
+            {% endif %}
         </title>
-        <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.css')}}">
         <link rel="stylesheet" href="{{url_for('static', filename='css/nausce.css')}}">
+        {% block extra_links %}
+        {% endblock extra_links%}
 
         <style>
            	{% block style %}
             {% endblock %}
         </style>
     </head>
+    
     <body>
-        <div class="container reveal">
-            <div class="header">
-                <h1>Nauč se Python</h1>
-            </div>
+        <nav id="header">
+            <ul class="block menu">
+                <li><a href="{{ url_for('index') }}" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="{{ url_for('courses') }}" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="{{ url_for('runs') }}" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
 
-            <div style="border: 3px solid red; padding: 10px 10px 0px 10px">
-                <p>Tato stránka je momentálně v rekonstrukci. Využijte raději <a href="http://pyladies.cz/brno/"> studijní materiály</a> k začátečnickému kurzu PyLadies. Pokud se chcete podílet na vylepšení těchto stránek, navštivte <a href="https://github.com/pyvec/naucse.python.cz">repozitář na GitHubu</a>.</p>
-            </div>
+        <div id="page">
+            <div class="block">
+                <div style="border: 3px solid red; padding: 10px 10px 0px 10px">
+                    <p>Tato stránka je momentálně v rekonstrukci. Využijte raději <a href="http://pyladies.cz/brno/"> studijní materiály</a> k začátečnickému kurzu PyLadies. Pokud se chcete podílet na vylepšení těchto stránek, navštivte <a href="https://github.com/pyvec/naucse.python.cz">repozitář na GitHubu</a>.</p>
+                </div>
 
-            <div>
-               	{% block content %}
-                {% endblock %}
-            </div>
-            <div class="footer">
-                <div>Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a></div>
-                <div>Upravit stránky: <a href="https://github.com/pyvec/naucse.python.cz">GitHub</a></div>
-            </div>
+                <div>
+                   	{% block content %}
+                    {% endblock %}
+                </div>
+                
 
-            <script type="text/javascript" src="{{ url_for('static', filename='js/solutions.js') }}"></script>
-
+                <script type="text/javascript" src="{{ url_for('static', filename='js/solutions.js') }}"></script>
+            </div>
         </div>
+
+        <div id="footer">
+            <div class="block">
+                <div class="col-3">
+                    <h2>Kontakt</h2>
+                    <p>
+                        E-mail: <a href="mailto:info@pyvec.org">info@pyvec.org</a><br>
+                        GitHub: <a href="http://github.com/pyvec">github.com/pyvec</a><br>
+                        Twitter: <a href="http://twitter.com/pyvec">@pyvec</a><br>
+                        Youtube: <a href="http://www.youtube.com/pyvec">www.youtube.com/pyvec</a>
+                    </p>
+                </div>
+                <div class="col-3">
+                    <h2>Zapoj se</h2>
+                    <p>
+                        Tyto stránky na <a href="https://github.com/pyvec/naucse.python.cz">GitHubu</a>
+                        <br>
+                        Organizuj <a href="http://pyladies.cz/stan_se/">PyLadies</a>
+                    </p>
+                </div>
+                <div class="col-3">
+                    <h2>Licence</h2>
+                    <p>
+                        <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
     </body>
 </html>
