@@ -193,7 +193,7 @@ souboru `setup.py` přidáme argument `ext_modules` se seznamem rozšiřovacích
 Podrobný popis třídy `Extension` je v [dokumentaci][Extension]; nám bude stačit
 jen jméno a seznam zdrojových souborů:
 
-[Extension]: (https://docs.python.org/3/distutils/apiref.html#distutils.core.Extension)
+[Extension]: https://docs.python.org/3/distutils/apiref.html#distutils.core.Extension
 
 setup.py:
 
