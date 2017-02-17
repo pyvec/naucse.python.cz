@@ -1,11 +1,12 @@
 import os
 from flask import Flask, render_template, url_for, send_from_directory
 from flask import abort
-from jinja2 import PrefixLoader, FileSystemLoader
+from jinja2 import PrefixLoader, FileSystemLoader, StrictUndefined
 from jinja2.exceptions import TemplateNotFound
+from werkzeug.local import LocalProxy
 
-
-from naucse.utils import read_yaml
+from naucse import models
+from naucse.urlconverters import register_url_converters
 
 
 app = Flask('naucsepythoncz')
@@ -18,6 +19,15 @@ app.jinja_loader = PrefixLoader({
     'runs': FileSystemLoader(os.path.join(app.root_path, 'runs')),
     'lessons': FileSystemLoader(os.path.join(app.root_path, 'lessons'))
 })
+
+
+@LocalProxy
+def model():
+    return models.Root(app.root_path)
+
+register_url_converters(app, model)
+
+app.jinja_env.undefined = StrictUndefined
 
 
 @app.route('/')
@@ -35,20 +45,22 @@ def about():
 @app.route('/runs/')
 def runs():
     """Runs page."""
-    return render_template("runs/index.html", runs=read_yaml("runs/runs.yml"), title="Seznam offline kurzů Pythonu")
+    return render_template("runs/index.html", run_years=model.run_years,
+                           title="Seznam offline kurzů Pythonu")
 
 
 @app.route('/courses/')
 def courses():
     """Page with listed online courses."""
-    return render_template("courses/index.html", courses=read_yaml("courses/courses.yml"), title="Seznam online kurzů Pythonu")
+    return render_template("courses/index.html", courses=model.courses,
+                           title="Seznam online kurzů Pythonu")
 
 
-@app.route('/lessons/<lesson_type>/<lesson>/static/<path:path>')
-def lesson_static(lesson_type, lesson, path):
+@app.route('/lessons/<lesson:lesson>/static/<path:path>')
+def lesson_static(lesson, path):
     """Static files in lessons."""
     directory = os.path.join(app.root_path, 'lessons')
-    filename = os.path.join(lesson_type, lesson, 'static', path)
+    filename = os.path.join(lesson.slug, 'static', path)
     return send_from_directory(directory, filename)
 
 
@@ -67,137 +79,108 @@ def title_loader(plan):
     return lesson_dict
 
 
-@app.route('/courses/<course>/')
+@app.route('/courses/<course:course>/')
 def course_page(course):
     """Course page."""
-    template = 'courses/{}/index.html'.format(course)
-    plan = read_yaml("courses/{}/plan.yml".format(course))
-    title = (read_yaml("courses/courses.yml"))[course]['title']
-
-    lesson_dict = title_loader(plan)
+    template = 'courses/{}/index.html'.format(course.slug)
 
     try:
-        return render_template(template, plan=plan, names=lesson_dict, title=title)
+        return render_template(template, course=course, plan=course.sessions)
     except TemplateNotFound:
         abort(404)
 
 
-@app.route('/runs/<year>/<run>/')
-def run_page(year, run):
-    """Run page."""
-    template = "runs/{}/{}/index.html".format(year, run)
-    plan = read_yaml("runs/{}/{}/plan.yml".format(year, run))
-    title = (read_yaml("runs/runs.yml"))[int(year)][run]['title']
+@app.route('/runs/<run:run>/')
+def run_page(run):
+    """Run's page."""
+    template = "runs/{}/index.html".format(run.slug)
 
-    lesson_dict = title_loader(plan)
-
-    def lesson_url(lesson_type, lesson):
+    def lesson_url(lesson):
         """Link to the specific lesson."""
-        return url_for('run_lesson', year=year, run=run, lesson_type=lesson_type, lesson=lesson)
+        return url_for('run_lesson', run=run, lesson=lesson)
 
     try:
-        return render_template(template, plan=plan, names=lesson_dict, title=title, lesson_url=lesson_url)
+        return render_template(template, plan=run.sessions,
+                               title=run.title, lesson_url=lesson_url)
     except TemplateNotFound:
         abort(404)
 
 
-def prv_nxt_teller(year, run, lesson):
+def prv_nxt_teller(run, lesson):
     """Determine the previous and the next lesson."""
-    plan = read_yaml("runs/{}/{}/plan.yml".format(year, run))
-
-    tmp_prv = None
-    nxt = None
-    next_one = False
-
-    for l in plan:
-        for mat in l["materials"]:
-            if next_one:
-                nxt = "/".join(mat["link"].split("/")[-2:])
-                break
-
-            if mat["link"].split("/")[-1] == lesson:
-                prv = tmp_prv
-                next_one = True
-            else:
-                tmp_prv = "/".join(mat["link"].split("/")[-2:])
-
-    if prv != None and prv[-3:] == "pdf":
-        prv = None
-    if nxt != None and nxt[-3:] == "pdf":
-        nxt = None
-
-    return (prv, nxt)
+    lessons = [
+        material.lesson
+        for session in run.sessions.values()
+        for material in session.materials
+        if material.lesson
+    ]
+    for prev, current, next in zip([None] + lessons,
+                                   lessons,
+                                   lessons[1:] + [None]):
+        if current.slug == lesson.slug:
+            return prev, next
+    return None, None
 
 
-@app.route('/runs/<year>/<run>/<lesson_type>/<lesson>/', defaults={'page': 'index'})
-@app.route('/runs/<year>/<run>/<lesson_type>/<lesson>/<page>/')
-def run_lesson(year, run, lesson_type, lesson, page):
+@app.route('/runs/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
+@app.route('/runs/<run:run>/<lesson:lesson>/<page>/')
+def run_lesson(run, lesson, page):
     """Run's lesson page."""
-    info = read_yaml("lessons/{}/{}/info.yml".format(lesson_type, lesson))
-
-    template = 'lessons/{}/{}/{}.{}'.format(lesson_type, lesson, page, info['style'])
+    template = 'lessons/{}/{}.{}'.format(lesson.slug, page, lesson.style)
 
 
     def lesson_static_url(path):
         """Static in the specific lesson."""
-        return url_for('lesson_static', lesson_type=lesson_type, lesson=lesson, path=path)
+        return url_for('lesson_static', lesson=lesson, path=path)
 
 
     def lesson_url(lesson):
         """Link to the specific lesson."""
-        return url_for('run_lesson', year=year, run=run, lesson_type=lesson.split('/')[0], lesson=lesson.split('/')[1], page=page)
+        return url_for('run_lesson', run=run, lesson=lesson, page=page)
 
+    prv, nxt = prv_nxt_teller(run, lesson)
 
-    prv, nxt = prv_nxt_teller(year, run, lesson)
-
-    file = open(template, 'r')
-    content = file.read()
-    title = info['course'] + ': ' + info['title']
+    with open(template, 'r') as file:
+        content = file.read()
+    title = '{}: {}'.format(run.title, lesson.title)
 
     try:
-        if info['style'] == "md":
-            return render_template('templates/_markdown_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
-        elif info['style'] == "ipynb":
-            return render_template('templates/_ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
+        if lesson.style == "md":
+            return render_template('templates/_markdown_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content, nxt=nxt, prv=prv)
+        elif lesson.style == "ipynb":
+            return render_template('templates/_ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content, nxt=nxt, prv=prv)
         else:
             return render_template(template, static=lesson_static_url, lesson=lesson_url, title=title, nxt=nxt, prv=prv)
     except TemplateNotFound:
         abort(404)
 
-    file.close()
 
-
-@app.route('/lessons/<lesson_type>/<lesson>/', defaults={'page': 'index'})
-@app.route('/lessons/<lesson_type>/<lesson>/<page>/')
-def lesson(lesson_type, lesson, page):
+@app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
+@app.route('/lessons/<lesson:lesson>/<page>/')
+def lesson(lesson, page):
     """Lesson page."""
-    info = read_yaml("lessons/{}/{}/info.yml".format(lesson_type, lesson))
-
-    template = 'lessons/{}/{}/{}.{}'.format(lesson_type, lesson, page, info['style'])
-
+    template = 'lessons/{}/{}.{}'.format(lesson.slug, page, lesson.style)
 
     def lesson_static_url(path):
         """Static in the specific lesson."""
-        return url_for('lesson_static', lesson_type=lesson_type, lesson=lesson, path=path)
+        return url_for('lesson_static', lesson=lesson, path=path)
 
 
-    def lesson_url(lesson):
+    def lesson_url(lesson, page='index'):
         """Link to the specific lesson."""
-        return url_for('lesson', lesson_type=lesson.split('/')[0], lesson=lesson.split('/')[1], page=page)
+        return url_for('lesson', lesson=lesson, page=page)
 
+    title = lesson.title
 
-    file = open(template, 'r')
-    content = file.read()
-    title = info['course'] + ': ' + info['title']
+    with open(template, 'r') as file:
+        content = file.read()
 
     try:
-        if info['style'] == "md":
+        if lesson.style == "md":
             return render_template('templates/_markdown_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
-        elif info['style'] == "ipynb":
+        elif lesson.style == "ipynb":
             return render_template('templates/_ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
         else:
             return render_template(template, static=lesson_static_url, lesson=lesson_url, title=title)
     except TemplateNotFound:
         abort(404)
-
-    file.close()
