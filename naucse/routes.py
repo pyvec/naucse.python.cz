@@ -11,16 +11,15 @@ from naucse import models
 from naucse.urlconverters import register_url_converters
 
 
-app = Flask('naucsepythoncz')
+app = Flask('naucse')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-app.jinja_loader = FileSystemLoader(os.path.join(app.root_path, 'naucse/templates'))
-lesson_template_loader = FileSystemLoader(os.path.join(app.root_path, 'lessons'))
+lesson_template_loader = FileSystemLoader(os.path.join(app.root_path, '..', 'lessons'))
 
 
 @LocalProxy
 def model():
-    return models.Root(app.root_path)
+    return models.Root(os.path.join(app.root_path, '..'))
 
 register_url_converters(app, model)
 
@@ -57,8 +56,8 @@ def courses():
 @app.route('/lessons/<lesson:lesson>/static/<path:path>')
 def lesson_static(lesson, path):
     """Static files in lessons."""
-    directory = os.path.join(app.root_path, 'lessons')
-    filename = os.path.join(lesson.slug, 'static', path)
+    directory = lesson.path
+    filename = os.path.join('static', path)
     return send_from_directory(directory, filename)
 
 
