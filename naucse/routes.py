@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, url_for, send_from_directory
-from flask import abort
+from flask import abort, render_template_string
 from jinja2 import PrefixLoader, FileSystemLoader, StrictUndefined
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
@@ -91,9 +91,9 @@ def course_page(course):
 @app.route('/runs/<run:run>/')
 def run_page(run):
     """Run's page."""
-    def lesson_url(lesson):
+    def lesson_url(lesson, *args):
         """Link to the specific lesson."""
-        return url_for('run_lesson', run=run, lesson=lesson)
+        return url_for('run_lesson', run=run, lesson=lesson, *args)
 
     try:
         return render_template('templates/run.html',
@@ -119,65 +119,57 @@ def prv_nxt_teller(run, lesson):
     return None, None
 
 
+def render_lesson(lesson, page='index', **kwargs):
+    kwargs.setdefault('title', lesson.title)
+    kwargs.setdefault('lesson', lesson)
+
+    def static_url(path):
+        return url_for('lesson_static', lesson=lesson, path=path)
+    kwargs.setdefault('static', static_url)
+
+    template = 'lessons/{}/{}.{}'.format(lesson.slug, page, lesson.style)
+
+    with open(template, 'r') as file:
+        content = file.read()
+
+    try:
+        if lesson.style == "md":
+            return render_template('templates/_markdown_page.html',
+                                   content=content, **kwargs)
+        elif lesson.style == "ipynb":
+            return render_template('templates/_ipython_page.html',
+                                   content=content, **kwargs)
+        else:
+            return render_template(template, **kwargs)
+    except TemplateNotFound:
+        abort(404)
+
+
 @app.route('/runs/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
 @app.route('/runs/<run:run>/<lesson:lesson>/<page>/')
 def run_lesson(run, lesson, page):
     """Run's lesson page."""
-    template = 'lessons/{}/{}.{}'.format(lesson.slug, page, lesson.style)
-
 
     def lesson_static_url(path):
         """Static in the specific lesson."""
         return url_for('lesson_static', lesson=lesson, path=path)
 
 
-    def lesson_url(lesson):
+    def lesson_url(lesson, *args):
         """Link to the specific lesson."""
-        return url_for('run_lesson', run=run, lesson=lesson, page=page)
+        return url_for('run_lesson', run=run, lesson=lesson, page=page, *args)
 
     prv, nxt = prv_nxt_teller(run, lesson)
+    title = title='{}: {}'.format(run.title, lesson.title)
 
-    with open(template, 'r') as file:
-        content = file.read()
-    title = '{}: {}'.format(run.title, lesson.title)
-
-    try:
-        if lesson.style == "md":
-            return render_template('templates/_markdown_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content, nxt=nxt, prv=prv)
-        elif lesson.style == "ipynb":
-            return render_template('templates/_ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content, nxt=nxt, prv=prv)
-        else:
-            return render_template(template, static=lesson_static_url, lesson=lesson_url, title=title, nxt=nxt, prv=prv)
-    except TemplateNotFound:
-        abort(404)
+    return render_lesson(lesson, page=page, title=title,
+                         static=lesson_static_url,
+                         lesson_url=lesson_url,
+                         nxt=nxt, prv=prv)
 
 
 @app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
 @app.route('/lessons/<lesson:lesson>/<page>/')
 def lesson(lesson, page):
     """Lesson page."""
-    template = 'lessons/{}/{}.{}'.format(lesson.slug, page, lesson.style)
-
-    def lesson_static_url(path):
-        """Static in the specific lesson."""
-        return url_for('lesson_static', lesson=lesson, path=path)
-
-
-    def lesson_url(lesson, page='index'):
-        """Link to the specific lesson."""
-        return url_for('lesson', lesson=lesson, page=page)
-
-    title = lesson.title
-
-    with open(template, 'r') as file:
-        content = file.read()
-
-    try:
-        if lesson.style == "md":
-            return render_template('templates/_markdown_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
-        elif lesson.style == "ipynb":
-            return render_template('templates/_ipython_page.html', static=lesson_static_url, lesson=lesson_url, title=title, content=content)
-        else:
-            return render_template(template, static=lesson_static_url, lesson=lesson_url, title=title)
-    except TemplateNotFound:
-        abort(404)
+    return render_lesson(lesson, page=page)
