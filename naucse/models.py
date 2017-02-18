@@ -100,6 +100,7 @@ class Course(Model):
 
     title = DataProperty(info)
     description = DataProperty(info)
+    long_description = DataProperty(info)
 
     @reify
     def slug(self):
@@ -114,12 +115,14 @@ class Course(Model):
 class Run(Model):
     """A run"""
     def __str__(self):
-        return self.title
+        return '{} - {}'.formta(self.slug, self.title)
 
     info = YamlProperty()
 
     title = DataProperty(info)
+    subtitle = DataProperty(info)
     description = DataProperty(info)
+    long_description = DataProperty(info)
 
     @reify
     def sessions(self):

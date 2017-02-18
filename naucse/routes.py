@@ -15,8 +15,6 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 app.jinja_loader = PrefixLoader({
     'templates': FileSystemLoader(os.path.join(app.root_path, 'naucse/templates')),
-    'courses': FileSystemLoader(os.path.join(app.root_path, 'courses')),
-    'runs': FileSystemLoader(os.path.join(app.root_path, 'runs')),
     'lessons': FileSystemLoader(os.path.join(app.root_path, 'lessons'))
 })
 
@@ -45,14 +43,15 @@ def about():
 @app.route('/runs/')
 def runs():
     """Runs page."""
-    return render_template("runs/index.html", run_years=model.run_years,
+    return render_template("templates/run_list.html",
+                           run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu")
 
 
 @app.route('/courses/')
 def courses():
     """Page with listed online courses."""
-    return render_template("courses/index.html", courses=model.courses,
+    return render_template("templates/course_list.html", courses=model.courses,
                            title="Seznam online kurzů Pythonu")
 
 
@@ -82,10 +81,9 @@ def title_loader(plan):
 @app.route('/courses/<course:course>/')
 def course_page(course):
     """Course page."""
-    template = 'courses/{}/index.html'.format(course.slug)
-
     try:
-        return render_template(template, course=course, plan=course.sessions)
+        return render_template('templates/course.html',
+                               course=course, plan=course.sessions)
     except TemplateNotFound:
         abort(404)
 
@@ -93,14 +91,13 @@ def course_page(course):
 @app.route('/runs/<run:run>/')
 def run_page(run):
     """Run's page."""
-    template = "runs/{}/index.html".format(run.slug)
-
     def lesson_url(lesson):
         """Link to the specific lesson."""
         return url_for('run_lesson', run=run, lesson=lesson)
 
     try:
-        return render_template(template, plan=run.sessions,
+        return render_template('templates/run.html',
+                               run=run, plan=run.sessions,
                                title=run.title, lesson_url=lesson_url)
     except TemplateNotFound:
         abort(404)
