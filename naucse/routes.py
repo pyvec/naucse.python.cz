@@ -1,9 +1,11 @@
 import os
+
 from flask import Flask, render_template, url_for, send_from_directory
 from flask import abort, render_template_string
-from jinja2 import PrefixLoader, FileSystemLoader, StrictUndefined
+from jinja2 import PrefixLoader, FileSystemLoader, StrictUndefined, Markup
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
+from markdown import markdown
 
 from naucse import models
 from naucse.urlconverters import register_url_converters
@@ -12,11 +14,8 @@ from naucse.urlconverters import register_url_converters
 app = Flask('naucsepythoncz')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-
-app.jinja_loader = PrefixLoader({
-    'templates': FileSystemLoader(os.path.join(app.root_path, 'naucse/templates')),
-    'lessons': FileSystemLoader(os.path.join(app.root_path, 'lessons'))
-})
+app.jinja_loader = FileSystemLoader(os.path.join(app.root_path, 'naucse/templates'))
+lesson_template_loader = FileSystemLoader(os.path.join(app.root_path, 'lessons'))
 
 
 @LocalProxy
@@ -31,19 +30,19 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Index page."""
-    return render_template("templates/index.html")
+    return render_template("index.html")
 
 
 @app.route('/about/')
 def about():
     """About page."""
-    return render_template("templates/about.html")
+    return render_template("about.html")
 
 
 @app.route('/runs/')
 def runs():
     """Runs page."""
-    return render_template("templates/run_list.html",
+    return render_template("run_list.html",
                            run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu")
 
@@ -51,7 +50,7 @@ def runs():
 @app.route('/courses/')
 def courses():
     """Page with listed online courses."""
-    return render_template("templates/course_list.html", courses=model.courses,
+    return render_template("course_list.html", courses=model.courses,
                            title="Seznam online kurzů Pythonu")
 
 
@@ -82,7 +81,7 @@ def title_loader(plan):
 def course_page(course):
     """Course page."""
     try:
-        return render_template('templates/course.html',
+        return render_template('course.html',
                                course=course, plan=course.sessions)
     except TemplateNotFound:
         abort(404)
@@ -96,7 +95,7 @@ def run_page(run):
         return url_for('run_lesson', run=run, lesson=lesson, *args)
 
     try:
-        return render_template('templates/run.html',
+        return render_template('run.html',
                                run=run, plan=run.sessions,
                                title=run.title, lesson_url=lesson_url)
     except TemplateNotFound:
@@ -120,29 +119,33 @@ def prv_nxt_teller(run, lesson):
 
 
 def render_lesson(lesson, page='index', **kwargs):
-    kwargs.setdefault('title', lesson.title)
-    kwargs.setdefault('lesson', lesson)
-
     def static_url(path):
         return url_for('lesson_static', lesson=lesson, path=path)
     kwargs.setdefault('static', static_url)
+    kwargs.setdefault('lesson', lesson)
 
-    template = 'lessons/{}/{}.{}'.format(lesson.slug, page, lesson.style)
+    if lesson.style == 'md':
+        name = lesson.path.joinpath('{}.{}'.format(page, lesson.style))
+        try:
+            file = lesson.path.joinpath(name).open()
+        except FileNotFoundError:
+            abort(404)
+        with file:
+            content = file.read()
+        content = Markup(markdown(content))
+    else:
+        env = app.jinja_env.overlay(loader=lesson_template_loader)
+        name = '{}/{}.{}'.format(lesson.slug, page, lesson.style)
+        try:
+            template = env.get_template(name)
+        except TemplateNotFound:
+            abort(404)
+        content = Markup(template.render(**kwargs))
 
-    with open(template, 'r') as file:
-        content = file.read()
+    kwargs.setdefault('title', lesson.title)
+    kwargs.setdefault('content', content)
 
-    try:
-        if lesson.style == "md":
-            return render_template('templates/_markdown_page.html',
-                                   content=content, **kwargs)
-        elif lesson.style == "ipynb":
-            return render_template('templates/_ipython_page.html',
-                                   content=content, **kwargs)
-        else:
-            return render_template(template, **kwargs)
-    except TemplateNotFound:
-        abort(404)
+    return render_template('lesson.html', **kwargs)
 
 
 @app.route('/runs/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})

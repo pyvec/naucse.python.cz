@@ -12,6 +12,7 @@ class Lesson(Model):
 
     title = DataProperty(info)
     style = DataProperty(info)
+    css = DataProperty(info, default=None)
 
     @reify
     def slug(self):
