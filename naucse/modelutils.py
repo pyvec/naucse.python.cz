@@ -1,9 +1,10 @@
 from collections import OrderedDict
+import collections.abc
 from pathlib import Path
+import sys
 
 import yaml
 
-f"This module requires Python 3.6 or above."
 
 NOTHING = object()
 
@@ -105,3 +106,24 @@ class reify(LazyProperty):
     """Reify decorator, as known from Pyramid"""
     def __init__(self, func):
         self.compute = func
+
+
+if sys.version_info < (3, 6):
+    # Hack to make __set_name__ work in Python 3.5 and below
+    class SettingDict(dict):
+        def __setitem__(self, name, item):
+            super().__setitem__(name, item)
+            try:
+                set_name = item.__set_name__
+            except AttributeError:
+                pass
+            else:
+                set_name(None, name)
+
+    class ModelMeta(type):
+        def __prepare__(meta, cls):
+            return SettingDict()
+
+    class Model(Model, metaclass=ModelMeta):
+        pass
+

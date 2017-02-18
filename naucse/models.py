@@ -161,4 +161,3 @@ class Root(Model):
             base_collection, name = name.split('/', 2)
         collection = self.collections[base_collection]
         return collection.lessons[name]
-
