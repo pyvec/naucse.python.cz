@@ -195,7 +195,7 @@ V takovém případě uděláme modul ve formě složky. V našem případě sou
 1 directory, 5 files
 ```
 
-Soubor `__init__.py` jednak značí, že adresář `isholiday` je Pythoní modul,
+Soubor `__init__.py` jednak značí, že adresář `isholiday` je Pythonní modul,
 také obsahuje kód, který se spustí při importu modulu `isholiday`.
 
 Musíme ještě mírně upravit `setup.py`:
@@ -312,7 +312,7 @@ setup(
 )
 ```
 
-Kromě závislostí v `setup.py` se u Pythoních projektů často setkáme se souborem
+Kromě závislostí v `setup.py` se u Pythonních projektů často setkáme se souborem
 `requirements.txt`, který obsahuje přesné verze všech závislosti, včetně
 tranzitivních – t.j. závisí-li náš balíček na `Flask`, a `Flask` na `Jinja2`,
 najdeme v `requirements.txt` mimojiné řádky:

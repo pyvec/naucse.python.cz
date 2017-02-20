@@ -632,7 +632,7 @@ potřebujeme vyhodit výjimku.
 Struktury, ukazatele, a dynamická alokace
 -----------------------------------------
 
-Přestože v Cythonu můžete používat pythonní tuply, slovníky, seznamy a další podobné nehomogenní typy, jejich použití je pomalé, protože vždy pracují s pythoními objekty.
+Přestože v Cythonu můžete používat pythonní tuply, slovníky, seznamy a další podobné nehomogenní typy, jejich použití je pomalé, protože vždy pracují s pythonními objekty.
 
 Pokud máte kód, který potřebuje dočasné pole takových záznamů,
 je pro časově kritické části kódu lepší k problému přistoupit spíše céčkovsky,

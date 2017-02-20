@@ -547,7 +547,7 @@ mypkg/
 
 První způsob je preferovaný, protože pomáhá udržovat kód a testy oddělené.
 Pokud ho použijete, nedávejte do něj `__init__.py` – není to importovatelný
-Pythoní modul, ale jen sada souborů s testy.
+Pythonní modul, ale jen sada souborů s testy.
 
 Ve druhém případě mějte na paměti, že pytest pouští testy jako samostatné
 moduly, ne jako součást vašeho balíčku.
