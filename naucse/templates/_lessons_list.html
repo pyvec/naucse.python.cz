@@ -1,4 +1,4 @@
-{% extends "templates/_base.html" %}
+{% extends "_base.html" %}
 
 {% block content %}
 
@@ -8,22 +8,22 @@
     <section class="container">
         <div class="row">
             <div class="sections col-xs-12 col-sm-12 col-md-8 col-lg-8">
-                {% for lesson in plan %}
+                {% for session in plan.values() %}
                 <div id="section{{ loop.index }}">
                     <h4>
-                        {% if "date" in lesson %}
-                            Lekce {{ loop.index }} - {{ lesson["name"] }} ({{ lesson["date"] }})
+                        {% if session.date %}
+                            Lekce {{ loop.index }} - {{ session.title }} ({{ session.date }})
                         {% else %}
-                            Lekce {{ loop.index }} - {{ lesson["name"] }} 
+                            Lekce {{ loop.index }} - {{ session.title }}
                         {% endif %}
                      </h4>
-                    {% for mat in lesson["materials"] %}
+                    {% for mat in session.materials %}
                         <div>
                             <span class="glyphicon-pencil"></span>
-                        {% if mat["link"][:4] == "http" %}
-                            <a href={{ mat["link"] }}>{{ mat["name"] }}</a> 
+                        {% if mat.lesson %}
+                            <a href="{{ lesson_url(mat.lesson) }}">{{ mat.title }}</a>
                         {% else %}
-                            <a href="{{ lesson_url(mat["link"].split("/")[-2], mat["link"].split("/")[-1]) }}">{{ names.get(mat["link"])[1] }}</a>
+                            <a href={{ mat.url }}>{{ mat.title }}</a>
                         {% endif %}
                         </div>
                     {% endfor %}
