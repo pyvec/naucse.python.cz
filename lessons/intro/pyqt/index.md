@@ -115,9 +115,9 @@ Tady jsou některé zvláštnosti, na které se můžete připravit.
 Qt pojmenovává funkce, metody a atributy konvencí `camelCase`, místo pythonistického `snake_case`.
 PyQt tuto konvenci nemění: je užitečnější používat identická jména, a kromě toho knihovna PyQt vznikla ještě před PEP 8.
 
-Hledáte-li dokumentaci, doporučuji zadat do vyhledávače "qt5 <hledaný objekt>".
+Hledáte-li dokumentaci, doporučuji zadat do vyhledávače "qt5 &gt;hledaný objekt&lt;".
 Dostanete se tak na dokumentaci pro C++ (např. [QObject](http://doc.qt.io/qt-5/qobject.html)).
-Hledáte-li "pyqt5 <hledaný objekt>", dostanete se k dokumentaci pro Python, která ale většinou jen odkazuje
+Hledáte-li "pyqt5 &gt;hledaný objekt&lt;", dostanete se k dokumentaci pro Python, která ale většinou jen odkazuje
 na verzi pro C++ (např. [pro QObject](http://pyqt.sourceforge.net/Docs/PyQt5/api/qobject.html)).
 
 Rozdíly mezi C a pythonní verzí jsou většinou intuitivní (např. None místo NULL), ale jsou popsány

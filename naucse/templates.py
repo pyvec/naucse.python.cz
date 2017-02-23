@@ -21,10 +21,10 @@ def course_url(course):
 
 
 @template_function
-def run_url(year, run):
-    return url_for('run_page', year=year, run=run)
+def run_url(run):
+    return url_for('run_page', run=run)
 
 
 @template_function
-def lesson_url(lesson_type, lesson, page='index'):
-    return url_for('lesson', lesson_type=lesson_type, lesson=lesson, page=page)
+def lesson_url(lesson, page='index'):
+    return url_for('lesson', lesson=lesson, page=page)
