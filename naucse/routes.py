@@ -56,7 +56,7 @@ def courses():
 @app.route('/lessons/<lesson:lesson>/static/<path:path>')
 def lesson_static(lesson, path):
     """Static files in lessons."""
-    directory = lesson.path
+    directory = str(lesson.path)
     filename = os.path.join('static', path)
     return send_from_directory(directory, filename)
 
