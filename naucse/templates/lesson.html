@@ -13,17 +13,41 @@
 
         {{ content }}
 
-        {% if prv is defined and prv != None %}
-            <span>
-                <a href="{{ lesson_url(prv) }}">← {{ prv.title }}</a>
-            </span>
+        {% if prv is defined and prv and nxt is defined and nxt %}
+
+        <hr>
+
+            {% if prv %}
+                <span>
+                    <a href="{{ lesson_url(prv) }}">← {{ prv.title }}</a>
+                </span>
+            {% endif %}
+
+            {% if nxt %}
+                <span class="align-right">
+                    <a href="{{ lesson_url(nxt) }}">{{ nxt.title }} →</a>
+                </span>
+            {% endif %}
         {% endif %}
 
-        {% if nxt is defined and nxt != None %}
-            <span class="align-right">
-                <a href="{{ lesson_url(nxt) }}">{{ nxt.title }} →</a>
-            </span>
+        <hr>
+
+        {% if lesson.attribution or lesson.license %}
+            <div class="lesson-attribution">
+                {% if lesson.attribution %}
+                    {{ lesson.attribution | markdown(inline=True) }}
+                {% endif %}
+                {% if lesson.license %}
+                    <p>
+                        Licence:
+                        <a href="{{ lesson.license.url }}">
+                            {{ lesson.license.title }}
+                        </a>.
+                    </p>
+                {% endif %}
+            </div>
         {% endif %}
+
     </div>
 </div>
 

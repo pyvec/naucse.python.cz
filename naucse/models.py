@@ -13,6 +13,13 @@ class Lesson(Model):
     title = DataProperty(info)
     style = DataProperty(info)
     css = DataProperty(info, default=None)
+    attribution = DataProperty(info, default=None)
+
+    @reify
+    def license(self):
+        if self.info.get('license') is None:
+            return None
+        return self.root.licenses[self.info['license']]
 
     @reify
     def slug(self):
@@ -143,6 +150,16 @@ class RunYear(Model):
     runs = DirProperty(Run)
 
 
+class License(Model):
+    def __str__(self):
+        return self.path.parts[-1]
+
+    info = YamlProperty()
+
+    title = DataProperty(info)
+    url = DataProperty(info)
+
+
 class Root(Model):
     """The base of the model"""
     def __init__(self, path):
@@ -151,6 +168,7 @@ class Root(Model):
     collections = DirProperty(Collection, 'lessons')
     courses = DirProperty(Course, 'courses')
     run_years = DirProperty(RunYear, 'runs', keyfunc=int)
+    licenses = DirProperty(License, 'licenses')
 
     @reify
     def runs(self):
