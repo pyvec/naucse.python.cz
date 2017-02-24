@@ -8,7 +8,7 @@ Zkontroluj si, že máš aktivované virtuální prostředí (na začátku pří
 Je-li tomu tak, nezbývá než – konečně – pustit Python!
 K tomu pužijeme příkaz `python`:
 
-```shell
+``` plain
 (venv)$ python
 Python 3.4.0 (default, Jan 26 2014, 18:15:05)
 [GCC 4.8.2 20131212 (Red Hat 4.8.2-7)] on linux
@@ -24,29 +24,30 @@ Je to jako v příkazové řádce, ale místo příkazů jako
 
 Nejjednodušší příkaz Pythonu je prosté číslo. Zkus to:
 
-```python
+```pycon
 >>> 1
 1
 >>> 42
 42
 >>> -8.3    # (Python používá desetinnou tečku)
 -8.3
+```
 
 !!! note ""
-    Zobáčky `>>>` i odpověď vypisuje sám Python, {{ gnd('sám', 'sama') }}!
-    Zadej jen číslo a Enter.
+    Zobáčky `>>>` i odpověď vypisuje sám Python!
+    {{ gnd('sám', 'sama') }} zadej jen číslo a Enter.
 
 Čísla umí Python i sečítat. Třeba takhle:
 
-```python
+```pycon
 >>> 8 + 2
 10
-```python
+```
 
 Všimni si, že příkazy z příkazové řádky v Pythonu nefungují,
 ačkoli okýnko vypadá skoro stejně:
 
-```python
+```pycon
 >>> whoami
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -62,7 +63,7 @@ Pokud ses dostala až sem, gratuluji! To nejhorší – instalaci – máš za s
 Stačí už jen zavřít Python a pak i samotnou příkazovou řádku.
 V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.
 
-```python
+```plain
 >>> quit()
 (env)$
 ```
@@ -76,13 +77,13 @@ příkazu `python`.
 Ukončit virtuální prostředí můžeš příkazem `deactivate` –
 tentokrát bez závorek.
 
-```shell
+```console
 (env)$ deactivate
 ```
 
 Příkazovou řádku můžeš nakonec zavřít příkazem `exit`.
 
-```shell
+```console
 $ exit
 ```
 

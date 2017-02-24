@@ -6,13 +6,13 @@ Jak na to?
 
 Spusť v [příkazové řádce]({{ lesson_url('beginners/cmdline') }}) příkazy:
 
-```shell
+```console
 $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
 Pak stačí zadat následující příkaz, a Python bude nainstalovaný:
 
-```shell
+```console
 $ brew install python3
 ```
 
@@ -49,13 +49,13 @@ Proto ho nedoporučuji vytářet na Ploše.
 Teď když je tenhle adresář vytvořený, otevři příkazovou řádku
 a příkazem `cd` se do něj přepni:
 <!-- XXX: Special highlight in source code needed -->
-```shell
+```console
 $ cd ~/{{ rootname }}
 ```
 
 Pak virtuální prostředí vytvoř:
 
-```shell
+```console
 $ python3 -m venv venv
 ```
 
@@ -70,7 +70,7 @@ Teď máš Python a virtuální prostředí nainstalované!
 Nakonec virtuální prostředí aktivuj:
 
 <pre><code>$ source <span class="pythondir">~/{{ rootname }}</span>/venv/bin/activate
-</pre>
+</code></pre>
 
 Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
 (před `$`) objevit slovo `(venv)`.

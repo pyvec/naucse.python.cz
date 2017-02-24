@@ -57,7 +57,7 @@ Teď když je tenhle adresář vytvořený, otevři [příkazovou řádku]({{ le
 a příkazem `cd` se do něj přepni.
 Pak vytvoř virtuální prostředí:
 
-```shell
+```console
 > python3 -m venv venv
 ```
 

@@ -10,7 +10,7 @@ Nezalekni se – většinu sekcí pravděpodobně přeskočíš :)
 Na Linuxu většinou Python 3 už bývá. Abys to zkontroloval{{a}}, spusť
 v [příkazové řádce]({{ lesson_url('beginners/cmdline') }}) příkaz:
 
-```shell
+```console
 $ python3 --version
 ```
 
@@ -29,15 +29,18 @@ Objeví-li se `bash: python3: command not found` nebo podobná chyba,
 doinstaluj Python.
 Konkrétní příkaz záleží na distribuci:
 
-* **Fedora**:
-```shell
-$ sudo dnf install python3
-```
-
-* **Ubuntu**:
-```shell
-$ sudo apt-get install python3
-```
+* Fedora:
+  {% filter markdown(inline=True) %}
+  ```console
+  $ sudo dnf install python3
+  ```
+  {% endfilter %}
+* Ubuntu:
+  {% filter markdown(inline=True) %}
+  ```console
+  $ sudo apt-get install python3
+  ```
+  {% endfilter %}
 
 Používáš-li jinou distribuci, předpokládám, že instalovat programy už umíš :)
 
@@ -51,7 +54,7 @@ Konkrétně knihovnu `tkinter` (která umožňuje např. kreslit „želví obr�
 často musíme nainstalovat zvlášť.
 Abys zjistil{{a}} jestli je už je nainstalovaná, zadej příkaz:
 
-```shell
+```console
 $ python3 -m tkinter
 ```
 
@@ -60,17 +63,20 @@ Zavři ho a přejdi na [doinstalování `virtualenv`](#install-virtualenv).
 
 Jestli ne, nainstaluj ještě modul tkinter:
 
-* **Fedora**:
-```shell
-$ sudo dnf install python3-tk
-```
-
+* Fedora:
+  {% filter markdown(inline=True) %}
+  ```console
+  $ sudo dnf install python3-tk
+  ```
+  {% endfilter %}
 * **Ubuntu**:
-```shell
-$ <b>sudo apt-get install python3-tkinter</b>
-```
+  {% filter markdown(inline=True) %}
+  ```console
+  $ sudo apt-get install python3-tkinter
+  ```
+  {% endfilter %}
 
-Používáš-li jinou distribuci, předpokládám, že instalovat programy už umíš :)
+Používáš-li jinou distribuci, musíš si správné jméno blíčku najít na Internetu.
 
 {{ anchor('install-virtualenv') }}
 ## Doinstalování Virtualenv
@@ -82,12 +88,12 @@ Potřebuješ proto zjistit, jestli `venv` máš, a kdyžtak nainstalovat alterna
 
 Spusť v příkazové řádce příkaz:
 
-```shell
+```console
 $ python3 -m venv --help
 ```
 
 Objeví-li se výpis začínající „usage:“, máš virtualenv nainstalovaný.
-Přejdi na sekci [vytvoření virtuálního prostředí](#setup-venv)
+Přejdi na sekci [vytvoření virtuálního prostředí](#setup-venv).
 
 Objeví-li se nápis `No module named venv`, je potřeba doinstalovat alternativu,
 Virtualenv.
@@ -96,10 +102,12 @@ a nainstaluj ho:
 
 <!-- na Fedoře se tohle nestává -->
 
-* **Ubuntu**:
-  ```shell
+* Ubuntu:
+  {% filter markdown(inline=True) %}
+  ```console
   $ sudo apt-get install python-virtualenv
   ```
+  {% endfilter %}
 
 Používáš-li jinou distribuci, předpokládám, že instalovat programy už umíš :)
 
@@ -137,20 +145,20 @@ přestane virtuální prostředí fungovat.
 Teď když je tenhle adresář vytvořený, otevři příkazovou řádku
 a příkazem `cd` se do něj přepni:
 <!-- XXX: Special highlight in source code needed -->
-```shell
+```console
 $ cd ~/{{ rootname }}
 ```
 
 Pak virtuální prostředí vytvoř.
 Pokud jsi v předchozím kroku neinstalovala `virtualenv`, zadej:
 
-```shell
+```console
 $ python3 -m venv venv
 ```
 
 jinak:
 
-```shell
+```console
 $ virtualenv -p python3 venv
 ```
 
