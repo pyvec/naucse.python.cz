@@ -1,5 +1,5 @@
 from flask import url_for
-
+from jinja2 import Markup
 
 from naucse.routes import app
 from naucse.filters import convert_markdown
@@ -28,3 +28,25 @@ def run_url(run):
 @template_function
 def lesson_url(lesson, page='index'):
     return url_for('lesson', lesson=lesson, page=page)
+
+
+@template_function
+def var(name):
+    return False
+
+
+@template_function
+def gnd(m, f):
+    return '{}/{}'.format(m, f)
+
+
+@template_function
+def anchor(name):
+    return Markup('<a id="{}"></a>').format(name)
+
+
+class A:
+    def __str__(self):
+        return gnd('', 'a')
+
+app.jinja_env.globals['a'] = A()

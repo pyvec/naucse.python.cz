@@ -15,6 +15,8 @@ class Lesson(Model):
     css = DataProperty(info, default=None)
     attribution = DataProperty(info, default=None)
 
+    jinja = DataProperty(info, default=False)
+
     @reify
     def license(self):
         if self.info.get('license') is None:

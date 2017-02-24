@@ -117,28 +117,39 @@ def prv_nxt_teller(run, lesson):
     return None, None
 
 
+def lesson_template_or_404(lesson, page):
+    env = app.jinja_env.overlay(loader=lesson_template_loader)
+    name = '{}/{}.{}'.format(lesson.slug, page, lesson.style)
+    try:
+        return env.get_template(name)
+    except TemplateNotFound:
+        abort(404)
+
+
 def render_lesson(lesson, page='index', **kwargs):
     def static_url(path):
         return url_for('lesson_static', lesson=lesson, path=path)
+    def subpage_url(page):
+        return url_for('lesson', lesson=lesson, page=page)
     kwargs.setdefault('static', static_url)
+    kwargs.setdefault('subpage_url', subpage_url)
     kwargs.setdefault('lesson', lesson)
 
     if lesson.style == 'md':
-        name = lesson.path.joinpath('{}.{}'.format(page, lesson.style))
-        try:
-            file = lesson.path.joinpath(name).open()
-        except FileNotFoundError:
-            abort(404)
-        with file:
-            content = file.read()
+        if lesson.jinja:
+            template = lesson_template_or_404(lesson, page)
+            content = template.render(**kwargs)
+        else:
+            name = lesson.path.joinpath('{}.{}'.format(page, lesson.style))
+            try:
+                file = lesson.path.joinpath(name).open()
+            except FileNotFoundError:
+                abort(404)
+            with file:
+                content = file.read()
         content = Markup(markdown(content))
     else:
-        env = app.jinja_env.overlay(loader=lesson_template_loader)
-        name = '{}/{}.{}'.format(lesson.slug, page, lesson.style)
-        try:
-            template = env.get_template(name)
-        except TemplateNotFound:
-            abort(404)
+        template = lesson_template_or_404(lesson, page)
         content = Markup(template.render(**kwargs))
 
     kwargs.setdefault('title', lesson.title)
@@ -152,11 +163,6 @@ def render_lesson(lesson, page='index', **kwargs):
 def run_lesson(run, lesson, page):
     """Run's lesson page."""
 
-    def lesson_static_url(path):
-        """Static in the specific lesson."""
-        return url_for('lesson_static', lesson=lesson, path=path)
-
-
     def lesson_url(lesson, *args):
         """Link to the specific lesson."""
         return url_for('run_lesson', run=run, lesson=lesson, page=page, *args)
@@ -165,7 +171,6 @@ def run_lesson(run, lesson, page):
     title = title='{}: {}'.format(run.title, lesson.title)
 
     return render_lesson(lesson, page=page, title=title,
-                         static=lesson_static_url,
                          lesson_url=lesson_url,
                          nxt=nxt, prv=prv)
 

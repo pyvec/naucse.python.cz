@@ -17,3 +17,9 @@ def convert_markdown(text, inline=False):
         result = result[len('<p>'):-len('</p>')]
 
     return result
+
+
+@app.template_filter('md_note')
+def markdown_note(text):
+    md_text = convert_markdown(text)
+    return Markup('<p class="note">{}</p>').format(md_text)
