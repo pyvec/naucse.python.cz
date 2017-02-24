@@ -1,0 +1,92 @@
+## První příkazy v Pythonu
+
+Vítej!
+
+Zkontroluj si, že máš aktivované virtuální prostředí (na začátku příkazové
+řádky ti svítí `(env)`).
+
+Je-li tomu tak, nezbývá než – konečně – pustit Python!
+K tomu pužijeme příkaz `python`:
+
+```shell
+(venv)$ python
+Python 3.4.0 (default, Jan 26 2014, 18:15:05)
+[GCC 4.8.2 20131212 (Red Hat 4.8.2-7)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>>
+```
+
+Příkaz vypíše několik informací.
+Z prvního řádku se můžeš ujistit, že používáš Python 3.
+Třemi zobáčky `>>>` pak Python poprosí o instrukce.
+Je to jako v příkazové řádce, ale místo příkazů jako
+`cd` a `mkdir` budeme psát příkazy Pythonu.
+
+Nejjednodušší příkaz Pythonu je prosté číslo. Zkus to:
+
+```python
+>>> 1
+1
+>>> 42
+42
+>>> -8.3    # (Python používá desetinnou tečku)
+-8.3
+
+{% filter md_note %}
+Zobáčky `>>>` i odpověď vypisuje sám Python, {{ gnd('sám', 'sama') }}!
+Zadej jen číslo a Enter.
+{% endfilter %}
+
+Čísla umí Python i sečítat. Třeba takhle:
+
+```python
+>>> 8 + 2
+10
+```python
+
+Všimni si, že příkazy z příkazové řádky v Pythonu nefungují,
+ačkoli okýnko vypadá skoro stejně:
+
+```python
+>>> whoami
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'whoami' is not defined
+```
+
+Tohle je *chybová hláška*, která se objeví vždycky,
+když uděláš něco špatně.
+V průběhu kurzu jich uvidíš ještě spoustu,
+takže si ji dobře prohlédni, ať ji příště poznáš.
+
+Pokud ses dostala až sem, gratuluji! To nejhorší – instalaci – máš za sebou.
+Stačí už jen zavřít Python a pak i samotnou příkazovou řádku.
+V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.
+
+```python
+>>> quit()
+(env)$
+```
+
+Zobáčky `>>>` se změnily na výzvu
+příkazové řádky (která začíná `(env)` a končí `$` nebo `>`).
+Teď fungují příkazy jako `whoami` a `cd`, ale příkazy Pythonu
+jako `1 + 2` fungovat nebudou, dokud Python opět nepustíš pomocí
+příkazu `python`.
+
+Ukončit virtuální prostředí můžeš příkazem `deactivate` –
+tentokrát bez závorek.
+
+```shell
+(env)$ deactivate
+```
+
+Příkazovou řádku můžeš nakonec zavřít příkazem `exit`.
+
+```shell
+$ exit
+```
+
+Pro cvik si zkus celé okno zavřít, a pak Python znovu
+spustit – nejdřív otevři příkazovou řádku, pak aktivuj virtuální prostředí,
+potom spusť Python samotný.
