@@ -8,10 +8,10 @@ Jak poznat, který instalátor je ten pravý?
 Pokud má tvůj počítač 64bitovou verzi Windows, stáhni si *Windows x86-64 executable installer*.
 Pokud máš starší počítač s 32bitovými Windows, stáhni si *Windows x86 executable installer*.
 
-{.note}
-Kde zjistíš, zda máš 32bitové nebo 64bitové Windows? Stačí otevřít nabídku
-**Start**, vyhledat „systém“ a otevřít **Systémové informace**.
-Pokud máš novější počítač, téměř jistě budeš mít 64bitový systém.
+!!! note ""
+    Kde zjistíš, zda máš 32bitové nebo 64bitové Windows? Stačí otevřít nabídku
+    **Start**, vyhledat „systém“ a otevřít **Systémové informace**.
+    Pokud máš novější počítač, téměř jistě budeš mít 64bitový systém.
 
 ![Screenshot zjišťování verze systému](windows_32v64-bit.png)
 
@@ -49,10 +49,9 @@ i když se u tebe pravděpodobně jmenuje jinak.
 Takže kdykoli odteď uvidíš <code class="pythondir">~/{{ rootname }}</code>,
 doplň místo toho „svůj“ adresář.
 
-{% filter md_note %}
-Kdybys někdy chtěl{{a}} adresář přece jen přesunout,
-musel{{a}} bys virtuální prostředí smazat a vytvořit nové.
-{% endfilter %}
+!!! note ""
+    Kdybys někdy chtěl{{a}} adresář přece jen přesunout,
+    musel{{a}} bys virtuální prostředí smazat a vytvořit nové.
 
 Teď když je tenhle adresář vytvořený, otevři [příkazovou řádku]({{ lesson_url('beginners/cmdline') }})
 a příkazem `cd` se do něj přepni.

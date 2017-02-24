@@ -5,10 +5,10 @@ from flask import abort, render_template_string
 from jinja2 import PrefixLoader, FileSystemLoader, StrictUndefined, Markup
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
-from markdown import markdown
 
 from naucse import models
 from naucse.urlconverters import register_url_converters
+from naucse.markdown_util import convert_markdown
 
 
 app = Flask('naucse')
@@ -147,7 +147,7 @@ def render_lesson(lesson, page='index', **kwargs):
                 abort(404)
             with file:
                 content = file.read()
-        content = Markup(markdown(content))
+        content = Markup(convert_markdown(content))
     else:
         template = lesson_template_or_404(lesson, page)
         content = Markup(template.render(**kwargs))

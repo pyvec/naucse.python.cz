@@ -32,10 +32,9 @@ Nejjednodušší příkaz Pythonu je prosté číslo. Zkus to:
 >>> -8.3    # (Python používá desetinnou tečku)
 -8.3
 
-{% filter md_note %}
-Zobáčky `>>>` i odpověď vypisuje sám Python, {{ gnd('sám', 'sama') }}!
-Zadej jen číslo a Enter.
-{% endfilter %}
+!!! note ""
+    Zobáčky `>>>` i odpověď vypisuje sám Python, {{ gnd('sám', 'sama') }}!
+    Zadej jen číslo a Enter.
 
 Čísla umí Python i sečítat. Třeba takhle:
 
