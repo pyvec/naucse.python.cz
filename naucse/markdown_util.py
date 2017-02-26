@@ -4,6 +4,7 @@ from markdown import Markdown
 from markdown.extensions.admonition import AdmonitionExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.fenced_code import FencedCodeExtension
+from markdown.extensions.def_list import DefListExtension
 from jinja2 import Markup
 
 markdown = Markdown(
@@ -11,6 +12,7 @@ markdown = Markdown(
         AdmonitionExtension(),
         FencedCodeExtension(),
         CodeHiliteExtension(guess_lang=False),
+        DefListExtension(),
     ],
 )
 
