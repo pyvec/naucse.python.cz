@@ -76,8 +76,9 @@ Tím máš Python a virtuální prostředí nainstalované!
 
 Nakonec virtuální prostředí aktivuj:
 
-<pre><code>&gt; <span class="pythondir">~/{{ rootname }}</span>\venv\Scripts\activate
-</code></pre>
+<div class="codehilite">
+<pre><code><span class="gp">&gt;</span> <span class="pythondir">~/{{ rootname }}</span>\venv\Scripts\activate
+</code></pre></div>
 
 Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
 (před `>`) objevit slovo `(venv)`.

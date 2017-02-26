@@ -63,10 +63,10 @@ Pokud ses dostala až sem, gratuluji! To nejhorší – instalaci – máš za s
 Stačí už jen zavřít Python a pak i samotnou příkazovou řádku.
 V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.
 
-```plain
->>> quit()
-(env)$
-```
+<div class="codehilite"><pre>
+<span class="gp">&gt;&gt;&gt;</span> quit()
+<span class="gp">(env)$</span>
+</pre></div>
 
 Zobáčky `>>>` se změnily na výzvu
 příkazové řádky (která začíná `(env)` a končí `$` nebo `>`).
