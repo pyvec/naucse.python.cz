@@ -10,7 +10,7 @@ Pokud máš starší počítač s 32bitovými Windows, stáhni si *Windows x86 
 
 !!! note ""
     Kde zjistíš, zda máš 32bitové nebo 64bitové Windows? Stačí otevřít nabídku
-    **Start**, vyhledat „systém“ a otevřít **Systémové informace**.
+    **Start**, vyhledat „Systém“ a otevřít **Systémové informace**.
     Pokud máš novější počítač, téměř jistě budeš mít 64bitový systém.
 
     {{ figure(
