@@ -13,9 +13,9 @@
 
         {{ content }}
 
-        {% if prv is defined and prv and nxt is defined and nxt %}
+        <hr class="lesson-end">
 
-        <hr>
+        {% if prv is defined and prv and nxt is defined and nxt %}
 
             {% if prv %}
                 <span>
@@ -28,15 +28,16 @@
                     <a href="{{ lesson_url(nxt) }}">{{ nxt.title }} →</a>
                 </span>
             {% endif %}
+
+            <hr>
         {% endif %}
 
-        <hr>
+        {% if lesson.attributions or lesson.license %}
 
-        {% if lesson.attribution or lesson.license %}
             <div class="lesson-attribution">
-                {% if lesson.attribution %}
-                    {{ lesson.attribution | markdown(inline=True) }}
-                {% endif %}
+                {% for a in lesson.attributions %}
+                    {{ a | markdown }}
+                {% endfor %}
                 {% if lesson.license %}
                     <p>
                         Licence:

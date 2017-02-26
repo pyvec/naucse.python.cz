@@ -13,9 +13,15 @@ class Lesson(Model):
     title = DataProperty(info)
     style = DataProperty(info)
     css = DataProperty(info, default=None)
-    attribution = DataProperty(info, default=None)
 
     jinja = DataProperty(info, default=False)
+
+    @reify
+    def attributions(self):
+        attr = self.info.get('attribution', ())
+        if isinstance(attr, str):
+            attr = [attr]
+        return tuple(attr)
 
     @reify
     def license(self):
