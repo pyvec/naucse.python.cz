@@ -13,7 +13,10 @@ Pokud máš starší počítač s 32bitovými Windows, stáhni si *Windows x86 e
     **Start**, vyhledat „systém“ a otevřít **Systémové informace**.
     Pokud máš novější počítač, téměř jistě budeš mít 64bitový systém.
 
-![Screenshot zjišťování verze systému](windows_32v64-bit.png)
+    {{ figure(
+        img=static('windows_32v64-bit.png'),
+        alt='Screenshot zjišťování verze systému',
+    ) }}
 
 Pak instalátor spusť
 Na začátku instalace zaškrtni **Install launcher for all Users**
@@ -21,8 +24,10 @@ a také **Add Python 3.6 to PATH**,
 a dále se drž instrukcí.
 (Tyto volby ti zjednoduší vytvoření virtuálního prostředí.)
 
-![Screenshot instalace Pythonu](windows_add_python_to_path.png)
-
+{{ figure(
+    img=static('windows_add_python_to_path.png'),
+    alt='Screenshot instalace Pythonu',
+) }}
 
 ## Vytvoření virtuálního prostředí
 

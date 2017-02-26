@@ -50,3 +50,15 @@ class A:
         return gnd('', 'a')
 
 app.jinja_env.globals['a'] = A()
+
+
+@template_function
+def figure(img, alt):
+    t = Markup('''
+        <div class="figure">
+            <a href="{img}">
+                <img src="{img}" alt="{alt}">
+            </a>
+        </div>
+    ''')
+    return t.strip().format(img=img, alt=alt)
