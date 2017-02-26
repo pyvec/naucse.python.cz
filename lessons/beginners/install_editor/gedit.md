@@ -21,7 +21,7 @@ Gedit se nastavuje v Předvolbách <span class="en">(Preferences)</span>.
 Odsazování
 :   V sekci Editor vyber:
 
-    * Šířka tabulátorů/<span class="en">Tab width</span>: 4</li>
+    * Šířka tabulátorů/<span class="en">Tab width</span>: 4
     * Vkládat mezery místo tabulátorů<span class="en">/Insert spaces instead of tabs</span>
     * Povolit automatické odsazování<span class="en">/Enable automatic indentation</span>
 

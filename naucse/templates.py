@@ -1,4 +1,4 @@
-from flask import url_for
+from flask import url_for, g
 from jinja2 import Markup
 
 from naucse.routes import app
@@ -22,7 +22,7 @@ def course_url(course):
 
 @template_function
 def run_url(run):
-    return url_for('run_page', run=run)
+    return url_for('run', run=run)
 
 
 @template_function
@@ -32,12 +32,29 @@ def lesson_url(lesson, page='index'):
 
 @template_function
 def var(name):
-    return False
+    """Return a page variable
+
+    Variables are a mechanism for adapting lesson pages to the course
+    or run they're part of.
+    """
+    return g.vars.get(name)
 
 
 @template_function
-def gnd(m, f):
-    return '{}/{}'.format(m, f)
+def gnd(m, f, *, both=None):
+    """Return `m` or `f` based on the user's grammatical gender
+
+    If the gender is not known, return `both`, or "m/f" if not given.
+    """
+    gender = var('user_gender')
+    if gender == 'm':
+        return m
+    elif gender == 'f':
+        return f
+    elif both is None:
+        return '{}/{}'.format(m, f)
+    else:
+        return both
 
 
 @template_function
@@ -46,6 +63,11 @@ def anchor(name):
 
 
 class A:
+    """Stringifies to "" or "a", depending on user's grammatical gender
+
+    (Note for English speakers: This is needed to form the past participle
+    of most verbs, which is quite common in tutorials.)
+    """
     def __str__(self):
         return gnd('', 'a')
 
@@ -55,10 +77,10 @@ app.jinja_env.globals['a'] = A()
 @template_function
 def figure(img, alt):
     t = Markup('''
-        <div class="figure">
+        <span class="figure">
             <a href="{img}">
                 <img src="{img}" alt="{alt}">
             </a>
-        </div>
+        </span>
     ''')
     return t.strip().format(img=img, alt=alt)

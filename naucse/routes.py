@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, render_template, url_for, send_from_directory
-from flask import abort, render_template_string
+from flask import abort, render_template_string, g
 from jinja2 import PrefixLoader, FileSystemLoader, StrictUndefined, Markup
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
@@ -87,11 +87,11 @@ def course_page(course):
 
 
 @app.route('/runs/<run:run>/')
-def run_page(run):
+def run(run):
     """Run's page."""
     def lesson_url(lesson, *args):
         """Link to the specific lesson."""
-        return url_for('run_lesson', run=run, lesson=lesson, *args)
+        return url_for('run_page', run=run, lesson=lesson, *args)
 
     try:
         return render_template('run.html',
@@ -119,30 +119,31 @@ def prv_nxt_teller(run, lesson):
 
 def lesson_template_or_404(lesson, page):
     env = app.jinja_env.overlay(loader=lesson_template_loader)
-    name = '{}/{}.{}'.format(lesson.slug, page, lesson.style)
+    name = '{}/{}.{}'.format(lesson.slug, page.slug, page.style)
     try:
         return env.get_template(name)
     except TemplateNotFound:
         abort(404)
 
 
-def render_lesson(lesson, page='index', **kwargs):
+def render_page(page, **kwargs):
+    lesson = page.lesson
     def static_url(path):
         return url_for('lesson_static', lesson=lesson, path=path)
-    def subpage_url(page):
-        return url_for('lesson', lesson=lesson, page=page)
+    def subpage_url(page_slug):
+        return url_for('lesson', lesson=lesson, page=page_slug)
     kwargs.setdefault('static', static_url)
     kwargs.setdefault('subpage_url', subpage_url)
     kwargs.setdefault('lesson', lesson)
+    kwargs.setdefault('page', page)
 
-    if lesson.style == 'md':
-        if lesson.jinja:
+    if page.style == 'md':
+        if page.jinja:
             template = lesson_template_or_404(lesson, page)
             content = template.render(**kwargs)
         else:
-            name = lesson.path.joinpath('{}.{}'.format(page, lesson.style))
             try:
-                file = lesson.path.joinpath(name).open()
+                file = page.path.open()
             except FileNotFoundError:
                 abort(404)
             with file:
@@ -152,7 +153,7 @@ def render_lesson(lesson, page='index', **kwargs):
         template = lesson_template_or_404(lesson, page)
         content = Markup(template.render(**kwargs))
 
-    kwargs.setdefault('title', lesson.title)
+    kwargs.setdefault('title', page.title)
     kwargs.setdefault('content', content)
 
     return render_template('lesson.html', **kwargs)
@@ -160,23 +161,32 @@ def render_lesson(lesson, page='index', **kwargs):
 
 @app.route('/runs/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
 @app.route('/runs/<run:run>/<lesson:lesson>/<page>/')
-def run_lesson(run, lesson, page):
+def run_page(run, lesson, page):
     """Run's lesson page."""
+
+    page = lesson.pages[page]
+    g.vars = dict(page.vars)
 
     def lesson_url(lesson, *args):
         """Link to the specific lesson."""
-        return url_for('run_lesson', run=run, lesson=lesson, page=page, *args)
+        return url_for('run_page', run=run, lesson=lesson, *args)
+
+    def subpage_url(page_slug):
+        return url_for('run_page', run=run, lesson=lesson, page=page_slug)
 
     prv, nxt = prv_nxt_teller(run, lesson)
-    title = title='{}: {}'.format(run.title, lesson.title)
+    title = title='{}: {}'.format(run.title, page.title)
 
-    return render_lesson(lesson, page=page, title=title,
-                         lesson_url=lesson_url,
-                         nxt=nxt, prv=prv)
+    return render_page(page=page, title=title,
+                       lesson_url=lesson_url,
+                       subpage_url=subpage_url,
+                       nxt=nxt, prv=prv)
 
 
 @app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
 @app.route('/lessons/<lesson:lesson>/<page>/')
 def lesson(lesson, page):
     """Lesson page."""
-    return render_lesson(lesson, page=page)
+    page = lesson.pages[page]
+    g.vars = dict(page.vars)
+    return render_page(page=page)

@@ -3,6 +3,7 @@ from collections import OrderedDict
 from naucse.modelutils import Model, YamlProperty, DataProperty, DirProperty, reify
 from naucse.modelutils import reify
 
+
 class Lesson(Model):
     """An individual lesson stored on naucse"""
     def __str__(self):
@@ -11,10 +12,64 @@ class Lesson(Model):
     info = YamlProperty()
 
     title = DataProperty(info)
-    style = DataProperty(info)
-    css = DataProperty(info, default=None)
 
-    jinja = DataProperty(info, default=False)
+    @reify
+    def slug(self):
+        return '/'.join(self.path.parts[-2:])
+
+    @reify
+    def pages(self):
+        pages = dict(self.info.get('subpages', {}))
+        pages.setdefault('index', {})
+        return {slug: Page(self, slug, self.info, p)
+                for slug, p in pages.items()}
+
+
+class Page(Model):
+    """A (sub-) page of a lesson"""
+    def __init__(self, lesson, slug, *infos):
+        self.slug = slug
+        self.info = {}
+        for i in infos:
+            self.info.update(i)
+        self.lesson = lesson
+        path = lesson.path.joinpath('{}.{}'.format(slug, self.info['style']))
+        super().__init__(lesson.root, path)
+
+    def __str__(self):
+        return '{}/{}'.format(self.lesson.slug, self.slug)
+
+    @reify
+    def style(self):
+        return self.info['style']
+
+    @reify
+    def title(self):
+        return self.info['title']
+
+    @reify
+    def jinja(self):
+        return self.info.get('jinja')
+
+    @reify
+    def css(self):
+        return self.info.get('css')
+
+    @reify
+    def previous(self):
+        prv = self.info.get('prev')
+        if prv is None:
+            return None
+        else:
+            return self.lesson.pages[prv]
+
+    @reify
+    def next(self):
+        nxt = self.info.get('next')
+        if nxt is None:
+            return None
+        else:
+            return self.lesson.pages[nxt]
 
     @reify
     def attributions(self):
@@ -30,12 +85,12 @@ class Lesson(Model):
         return self.root.licenses[self.info['license']]
 
     @reify
-    def slug(self):
-        return '/'.join(self.path.parts[-2:])
+    def vars(self):
+        return self.info.get('vars', {})
 
 
 class Collection(Model):
-    """An collection of lessons"""
+    """A collection of lessons"""
     def __str__(self):
         return self.path.parts[-1]
 
@@ -43,7 +98,7 @@ class Collection(Model):
 
 
 class Material(Model):
-    """An link – either a lesson, or an external URL"""
+    """A link – either to a lesson, or an external URL"""
     def __init__(self, root, path, info, base_collection):
         super().__init__(root, path)
         self.info = info
