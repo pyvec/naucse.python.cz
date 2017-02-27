@@ -29,13 +29,15 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Index page."""
-    return render_template("index.html")
+    return render_template("index.html",
+                           page_wip=True)
 
 
 @app.route('/about/')
 def about():
     """About page."""
-    return render_template("about.html")
+    return render_template("about.html",
+                           page_wip=True)
 
 
 @app.route('/runs/')
@@ -43,14 +45,16 @@ def runs():
     """Runs page."""
     return render_template("run_list.html",
                            run_years=model.run_years,
-                           title="Seznam offline kurzů Pythonu")
+                           title="Seznam offline kurzů Pythonu",
+                           page_wip=True)
 
 
 @app.route('/courses/')
 def courses():
     """Page with listed online courses."""
     return render_template("course_list.html", courses=model.courses,
-                           title="Seznam online kurzů Pythonu")
+                           title="Seznam online kurzů Pythonu",
+                           page_wip=True)
 
 
 @app.route('/lessons/<lesson:lesson>/static/<path:path>')
@@ -81,7 +85,8 @@ def course_page(course):
     """Course page."""
     try:
         return render_template('course.html',
-                               course=course, plan=course.sessions)
+                               course=course, plan=course.sessions,
+                               page_wip=True)
     except TemplateNotFound:
         abort(404)
 
@@ -188,7 +193,8 @@ def run_page(run, lesson, page):
     return render_page(page=page, title=title,
                        lesson_url=lesson_url,
                        subpage_url=subpage_url,
-                       nxt=nxt, prv=prv)
+                       nxt=nxt, prv=prv,
+                       page_wip=not page.license)
 
 
 @app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
@@ -197,4 +203,4 @@ def lesson(lesson, page):
     """Lesson page."""
     page = lesson.pages[page]
     g.vars = dict(page.vars)
-    return render_page(page=page)
+    return render_page(page=page, page_wip=True)
