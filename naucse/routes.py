@@ -26,6 +26,11 @@ register_url_converters(app, model)
 app.jinja_env.undefined = StrictUndefined
 
 
+@app.before_request
+def set_vars():
+    g.vars = {}
+
+
 @app.route('/')
 def index():
     """Index page."""
@@ -94,6 +99,8 @@ def course_page(course):
 @app.route('/runs/<run:run>/')
 def run(run):
     """Run's page."""
+    g.vars = dict(run.vars)
+
     def lesson_url(lesson, *args, **kwargs):
         """Link to the specific lesson."""
         return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
@@ -193,7 +200,7 @@ def run_page(run, lesson, page):
     return render_page(page=page, title=title,
                        lesson_url=lesson_url,
                        subpage_url=subpage_url,
-                       nxt=nxt, prv=prv,
+                       run=run, nxt=nxt, prv=prv,
                        page_wip=not page.license)
 
 
