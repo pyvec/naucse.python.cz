@@ -172,7 +172,8 @@ def run_page(run, lesson, page):
     """Run's lesson page."""
 
     page = lesson.pages[page]
-    g.vars = dict(page.vars)
+    g.vars = dict(run.vars)
+    g.vars.update(page.vars)
 
     def lesson_url(lesson, *args, **kwargs):
         """Link to the specific lesson."""

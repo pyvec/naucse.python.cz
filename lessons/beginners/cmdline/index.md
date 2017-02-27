@@ -41,7 +41,7 @@ se na různých systémech otevírá různě:
 * Linux (Gnome): Super → hledat Terminál
 
 Nevíš-li si rady, zkus buď googlit,
-{% if var('run') -%}
+{% if var('coach-present') -%}
 nebo se jednoduše zeptat kouče.
 {%- else -%}
 nebo se zeptat e-mailem.
@@ -328,7 +328,7 @@ Dokonce každý program, který máš na počítači nainstalovaný, jde spustit
 z příkazové řádky – a to většinou jen zadáním jeho jména.
 Zkus jestli na tvém počítači bude fungovat `firefox`, `notepad`, `safari`
 nebo `gedit`.
-{% if var('run') -%}
+{% if var('coach-present') -%}
 Kdyby nefungoval ani jeden, zeptej se kouče ať najde, nějaký co u tebe fungovat
 bude.
 {%- endif %}

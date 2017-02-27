@@ -107,8 +107,8 @@ Na začátek ale nejsou moc vhodné.
 
 Chceš-li takový editor přesto použít, měl{{a}} bys ho už poměrně dobře znát:
 vědět, co za tebe dělá editor, a jak to spravit, až něco udělá špatně.
-{% if var('run') -%}
-Koučové většinou znají jen jeden editor, který používají,
+{% if var('coach-present') -%}
+Koučové většinou znají jen jeden editor – ten který používají –
 takže nemusí být schopní s pokročilým IDE rychle pomoct.
 {%- endif %}
 

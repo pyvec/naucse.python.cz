@@ -19,7 +19,7 @@ a verze je 3.4 nebo vyšší, máš nainstalováno.
 Přejdi na další sekci, [kontrolu `tkinter`](#check-tkinter).
 
 Objeví-li se „Python“ a verze nižší než 3.3,
-{% if var('run') -%}
+{% if var('coach-present') -%}
 poraď se s koučem.
 {%- else -%}
 aktualizuj systém (nebo se poraď s někým, kdo to umí) a zkus to znovu.

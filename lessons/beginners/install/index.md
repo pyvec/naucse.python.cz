@@ -39,7 +39,7 @@ Vyber si stránku podle svého operačního systému:
 
 Pokud máš jiný systém než Linux, Windows nebo Mac OS,
 nebo pokud ke svému počítači neznáš administrátorské heslo,
-{% if var('run') -%}
+{% if var('coach-present') -%}
 poraď se s koučem hned, jinak se ptej, až bude něco nejasné.
 {%- else -%}
 napiš nám prosím e-mail. {# XXX vyřešit kam poslat samostudenty co mají problém #}

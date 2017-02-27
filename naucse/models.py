@@ -207,6 +207,7 @@ class Run(Model):
     subtitle = DataProperty(info)
     description = DataProperty(info)
     long_description = DataProperty(info)
+    vars = DataProperty(info)
 
     @reify
     def sessions(self):

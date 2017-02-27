@@ -46,7 +46,7 @@ def gnd(m, f, *, both=None):
 
     If the gender is not known, return `both`, or "m/f" if not given.
     """
-    gender = var('user_gender')
+    gender = var('user-gender')
     if gender == 'm':
         return m
     elif gender == 'f':
