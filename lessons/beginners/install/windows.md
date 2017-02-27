@@ -63,7 +63,7 @@ a příkazem `cd` se do něj přepni.
 Pak vytvoř virtuální prostředí:
 
 ```console
-> python3 -m venv venv
+> pyt -3 -m venv venv
 ```
 
 Tím se nám vytvořil adresář <code><span class="pythondir">~/{{ rootname }}</span>\venv</code>,
