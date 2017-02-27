@@ -1,4 +1,4 @@
-# Instalace
+# Instalace Pythonu
 
 V této sekci uděláme tři věci:
 
