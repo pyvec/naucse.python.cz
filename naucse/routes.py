@@ -96,7 +96,7 @@ def course_page(course):
         abort(404)
 
 
-@app.route('/runs/<run:run>/')
+@app.route('/<run:run>/')
 def run(run):
     """Run's page."""
     g.vars = dict(run.vars)
@@ -178,8 +178,8 @@ def render_page(page, **kwargs):
     return render_template('lesson.html', **kwargs)
 
 
-@app.route('/runs/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
-@app.route('/runs/<run:run>/<lesson:lesson>/<page>/')
+@app.route('/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
+@app.route('/<run:run>/<lesson:lesson>/<page>/')
 def run_page(run, lesson, page):
     """Run's lesson page."""
 
