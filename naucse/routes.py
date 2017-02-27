@@ -89,9 +89,9 @@ def course_page(course):
 @app.route('/runs/<run:run>/')
 def run(run):
     """Run's page."""
-    def lesson_url(lesson, *args):
+    def lesson_url(lesson, *args, **kwargs):
         """Link to the specific lesson."""
-        return url_for('run_page', run=run, lesson=lesson, *args)
+        return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
 
     try:
         return render_template('run.html',
@@ -113,6 +113,10 @@ def prv_nxt_teller(run, lesson):
                                    lessons,
                                    lessons[1:] + [None]):
         if current.slug == lesson.slug:
+            if prev:
+                prev = prev.index_page
+            if next:
+                next = next.index_page
             return prev, next
     return None, None
 
@@ -156,6 +160,9 @@ def render_page(page, **kwargs):
     kwargs.setdefault('title', page.title)
     kwargs.setdefault('content', content)
 
+    kwargs['prv'] = page.previous_page(kwargs.get('prv'))
+    kwargs['nxt'] = page.next_page(kwargs.get('nxt'))
+
     return render_template('lesson.html', **kwargs)
 
 
@@ -167,9 +174,9 @@ def run_page(run, lesson, page):
     page = lesson.pages[page]
     g.vars = dict(page.vars)
 
-    def lesson_url(lesson, *args):
+    def lesson_url(lesson, *args, **kwargs):
         """Link to the specific lesson."""
-        return url_for('run_page', run=run, lesson=lesson, *args)
+        return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
 
     def subpage_url(page_slug):
         return url_for('run_page', run=run, lesson=lesson, page=page_slug)

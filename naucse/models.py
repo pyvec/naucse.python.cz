@@ -24,6 +24,10 @@ class Lesson(Model):
         return {slug: Page(self, slug, self.info, p)
                 for slug, p in pages.items()}
 
+    @reify
+    def index_page(self):
+        return self.pages['index']
+
 
 class Page(Model):
     """A (sub-) page of a lesson"""
@@ -55,21 +59,30 @@ class Page(Model):
     def css(self):
         return self.info.get('css')
 
-    @reify
-    def previous(self):
-        prv = self.info.get('prev')
-        if prv is None:
-            return None
+    def _prevnext(self, name, default):
+        if name in self.info:
+            page_slug = self.info[name]
+            if page_slug is None:
+                return None
+            else:
+                return self.lesson.pages[page_slug]
         else:
-            return self.lesson.pages[prv]
+            return default
 
-    @reify
-    def next(self):
-        nxt = self.info.get('next')
-        if nxt is None:
-            return None
-        else:
-            return self.lesson.pages[nxt]
+    def previous_page(self, default):
+        """Return the page before this one, or `default`
+
+        The `default` can be a page from another lesson, for cases the ordering
+        is determined by a Course or Run.
+
+        Can return `None` if the page is ecplicitly configured to have
+        no previous page.
+        """
+        return self._prevnext('prev', default)
+
+    def next_page(self, default):
+        """Like `previous_page`, but for the next page"""
+        return self._prevnext('next', default)
 
     @reify
     def attributions(self):
