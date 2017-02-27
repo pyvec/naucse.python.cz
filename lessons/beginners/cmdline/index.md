@@ -329,7 +329,7 @@ z příkazové řádky – a to většinou jen zadáním jeho jména.
 Zkus jestli na tvém počítači bude fungovat `firefox`, `notepad`, `safari`
 nebo `gedit`.
 {% if var('coach-present') -%}
-Kdyby nefungoval ani jeden, zeptej se kouče ať najde, nějaký co u tebe fungovat
+Kdyby nefungoval ani jeden, zeptej se kouče ať najde nějaký, co u tebe fungovat
 bude.
 {%- endif %}
 
@@ -343,9 +343,15 @@ zanedlouho nainstalujeme.
 Nakonec vyzkoušej ještě jeden příkaz, ten, který příkazovou řádku zavírá:
 `exit`.
 
-{% call sidebyside() %}
-$ exit
----
-> exit
-{% endcall %}
+Jako většina příkazů (kromě pár z těch těch základních) funguje `exit`
+stejně na všech systémech. Proto už nebudu dělit ukázku pro Unix a Windows.
 
+Ve zbytku těchto materiálů budeme pro pro kód, který je potřeba zadat do
+příkazové řádky, používat unixovské `$`.
+S touto konvencí se setkáš i ve většině návodů na internetu.
+Používáš-li Windows, je dobré si na `$` zvyknout, i když ho ve své
+řádce máš místo něj `>`.
+
+```console
+$ exit
+```
