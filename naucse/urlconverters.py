@@ -1,5 +1,6 @@
 from functools import partial
 
+from flask import abort
 from werkzeug.routing import BaseConverter
 
 
@@ -22,7 +23,10 @@ def _converter(name):
 @_converter('course')
 class CourseConverter(ModelConverter):
     def to_python(self, slug):
-        return self.model.courses[slug]
+        try:
+            return self.model.courses[slug]
+        except KeyError:
+            abort(404)
 
     def to_url(self, value):
         if isinstance(value, str):
@@ -36,7 +40,10 @@ class RunConverter(ModelConverter):
 
     def to_python(self, value):
         year, slug = value.split('/')
-        return self.model.runs[int(year), slug]
+        try:
+            return self.model.runs[int(year), slug]
+        except KeyError:
+            abort(404)
 
     def to_url(self, value):
         if isinstance(value, str):
@@ -48,7 +55,10 @@ class LessonConverter(ModelConverter):
     regex = r'[^/]+/[^/]+'
 
     def to_python(self, value):
-        return self.model.get_lesson(value)
+        try:
+            return self.model.get_lesson(value)
+        except LookupError:
+            abort(404)
 
     def to_url(self, value):
         if isinstance(value, str):
