@@ -50,7 +50,10 @@ Při instalaci vyber tyto volby:
 
 Ostatní možnosti neměň.
 
-Potom Gitu nastav editor. V příkazové řádce zadej:
+Potom Gitu nastav editor.
+Máš-li otevřenou příkazovou řádku, zavři ji a otevři novou.
+(Instalace mění systémové nastavení, které se musí načíst znovu.)
+V nové příkazové řádce zadej:
 
 ```console
 > git config --global core.editor notepad

@@ -29,6 +29,11 @@ a dále se drž instrukcí.
     alt='Screenshot instalace Pythonu',
 ) }}
 
+Máš-li otevřenou příkazovou řádku, po instalaci Pythonu ji zavři a otevři
+novou.
+Instalace mění systémové nastavení, které se musí načíst znovu.
+
+
 ## Vytvoření virtuálního prostředí
 
 <!-- Pozn. Tahle sekce je velice podobná pro Linux, Mac i Windows;
