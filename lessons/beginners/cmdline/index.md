@@ -66,8 +66,8 @@ Podle systému se potom liší i samotné příkazy, které budeš zadávat.
 
 Začneme jednoduchým příkazem.
 Napiš `whoami` (z angl. *who am I?* – kdo jsem?)
-a stiskni Enter.
-Objeví se přihlašovací jméno. U Heleny by to vypadá takhle:
+a stiskni <kbd>Enter</kbd>.
+Objeví se přihlašovací jméno. Třeba u Heleny by to vypadalo takhle:
 
 {% call sidebyside() %}
 $ whoami
@@ -82,8 +82,8 @@ helena
 !!! note ""
     Znak `$` nebo `>` je v ukázce jen proto, aby bylo jasné, že zadáváme
     příkaz do příkazové řádky.
-    Vypíše ho sám počítač (většinou ještě s něčím před ním),
-    takže ho nepiš sama! Zadej jen `whoami` a Enter.
+    Vypíše ho počítač, většinou ještě s něčím před ním,
+    takže ho nepiš sama! Zadej jen `whoami` a <kbd>Enter</kbd>.
 
     Stejně tak počítač sám vypíše přihlašovací jméno.
 
@@ -105,8 +105,9 @@ C:\Users\helena
 {% endcall %}
 
 
-Aktuální adresář se většinou ukazuje i znakem `$` nebo `>`,
-ale je dobré `pwd`/`cd` znát, kdyby ses náhodou ztratila.
+Aktuální adresář se většinou ukazuje i před znakem `$` nebo `>`,
+ale je dobré `pwd`/`cd` znát, kdyby ses náhodou ztratil{{a}}
+(nebo musel{{a}} pracovat na počítači který před `$` ukazuje něco jiného).
 
 
 ## Co v tom adresáři je?
@@ -145,7 +146,7 @@ Jsi-li na Linuxu nebo MacOS, dej si pozor na velikost písmen: na těchto
 systémech jsou `Desktop` a `desktop` dvě různá jména.
 
 Jsi-li na Windows, `cd` už jsi používala – tento příkaz se chová různě
-podle toho, jestli něco napcseš za něj nebo ne.
+podle toho, jestli něco napíšeš za něj nebo ne.
 
 {% call sidebyside() %}
 $ cd Desktop
@@ -205,8 +206,10 @@ Teď vytvořené adresáře zase smažeme.
 
 Nemůžeš ale smazat adresář, ve kterém jsi.
 Proto se vrátíme na `Desktop`.
-Nadřazený adresář (ten, který obsahuje ten aktuální),
-se značí dvěma tečkami:
+Ale nemůžeme použít `cd Desktop` – v aktuálním adresáři, žádný `Desktop` není.
+Potřebuješ se dostat do *nadřazeného adresáře*: toho, který obsahuje
+adresář ve kterém právě jsi.
+Nadřazený adresář se značí dvěma tečkami:
 
 {% call sidebyside() %}
 $ pwd
@@ -222,16 +225,16 @@ C:\Users\helena\Desktop\{{ dirname }}
 C:\Users\helena\Desktop
 {% endcall %}
 
-A nakonec smažeme vytvořený adresář `{{ dirname }}`.
-K tomu použijeme příkaz `rm` nebo `rmdir`
+Teď můžeš smazat vytvořený adresář `{{ dirname }}`.
+K tomu použij příkaz `rm` nebo `rmdir`
 (z *remove* – odstraň, resp. *remove directory* – odstraň adresář).
 
 !!! warning "Pozor!"
     Příkazová řádka nepoužívá odpadkový koš!
-    Všechno se nadobro smaže, takže si dobře překontroluj, že mažeš
+    Všechno se nadobro smaže. Takže si dobře překontroluj, že mažeš
     správný adresář.
 
-Na Unixu za tento příkazu musíš napsat ještě jedno slovo: `-rv` (minus,
+Na Unixu za tento příkaz musíš napsat ještě jedno slovo: `-rv` (minus,
 `r`, `v`).
 To je takzvaný *přepínač*, který příkazu říká, že má smazat celý adresář
 včetně všeho, co obsahuje (`r`),
@@ -326,7 +329,7 @@ Tady je tabulka základních příkazů, se kterými si zatím vystačíme:
 Příkazů existuje samozřejmě daleko víc.
 Dokonce každý program, který máš na počítači nainstalovaný, jde spustit
 z příkazové řádky – a to většinou jen zadáním jeho jména.
-Zkus jestli na tvém počítači bude fungovat `firefox`, `notepad`, `safari`
+Zkus, jestli na tvém počítači bude fungovat `firefox`, `notepad`, `safari`
 nebo `gedit`.
 {% if var('coach-present') -%}
 Kdyby nefungoval ani jeden, zeptej se kouče ať najde nějaký, co u tebe fungovat
@@ -340,18 +343,20 @@ zanedlouho nainstalujeme.
 
 ## Konec
 
-Nakonec vyzkoušej ještě jeden příkaz, ten, který příkazovou řádku zavírá:
-`exit`.
+Nakonec vyzkoušej ještě jeden příkaz.
+Ten, který příkazovou řádku zavírá: `exit`.
 
-Jako většina příkazů (kromě pár z těch těch základních) funguje `exit`
-stejně na všech systémech. Proto už nebudu dělit ukázku pro Unix a Windows.
-
-Ve zbytku těchto materiálů budeme pro pro kód, který je potřeba zadat do
-příkazové řádky, používat unixovské `$`.
-S touto konvencí se setkáš i ve většině návodů na internetu.
-Používáš-li Windows, je dobré si na `$` zvyknout, i když ho ve své
-řádce máš místo něj `>`.
+Jako většina příkazů (kromě pár z těch základních) funguje `exit`
+stejně na všech systémech.
+Proto už nebudu používat ukázku rozdělenou pro Unix a Windows.
 
 ```console
 $ exit
 ```
+
+Ve zbytku těchto materiálů budeme pro pro kód, který je potřeba zadat do
+příkazové řádky, používat unixovské `$`.
+S touto konvencí se setkáš i ve většině návodů na internetu.
+Používáš-li Windows, je dobré si na `$` zvyknout, i když ve své
+řádce máš místo něj `>`.
+

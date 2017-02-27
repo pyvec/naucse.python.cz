@@ -7,7 +7,6 @@ Jmenuje se Git.
 Pojďme si ho nainstalovat a nastavit.
 
 Instalace je různá pro růné operační systémy, vyber ten svůj.
-Po instalaci je ještě Git potřeba nastavit – to je provšechny systémy stejné.
 
 
 ## Linux
@@ -44,7 +43,7 @@ Dál pokračuj obecným [nastavením](#config) níže.
 
 Jdi na stránku [git-scm.org](https://git-scm.org), stáhni si
 Git, a nainstaluj si ho.
-Při instalaci zadej tyto volby:
+Při instalaci vyber tyto volby:
 
 * Run Git from the Windows Command Prompt
 * Checkout Windows-style, commit Unix-style line endings
@@ -66,14 +65,13 @@ A teď pokračuj v sekci [Nastavením](#config) níže – MacOS přeskoč.
 Spusť v příkazové řádce `git`.
 Je-li už nainstalovaný, dozvíš se, jak ho používat
 (výpis začíná `usage`).
-Jinak by se měly objevit instalační instrukce.
-ho nainstaluj pomocí Homebrew:
+Jinak ho nainstaluj pomocí Homebrew:
 
 ```console
 $ brew install git
 ```
 
-Nainstalovanému Gitu ještě potřeba nastavit editor.
+Nainstalovanému Gitu je ještě potřeba nastavit editor.
 Dělá se to tímto příkazem:
 
 ```console

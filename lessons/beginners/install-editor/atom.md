@@ -12,7 +12,7 @@ Odsazování a obarvování bude fungovat správně jen v souborech s koncovko
 (jako Python).
 V jiných programovacích jazycích se totiž odsazuje i obarvuje jinak.
 
-Proto, jakmile v tomhle editoru vytvoříš nový soubor,
+Proto jakmile v tomhle editoru vytvoříš nový soubor,
 měl{{a}} bys ho co nejdřív uložit pod správným jménem.
 
 {% endblock %}

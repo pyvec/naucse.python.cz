@@ -49,14 +49,14 @@ Zvolený adresář po vytvoření nesmíš přesouvat jinam – když to udělá
 přestane virtuální prostředí fungovat.
 Proto ho nedoporučuji vytářet na Ploše.
 
+!!! note ""
+    Kdybys někdy chtěl{{a}} adresář přece jen přesunout,
+    musel{{a}} bys smazat virtuální prostředí a vytvořit nové.
+
 Ve zbytku materiálů budeme tento adresář nazývat <code class="pythondir">~/{{ rootname }}</code>,
 i když se u tebe pravděpodobně jmenuje jinak.
 Takže kdykoli odteď uvidíš <code class="pythondir">~/{{ rootname }}</code>,
 doplň místo toho „svůj“ adresář.
-
-!!! note ""
-    Kdybys někdy chtěl{{a}} adresář přece jen přesunout,
-    musel{{a}} bys virtuální prostředí smazat a vytvořit nové.
 
 Teď když je tenhle adresář vytvořený, otevři [příkazovou řádku]({{ lesson_url('beginners/cmdline') }})
 a příkazem `cd` se do něj přepni.
@@ -70,7 +70,6 @@ Tím se nám vytvořil adresář <code><span class="pythondir">~/{{ rootname }}<
 ve kterém jsou soubory s virtuálním prostředím.
 Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
-Tím máš Python a virtuální prostředí nainstalované!
 
 ## Aktivace virtuálního prostředí
 
@@ -80,18 +79,21 @@ Nakonec virtuální prostředí aktivuj:
 <pre><code><span class="gp">&gt;</span> <span class="pythondir">~/{{ rootname }}</span>\venv\Scripts\activate
 </code></pre></div>
 
+!!! note ""
+    Nezapomeň místo <span class="pythondir">~/{{ rootname }}</span> zadat
+    „svůj“ adresář!
+
 Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
 (před `>`) objevit slovo `(venv)`.
 Tak poznáš, že je virtuální prostředí *aktivní*.
 
 Tenhle příkaz si zapiš. Budeš ho muset zadat vždycky když pustíš příkazovou řádku,
 než se pustíš do programování.
-
-{% if var('pyladies') %}
+{% if var('pyladies') -%}
 Máš-li vytištěné <a href="http://pyladies.cz/v1/s001-install/handout/handout.pdf">domácí projekty</a>,
-příkaz si poznač, ať ho do příště nezapomeneš :)
-{% endif %}
+můžeš si ho poznačit tam :)
+{%- endif %}
 
-Pusťme se tedy do programování!
+Zkusme teď nainstalovaný Python použít!
 To už bude stejné pro tebe i pro lidi na Linuxu a Macu.
 Sejdeme se na [další stránce]({{ subpage_url('first-steps') }}).

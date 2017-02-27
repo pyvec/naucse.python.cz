@@ -1,12 +1,12 @@
 ## První příkazy v Pythonu
 
-Vítej!
+Pojďme si vyzkoušet, že nainstalovaný Python funguje!
 
 Zkontroluj si, že máš aktivované virtuální prostředí (na začátku příkazové
 řádky ti svítí `(env)`).
 
-Je-li tomu tak, nezbývá než – konečně – pustit Python!
-K tomu pužijeme příkaz `python`:
+Je-li tomu tak, nezbývá než – konečně – pustit Python.
+K tomu pužij příkaz `python`:
 
 ``` plain
 (venv)$ python
@@ -18,9 +18,9 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 Příkaz vypíše několik informací.
 Z prvního řádku se můžeš ujistit, že používáš Python 3.
-Třemi zobáčky `>>>` pak Python poprosí o instrukce.
+Třemi „zobáčky“ `>>>` pak Python poprosí o instrukce.
 Je to jako v příkazové řádce, ale místo příkazů jako
-`cd` a `mkdir` budeme psát příkazy Pythonu.
+`cd` a `mkdir` sem budeš psát příkazy Pythonu.
 
 Nejjednodušší příkaz Pythonu je prosté číslo. Zkus to:
 
@@ -59,8 +59,9 @@ když uděláš něco špatně.
 V průběhu kurzu jich uvidíš ještě spoustu,
 takže si ji dobře prohlédni, ať ji příště poznáš.
 
-Pokud ses dostala až sem, gratuluji! To nejhorší – instalaci – máš za sebou.
-Stačí už jen zavřít Python a pak i samotnou příkazovou řádku.
+Pokud ses dostala až sem, gratuluji!
+Python máš nejen nainstalovaný, ale taky ti funguje.
+Stačí ho už jen zavřít, a pak opustit i samotnou příkazovou řádku.
 V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.
 
 <div class="codehilite"><pre>
@@ -87,6 +88,5 @@ Příkazovou řádku můžeš nakonec zavřít příkazem `exit`.
 $ exit
 ```
 
-Pro cvik si zkus celé okno zavřít, a pak Python znovu
-spustit – nejdřív otevři příkazovou řádku, pak aktivuj virtuální prostředí,
-potom spusť Python samotný.
+Pro cvik si zkus Python znovu spustit – nejdřív otevři příkazovou řádku,
+pak aktivuj virtuální prostředí, potom spusť Python samotný.

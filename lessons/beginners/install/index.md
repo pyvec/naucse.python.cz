@@ -1,13 +1,6 @@
 # Instalace
 
-{# XXX - move to generall install info
-Instalace je na celé věci nejsložitější,
-protože se na každém počítači musí dělat trochu jinak.
-Ale na druhou stranu se musí udělat jenom jednou.
-Příště to bude jednodušší!
-#}
-
-V této lekci uděláme tři věci:
+V této sekci uděláme tři věci:
 
 * Nainstalujeme Python a Virtualenv
 * Vytvoříme si virtuální prostředí pro práci v Pythonu

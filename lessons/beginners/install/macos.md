@@ -44,7 +44,7 @@ Proto ho nedoporučuji vytářet na Ploše.
 
 !!! note ""
     Kdybys někdy chtěl{{a}} adresář přece jen přesunout,
-    musel{{a}} bys virtuální prostředí smazat a vytvořit nové.
+    musel{{a}} bys smazat virtuální prostředí a vytvořit nové.
 
 Teď když je tenhle adresář vytvořený, otevři příkazovou řádku
 a příkazem `cd` se do něj přepni:
@@ -63,7 +63,6 @@ Tím se ti vytvořil adresář <code><span class="pythondir">~/{{ rootname }}</s
 ve kterém jsou soubory s virtuálním prostředím.
 Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
-Teď máš Python a virtuální prostředí nainstalované!
 
 ## Aktivace virtuálního prostředí
 

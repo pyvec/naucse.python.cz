@@ -19,24 +19,24 @@ Editor pro programátory nám umožňuje upravovat *prostý text* – písmenka.
 Na rozdíl od programů jako Word, Writer či Pages neumožňuje text *formátovat*,
 tedy dělat nadpisy, obarvovat, zvětšovat font, vkládat obrázky, a podobně.
 
-Formátování nepotřebujeme: pomocí editoru budeme zadávat počítači příkazy.
+Pomocí editoru budeme zadávat počítači příkazy, takže formátování nepotřebujeme.
 Porovnej {{ gnd('sám', 'sama') }}, jaký je rozdíl mezi následujícími příkazy
 pro někoho, kdo se jimi má řídit:
 
-* `Nakresli mi beránka!`
-* <font color="green">Nakresli <big><big>mi</big> <em>beránka</em>!</big></font>
+* Nakresli mi beránka!
+* <font color="green">Nakresli <big><big>mi</big> <u>beránka</u>!</big></font>
 
 To, že neumí formátování, neznamená že jsou naše editory úplně „hloupé“
 nástroje.
 Aby se nám programy upravovaly pohodlněji, mají několik vychytávek:
 
 Podpora více souborů
-:   Větší programy sestávají z více souborů, které můžeš mít v editoru otevřené
+:   Větší projekty sestávají z více souborů, které můžeš mít v editoru otevřené
     všechny najednou.
 
 Číslování řádků
-:   Před pkaždým řádkem je ukazuje číslo.
-    To se bude velice hodit, až Python bude nadávat, že chyba je na řádku 183. 
+:   Před každým řádkem se ukazuje číslo.
+    To se bude velice hodit, až Python bude nadávat že chyba je na řádku 183. 
 
 Odsazování
 :   V Pythonu je důležité, kolika mezerami řádek začíná.
@@ -51,7 +51,7 @@ Obarvování
 
 !!! note ""
 
-    Pro ilustraci: takhle může v editoru vypadat kousek kódu téhle stránky:
+    Pro ilustraci, takhle může v editoru vypadat kousek kódu:
 
         :::python
          1  @app.route('/courses/<course:course>/')
@@ -80,8 +80,8 @@ doporučujeme *Atom*:
 
 Na Linuxu budeš mít pravděpodobně už nainstalovaný Gedit nebo Kate.
 Zkus se podívat do systémové nabídky, jestli jeden z nich máš (případně je
-spusť z příkazové řádky jako `gedit`, resp. `kate`), a pokud ano,
-klikni na odka níže a nakonfiguruj ho.
+spusť z příkazové řádky jako `gedit`, resp. `kate`).
+Pokud ano, klikni na odkaz níže a editor si nastav.
 Nemáš-li ani jeden, vyber třeba Gedit.
 
 * [Gedit]({{ subpage_url('gedit') }}) – bývá na systémech s prostředím Gnome.
