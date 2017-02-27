@@ -89,14 +89,14 @@ Potřebuješ proto zjistit, jestli `venv` máš, a kdyžtak nainstalovat alterna
 Spusť v příkazové řádce příkaz:
 
 ```console
-$ python3 -m venv --help
+$ python3 -m ensurepip --version
 ```
 
-Objeví-li se výpis začínající „usage:“, máš virtualenv nainstalovaný.
+Objeví-li se výpis začínající „pip“, máš funkční `venv` nainstalovaný.
 Přejdi na sekci [vytvoření virtuálního prostředí](#setup-venv).
 
-Objeví-li se nápis `No module named venv`, je potřeba doinstalovat alternativu,
-Virtualenv.
+Objeví-li se nápis `No module named ensurepip`, je potřeba doinstalovat
+alternativu, Virtualenv.
 Zapamatuj si, že Virtualenv budeš muset v dalším kroku použít,
 a nainstaluj ho:
 
