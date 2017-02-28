@@ -840,7 +840,7 @@ Zobrazování cesty
     * matici šipek máte opět z úloh z minula, stačí je zobrazit pouze tam, kde jsou čáry
 * od některých postav logicky cesta k cíli nemusí existovat, od nich tedy žádnou nevykreslujte (aplikace s takovou situací musí počítat a nesmí spadnout)
 
-![Obrázek bludiště](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/09-qt/mazepic.png)
+![Obrázek bludiště](09-qt/mazepic.png)
 
 Odevzdání
 ---------
