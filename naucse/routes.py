@@ -122,16 +122,23 @@ def prv_nxt_teller(run, lesson):
         for material in session.materials
         if material.lesson
     ]
+
+    prv_link, prv_title, nxt_link, nxt_title = None, None, None, None
+
     for prev, current, next in zip([None] + lessons,
                                    lessons,
                                    lessons[1:] + [None]):
         if current.slug == lesson.slug:
             if prev:
                 prev = prev.index_page
+                prv_link = str(prev)
+                prv_title = prev.title
             if next:
                 next = next.index_page
-            return prev, next
-    return None, None
+                nxt_link = str(next)
+                nxt_title = next.title
+    
+    return prv_link, prv_title, nxt_link, nxt_title
 
 
 def lesson_template_or_404(lesson, page):
@@ -195,13 +202,15 @@ def run_page(run, lesson, page):
     def subpage_url(page_slug):
         return url_for('run_page', run=run, lesson=lesson, page=page_slug)
 
-    prv, nxt = prv_nxt_teller(run, lesson)
+    prv_link, prv_title, nxt_link, nxt_title = prv_nxt_teller(run, lesson)
     title = title='{}: {}'.format(run.title, page.title)
 
     return render_page(page=page, title=title,
                        lesson_url=lesson_url,
                        subpage_url=subpage_url,
-                       run=run, nxt=nxt, prv=prv,
+                       run=run,
+                       nxt_link=nxt_link, nxt_title=nxt_title,
+                       prv_link=prv_link, prv_title=prv_title,
                        page_wip=not page.license)
 
 
