@@ -34,8 +34,8 @@ Příkazová řádka
 anglicky *command line*, *console*, *terminal*)
 se na různých systémech otevírá různě:
 
-* Windows (české): Start → Všechny programy → Příslušenství → Příkazový řádek
-* Windows (anglické): Start → All Programs → Accessories → Command Prompt
+* Windows (české): Start → napsat na klávesnici „cmd“ → Příkazový řádek
+* Windows (anglické): Start → napsat na klávesnici „cmd“ → Command Prompt
 * MacOS (anglický): Applications → Utilities → Terminal
 * Linux (KDE): Hlavní Menu → hledat Konsole
 * Linux (Gnome): Super → hledat Terminál
@@ -61,6 +61,20 @@ $
 
 Podle systému se potom liší i samotné příkazy, které budeš zadávat.
 
+!!! note "Velikost písma"
+    Je-li ve Windows moc malé písmo, klikni na ikonku okna a vyber Možnosti.
+    V záložce Písmo si pak můžeš vybrat větší font.
+    <!-- XXX: are the Czech names correct? -->
+
+    {{ figure(
+        img=static('windows-cmd-properties.png'),
+        alt='Screenshot menu příkazové řádky',
+    ) }}
+
+    Na ostatních systémech hledej v nastavení, nebo zkus
+    <kbd>Ctrl</kbd>+<kbd>+</kbd> a
+    <kbd>Ctrl</kbd>+<kbd>-</kbd> (příp. se Shift).
+
 
 ## První příkaz
 
@@ -74,7 +88,7 @@ $ whoami
 helena
 ---
 > whoami
-helena
+pocitac\Helena
 {% endcall %}
 
 
@@ -177,6 +191,9 @@ $ mkdir {{ dirname }}
 ---
 > mkdir {{ dirname }}
 {% endcall %}
+
+Teď se můžeš podívat na Plochu nebo do nějakého grafickém programu na
+prohlížení adresářů: zjistíš, že adresář se opravdu vytvořil!
 
 ## Úkol
 Zkus v nově vytvořeném adresáři `{{ dirname }}`
