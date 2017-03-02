@@ -6,7 +6,7 @@ Zkontroluj si, že máš aktivované virtuální prostředí (na začátku pří
 řádky ti svítí `(venv)`).
 
 Je-li tomu tak, nezbývá než – konečně – pustit Python.
-K tomu pužij příkaz `python`:
+K tomu použij příkaz `python`:
 
 ``` plain
 (venv)$ python
