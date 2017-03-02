@@ -3,7 +3,7 @@
 Pojďme si vyzkoušet, že nainstalovaný Python funguje!
 
 Zkontroluj si, že máš aktivované virtuální prostředí (na začátku příkazové
-řádky ti svítí `(env)`).
+řádky ti svítí `(venv)`).
 
 Je-li tomu tak, nezbývá než – konečně – pustit Python.
 K tomu pužij příkaz `python`:
@@ -66,11 +66,11 @@ V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.
 
 <div class="codehilite"><pre>
 <span class="gp">&gt;&gt;&gt;</span> quit()
-<span class="gp">(env)$</span>
+<span class="gp">(venv)$</span>
 </pre></div>
 
 Zobáčky `>>>` se změnily na výzvu
-příkazové řádky (která začíná `(env)` a končí `$` nebo `>`).
+příkazové řádky (která začíná `(venv)` a končí `$` nebo `>`).
 Teď fungují příkazy jako `whoami` a `cd`, ale příkazy Pythonu
 jako `1 + 2` fungovat nebudou, dokud Python opět nepustíš pomocí
 příkazu `python`.
@@ -79,7 +79,7 @@ Ukončit virtuální prostředí můžeš příkazem `deactivate` –
 tentokrát bez závorek.
 
 ```console
-(env)$ deactivate
+(venv)$ deactivate
 ```
 
 Příkazovou řádku můžeš nakonec zavřít příkazem `exit`.
