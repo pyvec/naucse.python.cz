@@ -7,6 +7,7 @@ from naucse.modelutils import reify
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.markdown_util import convert_markdown
 from naucse.notebook_util import convert_notebook
+import yaml
 
 
 class Lesson(Model):
@@ -68,30 +69,20 @@ class Page(Model):
     def css(self):
         return self.info.get('css')
 
-    def _prevnext(self, name, default):
-        if name in self.info:
-            page_slug = self.info[name]
-            if page_slug is None:
-                return None
-            else:
-                return self.lesson.pages[page_slug]
+    @reify
+    def subpages(self):
+        if "subpages" in self.info.keys():
+            return self.info['subpages']
         else:
-            return default
+            return None
 
-    def previous_page(self, default):
-        """Return the page before this one, or `default`
+    @reify
+    def previous_page(self):
+        return self.info.get('prev')
 
-        The `default` can be a page from another lesson, for cases the ordering
-        is determined by a Course or Run.
-
-        Can return `None` if the page is ecplicitly configured to have
-        no previous page.
-        """
-        return self._prevnext('prev', default)
-
-    def next_page(self, default):
-        """Like `previous_page`, but for the next page"""
-        return self._prevnext('next', default)
+    @reify
+    def next_page(self):
+        return self.info.get('next')
 
     @reify
     def attributions(self):
@@ -140,9 +131,9 @@ class Page(Model):
             def lesson_url(lesson, page='index', solution=None):
                 lesson = self.root.get_lesson(lesson)
                 url = '../../{}/'.format(lesson.slug)
-                if page != 'index' or solution != None:
+                if page != 'index' or solution is not None:
                     url += '{}/'.format(page)
-                if solution != None:
+                if solution is not None:
                     url += '{}/'.format(solution)
                 return url
 
@@ -191,37 +182,82 @@ class Collection(Model):
 
     lessons = DirProperty(Lesson)
 
+def material(root, path, info, base_collection):
+    if "lesson" in info:
+        lesson = root.get_lesson(info['lesson'], base_collection)
+        page = lesson.pages[info.get("page", "index")]
+        return PageMaterial(root, path, page, info.get("title"))
+    elif "url" in info:
+        return UrlMaterial(root, path, info["url"], info["title"])
+    else:
+        raise ValueError("Unknown material type")
+
 
 class Material(Model):
     """A link – either to a lesson, or an external URL"""
-    def __init__(self, root, path, info, base_collection):
+    def __init__(self, root, path):
         super().__init__(root, path)
-        self.info = info
-        self.base_collection = base_collection
+        self.default_prev = None
+        self.default_next = None
+        # default_prev and default_next is set later
 
     def __str__(self):
         return self.title
 
-    @reify
-    def url(self):
-        return self.info['url']
 
-    @reify
-    def lesson(self):
-        try:
-            name = self.info['lesson']
-        except KeyError:
-            return None
+class PageMaterial(Material):
+    type = "page"
+    has_navigation = True
+
+    def __init__(self, root, path, page, title=None, default_prev=None,
+                 default_next=None, subpages=None):
+        super().__init__(root, path)
+        self.page = page
+        self.title = title or page.title
+        self.default_prev = default_prev
+        self.default_next = default_next
+        
+        if subpages is None:
+            self.subpages = {}
+
+            for slug, subpage in page.lesson.pages.items():
+                item = PageMaterial(root, path, subpage, default_prev=self, default_next=default_next, subpages=self.subpages)
+                self.subpages[slug] = item
+
+            print(self.subpages)
         else:
-            return self.root.get_lesson(name, self.base_collection)
+            self.subpages = subpages
+
 
     @reify
     def title(self):
-        try:
-            return self.info['title']
-        except KeyError:
-            pass
-        return self.lesson.title
+        return self.info.get("title", self.page.title)
+
+    @reify
+    def prev(self):
+        if self.page.previous_page is not None:
+            return PageMaterial(self.root, self.path, self.page.prev_page, default_prev=self.default_prev)
+        else:
+            return self.default_prev
+
+    @reify
+    def next(self):  
+        if self.page.next_page is not None:
+            return PageMaterial(self.root, self.path, self.page.next_page, default_next=self.default_next)
+        else:
+            return self.default_next
+
+
+class UrlMaterial(Material):
+    prev = None
+    next = None
+    type = "url"
+    has_navigation = False
+
+    def __init__(self, root, path, url, title):
+        super().__init__(root, path)
+        self.url = url
+        self.title = title
 
 
 class Session(Model):
@@ -230,6 +266,7 @@ class Session(Model):
         super().__init__(root, path)
         self.info = info
         self.base_collection = base_collection
+        # self.prev and self.next are set later
 
     def __str__(self):
         return self.title
@@ -242,8 +279,17 @@ class Session(Model):
 
     @reify
     def materials(self):
-        return [Material(self.root, self.path, s, self.base_collection)
+        materials = [material(self.root, self.path, s, self.base_collection)
                 for s in self.info['materials']]
+        materials_with_nav = [mat for mat in materials if mat.has_navigation]
+        for prev, current, next in zip([None] + materials_with_nav, 
+                                       materials_with_nav,
+                                       materials_with_nav[1:] + [None]
+                                       ):
+            current.default_prev = prev
+            current.default_next = next
+
+        return materials
 
 
 def _get_sessions(model, plan, base_collection):
@@ -252,6 +298,13 @@ def _get_sessions(model, plan, base_collection):
             Session(model.root, model.path, s, base_collection))
         for s in plan
     )
+
+    sessions = list(result.values())
+
+    for prev, current, next in zip([None] + sessions, sessions, sessions[1:] + [None]):
+        current.prev = prev
+        current.next = next
+
     if len(result) != len(set(result)):
         raise ValueError('slugs not unique in {!r}'.format(model))
     return result

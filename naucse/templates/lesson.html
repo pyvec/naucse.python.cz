@@ -21,29 +21,28 @@
         {% block lesson_content %}
             {{ content }}
         {% endblock %}
-
+        
         <hr class="lesson-end">
 
-        {% if (prv is defined and prv) or (nxt is defined and nxt) %}
+        {% if (prv is defined and prv != None) or (nxt is defined and nxt != None) %}
         <div class="row prev-next">
-            {% if prv %}
-                <div class="col text-left">
-                    <a href="{{ lesson_url(prv.lesson, page=prv.slug) }}">← <span class="hidden-xs-down">{{ prv.title }}</span></a>
-                </div>
+            <div class="col text-left">
+            {% if prv is defined and prv != None %}
+                <a href="{{ lesson_url(lesson=prv.page.lesson, page=prv.page.slug) }}">← <span class="hidden-xs-down">{{ prv.title }}</span></a>
             {% endif %}
+            </div>
 
-            {% if nxt %}
-                <div class="col text-right">
-                    <a href="{{ lesson_url(nxt.lesson, page=nxt.slug) }}"><span class="hidden-xs-down">{{ nxt.title }}</span> →</a>
-                </div>
+            <div class="col text-right">
+            {% if nxt is defined and nxt != None %}
+                <a href="{{ lesson_url(lesson=nxt.page.lesson, page=nxt.page.slug) }}"><span class="hidden-xs-down">{{ nxt.title }}</span> →</a>
             {% endif %}
+            </div>
         </div>
 
-            <hr>
+        <hr>
         {% endif %}
 
         {% if page.attributions or page.license %}
-
             <div class="lesson-attribution">
                 {% for a in page.attributions %}
                     {{ a | markdown }}

@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, url_for, send_from_directory
+from flask import Flask, render_template, url_for, send_from_directory, redirect
 from flask import abort
 from jinja2 import StrictUndefined
 from jinja2.exceptions import TemplateNotFound
@@ -121,26 +121,6 @@ def run(run):
         abort(404)
 
 
-def prv_nxt_teller(run, lesson):
-    """Determine the previous and the next lesson."""
-    lessons = [
-        material.lesson
-        for session in run.sessions.values()
-        for material in session.materials
-        if material.lesson
-    ]
-    for prev, current, next in zip([None] + lessons,
-                                   lessons,
-                                   lessons[1:] + [None]):
-        if current.slug == lesson.slug:
-            if prev:
-                prev = prev.index_page
-            if next:
-                next = next.index_page
-            return prev, next
-    return None, None
-
-
 def render_page(page, solution=None, vars=None, **kwargs):
     lesson = page.lesson
 
@@ -164,14 +144,8 @@ def render_page(page, solution=None, vars=None, **kwargs):
         template_name = 'solution.html'
         kwargs.setdefault('solution_number', solution)
 
-        # XXX: Link to fragment
-        kwargs['prv'] = page
-        kwargs['nxt'] = None
     else:
         template_name = 'lesson.html'
-
-        kwargs['prv'] = page.previous_page(kwargs.get('prv'))
-        kwargs['nxt'] = page.next_page(kwargs.get('nxt'))
 
     kwargs.setdefault('title', page.title)
     kwargs.setdefault('content', content)
@@ -185,7 +159,21 @@ def render_page(page, solution=None, vars=None, **kwargs):
 def run_page(run, lesson, page, solution=None):
     """Run's lesson page."""
 
-    page = lesson.pages[page]
+    for session in run.sessions.values():
+        for material in session.materials:
+            if (material.type == "page" and
+                    material.page.lesson.slug == lesson.slug):
+                material = material.subpages[page]
+                page = material.page
+                nxt = material.next
+                prv = material.prev
+                break
+        else:
+            continue
+        break
+    else:
+        page = lesson.pages[page]
+        prv = nxt = None
 
     def lesson_url(lesson, *args, **kwargs):
         """Link to the specific lesson."""
@@ -194,16 +182,16 @@ def run_page(run, lesson, page, solution=None):
     def subpage_url(page_slug):
         return url_for('run_page', run=run, lesson=lesson, page=page_slug)
 
-    prv, nxt = prv_nxt_teller(run, lesson)
     title = title='{}: {}'.format(run.title, page.title)
 
     return render_page(page=page, title=title,
                        lesson_url=lesson_url,
                        subpage_url=subpage_url,
-                       run=run, nxt=nxt, prv=prv,
+                       run=run,
                        page_wip=not page.license,
                        solution=solution,
-                       vars=run.vars)
+                       vars=run.vars,
+                       nxt=nxt, prv=prv)
 
 
 @app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
