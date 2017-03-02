@@ -15,6 +15,7 @@ app = Flask('naucse')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 lesson_template_loader = FileSystemLoader(os.path.join(app.root_path, '..', 'lessons'))
+session_template_loader = FileSystemLoader(os.path.join(app.root_path, '..', 'runs'))
 
 
 @LocalProxy
@@ -211,3 +212,39 @@ def lesson(lesson, page):
     page = lesson.pages[page]
     g.vars = dict(page.vars)
     return render_page(page=page, page_wip=True)
+
+
+####### SESSION
+
+
+def session_template_or_404(run, session, page):
+    env = app.jinja_env.overlay(loader=session_template_loader)
+    run_link = str(run).split(" - ")[0]
+    name = '{}/sessions/{}/{}.md'.format(run_link, session, page)
+    try:
+        return env.get_template(name)
+    except TemplateNotFound:
+        abort(404)
+
+
+def render_session(run, session, page):
+    template = session_template_or_404(run, session, page)
+    content = Markup(template.render())
+
+    md_content = Markup(convert_markdown(content))
+
+    return render_template('session.html', content=md_content, page=page)
+
+
+@app.route('/runs/<run:run>/sessions/<session>/', defaults={'page': 'front'})
+@app.route('/runs/<run:run>/sessions/<session>/<page>/')
+def session_page(run, session, page):
+    """Run's session page."""
+
+    def session_url(session):
+        """Link to the specific lesson."""
+        return url_for('session_page', run=run, session=session, page=page)
+
+    nxt = "back.md"
+
+    return render_session(run=run, session=session, page=page)
