@@ -277,7 +277,7 @@ Tady je tabulka základních příkazů, se kterými si zatím vystačíme:
     <tr>
         <td><code>pwd</code></td>
         <td><code>cd</code></td>
-        <td>výpis akktuálního adresáře</td>
+        <td>výpis aktuálního adresáře</td>
         <td><code>pwd</code><br><code>cd</code></td>
     </tr>
     <tr>
