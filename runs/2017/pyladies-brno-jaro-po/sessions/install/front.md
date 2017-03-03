@@ -20,4 +20,4 @@ Vítej na srazu, pohodlně se usaď, za chvíli začínáme.
 
 ## [Odkaz na feedback]
 
-[Odkaz na feedback]: http://s.quickmeme.com/img/a8/a8022006b463b5ed9be5a62f1bdbac43b4f3dbd5c6b3bb44707fe5f5e26635b0.jpg
+[Odkaz na feedback]: https://gist.github.com/encukou/290a5b519656da51780be05f0e894b9c
