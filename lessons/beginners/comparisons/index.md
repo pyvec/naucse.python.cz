@@ -120,12 +120,14 @@ Nejdřív zkus nastavit proměnnou,
 která bude `True`, když uživatel zadal kladné číslo nebo nulu.
 
 
-!!! solution "Řešení"
+{% filter solution %}
     Taková proměnná se dá nastavit pomocí tohoto kódu:
 
-        :::python
-        strana = float(input('Zadej stranu v centimetrech: '))
-        cislo_je_spravne = strana <= 0
+    ```python
+    strana = float(input('Zadej stranu v centimetrech: '))
+    cislo_je_spravne = strana <= 0
+    ```
+{% endfilter %}
 
 A nyní řekneme počítači, aby tuhle proměnnou použil.
 K tomu se používá dvojice příkazů `if` (*pokud*)

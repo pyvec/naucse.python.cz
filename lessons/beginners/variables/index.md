@@ -35,28 +35,30 @@ Výsledky by měl samozřejmě spočítat Python; číslo 1424 nebo 126736 do pr
 Jestli si nevíš rady, podívej se na program <code>printing.py</code>
 z [lekce o `print`]({{ lesson_url('beginners/print') }}), kde jeden řádek dělá něco podobného.
 
-!!! solution "Řešení"
+{% filter solution %}
     Program, který vypíše správný výsledek, může vypadat třeba takhle:
 
-        :::python
-        print('Obvod čtverce se stranou 356 cm je', 4 * 356, 'cm')
-        print('Obsah čtverce se stranou 356 cm je', 356 * 356, 'cm2')
+    ```python
+    print('Obvod čtverce se stranou 356 cm je', 4 * 356, 'cm')
+    print('Obsah čtverce se stranou 356 cm je', 356 * 356, 'cm2')
+    ```
+{% endfilter %}
 
 
-        ## Menší čtverec
+## Menší čtverec
 
 Jestli všechno funguje, zkus změnit program tak,
 aby počítal obsah a obvod čtverce o straně 123 cm.
 
-!!! solution "Řešení"
-    Program, který vypíše správný výsledek, může vypadat třeba takhle:
+{% filter solution %}
+    ```python
+    print('Obvod čtverce se stranou 123 cm je', 4 * 123, 'cm')
+    print('Obsah čtverce se stranou 123 cm je', 123 * 123, 'cm2')
+    ```
+{% endfilter %}
 
-        :::python
-        print('Obvod čtverce se stranou 123 cm je', 4 * 123, 'cm')
-        print('Obsah čtverce se stranou 123 cm je', 123 * 123, 'cm2')
 
-
-## Proměnné</h2>
+## Proměnné
 
 Zvládneš to i pro stranu 3945 cm, 832 cm, 956 cm?
 Baví tě přepisování čísel?
