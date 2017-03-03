@@ -101,10 +101,9 @@ u `4 * 183` není příliš jasné, co ta čísla znamenají.
 
     ## Kruhy
 
-    (Tohle je aktivita navíc! Klidně ji přeskoč.)
+    *Tohle je příklad navíc! Klidně ho přeskoč.*
 
     Změna zadání!
-
     Zkus program doplnit tak, aby kromě čtverce počítal
     i obvod a obsah kruhu se stejným poloměrem,
     jakou má čtverec stranu.
