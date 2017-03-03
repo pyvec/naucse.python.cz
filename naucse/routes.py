@@ -117,14 +117,15 @@ def run(run):
 
 def prv_nxt_teller(run, lesson):
     """Determine the previous and the next lesson."""
-    lessons = [
-        material.lesson
-        for session in run.sessions.values()
-        for material in session.materials
-        if material.lesson
-    ]
+    lessons = [material.lesson for session in run.sessions.values() for material in session.materials if material.lesson]
 
     Arrow = namedtuple('Arrow', ['link', 'title'])
+
+    sess = None
+    for session in run.sessions.values():
+        for material in session.materials:
+            if str(material.lesson) == str(lesson):
+                sess = Arrow(session.slug, session.title)
 
     prv, nxt = None, None
 
@@ -137,7 +138,7 @@ def prv_nxt_teller(run, lesson):
             if next:
                 nxt = Arrow(next.slug, next.title)
 
-    return prv, nxt
+    return prv, nxt, sess
 
 
 def lesson_template_or_404(lesson, page):
@@ -198,7 +199,7 @@ def run_page(run, lesson, page):
     def subpage_url(page_slug):
         return url_for('run_page', run=run, lesson=lesson, page=page_slug)
 
-    prv, nxt = prv_nxt_teller(run, lesson)
+    prv, nxt, sess = prv_nxt_teller(run, lesson)
 
     title = title='{}: {}'.format(run.title, page.title)
 
@@ -206,6 +207,7 @@ def run_page(run, lesson, page):
                        lesson_url=lesson_url,
                        subpage_url=subpage_url,
                        run=run, prv=prv, nxt=nxt,
+                       sess=sess,
                        page_wip=not page.license)
 
 
