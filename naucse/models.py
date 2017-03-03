@@ -53,7 +53,7 @@ class Page(Model):
 
     @reify
     def jinja(self):
-        return self.info.get('jinja')
+        return self.info.get('jinja', True)
 
     @reify
     def css(self):
