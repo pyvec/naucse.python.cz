@@ -1,4 +1,4 @@
-# Nastavení editoru
+# Instalace editoru
 
 Editor, program na úpravu textu, je základní pomůcka
 každého programátora,
