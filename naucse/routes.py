@@ -5,6 +5,7 @@ from flask import abort, render_template_string, g
 from jinja2 import PrefixLoader, FileSystemLoader, StrictUndefined, Markup
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
+from collections import namedtuple
 
 from naucse import models
 from naucse.urlconverters import register_url_converters
@@ -123,22 +124,20 @@ def prv_nxt_teller(run, lesson):
         if material.lesson
     ]
 
-    prv_link, prv_title, nxt_link, nxt_title = None, None, None, None
+    Arrow = namedtuple('Arrow', ['link', 'title'])
+
+    prv, nxt = None, None
 
     for prev, current, next in zip([None] + lessons,
                                    lessons,
                                    lessons[1:] + [None]):
         if current.slug == lesson.slug:
             if prev:
-                prev = prev.index_page
-                prv_link = str(prev)
-                prv_title = prev.title
+                prv = Arrow(prev.slug, prev.title)
             if next:
-                next = next.index_page
-                nxt_link = str(next)
-                nxt_title = next.title
-    
-    return prv_link, prv_title, nxt_link, nxt_title
+                nxt = Arrow(next.slug, next.title)
+
+    return prv, nxt
 
 
 def lesson_template_or_404(lesson, page):
@@ -180,9 +179,6 @@ def render_page(page, **kwargs):
     kwargs.setdefault('title', page.title)
     kwargs.setdefault('content', content)
 
-    kwargs['prv'] = page.previous_page(kwargs.get('prv'))
-    kwargs['nxt'] = page.next_page(kwargs.get('nxt'))
-
     return render_template('lesson.html', **kwargs)
 
 
@@ -202,15 +198,14 @@ def run_page(run, lesson, page):
     def subpage_url(page_slug):
         return url_for('run_page', run=run, lesson=lesson, page=page_slug)
 
-    prv_link, prv_title, nxt_link, nxt_title = prv_nxt_teller(run, lesson)
+    prv, nxt = prv_nxt_teller(run, lesson)
+
     title = title='{}: {}'.format(run.title, page.title)
 
     return render_page(page=page, title=title,
                        lesson_url=lesson_url,
                        subpage_url=subpage_url,
-                       run=run,
-                       nxt_link=nxt_link, nxt_title=nxt_title,
-                       prv_link=prv_link, prv_title=prv_title,
+                       run=run, prv=prv, nxt=nxt,
                        page_wip=not page.license)
 
 
@@ -250,7 +245,7 @@ def session_page(run, session, page):
     """Run's session page."""
 
     def session_url(session):
-        """Link to the specific lesson."""
+        """Link to the specific session."""
         return url_for('session_page', run=run, session=session, page=page)
 
     nxt = "back.md"
