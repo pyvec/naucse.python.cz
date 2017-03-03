@@ -228,8 +228,7 @@ def lesson(lesson, page):
 
 def session_template_or_404(run, session, page):
     env = app.jinja_env.overlay(loader=session_template_loader)
-    run_link = str(run).split(" - ")[0]
-    name = '{}/sessions/{}/{}.md'.format(run_link, session, page)
+    name = '{}/sessions/{}/{}.md'.format(run.slug, session, page)
     try:
         return env.get_template(name)
     except TemplateNotFound:
