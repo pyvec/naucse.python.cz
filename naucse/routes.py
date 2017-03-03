@@ -232,15 +232,6 @@ def session_template_or_404(run, session, page):
         abort(404)
 
 
-def render_session(run, session, page):
-    template = session_template_or_404(run, session, page)
-    content = Markup(template.render())
-
-    md_content = Markup(convert_markdown(content))
-
-    return render_template('session.html', content=md_content, page=page)
-
-
 @app.route('/runs/<run:run>/sessions/<session>/', defaults={'page': 'front'})
 @app.route('/runs/<run:run>/sessions/<session>/<page>/')
 def session_page(run, session, page):
@@ -250,6 +241,9 @@ def session_page(run, session, page):
         """Link to the specific session."""
         return url_for('session_page', run=run, session=session, page=page)
 
-    nxt = "back.md"
+    template = session_template_or_404(run, session, page)
+    content = Markup(template.render())
 
-    return render_session(run=run, session=session, page=page)
+    md_content = Markup(convert_markdown(content))
+
+    return render_template('session.html', content=md_content, page=page)
