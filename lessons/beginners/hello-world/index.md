@@ -5,11 +5,11 @@
 7
 ```
 
-Psaní příkazů přímo v Pythonu, <em>interaktivně</em>,
+Psaní příkazů přímo v Pythonu, <em>interaktivně</em>,
 má jednu velkou nevýhodu:
-to, co napíšeme, se ztratí, jakmile zavřeme okno příkazové řádky.
-Na jednoduché výpočty to nevadí, ale až budou naše programy složitější,
-budeme je potřebovat nějak uložit.
+to, co napíšeš, se ztratí, jakmile zavřeš okno příkazové řádky.
+Na jednoduché výpočty to nevadí, ale až budou tvoje programy složitější,
+budeš je potřebovat nějak uložit.
 
 Otevři editor
 (Ten bys měl{{a}} mít nainstalovaný, jestli ne, instrukce jsou v [předchozí
@@ -32,14 +32,14 @@ Za <code class="pythondir">~/{{ rootname }}</code> musíš doplnit adresář,
 který jsi vytvořil{{a}} minule. Podadresář `02` musíš vytvořit.
 Do něj pak soubor ulož jako `ahoj.py`.
 
-Pokud máš v ukládacím okýnku možnost zvolit <em>kódování</em>, zvol <code>UTF-8</code>.
+Pokud máš v ukládacím okýnku možnost zvolit <em>kódování</em>, zvol <code>UTF-8</code>.
 Můžeš–li zvolit typ souboru, zvol <code>.py</code> nebo „všechny soubory“.
 
 
 Některé systémy a editory se snaží přípony jako <code>.py</code> schovávat
-nebo si doplňovat přípony vlastní. V příkazové řádce se ale vždycky ukáže
+nebo si doplňovat přípony vlastní. V příkazové řádce se ale vždycky ukáže
 opravdové jméno.
-Proto ještě v příkazové řádce pomocí `cd` přejdi do adresáře <code><span class="pythondir">~/{{ rootname }}</span>/02</code>
+Proto ještě v příkazové řádce pomocí `cd` přejdi do adresáře <code><span class="pythondir">~/{{ rootname }}</span>/02</code>
 a pomocí `ls` (Unix) nebo `dir` (Windows) zkontroluj, že se soubor opravdu
 jmenuje `ahoj.py` a ne třeba `ahoj.py.txt`.
 
@@ -55,12 +55,13 @@ $ python ahoj.py
 ```
 
 !!! note "Poznámka pro Windows a starší Python"
-    V nečeských Windows s Pythonem 3.5 či nižším bude třeba před
+    V nečeských Windows s Pythonem 3.5 či nižším bude třeba před
     programem spustit `chcp 1250`, jinak bude program píšící české
     znaky končit chybou `UnicodeEncodeError`.
     Je to trochu polovičaté řešení, ale pro naše příklady bude stačit.
 
-Pokud se vypíše hláška, gratuluji! Napsala jsi svůj první program v Pythonu!
+Pokud se vypíše hláška, gratuluji!
+Napsal{{a}} jsi svůj první program v Pythonu!
 
 Jestli to nefunguje, zkontroluj, že:
 

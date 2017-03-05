@@ -32,7 +32,7 @@ Počítač je hloupý stroj; pokud instrukce nenapíšeš přesně podle pravide
 Python, neumí si domyslet, co po něm chceš.
 Ale nevěš hlavu, stává se to všem programátorům.
 Důležité je vědět, jak chybu najít.
-A k tomu nám pomáhají chybové výpisy.
+A k tomu ti pomůžou chybové výpisy.
 Třeba program výše vypíše po spuštění následující chybu:
 
 <pre>
@@ -45,9 +45,9 @@ Třeba program výše vypíše po spuštění následující chybu:
 Při chybě Python napřed vypíše
 jméno souboru a <span class="err-lineno">číslo řádku</span>,
 na kterém chyba je.
-Potom vypíše celý řádek s chybou,
+Potom vypíše celý řádek s chybou,
 a nakonec oznámí <span class="err-exctype">druh chyby</span>
-(v tomto případě je to „syntaktická chyba“),
+(v tomto případě je to „syntaktická chyba“),
 a případně nějaké bližší upřesnění.
 
 !!! note "Pro zvídavé"
@@ -56,7 +56,7 @@ a případně nějaké bližší upřesnění.
 
 Chybové hlášky můžou být ze začátku těžko pochopitelné,
 zvyknout se na ně dá asi jenom praxí.
-Pro tebe bude ze začátku hlavně důležité ono číslo řádku.
+Pro tebe bude ze začátku důležité hlavně ono číslo řádku.
 Když víš, že chyba je na řádku <span class="err-lineno">11</span>,
 můžeš se podívat na tento řádek a zkusit chybu najít.
 
@@ -65,7 +65,7 @@ o pár řádků výš nebo níž:
 Python občas nesdílí lidské představy o tom, kde přesně chyba *je*,
 a ukáže jen, kde si jí sám *všimnul*.
 
-V našem případě je chyba v tom, že kolem řetězce nejsou uvozovky.
+V našem případě je chyba v tom, že kolem řetězce nejsou uvozovky.
 Přidej je a program znovu spusť.
 Jestli funguje, gratuluji!
 Jinak chybu opět oprav a opakuj, dokud to nebude fungovat :)
@@ -79,25 +79,27 @@ odshora dolů.
 Program je jako recept na vaření: seznam instrukcí, které říkají co je potřeba
 udělat.
 
-Zanedlouho budou naše programy připomínat spíš recepty na
+Zanedlouho budou tvoje programy připomínat spíš recepty na
 čarodějné lektvary (*počkej do úplňku, a pokud je Mars
-v konjunkci s Jupiterem, třikrát zamíchej*),
+v konjunkci s Jupiterem, třikrát zamíchej*),
 ale základní myšlenka je stále stejná:
 počítač čte odshora dolů a provádí příkazy jeden po druhém.
 
 ## Print a výrazy
 
-Ten `print`, co tu celou dobu používáme, je *funkce*.
+A z jakých že instrukcí se náš „recept“ skládá?
+
+Ten `print`, který tu celou dobu používáš, je *funkce*.
 O funkcích se ještě budeme bavit později,
-teď nám stačí vědět, že když napíšeme `print`
+teď stačí vědět, že když napíšeš `print`
 a za to do závorky několik *výrazů* (angl. *expressions*)
 oddělených čárkou, hodnoty těchto výrazů se vypíšou.
 
 A co že je ten výraz?
-V našem druhém programu máme několik příkladů:
+V našem programu máš několik příkladů:
 výraz je číslo, řetězec, nebo nějaká (třeba matematická) operace
-složená z více výrazů.
-Třeba výraz `3 + 8` sečítá
-výrazy `3` a `8`.
+složená z více výrazů.
+Třeba výraz `3 + 8` sečítá výrazy `3` a `8`.
 
-V sekci o [proměnných]({{ lesson_url('beginners/variables') }}) se na výrazy a jejich hodnoty podíváme podrobněji.
+V sekci o [proměnných]({{ lesson_url('beginners/variables') }}) se
+na výrazy a jejich hodnoty podíváme podrobněji.

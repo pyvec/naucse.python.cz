@@ -2,7 +2,7 @@
 
 Pamatuješ si ještě, co je to <em>operátor</em>?
 
-V domácím projektu, jsme si ukázaly základní aritmetické operátory.
+V domácím projektu jsme si ukázal{{ gnd('i', 'y', both='i') }} základní aritmetické operátory.
 Přidáme-li jeden další (`//`), jsou to tyhle:
 
 <table class="table">
@@ -35,9 +35,9 @@ Přidáme-li jeden další (`//`), jsou to tyhle:
 
 Python ale zná i další druhy operátorů.
 Důležité jsou operátory *porovnávací*.
-Zkus si, co dělají!
-(Buď z programu pomocí `print`,
-nebo pusť `python` z příkazové řádky.)
+Zkus si co dělají!
+(Buď z programu pomocí `print`,
+nebo pusť `python` z příkazové řádky.)
 
 <table class="table">
     <tr>
@@ -64,7 +64,7 @@ nebo pusť `python` z příkazové řádky.)
 
 Hodnoty provnání jsou takzvané *booleovské* hodnoty
 (angl. *boolean*, podle [G. Boolea](http://en.wikipedia.org/wiki/George_Boole)).
-V Pythonu se používají vždycky, když potřebujeme vědět, jestli něco platí
+V Pythonu se používají vždycky, když potřebujeme vědět, jestli něco platí
 nebo neplatí.
 Jsou jenom dvě – buď `True` (pravda), nebo `False` (nepravda).
 
@@ -83,7 +83,7 @@ print(nepravda)
     Jedno rovnítko přiřazuje do proměnné; dvě rovnítka porovnávají.
 
 Slova <code>True</code> a <code>False</code> jdou
-v programu použít i přímo,
+v programu použít i přímo,
 jen je potřeba dávat pozor na velikost písmen:
 
 ```python
@@ -106,7 +106,7 @@ Co se stane, když jako stranu zadáš záporné číslo?
 Dává výstup smysl?
 
 ```python
-strana = float(input('Zadej stranu v centimetrech: '))
+strana = float(input('Zadej stranu v centimetrech: '))
 print('Obvod čtverce se stranou', strana, 'je', 4 * strana, 'cm')
 print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 ```
@@ -116,26 +116,26 @@ Tady je vidět, jak počítač dělá přesně co se mu řekne, a nepřemýšlí
 Bylo by dobré uživateli, který zadá záporné číslo,
 přímo říct, že zadal blbost. Jak na to?
 
-Nejdřív zkus nastavit proměnnou,
-která bude `True`, když uživatel zadal kladné číslo nebo nulu.
+Nejdřív zkus nastavit proměnnou která bude `True`,
+když uživatel zadal kladné číslo nebo nulu.
 
 
 {% filter solution %}
     Taková proměnná se dá nastavit pomocí tohoto kódu:
 
     ```python
-    strana = float(input('Zadej stranu v centimetrech: '))
+    strana = float(input('Zadej stranu v centimetrech: '))
     cislo_je_spravne = strana <= 0
     ```
 {% endfilter %}
 
 A nyní řekneme počítači, aby tuhle proměnnou použil.
-K tomu se používá dvojice příkazů `if` (*pokud*)
+K tomu se používá dvojice příkazů `if` (*pokud*)
 a `else` (*jinak*).
 Nejepší bude je ukázat na příkladu:
 
 ```python
-strana = float(input('Zadej stranu v centimetrech: '))
+strana = float(input('Zadej stranu v centimetrech: '))
 cislo_je_spravne = strana <= 0
 
 if cislo_je_spravne:
@@ -152,32 +152,32 @@ což je výraz, podle kterého se budeme rozhodovat.
 Za podmínkou je dvojtečka.
 Potom následují příkazy, které se provedou, pokud je podmínka pravdivá.
 Všechny jsou odsazeny o čtyři mezery.<br>
-Po téhle části stačí napsat neodsazené `else:`, zase s dvojtečkou na konci,
-a odsazené příkazy, které se provedou v opačném případě.<br>
-Potom můžeme psát příkazy, které se provedou vždycky – ty odsazené nebudou,
+Po téhle části stačí napsat neodsazené `else:`, zase s dvojtečkou na konci,
+a odsazené příkazy, které se provedou v opačném případě.<br>
+Potom můžeš psát příkazy, které se provedou vždycky – ty odsazené nebudou,
 podmíněná část programu už skončila.
 
 !!! note ""
     Čistě technicky, odsazení nemusí být o čtyři mezery.
     Může být třeba o dvě nebo o jedenáct, nebo dokonce o tabulátor.
-    V rámci jednoho bloku musí být ale odsazení vždycky stejné,
+    V rámci jednoho bloku musí být ale odsazení vždycky stejné,
     takže když pak na jednom programu spolupracuje více lidí, musí se shodnout.
     No a na čtyřech mezerách se shodla většina Pythonního světa.
 
 ## Další podmíněné příkazy
 
 Někdy není `else` vůbec potřeba.
-V následujícím programu se nedělá nic navíc, pokud je číslo nenulové:
+V následujícím programu se nedělá nic navíc, pokud je číslo nenulové:
 
 ```python
-cislo = int(input('Zadej číslo, přičtu k němu 3: '))
+cislo = int(input('Zadej číslo, přičtu k němu 3: '))
 if cislo == 0:
     print('Jé, to je jednoduché!')
 print(cislo, '+ 3 =', cislo + 3)
 ```
 
 Někdy je naopak potřeba podmínek několik,
-k čemuž slouží příkaz `elif` – kombinace `else` a `if`.
+k čemuž slouží příkaz `elif` – kombinace `else` a `if`.
 Dává se „mezi“ bloky `if` a `else`.
 Příkazů `elif` může být za jedním `if`-em několik,
 ale vždy se provede jen jedna „větev“:
@@ -188,13 +188,15 @@ vek = int(input('Kolik ti je let? '))
 if vek >= 150:
     print('A ze kterépak jsi planety?')
 elif vek >= 18:
+    # Tahle větev se např. pro "200" už neprovede.
     print('Můžeme nabídnout: víno, cider, nebo vodku.')
 elif vek >= 1:
     print('Můžeme nabídnout: mléko, čaj, nebo vodu')
 elif vek >= 0:
     print('Sunar už bohužel došel.')
 else:
-    print('Návštěvníky z budoucnosti tady nevidíme rádi.')
+    # Nenastala ani nedna ze situací výše – muselo to být záporné
+    print('Návštěvníky z budoucnosti tady nevidíme rádi.')
 ```
 
 ## Kámen nůžky papír
