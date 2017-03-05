@@ -53,7 +53,7 @@ class Page(Model):
 
     @reify
     def jinja(self):
-        return self.info.get('jinja')
+        return self.info.get('jinja', True)
 
     @reify
     def css(self):
@@ -199,7 +199,7 @@ class Course(Model):
 class Run(Model):
     """A run"""
     def __str__(self):
-        return '{} - {}'.formta(self.slug, self.title)
+        return '{} - {}'.format(self.slug, self.title)
 
     info = YamlProperty()
 
