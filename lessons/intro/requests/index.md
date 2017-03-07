@@ -5,6 +5,13 @@ Knihovna requests je určená pro HTTP požadavky (klienty).
 Přestože vytvářet HTTP požadavky jde i bez requests, pomocí standardní knihovny
 Pythonu, requests mají mnohem lidštější rozhraní a používají se mnohem
 jednodušeji.
+
+Instaluje se standardním způsobem:
+
+```console
+$ python -m pip install requests
+```
+
 Budeme předpokládat, že znáš alespoň základy HTTP protokolu a
 vrhneme se rovnou na příklad.
 
