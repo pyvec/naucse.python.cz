@@ -35,21 +35,18 @@ def set_vars():
 
 @app.route('/')
 def index():
-    """Index page."""
     return render_template("index.html",
                            page_wip=True)
 
 
 @app.route('/about/')
 def about():
-    """About page."""
     return render_template("about.html",
                            page_wip=True)
 
 
 @app.route('/runs/')
 def runs():
-    """Runs page."""
     return render_template("run_list.html",
                            run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu",
@@ -58,7 +55,6 @@ def runs():
 
 @app.route('/courses/')
 def courses():
-    """Page with listed online courses."""
     return render_template("course_list.html", courses=model.courses,
                            title="Seznam online kurzů Pythonu",
                            page_wip=True)
@@ -66,7 +62,15 @@ def courses():
 
 @app.route('/lessons/<lesson:lesson>/static/<path:path>')
 def lesson_static(lesson, path):
-    """Static files in lessons."""
+    """Get the endpoint for static files in lessons.
+
+    Args:
+        lesson  location of the file <lesson_type>/<lesson_name>
+        path    path to file in the static folder
+
+    Returns:    
+        endpoint for the static file
+    """
     directory = str(lesson.path)
     filename = os.path.join('static', path)
     return send_from_directory(directory, filename)
@@ -74,7 +78,6 @@ def lesson_static(lesson, path):
 
 @app.route('/courses/<course:course>/')
 def course_page(course):
-    """Course page."""
     try:
         return render_template('course.html',
                                course=course, plan=course.sessions,
@@ -85,11 +88,9 @@ def course_page(course):
 
 @app.route('/<run:run>/')
 def run(run):
-    """Run's page."""
     g.vars = dict(run.vars)
 
     def lesson_url(lesson, *args, **kwargs):
-        """Link to the specific lesson."""
         return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
 
     try:
@@ -101,7 +102,15 @@ def run(run):
 
 
 def prv_nxt_teller(run, lesson):
-    """Determine the previous and the next lesson."""
+    """Determine the previous and the next lesson and the parent session.
+
+    Args:
+        run     run of the current lesson
+        lesson  current lesson
+
+    Returns:
+        3-tuple: previous lesson, next lesson and the parent session
+    """
     lessons = [material.lesson for session in run.sessions.values() for material in session.materials if material.lesson]
 
     Arrow = namedtuple('Arrow', ['link', 'title'])
@@ -171,14 +180,22 @@ def render_page(page, **kwargs):
 @app.route('/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
 @app.route('/<run:run>/<lesson:lesson>/<page>/')
 def run_page(run, lesson, page):
-    """Run's lesson page."""
+    """Render the lesson page of the run.
+
+    Args:
+        run     where the lesson belongs
+        lesson  name of the lesson <lesson_type>/<lesson_name>
+        page    page of the lesson, index is default
+
+    Returns:
+        rendered lesson page
+    """
 
     page = lesson.pages[page]
     g.vars = dict(run.vars)
     g.vars.update(page.vars)
 
     def lesson_url(lesson, *args, **kwargs):
-        """Link to the specific lesson."""
         return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
 
     def subpage_url(page_slug):
@@ -199,13 +216,18 @@ def run_page(run, lesson, page):
 @app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
 @app.route('/lessons/<lesson:lesson>/<page>/')
 def lesson(lesson, page):
-    """Lesson page."""
+    """Render the lesson page.
+
+    Args:
+        lesson  name of the lesson <lesson_type>/<lesson_name>
+        page    page of the lesson, index is default
+
+    Returns:
+        rendered lesson page
+    """
     page = lesson.pages[page]
     g.vars = dict(page.vars)
     return render_page(page=page, page_wip=True)
-
-
-####### SESSION
 
 
 def session_template_or_404(run, session, page):
@@ -220,10 +242,18 @@ def session_template_or_404(run, session, page):
 @app.route('/runs/<run:run>/sessions/<session>/', defaults={'page': 'front'})
 @app.route('/runs/<run:run>/sessions/<session>/<page>/')
 def session_page(run, session, page):
-    """Run's session page."""
+    """Render the session page.
+
+    Args:
+        run     run where the session belongs
+        session name of the session
+        page    page of the session, front is default
+
+    Returns:
+        rendered session page
+    """
 
     def session_url(session):
-        """Link to the specific session."""
         return url_for('session_page', run=run, session=session, page=page)
 
     template = session_template_or_404(run, session, page)
