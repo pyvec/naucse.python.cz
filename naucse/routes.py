@@ -70,21 +70,6 @@ def lesson_static(lesson, path):
     return send_from_directory(directory, filename)
 
 
-def title_loader(plan):
-    """Loads a dictionary of lessons names."""
-
-    lesson_dict = {}
-
-    for lesson in plan:
-        for mat in lesson['materials']:
-            lesson_link = "/".join(mat['link'].split("/")[-2:])
-            if lesson_link[-3:] != "pdf":
-                lesson_type = lesson_link.split("/")[1]
-                info_file = read_yaml("lessons/" + lesson_link + "/info.yml")
-                lesson_dict[mat['link']] = (lesson_type, info_file['title'])
-    return lesson_dict
-
-
 @app.route('/courses/<course:course>/')
 def course_page(course):
     """Course page."""
