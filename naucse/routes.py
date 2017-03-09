@@ -53,21 +53,18 @@ def lesson_url(lesson, page='index', solution=None):
 
 @app.route('/')
 def index():
-    """Index page."""
     return render_template("index.html",
                            page_wip=True)
 
 
 @app.route('/about/')
 def about():
-    """About page."""
     return render_template("about.html",
                            page_wip=True)
 
 
 @app.route('/runs/')
 def runs():
-    """Runs page."""
     return render_template("run_list.html",
                            run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu",
@@ -76,7 +73,6 @@ def runs():
 
 @app.route('/courses/')
 def courses():
-    """Page with listed online courses."""
     return render_template("course_list.html", courses=model.courses,
                            title="Seznam online kurzů Pythonu",
                            page_wip=True)
@@ -84,7 +80,15 @@ def courses():
 
 @app.route('/lessons/<lesson:lesson>/static/<path:path>')
 def lesson_static(lesson, path):
-    """Static files in lessons."""
+    """Get the endpoint for static files in lessons.
+
+    Args:
+        lesson  lesson in which is the file located
+        path    path to file in the static folder
+
+    Returns:
+        endpoint for the static file
+    """
     directory = str(lesson.path)
     filename = os.path.join('static', path)
     return send_from_directory(directory, filename)
@@ -92,7 +96,6 @@ def lesson_static(lesson, path):
 
 @app.route('/courses/<course:course>/')
 def course_page(course):
-    """Course page."""
     try:
         return render_template('course.html',
                                course=course, plan=course.sessions,
@@ -103,9 +106,7 @@ def course_page(course):
 
 @app.route('/<run:run>/')
 def run(run):
-    """Run's page."""
     def lesson_url(lesson, *args, **kwargs):
-        """Link to the specific lesson."""
         return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
 
     try:
@@ -157,7 +158,7 @@ def render_page(page, solution=None, vars=None, **kwargs):
 @app.route('/<run:run>/<lesson:lesson>/<page>/')
 @app.route('/<run:run>/<lesson:lesson>/<page>/solutions/<int:solution>/')
 def run_page(run, lesson, page, solution=None):
-    """Run's lesson page."""
+    """Render the html of the given lesson page in the run."""
 
     for session in run.sessions.values():
         for material in session.materials:
@@ -176,7 +177,6 @@ def run_page(run, lesson, page, solution=None):
         prv = nxt = None
 
     def lesson_url(lesson, *args, **kwargs):
-        """Link to the specific lesson."""
         return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
 
     def subpage_url(page_slug):
@@ -198,6 +198,6 @@ def run_page(run, lesson, page, solution=None):
 @app.route('/lessons/<lesson:lesson>/<page>/')
 @app.route('/lessons/<lesson:lesson>/<page>/solutions/<int:solution>/')
 def lesson(lesson, page, solution=None):
-    """Lesson page."""
+    """Render the html of the given lesson page."""
     page = lesson.pages[page]
     return render_page(page=page, page_wip=True, solution=solution)
