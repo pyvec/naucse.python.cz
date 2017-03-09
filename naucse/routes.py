@@ -115,11 +115,11 @@ def prv_nxt_teller(run, lesson):
 
     Arrow = namedtuple('Arrow', ['link', 'title'])
 
-    sess = None
+    session_link = None
     for session in run.sessions.values():
         for material in session.materials:
             if str(material.lesson) == str(lesson):
-                sess = Arrow(session.slug, session.title)
+                session_link = Arrow(session.slug, session.title)
 
     prv, nxt = None, None
 
@@ -132,7 +132,7 @@ def prv_nxt_teller(run, lesson):
             if next:
                 nxt = Arrow(next.slug, next.title)
 
-    return prv, nxt, sess
+    return prv, nxt, session_link
 
 
 def lesson_template_or_404(lesson, page):
@@ -201,7 +201,7 @@ def run_page(run, lesson, page):
     def subpage_url(page_slug):
         return url_for('run_page', run=run, lesson=lesson, page=page_slug)
 
-    prv, nxt, sess = prv_nxt_teller(run, lesson)
+    prv, nxt, session_link = prv_nxt_teller(run, lesson)
 
     title = title='{}: {}'.format(run.title, page.title)
 
@@ -209,7 +209,7 @@ def run_page(run, lesson, page):
                        lesson_url=lesson_url,
                        subpage_url=subpage_url,
                        run=run, prv=prv, nxt=nxt,
-                       sess=sess,
+                       session_link=session_link,
                        page_wip=not page.license)
 
 
@@ -258,7 +258,6 @@ def session_page(run, session, page):
 
     template = session_template_or_404(run, session, page)
     content = Markup(template.render())
-
     md_content = Markup(convert_markdown(content))
 
-    return render_template('session.html', content=md_content, page=page)
+    return render_template('lesson.html', content=md_content, page=page, session=True)

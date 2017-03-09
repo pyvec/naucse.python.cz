@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 
 {% block style %}
-    {% if page.css %}
+    {% if session is not defined and page.css %}
         {{ page.css }}
     {% endif %}
 {% endblock style %}
@@ -20,9 +20,9 @@
 
         {{ content }}
 
+        {% if (prv is defined) or (nxt is defined) or (session_link is defined) %}
         <hr class="lesson-end">
-
-        {% if (prv is defined) or (nxt is defined) or (sess is defined) %}
+        
         <div class="row prev-next">
             {% if prv %}
                 <div class="col text-left">
@@ -32,9 +32,9 @@
                 <div class="col text-left"></div>
             {% endif %}
 
-            {% if sess %}
+            {% if session_link %}
                 <div class="col text-center">
-                    <a href="{{ session_url(run, sess.link) }}">{{ sess.title }}</a>
+                    <a href="{{ session_url(run, session_link.link) }}">{{ session_link.title }}</a>
                 </div>
             {% endif %}
 
@@ -47,24 +47,25 @@
             {% endif %}
         </div>
 
-            <hr>
+        <hr>
         {% endif %}
 
-        {% if page.attributions or page.license %}
-
-            <div class="lesson-attribution">
-                {% for a in page.attributions %}
-                    {{ a | markdown }}
-                {% endfor %}
-                {% if page.license %}
-                    <p>
-                        Licence:
-                        <a href="{{ page.license.url }}">
-                            {{ page.license.title }}
-                        </a>
-                    </p>
-                {% endif %}
-            </div>
+        {% if session is not defined %}
+            {% if page.attributions or page.license %}
+                <div class="lesson-attribution">
+                    {% for a in page.attributions %}
+                        {{ a | markdown }}
+                    {% endfor %}
+                    {% if page.license %}
+                        <p>
+                            Licence:
+                            <a href="{{ page.license.url }}">
+                                {{ page.license.title }}
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endif %}
 
     </div>
