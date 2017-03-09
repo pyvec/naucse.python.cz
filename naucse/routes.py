@@ -113,13 +113,11 @@ def prv_nxt_teller(run, lesson):
     """
     lessons = [material.lesson for session in run.sessions.values() for material in session.materials if material.lesson]
 
-    Arrow = namedtuple('Arrow', ['link', 'title'])
-
     session_link = None
     for session in run.sessions.values():
         for material in session.materials:
             if str(material.lesson) == str(lesson):
-                session_link = Arrow(session.slug, session.title)
+                session_link = models.Navigation(session.title, session.slug)
 
     prv, nxt = None, None
 
@@ -128,9 +126,9 @@ def prv_nxt_teller(run, lesson):
                                    lessons[1:] + [None]):
         if current.slug == lesson.slug:
             if prev:
-                prv = Arrow(prev.slug, prev.title)
+                prv = models.Navigation(prev.title, prev.slug)
             if next:
-                nxt = Arrow(next.slug, next.title)
+                nxt = models.Navigation(next.title, next.slug)
 
     return prv, nxt, session_link
 
