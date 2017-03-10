@@ -30,7 +30,7 @@ Vyber si stránku podle svého operačního systému:
 * [Windows]({{ subpage_url('windows') }})
 * [MacOS]({{ subpage_url('macos') }})
 
-Pokud máš jiný systém než Linux, Windows nebo Mac OS,
+Pokud máš jiný systém než Linux, Windows nebo MacOS,
 nebo pokud ke svému počítači neznáš administrátorské heslo,
 {% if var('coach-present') -%}
 poraď se s koučem hned, jinak se ptej, až bude něco nejasné.

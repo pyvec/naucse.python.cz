@@ -142,7 +142,7 @@ def lesson_template_or_404(lesson, page):
         abort(404)
 
 
-def render_page(page, **kwargs):
+def render_page(page, solution=None, **kwargs):
     lesson = page.lesson
     def static_url(path):
         return url_for('lesson_static', lesson=lesson, path=path)
@@ -152,6 +152,8 @@ def render_page(page, **kwargs):
     kwargs.setdefault('subpage_url', subpage_url)
     kwargs.setdefault('lesson', lesson)
     kwargs.setdefault('page', page)
+
+    g.solutions = []
 
     if page.style == 'md':
         if page.jinja:
@@ -169,15 +171,24 @@ def render_page(page, **kwargs):
         template = lesson_template_or_404(lesson, page)
         content = Markup(template.render(**kwargs))
 
+    if solution is not None:
+        content = g.solutions[solution]
+        template_name = 'solution.html'
+        kwargs.setdefault('solution_number', solution)
+
+    else:
+        template_name = 'lesson.html'
+
     kwargs.setdefault('title', page.title)
     kwargs.setdefault('content', content)
 
-    return render_template('lesson.html', **kwargs)
+    return render_template(template_name, **kwargs)
 
 
 @app.route('/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
 @app.route('/<run:run>/<lesson:lesson>/<page>/')
-def run_page(run, lesson, page):
+@app.route('/<run:run>/<lesson:lesson>/<page>/solutions/<int:solution>/')
+def run_page(run, lesson, page, solution=None):
     """Render the lesson page of the run.
 
     Args:
@@ -188,7 +199,6 @@ def run_page(run, lesson, page):
     Returns:
         rendered lesson page
     """
-
     page = lesson.pages[page]
     g.vars = dict(run.vars)
     g.vars.update(page.vars)
@@ -208,12 +218,14 @@ def run_page(run, lesson, page):
                        subpage_url=subpage_url,
                        run=run, prv=prv, nxt=nxt,
                        session_link=session_link,
-                       page_wip=not page.license)
+                       page_wip=not page.license,
+                       solution=solution)
 
 
 @app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
 @app.route('/lessons/<lesson:lesson>/<page>/')
-def lesson(lesson, page):
+@app.route('/lessons/<lesson:lesson>/<page>/solutions/<int:solution>/')
+def lesson(lesson, page, solution=None):
     """Render the lesson page.
 
     Args:
@@ -225,7 +237,7 @@ def lesson(lesson, page):
     """
     page = lesson.pages[page]
     g.vars = dict(page.vars)
-    return render_page(page=page, page_wip=True)
+    return render_page(page=page, page_wip=True, solution=solution)
 
 
 def session_template_or_404(run, session, page):
