@@ -31,6 +31,11 @@ def lesson_url(lesson, page='index'):
 
 
 @template_function
+def session_url(run, session, page='front'):
+    return url_for('session_page', run=run, session=session, page=page)
+
+
+@template_function
 def var(name):
     """Return a page variable
 

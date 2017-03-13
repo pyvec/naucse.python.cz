@@ -260,3 +260,12 @@ class Root(Model):
             base_collection, name = name.split('/', 2)
         collection = self.collections[base_collection]
         return collection.lessons[name]
+
+
+class Navigation(Model):
+    def __init__(self, title, url):
+        self.url = url
+        self.title = title
+
+    def __str__(self):
+        return "[{}]({})".format(self.title, self.url)

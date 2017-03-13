@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 
 {% block style %}
-    {% if page.css %}
+    {% if session is not defined and page.css %}
         {{ page.css }}
     {% endif %}
 {% endblock style %}
@@ -22,41 +22,52 @@
             {{ content }}
         {% endblock %}
 
+        {% if (prv is defined) or (nxt is defined) or (session_link is defined) %}
         <hr class="lesson-end">
-
-        {% if (prv is defined and prv) or (nxt is defined and nxt) %}
+        
         <div class="row prev-next">
             {% if prv %}
                 <div class="col text-left">
-                    <a href="{{ lesson_url(prv.lesson, page=prv.slug) }}">← {{ prv.title }}</a>
+                    <a href="{{ lesson_url(prv.url) }}">← {{ prv.title }}</a>
+                </div>
+            {% else %}
+                <div class="col text-left"></div>
+            {% endif %}
+
+            {% if session_link != None %}
+                <div class="col text-center">
+                    <a href="{{ session_url(run, session_link.url) }}">{{ session_link.title }}</a>
                 </div>
             {% endif %}
 
             {% if nxt %}
                 <div class="col text-right">
-                    <a href="{{ lesson_url(nxt.lesson, page=nxt.slug) }}">{{ nxt.title }} →</a>
+                    <a href="{{ lesson_url(nxt.url) }}">{{ nxt.title }} →</a>
                 </div>
+            {% else %}
+                <div class="col text-right"></div>
             {% endif %}
         </div>
 
-            <hr>
+        <hr>
         {% endif %}
 
-        {% if page.attributions or page.license %}
-
-            <div class="lesson-attribution">
-                {% for a in page.attributions %}
-                    {{ a | markdown }}
-                {% endfor %}
-                {% if page.license %}
-                    <p>
-                        Licence:
-                        <a href="{{ page.license.url }}">
-                            {{ page.license.title }}
-                        </a>
-                    </p>
-                {% endif %}
-            </div>
+        {% if session is not defined %}
+            {% if page.attributions or page.license %}
+                <div class="lesson-attribution">
+                    {% for a in page.attributions %}
+                        {{ a | markdown }}
+                    {% endfor %}
+                    {% if page.license %}
+                        <p>
+                            Licence:
+                            <a href="{{ page.license.url }}">
+                                {{ page.license.title }}
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endif %}
 
     </div>
