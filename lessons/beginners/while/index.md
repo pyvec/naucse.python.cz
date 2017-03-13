@@ -53,7 +53,7 @@ a pokud máme víc cyklů zanořených v sobě, vyskočí jen z toho vnitřníh
 for i in range(10):  # Vnější cyklus
     for j in range(10):  # Vnitřní cyklus
         print(j * i, end=' ')
-        if i &lt;= j:
+        if i <= j:
             break
     print()
 ```
@@ -77,7 +77,7 @@ Dokážeš napsat tenhle program?
 from random import randrange
 
 soucet = 0
-while soucet &lt; 21:
+while soucet < 21:
     print('Máš', soucet, 'bodů')
     odpoved = input('Otočit kartu? ')
     if odpoved == 'ano':

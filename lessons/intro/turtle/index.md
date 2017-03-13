@@ -317,7 +317,8 @@ exitonclick()
 ### Tři čtverce
 
 Nakonec nakresli 3 čtverce, každý otočený o 20°.
-Tentokrát už víš, jak to dělat chytře.
+Tentokrát už víš, jak to dělat chytře: opakuj pomocí příkazu
+`for`, ne kopírováním kódu.
 
 ![Tři želví čtverce]({{ static('turtle-squares.png') }})
 

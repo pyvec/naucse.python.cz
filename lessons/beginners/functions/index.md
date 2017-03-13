@@ -377,8 +377,8 @@ užitečné pro hry.
 ```python
 from random import randrange, uniform
 
-randrange(a, b)   # náhodné <strong>celé</strong> číslo od <i>a</i> do <strong><i>b</i>-1</strong>
-uniform(a, b)     # náhodné „desetinné“ číslo od <i>a</i> do <i>b</i>
+randrange(a, b)   # náhodné celé číslo od a do b-1
+uniform(a, b)     # náhodné „desetinné“ číslo od a do b
 ```
 
 Pozor na to, že <code>randrange(a, b)</code>
