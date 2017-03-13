@@ -21,19 +21,19 @@ Jak je vidět, π je tak trochu schované.
 Přece jen, `print` nebo `if` potřebují všichni, ale ne všichni mají
 rádi matematiku…
 
-Teď ale u matematiky ještě chvilku zůstaneme.
+Teď ale u matematiky ještě chvilku zůstaneme.
 
 
 ## Výrazy
 
 V matematice máme spoustu různých operací,
-které se zapisují symboly – třeba plus a minus.
-Stejné symboly používá i Python:
+které se zapisují symboly – třeba plus a minus.
+Stejné symboly používá i Python:
 
 * 3 + 4
 * <var>a</var> - <var>b</var>
 
-S násobením a dělením už je to složitější,
+S násobením a dělením už je to složitější,
 matematický zápis se na běžné klávesnici nedá napsat:
 
 * 3 · 4
@@ -42,7 +42,7 @@ matematický zápis se na běžné klávesnici nedá napsat:
 V Pythonu si ale pořád vystačíme s operátorem.
 
 Matematici ovšem psali na papír,
-a tak vymýšleli stále nezapsatelnější klikyháky,
+a tak vymýšleli stále nezapsatelnější klikyháky,
 které se programátorům nechtělo přepisovat:
 
 * <var>x</var>²
@@ -69,7 +69,7 @@ dost dobře ani psát, ani číst.
 
 V Pythonu je operátorů poměrně málo.
 Už z nich známe skoro půlku!
-A i tak některé místo symbolů používají slova.
+A i tak některé místo symbolů používají slova.
 Tady jsou všechny Pythonní operátory:
 
 <div>
@@ -109,7 +109,7 @@ používá pro operace jména.
 
 * <var>x</var> = sin <var>a</var>
 
-A to jde napsat na klávesnici!
+A to jde napsat na klávesnici!
 Python jenom přidá závorky,
 aby bylo jasnější, k čemu se operace vztahuje:
 
@@ -133,7 +133,7 @@ print(x)
 
 Funkci voláme *jménem*.
 
-Je to jméno jako u proměnných – vlastně to *je* proměnná,
+Je to jméno jako u proměnných – vlastně to *je* proměnná,
 jen je v ní, místo čísla nebo řetězce, funkce.
 
 Za jméno funkce patří závorky,
@@ -141,7 +141,7 @@ do nichž uzavřeme *argument* (neboli *vstup*) funkce.
 To je informace, se kterou bude naše funkce
 pracovat – třeba `sin()` ze svého argumentu vypočítá <em>sinus</em>.
 
-Volání funkce je *výraz*, a výsledná, neboli *návratová*, hodnota
+Volání funkce je *výraz* a výsledná, neboli *návratová*, hodnota
 (angl. *return value*) se dá třeba přiřadit do proměnné.
 
 ```
@@ -155,13 +155,13 @@ Volání funkce je *výraz*, a výsledná, neboli *návratová*, hodnota
             ╰── návratová hodnota
 ```
 
-Nebo se dá použít místo čísla v součtu:
+Nebo se dá použít místo čísla v součtu:
 
 ```python
 a = sin(1) + cos(2)
 ```
 
-Nebo v podmínce ifu:
+Nebo v podmínce ifu:
 
 ```python
 if sin(1) < 3:
@@ -173,12 +173,12 @@ Nebo dokonce jako argument jiné funkce:
 print(sin(1))
 ```
 
-… a podobně.
+… a podobně.
 
 
 ### Argumenty
 
-Některým funkcím můžeme předat i více argumentů.
+Některým funkcím můžeme předat i více argumentů.
 Třeba funkci `print`, která všechny své argumenty vypíše na řádek.
 Jednotlivé argumenty oddělujeme čárkami:
 
@@ -191,8 +191,8 @@ print("Jedna plus dva je", 1 + 2)
 ```
 
 Některé funkce nepotřebují žádný argument.
-Příklad je zase `print`.
-Je ale nutné napsat závorky – i když jsou prázdné.
+Příkladem je zase `print`.
+Je ale nutné napsat závorky – i když jsou prázdné.
 Hádej, co tohle volání udělá?
 
 ```python
@@ -208,7 +208,7 @@ na řádek.)
 
 ### Funkce je potřeba volat
 
-Pozor na to, že nenapíšeš-li závorky, funkce se nezavolá!
+Pozor na to, že když nenapíšeš závorky, funkce se nezavolá!
 (Nedostaneš návratovou hodnotu, ale samotnou funkci.)
 Zkus si, co dělají tyhle příklady, abys pak podobné chyby poznala:
 
@@ -221,12 +221,12 @@ print(sin + 1)
 
 ### Pojmenované argumenty
 
-Některé funkce umí pracovat i s *pojmenovanými* argumenty.
+Některé funkce umí pracovat i s *pojmenovanými* argumenty.
 Píšou se podobně jako přiřazení do proměnné,
 s rovnítkem, ale uvnitř závorek.
 
 Třeba funkce `print` normálně ukončí výpis novým řádkem,
-ale pomocí argumentu `end` se dá vypsat i něco jiného.
+ale pomocí argumentu `end` se dá vypsat i něco jiného.
 
 !!! note ""
     Tenhle příklad je potřeba napsat do souboru; v interaktivní konzoli
@@ -255,7 +255,7 @@ na nový řádek);
 `sep` zase, co se vypíše mezi jednotlivými argumenty (místo mezery).
 
 !!! note ""
-    Příklad opět doporučuju spustit ze souboru, ne
+    Příklad opět doporučuji spustit ze souboru, ne
     interaktivně:
 
 ```python
@@ -266,7 +266,7 @@ print(2, 3, 4, sep=", ")
 
 Základní funkce na výstup, `input`,
 vypíše otázku, načte vstup od uživatele,
-a vrátí ho jako řetězec.
+a vrátí ho jako řetězec.
 
 ```python
 input('zadej vstup: ')
@@ -276,10 +276,10 @@ input('zadej vstup: ')
 
 
 Co ale když nechceme pracovat s řetězcem, ale třeba s číslem?
-Tady nám pomůže skupina funkcí, které umí převádět čísla na řetězce a zpátky.
+Tady nám pomůže skupina funkcí, které umí převádět čísla na řetězce a zpátky.
 Každý ze tří <em>typů</em> (angl. <em>types</em>) proměnných, které zatím známe
 – řetězce, celá čísla a „desetinná“ čísla – má funkci, která vezme nějakou hodnotu
-a vrátí podobnou hodnotu „svého“ typu.
+a vrátí podobnou hodnotu „svého“ typu.
 
 ```python
 int(x)              # převod na celé číslo
@@ -304,7 +304,7 @@ float('blablabla')  # chyba!
 int('8.9')          # chyba!
 ```
 
-…a jak si poradit s chybou, která nastane,
+…a jak si poradit s chybou, která nastane,
 když použiješ špatnou hodnotu, si řekneme později.
 {%- if var('pyladies') %}
 Teď je hlavní to, že už víš, jak funguje
@@ -317,13 +317,13 @@ Teď je hlavní to, že už víš, jak funguje
 Matematika je občas potřeba, takže se pojďme
 podívat, jak v Pythonu pracovat s čísly.
 
-Jedna zajímavá matematická funkce je k dispozici vždy:
+Jedna zajímavá matematická funkce je k dispozici vždy:
 
 ```python
 round(cislo)    # zaokrouhlení
 ```
 
-Spousta dalších se dá importovat z modulu `math`:
+Spousta dalších se dá importovat z modulu `math`:
 
 ```python
 from math import sin, cos, tan, sqrt, floor, ceil
@@ -342,7 +342,7 @@ ceil(cislo)     # zaokrouhlení nahoru
 Další funkce pomáhá programátorům:
 Můžeš si přímo z programu (nebo z interaktivního
 režimu) vyvolat nápovědu k nějaké funkci.
-(Občas bývá srozumitelná i pro začátečníky,
+(Občas bývá srozumitelná i pro začátečníky,
 občas bohužel spíš ne – v takovém případě zkus
 Google).
 
@@ -350,7 +350,7 @@ Nápověda se zobrazí podle systému buď v prohlížeči,
 nebo přímo v terminálu.
 Když je nápověda v terminálu příliš dlouhá, dá se v ní
 pohybovat (<kbd>↑</kbd>, <kbd>↓</kbd>,
-<kbd>PgUp</kbd>, <kbd>PgDn</kbd>), a „ven“
+<kbd>PgUp</kbd>, <kbd>PgDn</kbd>) a „ven“
 se dostaneš klávesou <kbd>Q</kbd> (od *Quit*).
 
 Nápověda k funkci <code>print</code> se zobrazí příkazem:
@@ -359,7 +359,7 @@ Nápověda k funkci <code>print</code> se zobrazí příkazem:
 help(print)
 ```
 
-Nápověda se dá vypsat i k celému modulu.
+Nápověda se dá vypsat i k celému modulu.
 
 ```python
 import math
@@ -369,7 +369,7 @@ help(math)
 
 ### Náhoda
 
-Nakonec si ukážeme dvě funkce, z modulu
+Nakonec si ukážeme dvě funkce z modulu
 `random`, které jsou velice
 užitečné pro hry.
 
@@ -401,7 +401,7 @@ else:  # 2
 
 ### A další
 Python dává k dispozici obrovské množství dalších
-funkcí a modulů, i když ne všem budeš ze začátku
+funkcí a modulů, i když ne všem budeš ze začátku
 rozumět.
 Všechny jsou – anglicky – popsány v dokumentaci Pythonu, např.
 <a href="https://docs.python.org/3/library/functions.html">vestavěné funkce</a>,
