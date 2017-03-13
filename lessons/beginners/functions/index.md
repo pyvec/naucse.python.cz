@@ -278,12 +278,13 @@ input('zadej vstup: ')
 Co ale když nechceme pracovat s řetězcem, ale třeba s číslem?
 Tady nám pomůže skupina funkcí, které umí převádět čísla na řetězce a zpátky.
 Každý ze tří <em>typů</em> (angl. <em>types</em>) proměnných, které zatím známe
-– řetězce, celá čísla a „desetinná“ čísla – má funkci, která vezme nějakou hodnotu
-a vrátí podobnou hodnotu „svého“ typu.
+má funkci, která vezme nějakou hodnotu a vrátí podobnou hodnotu „svého“ typu.
+Na celá čísla je funkce `int` (a angl. *integer*), na reálná čísla je `float`
+(a angl. *floating-point*), a pro řetězce `str` (s angl. *string*).
 
 ```python
 int(x)              # převod na celé číslo
-float(x)            # převod na „desetinné“ číslo
+float(x)            # převod na reálné číslo
 str(x)              # převod na řetězec
 ```
 
