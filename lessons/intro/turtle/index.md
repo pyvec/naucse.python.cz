@@ -1,3 +1,9 @@
+{%- if var('pyladies') -%}
+{% set rootname = 'pyladies' %}
+{%- else -%}
+{% set rootname = 'naucse-python' %}
+{%- endif -%}
+
 # 🐍 🐢
 
 V této lekci si vyzkoušíš *želví kreslení*.
@@ -60,12 +66,6 @@ nebo naimportovat a použít funkci `clear()`.
 
 
 ## Želví program
-
-{%- if var('pyladies') -%}
-{% set rootname = 'pyladies' %}
-{%- else -%}
-{% set rootname = 'naucse-python' %}
-{%- endif -%}
 
 Interaktivní mód je skvělý na hraní,
 ale teď přejdeme zase na soubory.
