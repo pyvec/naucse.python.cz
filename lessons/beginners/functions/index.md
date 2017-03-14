@@ -1,4 +1,9 @@
 {% if var('pyladies') %}
+
+!!! note "Pro kouče"
+    Slajdy jsou k dispozici na stránkách
+    [PyLadies](http://pyladies.cz/v1/s003-looping/functions.html#/).
+
 Pokud jsi minule udělal{{a}} projekt navíc, tak jsi nejspíš
 do programu zadal{{a}} hotnotu čísla π.
 {% else %}
