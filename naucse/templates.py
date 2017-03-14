@@ -1,3 +1,5 @@
+import textwrap
+
 from flask import url_for, g
 from jinja2 import Markup
 
@@ -76,11 +78,11 @@ app.jinja_env.globals['a'] = A()
 
 @template_function
 def figure(img, alt):
-    t = Markup('''
+    t = Markup(textwrap.dedent('''
         <span class="figure">
             <a href="{img}">
                 <img src="{img}" alt="{alt}">
             </a>
         </span>
-    ''')
+    '''))
     return t.strip().format(img=img, alt=alt)
