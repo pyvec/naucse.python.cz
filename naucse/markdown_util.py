@@ -61,9 +61,6 @@ def convert_markdown(text, *, inline=False):
     text = dedent(text)
     result = Markup(markdown(text))
 
-    print(text)
-    print(result)
-
     if inline and result.startswith('<p>') and result.endswith('</p>'):
         result = result[len('<p>'):-len('</p>')]
 

@@ -9,7 +9,7 @@
 ```
 {%- endfilter -%}
             </div>
-        {% endfor %}
+        {%- endfor -%}
     </div>
 {%- endmacro -%}
 
