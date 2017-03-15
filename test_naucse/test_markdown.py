@@ -43,3 +43,49 @@ def test_markdown_admonition_name():
         </div>
     """).strip()
     assert convert_markdown(src) == expected
+
+
+def test_markdown_definition_list():
+    src = dedent("""
+        Bla Bla
+
+        The Term
+        :    Its Definition
+
+        More Text
+    """)
+    expected = dedent("""
+        <p>Bla Bla</p>
+        <dl>
+        <dt></dt><dt>The Term</dt><dd><p>Its Definition</p>
+        </dd></dl><p>More Text</p>
+    """).strip()
+    assert convert_markdown(src).strip() == expected
+
+
+def test_markdown_definition_list_advanced():
+    src = dedent("""
+        Bla Bla
+
+        The Term
+        :   Its Definition
+            More Definition
+
+            Even More
+
+        Another Term
+        :   Define this
+
+        More Text
+    """)
+    expected = dedent("""
+        <p>Bla Bla</p>
+        <dl>
+        <dt></dt><dt>The Term</dt><dd><p>Its Definition
+        More Definition</p>
+        <p>Even More</p>
+        </dd><dt></dt><dt>Another Term</dt><dd><p>Define this</p>
+        </dd></dl><p>More Text</p>
+    """).strip()
+    print(convert_markdown(src))
+    assert convert_markdown(src).strip() == expected

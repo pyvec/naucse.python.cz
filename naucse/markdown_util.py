@@ -14,6 +14,7 @@ pygments_formatter = pygments.formatters.html.HtmlFormatter(
 
 class BlockGrammar(mistune.BlockGrammar):
     admonition = re.compile(r'^!!! *(\S+) *"([^"]*)"\n((\n| .*)+)')
+    deflist = re.compile(r'^(([^\n: ][^\n]*\n)+)((:( {0,3})[^\n]*\n)( \5[^\n]*\n|\n)+)')
 
 
 class BlockLexer(mistune.BlockLexer):
@@ -21,6 +22,7 @@ class BlockLexer(mistune.BlockLexer):
 
     default_rules = [
         'admonition',
+        'deflist',
     ] + mistune.BlockLexer.default_rules
 
     def parse_admonition(self, m):
@@ -32,6 +34,22 @@ class BlockLexer(mistune.BlockLexer):
         self.parse(dedent(m.group(3)))
         self.tokens.append({
             'type': 'admonition_end',
+        })
+
+    def parse_deflist(self, m):
+        self.tokens.append({
+            'type': 'deflist_term_start',
+        })
+        self.parse(dedent(m.group(1)))
+        self.tokens.append({
+            'type': 'deflist_term_end',
+        })
+        self.tokens.append({
+            'type': 'deflist_def_start',
+        })
+        self.parse(dedent(' ' + m.group(3)[1:]))
+        self.tokens.append({
+            'type': 'deflist_def_end',
         })
 
 
@@ -48,6 +66,13 @@ class Renderer(mistune.Renderer):
         lexer = pygments.lexers.get_lexer_by_name(lang)
         return pygments.highlight(code, lexer, pygments_formatter).strip()
 
+    def deflist(self, items):
+        tags = {'term': 'dt', 'def': 'dd'}
+        return '<dl>\n{}</dl>'.format(''.join(
+            '<{tag}>{text}</{tag}>'.format(tag=tags[type], text=text)
+            for type, text in items
+        ))
+
 
 class Markdown(mistune.Markdown):
     def output_admonition(self):
@@ -60,14 +85,33 @@ class Markdown(mistune.Markdown):
             body += self.tok()
         return self.renderer.admonition(name, body)
 
+    def output_deflist_term(self):
+        items = [['term', self.renderer.placeholder()]]
+        while True:
+            end_token = 'deflist_{}_end'.format(items[-1][0])
+            while self.pop()['type'] not in (end_token, 'paragraph'):
+                items[-1][1] += self.tok()
+            if self.token['type'] == 'paragraph':
+                if items[-1][0] == 'term':
+                    items.append(['term', self.renderer.placeholder()])
+                    items[-1][1] += self.token['text']
+                else:
+                    items[-1][1] += self.output_paragraph()
+            elif self.peek()['type'] == 'deflist_term_start':
+                self.pop()
+                items.append(['term', self.renderer.placeholder()])
+            elif self.peek()['type'] == 'deflist_def_start':
+                self.pop()
+                items.append(['def', self.renderer.placeholder()])
+            else:
+                break
+        return self.renderer.deflist(items)
+
 
 markdown = Markdown(
     escape = False,
     block = BlockLexer(),
     renderer = Renderer(),
-    #extensions=[
-        #XXX: DefListExtension(),
-    #],
 )
 
 
