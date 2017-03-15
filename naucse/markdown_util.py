@@ -3,11 +3,17 @@ import re
 
 import mistune
 from jinja2 import Markup
+import pygments
+import pygments.lexers
+import pygments.formatters.html
+
+pygments_formatter = pygments.formatters.html.HtmlFormatter(
+    cssclass='codehilite'
+)
 
 
 class BlockGrammar(mistune.BlockGrammar):
     admonition = re.compile(r'^!!! *(\S+) *"([^"]*)"\n((\n| .*)+)')
-    #admonition = re.compile(r'^!!!')
 
 
 class BlockLexer(mistune.BlockLexer):
@@ -33,6 +39,15 @@ class Renderer(mistune.Renderer):
     def admonition(self, name, content):
         return '<div class="admonition {}">{}</div>'.format(name, content)
 
+    def block_code(self, code, lang):
+        if lang is not None:
+            lang = lang.strip()
+        if not lang or lang == 'plain':
+            escaped = mistune.escape(code)
+            return '<div class="codehilite"><pre><code>{}</code></pre></div>'.format(escaped)
+        lexer = pygments.lexers.get_lexer_by_name(lang)
+        return pygments.highlight(code, lexer, pygments_formatter).strip()
+
 
 class Markdown(mistune.Markdown):
     def output_admonition(self):
@@ -51,7 +66,6 @@ markdown = Markdown(
     block = BlockLexer(),
     renderer = Renderer(),
     #extensions=[
-        #XXX: CodeHiliteExtension(guess_lang=False),
         #XXX: DefListExtension(),
     #],
 )
