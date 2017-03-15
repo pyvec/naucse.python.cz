@@ -89,3 +89,8 @@ def test_markdown_definition_list_advanced():
     """).strip()
     print(convert_markdown(src))
     assert convert_markdown(src).strip() == expected
+
+
+def test_markdown_keeps_nbsp():
+    text = 'Some text\N{NO-BREAK SPACE}more text'
+    assert convert_markdown(text).strip() == '<p>{}</p>'.format(text)

@@ -116,10 +116,16 @@ markdown = Markdown(
 
 
 def convert_markdown(text, *, inline=False):
+    # Workaround for https://github.com/lepture/mistune/issues/125
+    NBSP_REPLACER = '\uf8ff'
+    text = text.replace('\N{NO-BREAK SPACE}', NBSP_REPLACER)
+
     text = dedent(text)
     result = Markup(markdown(text))
 
     if inline and result.startswith('<p>') and result.endswith('</p>'):
         result = result[len('<p>'):-len('</p>')]
 
+    # Workaround for https://github.com/lepture/mistune/issues/125
+    result = result.replace(NBSP_REPLACER, '\N{NO-BREAK SPACE}')
     return result
