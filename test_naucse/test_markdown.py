@@ -91,6 +91,38 @@ def test_markdown_definition_list_advanced():
     assert convert_markdown(src).strip() == expected
 
 
+def test_markdown_ansi_colors():
+    src = dedent("""
+        ```ansi
+        On branch ansicolors
+        Changes to be committed:
+          (use "git reset HEAD <file>..." to unstage)
+
+            [32mmodified:   naucse/markdown_util.py[m
+
+        Changes not staged for commit:
+          (use "git add <file>..." to update what will be committed)
+          (use "git checkout -- <file>..." to discard changes in working directory)
+
+            \x1b[31mmodified:   test_naucse/test_markdown.py\x1b[m
+        ```
+    """)
+    expected = dedent("""
+        <div class="codehilite"><pre><code>On branch ansicolors
+        Changes to be committed:
+          (use "git reset HEAD &lt;file&gt;..." to unstage)
+
+            <span style="color: #00aa00">modified:   naucse/markdown_util.py</span>
+
+        Changes not staged for commit:
+          (use "git add &lt;file&gt;..." to update what will be committed)
+          (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+            <span style="color: #aa0000">modified:   test_naucse/test_markdown.py</span></code></pre></div>
+    """).strip()
+    assert convert_markdown(src) == expected
+
+
 def test_markdown_keeps_nbsp():
     text = 'Some text\N{NO-BREAK SPACE}more text'
     assert convert_markdown(text).strip() == '<p>{}</p>'.format(text)

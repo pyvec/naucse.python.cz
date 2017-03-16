@@ -1,11 +1,15 @@
 from textwrap import dedent
 import re
 
+from  ansi2html import Ansi2HTMLConverter
 import mistune
 from jinja2 import Markup
 import pygments
 import pygments.lexers
 import pygments.formatters.html
+
+
+ansi_convertor = Ansi2HTMLConverter(inline=True)
 
 pygments_formatter = pygments.formatters.html.HtmlFormatter(
     cssclass='codehilite'
@@ -54,6 +58,8 @@ class BlockLexer(mistune.BlockLexer):
 
 
 class Renderer(mistune.Renderer):
+    code_tmpl = '<div class="codehilite"><pre><code>{}</code></pre></div>'
+
     def admonition(self, name, content):
         return '<div class="admonition {}">{}</div>'.format(name, content)
 
@@ -62,7 +68,10 @@ class Renderer(mistune.Renderer):
             lang = lang.strip()
         if not lang or lang == 'plain':
             escaped = mistune.escape(code)
-            return '<div class="codehilite"><pre><code>{}</code></pre></div>'.format(escaped)
+            return self.code_tmpl.format(escaped)
+        if lang == 'ansi':
+            converted = ansi_convertor.convert(code, full=False)
+            return self.code_tmpl.format(converted)
         lexer = pygments.lexers.get_lexer_by_name(lang)
         return pygments.highlight(code, lexer, pygments_formatter).strip()
 
