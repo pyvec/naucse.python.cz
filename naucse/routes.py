@@ -14,6 +14,8 @@ from naucse.markdown_util import convert_markdown
 
 app = Flask('naucse')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['TRAP_HTTP_EXCEPTIONS'] = True
+
 
 lesson_template_loader = FileSystemLoader(os.path.join(app.root_path, '..', 'lessons'))
 session_template_loader = FileSystemLoader(os.path.join(app.root_path, '..', 'runs'))
@@ -182,6 +184,20 @@ def render_page(page, solution=None, **kwargs):
     kwargs.setdefault('title', page.title)
     kwargs.setdefault('content', content)
 
+    if (page.subpages != None and page.slug in page.subpages.keys()
+    and "prev" in page.subpages[page.slug].keys() and "next" in page.subpages[page.slug].keys()) :
+        prev_segments = page.subpages[page.slug]["prev"].split(':')
+        next_segments = page.subpages[page.slug]["next"].split(':')
+
+        if len(next_segments) == 2:
+            next_segments.append("index")
+
+        if len(prev_segments) == 2:
+            prev_segments.append("index")
+
+        kwargs['prv'] = models.Navigation(prev_segments[0], prev_segments[1], prev_segments[2])
+        kwargs['nxt'] = models.Navigation(next_segments[0], next_segments[1], next_segments[2])
+
     return render_template(template_name, **kwargs)
 
 
@@ -210,7 +226,6 @@ def run_page(run, lesson, page, solution=None):
         return url_for('run_page', run=run, lesson=lesson, page=page_slug)
 
     prv, nxt, session_link = prv_nxt_teller(run, lesson)
-
     title = title='{}: {}'.format(run.title, page.title)
 
     return render_page(page=page, title=title,

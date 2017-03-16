@@ -59,6 +59,14 @@ class Page(Model):
     def css(self):
         return self.info.get('css')
 
+    @reify
+    def subpages(self):
+        if "subpages" in self.info.keys():
+            return self.info['subpages']
+        else:
+            return None
+
+
     def _prevnext(self, name, default):
         if name in self.info:
             page_slug = self.info[name]
@@ -263,9 +271,18 @@ class Root(Model):
 
 
 class Navigation(Model):
-    def __init__(self, title, url):
-        self.url = url
+    """Represents navigation link.
+
+    Arguments:
+        title   the title of the link location
+        url     <lesson_type>/<lesson>
+        page    the subpage of the lesson, index is default
+
+    """
+    def __init__(self, title, url, page='index'):
         self.title = title
+        self.url = url
+        self.page = page
 
     def __str__(self):
-        return "[{}]({})".format(self.title, self.url)
+        return "[{}]({}/{})".format(self.title, self.url, self.page)
