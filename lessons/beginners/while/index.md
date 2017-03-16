@@ -1,0 +1,99 @@
+# While
+
+Kromě cyklu `for` máme ještě druhý typ cyklu, uvozený příkazem `while`
+(angl. *dokud*).
+Na rozdíl od `for`, kde *předem známe počet opakování*,
+se while používá když cyklus závisí na nějaké podmínce.
+Tělo cyklu se opakuje, dokud je podmínka splněna. Například:
+
+```python
+odpoved = input('Řekni Ááá! ')
+while odpoved != 'Ááá':
+    print('Špatně, zkus to znovu')
+    odpoved = input('Řekni Ááá! ')
+```
+
+Ale pozor! Je velice jednoduché napsat cyklus,
+jehož podmínka bude splněna vždycky.
+Takový cyklus se bude opakovat donekonečna.
+
+```python
+from random import randrange
+
+while True:
+    print('Číslo je', randrange(10000))
+    print('(Počkej, než se počítač unaví...)')
+```
+
+Program se dá přerušit zmáčknutím
+<kbd>Ctrl</kbd>+<kbd>C</kbd>.
+
+!!! note ""
+    Tahle klávesová zkratka vyvolá v programu chybu,
+    a program se – jako po každé chybě – ukončí.
+
+A nakonec, existuje příkaz `break`, který z cyklu „vyskočí“:
+začnou se hned vykonávat příkazy za cyklem.
+
+```python
+while True:
+    odpoved = input('Řekni Ááá! ')
+    if odpoved == 'Ááá':
+        print('Bééé')
+        break
+    print('Špatně, zkus to znovu')
+
+print('Hotovo, ani to nebolelo.')
+```
+
+Příkaz `break` se dá použít jenom v cyklu (`while` nebo `for`),
+a pokud máme víc cyklů zanořených v sobě, vyskočí jen z toho vnitřního.
+
+```python
+for i in range(10):  # Vnější cyklus
+    for j in range(10):  # Vnitřní cyklus
+        print(j * i, end=' ')
+        if i <= j:
+            break
+    print()
+```
+
+Ale zpátky k `while`!
+Dokážeš napsat tenhle program?
+
+## Oko bere
+
+* Začínáš s 0 body.
+* Počítač v každém kole vypíše, kolik máš bodů,
+  a zeptá se hráče, jestli chce pokračovat.
+* Pokud hráč odpoví „ne“, hra končí.
+* Pokud hráč odpoví „ano“, počítač „otočí kartu“
+  (náhodně vybere číslo od 2 do 10) a přičte její hodnotu k bodům.
+* Pokud má hráč víc než 21 bodů, prohrává.
+* Cílem hry je získat co nejvíc bodů, ideálně 21.
+
+{% filter solution %}
+```python
+from random import randrange
+
+soucet = 0
+while soucet < 21:
+    print('Máš', soucet, 'bodů')
+    odpoved = input('Otočit kartu? ')
+    if odpoved == 'ano':
+        karta = randrange(2, 11)
+        print('Otočil{{a}} jsi', karta)
+        soucet = soucet + karta
+    elif odpoved == 'ne':
+        break
+    else:
+        print('Nerozumím! Odpovídej "ano" nebo "ne"')
+
+if soucet == 21:
+    print('Gratuluji! Vyhrál{{a}} jsi!')
+elif soucet > 21:
+    print('Smůla!', soucet, 'bodů je moc!')
+else:
+    print('Chybělo jen', 21 - soucet, 'bodů!')
+```
+{% endfilter %}

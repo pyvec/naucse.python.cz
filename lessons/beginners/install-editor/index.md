@@ -53,17 +53,18 @@ Obarvování
 
     Pro ilustraci, takhle může v editoru vypadat kousek kódu:
 
-        :::python
-         1  @app.route('/courses/<course:course>/')
-         2  def course_page(course):
-         3      try:
-         4          return render_template(
-         5              'course.html',
-         6              course=course,
-         7              plan=course.sessions,
-         8          )
-         9      except TemplateNotFound:
-        10         abort(404)
+    ```python
+        1  @app.route('/courses/<course:course>/')
+        2  def course_page(course):
+        3      try:
+        4          return render_template(
+        5              'course.html',
+        6              course=course,
+        7              plan=course.sessions,
+        8          )
+        9      except TemplateNotFound:
+       10          abort(404)
+    ```
 
 
 ## Volba a nastavení editoru

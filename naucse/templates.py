@@ -81,11 +81,11 @@ app.jinja_env.globals['a'] = A()
 
 @template_function
 def figure(img, alt):
-    t = Markup('''
+    t = Markup(''.join(p.strip() for p in """
         <span class="figure">
             <a href="{img}">
                 <img src="{img}" alt="{alt}">
             </a>
         </span>
-    ''')
+    """.splitlines()))
     return t.strip().format(img=img, alt=alt)

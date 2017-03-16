@@ -155,18 +155,21 @@ pro teď to budou kouzelná zaříkadla:
 
 * Chceš-li načíst **řetězec**, použij:
 
-        :::python
-        promenna = input('Zadej řetězec: ')
+  ```python
+  promenna = input('Zadej řetězec: ')
+  ```
 
 * Chceš-li načíst **celé číslo**, použij:
 
-        :::python
-        promenna = int(input('Zadej číslo: '))
+  ```python
+  promenna = int(input('Zadej číslo: '))
+  ```
 
 * Chceš-li načíst **desetinné číslo**, použij:
 
-        :::python
-        promenna = float(input('Zadej číslo: '))
+  ```python
+  promenna = float(input('Zadej číslo: '))
+  ```
 
 Místo řetězce `'Zadej …'` se dá napsat i jiná výzva. 
 A výsledek se samozřejmě dá uložit i do jiné proměnné než `promenna`.

@@ -9,7 +9,7 @@
 ```
 {%- endfilter -%}
             </div>
-        {% endfor %}
+        {%- endfor -%}
     </div>
 {%- endmacro -%}
 
@@ -223,7 +223,7 @@ Teď vytvořené adresáře zase smažeme.
 
 Nemůžeš ale smazat adresář, ve kterém jsi.
 Proto se vrátíme na `Desktop`.
-Ale nemůžeme použít `cd Desktop` – v aktuálním adresáři, žádný `Desktop` není.
+Ale nemůžeme použít `cd Desktop` – v aktuálním adresáři žádný `Desktop` není.
 Potřebuješ se dostat do *nadřazeného adresáře*: toho, který obsahuje
 adresář ve kterém právě jsi.
 Nadřazený adresář se značí dvěma tečkami:

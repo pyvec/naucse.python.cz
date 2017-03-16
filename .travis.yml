@@ -3,11 +3,15 @@ python:
 - '3.5'
 cache:
 - pip
+install:
+- pip install -r requirements.txt pytest
 script:
+- python -m pytest test_naucse
 - python -m naucse freeze
 deploy:
   provider: script
-  script: python -m naucse deploy --push
+  skip_cleanup: true
+  script: python -m naucse deploy --push --no-freeze
   on:
     branch: master
     repo: pyvec/naucse.python.cz
