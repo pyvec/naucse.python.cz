@@ -132,11 +132,13 @@ class Page(Model):
                 return 'static/{}'.format(path)
 
         if lesson_url is None:
-            def lesson_url(lesson, page='index'):
+            def lesson_url(lesson, page='index', solution=None):
                 lesson = self.root.get_lesson(lesson)
                 url = '../../{}/'.format(lesson.slug)
-                if page != 'index':
-                    url += page + '/'
+                if page != 'index' or solution != None:
+                    url += '{}/'.format(page)
+                if solution != None:
+                    url += '{}/'.format(solution)
                 return url
 
         def default_lesson_url(lesson, page='index'):
@@ -146,8 +148,9 @@ class Page(Model):
             return 'static/{}'.format(path)
 
         kwargs = {
-            'static': static_url,
-            'lesson_url': lesson_url,
+            'static': lambda path: static_url(path),
+            'lesson_url': lambda lesson, page='index', solution=None:
+                lesson_url(lesson=lesson, page=page, solution=solution),
             'subpage_url': lambda page: lesson_url(lesson=lesson, page=page),
             'lesson': lesson,
             'page': self,
