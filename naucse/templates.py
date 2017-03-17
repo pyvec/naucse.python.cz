@@ -89,26 +89,6 @@ def solution(text):
 
 
 @template_function()
-def static(filename):
-    return url_for('static', filename=filename)
-
-
-@template_function()
-def course_url(course):
-    return url_for('course_page', course=course)
-
-
-@template_function()
-def run_url(run):
-    return url_for('run', run=run)
-
-
-@template_function()
-def lesson_url(lesson, page='index'):
-    return url_for('lesson', lesson=lesson, page=page)
-
-
-@template_function()
 def var(name):
     """Return a page variable
 
