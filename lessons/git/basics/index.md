@@ -42,7 +42,7 @@ se teď seznámíme.
 ## Instalace
 
 Popis instalace Gitu najdeš
-[zde](lesson_url('git/install')).
+[zde]({{ lesson_url('git/install') }}).
 Jestli jsi instalaci přeskočil{{a}}, projdi si ji teď.
 
 
