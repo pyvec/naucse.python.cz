@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
 import jinja2
-from flask import g
 
 from naucse.modelutils import Model, YamlProperty, DataProperty, DirProperty, reify
 from naucse.modelutils import reify
@@ -116,8 +115,15 @@ class Page(Model):
     def render_html(self, solution=None,
                     static_url=None,
                     lesson_url=None,
+                    vars=None,
                     ):
         lesson = self.lesson
+
+        if not vars:
+            vars = {}
+        else:
+            vars = dict(vars)
+        vars.update(self.vars)
 
         solutions = []
 
@@ -146,6 +152,7 @@ class Page(Model):
             'lesson': lesson,
             'page': self,
             '$solutions': solutions,
+            'var': vars.get,
         }
 
         if self.style == 'md':

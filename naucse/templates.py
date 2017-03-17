@@ -1,6 +1,5 @@
 import textwrap
 
-from flask import g
 from jinja2 import Markup, contextfilter
 
 from naucse import markdown_util
@@ -97,7 +96,8 @@ def var(name):
     Variables are a mechanism for adapting lesson pages to the course
     or run they're part of.
     """
-    return g.vars.get(name)
+    # Templates that use vars should override this with `vars.get`.
+    return None
 
 
 @template_function()

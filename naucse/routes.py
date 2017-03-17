@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, render_template, url_for, send_from_directory
-from flask import abort, g
+from flask import abort
 from jinja2 import StrictUndefined, Markup
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
@@ -49,11 +49,6 @@ def run_url(run):
 @template_function
 def lesson_url(lesson, page='index', solution=None):
     return url_for('lesson', lesson=lesson, page=page, solution=solution)
-
-
-@app.before_request
-def set_vars():
-    g.vars = {}
 
 
 @app.route('/')
@@ -109,16 +104,19 @@ def course_page(course):
 @app.route('/<run:run>/')
 def run(run):
     """Run's page."""
-    g.vars = dict(run.vars)
-
     def lesson_url(lesson, *args, **kwargs):
         """Link to the specific lesson."""
         return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
 
     try:
-        return render_template('run.html',
-                               run=run, plan=run.sessions,
-                               title=run.title, lesson_url=lesson_url)
+        return render_template(
+            'run.html',
+            run=run,
+            plan=run.sessions,
+            title=run.title,
+            lesson_url=lesson_url,
+            var=run.vars.get,
+        )
     except TemplateNotFound:
         abort(404)
 
@@ -143,7 +141,7 @@ def prv_nxt_teller(run, lesson):
     return None, None
 
 
-def render_page(page, solution=None, **kwargs):
+def render_page(page, solution=None, vars=None, **kwargs):
     lesson = page.lesson
 
     def static_url(path):
@@ -154,6 +152,7 @@ def render_page(page, solution=None, **kwargs):
             solution=solution,
             static_url=static_url,
             lesson_url=kwargs.get('lesson_url', lesson_url),
+            vars=vars,
         )
     except FileNotFoundError:
         abort(404)
@@ -187,8 +186,6 @@ def run_page(run, lesson, page, solution=None):
     """Run's lesson page."""
 
     page = lesson.pages[page]
-    g.vars = dict(run.vars)
-    g.vars.update(page.vars)
 
     def lesson_url(lesson, *args, **kwargs):
         """Link to the specific lesson."""
@@ -205,7 +202,8 @@ def run_page(run, lesson, page, solution=None):
                        subpage_url=subpage_url,
                        run=run, nxt=nxt, prv=prv,
                        page_wip=not page.license,
-                       solution=solution)
+                       solution=solution,
+                       vars=run.vars)
 
 
 @app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
@@ -214,5 +212,4 @@ def run_page(run, lesson, page, solution=None):
 def lesson(lesson, page, solution=None):
     """Lesson page."""
     page = lesson.pages[page]
-    g.vars = dict(page.vars)
     return render_page(page=page, page_wip=True, solution=solution)
