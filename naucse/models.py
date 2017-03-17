@@ -119,7 +119,7 @@ class Page(Model):
                     ):
         lesson = self.lesson
 
-        g.solutions = []
+        solutions = []
 
         if static_url is None:
             def static_url(path):
@@ -145,6 +145,7 @@ class Page(Model):
             'subpage_url': lambda page: lesson_url(lesson=lesson, page=page),
             'lesson': lesson,
             'page': self,
+            '$solutions': solutions,
         }
 
         if self.style == 'md':
@@ -159,7 +160,10 @@ class Page(Model):
             template = self._get_template()
             content = jinja2.Markup(template.render(**kwargs))
 
-        return content
+        if solution is None:
+            return content
+        else:
+            return solutions[solution]
 
 
 class Collection(Model):

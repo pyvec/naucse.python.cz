@@ -1,7 +1,7 @@
 import textwrap
 
-from flask import g, request, url_for
-from jinja2 import Markup
+from flask import g
+from jinja2 import Markup, contextfilter
 
 from naucse import markdown_util
 
@@ -52,7 +52,8 @@ def extract_part(text, part, delimiter):
 
 
 @template_filter()
-def solution(text):
+@contextfilter
+def solution(ctx, text):
     """A solution to a problem.
 
     The intent is for the solution to be hidden by default, and only shown
@@ -65,14 +66,15 @@ def solution(text):
     To set up the special page, this filter needs special setup in the view.
     So, it can only be used within lesson pages.
     """
-    solution_index = len(g.solutions)
+    solutions = ctx['$solutions']
+    solution_index = len(solutions)
 
-    args = dict(request.view_args)
-    args['solution'] = solution_index
-    solution_url = url_for(request.url_rule.endpoint, **args)
+    solution_url = ctx['lesson_url'](lesson=ctx['lesson'].slug,
+                                     page=ctx['page'].slug,
+                                     solution=solution_index)
 
     solution = markdown_util.convert_markdown(text)
-    g.solutions.append(solution)
+    solutions.append(solution)
 
     t = Markup(textwrap.dedent("""
         <div class="solution" id="solution-{}">

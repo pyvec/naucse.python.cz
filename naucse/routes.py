@@ -47,8 +47,8 @@ def run_url(run):
 
 
 @template_function
-def lesson_url(lesson, page='index'):
-    return url_for('lesson', lesson=lesson, page=page)
+def lesson_url(lesson, page='index', solution=None):
+    return url_for('lesson', lesson=lesson, page=page, solution=solution)
 
 
 @app.before_request
@@ -162,7 +162,6 @@ def render_page(page, solution=None, **kwargs):
     kwargs.setdefault('page', page)
 
     if solution is not None:
-        content = g.solutions[solution]
         template_name = 'solution.html'
         kwargs.setdefault('solution_number', solution)
 
