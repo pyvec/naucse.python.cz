@@ -9,12 +9,15 @@ from werkzeug.local import LocalProxy
 from naucse import models
 from naucse.urlconverters import register_url_converters
 from naucse.markdown_util import convert_markdown
+from naucse.templates import setup_jinja_env
 
 
 app = Flask('naucse')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 lesson_template_loader = FileSystemLoader(os.path.join(app.root_path, '..', 'lessons'))
+
+setup_jinja_env(app.jinja_env)
 
 
 @LocalProxy

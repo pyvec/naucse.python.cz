@@ -1,36 +1,114 @@
-from flask import url_for, g
+import textwrap
+
+from flask import g, request, url_for
 from jinja2 import Markup
 
-from naucse.routes import app
-from naucse.filters import convert_markdown
+from naucse import markdown_util
 
 
-def template_function(func):
-    app.jinja_env.globals[func.__name__] = func
-    return func
+template_filters = {}
+
+def template_filter(name=None):
+    """Register a function as a Jinja template filter"""
+    def _decorator(func):
+        template_filters[name or func.__name__] = func
+        return func
+    return _decorator
 
 
-@template_function
+template_globals = {}
+
+def template_function(name=None):
+    """Register a function as a Jinja template global"""
+    def _decorator(func):
+        template_globals[name or func.__name__] = func
+        return func
+    return _decorator
+
+
+def setup_jinja_env(jinja_env):
+    """Sets up a Jinja environment with functions defined below"""
+    jinja_env.filters.update(template_filters)
+    jinja_env.globals.update(template_globals)
+
+
+@template_filter()
+def markdown(text, inline=False):
+    return markdown_util.convert_markdown(text, inline=inline)
+
+
+@template_filter()
+def dedent(text):
+    return textwrap.dedent(text)
+
+
+@template_filter()
+def extract_part(text, part, delimiter):
+    """Extract the given part of text. Parts are delimited by `delimiter`.
+
+    Indexing starts at zero.
+    """
+    return text.split(delimiter)[part]
+
+
+@template_filter()
+def solution(text):
+    """A solution to a problem.
+
+    The intent is for the solution to be hidden by default, and only shown
+    after an explicit action by the reader.
+    The explicit action can be:
+    - Clicking a dumb link, which takes the reader to a special page that shows
+      only the solution
+    - Clicking a button, which shows the solution using Javascript
+
+    To set up the special page, this filter needs special setup in the view.
+    So, it can only be used within lesson pages.
+    """
+    solution_index = len(g.solutions)
+
+    args = dict(request.view_args)
+    args['solution'] = solution_index
+    solution_url = url_for(request.url_rule.endpoint, **args)
+
+    solution = markdown_util.convert_markdown(text)
+    g.solutions.append(solution)
+
+    t = Markup(textwrap.dedent("""
+        <div class="solution" id="solution-{}">
+            <h3>Řešení</h3>
+            <div class="solution-cover">
+                <a href="{}"><span class="link-text">Ukázat řešení</span></a>
+            </div>
+            <div class="solution-body" aria-hidden="true">
+                {}
+            </div>
+        </div>
+    """))
+    return t.format(solution_index, solution_url, solution)
+
+
+@template_function()
 def static(filename):
     return url_for('static', filename=filename)
 
 
-@template_function
+@template_function()
 def course_url(course):
     return url_for('course_page', course=course)
 
 
-@template_function
+@template_function()
 def run_url(run):
     return url_for('run', run=run)
 
 
-@template_function
+@template_function()
 def lesson_url(lesson, page='index'):
     return url_for('lesson', lesson=lesson, page=page)
 
 
-@template_function
+@template_function()
 def var(name):
     """Return a page variable
 
@@ -40,7 +118,7 @@ def var(name):
     return g.vars.get(name)
 
 
-@template_function
+@template_function()
 def gnd(m, f, *, both=None):
     """Return `m` or `f` based on the user's grammatical gender
 
@@ -57,7 +135,7 @@ def gnd(m, f, *, both=None):
         return both
 
 
-@template_function
+@template_function()
 def anchor(name):
     return Markup('<a id="{}"></a>').format(name)
 
@@ -71,10 +149,10 @@ class A:
     def __str__(self):
         return gnd('', 'a')
 
-app.jinja_env.globals['a'] = A()
+template_globals['a'] = A()
 
 
-@template_function
+@template_function()
 def figure(img, alt):
     t = Markup(''.join(p.strip() for p in """
         <span class="figure">
