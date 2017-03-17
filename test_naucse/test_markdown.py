@@ -98,13 +98,13 @@ def test_markdown_ansi_colors():
         Changes to be committed:
           (use "git reset HEAD <file>..." to unstage)
 
-            [32mmodified:   naucse/markdown_util.py[m
+            ␛[32mmodified:   naucse/markdown_util.py␛[m
 
         Changes not staged for commit:
           (use "git add <file>..." to update what will be committed)
           (use "git checkout -- <file>..." to discard changes in working directory)
 
-            \x1b[31mmodified:   test_naucse/test_markdown.py\x1b[m
+            ␛[31mmodified:   test_naucse/test_markdown.py␛[m
         ```
     """)
     expected = dedent("""

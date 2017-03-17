@@ -57,6 +57,11 @@ class BlockLexer(mistune.BlockLexer):
         })
 
 
+def ansi_convert(code):
+    replaced = code.replace('\u241b', '\x1b')
+    return ansi_convertor.convert(replaced, full=False)
+
+
 class Renderer(mistune.Renderer):
     code_tmpl = '<div class="codehilite"><pre><code>{}</code></pre></div>'
 
@@ -70,7 +75,7 @@ class Renderer(mistune.Renderer):
             escaped = mistune.escape(code)
             return self.code_tmpl.format(escaped)
         if lang == 'ansi':
-            converted = ansi_convertor.convert(code, full=False)
+            converted = ansi_convert(code)
             return self.code_tmpl.format(converted)
         lexer = pygments.lexers.get_lexer_by_name(lang)
         return pygments.highlight(code, lexer, pygments_formatter).strip()
