@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template, url_for, send_from_directory
 from flask import abort
-from jinja2 import StrictUndefined, Markup
+from jinja2 import StrictUndefined
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
 

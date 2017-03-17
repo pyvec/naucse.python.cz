@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import jinja2
 
-from naucse.modelutils import Model, YamlProperty, DataProperty, DirProperty, reify
+from naucse.modelutils import Model, YamlProperty, DataProperty, DirProperty
 from naucse.modelutils import reify
 from naucse.templates import setup_jinja_env
 from naucse.markdown_util import convert_markdown

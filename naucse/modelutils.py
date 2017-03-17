@@ -1,5 +1,4 @@
 from collections import OrderedDict
-import collections.abc
 from pathlib import Path
 import sys
 
