@@ -1,21 +1,18 @@
 import os
 
 from flask import Flask, render_template, url_for, send_from_directory
-from flask import abort, render_template_string, g
-from jinja2 import PrefixLoader, FileSystemLoader, StrictUndefined, Markup
+from flask import abort, g
+from jinja2 import StrictUndefined, Markup
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
 
 from naucse import models
 from naucse.urlconverters import register_url_converters
-from naucse.markdown_util import convert_markdown
 from naucse.templates import setup_jinja_env
 
 
 app = Flask('naucse')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-
-lesson_template_loader = FileSystemLoader(os.path.join(app.root_path, '..', 'lessons'))
 
 setup_jinja_env(app.jinja_env)
 
@@ -146,43 +143,23 @@ def prv_nxt_teller(run, lesson):
     return None, None
 
 
-def lesson_template_or_404(lesson, page):
-    env = app.jinja_env.overlay(loader=lesson_template_loader)
-    name = '{}/{}.{}'.format(lesson.slug, page.slug, page.style)
-    try:
-        return env.get_template(name)
-    except TemplateNotFound:
-        abort(404)
-
-
 def render_page(page, solution=None, **kwargs):
     lesson = page.lesson
+
     def static_url(path):
         return url_for('lesson_static', lesson=lesson, path=path)
-    def subpage_url(page_slug):
-        return url_for('lesson', lesson=lesson, page=page_slug)
-    kwargs.setdefault('static', static_url)
-    kwargs.setdefault('subpage_url', subpage_url)
+
+    try:
+        content = page.render_html(
+            solution=solution,
+            static_url=static_url,
+            lesson_url=kwargs.get('lesson_url', lesson_url),
+        )
+    except FileNotFoundError:
+        abort(404)
+
     kwargs.setdefault('lesson', lesson)
     kwargs.setdefault('page', page)
-
-    g.solutions = []
-
-    if page.style == 'md':
-        if page.jinja:
-            template = lesson_template_or_404(lesson, page)
-            content = template.render(**kwargs)
-        else:
-            try:
-                file = page.path.open()
-            except FileNotFoundError:
-                abort(404)
-            with file:
-                content = file.read()
-        content = Markup(convert_markdown(content))
-    else:
-        template = lesson_template_or_404(lesson, page)
-        content = Markup(template.render(**kwargs))
 
     if solution is not None:
         content = g.solutions[solution]

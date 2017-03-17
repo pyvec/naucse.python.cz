@@ -1,7 +1,12 @@
 from collections import OrderedDict
 
+import jinja2
+from flask import g
+
 from naucse.modelutils import Model, YamlProperty, DataProperty, DirProperty, reify
 from naucse.modelutils import reify
+from naucse.templates import setup_jinja_env
+from naucse.markdown_util import convert_markdown
 
 
 class Lesson(Model):
@@ -100,6 +105,61 @@ class Page(Model):
     @reify
     def vars(self):
         return self.info.get('vars', {})
+
+    def _get_template(self):
+        name = '{}/{}.{}'.format(self.lesson.slug, self.slug, self.style)
+        try:
+            return self.root.lesson_jinja_env.get_template(name)
+        except jinja2.TemplateNotFound:
+            raise FileNotFoundError(name)
+
+    def render_html(self, solution=None,
+                    static_url=None,
+                    lesson_url=None,
+                    ):
+        lesson = self.lesson
+
+        g.solutions = []
+
+        if static_url is None:
+            def static_url(path):
+                return 'static/{}'.format(path)
+
+        if lesson_url is None:
+            def lesson_url(lesson, page='index'):
+                lesson = self.root.get_lesson(lesson)
+                url = '../../{}/'.format(lesson.slug)
+                if page != 'index':
+                    url += page + '/'
+                return url
+
+        def default_lesson_url(lesson, page='index'):
+            url = '../../{}/'.format(lesson.slug)
+            if page != 'index':
+                url += ''
+            return 'static/{}'.format(path)
+
+        kwargs = {
+            'static': static_url,
+            'lesson_url': lesson_url,
+            'subpage_url': lambda page: lesson_url(lesson=lesson, page=page),
+            'lesson': lesson,
+            'page': self,
+        }
+
+        if self.style == 'md':
+            if self.jinja:
+                template = self._get_template()
+                content = template.render(**kwargs)
+            else:
+                with self.path.open() as file:
+                    content = file.read()
+            content = jinja2.Markup(convert_markdown(content))
+        else:
+            template = self._get_template()
+            content = jinja2.Markup(template.render(**kwargs))
+
+        return content
 
 
 class Collection(Model):
@@ -256,7 +316,18 @@ class Root(Model):
         }
 
     def get_lesson(self, name, base_collection=None):
+        if isinstance(name, Lesson):
+            return name
         if '/' in name:
             base_collection, name = name.split('/', 2)
         collection = self.collections[base_collection]
         return collection.lessons[name]
+
+    @reify
+    def lesson_jinja_env(self):
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader([str(self.path / 'lessons')]),
+            autoescape=jinja2.select_autoescape(['html', 'xml']),
+        )
+        setup_jinja_env(env)
+        return env
