@@ -25,21 +25,21 @@ dělá na vlastní větvi, a když přijde čas,
 tak se různé změny sloučí dohromady.
 
 Podívej se, jaké máš větve ve svém repozitáři.
-K tomu slouží příkaz *git branch*:
+K tomu slouží příkaz `git branch`:
 
 ```ansi
 ␛[36m$␛[0m git branch
 * ␛[32mmaster␛[m
 ```
 
-Je tam jenom jedna, a jmenuje se *master*
+Je tam jenom jedna, a jmenuje se `master`
 – to je tradičně jméno „hlavní” větve.
 
 K vytvoření nové větve znovu použiješ
-*git branch*, jen tomu příkazu dáš navíc
+`git branch`, jen tomu příkazu dáš navíc
 jméno nové větve.
 Třeba budeš chtít k básničce doplnit jméno autora,
-tak větev pojmenuješ *doplneni-autora*.
+tak větev pojmenuješ `doplneni-autora`.
 
 ```ansi
 ␛[36m$␛[0m git branch doplneni-autora
@@ -50,8 +50,8 @@ tak větev pojmenuješ *doplneni-autora*.
 
 Tenhle příkaz sice udělal novou větev,
 ale nepřepnul do ní.
-Hvězdička ve výstupu z *git branch* ukazuje,
-že stále pracuješ v *master*.
+Hvězdička ve výstupu z `git branch` ukazuje,
+že stále pracuješ v `master`.
 Na přepnutí budeš potřebovat další příkaz:
 
 ```ansi
@@ -62,8 +62,8 @@ Switched to branch 'doplneni-autora'
   master␛[m
 ```
 
-Tak. Teď jsi „ve” větvi *doplneni-autora*.
-Doplň jméno do souboru `basnicka.txt`,
+Tak. Teď jsi „ve” větvi `doplneni-autora`.
+Doplň nějaké jméno do souboru `basnicka.txt`,
 a pomocí `git add` a `git commit` udělej novou revizi.
 Pak koukni na `gitk --all`, jak to vypadá:
 
@@ -158,8 +158,8 @@ kde konflikt nastal.
 Soubor uprav ho tak, jak by měl vypadat, ulož, a zadej
 `git commit`.
  
-Ať nastal konflikt nebo ne, vytvoří se slučovací revize”
-(angl. *merge commit*), které můžeš dát popisek.
+Ať nastal konflikt nebo ne, vytvoří se „slučovací revize“
+(angl. *merge commit*), které – jako každé revizi – můžeš dát popisek.
 
 ```ansi
 ␛[36m$␛[0m git merge doplneni-autora
@@ -177,7 +177,7 @@ Povedlo se?
 ) }}
 
 Pokud ano, můžeš staré větve vymazat – všechny jejich
-změny jsou v master`, a nemá na nich cenu
+změny jsou v `master`, a nemá na nich cenu
 pracovat dál.
 
 ```ansi

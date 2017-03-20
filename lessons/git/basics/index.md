@@ -82,7 +82,7 @@ nothing to commit (create/copy files and use "git add" to track)
 *„On branch master”* říká něco o větvích, k tomu se vrátíme později.
 *„Initial commit”* říká, že zatím nemáš uloženou žádnou revizi.
 A *„nothing to commit”* říká, že je adresář
-prázdný – nejsou tu žádné soubory u verzování.
+prázdný – nejsou tu žádné soubory k verzování.
 
 
 ## První revize
@@ -220,7 +220,7 @@ Vidíš unikátní
 <span class="yellow">označení revize</span>,
 pomocí kterého se vždy bude dát dostat k této konkrétní
 verzi projektu.
-Pak je tam jméno autorky a datum vytvoření,
+Pak je tam jméno autor{{ gnd('a', 'ky', both='a') }} a datum vytvoření,
 popisek,
 a nakonec shrnutí změn: byl přidán soubor <tt class="strong">basnicka.txt</tt>
 s nějakým <span class="green">obsahem</span>.
@@ -272,8 +272,8 @@ Na to nám odpoví příkaz <code>git diff</code>.
 ```
 
 Změny se ukazují po řádcích.
-Červeně, s <tt class="red">-</tt>, jsou ukázány
-odebrané řádky; zeleně s <tt class="green">+</tt>
+Červeně, s <tt class="red">-</tt>, jsou ukázány
+odebrané řádky; zeleně s <tt class="green">+</tt>
 řádky přidané.
 
 !!! note ""
@@ -434,7 +434,7 @@ na obrazovku, můžeš se v logu pohybovat pomocí šipek a
     rozumět :)
 
 Když se na nějakou verzi budeš chtít podívat podrobněji,
-napiš `git show 5ff0b`, kde místo `5ff0b
+napiš `git show 5ff0b`, kde místo `5ff0b`
 uveď prvních několik čísel z <span class="yellow">označení revize</span>.
 
 ## gitk
