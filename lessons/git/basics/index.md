@@ -46,7 +46,7 @@ Popis instalace Gitu najdeš
 Jestli jsi instalaci přeskočil{{a}}, projdi si ji teď.
 
 
-## Repozitář</h2>
+## Repozitář
 
 Každý projekt, který budeš verzovat, musí mít pro sebe
 vyhrazený adresář.
@@ -279,9 +279,9 @@ odebrané řádky; zeleně s <tt class="green">+</tt>
 řádky přidané.
 
 !!! note ""
-    Změnilo-li se na řádku jen jedno slovo nebo znak,
+    Změnilo-li se na řádku jen jedno slovo nebo i písmeno,
     celý řádek se ukáže jako smazaný a zase přidaný.
-    Dá se to nastaviti jinak, když je potřeba,
+    Dá se to nastavit i jinak, když je potřeba,
     ale je dobré si na tento standard zvyknout.
 
 Takhle se dá jednoduše zjistit, co se dělo od poslední verze.
@@ -295,7 +295,7 @@ v jedné ze změn musí být chyba!
     souboru řádkem 3, a měl 8 řádků; v nové verzi je
     opět od 3. řádku, ale má už jen 7 řádků).
 
-Jsi-li se změnami spokojená, řekni Gitu ať je
+Jsi-li se změnami spokojen{{a}}, řekni Gitu ať je
 použije v další revizi:
 
 ```ansi
