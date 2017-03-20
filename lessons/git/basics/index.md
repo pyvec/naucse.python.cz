@@ -54,9 +54,9 @@ Vytvoř si tedy nový adresář a přepni se do něj (pomocí `cd`).
 Pak vytvoř gitový <em>repozitář</em> (angl. repository)
 pomocí příkazu `git init`:
 
-```console
-$ git init
-Initialized empty Git repository in /tmp/tepo/.git/
+```ansi
+␛[36m$␛[0m git init
+Initialized empty Git repository in ./.git/
 ```
 
 Na první pohled to vypadá že se nic nestalo.
@@ -70,8 +70,8 @@ V repozitáři zatím nic není.
 Zkus to ověřit příkazem `git status`, který
 vypisuje informace o stavu repozitáře:
 
-```console
-$ git status
+```ansi
+␛[36m$␛[0m git status
 On branch master
 
 Initial commit
@@ -97,8 +97,8 @@ Pak zkus znovu `git status`: Git oznámí,
 
 <!-- XXX: Color coding! -->
 
-```console
-$ git status
+```ansi
+␛[36m$␛[0m git status
 On branch master
 
 Initial commit
@@ -106,7 +106,7 @@ Initial commit
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
 
-        <span class="red">basnicka.txt</span>
+        ␛[31mbasnicka.txt␛[m
 
 nothing added to commit but untracked files present (use "git add" to track)
 ```
@@ -115,22 +115,22 @@ U každého nového souboru musíme Gitu říct, že
 chceme jeho obsah sledovat.
 Proveď to se svojí básničkou:
 
-```console
-$ git add basnicka.txt
+```ansi
+␛[36m$␛[0m git add basnicka.txt
 ```
 
 a znovu zkontroluj stav repozitáře:
 
-```console
-$ git status
+```ansi
+␛[36m$␛[0m git status
 On branch master
 
 Initial commit
 
 Changes to be committed:
-  (use "git rm --cached &lt;file&gt;..." to unstage)
+  (use "git rm --cached <file>..." to unstage)
 
-        <span class="green">new file:   basnicka.txt</span>
+        ␛[32mnew file:   basnicka.txt␛[m
 
 ```
 
@@ -139,8 +139,11 @@ se přidá do další *revize* (angl. *commit*),
 kterou vytvoříš.
 Pojď tedy vytvořit revizi:
 
-```console
-$ git commit
+```ansi
+␛[36m$␛[0m git commit
+[master (root-commit) 7465169] První revize
+ 1 file changed, 11 insertions(+)
+ create mode 100644 basnicka.txt
 ```
 
 Po zadání tohoto příkazu se otevře editor,
@@ -178,10 +181,10 @@ Pak soubor ulož, a zavři editor.
 
 Znovu zkus vypsat stav repozitáře:
 
-```console
-$ git status
+```ansi
+␛[36m$␛[0m git status
 On branch master
-nothing to commit, working directory clean
+nothing to commit, working tree clean
 ```
 
 Tenhle krátký výstup znamená, že od poslední revize
@@ -191,31 +194,31 @@ Což dává smysl – poslední revizi jsi právě vytvořil{{a}}!
 A co všechno je v téhle první/poslední revizi?
 To ti poví příkaz `git show`:
 
-```console
-$ git show
-<span class="yellow">commit e0419fedda0a85a945a05a31bd58c5196c8d3b1d</span>
-Author: Adéla Novotná &lt;adela.novotna@example.cz&gt;
-Date:   Sun Jan 18 23:41:31 2015 +0100
+```ansi
+␛[36m$␛[0m git show
+␛[33mcommit 7465169a16eb1ee39352ab3d23ced4d213960e9d␛[m
+Author: Adéla Novotná <adela.novotna@example.cz>
+Date:   Mon Mar 20 11:46:47 2017 +0100
 
     První revize
-<span class="strong">
-diff --git a/basnicka.txt b/basnicka.txt
-new file mode 100644
-index 0000000..8416aea
---- /dev/null
-+++ b/basnicka.txt</span><span class="blue">
-@@ -0,0 +1,11 @@</span><span class="green">
-+Haló haló
-+co se stalo?
-+Kolo se mi polámalo
-+
-+Jaké kolo?
-+Favoritka,
-+přeletěl jsem přes řidítka
-+
-+Co jste dělal?
-+Blbnul jsem,
-+do příkopy zahnul jsem
+
+␛[1mdiff --git a/basnicka.txt b/basnicka.txt␛[m
+␛[1mnew file mode 100644␛[m
+␛[1mindex 0000000..18b2f69␛[m
+␛[1m--- /dev/null␛[m
+␛[1m+++ b/basnicka.txt␛[m
+␛[36m@@ -0,0 +1,11 @@␛[m
+␛[32m+␛[m␛[32mHaló haló␛[m
+␛[32m+␛[m␛[32mco se stalo?␛[m
+␛[32m+␛[m␛[32mKolo se mi polámalo␛[m
+␛[32m+␛[m
+␛[32m+␛[m␛[32mJaké kolo?␛[m
+␛[32m+␛[m␛[32mFavoritka,␛[m
+␛[32m+␛[m␛[32mpřeletěl jsem přes řidítka␛[m
+␛[32m+␛[m
+␛[32m+␛[m␛[32mCo jste dělal?␛[m
+␛[32m+␛[m␛[32mBlbnul jsem,␛[m
+␛[32m+␛[m␛[32mdo příkopy zahnul jsem␛[m
 ```
 
 Vidíš unikátní
@@ -238,38 +241,36 @@ Udělej v básničce nějakou malou změnu – změň slovo,
 uprav interpunkci nebo přidej sloku.
 Pak se opět zeptej Gitu na stav repozitáře.
 
-```console
-$ git status
+```ansi
+␛[36m$␛[0m git status
 On branch master
-Changes not staged for commit:
-  (use "git add &lt;file&gt;..." to update what will be committed)
-  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
 
-        <span class="red">modified:   basnicka.txt</span>
+        ␛[32mmodified:   basnicka.txt␛[m
 
-no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
 Soubor je opět červený! Něco se v něm změnilo!
 Ale co?
 Na to nám odpoví příkaz <code>git diff</code>.
 
-```console
-<span class="strong">$ git diff
-diff --git a/basnicka.txt b/basnicka.txt
-index 8416aea..333757f 100644
---- a/basnicka.txt
-+++ b/basnicka.txt</span><span class="blue">
-@@ -3,8 +3,7 @@</span> co se stalo?
- Kolo se mi polámalo
-
- Jaké kolo?<span class="red">
--Favoritka,
--přeletěl jsem přes řidítka</span><span class="green">
-+Favoritka! Přeletěl jsem přes řidítka!</span>
-
- Co jste dělal?
- Blbnul jsem,
+```ansi
+␛[36m$␛[0m git diff
+␛[1mdiff --git a/basnicka.txt b/basnicka.txt␛[m
+␛[1mindex 18b2f69..9290e0e 100644␛[m
+␛[1m--- a/basnicka.txt␛[m
+␛[1m+++ b/basnicka.txt␛[m
+␛[36m@@ -3,8 +3,7 @@␛[m ␛[mco se stalo?␛[m
+ Kolo se mi polámalo␛[m
+ ␛[m
+ Jaké kolo?␛[m
+␛[31m-Favoritka,␛[m
+␛[31m-přeletěl jsem přes řidítka␛[m
+␛[32m+␛[m␛[32mFavoritka! Přeletěl jsem přes řidítka!␛[m
+ ␛[m
+ Co jste dělal?␛[m
+ Blbnul jsem,␛[m
 ```
 
 Změny se ukazují po řádcích.
@@ -297,21 +298,22 @@ v jedné ze změn musí být chyba!
 Jsi-li se změnami spokojená, řekni Gitu ať je
 použije v další revizi:
 
-```console
-$ git add basnicka.txt
+```ansi
+␛[36m$␛[0m git add basnicka.txt
 ```
 
 A pro úplnost se znovu koukni co říká
 `status` – co je zelené, přidá se do další
 revize.
 
-```console
-$ git status
+```ansi
+␛[36m$␛[0m git status
 On branch master
 Changes to be committed:
-  (use "git reset HEAD &lt;file&gt;..." to unstage)
+  (use "git reset HEAD <file>..." to unstage)
 
-       <span class="green"> modified:   basnicka.txt</span>
+        ␛[32mmodified:   basnicka.txt␛[m
+
 ```
 
 Než uděláš druhou revizi, ještě řeknu něco o tom,
@@ -349,11 +351,11 @@ Použití vykřičníku místo čárky zdůrazňuje naléhavost situace.
 Pomocí `git commit` vytvoř druhou revizi.
 Pak ji zkontroluj:
 
-```console
-$ git show
-<span class="yellow">commit 207f72f43d4a45a0ecb477f74d9f83bf7ddb3200</span>
-Author: Adéla Novotná &lt;adela.novotna@example.cz&gt;
-Date:   Mon Jan 19 00:52:37 2015 +0100
+```ansi
+␛[36m$␛[0m git show
+␛[33mcommit 303761b29fb6ef0bfd961b311131c224b918ffc5␛[m
+Author: Adéla Novotná <adela.novotna@example.cz>
+Date:   Mon Mar 20 11:46:47 2017 +0100
 
     Druhá sloka: Sloučení posledních dvou řádků
     
@@ -361,22 +363,22 @@ Date:   Mon Jan 19 00:52:37 2015 +0100
     veršů ve sloce je prý moderní. (Ale, co si budeme povídat, hlavní
     důvod je líp ukázat co dělá `git diff`.)
     
-    Použití vykřičníků místo čárky zdůrazňuje naléhavost situace.
-<span class="strong">
-diff --git a/basnicka.txt b/basnicka.txt
-index 18b2f69..9290e0e 100644
---- a/basnicka.txt
-+++ b/basnicka.txt</span><span class="blue">
-@@ -3,8 +3,7 @@</span> co se stalo?
- Kolo se mi polámalo
- 
- Jaké kolo?<span class="red">
--Favoritka,
--přeletěl jsem přes řidítka</span><span class="green">
-+Favoritka! Přeletěl jsem přes řidítka!</span>
- 
- Co jste dělal?
- Blbnul jsem,
+    Použití vykřičníku místo čárky zdůrazňuje naléhavost situace.
+
+␛[1mdiff --git a/basnicka.txt b/basnicka.txt␛[m
+␛[1mindex 18b2f69..9290e0e 100644␛[m
+␛[1m--- a/basnicka.txt␛[m
+␛[1m+++ b/basnicka.txt␛[m
+␛[36m@@ -3,8 +3,7 @@␛[m ␛[mco se stalo?␛[m
+ Kolo se mi polámalo␛[m
+ ␛[m
+ Jaké kolo?␛[m
+␛[31m-Favoritka,␛[m
+␛[31m-přeletěl jsem přes řidítka␛[m
+␛[32m+␛[m␛[32mFavoritka! Přeletěl jsem přes řidítka!␛[m
+ ␛[m
+ Co jste dělal?␛[m
+ Blbnul jsem,␛[m
 ```
 
 ## Diagram
@@ -395,23 +397,23 @@ si ukážeme několik příkazů, které nám umožní se
 v nich orientovat.
 První z nich je <code>git log</code>.
 
-```console
-$ git log
-<span class="yellow">commit 207f72f43d4a45a0ecb477f74d9f83bf7ddb3200</span>
-Author: Adéla Novotná &gt;adela.novotna@example.cz&lt;
-Date:   Mon Jan 19 00:52:37 2015 +0100
+```ansi
+␛[36m$␛[0m git -c color.ui=always -c color.diff=always -c color.status=always log
+␛[33mcommit 303761b29fb6ef0bfd961b311131c224b918ffc5␛[m
+Author: Adéla Novotná <adela.novotna@example.cz>
+Date:   Mon Mar 20 11:46:47 2017 +0100
 
     Druhá sloka: Sloučení posledních dvou řádků
     
-    Sloučení řádku rozbíjí monotónnost formy básně – nestejný počet
-    veršů ve sloce je prý moderní. Ale, co si budeme povídat, hlavní
-    důvod je líp ukázat co dělá git diff.
+    Sloučení řádků rozbíjí monotónnost formy básně – nestejný počet
+    veršů ve sloce je prý moderní. (Ale, co si budeme povídat, hlavní
+    důvod je líp ukázat co dělá .)
     
-    Použití vykřičníků místo čárky zdůrazňuje naléhavost situace, samozřejmě.
+    Použití vykřičníku místo čárky zdůrazňuje naléhavost situace.
 
-<span class="yellow">commit 5ff0bba5ea8da3068be6491cd8f0069ddb321950</span>
-Author: Adéla Novotná &gt;adela.novotna@example.cz&lt;
-Date:   Sun Jan 18 23:41:31 2015 +0100
+␛[33mcommit 7465169a16eb1ee39352ab3d23ced4d213960e9d␛[m
+Author: Adéla Novotná <adela.novotna@example.cz>
+Date:   Mon Mar 20 11:46:47 2017 +0100
 
     První revize
 ```
