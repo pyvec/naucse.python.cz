@@ -386,7 +386,7 @@ Pro lepší pochopení, co dělají jednotlivé příkazy a v jakém
 stavu můžou být soubory/změny, přikládám tento diagram:
 
 {{ figure(
-    img=static('diagram.png'),
+    img=static('diagram.svg'),
     alt="Diagram revizí"
 ) }}
 
