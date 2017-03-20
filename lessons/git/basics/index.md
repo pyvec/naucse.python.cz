@@ -141,8 +141,8 @@ Pojď tedy vytvořit revizi:
 
 ```ansi
 ␛[36m$␛[0m git commit
-[master (root-commit) 7465169] První revize
- 1 file changed, 11 insertions(+)
+[master (root-commit) 1a009f4] První revize
+ 1 file changed, 6 insertions(+)
  create mode 100644 basnicka.txt
 ```
 
@@ -196,29 +196,24 @@ To ti poví příkaz `git show`:
 
 ```ansi
 ␛[36m$␛[0m git show
-␛[33mcommit 7465169a16eb1ee39352ab3d23ced4d213960e9d␛[m
+␛[33mcommit 1a009f4267d5a6ab7ece87cb7514f5b803692e39␛[m
 Author: Adéla Novotná <adela.novotna@example.cz>
-Date:   Mon Mar 20 11:46:47 2017 +0100
+Date:   Mon Mar 20 14:51:34 2017 +0100
 
     První revize
 
 ␛[1mdiff --git a/basnicka.txt b/basnicka.txt␛[m
 ␛[1mnew file mode 100644␛[m
-␛[1mindex 0000000..18b2f69␛[m
+␛[1mindex 0000000..558d133␛[m
 ␛[1m--- /dev/null␛[m
 ␛[1m+++ b/basnicka.txt␛[m
-␛[36m@@ -0,0 +1,11 @@␛[m
-␛[32m+␛[m␛[32mHaló haló␛[m
-␛[32m+␛[m␛[32mco se stalo?␛[m
-␛[32m+␛[m␛[32mKolo se mi polámalo␛[m
+␛[36m@@ -0,0 +1,6 @@␛[m
+␛[32m+␛[m␛[32mHolka modrooká, nesedávej u potoka␛[m
+␛[32m+␛[m␛[32mHolka modrooká, nesedávej tam␛[m
 ␛[32m+␛[m
-␛[32m+␛[m␛[32mJaké kolo?␛[m
-␛[32m+␛[m␛[32mFavoritka,␛[m
-␛[32m+␛[m␛[32mpřeletěl jsem přes řidítka␛[m
-␛[32m+␛[m
-␛[32m+␛[m␛[32mCo jste dělal?␛[m
-␛[32m+␛[m␛[32mBlbnul jsem,␛[m
-␛[32m+␛[m␛[32mdo příkopy zahnul jsem␛[m
+␛[32m+␛[m␛[32mV potoce je hastrmánek␛[m
+␛[32m+␛[m␛[32mZatahá tě za copánek␛[m
+␛[32m+␛[m␛[32mHolka modrooká, nesedávej tam␛[m
 ```
 
 Vidíš unikátní
@@ -258,19 +253,22 @@ Na to nám odpoví příkaz <code>git diff</code>.
 ```ansi
 ␛[36m$␛[0m git diff
 ␛[1mdiff --git a/basnicka.txt b/basnicka.txt␛[m
-␛[1mindex 18b2f69..9290e0e 100644␛[m
+␛[1mindex 558d133..24e2384 100644␛[m
 ␛[1m--- a/basnicka.txt␛[m
 ␛[1m+++ b/basnicka.txt␛[m
-␛[36m@@ -3,8 +3,7 @@␛[m ␛[mco se stalo?␛[m
- Kolo se mi polámalo␛[m
+␛[36m@@ -1,6 +1,9 @@␛[m
+␛[31m-Holka modrooká, nesedávej u potoka␛[m
+␛[31m-Holka modrooká, nesedávej tam␛[m
+␛[32m+␛[m␛[32mHolka modrooká␛[m
+␛[32m+␛[m␛[32mNesedávej u potoka␛[m
+␛[32m+␛[m␛[32mHolka modrooká␛[m
+␛[32m+␛[m␛[32mNesedávej tam␛[m
  ␛[m
- Jaké kolo?␛[m
-␛[31m-Favoritka,␛[m
-␛[31m-přeletěl jsem přes řidítka␛[m
-␛[32m+␛[m␛[32mFavoritka! Přeletěl jsem přes řidítka!␛[m
- ␛[m
- Co jste dělal?␛[m
- Blbnul jsem,␛[m
+ V potoce je hastrmánek␛[m
+ Zatahá tě za copánek␛[m
+␛[31m-Holka modrooká, nesedávej tam␛[m
+␛[32m+␛[m␛[32mHolka modrooká␛[m
+␛[32m+␛[m␛[32mNesedávej tam␛[m
 ```
 
 Změny se ukazují po řádcích.
@@ -332,13 +330,11 @@ Cokoli, co může přijít vhod až se změny bude snažit někdo pochopit.
 Můj popisek bude znít takhle:
 
 ```plain
-Druhá sloka: Sloučení posledních dvou řádků
+Rozdělení dlouhých řádků
 
-Sloučení řádků rozbíjí monotónnost formy básně – nestejný počet
-veršů ve sloce je prý moderní. (Ale, co si budeme povídat, hlavní 
-důvod je líp ukázat co dělá `git diff`.)
-
-Použití vykřičníku místo čárky zdůrazňuje naléhavost situace.
+Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
+takhle se to líp čte. (Ale, co si budeme povídat, hlavní 
+důvod je ukázat co dělá git diff.)
 ```
 
 !!! note ""
@@ -353,32 +349,33 @@ Pak ji zkontroluj:
 
 ```ansi
 ␛[36m$␛[0m git show
-␛[33mcommit 303761b29fb6ef0bfd961b311131c224b918ffc5␛[m
+␛[33mcommit 81cbabb3bd3cd2f3896dd41b20012c44dbd69031␛[m
 Author: Adéla Novotná <adela.novotna@example.cz>
-Date:   Mon Mar 20 11:46:47 2017 +0100
+Date:   Mon Mar 20 14:51:34 2017 +0100
 
-    Druhá sloka: Sloučení posledních dvou řádků
+    Rozdělení dlouhých řádků
     
-    Sloučení řádků rozbíjí monotónnost formy básně – nestejný počet
-    veršů ve sloce je prý moderní. (Ale, co si budeme povídat, hlavní
-    důvod je líp ukázat co dělá `git diff`.)
-    
-    Použití vykřičníku místo čárky zdůrazňuje naléhavost situace.
+    Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
+    takhle se to líp čte. (Ale, co si budeme povídat, hlavní
+    důvod je ukázat co dělá git diff.)
 
 ␛[1mdiff --git a/basnicka.txt b/basnicka.txt␛[m
-␛[1mindex 18b2f69..9290e0e 100644␛[m
+␛[1mindex 558d133..24e2384 100644␛[m
 ␛[1m--- a/basnicka.txt␛[m
 ␛[1m+++ b/basnicka.txt␛[m
-␛[36m@@ -3,8 +3,7 @@␛[m ␛[mco se stalo?␛[m
- Kolo se mi polámalo␛[m
+␛[36m@@ -1,6 +1,9 @@␛[m
+␛[31m-Holka modrooká, nesedávej u potoka␛[m
+␛[31m-Holka modrooká, nesedávej tam␛[m
+␛[32m+␛[m␛[32mHolka modrooká␛[m
+␛[32m+␛[m␛[32mNesedávej u potoka␛[m
+␛[32m+␛[m␛[32mHolka modrooká␛[m
+␛[32m+␛[m␛[32mNesedávej tam␛[m
  ␛[m
- Jaké kolo?␛[m
-␛[31m-Favoritka,␛[m
-␛[31m-přeletěl jsem přes řidítka␛[m
-␛[32m+␛[m␛[32mFavoritka! Přeletěl jsem přes řidítka!␛[m
- ␛[m
- Co jste dělal?␛[m
- Blbnul jsem,␛[m
+ V potoce je hastrmánek␛[m
+ Zatahá tě za copánek␛[m
+␛[31m-Holka modrooká, nesedávej tam␛[m
+␛[32m+␛[m␛[32mHolka modrooká␛[m
+␛[32m+␛[m␛[32mNesedávej tam␛[m
 ```
 
 ## Diagram
@@ -398,22 +395,20 @@ v nich orientovat.
 První z nich je <code>git log</code>.
 
 ```ansi
-␛[36m$␛[0m git -c color.ui=always -c color.diff=always -c color.status=always log
-␛[33mcommit 303761b29fb6ef0bfd961b311131c224b918ffc5␛[m
+␛[36m$␛[0m git log
+␛[33mcommit 81cbabb3bd3cd2f3896dd41b20012c44dbd69031␛[m
 Author: Adéla Novotná <adela.novotna@example.cz>
-Date:   Mon Mar 20 11:46:47 2017 +0100
+Date:   Mon Mar 20 14:51:34 2017 +0100
 
-    Druhá sloka: Sloučení posledních dvou řádků
+    Rozdělení dlouhých řádků
     
-    Sloučení řádků rozbíjí monotónnost formy básně – nestejný počet
-    veršů ve sloce je prý moderní. (Ale, co si budeme povídat, hlavní
-    důvod je líp ukázat co dělá .)
-    
-    Použití vykřičníku místo čárky zdůrazňuje naléhavost situace.
+    Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
+    takhle se to líp čte. (Ale, co si budeme povídat, hlavní
+    důvod je ukázat co dělá git diff.)
 
-␛[33mcommit 7465169a16eb1ee39352ab3d23ced4d213960e9d␛[m
+␛[33mcommit 1a009f4267d5a6ab7ece87cb7514f5b803692e39␛[m
 Author: Adéla Novotná <adela.novotna@example.cz>
-Date:   Mon Mar 20 11:46:47 2017 +0100
+Date:   Mon Mar 20 14:51:34 2017 +0100
 
     První revize
 ```

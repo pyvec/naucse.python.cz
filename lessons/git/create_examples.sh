@@ -1,6 +1,5 @@
 # Runs a Git demo script and outputs a file with terminal escape sequences
 # where \e is substituted for the visible character `␛`.
-# This one also takes some screenshots.
 
 if [ -z "$1" ]; then
     echo "Usage: $0 OUTFILE"
@@ -10,48 +9,61 @@ fi
 OUTFILE=$(realpath $1)
 
 export second_msg='
-Druhá sloka: Sloučení posledních dvou řádků
+Rozdělení dlouhých řádků
 
-Sloučení řádků rozbíjí monotónnost formy básně – nestejný počet
-veršů ve sloce je prý moderní. (Ale, co si budeme povídat, hlavní 
-důvod je líp ukázat co dělá `git diff`.)
-
-Použití vykřičníku místo čárky zdůrazňuje naléhavost situace.
+Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
+takhle se to líp čte. (Ale, co si budeme povídat, hlavní 
+důvod je ukázat co dělá git diff.)
 '
 
 function _the_script {
 
 git init
 
+git status
+
 cat > basnicka.txt << END
-Haló haló
-co se stalo?
-Kolo se mi polámalo
+Holka modrooká, nesedávej u potoka
+Holka modrooká, nesedávej tam
 
-Jaké kolo?
-Favoritka,
-přeletěl jsem přes řidítka
-
-Co jste dělal?
-Blbnul jsem,
-do příkopy zahnul jsem
+V potoce je hastrmánek
+Zatahá tě za copánek
+Holka modrooká, nesedávej tam
 END
 
+git status
 git add basnicka.txt
+git status
 GIT_EDITOR='echo "První revize" >' git commit
 
+git status
+git show
+
 cat > basnicka.txt << END
-Haló haló
-co se stalo?
-Kolo se mi polámalo
+Holka modrooká
+Nesedávej u potoka
+Holka modrooká
+Nesedávej tam
 
-Jaké kolo?
-Favoritka! Přeletěl jsem přes řidítka!
-
-Co jste dělal?
-Blbnul jsem,
-do příkopy zahnul jsem
+V potoce je hastrmánek
+Zatahá tě za copánek
+Holka modrooká
+Nesedávej tam
 END
+
+git status
+git diff
+git add basnicka.txt
+git status
+
+GIT_EDITOR="echo \"$second_msg\" >" git commit
+
+git show
+git log
+
+git config -l
+
+take_screenshot $OUTFILE.gitk.png gitk --all
 
 git add basnicka.txt
 GIT_EDITOR="echo \"$second_msg\" >" git commit
@@ -63,19 +75,17 @@ git checkout doplneni-autora
 git branch
 
 cat > basnicka.txt << END
-Haló haló
-co se stalo?
-Kolo se mi polámalo
+Holka modrooká
+Nesedávej u potoka
+Holka modrooká
+Nesedávej tam
 
-Jaké kolo?
-Favoritka,
-přeletěl jsem přes řidítka
+V potoce je hastrmánek
+Zatahá tě za copánek
+Holka modrooká
+Nesedávej tam
 
-Co jste dělal?
-Blbnul jsem,
-do příkopy zahnul jsem
-
-- Jaromír Nohavica
+- Lidová
 END
 
 git add basnicka.txt
@@ -89,20 +99,18 @@ git checkout doplneni-jmena
 git branch
 
 cat > basnicka.txt << END
-Haló haló
+Holka modrooká
 =========
 
-Haló haló
-co se stalo?
-Kolo se mi polámalo
+Holka modrooká
+Nesedávej u potoka
+Holka modrooká
+Nesedávej tam
 
-Jaké kolo?
-Favoritka,
-přeletěl jsem přes řidítka
-
-Co jste dělal?
-Blbnul jsem,
-do příkopy zahnul jsem
+V potoce je hastrmánek
+Zatahá tě za copánek
+Holka modrooká
+Nesedávej tam
 END
 
 git add basnicka.txt
