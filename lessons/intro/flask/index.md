@@ -323,8 +323,9 @@ Po přihlášení se ukáže záložka *Consoles*, kde vytvoříme "Bash" konzol
 V té vytvořte a aktivujte virtuální prostředí, a nainstalujte Flask (plus
 případně další závislosti).
 
-PythonAnywhere je postavený na Ubuntu, takže příkaz na vytvoření prostředí
-vypadá jinak než na vašich počítačích.
+PythonAnywhere používá specificky nastavený Linux,
+tak je ve webové konzoli potřeba použít jiný příkaz
+na vytvoření virtuální prostředí, než jste z toho kurzu zvyklí.
 Napište příkazy takto (bez úvodního `$`):
 
 ```console
