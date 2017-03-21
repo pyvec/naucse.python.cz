@@ -28,7 +28,8 @@ $ . env/bin/activate
 (env)$ python -m pip install Flask
 ```
 
-Základní použití Flasku je poměrně primitivní:
+Základní použití Flasku je poměrně primitivní.
+Do souboru `hello.py` napište:
 
 ```python
 from flask import Flask
@@ -38,18 +39,33 @@ app = Flask(__name__)
 def hello():
     return 'MI-PYT je nejlepší předmět na FITu!'
 
-if __name__ == '__main__':
-    app.run(debug=True)
 ```
 
+Pak aplikaci spusťte pomocí následujících příkazů.
+(Na Windows použijte místo `export` příkaz `set`.)
+
 ```console
-(env)$ python hello.py
+(env)$ export FLASK_APP=hello.py
+(env)$ export FLASK_DEBUG=1
+(env)$ flask run
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
  * Restarting with stat
  * Debugger is active!
  * Debugger pin code: 189-972-345
 ```
 Na zmíněné adrese byste měli v prohlížeči vidět použitý text.
+
+Proměnná prostředí `FLASK_APP` říká Flasku, kde aplikaci najít.
+V daném souboru Flask hledá automaticky proměnnou jménem `app`.
+([Jde nastavit](http://flask.pocoo.org/docs/0.12/cli/) i jiná.)
+
+Proměnná `FLASK_DEBUG` říká, že se aplikace má spustit v ladícím režimu:
+je zapnutý příjemnější výpis chyb, a aplikace se automaticky restartuje
+po změnách.
+Tento mód je užitečný, ale nebezpečný – návštěvníkům stránky může umožňit
+spustit jakýkoli Pythonní kód.
+Navíc aplikaci zpomaluje.
+Používejte ho proto pouze na svém počítači.
 
 V příkladu jsme vytvořili flaskovou aplikaci (`app`), pomocí dekorátoru
 `@app.route` jsme vytvořili takzvanou routu (cestu). Říkáme tím, že na adrese
@@ -67,13 +83,6 @@ def hello():
 ```
 
 Na adrese `http://127.0.0.1:5000/hello` pak uvidíte druhou stránku.
-
-Pomocí `app.run()` jsme aplikaci spustili na lokálním počítači.
-V případě reálného nasazení pak aplikaci předáme nějakému webovému serveru.
-Argument `debug` slouží k zjednodušení debugování
-(např. případné výjimky uvidíte přímo v prohlížeči),
-pro reálné nasazení by však tento režim neměl být zapnut, kvůli bezpečnosti a
-dopadům na výkon.
 
 ### Dynamické routy
 
@@ -175,22 +184,21 @@ Pak je třeba vedle souboru vytvořit složku `templates` a v ní `hello.html`:
 
 {% raw %}
 Šablony používají v Pythonu velmi oblíbený šablonovací jazyk [Jinja2].
-Kompletní popis jazyke najdete v [dokumentaci][Jinja2], ale
+Kompletní popis jazyka najdete v [dokumentaci][Jinja2], ale
 pro většinu stránek se obejdete s `{% if %}` a `{{ promenna }}` jako výše,
 případně s `{% for %}/{% endfor %}`.
 {% endraw %}
 
-Veškerý kontext do šablony musí přijít z volání `render_template()`,
-navíc můžete automaticky použít např, `url_for()`.
+Veškerý kontext (proměnné) do šablony musí přijít z volání `render_template()`,
+navíc můžete automaticky použít např. funkci `url_for()`.
 
 [Jinja2]: http://jinja.pocoo.org/latest/templates/
 
 Pro debugování je vhodné nastavit automatické načítání změn šablon:
 
 ```python
-if __name__ == "__main__":
+if app.config.get('DEBUG'):
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(debug=True)
 ```
 
 #### Filtry
