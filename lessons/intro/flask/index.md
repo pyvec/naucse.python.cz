@@ -387,9 +387,10 @@ zvlášť.
 Konfigurační soubor jde nahrát v záložce Files, nebo opět vytvořit
 a editovat ve webové konzoli.
 
-**Poznámka:** Doporučujeme pro tyto potřeby stejně raději nepoužívat API klíče
-k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
-Twitter vyžaduje před vydáním API klíčů zadání a potvrzení telefonního čísla.
+!!! note ""
+    Doporučujeme pro tyto potřeby stejně raději nepoužívat API klíče
+    k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
+    Twitter vyžaduje před vydáním API klíčů zadání a potvrzení telefonního čísla.
 
 
 ### Aktualizace
