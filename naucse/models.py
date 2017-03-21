@@ -166,6 +166,8 @@ class Page(Model):
                 with self.path.open() as file:
                     content = file.read()
             content = jinja2.Markup(convert_markdown(content))
+        elif self.style == 'ipynb':
+            content = jinja2.Markup('<em>TODO add content</em>')
         else:
             template = self._get_template()
             content = jinja2.Markup(template.render(**kwargs))
