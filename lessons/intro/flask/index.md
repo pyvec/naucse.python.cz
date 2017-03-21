@@ -67,9 +67,13 @@ spustit jakýkoli Pythonní kód.
 Navíc aplikaci zpomaluje.
 Používejte ho proto pouze na svém počítači.
 
-V příkladu jsme vytvořili flaskovou aplikaci (`app`), pomocí dekorátoru
-`@app.route` jsme vytvořili takzvanou routu (cestu). Říkáme tím, že na adrese
-`/` bude k dispozici obsah, který vrátí definovaná funkce.
+V příkladu jsme vytvořili flaskovou aplikaci (`app`).
+Argument `__name__` je jméno modulu – Flask podle něj hledá soubory,
+které k aplikaci patří (viz `static` a `templates` níže).
+
+Pomocí dekorátoru `@app.route` jsme vytvořili takzvanou routu (cestu).
+Říkáme tím, že na adrese `/` bude k dispozici obsah, který vrátí
+definovaná funkce.
 Více různých cest lze vytvořit jednoduše přidáním další funkce.
 
 ```python
