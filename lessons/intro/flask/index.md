@@ -150,6 +150,7 @@ def hello(name=None):
 
 Pak je třeba vedle souboru vytvořit složku `templates` a v ní `hello.html`:
 
+{% raw %}
 ```html
 <!doctype html>
 <title>Hello from Flask</title>
@@ -159,6 +160,7 @@ Pak je třeba vedle souboru vytvořit složku `templates` a v ní `hello.html`:
   <h1>Hello, World!</h1>
 {% endif %}
 ```
+{% endraw %}
 
 Šablony používají v Pythonu velmi oblíbený [Jinja2].
 (Základní použití najdete na odkaze.)
@@ -195,9 +197,11 @@ def convert_time(text):
 
 V šabloně:
 
+{% raw %}
 ```html
 {{ tweet.created_at|time }}
 ```
+{% endraw %}
 
 #### Escaping
 
@@ -219,9 +223,11 @@ bude výsledné HTML vypadat takto:
 Někdy je ovšem potřeba do stránky opravdu vložit HTML.
 To se dá zajistit dvěma způsoby. Nejjednodušší je vestavěný filtr `safe`:
 
+{% raw %}
 ```
 {{ "<em>Text</em>" | safe }}
 ```
+{% endraw %}
 
 Z Pythonu pak lze použít [jinja2.Markup](http://jinja.pocoo.org/docs/dev/api/#jinja2.Markup),
 čímž se daný text označí jako „bezpečný”.
@@ -248,9 +254,11 @@ url_for('static', filename='style.css')
 
 V šabloně pak například:
 
+{% raw %}
 ```html
 <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 ```
+{% endraw %}
 
 Další věci, které možná budete potřebovat, jako například zpracování formulářů,
 najdete [v dokumentaci](http://flask.pocoo.org/docs/0.11/quickstart/).
