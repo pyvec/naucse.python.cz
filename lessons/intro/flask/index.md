@@ -319,7 +319,7 @@ Nejprve proto uložte celý projekt do Gitu a nahrajte na Github.
 Potom se zaregistrujte na
 [www.pythonanywhere.com](https://www.pythonanywhere.com/) a vyberte
 Beginner Account.
-Po přihlášení se ukáže záložka "Consoles", kde vytvoříme "Bash" konzoli.
+Po přihlášení se ukáže záložka *Consoles*, kde vytvoříme "Bash" konzoli.
 V té vytvořte a aktivujte virtuální prostředí, a nainstalujte Flask (plus
 případně další závislosti).
 
@@ -353,7 +353,7 @@ $ git clone git@github.com:<github-username>/<github-repo>.git
 
 Zbývá nastavit, aby PythonAnywhere tento kód spustil jako webovou aplikaci.
 
-Přejděte na stránkách PythonAnywhere do Dashboard do záložky Web,
+Přejděte na stránkách PythonAnywhere do Dashboard do záložky *Web*,
 a vytvořte novou aplikaci.
 V nastavení zvolte Manual Configuration a Python 3.5.
 
@@ -377,7 +377,7 @@ from <jméno-souboru> import app as application
 (Za `<uživatelské-jméno>`, `<jméno-adresáře>` a `<jméno-souboru>` je samozřejmě potřeba doplnit
 vaše údaje. Jméno souboru je zde bez přípony `.py`.)
 
-Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce Web,
+Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce *Web*,
 a na adrese `<uživatelské-jméno>.pythonanywhere.com` si ji můžete
 prohlédnout.
 
@@ -388,7 +388,7 @@ prohlédnout.
 
 Protože vaše tajné klíče nejsou v repozitáři, je nutné je předat aplikaci
 zvlášť.
-Konfigurační soubor jde nahrát v záložce Files, nebo opět vytvořit
+Konfigurační soubor jde nahrát v záložce *Files*, nebo opět vytvořit
 a editovat ve webové konzoli.
 
 !!! note ""
@@ -400,5 +400,5 @@ a editovat ve webové konzoli.
 ### Aktualizace
 
 Když nahrajeme nový kód na Github, je vždy potřeba provést na PythonAnywhere
-v konzoli `git pull` a pak v záložce Web aplikaci restartovat.
+v konzoli `git pull` a pak v záložce *Web* aplikaci restartovat.
 
