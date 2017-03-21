@@ -200,17 +200,17 @@ také obsahuje kód, který se spustí při importu modulu `isholiday`.
 
 Musíme ještě mírně upravit `setup.py`:
 
-```ansi
-␛[1mdiff --git a/setup.py b/setup.py␛[m
-␛[1mindex 3a69792..6b453ab 100644␛[m
-␛[1m--- a/setup.py␛[m
-␛[1m+++ b/setup.py␛[m
-␛[36m@@ -11,7 +11,7 @@ setup(␛[m
+```diff
+diff --git a/setup.py b/setup.py
+index 3a69792..6b453ab 100644
+--- a/setup.py
++++ b/setup.py
+@@ -11,7 +11,7 @@ setup(
      keywords='holiday,dates',
      license='Public Domain',
      url='https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e',
-␛[31m-    py_modules=['isholiday'],␛[m
-␛[32m+    packages=['isholiday'],␛[m
+-    py_modules=['isholiday'],
++    packages=['isholiday'],
      classifiers=[
          'Intended Audience :: Developers',
          'License :: Public Domain',
