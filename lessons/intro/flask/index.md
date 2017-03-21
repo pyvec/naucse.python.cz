@@ -213,7 +213,7 @@ Od toho jsou tu filtry. Filtr transformuje hodnotu na řetězec,
 který pak ukážeme uživateli.
 
 Zde je například filtr `time`, který načte čas v určitém formátu
-a převede do jiného:
+a převede ho do jiného:
 
 ```python
 from datetime import datetime
@@ -375,7 +375,7 @@ from <jméno-souboru> import app as application
 ```
 
 (Za `<uživatelské-jméno>`, `<jméno-adresáře>` a `<jméno-souboru>` je samozřejmě potřeba doplnit
-vaše údaje. Jméno souboru je zde bez přípony `py`.)
+vaše údaje. Jméno souboru je zde bez přípony `.py`.)
 
 Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce Web,
 a na adrese `<uživatelské-jméno>.pythonanywhere.com` si ji můžete
