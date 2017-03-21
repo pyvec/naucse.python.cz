@@ -22,7 +22,7 @@ Flask
 Flask opět můžete nainstalovat do virtualenvu, nejlépe použít projekt
 z minulého cvičení:
 
-```bash
+```console
 $ cd project
 $ . env/bin/activate 
 (env)$ python -m pip install Flask
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     app.run(debug=True)
 ```
 
-```bash
+```console
 (env)$ python hello.py
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
  * Restarting with stat
@@ -115,7 +115,7 @@ Tuto funkci jde použít jen uvnitř funkce obsluhující cestu, pokud ji chcete
 vyzkoušet například v interaktivní konzoli, můžete použít speciální kontext
 manager:
 
-```python
+```pycon
 >>> with app.test_request_context():
 ...     print(url_for('profile', username='hroncok'))
 ... 
@@ -151,7 +151,7 @@ def hello(name=None):
 Pak je třeba vedle souboru vytvořit složku `templates` a v ní `hello.html`:
 
 {% raw %}
-```html
+```html+jinja
 <!doctype html>
 <title>Hello from Flask</title>
 {% if name %}
@@ -198,7 +198,7 @@ def convert_time(text):
 V šabloně:
 
 {% raw %}
-```html
+```html+jinja
 {{ tweet.created_at|time }}
 ```
 {% endraw %}
@@ -224,7 +224,7 @@ Někdy je ovšem potřeba do stránky opravdu vložit HTML.
 To se dá zajistit dvěma způsoby. Nejjednodušší je vestavěný filtr `safe`:
 
 {% raw %}
-```
+```html+jinja
 {{ "<em>Text</em>" | safe }}
 ```
 {% endraw %}
@@ -255,7 +255,7 @@ url_for('static', filename='style.css')
 V šabloně pak například:
 
 {% raw %}
-```html
+```html+jinja
 <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 ```
 {% endraw %}
@@ -282,10 +282,10 @@ případně další závislosti).
 (Příkaz vypadá kvůli balíčkovací politice Debianu
 trochu jinak než na našich počítačích.)
 
-```bash
-virtualenv --python=python3.5 env
-. env/bin/activate
-python -m pip install flask
+```console
+$ virtualenv --python=python3.5 env
+$ . env/bin/activate
+$ python -m pip install flask
 ```
 
 Následně naklonujte na PythonAnywhere náš kód.
@@ -293,17 +293,17 @@ S veřejným repozitářem je to jednodušší – stačí ho naklonovat „anon
 (`git clone https://github.com/<github-username>/<github-repo>`).
 Pokud ale používáme privátní repozitář, bude potřeba si vygenerovat SSH klíč:
 
-```bash
-ssh-keygen  # (zeptá se na hesla ke klíči)
-cat ~/.ssh/id_rsa.pub
+```console
+$ ssh-keygen  # (zeptá se na hesla ke klíči)
+$ cat ~/.ssh/id_rsa.pub
 ```
 
 Obsah souboru `~/.ssh/id_rsa.pub` je pak potřeba přidat na Github v osobním
 nastavení v sekci "SSH and GPG Keys".
 Pak můžeme klonovat přes SSH:
 
-```bash
-git clone git@github.com:<github-username>/<github-repo>.git
+```console
+$ git clone git@github.com:<github-username>/<github-repo>.git
 ```
 
 Zbývá nastavit, aby PythonAnywhere tento kód spustil jako webovou aplikaci.
