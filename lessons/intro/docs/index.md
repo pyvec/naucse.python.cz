@@ -16,29 +16,31 @@ betamaxu či Pythonu samotného, viděli jste dokumentaci vytvořenou ve Sphinxu
 
 Pro vytvoření základní kostry dokumentace se používá jednoduchý průvodce:
 
-    $ . env/bin/activate
-    (env) $ python -m pip install sphinx
-    (env) $ python -m sphinx.quickstart
-    Welcome to the Sphinx 1.4.8 quickstart utility.
-    ...
-    Enter the root path for documentation.
-    > Root path for the documentation [.]: docs
-    ...
-    The project name will occur in several places in the built documentation.
-    > Project name: coolthing
-    > Author name(s): Pythonista Dokumentarista
+```
+$ . env/bin/activate
+(env) $ python -m pip install sphinx
+(env) $ python -m sphinx.quickstart
+Welcome to the Sphinx 1.4.8 quickstart utility.
+...
+Enter the root path for documentation.
+> Root path for the documentation [.]: docs
+...
+The project name will occur in several places in the built documentation.
+> Project name: coolthing
+> Author name(s): Pythonista Dokumentarista
 
-    Sphinx has the notion of a "version" and a "release" for the
-    software. Each version can have multiple releases. For example, for
-    Python the version is something like 2.5 or 3.0, while the release is
-    something like 2.5.1 or 3.0a1.  If you don't need this dual structure,
-    just set both to the same value.
-    > Project version: 0.5
-    ...
-    Please indicate if you want to use one of the following Sphinx extensions:
-    > autodoc: automatically insert docstrings from modules (y/n) [n]: y
-    > doctest: automatically test code snippets in doctest blocks (y/n) [n]: y
-    ...
+Sphinx has the notion of a "version" and a "release" for the
+software. Each version can have multiple releases. For example, for
+Python the version is something like 2.5 or 3.0, while the release is
+something like 2.5.1 or 3.0a1.  If you don't need this dual structure,
+just set both to the same value.
+> Project version: 0.5
+...
+Please indicate if you want to use one of the following Sphinx extensions:
+> autodoc: automatically insert docstrings from modules (y/n) [n]: y
+> doctest: automatically test code snippets in doctest blocks (y/n) [n]: y
+...
+```
 
 V ukázce jsou zobrazeny jen věci, kde nestačí nechat výchozí hodnota.
 K modulům `autodoc` a `doctest` se dostaneme později.
@@ -53,10 +55,12 @@ dokumentace sestavit do HTML.
 **Poznámka:** Sphinx umí generovat dokumentaci ve více formátech (LaTeX,
 manuálové stránky atd.), pro nás bude podstatné především HTML.
 
-    (env) $ cd docs
-    (env) $ make html
-    ...
-    Build finished. The HTML pages are in _build/html.
+```
+(env) $ cd docs
+(env) $ make html
+...
+Build finished. The HTML pages are in _build/html.
+```
 
 Ve zmíněné složce byste měli najít `index.html`, ten si můžete prohlédnout
 v prohlížeči.
@@ -79,18 +83,22 @@ můžete použít [tahák].
 
 V `index.rst` je seznam kapitol:
 
-    .. toctree::
-       :maxdepth: 2
+```rst
+.. toctree::
+   :maxdepth: 2
+```
 
 Tam můžete přidat další kapitoly:
 
-    .. toctree::
-       :maxdepth: 2
+```rst
+.. toctree::
+   :maxdepth: 2
 
-       intro
-       tutorial/foo
-       tutorial/bar
-       ...
+   intro
+   tutorial/foo
+   tutorial/bar
+   ...
+```
 
 Soubory s kapitolami je třeba vytvořit ve složce `docs` s příponou `.rst`.
 Obsah (ve smyslu *content*) lze pak přidávat samozřejmě do těchto souborů i do
@@ -98,18 +106,22 @@ Obsah (ve smyslu *content*) lze pak přidávat samozřejmě do těchto souborů 
 
 Chcete-li odkazovat na některou sekci, označíme si ji pomocí `.. _label:`:
 
-    .. _my-reference-label:
+```rst
+.. _my-reference-label:
 
-    Section to cross-reference
-    --------------------------
+Section to cross-reference
+--------------------------
 
-    This is the text of the section.
+This is the text of the section.
+```
 
 Poté na ni lze odkazovat, odkudkoli z dokumentace, odkazovat pomocí
 [konstrukce ref]:
 
-    It refers to the section itself, see :ref:`my-reference-label`.
-    It could refer to a different section as well :)
+```rst
+It refers to the section itself, see :ref:`my-reference-label`.
+It could refer to a different section as well :)
+```
 
 [konstrukce ref]: http://www.sphinx-doc.org/en/1.4.8/markup/inline.html#role-ref
 
@@ -124,19 +136,25 @@ aktivovali. Můžete to dělat dvěma způsoby. První je mít v dokumentaci
 příklad vypadající jako interaktivní konzole.
 Takový příklad nemusí být odsazený ani ničím uvozený; stačí `>>>` na začátku.
 
-    >>> 1 + 1
-    2
+```python
+>>> 1 + 1
+2
+```
 
 Doctest v tomto případě otestuje, že vše funguje, jak má.
 V tomto případě se provede součet a zkontroluje se, zda výsledek je 2.
 
 Druhý způsob je mít v dokumentaci nejdříve kód:
 
-    print('foo')
+```python
+print('foo')
+```
 
 A dále někde jinde výstup volání:
 
-    foo
+```python
+foo
+```
 
 K tomu všemu složí několik direktiv:
 
@@ -169,83 +187,87 @@ nepoužijete flag `:hide:`.
 
 ### Kompletní příklad
 
-    The parrot module
-    =================
+```rst
+The parrot module
+=================
 
-    .. testsetup::
+.. testsetup::
 
-       class Parrot:
-           def voom(self, voltage):
-               print('This parrot wouldn\'t voom if you put {} volts through it!'.format(voltage))
+   class Parrot:
+       def voom(self, voltage):
+           print('This parrot wouldn\'t voom if you put {} volts through it!'.format(voltage))
 
-           def die(self):
-               return 'RIP'
-
-
-       parrot = Parrot()
-
-    The parrot module is a module about parrots.
-
-    Doctest example:
-
-    .. doctest::
-
-       >>> parrot.voom(3000)
-       This parrot wouldn't voom if you put 3000 volts through it!
-
-    Test-Output example:
-
-    .. testcode::
-
-       parrot.voom(3000)
-
-    This would output:
-
-    .. testoutput::
-
-       This parrot wouldn't voom if you put 3000 volts through it!
-
-    You can use other values:
-
-    .. testcode::
-
-       parrot.voom(230)
-
-    .. testoutput::
-       :hide:
-
-       This parrot wouldn't voom if you put 230 volts through it!
+       def die(self):
+           return 'RIP'
 
 
-    .. testcleanup::
+   parrot = Parrot()
 
-       parrot.die()
+The parrot module is a module about parrots.
+
+Doctest example:
+
+.. doctest::
+
+   >>> parrot.voom(3000)
+   This parrot wouldn't voom if you put 3000 volts through it!
+
+Test-Output example:
+
+.. testcode::
+
+   parrot.voom(3000)
+
+This would output:
+
+.. testoutput::
+
+   This parrot wouldn't voom if you put 3000 volts through it!
+
+You can use other values:
+
+.. testcode::
+
+   parrot.voom(230)
+
+.. testoutput::
+   :hide:
+
+   This parrot wouldn't voom if you put 230 volts through it!
+
+
+.. testcleanup::
+
+   parrot.die()
+```
 
 Testy se také dají zařazovat do skupin, více
 v [dokumentaci](http://www.sphinx-doc.org/en/1.4.8/ext/doctest.html).
 
-    (env) $ make doctest
-    ...
-    Document: intro
-    ---------------
-    1 items passed all tests:
-       3 tests in default
-    3 tests in 1 items.
-    3 passed and 0 failed.
-    Test passed.
-    1 items passed all tests:
-       1 tests in default (cleanup code)
-    1 tests in 1 items.
-    1 passed and 0 failed.
-    Test passed.
+```
+(env) $ make doctest
+...
+Document: intro
+---------------
+1 items passed all tests:
+   3 tests in default
+3 tests in 1 items.
+3 passed and 0 failed.
+Test passed.
+1 items passed all tests:
+   1 tests in default (cleanup code)
+1 tests in 1 items.
+1 passed and 0 failed.
+Test passed.
 
-    Doctest summary
-    ===============
-        3 tests
-        0 failures in tests
-        0 failures in setup code
-        0 failures in cleanup code
-    ...
+Doctest summary
+===============
+    3 tests
+    0 failures in tests
+    0 failures in setup code
+    0 failures in cleanup code
+...
+```
 
 ### Import z vlastního kódu
 
@@ -253,13 +275,15 @@ Pokud nemáte nainstalovaný vlastní balíček, a budete z něj chtít v doctes
 importovat, pravděpodobně dostanete `ImportError`.
 V takovém případě pomůže drobná editace `conf.py`:
 
-    # If extensions (or modules to document with autodoc) are in another directory,
-    # add these directories to sys.path here. If the directory is relative to the
-    # documentation root, use os.path.abspath to make it absolute, like shown here.
-    #
-    import os
-    import sys
-    sys.path.insert(0, os.path.abspath('..'))
+```python
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
+#
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+```
 
 ### Travis CI
 
@@ -273,15 +297,17 @@ samostatně.
 
 Poté na Travisu můžete udělat něco jako:
 
-    language: python
-    python:
-    - '3.5'
-    install:
-    - python setup.py install
-    - pip install -r docs/requirements.txt
-    script:
-    - python setup.py test --addopts -v
-    - cd docs && make doctest
+```yaml
+language: python
+python:
+- '3.5'
+install:
+- python setup.py install
+- pip install -r docs/requirements.txt
+script:
+- python setup.py test --addopts -v
+- cd docs && make doctest
+```
 
 autodoc
 -------
@@ -289,8 +315,10 @@ autodoc
 Pro dokumentaci API lze použít Sphinx rozšíření `autodoc`, které jsme povolili
 v průvodci (případně to lze udělat v souboru `conf.py`), a to takto:
 
-    .. automodule:: mymodule
-       :members:
+```rst
+.. automodule:: mymodule
+   :members:
+```
 
 Tento příklad na dané místo vygeneruje dokumentaci složenou z dokumentačních
 řetězců jednotlivých funkcí, tříd a metod v modulu `mymodule`.
@@ -308,43 +336,45 @@ dokonce žádoucí.
 
 Zde je ukázka z betamaxu (*Copyright 2013 Ian Cordasco*):
 
-    class Betamax:
+```python
+class Betamax:
 
-        """This object contains the main API of the request-vcr library.
+    """This object contains the main API of the request-vcr library.
 
-        This object is entirely a context manager so all you have to do is:
+    This object is entirely a context manager so all you have to do is:
 
-        .. code::
+    .. code::
 
-            s = requests.Session()
-            with Betamax(s) as vcr:
-                vcr.use_cassette('example')
-                r = s.get('https://httpbin.org/get')
+        s = requests.Session()
+        with Betamax(s) as vcr:
+            vcr.use_cassette('example')
+            r = s.get('https://httpbin.org/get')
 
-        Or more concisely, you can do:
+    Or more concisely, you can do:
 
-        .. code::
+    .. code::
 
-            s = requests.Session()
-            with Betamax(s).use_cassette('example') as vcr:
-                r = s.get('https://httpbin.org/get')
+        s = requests.Session()
+        with Betamax(s).use_cassette('example') as vcr:
+            r = s.get('https://httpbin.org/get')
 
-        This object allows for the user to specify the cassette library directory
-        and default cassette options.
+    This object allows for the user to specify the cassette library directory
+    and default cassette options.
 
-        .. code::
+    .. code::
 
-            s = requests.Session()
-            with Betamax(s, cassette_library_dir='tests/cassettes') as vcr:
-                vcr.use_cassette('example')
-                r = s.get('https://httpbin.org/get')
+        s = requests.Session()
+        with Betamax(s, cassette_library_dir='tests/cassettes') as vcr:
+            vcr.use_cassette('example')
+            r = s.get('https://httpbin.org/get')
 
-            with Betamax(s, default_cassette_options={
-                    're_record_interval': 1000
-                    }) as vcr:
-                vcr.use_cassette('example')
-                r = s.get('https://httpbin.org/get')
-        """
+        with Betamax(s, default_cassette_options={
+                're_record_interval': 1000
+                }) as vcr:
+            vcr.use_cassette('example')
+            r = s.get('https://httpbin.org/get')
+    """
+```
 
 Existují různé způsoby, jak dokumentovat argumenty, návratové hodnoty apod.
 Zvídavým studentům doporučujeme podívat se na rozšíření [Napoleon].
@@ -359,12 +389,14 @@ Máte-li zdokumentovaný modul, funkci, třídu, metodu apod., je možné na ni
 odkázat pomocí konstrukce `:mod:`, `:func:`, `:cls:`, `:meth:` a dalších
 ze Sphinxové [domény Python]:
 
-    To test the parrot's electrical resistance, use :meth:`parrot.voom()`.
+```rst
+To test the parrot's electrical resistance, use :meth:`parrot.voom()`.
+```
 
-V této části dokumentace Sphinxu též najdete způsob, jak dokumnetovat API
+V této části dokumentace Sphinxu též najdete způsob, jak dokumentovat API
 bez použití `autodoc`.
 
-Všechny zdokumnetované objekty se automaticky přidávají do rejstříku.
+Všechny zdokumentované objekty se automaticky přidávají do rejstříku.
 Chcete-li do rejstříku přidat něco navíc, použijte direktivu [index].
 
 [domény Python]: http://www.sphinx-doc.org/en/1.4.8/domains.html#cross-referencing-python-objects
@@ -395,7 +427,7 @@ z `README.rst`.
 Úkol
 ----
 
-Vaším úkolem je vytvořit pomocí Sphinx dokumentaci k vašemu projektu.
+Vaším úkolem za 5 bodů je vytvořit pomocí Sphinx dokumentaci k vašemu projektu.
 
 Měla by obsahovat textovou část, ze které bude jasné, co je, k čemu je,
 jak se nainstaluje a jak se používá vaše aplikace.
@@ -414,7 +446,7 @@ výrobu jiné aplikace, nebo může popisovat, jak aplikace uvnitř funguje.
 V dokumentaci by měla existovat kapitola s kompletní API dokumentací vašich
 modulů, tříd, funkcí apod. Všechny tyto věci musí mít v kódu dokumentační
 řetězce, které v dokumentaci musí být zobrazeny (t.j. změna dokumentačního
-řetězce se automaticky promítne ve vygenerované dokumnetaci).
+řetězce se automaticky promítne ve vygenerované dokumentaci).
 
 Jak sestavit a testovat dokumentaci by mělo být jasné z `README.rst`
 (a to musí mít reStructuredText syntaxi).
@@ -428,3 +460,10 @@ Na Travis CI spouštějte dokumentační testy.
 Dokumentace musí být v angličtině.
 
 Dosavadní funkcionalita aplikace musí být samozřejmě zachována.
+
+Úkol odevzdáváte tradičně s tagem v0.5 a nahráním nové verze na
+(testovací či pravou) PyPI.
+(Nahrání je nutné – čtenář dokumentace k verzi 0.5 se bude dívat po balíčku
+této verze.)
+
+Za fungující publikaci smysluplné dokumentace na [Read the Docs] je bod navíc.

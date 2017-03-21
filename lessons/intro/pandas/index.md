@@ -3,17 +3,17 @@ Pandas
 
 Materiály k tomuto cvičení jsou k dispozici [na GitHubu][nb].
 
-[nb]: https://github.com/cvut/MI-PYT/blob/master/tutorials/06-pandas/pandas-intro.ipynb
+[nb]: https://github.com/pyvec/naucse.python.cz/blob/master/lessons/intro/pandas/pandas-intro.ipynb
 
 Budete si potřebovat stáhnout tři soubory:
-[actors.csv](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/06-pandas/actors.csv),
-[spouses.csv](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/06-pandas/spouses.csv), a
-[style-table.css](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/06-pandas/style-table.css).
+[actors.csv]({{ static('actors.csv') }}),
+[spouses.csv]({{ static('spouses.csv') }}), a
+[style-table.css]({{ static('style-table.css') }}).
 
 
 ---
 
-Vašim úkolem je odpovědět na otázky a vyřešit úkoly níže.
+Vašim úkolem za pět bodů je odpovědět na otázky a vyřešit úkoly níže.
 
 Řešení může být zpracováno buď jako Jupyter Notebook, ve kterém bude patrné,
 která část kódu odpovídá na kterou otázku, nebo jako skript v jazyce Python,
@@ -59,6 +59,13 @@ Dokumentace k datům je k dispozici [ve stejném repozitáři][data-docs].
 
 Tato data jsou z dnešního pohledu nekompletní, nicméně pro úkol použijte
 právě je.
+
+Řešení se odevzdává jako repozitář jménem `titanic` pod studentovým
+účtem na GitHubu.
+Případné výjimky (např. jméno `titanic` už používáte na něco jiného)
+řešte e-mailem.
+
+Termín je začátek příštího prvního cvičení (23.11.2016 11:00). Budemme kontorlovat větev master, není třeba vytvářet speciální tag.
 
 Otázky a úkoly:
 

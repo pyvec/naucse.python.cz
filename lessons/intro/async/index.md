@@ -2,8 +2,10 @@ Generátory a AsyncIO
 ====================
 
 Na část toto cvičení bude opět potřeba PyQt5.
-Můžete použít virtualenv z minula, nebo PyQt5 nainstalovat znovu viz minulá lekce.
+Můžete použít virtualenv z minula, nebo PyQt5 nainstalovat znovu (viz [minulá lekce]).
 (Nejde-li to, nevadí – úplně nezbytné dnes PyQt nebude.)
+
+[minulá lekce]: {{ lesson_url('intro/pyqt') }}
 
 Další knihovny pro dnešní den:
 
@@ -39,28 +41,32 @@ který pracuje se dvěma druhy objektů: s *iterovatelnými objekty* a s *iterá
 Iterovatelné objekty (*iterables*) se vyznačují tím, že je na ně možné zavolat
 funkci `iter()`, která vrátí příslušný iterátor:
 
-    >>> iter([1, 2, 3])
-    <list_iterator object at 0x...>
+```python
+>>> iter([1, 2, 3])
+<list_iterator object at 0x...>
+```
 
 Na iterátor pak je možné opakovaně volat funkci `next()`, čímž dostáváme jednotlivé
 prvky iterace.
 Po vyčerpání iterátoru způsobuje `next()` výjimku `StopIteration`:
 
-    >>> it = iter([1, 2, 3])
-    >>> next(it)
-    1
-    >>> next(it)
-    2
-    >>> next(it)
-    3
-    >>> next(it)
-    Traceback (most recent call last):
-      ...
-    StopIteration
-    >>> next(it)
-    Traceback (most recent call last):
-      ...
-    StopIteration
+```python
+>>> it = iter([1, 2, 3])
+>>> next(it)
+1
+>>> next(it)
+2
+>>> next(it)
+3
+>>> next(it)
+Traceback (most recent call last):
+  ...
+StopIteration
+>>> next(it)
+Traceback (most recent call last):
+  ...
+StopIteration
+```
 
 Zároveň platí, že každý iterátor je iterovatelný: zavoláním `iter()` na iterátor
 dostaneme ten stejný iterátor (nikoli jeho kopii) zpět.
@@ -83,52 +89,60 @@ dávat k dispozici hodnoty.
 Definuje se pomocí klíčového slova `yield`: každá funkce, která obsahuje `yield`,
 je *generátorová funkce* (angl. *generator function*).
 
-    def generate2():
-        """generates 2 numbers"""
-        print('A')
-        yield 0
-        print('B')
-        yield 1
-        print('C')
+```python
+def generate2():
+    """generates 2 numbers"""
+    print('A')
+    yield 0
+    print('B')
+    yield 1
+    print('C')
+```
 
 Zavoláním takové funkce dostáváme *generátorový iterátor* (angl. *generator iterator*):
 
-    >>> generate2()
-    <generator object generate2 at 0x...>
+```python
+>>> generate2()
+<generator object generate2 at 0x...>
+```
 
 Voláním `next()` se pak stane zajímavá věc: funkce se provede až po první `yield`,
 tam se *zastaví*, a hodnota `yield`-u se vrátí z `next()`.
 Při dalším volání se začne provádět zbytek funkce od místa, kde byla naposled
 zastavena.
 
-    >>> it = generate2()
-    >>> next(it)
-    A
-    0
-    >>> next(it)
-    B
-    1
-    >>> next(it)
-    C
-    Traceback (most recent call last):
-      ...
-    StopIteration
+```python
+>>> it = generate2()
+>>> next(it)
+A
+0
+>>> next(it)
+B
+1
+>>> next(it)
+C
+Traceback (most recent call last):
+  ...
+StopIteration
+```
 
 Tahle vlastnost přerušit provádění funkce je velice užitečná nejen pro vytváření
 sekvencí, ale má celou řadu dalších užití.
 Existuje třeba dekorátor, který generátorovou funkci s jedním `yield` převede na *context manager*:
 
-    import contextlib
+```python
+import contextlib
 
-    @contextlib.contextmanager
-    def ctx_manager():
-        print('Entering')
-        yield 123
-        print('Exiting')
+@contextlib.contextmanager
+def ctx_manager():
+    print('Entering')
+    yield 123
+    print('Exiting')
 
 
-    with ctx_manager() as obj:
-        print('Inside context, with', obj)
+with ctx_manager() as obj:
+    print('Inside context, with', obj)
+```
 
 Vše před `yield` se provede při vstupu do kontextu, hodnota `yield` se předá
 dál, a vše po `yield` se provede na konci.
@@ -144,21 +158,25 @@ Vrácená hodnota se však při normální iteraci (např. ve `for`) nepoužije.
 Objeví se pouze jako hodnota výjimky `StopIteration`, která signalizuje konec
 iterace:
 
-    def generator(a, b):
-        """Yield two numbers and return their sum"""
-        yield a
-        yield b
-        return a + b
+```python
+def generator(a, b):
+    """Yield two numbers and return their sum"""
+    yield a
+    yield b
+    return a + b
+```
 
-    >>> it = generator(2, 3)
-    >>> next(it)
-    2
-    >>> next(it)
-    3
-    >>> next(it)
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-    StopIteration: 5
+```python
+>>> it = generator(2, 3)
+>>> next(it)
+2
+>>> next(it)
+3
+>>> next(it)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+StopIteration: 5
+```
 
 
 Obousměrná komunikace
@@ -169,18 +187,20 @@ Oproti normálním iterátorům, které hodnoty jen poskytují, mají generátor
 Klíčové slovo `yield` totiž může fungovat jako výraz, a tento výraz nabývá poslanou
 hodnotu (nebo `None`, byl-li použit normální `next()`).
 
-    def running_sum():
-        total = 0
-        while True:
-            num = (yield total)
-            if num:
-                total += num
+```python
+def running_sum():
+    total = 0
+    while True:
+        num = (yield total)
+        if num:
+            total += num
 
-    it = running_sum()
-    next(it)  # pro první iteraci nelze použít send() -- nečekáme zatím na yield-u
-    it.send(2)
-    it.send(3)
-    assert next(it) == 5
+it = running_sum()
+next(it)  # pro první iteraci nelze použít send() -- nečekáme zatím na yield-u
+it.send(2)
+it.send(3)
+assert next(it) == 5
+```
 
 Upřímě řečeno, metoda `send()` není příliš užitečná.
 (Když byste něco takového potřebovali, radši si napište třídu, která si bude
@@ -191,19 +211,23 @@ Ta do generátoru "vhodí" výjimku.
 Z pohledu generátorové funkce to vypadá, jako by výjimka nastala na příkazu
 `yield`.
 
-    def report_exception():
-        try:
-            yield
-        except BaseException as e:
-            print('Death by', type(e).__name__)
-        yield 123
+```python
+def report_exception():
+    try:
+        yield
+    except BaseException as e:
+        print('Death by', type(e).__name__)
+    yield 123
+```
 
-    >>> it = report_exception()
-    >>> next(it)  # opět – v první iteraci nelze throw() použít
-    >>> value = it.throw(ValueError())
-    Death by ValueError
-    >>> value
-    123
+```python
+>>> it = report_exception()
+>>> next(it)  # opět – v první iteraci nelze throw() použít
+>>> value = it.throw(ValueError())
+Death by ValueError
+>>> value
+123
+```
 
 Podobná věc se děje, když generátorový iterátor zanikne: Python do generátoru
 "vhodí" výjimku GeneratorExit.
@@ -212,14 +236,16 @@ ji nechytí (ale např. `finally` funguje jak má).
 Pokud generátor tuto výjimku chytá, měl by se co nejdřív ukončit.
 (Když to neudělá a provede další `yield`, Python ho ukončí "násilně".)
 
-    >>> import gc
-    >>> it = report_exception()
-    >>> next(it)
-    >>> del it; gc.collect()  # zbavíme se objektu "it" (i v interpretech, které nepoužívají reference counting)
-    Death by GeneratorExit
-    Exception ignored in: <generator object report_exception at 0x...>
-    RuntimeError: generator ignored GeneratorExit
-    0
+```python
+>>> import gc
+>>> it = report_exception()
+>>> next(it)
+>>> del it; gc.collect()  # zbavíme se objektu "it" (i v interpretech, které nepoužívají reference counting)
+Death by GeneratorExit
+Exception ignored in: <generator object report_exception at 0x...>
+RuntimeError: generator ignored GeneratorExit
+0
+```
 
 
 Kombinace generátorů
@@ -227,83 +253,95 @@ Kombinace generátorů
 
 Máme následující generátor:
 
-    def dance():
-        yield 'putting hands forward'
-        yield 'putting hands down'
-        yield 'turning around'
-        yield 'jumping'
-        yield 'putting hands forward'
-        yield 'putting hands down'
+```python
+def dance():
+    yield 'putting hands forward'
+    yield 'putting hands down'
+    yield 'turning around'
+    yield 'jumping'
+    yield 'putting hands forward'
+    yield 'putting hands down'
 
-    for action in dance():
-        print(action)
+for action in dance():
+    print(action)
+```
 
 Opakuje se v něm jistá sekvence, kterou bychom jako správní programátoři chtěli
 vyčlenit do samostatné funkce.
 Pomocí samotného `yield` to ale jde celkem těžko:
 
-    def dance_hands():
-        yield 'putting hands forward'
-        yield 'putting hands down'
+```python
+def dance_hands():
+    yield 'putting hands forward'
+    yield 'putting hands down'
 
-    def dance():
-        for action in dance_hands():
-            yield action
-        yield 'turning around'
-        yield 'jumping'
-        for action in dance_hands():
-            yield action
-
-    for action in dance():
-        print(action)
-
-Tohle počtu řádků příliš nepomohlo. Existuje lepší způsob – místo:
-
+def dance():
+    for action in dance_hands():
+        yield action
+    yield 'turning around'
+    yield 'jumping'
     for action in dance_hands():
         yield action
 
+for action in dance():
+    print(action)
+```
+
+Tohle počtu řádků příliš nepomohlo. Existuje lepší způsob – místo:
+
+```python
+    for action in dance_hands():
+        yield action
+```
+
 můžeme delegovat vytváření podsekvence na jiný generátor pomocí:
 
+```python
     yield from dance_hands()
+```
 
 Příkaz `yield from` deleguje nejen hodnoty, které jdou z generátoru "ven" pomocí
 `yield`, ale i ty, které jdou "dovnitř" pomocí `send()` či `throw()`.
 A dokonce funguje jako výraz, jehož hodnota odpovídá tomu, co
 daný generátor vrátil:
 
-    def dance_hands():
-        value = (yield 'putting hands forward')
-        yield 'putting hands down'
-        if value:
-            yield 'putting {},- in pocket'.format(value)
-            return value
-        return 0
+```python
+def dance_hands():
+    value = (yield 'putting hands forward')
+    yield 'putting hands down'
+    if value:
+        yield 'putting {},- in pocket'.format(value)
+        return value
+    return 0
 
-    def dance():
-        profit = 0
-        profit += (yield from dance_hands())
-        yield 'turning around'
-        yield 'jumping'
-        profit += (yield from dance_hands())
-        if profit:
-            yield 'spending {},- on sweets'.format(profit)
+def dance():
+    profit = 0
+    profit += (yield from dance_hands())
+    yield 'turning around'
+    yield 'jumping'
+    profit += (yield from dance_hands())
+    if profit:
+        yield 'spending {},- on sweets'.format(profit)
 
-    def performance():
-        it = dance()
-        print(next(it))
-        print(it.send(100))
-        for action in it:  # pokračujeme v načaté iteraci – implicitní "iter(it)" vrací zase "it"
-            print(action)
+def performance():
+    it = dance()
+    print(next(it))
+    print(it.send(100))
+    for action in it:  # pokračujeme v načaté iteraci – implicitní "iter(it)" vrací zase "it"
+        print(action)
+```
 
-    >>> performance()
-    putting hands forward
-    putting hands down
-    putting 100,- in pocket
-    turning around
-    jumping
-    putting hands forward
-    putting hands down
-    spending 100,- on sweets
+```python
+>>> performance()
+putting hands forward
+putting hands down
+putting 100,- in pocket
+turning around
+jumping
+putting hands forward
+putting hands down
+spending 100,- on sweets
+```
 
 
 AsyncIO
@@ -350,71 +388,75 @@ jednoduchou animaci.
 V reálném serveru bychom místo čekání, než uplyne určitý počet sekund, čekali na odpověď
 ze sítě, ale principy zůstávají stejné.
 
-    import random
-    import time
+```python
+import random
+import time
 
 
-    def print_blinky(blinky):
-        print(blinky, end='\r')
+def print_blinky(blinky):
+    print(blinky, end='\r')
 
 
-    class Blinky:
-        def __init__(self):
-            self._face = '(o.o)'
+class Blinky:
+    def __init__(self):
+        self._face = '(o.o)'
 
-        def __str__(self):
-            return self._face
+    def __str__(self):
+        return self._face
 
-        def set_face(self, new):
-            self._face = new
-            print_blinky(self)
+    def set_face(self, new):
+        self._face = new
+        print_blinky(self)
 
-        def run(self):
-            while True:
-                self.set_face('(-.-)')
-                time.sleep(random.uniform(0.05, 0.1))
-                self.set_face('(o.o)')
-                time.sleep(random.uniform(0.5, 1))
+    def run(self):
+        while True:
+            self.set_face('(-.-)')
+            time.sleep(random.uniform(0.05, 0.1))
+            self.set_face('(o.o)')
+            time.sleep(random.uniform(0.5, 1))
 
 
-    Blinky().run()
+Blinky().run()
+```
 
 Chceme-li spustit několik takových animací, můžeme to udělat ve vláknech:
 
-    import random
-    import time
-    import threading
+```python
+import random
+import time
+import threading
 
 
-    def print_blinkies():
-        for blinky in blinkies:
-            print(blinky, end=' ')
-        print(end='\r')
-
-
-    class Blinky:
-        def __init__(self):
-            self._face = '(o.o)'
-
-        def __str__(self):
-            return self._face
-
-        def set_face(self, new):
-            self._face = new
-            print_blinkies()
-
-        def run(self):
-            while True:
-                self.set_face('(-.-)')
-                time.sleep(random.uniform(0.05, 0.1))
-                self.set_face('(o.o)')
-                time.sleep(random.uniform(0.5, 1))
-
-
-    blinkies = [Blinky() for i in range(10)]
-
+def print_blinkies():
     for blinky in blinkies:
-        threading.Thread(target=blinky.run).start()
+        print(blinky, end=' ')
+    print(end='\r')
+
+
+class Blinky:
+    def __init__(self):
+        self._face = '(o.o)'
+
+    def __str__(self):
+        return self._face
+
+    def set_face(self, new):
+        self._face = new
+        print_blinkies()
+
+    def run(self):
+        while True:
+            self.set_face('(-.-)')
+            time.sleep(random.uniform(0.05, 0.1))
+            self.set_face('(o.o)')
+            time.sleep(random.uniform(0.5, 1))
+
+
+blinkies = [Blinky() for i in range(10)]
+
+for blinky in blinkies:
+    threading.Thread(target=blinky.run).start()
+```
 
 Ale po docela jednoduchých změnách se může stát, že se jednotlivá vlákna začnou
 přepínat nevhodně, a celý program se rozsype.
@@ -422,11 +464,13 @@ Nám stačí malá změna ve funkci `print_blinkies` (podobná funkce by v reál
 mohla být z externí knihovny, která při přechodu na novou verzi trošku změnila
 vnitřní implementaci):
 
-    def print_blinkies():
-        for blinky in blinkies:
-            time.sleep(0.001)
-            print(blinky, end=' ')
-        print(end='\r')
+```python
+def print_blinkies():
+    for blinky in blinkies:
+        time.sleep(0.001)
+        print(blinky, end=' ')
+    print(end='\r')
+```
 
 Tohle se samozřejmě dá řešit např. zámkem kolem volání `print_blinkies`.
 Chyby tohoto typu ale mají tendenci se projevovat jen zřídka: i původní
@@ -437,63 +481,65 @@ Kdykoli je potřeba pozastavit běh některé úlohy, tak zbytek úlohy naplánu
 na nějaký pozdější čas, a mezitím spouštíme úlohy, které byly naplánovány
 na dříve.
 
-    import random
-    import time
+```python
+import random
+import time
 
 
-    def print_blinkies():
-        for blinky in blinkies:
-            print(blinky, end=' ')
-        print(end='\r')
+def print_blinkies():
+    for blinky in blinkies:
+        print(blinky, end=' ')
+    print(end='\r')
 
 
-    blinkies = []
+blinkies = []
 
-    class Blinky:
-        def __init__(self):
-            self.open_eyes()
+class Blinky:
+    def __init__(self):
+        self.open_eyes()
 
-        def __str__(self):
-            return self._face
+    def __str__(self):
+        return self._face
 
-        def set_face(self, new):
-            self._face = new
-            print_blinkies()
+    def set_face(self, new):
+        self._face = new
+        print_blinkies()
 
-        def close_eyes(self):
-            self.set_face('(-.-)')
-            schedule(random.uniform(0.05, 0.1), self.open_eyes)
+    def close_eyes(self):
+        self.set_face('(-.-)')
+        schedule(random.uniform(0.05, 0.1), self.open_eyes)
 
-        def open_eyes(self):
-            self.set_face('(o.o)')
-            schedule(random.expovariate(1/2), self.close_eyes)
-
-
-    # Scheduling via a list of [remaining time, function to run] pairs:
-
-    task_entries = []
-    def schedule(wait_time, task):
-        """Schedule "task" to occur "wait_time" seconds from now"""
-        task_entries.append([wait_time, task])
-
-    blinkies = [Blinky() for i in range(10)]
+    def open_eyes(self):
+        self.set_face('(o.o)')
+        schedule(random.expovariate(1/2), self.close_eyes)
 
 
-    # Simple event loop
-    while task_entries:
-        # Get the entry with the least remaining time
-        task_entries.sort(key=lambda e: -e[0])
-        wait_time, task = task_entries.pop()
+# Scheduling via a list of [remaining time, function to run] pairs:
 
-        # Wait (this ignores the time needed to actually run code
-        time.sleep(wait_time)
+task_entries = []
+def schedule(wait_time, task):
+    """Schedule "task" to occur "wait_time" seconds from now"""
+    task_entries.append([wait_time, task])
 
-        # Decrease remaining time for all tasks by the time waited
-        for entry in task_entries:
-            entry[0] -= wait_time
+blinkies = [Blinky() for i in range(10)]
 
-        # Run the actual task
-        task()
+
+# Simple event loop
+while task_entries:
+    # Get the entry with the least remaining time
+    task_entries.sort(key=lambda e: -e[0])
+    wait_time, task = task_entries.pop()
+
+    # Wait (this ignores the time needed to actually run code
+    time.sleep(wait_time)
+
+    # Decrease remaining time for all tasks by the time waited
+    for entry in task_entries:
+        entry[0] -= wait_time
+
+    # Run the actual task
+    task()
+```
 
 V tomto řešení nefigurují vlákna: každá funkce se provede celá najednou,
 a ostatní úlohy běží pouze mezi jednotlivými funkcemi jedné úlohy.
@@ -513,58 +559,60 @@ S drobnou změnou smyčky událostí lze náš program zapsat opět téměř
 procedurálně, ale s tím, že k přepínání úloh dochází jen na
 vyznačených místech: tam, kde použijeme `yield`.
 
-    import random
-    import time
+```python
+import random
+import time
 
 
-    def print_blinkies():
-        for blinky in blinkies:
-            print(blinky, end=' ')
-        print(end='\r')
+def print_blinkies():
+    for blinky in blinkies:
+        print(blinky, end=' ')
+    print(end='\r')
 
 
-    class Blinky:
-        def __init__(self):
-            self._face = '(o.o)'
+class Blinky:
+    def __init__(self):
+        self._face = '(o.o)'
 
-        def __str__(self):
-            return self._face
+    def __str__(self):
+        return self._face
 
-        def set_face(self, new):
-            self._face = new
-            print_blinkies()
+    def set_face(self, new):
+        self._face = new
+        print_blinkies()
 
-        def run(self):
-            while True:
-                self.set_face('(-.-)')
-                yield random.uniform(0.05, 0.1)
-                self.set_face('(o.o)')
-                yield random.expovariate(1/2)
-
-
-    # Scheduling via a list of [remaining time, generator] pairs:
-
-    blinkies = [Blinky() for i in range(10)]
-
-    task_entries = [[0, b.run()] for b in blinkies]
+    def run(self):
+        while True:
+            self.set_face('(-.-)')
+            yield random.uniform(0.05, 0.1)
+            self.set_face('(o.o)')
+            yield random.expovariate(1/2)
 
 
-    # Simple event loop
-    while task_entries:
-        # Get the entry with the least remaining time
-        task_entries.sort(key=lambda e: -e[0])
-        wait_time, task = task_entries[-1]
+# Scheduling via a list of [remaining time, generator] pairs:
 
-        # Wait (this ignores the time needed to actually run code
-        time.sleep(wait_time)
+blinkies = [Blinky() for i in range(10)]
 
-        # Decrease remaining time for all tasks by the time waited
-        for entry in task_entries:
-            entry[0] -= wait_time
+task_entries = [[0, b.run()] for b in blinkies]
 
-        # Run the actual task
-        new_time = next(task)
-        task_entries[-1][0] = new_time
+
+# Simple event loop
+while task_entries:
+    # Get the entry with the least remaining time
+    task_entries.sort(key=lambda e: -e[0])
+    wait_time, task = task_entries[-1]
+
+    # Wait (this ignores the time needed to actually run code
+    time.sleep(wait_time)
+
+    # Decrease remaining time for all tasks by the time waited
+    for entry in task_entries:
+        entry[0] -= wait_time
+
+    # Run the actual task
+    new_time = next(task)
+    task_entries[-1][0] = new_time
+```
 
 Na tomto principu je postavené moderní API, které se pro podobné úlohy používá.
 Než si ho ale ukážeme, pojďme se na chvíli podívat do historie.
@@ -624,55 +672,61 @@ Tuto syntaxi použijeme i tady; máte-li starší Python, podívejte se na potř
 
 Náš příklad s animací vypadá v `asyncio` takto:
 
-    import random
-    import time
-    import asyncio
+```python
+import random
+import time
+import asyncio
 
 
-    def print_blinkies():
-        for blinky in blinkies:
-            print(blinky, end=' ')
-        print(end='\r')
+def print_blinkies():
+    for blinky in blinkies:
+        print(blinky, end=' ')
+    print(end='\r')
 
 
-    class Blinky:
-        def __init__(self):
-            self._face = '(o.o)'
-            asyncio.ensure_future(self.run())
+class Blinky:
+    def __init__(self):
+        self._face = '(o.o)'
+        asyncio.ensure_future(self.run())
 
-        def __str__(self):
-            return self._face
+    def __str__(self):
+        return self._face
 
-        def set_face(self, new):
-            self._face = new
-            print_blinkies()
+    def set_face(self, new):
+        self._face = new
+        print_blinkies()
 
-        async def run(self):
-            while True:
-                self.set_face('(-.-)')
-                await asyncio.sleep(random.uniform(0.05, 0.1))
-                self.set_face('(o.o)')
-                await asyncio.sleep(random.expovariate(1/2))
+    async def run(self):
+        while True:
+            self.set_face('(-.-)')
+            await asyncio.sleep(random.uniform(0.05, 0.1))
+            self.set_face('(o.o)')
+            await asyncio.sleep(random.expovariate(1/2))
 
 
-    blinkies = [Blinky() for i in range(10)]
+blinkies = [Blinky() for i in range(10)]
 
-    loop = asyncio.get_event_loop()
-    loop.run_forever()
-    loop.close()
+loop = asyncio.get_event_loop()
+loop.run_forever()
+loop.close()
+```
 
 
 V Pythonu verze 3.4 a nižší neexistují klíčová slova `async` a `await`, takže je potřeba
 místo:
 
-    async def ...:
-        await ...
+```python
+async def ...:
+    await ...
+```
 
 psát:
 
-    @asyncio.coroutine
-    def ...:
-        yield from ...
+```python
+@asyncio.coroutine
+def ...:
+    yield from ...
+```
 
 (Zajímavé je, že dekorátor `asyncio.coroutine` toho nedělá mnoho: označí funkci
 jako *coroutine*, v *debug* módu zapne něco navíc, a pokud ve funkci není `yield`,
@@ -719,35 +773,37 @@ jestli je operace hotová se dá zjistit pomocí `done()`.
 tu hodnotu dá, musíme počkat, a poté je hodnota stále k dispozici.
 Tohle čekání se dělá pomocí `await` (nebo `loop.run_until_complete`).
 
-    import asyncio
+```python
+import asyncio
 
 
-    async def set_future(fut):
-        """Sets the value of a Future, after a delay"""
-        await asyncio.sleep(1)
-        fut.set_result(123)
+async def set_future(fut):
+    """Sets the value of a Future, after a delay"""
+    await asyncio.sleep(1)
+    fut.set_result(123)
 
 
-    async def get_future(fut):
-        """Receives the value of a Future, once it's ready"""
-        await fut
-        result = fut.result()
-        return result
+async def get_future(fut):
+    """Receives the value of a Future, once it's ready"""
+    await fut
+    result = fut.result()
+    return result
 
 
-    future = asyncio.Future()
+future = asyncio.Future()
 
 
-    # Schedule the "set_future" task (explained later)
-    asyncio.ensure_future(set_future(future))
+# Schedule the "set_future" task (explained later)
+asyncio.ensure_future(set_future(future))
 
 
-    # Run the "get_future" coroutine until complete
-    loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(get_future(future))
-    loop.close()
+# Run the "get_future" coroutine until complete
+loop = asyncio.get_event_loop()
+result = loop.run_until_complete(get_future(future))
+loop.close()
 
-    print(result)
+print(result)
+```
 
 Do `Future` se dá vložit i výjimka: pokud proces, který by `Future`
 naplnil, selže, může výjimku uložit do `Future` místo výsledku,
@@ -763,9 +819,11 @@ A ještě jedna věc: `await` (podobně jako `yield`) je výraz, jehož
 hodnota je výsledek dané `Future`.
 Kód výše tak můžeme zjednodušit:
 
-    async def get_future(fut):
-        """Receives the value of a Future, once it's ready"""
-        return (await fut)
+```python
+async def get_future(fut):
+    """Receives the value of a Future, once it's ready"""
+    return (await fut)
+```
 
 Další vlastnost `Future` je ta, že se dá "zrušit": pomocí `Future.cancel()`
 signalizujeme úloze, která má připravit výsledek, že už ten výsledek
@@ -789,21 +847,23 @@ Nevýhoda async funkcí spočívá v tom, že na každé zavolání async funkce
 použít jen jeden `await`: na rozdíl od `Future` se výsledek nikam neukládá;
 jen se po skončení jednou předá.
 
-    import asyncio
+```python
+import asyncio
 
-    async def add(a, b):
-        await asyncio.sleep(1)
-        return a + b
+async def add(a, b):
+    await asyncio.sleep(1)
+    return a + b
 
-    async def demo():
-        coroutine = add(2, 3)
-        print('The result is:', (await coroutine))
-        print('The result is:', (await coroutine))  # chyba!
+async def demo():
+    coroutine = add(2, 3)
+    print('The result is:', (await coroutine))
+    print('The result is:', (await coroutine))  # chyba!
 
 
-    loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(demo())
-    loop.close()
+loop = asyncio.get_event_loop()
+result = loop.run_until_complete(demo())
+loop.close()
+```
 
 Tenhle problém můžeme vyřešit tak, že asynchronní funkci "zabalíme" do `Future`.
 Na to ma dokonce `asyncio` speciální funkci `ensure_future`, která:
@@ -812,10 +872,12 @@ Na to ma dokonce `asyncio` speciální funkci `ensure_future`, která:
 * výsledek přímo naplánuje na smyčce událostí, takže se asynchronní funkce
   časem začne provádět.
 
-    async def demo():
-        coroutine = asyncio.ensure_future(add(2, 3))
-        print('The result is:', (await coroutine))
-        print('The result is:', (await coroutine))  # OK!
+```python
+async def demo():
+    coroutine = asyncio.ensure_future(add(2, 3))
+    print('The result is:', (await coroutine))
+    print('The result is:', (await coroutine))  # OK!
+```
 
 Výsledek `ensure_future` je speciální druh `Future` zvaný `Task`.
 Ten má oproti normální `Future` několik vlastností navíc, ale v podstatě
@@ -869,10 +931,12 @@ Typický příklad je u databází: začátek a konec transakce i získávání 
 řádků pravděpodobně potřebují komunikaci po síti, takže hypotetická databázová
 knihovna by se mohla používat nějak takto:
 
-    async with database.transaction():
-        await database.execute('UPDATE ...')
-        async for row in (await database.execute('SELECT ...')):
-            handle(row)
+```python
+async with database.transaction():
+    await database.execute('UPDATE ...')
+    async for row in (await database.execute('SELECT ...')):
+        handle(row)
+```
 
 
 Komunikace
@@ -909,24 +973,26 @@ Typicky ale místo čistého `asyncio` použijeme existující knihovnu.
 Tady je příklad z knihovny `aiohttp`, která implementuje server a klienta
 pro HTTP:
 
-    import asyncio
-    import aiohttp
+```python
+import asyncio
+import aiohttp
 
-    async def main(url):
-        # Use a a session
-        session = aiohttp.ClientSession()
-        async with session:
+async def main(url):
+    # Use a a session
+    session = aiohttp.ClientSession()
+    async with session:
 
-            # Get the response (acts somewhat like a file; needs to be closed)
-            async with session.get(url) as response:
+        # Get the response (acts somewhat like a file; needs to be closed)
+        async with session.get(url) as response:
 
-                # Fetch the whole text
-                html = await response.text()
-                print(html)
+            # Fetch the whole text
+            html = await response.text()
+            print(html)
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main('http://python.cz'))
-    loop.close()
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main('http://python.cz'))
+loop.close()
+```
 
 
 A další
@@ -968,15 +1034,19 @@ známými z `asyncio`.
 *Event loop* z `quamash` je potřeba na začátku programu naimportovat a nastavit
 jako hlavní smyčku událostí:
 
-    from quamash import QEventLoop
+```python
+from quamash import QEventLoop
 
-    app = QtWidgets.QApplication([])
-    loop = QEventLoop(app)
-    asyncio.set_event_loop(loop)
+app = QtWidgets.QApplication([])
+loop = QEventLoop(app)
+asyncio.set_event_loop(loop)
+```
 
 a poté ji, místo Qt-ovského `app.exec()`, spustit:
 
-    loop.run_forever()
+```python
+loop.run_forever()
+```
 
 Jednotlivé asynchronní funkce se pak používají jako v čistém `asyncio`:
 pomocí `asyncio.ensure_future`, `await`, atd.
@@ -986,35 +1056,38 @@ pomocí `asyncio.ensure_future`, `await`, atd.
 
 Ukázka:
 
-    import asyncio
+```python
+import asyncio
 
-    from PyQt5 import QtGui, QtWidgets
-    from quamash import QEventLoop
+from PyQt5 import QtGui, QtWidgets
+from quamash import QEventLoop
 
-    app = QtWidgets.QApplication([])
-    loop = QEventLoop(app)
-    asyncio.set_event_loop(loop)
+app = QtWidgets.QApplication([])
+loop = QEventLoop(app)
+asyncio.set_event_loop(loop)
 
-    display = QtWidgets.QLCDNumber()
-    display.setWindowTitle('Stopwatch')
+display = QtWidgets.QLCDNumber()
+display.setWindowTitle('Stopwatch')
 
-    display.show()
+display.show()
 
-    async def update_time():
-        value = 0
-        while True:
-            display.display(value)
-            await asyncio.sleep(1)
-            value += 1
+async def update_time():
+    value = 0
+    while True:
+        display.display(value)
+        await asyncio.sleep(1)
+        value += 1
 
-    asyncio.ensure_future(update_time())
+asyncio.ensure_future(update_time())
 
-    loop.run_forever()
+loop.run_forever()
+```
+
 
 Úkol
 ====
 
-Vaším úkolem je vytvořit asynchronní třídy reprezentující jednotlivé postavy v bludišti a rozhraní umožňující je spustit.
+Vaším úkolem za 5 bodů je vytvořit asynchronní třídy reprezentující jednotlivé postavy v bludišti a rozhraní umožňující je spustit.
 
 Program musí stále splňovat zadání z předchozího cvičení, zejména:
 
@@ -1041,7 +1114,7 @@ Do vizualizátoru bludiště doplňte funkcionalitu hry. V režimu hry:
 
 Máte k dispozici základní třídu `Actor`, která reprezentuje aktora (postavu v bludišti):
 
- * [class Actor](https://github.com/cvut/MI-PYT/blob/master/tutorials/10-async/actor.py)
+ * [class Actor]({{ static('actor.py') }})
 
 Tato třída definuje rozhraní jednotlivých postav a zároveň implementuje základní chování postavy - jde nejkratší cestou k cíli rychlostí jedno políčko za sekundu.
 Aby to mohlo fungovat, musí kód, který postavu používá:
@@ -1180,6 +1253,10 @@ Implementujte jiné netriviální chovaní. Svůj záměr popište v README.
 Vyhněte se i triviálním variantám jiných chování, které jste již implementovali
 (např. máte-li Rychlíka, nedělejte v rámci vlastního zadání "Pomalíka", který je jen o trochu pomalejší než základní aktor.)
 
+Nakolik je chování netriviální, určujeme při hodnocení my.
+V případě pochybností se zeptejte pomocí issue nebo na cvičení.
+
+
 Odevzdání, deadliny apod.
 -------------------------
 
@@ -1188,4 +1265,8 @@ Váš úkol se skládá prakticky ze dvou částí:
  * úprava GUI pro novou funkcionalitu
  * asynchronní programování aktorů
 
-V případě potřeby opět můžete využít naše [řešení](http://github.com/encukou/maze) minulého úkolu.
+A zároveň je to poslední úkol kromě semestrálky.
+
+Proto na něj máte čas až do středy 28.12. 11:00. Nekažte si ale prosím kvůli úkolu Vánoce (a ani od nás v průběhu svátků nečekejte velkou komunikaci).
+
+Odevzdávejte standardně s tagem `v0.4`. V případě potřeby opět můžete využít naše [řešení](http://github.com/encukou/maze) minulého úkolu.

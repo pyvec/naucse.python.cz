@@ -13,28 +13,32 @@ pytest
 
 Rovnou se podíváme na velmi oblíbený balíček [pytest], který oproti standardnímu
 unittestu přináší mnoho výhod. Začneme jednoduchou ukázkou z modulu `isholiday`
-z [předchozího cvičení](../distribution/).
+z [předchozího cvičení]({{ lesson_url('intro/distribution') }}).
 
-    import isholiday
+```python
+import isholiday
 
-    def test_xmas_2016():
-        """Test whether there is Christmas in 2016"""
-        holidays = isholiday.getholidays(2016)
-        assert (24, 12) in holidays
+def test_xmas_2016():
+    """Test whether there is Christmas in 2016"""
+    holidays = isholiday.getholidays(2016)
+    assert (24, 12) in holidays
+```
 
 Test uložíme někam do projektu, třeba do souboru `tests/test_holidays.py` a
 nainstalujeme a spustíme `pytest`:
 
-    (env)$ python -m pip install pytest
-    (env)$ PYTHONPATH=. python -m pytest tests/test_holidays.py
-    =============================== test session starts ================================
-    platform linux -- Python 3.5.2, pytest-3.0.3, py-1.4.31, pluggy-0.4.0
-    rootdir: ..isholiday, inifile: 
-    collected 1 items 
+```bash
+(env)$ python -m pip install pytest
+(env)$ PYTHONPATH=. python -m pytest tests/test_holidays.py
+=============================== test session starts ================================
+platform linux -- Python 3.5.2, pytest-3.0.3, py-1.4.31, pluggy-0.4.0
+rootdir: ..isholiday, inifile: 
+collected 1 items 
 
-    tests/test_holidays.py .
+tests/test_holidays.py .
 
-    ============================= 1 passed in 0.24 seconds =============================
+============================= 1 passed in 0.24 seconds =============================
+```
 
 Všimněte si několika věcí:
 
@@ -52,32 +56,38 @@ pytest prohledá i to a často v něm najde neprocházející testy.)
 
 Pytest upravuje chování assertu, což oceníte především, pokud test selže:
 
-        ...
-        assert (23, 12) in holidays
+```python
+    ...
+    assert (23, 12) in holidays
+```
 
-    ===================================== FAILURES =====================================
-    __________________________________ test_xmas_2016 __________________________________
+```
+===================================== FAILURES =====================================
+__________________________________ test_xmas_2016 __________________________________
 
-        def test_xmas_2016():
-            """Test whether there is Christmas in 2016"""
-            holidays = isholiday.getholidays(2016)
-    >       assert (23, 12) in holidays
-    E       assert (23, 12) in {(1, 1), (1, 5), (5, 7), (6, 7), (8, 5), (17, 11), ...}
+    def test_xmas_2016():
+        """Test whether there is Christmas in 2016"""
+        holidays = isholiday.getholidays(2016)
+>       assert (23, 12) in holidays
+E       assert (23, 12) in {(1, 1), (1, 5), (5, 7), (6, 7), (8, 5), (17, 11), ...}
 
-    tests/test_holidays.py:6: AssertionError
-    ============================= 1 failed in 0.24 seconds =============================
+tests/test_holidays.py:6: AssertionError
+============================= 1 failed in 0.24 seconds =============================
+```
 
 S obyčejným assertem si vystačíte pro většinu testovaných případů kromě
 ověření vyhození výjimky. To se dělá takto:
 
-    import pytest
+```python
+import pytest
 
-    def f():
-        raise SystemExit(1)
+def f():
+    raise SystemExit(1)
 
-    def test_mytest():
-        with pytest.raises(SystemExit):
-            f()
+def test_mytest():
+    with pytest.raises(SystemExit):
+        f()
+```
 
 Více o základním použití pytestu najdete v [dokumentaci].
 
@@ -96,64 +106,76 @@ průběh testu při selhání ukončí.
 
 Místo toho tedy použijeme parametrický test:
 
-    import pytest
-    import isholiday
+```python
+import pytest
+import isholiday
 
-    @pytest.mark.parametrize('year', (2015, 2016, 2017, 2033, 2048))
-    def test_xmas(year):
-        """Test whether there is Christmas"""
-        holidays = isholiday.getholidays(year)
-        assert (24, 12) in holidays
+@pytest.mark.parametrize('year', (2015, 2016, 2017, 2033, 2048))
+def test_xmas(year):
+    """Test whether there is Christmas"""
+    holidays = isholiday.getholidays(year)
+    assert (24, 12) in holidays
+
+```
 
 (Místo výpisu hodnot v `tuple` lze použít jakýkoliv objekt, přes který jde
 iterovat, tedy i např. volání `range()`.)
 
 Pro více podrobný výpis výsledku testů můžete použít přepínač `-v`:
 
-    (env)$ PYTHONPATH=. python -m pytest -v
-    ...
-    tests/test_holidays.py::test_xmas[2015] PASSED
-    tests/test_holidays.py::test_xmas[2016] PASSED
-    tests/test_holidays.py::test_xmas[2017] PASSED
-    tests/test_holidays.py::test_xmas[2033] PASSED
-    tests/test_holidays.py::test_xmas[2048] PASSED
-    ...
+```bash
+(env)$ PYTHONPATH=. python -m pytest -v
+...
+tests/test_holidays.py::test_xmas[2015] PASSED
+tests/test_holidays.py::test_xmas[2016] PASSED
+tests/test_holidays.py::test_xmas[2017] PASSED
+tests/test_holidays.py::test_xmas[2033] PASSED
+tests/test_holidays.py::test_xmas[2048] PASSED
+...
+```
 
 Potřebujeme-li parametrizovat více argumentů, můžeme předat seznam jmen
 argumentů a seznam jejich hodnot:
 
-    import pytest
-    import isholiday
+```python
+import pytest
+import isholiday
 
-    @pytest.mark.parametrize(
-        ['year', 'month', 'day'],
-        [(2015, 12, 24),
-         (2016, 12, 24),
-         (2017, 1, 1),
-         (2033, 7, 5),
-         (2048, 7, 6)],
-    )
-    def test_some_holidays(year, month, day):
-        """Test a few sample holidays"""
-        holidays = isholiday.getholidays(year)
-        assert (day, month) in holidays
+@pytest.mark.parametrize(
+    ['year', 'month', 'day'],
+    [(2015, 12, 24),
+     (2016, 12, 24),
+     (2017, 1, 1),
+     (2033, 7, 5),
+     (2048, 7, 6)],
+)
+def test_some_holidays(year, month, day):
+    """Test a few sample holidays"""
+    holidays = isholiday.getholidays(year)
+    assert (day, month) in holidays
+```
 
 Vždy je dobré pokusit se nějaký test rozbít v samotném kódu, který testujeme,
 abychom se ujistili, že testujeme správně.
 Přidám tedy dočasně na konec funkce `getholidays()` tento pesimistický kus kódu:
 
-        if year > 2020:
-            # After the Zygon war, the puppet government canceled all holidays
-            holidays = set()
+```python
+    if year > 2020:
+        # After the Zygon war, the puppet government canceled all holidays
+        holidays = set()
+```
 
-    (env)$ PYTHONPATH=. python -m pytest -v
-    ...
-    tests/test_holidays.py::test_xmas[2015] PASSED
-    tests/test_holidays.py::test_xmas[2016] PASSED
-    tests/test_holidays.py::test_xmas[2017] PASSED
-    tests/test_holidays.py::test_xmas[2033] FAILED
-    tests/test_holidays.py::test_xmas[2048] FAILED
-    ...
+```bash
+(env)$ PYTHONPATH=. python -m pytest -v
+...
+tests/test_holidays.py::test_xmas[2015] PASSED
+tests/test_holidays.py::test_xmas[2016] PASSED
+tests/test_holidays.py::test_xmas[2017] PASSED
+tests/test_holidays.py::test_xmas[2033] FAILED
+tests/test_holidays.py::test_xmas[2048] FAILED
+...
+```
+
 
 [parametrické testy]: http://doc.pytest.org/en/latest/parametrize.html
 
@@ -169,17 +191,19 @@ testech používají jako argumenty funkcí.
 
 [fixtures]: http://doc.pytest.org/en/latest/fixture.html
 
-    import pytest
+```python
+import pytest
 
-    @pytest.fixture
-    def client():
-        import twitter
-        return twitter.Client(...)
+@pytest.fixture
+def client():
+    import twitter
+    return twitter.Client(...)
 
-    def test_search_python(client):
-        tweets = client.search('python', size=1)
-        assert len(tweets) == 1
-        assert 'python' in tweets[0].text.lower()
+def test_search_python(client):
+    tweets = client.search('python', size=1)
+    assert len(tweets) == 1
+    assert 'python' in tweets[0].text.lower()
+```
 
 Fixtures se hledají pomocí jména: když má testovací funkce (nebo i jiná
 fixture) parametr, podle jména tohoto parametru se najde odpovídající fixture.
@@ -194,32 +218,34 @@ použít `yield`.
 zavřít, například u databázových spojení.
 Zde je ilustrační příklad, který si můžete rovnou vyzkoušet:
 
-    import pytest
+```python
+import pytest
 
 
-    class DBConnection:
-        def __init__(self, name):
-            print('Creating connection for ' + name)
-            ...
+class DBConnection:
+    def __init__(self, name):
+        print('Creating connection for ' + name)
+        ...
 
-        def select(self, arg):
-            return arg
+    def select(self, arg):
+        return arg
 
-        def cleanup(self):
-            print('Cleaning up connection')
-            ...
-
-
-    @pytest.fixture
-    def connection():
-        d = DBConnection('sqlite')
-        yield d
-        d.cleanup()
+    def cleanup(self):
+        print('Cleaning up connection')
+        ...
 
 
-    @pytest.mark.parametrize('arg', (1, float, None))
-    def test_with_fixture(connection, arg):
-        assert arg == connection.select(arg)
+@pytest.fixture
+def connection():
+    d = DBConnection('sqlite')
+    yield d
+    d.cleanup()
+
+
+@pytest.mark.parametrize('arg', (1, float, None))
+def test_with_fixture(connection, arg):
+    assert arg == connection.select(arg)
+```
 
 Standardní výstup z testů se normálně zobrazuje jen když test selže.
 Chceme-li výstup vidět u všech testů, je třeba použít `pytest -s`.
@@ -228,11 +254,13 @@ I fixtury jdou parametrizovat, jen trochu jiným způsobem než testovací funkc
 parametry předané dekorátoru `pytest.fixture`, získáme ze zabudované
 fixtury `request`:
 
-    @pytest.fixture(params=('sqlite', 'postgres'))
-    def connection(request):
-        d = DBConnection(request.param)
-        yield d
-        d.cleanup()
+```python
+@pytest.fixture(params=('sqlite', 'postgres'))
+def connection(request):
+    d = DBConnection(request.param)
+    yield d
+    d.cleanup()
+```
 
 Hromadu dalších příkladů použití pytestu najdete dokumentaci, v
 [sekci s příklady](http://doc.pytest.org/en/latest/example/index.html).
@@ -256,46 +284,54 @@ Při testování často potřebujeme nějaký objekt, který má určité atribu
 metody. Vytvářet si pro každý takový objekt třídu (jako v příkladě výše)
 může být ubíjející.
 
-    class FakePlane:
-        operational = True
-        model = 'MIG-21'
-        def fly(self): pass
+```python
+class FakePlane:
+    operational = True
+    model = 'MIG-21'
+    def fly(self): pass
 
-    plane = FakePlane()  # this is tedious!
+plane = FakePlane()  # this is tedious!
+```
 Flexmock umožňuje vytvoření objektu rychle a jednoduše:
 
-    plane = flexmock(operational=True,
-                     model='MIG-21',
-                     fly=lambda: None)
+```python
+plane = flexmock(operational=True,
+                 model='MIG-21',
+                 fly=lambda: None)
+```
 
 ### Částečně upravené objekty, třídy, moduly (stubs)
 
 Stejně tak můžete vzít i nějaký existující objekt nebo třídu a upravit jen část
 atributů nebo metod:
 
-    >>> import flexmock
-    >>> class Train:
-    ...     def get_speed(self):
-    ...         return 0
-    ... 
-    >>> flexmock(Train, get_speed=200)
-    <flexmock.Mock object at 0x7f88501d8908>
-    >>> train = Train()
-    >>> train.get_speed()
-    200
+```python
+>>> import flexmock
+>>> class Train:
+...     def get_speed(self):
+...         return 0
+... 
+>>> flexmock(Train, get_speed=200)
+<flexmock.Mock object at 0x7f88501d8908>
+>>> train = Train()
+>>> train.get_speed()
+200
+```
 
 Můžete tak zfalšovat i volání *builtin* funkcí, jako je například `open()`:
 
-    >>> import sys
-    >>> import flexmock
-    >>> import builtins
-    >>> from io import StringIO
-    >>> flexmock(builtins, open=StringIO('fake content'))
-    <module 'builtins' (built-in)>
-    >>> with open('/etc/passwd') as f:
-    ...     f.readlines()
-    ... 
-    ['fake content']
+```python
+>>> import sys
+>>> import flexmock
+>>> import builtins
+>>> from io import StringIO
+>>> flexmock(builtins, open=StringIO('fake content'))
+<module 'builtins' (built-in)>
+>>> with open('/etc/passwd') as f:
+...     f.readlines()
+... 
+['fake content']
+```
 
 ### Očekávání (mocks, spies)
 
@@ -351,15 +387,17 @@ Betamax funguje pouze s modulem requests při použití session.
 
 V kombinaci s pytestem můžete použít předpřipravenou fixture:
 
-    import betamax
+```python
+import betamax
 
-    with betamax.Betamax.configure() as config:
-        # tell Betamax where to find the cassettes
-        # make sure to create the directory
-        config.cassette_library_dir = 'tests/fixtures/cassettes'
+with betamax.Betamax.configure() as config:
+    # tell Betamax where to find the cassettes
+    # make sure to create the directory
+    config.cassette_library_dir = 'tests/fixtures/cassettes'
 
-    def test_get(betamax_session):
-        betamax_session.get('https://httpbin.org/get')
+def test_get(betamax_session):
+    betamax_session.get('https://httpbin.org/get')
+```
 
 Před spuštěním testu vytvořte složku `tests/fixtures/cassettes`.
 Po spuštění testu ji prozkoumejte.
@@ -373,14 +411,16 @@ session, kterou máme od betamaxu. Jak to udělat?
 
 Je třeba, aby implementační část kódu uměla session přejmout, například takto:
 
-    class Client:
-        def __init__(self, session=None):
-            self.session = session or requests.Session()
-            ...
+```python
+class Client:
+    def __init__(self, session=None):
+        self.session = session or requests.Session()
+        ...
 
-    def test_clent_foo(betamax_session):
-        client = Client(betamax_session)
-        assert client.foo() == 42
+def test_clent_foo(betamax_session):
+    client = Client(betamax_session)
+    assert client.foo() == 42
+```
 
 Pokud budete používat parametrizované testy, použijte
 `betamax_parametrized_session`, aby kazety měly odlišné jméno při odlišných
@@ -389,9 +429,11 @@ parametrech.
 Pro tip: Abyste nevytvářeli novou instanci třídy ve všech testech, můžete si
 vytvořit vlastní fixture, která použije fixture `betamax_session`:
 
-    @pytest.fixture
-    def client(betamax_session):
-        return Client(session=betamax_session)
+```python
+@pytest.fixture
+def client(betamax_session):
+    return Client(session=betamax_session)
+```
 
 ### Citlivé údaje
 
@@ -404,25 +446,27 @@ Vyvstávají dvě otázky:
 
 Na obě otázky se pokusím odpovědět jedním okomentovaným kódem:
 
-    with betamax.Betamax.configure() as config:
-        if 'AUTH_FILE' in os.environ:
-            # If the tests are invoked with an AUTH_FILE environ variable
-            TOKEN = my_auth_parsing_func(os.environ['AUTH_FILE'])
-            # Always re-record the cassetes
-            # https://betamax.readthedocs.io/en/latest/record_modes.html
-            config.default_cassette_options['record_mode'] = 'all'
-        else:
-            TOKEN = 'false_token'
-            # Do not attempt to record sessions with bad fake token
-            config.default_cassette_options['record_mode'] = 'none'
+```python
+with betamax.Betamax.configure() as config:
+    if 'AUTH_FILE' in os.environ:
+        # If the tests are invoked with an AUTH_FILE environ variable
+        TOKEN = my_auth_parsing_func(os.environ['AUTH_FILE'])
+        # Always re-record the cassetes
+        # https://betamax.readthedocs.io/en/latest/record_modes.html
+        config.default_cassette_options['record_mode'] = 'all'
+    else:
+        TOKEN = 'false_token'
+        # Do not attempt to record sessions with bad fake token
+        config.default_cassette_options['record_mode'] = 'none'
 
-        # Hide the token in the cassettes
-        config.define_cassette_placeholder('<TOKEN>', TOKEN)
-        ...
+    # Hide the token in the cassettes
+    config.define_cassette_placeholder('<TOKEN>', TOKEN)
+    ...
 
-    @pytest.fixture
-    def client(betamax_session):
-        return Client(token=TOKEN, session=betamax_session)
+@pytest.fixture
+def client(betamax_session):
+    return Client(token=TOKEN, session=betamax_session)
+```
 
 Co když ale nevíme, jak bude vypadat citlivá část požadavku, protože se teprve
 někde spočítá a získá, jako v případě Twitter API?
@@ -441,7 +485,9 @@ V takovém případě je potřeba k tomu, aby šlo v kazetě nahradit citlivé �
 hlavičku `Accept-Encoding` v `betamax_session` tak, aby neobsahovala `*`, `gzip`, 
 `compress` ani `deflate`:
 
-    betamax_session.headers.update({'Accept-Encoding': 'identity'})
+```
+betamax_session.headers.update({'Accept-Encoding': 'identity'})
+```
 
 (_Poznámka_: `'identity'` má shodné chování jako `''` a to, že data ve zprávě nejsou 
 nijak transformována, více viz [wikipedia](https://en.wikipedia.org/wiki/HTTP_compression#Content-Encoding_tokens) 
@@ -452,16 +498,18 @@ Testování aplikací ve Flasku
 
 Pro testování aplikací ve Flasku se používá `app.test_client()`:
 
-    import pytest
+```python
+import pytest
 
-    @pytest.fixture
-    def testapp():
-        from hello import app
-        app.config['TESTING'] = True
-        return app.test_client()
+@pytest.fixture
+def testapp():
+    from hello import app
+    app.config['TESTING'] = True
+    return app.test_client()
 
-    def test_hello(testapp):
-        assert 'Hello' in testapp.get('/').data.decode('utf-8')
+def test_hello(testapp):
+    assert 'Hello' in testapp.get('/').data.decode('utf-8')
+```
 
 Pozor, metody na testovacím klientu vrací [Response], ale trochu jinou, než tu
 z requests.
@@ -474,28 +522,32 @@ Kam dát testy?
 [Dokumentace pytestu](http://doc.pytest.org/en/latest/goodpractices.html#choosing-a-test-layout-import-rules)
 uvádí dvě možnosti, kam dát adresář s testy. Buď vedle adresáře s modulem:
 
-    setup.py
-    mypkg/
-        __init__.py
-        appmodule.py
-    tests/
-        test_app.py
-        ...
+```
+setup.py
+mypkg/
+    __init__.py
+    appmodule.py
+tests/
+    test_app.py
+    ...
+```
 
 nebo do něj:
 
-    setup.py
-    mypkg/
-        __init__.py
-        appmodule.py
+```
+setup.py
+mypkg/
+    __init__.py
+    appmodule.py
+    ...
+    test/
+        test_app.py
         ...
-        test/
-            test_app.py
-            ...
+```
 
 První způsob je preferovaný, protože pomáhá udržovat kód a testy oddělené.
 Pokud ho použijete, nedávejte do něj `__init__.py` – není to importovatelný
-Pythoní modul, ale jen sada souborů s testy.
+Pythonní modul, ale jen sada souborů s testy.
 
 Ve druhém případě mějte na paměti, že pytest pouští testy jako samostatné
 moduly, ne jako součást vašeho balíčku.
@@ -519,19 +571,23 @@ K tomu potřeujeme nakonfigurovat závislosti: v `setup_requires` musí být
 `pytest-runner`, a v `tests_require` pak `pytest` a další testovací závislosti
 (`flexmock`, `betamax`...).
 
-    from setuptools import setup
+```python
+from setuptools import setup
 
-    setup(
-        ...,
-        setup_requires=['pytest-runner', ...],
-        tests_require=['pytest', ...],
-        ...,
-    )
+setup(
+    ...,
+    setup_requires=['pytest-runner', ...],
+    tests_require=['pytest', ...],
+    ...,
+)
+```
 
 a přidat následující sekci do `setup.cfg`:
 
-    [aliases]
-    test=pytest
+```
+[aliases]
+test=pytest
+```
 
 Příkaz `python setup.py test` by měl fungovat, ale neočekává se, že bude
 podporovat další argumenty pytestu (jako `-v`).
@@ -555,13 +611,15 @@ a povolte Travis pro váš repozitář.
 
 Do repozitáře přidejte soubor `.travis.yml`:
 
-    language: python
-    python:
-    - '3.5'
-    install:
-    - python setup.py install
-    script:
-    - python setup.py test --addopts -v
+```yaml
+language: python
+python:
+- '3.5'
+install:
+- python setup.py install
+script:
+- python setup.py test --addopts -v
+```
 
 Po pushnutí by se na Travisu měl automaticky spustit test.
 Více informací o použití pro Python najdete
@@ -575,18 +633,20 @@ Kvíz
 
 Co je špatně na této testovací sadě k funkci `is_even()`?
 
-    def is_even(n):
-        return n % 2 == 0
+```python
+def is_even(n):
+    return n % 2 == 0
 
 
-    @pytest.mark.parametrize('n', range(0, 1000, 2))
-    def test_is_even(n):
-        assert is_even(n)
+@pytest.mark.parametrize('n', range(0, 1000, 2))
+def test_is_even(n):
+    assert is_even(n)
+```
 
 Úkol
 ----
 
-Vaším úkolem je napsat testy k dosavadním úlohám pomocí pytestu.
+Vaším úkolem za 5 bodů je napsat testy k dosavadním úlohám pomocí pytestu.
 Není nutné použít `flexmock` pokud to nepotřebujete.
 Využití `betamax`u je silně doporučeno.
 
@@ -606,3 +666,5 @@ Podmínky:
 \* Záměrně nestanovujeme podmínku na 100% pokrytí kódu testy.
 Otestujte prostě kód tak, aby byly otestovány všechny podstatné součásti
 včetně webové aplikace.
+ 
+Úkol odevzdáváte tradičně s tagem v0.4 a nahráním nové verze na (testovací či pravou) PyPI.

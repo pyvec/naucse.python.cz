@@ -108,51 +108,59 @@ Typický příklad je `@app.route` ve Flasku.
 My si pro příklad budeme chtít udělat dekorátor pro kalkulačku,
 `@register_operator`, aby fungoval tento kód:
 
-    operators = {}
+```python
+operators = {}
 
-    @register_operator
-    def add(a, b):
-        return a + b
+@register_operator
+def add(a, b):
+    return a + b
 
-    @register_operator
-    def mul(a, b):
-        return a * b
+@register_operator
+def mul(a, b):
+    return a * b
 
-    a = int(input('First number: '))
-    operator_name = input('Operation: ')
-    b = int(input('Second number: '))
+a = int(input('First number: '))
+operator_name = input('Operation: ')
+b = int(input('Second number: '))
 
-    func = operators[operator_name]
-    print(func(a, b))
+func = operators[operator_name]
+print(func(a, b))
+```
 
 Bez použití dekorátorů by se to dalo napsat takto:
 
-    def register_operator(func):
-        operators[func.__name__] = func
+```python
+def register_operator(func):
+    operators[func.__name__] = func
 
-    def add(a, b):
-        return a + b
+def add(a, b):
+    return a + b
 
-    register_operator(add)
+register_operator(add)
+```
 
 S použitím dekorátoru je funkce `register_operator` téměř stejná,
 jen použijeme speciální syntaxi se zavináčem.
 
-    def register_operator(func):
-        operators[func.__name__] = func
-        return func
+```python
+def register_operator(func):
+    operators[func.__name__] = func
+    return func
 
-    @register_operator
-    def add(a, b):
-        return a + b
+@register_operator
+def add(a, b):
+    return a + b
+```
 
 Použití dekorátoru je jen zkrácený zápis pro volání dekorátoru jako
 funkce – poslední tři řádky předchozího příkladu jsou ekvivalentní tomuto:
 
-    def add(a, b):
-        return a + b
+```python
+def add(a, b):
+    return a + b
 
-    add = register_operator(add)
+add = register_operator(add)
+```
 
 Chování samotného `@` je tedy celkem triviální.
 Magie (složitost) spočívá v tom, že dekorátor je většinou funkce vyššího řádu:
@@ -165,42 +173,48 @@ na reálná čísla.
 Dělá to tak, že definuje *novou funkci*, která volá tu původní – ale před nebo
 po tomto volání může dělat i něco jiného.
 
-    def to_floats(func):
-        def outer_function(a, b):
-            a = float(a)
-            b = float(b)
-            return func(a, b)
-        return outer_function
+```python
+def to_floats(func):
+    def outer_function(a, b):
+        a = float(a)
+        b = float(b)
+        return func(a, b)
+    return outer_function
 
-    @to_floats
-    def add(a, b):
-        """Adds two numbers"""
-        return a + b
+@to_floats
+def add(a, b):
+    """Adds two numbers"""
+    return a + b
 
-    print(add(1, '2'))
+print(add(1, '2'))
+```
 
 Takto funguje většina dekorátorů, které mění chování dekorované funkce.
 Naráží s tím ale na jeden problém: nově nadefinovaná funkce má vlastní jméno
 (a dokumentační řetězec, a podobné informace), což kazí iluzi, že jsme
 původní funkci jen trošku změnili:
 
-    print(add)
-    help(add)
+```python
+print(add)
+help(add)
+```
 
 Řešení je jednoduché – zkopírovat jméno, dokumentační řetězec, atd. z jedné
 funkce na druhou.
 Na to ve standardní knihovně existuje dekorátor jménem `functools.wraps`:
 
 
-    import functools
+```python
+import functools
 
-    def to_floats(func):
-        @functools.wraps(func)
-        def outer_function(a, b):
-            a = float(a)
-            b = float(b)
-            return func(a, b)
-        return outer_function
+def to_floats(func):
+    @functools.wraps(func)
+    def outer_function(a, b):
+        a = float(a)
+        b = float(b)
+        return func(a, b)
+    return outer_function
+```
 
 S `wraps` bude `help(add)` fungovat správně – ukáže původní jméno
 a dokumentační řetězec.
@@ -210,28 +224,30 @@ funkce, ne jen funkci samotnou.
 Budeme-li chtít napsat dekorátor, který tohle umí, potřebujeme napsat
 funkci ještě vyššího řádu – totiž funkci, která po zavolání vrátí dekorátor:
 
-    operators = {}
+```python
+operators = {}
 
-    def register_operator(name):
-        def decorator(func):
-            operators[name] = func
-            return func
-        return decorator
+def register_operator(name):
+    def decorator(func):
+        operators[name] = func
+        return func
+    return decorator
 
-    @register_operator('+')
-    def add(a, b):
-        return a + b
+@register_operator('+')
+def add(a, b):
+    return a + b
 
-    @register_operator('*')
-    def mul(a, b):
-        return a * b
+@register_operator('*')
+def mul(a, b):
+    return a * b
 
-    a = int(input('First number: '))
-    operator_name = input('Operation: ')
-    b = int(input('Second number: '))
+a = int(input('First number: '))
+operator_name = input('Operation: ')
+b = int(input('Second number: '))
 
-    func = operators[operator_name]
-    print(func(a, b))
+func = operators[operator_name]
+print(func(a, b))
+```
 
 Řádek `@register_operator('+')` dělá (jak už víme) to stejné, jako bychom hned
 za funkcí napsali `add = register_operator('+')(add)`.
@@ -239,36 +255,40 @@ za funkcí napsali `add = register_operator('+')(add)`.
 Budete-li chtít napsat dekorátor, který bere argumenty, a přitom ještě
 „mění“ dekorovanou funkci, dostanete se na tři funkce zanořené v sobě:
 
-    import functools
-    operators = {}
+```python
+import functools
+operators = {}
 
-    def register_operator(name):
-        def to_floats(func):
+def register_operator(name):
+    def to_floats(func):
 
-            @functools.wraps(func)
-            def outer_function(a, b):
-                a = float(a)
-                b = float(b)
-                return func(a, b)
+        @functools.wraps(func)
+        def outer_function(a, b):
+            a = float(a)
+            b = float(b)
+            return func(a, b)
 
-            operators[name] = outer_function
-            return outer_function
+        operators[name] = outer_function
+        return outer_function
 
-        return to_floats
+    return to_floats
 
-    @register_operator('+')
-    def add(a, b):
-        return a + b
+@register_operator('+')
+def add(a, b):
+    return a + b
 
-    func = operators['+']
-    print(func(1, '2'))
+func = operators['+']
+print(func(1, '2'))
+```
 
 Dekorátorů se na jedné funkci dá použít víc:
 
-    @register_operator('×')
-    @register_operator('*')
-    def mul(a, b):
-        return a * b
+```python
+@register_operator('×')
+@register_operator('*')
+def mul(a, b):
+    return a * b
+```
 
 Úplně stejně jako funkce se dají dekorovat i třídy.
 Dekorátor dostane třídu jako první argument, a třída se nahradí tím,
@@ -305,20 +325,22 @@ Podívejme se teď na získávání atributu trošku podrobněji. Je to poměrn�
 První z nich nedoporučuji používat, protože je *příliš* obecná (pokusy se z ní dostat ke stavu objektu končívají nekonečnou rekurzí).
 Příklad druhé:
 
-    class Palette:
-        red = 255, 0, 0
-        green = 0, 255, 0
-        
-        def __getattr__(self, attr_name):
-            prefix, sep, suffix = attr_name.partition('_')
-            if prefix == 'dark':
-                original_color = getattr(self, suffix)
-                return tuple(c//2 for c in original_color)
-            else:
-                raise AttributeError(attr_name)
+```python
+class Palette:
+    red = 255, 0, 0
+    green = 0, 255, 0
+    
+    def __getattr__(self, attr_name):
+        prefix, sep, suffix = attr_name.partition('_')
+        if prefix == 'dark':
+            original_color = getattr(self, suffix)
+            return tuple(c//2 for c in original_color)
+        else:
+            raise AttributeError(attr_name)
 
-    palette = Palette()
-    print(palette.dark_red)
+palette = Palette()
+print(palette.dark_red)
+```
 
 (Předpokládám že znáte funkci `getattr`; kdyby ne: `getattr(foo, "bar")` dělá totéž co `foo.bar` – jen je jméno atributu předáno jako řetězec, takže může být např. v proměnné. Podobně existují `setattr(instance, attr_name, new_value)` a `delattr(setattr(instance, attr_name)`.)
 
@@ -326,60 +348,64 @@ Metoda `__getattr__` je většinou tak trochu kanón na vrabce: ve většině p�
 Například máme třídu pro 2D bod s atributy `x` a `y`, a potřebujeme i atribut pro dvojici `(x, y)`.
 Toto se často dělá pomocí dekorátoru `property`:
 
-    class Point:
-        def __init__(self, x, y):
-            self.x = x
-            self.y = y
-        
-        @property
-        def pos(self):
-            return self.x, self.y
+```python
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    
+    @property
+    def pos(self):
+        return self.x, self.y
 
-    point = Point(41, 8)
-    print(point.pos)
+point = Point(41, 8)
+print(point.pos)
+```
 
 Jak to ale funguje? Dekorátor `property` je třída, jakou můžete teoreticky napsat sami v Pythonu.
 Je to *deskriptor*, objekt, který v rámci nějaké třídy *popisuje* jak přistupovat k nějakému atributu.
 
 Nejlépe se deskriptory vysvětlí na příkladu:
 
-    # (Omluvte prosím češtinu v kódu)
+```python
+# (Omluvte prosím češtinu v kódu)
 
-    class Descriptor2D:
-        """Popisuje atribut, který kombinuje dva jiné atributy do dvojice"""
+class Descriptor2D:
+    """Popisuje atribut, který kombinuje dva jiné atributy do dvojice"""
 
-        def __init__(self, name1, name2):
-            self.name1 = name1
-            self.name2 = name2
-        
-        def __get__(self, instance, cls=None):
-            """Volá se, když je třeba načíst atribut dané `instance` na dané třídě `cls`.
-            """
+    def __init__(self, name1, name2):
+        self.name1 = name1
+        self.name2 = name2
+    
+    def __get__(self, instance, cls=None):
+        """Volá se, když je třeba načíst atribut dané `instance` na dané třídě `cls`.
+        """
 
-            if instance is not None:
-                # Je-li instance nastavena, čteme atribut z ní.
-                return getattr(instance, self.name1), getattr(instance, self.name2)
-            else:
-                # Je-li instance None, čteme atribut přímo ze třídy `cls`;
-                # v tomto případě slušné deskriptory většinou vrací deskriptor samotný.
-                return self
+        if instance is not None:
+            # Je-li instance nastavena, čteme atribut z ní.
+            return getattr(instance, self.name1), getattr(instance, self.name2)
+        else:
+            # Je-li instance None, čteme atribut přímo ze třídy `cls`;
+            # v tomto případě slušné deskriptory většinou vrací deskriptor samotný.
+            return self
 
-    class Rect:
-        def __init__(self, x, y, w, h):
-            self.x = x
-            self.y = y
-            self.w = w
-            self.h = h
-        
-        pos = Descriptor2D('x', 'y')
-        size = Descriptor2D('w', 'h')
+class Rect:
+    def __init__(self, x, y, w, h):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+    
+    pos = Descriptor2D('x', 'y')
+    size = Descriptor2D('w', 'h')
 
-    rect = Rect(1, 2, 3, 4)
-    print(rect.pos)
-    print(rect.size)
+rect = Rect(1, 2, 3, 4)
+print(rect.pos)
+print(rect.size)
 
-    # Čtení atributu přímo ze třídy:
-    print(Rect.pos)
+# Čtení atributu přímo ze třídy:
+print(Rect.pos)
+```
 
 Deskriptory jsou tedy součást třídy – atributy s nějakým jménem. Popisují, jak se bude přistupovat k atributu daného jména.
 
@@ -388,40 +414,44 @@ Liší se v tom, jestli popisují jen, jak se daný atribut *čte*, nebo i jak s
 Výše uvedený deskriptor je *non-data*: ovládá jen čtení. Zápis funguje jako u normálních atributů:
 přepíše aktuální hodnotu – a nové hodnota se pak použije místo volání deskriptoru:
 
-    rect.pos = 'haha'
-    print(rect.pos)
+```python
+rect.pos = 'haha'
+print(rect.pos)
+```
 
 Abychom tomu zabránili, můžeme na deskriptoru nadefinovat speciální metodu `__set__` (nebo `__delete__`), která popisuje,
 jak se atribut nastavuje (resp. maže).
 Tím vznikne *data descriptor*:
 
 
-    class Descriptor2D:
-        def __init__(self, name1, name2):
-            self.name1 = name1
-            self.name2 = name2
-        
-        def __get__(self, instance, cls=None):
-            if instance is not None:
-                return getattr(instance, self.name1), getattr(instance, self.name2)
-            else:
-                return self
+```python
+class Descriptor2D:
+    def __init__(self, name1, name2):
+        self.name1 = name1
+        self.name2 = name2
+    
+    def __get__(self, instance, cls=None):
+        if instance is not None:
+            return getattr(instance, self.name1), getattr(instance, self.name2)
+        else:
+            return self
 
-        def __set__(self, instance, new_value):
-            a, b = new_value
-            setattr(instance, self.name1, a)
-            setattr(instance, self.name2, b)
+    def __set__(self, instance, new_value):
+        a, b = new_value
+        setattr(instance, self.name1, a)
+        setattr(instance, self.name2, b)
 
-        def __delete__(self, instance):
-            delattr(instance, self.name1)
-            delattr(instance, self.name2)
+    def __delete__(self, instance):
+        delattr(instance, self.name1)
+        delattr(instance, self.name2)
 
-    class Rect:
-        # jako předtím
+class Rect:
+    # jako předtím
 
-    rect = Rect(1, 2, 3, 4)
-    rect.pos = 123, 456
-    print(rect.pos)
+rect = Rect(1, 2, 3, 4)
+rect.pos = 123, 456
+print(rect.pos)
+```
 
 Už zmíněný vestavěný deskriptor `property`, je *data descriptor*.
 Popisuje jak čtení, tak zápis atributu. Pokud mu nenastavíme funkci pro zápis, vyhodí ze své metody  `__set__` výjimku `AttributeError` se zprávou, že do atributu se zapisovat nedá. (To je trochu magická odchylka od normálního chování Pythonu, kdy atributy zapisovat jdou.)
@@ -429,21 +459,23 @@ Popisuje jak čtení, tak zápis atributu. Pokud mu nenastavíme funkci pro záp
 Nejčastější příklad *non-data* deskriptoru je obyčejná funkce.
 Každá funkce totiž funguje jako deskriptor: má speciální metodu `__get__`, která zajišťuje, že pokud je nastavena na třídě, daným atributem nedostaneme *funkci*, ale *metodu* (s „předvyplněným“ parametrem `self`).
 
-    def foo(self):
-        return 4
+```python
+def foo(self):
+    return 4
 
-    class C:
-        foo = foo
+class C:
+    foo = foo
 
-    c = C()
-        
-    # Obyčejná funkce
-    print(C.foo)
-    print(foo)
+c = C()
+    
+# Obyčejná funkce
+print(C.foo)
+print(foo)
 
-    # Metoda
-    print(C().foo)
-    print(foo.__get__(c))
+# Metoda
+print(C().foo)
+print(foo.__get__(c))
+```
 
 Protože je to *non-data* deskriptor, můžeme v jednotlivých instancích třídy
 daný atribut přepsat něčím jiným, čímž metodu znepřístupníme.
@@ -453,31 +485,33 @@ Jako zajímavost uvedu *non-data* deskriptor, který přepisuje svůj vlastní a
 Funguje podobně jako `@property`, jen se výsledek vypočítá pouze jednou a uloží se jako normální atribut.
 Při dalším přístupu k atributu už se použije uložená hodnota.
 
-    class reify(object):
-        def __init__(self, func):
-            self.func = func
+```python
+class reify(object):
+    def __init__(self, func):
+        self.func = func
 
-        def __get__(self, instance, cls=None):
-            if instance is None:
-                return self
-            val = self.func(instance)
-            setattr(instance, self.func.__name__, val)
-            return val
+    def __get__(self, instance, cls=None):
+        if instance is None:
+            return self
+        val = self.func(instance)
+        setattr(instance, self.func.__name__, val)
+        return val
 
-    class Vector:
-        def __init__(self, x, y):
-            self.x = x
-            self.y = y
-        
-        @reify
-        def length(self):
-            print('Running expensive computation...')
-            return (self.x ** 2 + self.y ** 2) ** 0.5
+class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    
+    @reify
+    def length(self):
+        print('Running expensive computation...')
+        return (self.x ** 2 + self.y ** 2) ** 0.5
 
-    vect = Vector(3, 4)
-    print(vect.length)
-    print(vect.length)
-    print(vect.length)
+vect = Vector(3, 4)
+print(vect.length)
+print(vect.length)
+print(vect.length)
+```
 
 Kompletní implementace je např. ve frameworku Pyramid jako [pyramid.decorator.reify](http://docs.pylonsproject.org/projects/pyramid/en/latest/_modules/pyramid/decorator.html).
 
@@ -495,17 +529,19 @@ místo `self` bere třídu, jejíž instanci má vytvořit.
 Opravdový konstruktor se „hodí“ pro vytváření *singletonů*, tříd které mají jen
 jednu instanci:
 
-    class Singleton:
-        def __new__(cls):
-            try:
-                return cls._instance
-            except AttributeError:
-                cls._instance = super().__new__(cls)
-                return cls._instance
+```python
+class Singleton:
+    def __new__(cls):
+        try:
+            return cls._instance
+        except AttributeError:
+            cls._instance = super().__new__(cls)
+            return cls._instance
 
-    assert Singleton() is Singleton()
+assert Singleton() is Singleton()
+```
 
-Podobný trik použít pro třídu podobnou `bool`, která má pouze dvě instance:
+Podobný trik lze použít pro třídu podobnou `bool`, která má pouze dvě instance:
 `bool(1) is bool(2)`.
 
 Metoda `__new__` se hodí, když chceme dědit z neměnitelné (*immutable*)
@@ -516,11 +552,13 @@ Je ale možné předefinovat `__new__`.
 Normálně bere `tuple` jediný argument, `tuple([1, 2])`.
 Chceme-li brát dva, dá se to udělat takto:
 
-    class Point(tuple):
-        def __new__(cls, x, y):
-            return super().__new__(cls, (x, y))
+```python
+class Point(tuple):
+    def __new__(cls, x, y):
+        return super().__new__(cls, (x, y))
 
-    print(Point(3, 4))
+print(Point(3, 4))
+```
 
 
 Metatřídy
@@ -533,13 +571,15 @@ parametr `metaclass`, funkce se zavolá s informacemi potřebnými pro vytvořen
 třídy.
 Ty můžeme použít, nebo úplně ignorovat a vrátit něco jiného:
 
-    def fake_metaclass(name, bases, namespace):
-        return 42
+```python
+def fake_metaclass(name, bases, namespace):
+    return 42
 
-    class NotAClass(metaclass=fake_metaclass):
-        pass
+class NotAClass(metaclass=fake_metaclass):
+    pass
 
-    print(NotAClass)
+print(NotAClass)
+```
 
 Argumenty, které „metatřída” dostane, jsou tři: jméno třídy, *n*-tice
 nadtříd, a jmenný prostor – slovník s proměnnými, které vznikly vykonáním
@@ -547,25 +587,29 @@ těla příkazu `class`.
 (Ve jmenném prostoru jsou implicitně nastavené záznamy `__module__`
 a `__qualname__`, které přidává samotný příkaz `class`.)
 
-    def fake_metaclass(name, bases, namespace):
-        print('name:', name)
-        print('bases:', bases)
-        print('namespace:', namespace)
-        return 42
+```python
+def fake_metaclass(name, bases, namespace):
+    print('name:', name)
+    print('bases:', bases)
+    print('namespace:', namespace)
+    return 42
 
-    class NotAClass(int, metaclass=fake_metaclass):
-        foo = 123
-        def inc(self):
-            return self + 1
+class NotAClass(int, metaclass=fake_metaclass):
+    foo = 123
+    def inc(self):
+        return self + 1
+```
 
 Když `metaclass` nezadáme, použije se výchozí *metatřída*, tedy třída třídy.
 V Pythonu je to `type`.
 Pokud ji zavoláme s vhodnými argumenty, dostaneme normální třídu:
 
-    MyInt = type('MyInt', (int, ), {'foo': 123, 'inc': lambda self: self + 1})
+```python
+MyInt = type('MyInt', (int, ), {'foo': 123, 'inc': lambda self: self + 1})
 
-    three = MyInt(3)
-    print(three.inc())
+three = MyInt(3)
+print(three.inc())
+```
 
 Kromě toho se `type` dá zavolat i s jedním argumentem; v tom případě vrátí
 typ (třídu) daného argumentu.
@@ -575,25 +619,29 @@ Je to nešťastná výjimka, která přežívá z historických důvodů.)
 
 Pojďme se podívat na třídy několika základích objektů:
 
-    # Třída základních objektů
-    print(type(1))
-    print(type("abc"))
+```python
+# Třída základních objektů
+print(type(1))
+print(type("abc"))
 
-    # Třída třídy – metatřída.
-    # Třída většiny tříd v Pythonu je `type`
-    print(type(int))
-    print(type(type(1)))
+# Třída třídy – metatřída.
+# Třída většiny tříd v Pythonu je `type`
+print(type(int))
+print(type(type(1)))
 
-    # Třída třídy třídy
-    # Samotná `type` je jedna z té většiny tříd; její třída je `type`
-    print(type(type))
-    print(type(type(type(1))))
+# Třída třídy třídy
+# Samotná `type` je jedna z té většiny tříd; její třída je `type`
+print(type(type))
+print(type(type(type(1))))
+```
 
 Objekty třídy `type` (tedy třídy) se normálně tvoří příkazem `class`.
 Explicitně to můžeme nasat takto:
 
-    class NormalClass(metaclass=type):
-        foo = 123
+```python
+class NormalClass(metaclass=type):
+    foo = 123
+```
 
 Když budeme chtít chování třídy změnit, budeme postupovat podobně jako
 u jiných objektů.
@@ -602,22 +650,24 @@ a předefiuji `__iter__`.
 Pokud chci třídu, přes kterou jde iterovat (tedy ne přes objekty dané
 třídy – přes třídu samotnou!), podědím z `type` a předefiuji `__iter__`:
 
-    class IterableMeta(type):
-        def __init__(cls, name, bases, namespace):
-            cls.items = sorted(n for n in namespace
-                               if not n.startswith('__'))
+```python
+class IterableMeta(type):
+    def __init__(cls, name, bases, namespace):
+        cls.items = sorted(n for n in namespace
+                           if not n.startswith('__'))
 
-        def __iter__(cls):
-            return iter(cls.items)
+    def __iter__(cls):
+        return iter(cls.items)
 
-    class SimpleEnum(metaclass=IterableMeta):
-        a = 1
-        b = 2
-        c = 3
-        d = 4
+class SimpleEnum(metaclass=IterableMeta):
+    a = 1
+    b = 2
+    c = 3
+    d = 4
 
-    print(SimpleEnum.a)
-    print(list(SimpleEnum))
+print(SimpleEnum.a)
+print(list(SimpleEnum))
+```
 
 (V metatřídě se většinou používá `cls` místo `self`, aby bylo jasné že
 instance, se kterou pracujeme, je třída – ale to je jen konvence.)
@@ -626,13 +676,15 @@ Metatřídy se dědí.
 Pokud v příkazu `class` nezadám explicitně `metaclass`, použije
 se metatřída nadtřídy:
 
-    class AnotherEnum(SimpleEnum):
-        x = 10
-        y = 20
-        z = 30
+```python
+class AnotherEnum(SimpleEnum):
+    x = 10
+    y = 20
+    z = 30
 
-    print(AnotherEnum.a)
-    print(list(AnotherEnum))
+print(AnotherEnum.a)
+print(list(AnotherEnum))
+```
 
 Tímto způsobem lze vnuknout třídám magické schopnosti, bez toho aby
 uživatel naší knihovny musel použít `metaclass` – stačí mu podědit z námi
@@ -647,26 +699,28 @@ vytvořeny – a slovník toto pořadí neuchovává.
 Na to existuje speciální metoda `__prepare__`, která se, když na metatřídě
 existuje, zavolá pro vytvoření jmenného prostoru:
 
-    from collections import OrderedDict
+```python
+from collections import OrderedDict
 
-    class OrderRememberingMeta(type):
-        def __prepare__(self, name):
-            return OrderedDict()
+class OrderRememberingMeta(type):
+    def __prepare__(self, name):
+        return OrderedDict()
 
-        def __init__(cls, name, bases, namespace):
-            cls.items = list(namespace)
+    def __init__(cls, name, bases, namespace):
+        cls.items = list(namespace)
 
-        def __iter__(cls):
-            return iter(cls.items)
+    def __iter__(cls):
+        return iter(cls.items)
 
-    class OrderedEnum(metaclass=OrderRememberingMeta):
-        first = 1
-        second = 2
-        third = 3
-        fourth = 4
-        fifth = 5
+class OrderedEnum(metaclass=OrderRememberingMeta):
+    first = 1
+    second = 2
+    third = 3
+    fourth = 4
+    fifth = 5
 
-    print(list(OrderedEnum))
+print(list(OrderedEnum))
+```
 
 Toho se dá využít třeba v mapování objektů na databázi (např. v Django Models
 nebo SQLAlchemy), kdy chceme, aby pořadí sloupců tabulky odpovídalo
@@ -683,36 +737,49 @@ A tuto cache můžeme změnit (tzv. *cache poisoning*) – přidat si do ní
 vlastní „modul“, který ovšem vůbec nemusí být modul, a tudíž může umět věci,
 které moduly normálně neumí:
 
-    import sys
+```python
+import sys
 
-    sys.modules['fake'] = 'a string'
+sys.modules['fake'] = 'a string'
 
-    ...
+...
 
-    import fake
+import fake
 
-    print(fake[2])
+print(fake[2])
+```
 
 Když toto uděláme přímo z modulu, uživatel naší knihovny dostane podstrčený
 objekt hned při prvním importu.
 K tomu se hodí proměnná `__name__`, jméno aktuálního modulu:
 
-    sys.modules[__name__] = ReplacementModule()
+```python
+sys.modules[__name__] = ReplacementModule()
+```
 
 
 Jiný trik je registrace „built-in“ („superglobální”) proměnné:
 
-    import builtins
-    builtins.ANSWER = 42
+```
+import builtins
+builtins.ANSWER = 42
 
-    ...
+...
 
-    # Třeba v jiném modulu
-    print(ANSWER)
+# Třeba v jiném modulu
+print(ANSWER)
+```
 
 Tímto způsobem se dají i předefinovat vestavěné funkce, což může být někdy
 užitečné pro ladění. V produkčním kódu to ale, prosím, nedělejte.
 
 
-Budete-li chtít některé techniky z této lekce ve svém kódu použít, zamyslete se, jestli se problém nedá vyřešit jednodušeji, čitelněji, přehledněji, udržovatelněji.
+Úkol
+----
+
+Úkol není!
+
+Budete-li chtít některé techniky z této lekce ve svém kódu (včetně semestrálky) použít, zamyslete se, jestli se problém nedá vyřešit jednodušeji, čitelněji, přehledněji, udržovatelněji.
 Dobrý mág ví, kdy magii *nepoužít*.
+
+

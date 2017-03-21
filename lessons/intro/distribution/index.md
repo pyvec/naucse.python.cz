@@ -1,4 +1,4 @@
-Moduly
+moduly
 ======
 
 Zatím jsme tvořili programy v Pythonu tak nějak na divoko, tedy v jednom nebo
@@ -33,41 +33,47 @@ obsahuje všechna potřebná metadata ve volání funkce `setup()` z modulu
 
 Pojďme vytvořit jeho minimální variantu:
 
-    from setuptools import setup
+```python
+from setuptools import setup
 
 
-    setup(
-        name='isholiday',
-        version='0.1',
-        description='Finds Czech holiday for given year',
-        author='Ondřej Caletka',
-        author_email='ondrej@caletka.cz',
-        license='Public Domain',
-        url='https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e',
-        py_modules=['isholiday'],
-    )
+setup(
+    name='isholiday',
+    version='0.1',
+    description='Finds Czech holiday for given year',
+    author='Ondřej Caletka',
+    author_email='ondrej@caletka.cz',
+    license='Public Domain',
+    url='https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e',
+    py_modules=['isholiday'],
+)
+```
 
 Všimněte si, že jsme balíček pojmenoval stejně jako soubor se zdrojovým kódem.
 Je to dobrá konvence, ale není to technicky nutné.
 
 Balíček můžeme zkusit nainstalovat do virtualenvu:
 
-    $ python3.5 -m venv env
-    $ . env/bin/activate
-    (env)$ python setup.py install
-    ...
-    (env)$ python
-    >>> import isholiday
-    >>> 
-    (env)$ python -m pip freeze
-    isholiday==0.1
+```bash
+$ python3.5 -m venv env
+$ . env/bin/activate
+(env)$ python setup.py install
+...
+(env)$ python
+>>> import isholiday
+>>> 
+(env)$ python -m pip freeze
+isholiday==0.1
+```
 
 Přes `setup.py` můžeme dělat další věci, například vytvořit archiv s balíčkem:
 
-    (env)$ python3 setup.py sdist
-    ...
-    warning: sdist: standard file not found: should have one of README, README.rst, README.txt
-    ...
+```bash
+(env)$ python3 setup.py sdist
+...
+warning: sdist: standard file not found: should have one of README, README.rst, README.txt
+...
+```
 
 Extra soubory do zdrojového balíčku
 -----------------------------------
@@ -76,9 +82,13 @@ Jak vidíte, `setuptools` si stěžuje, že náš projekt nemá `README`.
 Můžeme jej vytvořit a uložit jako `README` přímo v kořenovém adresáři projektu,
 tedy tam, kde byste jej nejspíš čekali.
 
-    Czech public holiday checker...
+```
+Czech public holiday checker...
+```
 
-    (env)$ python3 setup.py sdist
+```bash
+(env)$ python3 setup.py sdist
+```
 
 V adresáři `dist` najdete archiv, jeho obsah můžete zkontrolovat, měl by tam
 být i soubor `README`.
@@ -97,13 +107,17 @@ Další soubory lze přidat pomocí souboru `MANIFEST.in`, dle [dokumentace].
 
 V tomto případě takto:
 
-    include LICENSE
-    (env)$ python3 setup.py sdist
-    ...
-    hard linking LICENSE -> isholiday-0.1
-    hard linking MANIFEST.in -> isholiday-0.1
-    hard linking README -> isholiday-0.1
-    ...
+```
+include LICENSE
+```
+```bash
+(env)$ python3 setup.py sdist
+...
+hard linking LICENSE -> isholiday-0.1
+hard linking MANIFEST.in -> isholiday-0.1
+hard linking README -> isholiday-0.1
+...
+```
 
 Více argumentů pro setup()
 --------------------------
@@ -111,36 +125,38 @@ Více argumentů pro setup()
 Na chvíli se vrátíme k volání funkce `setup()` a přidáme co nejvíc dalších
 položek ([jejich vysvětlení](https://packaging.python.org/distributing/#setup-args)).
 
-    from setuptools import setup
+```python
+from setuptools import setup
 
 
-    with open('README') as f:
-        long_description = ''.join(f.readlines())
+with open('README') as f:
+    long_description = ''.join(f.readlines())
 
 
-    setup(
-        name='isholiday',
-        version='0.1',
-        description='Finds Czech holiday for given year',
-        long_description=long_description,
-        author='Ondřej Caletka',
-        author_email='ondrej@caletka.cz',
-        keywords='holiday,dates',
-        license='Public Domain',
-        url='https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e',
-        py_modules=['isholiday'],
-        classifiers=[
-            'Intended Audience :: Developers',
-            'License :: Public Domain',
-            'Operating System :: POSIX :: Linux',
-            'Programming Language :: Python',
-            'Programming Language :: Python :: Implementation :: CPython',
-            'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.5',
-            'Topic :: Software Development :: Libraries',
-            ],
-        zip_safe=False,
-    )
+setup(
+    name='isholiday',
+    version='0.1',
+    description='Finds Czech holiday for given year',
+    long_description=long_description,
+    author='Ondřej Caletka',
+    author_email='ondrej@caletka.cz',
+    keywords='holiday,dates',
+    license='Public Domain',
+    url='https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e',
+    py_modules=['isholiday'],
+    classifiers=[
+        'Intended Audience :: Developers',
+        'License :: Public Domain',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Topic :: Software Development :: Libraries',
+        ],
+    zip_safe=False,
+)
+```
 
 Všimněte si několika věcí. V první řadě v `long_description` vidíte, že jsme
 pořád ještě v Pythonu a můžeme si ušetřit duplikaci nějakých informací pomocí
@@ -166,54 +182,62 @@ Teoreticky je možné je přidat všechny do `py_modules`, ale není to dobrý n
 V takovém případě uděláme modul ve formě složky. V našem případě soubor
 `isholiday.py` zatím přesuneme do `isholiday/__init__.py`:
 
-    (env)$ tree
-    .
-    ├── isholiday
-    │   └── __init__.py
-    ├── LICENSE
-    ├── MANIFEST.in
-    ├── README
-    └── setup.py
+```bash
+(env)$ tree
+.
+├── isholiday
+│   └── __init__.py
+├── LICENSE
+├── MANIFEST.in
+├── README
+└── setup.py
 
-    1 directory, 5 files
+1 directory, 5 files
+```
 
-Soubor `__init__.py` jednak značí, že adresář `isholiday` je Pythoní modul,
+Soubor `__init__.py` jednak značí, že adresář `isholiday` je Pythonní modul,
 také obsahuje kód, který se spustí při importu modulu `isholiday`.
 
 Musíme ještě mírně upravit `setup.py`:
 
-    diff --git a/setup.py b/setup.py
-    index 3a69792..6b453ab 100644
-    --- a/setup.py
-    +++ b/setup.py
-    @@ -11,7 +11,7 @@ setup(
-         keywords='holiday,dates',
-         license='Public Domain',
-         url='https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e',
-    -    py_modules=['isholiday'],
-    +    packages=['isholiday'],
-         classifiers=[
-             'Intended Audience :: Developers',
-             'License :: Public Domain',
+```ansi
+␛[1mdiff --git a/setup.py b/setup.py␛[m
+␛[1mindex 3a69792..6b453ab 100644␛[m
+␛[1m--- a/setup.py␛[m
+␛[1m+++ b/setup.py␛[m
+␛[36m@@ -11,7 +11,7 @@ setup(␛[m
+     keywords='holiday,dates',
+     license='Public Domain',
+     url='https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e',
+␛[31m-    py_modules=['isholiday'],␛[m
+␛[32m+    packages=['isholiday'],␛[m
+     classifiers=[
+         'Intended Audience :: Developers',
+         'License :: Public Domain',
+```
 
 Případně, což je ještě lepší, můžeme použít `find_packages()`:
 
-    from setuptools import setup, find_packages
+```python
+from setuptools import setup, find_packages
 
-    setup(
-        ...
-        packages=find_packages(),
-        ...
-    )
+setup(
+    ...
+    packages=find_packages(),
+    ...
+)
+```
 
 Momentálně máme všechen kód přímo v `__init__.py`, což sice funguje,
 ale ideální to není. Dobré je mít kód v samostatných souborech a v `__init__.py`
 pouze importovat veřejné rozhraní, například takto:
 
-    from .holidays import getholidays, isholiday
+```python
+from .holidays import getholidays, isholiday
 
-    __all__ = ['getholidays', 'isholiday']
+__all__ = ['getholidays', 'isholiday']
 
+```
 
 Do `__init__.py` ideálně nepatří žádný kód kromě tohoto.
 
@@ -234,9 +258,11 @@ Soubor `__main__.py` není určený k tomu, aby se z něho importovalo, proto
 by měl obsahovat co nejméně kódu – ideálně jen volání funkce, která je
 definovaná jinde. Vytvořte proto `__main__.py` s následujícím obsahem:
 
-    from .holidays import main
+```python
+from .holidays import main
 
-    main()
+main()
+```
 
 a v `holidays.py` zaměňte `if __name__ == '__main__':` za `def main():`.
 
@@ -251,13 +277,15 @@ použít [entrypoints]:
 
 [entrypoints]: https://setuptools.readthedocs.io/en/latest/setuptools.html#dynamic-discovery-of-services-and-plugins
 
-    setup(
-        entry_points={
-            'console_scripts': [
-                'executable_name = isholiday.holidays:main',
-            ],
-        },
-    )
+```python
+setup(
+    entry_points={
+        'console_scripts': [
+            'executable_name = isholiday.holidays:main',
+        ],
+    },
+)
+```
 
 `isholiday.holidays:main` je cesta k funkci ve tvaru `modul:funkce`, funkce může
 být v modulu definovaná nebo importovaná.
@@ -278,17 +306,21 @@ Možná jste se setkali se souborem `requirements.txt`. Pomocí `setuptools` to
 jde ale lépe. Existuje několik úrovní závislostí, ve většině případů si
 vystačíte s argumentem `install_requires`:
 
-    setup(
-        install_requires=['Flask', 'click>=6'],
-    )
+```python
+setup(
+    install_requires=['Flask', 'click>=6'],
+)
+```
 
-Kromě závislostí v `setup.py` se u Pythoních projektů často setkáme se souborem
+Kromě závislostí v `setup.py` se u Pythonních projektů často setkáme se souborem
 `requirements.txt`, který obsahuje přesné verze všech závislosti, včetně
 tranzitivních – t.j. závisí-li náš balíček na `Flask`, a `Flask` na `Jinja2`,
 najdeme v `requirements.txt` mimojiné řádky:
 
-    Flask==0.11.1
-    Jinja2==2.8
+```
+Flask==0.11.1
+Jinja2==2.8
+```
 
 Tento soubor se používá, když je potřeba přesně replikovat prostředí, kde
 program běží, například mezi testovacím strojem a produkčním nasazením
@@ -311,20 +343,22 @@ Budete potřebovat [účet na PyPI](https://pypi.python.org/pypi?%3Aaction=regis
 [účet na testovací PyPI](https://testpypi.python.org/pypi?%3Aaction=register_form)
 a konfigurační soubor `~/.pypirc`:
 
-    [distutils]
-    index-servers=
-        pypi
-        pypitest
+```ini
+[distutils]
+index-servers=
+    pypi
+    pypitest
 
-    [pypi]
-    repository = https://pypi.python.org/pypi
-    username = <your user name goes here>
-    password = <your password goes here>
+[pypi]
+repository = https://pypi.python.org/pypi
+username = <your user name goes here>
+password = <your password goes here>
 
-    [pypitest]
-    repository = https://testpypi.python.org/pypi
-    username = <your user name goes here>
-    password = <your password goes here>
+[pypitest]
+repository = https://testpypi.python.org/pypi
+username = <your user name goes here>
+password = <your password goes here>
+```
 
 Hesla můžete vynechat, pokud je budete chtít pokaždé zadávat.
 
@@ -333,13 +367,15 @@ se souborem `.pypirc`.
 
 Registrace projektu a nahrání na testovací PyPI se provádí pomocí:
 
-    (env)$ twine register -r pypitest dist/<soubor>
-    Registering package to https://testpypi.python.org/pypi
-    Registering <soubor>
-    (env)$ twine upload -r pypitest dist/<soubor>
-    Uploading distributions to https://testpypi.python.org/pypi
-    Uploading <soubor>
-    [================================] 8379/8379 - 00:00:02
+```bash
+(env)$ twine register -r pypitest dist/<soubor>
+Registering package to https://testpypi.python.org/pypi
+Registering <soubor>
+(env)$ twine upload -r pypitest dist/<soubor>
+Uploading distributions to https://testpypi.python.org/pypi
+Uploading <soubor>
+[================================] 8379/8379 - 00:00:02
+```
 
 Registrace se zdaří jen pokud jméno projektu již není zabrané.
 Po úspěšném nahrání lze nahrát už jen novější verze modulu.
@@ -352,7 +388,9 @@ Instalace pomocí pip
 Projekt nahraný na PyPI by mělo jít nainstalovat pomocí pipu.
 V případě použití ostré verze PyPI stačí k instalaci zadat název balíčku:
 
-    (env)$ python -m pip install <název_balíčku>
+```bash
+(env)$ python -m pip install <název_balíčku>
+```
 
 Pokud však použijeme testovací PyPI, je nutné pipu říct, aby balíček hledal tam.
 [Postup](https://wiki.python.org/moin/TestPyPI) uvedený v dokumentaci není
@@ -362,7 +400,9 @@ tak i případné závislosti, které mohou být zastaralé, rozbité či jinak 
 Lepší by bylo, kdyby pip nainstaloval závislosti z ostré PyPI a na testovací
 hledal jen náš projekt. Toho se dá docílit přepínačem `--extra-index-url`.
 
-    (env)$ python -m pip install --extra-index-url https://testpypi.python.org/pypi <název_balíčku>
+```bash
+(env)$ python -m pip install --extra-index-url https://testpypi.python.org/pypi <název_balíčku>
+```
 
 V tomto případě pip nejdřív prohledá ostrou PyPI, a pokud nenajde požadovaný
 balíček, použije testovací PyPI. Zde je potřeba dávat pozor na název projektu,
@@ -373,7 +413,9 @@ stejným názvem, nainstaluje se ten z ostré verze.
 V případě, že tento problém nastane, je možné ho částečně obejít specifikací
 verze instalovaného balíčku:
 
-    (env)$ python -m pip install --extra-index-url https://testpypi.python.org/pypi <název_balíčku>==0.3
+```bash
+(env)$ python -m pip install --extra-index-url https://testpypi.python.org/pypi <název_balíčku>==0.3
+```
 
 Pokud u duplicitního projektu na ostré PyPI neexistuje požadovaná verze,
 nainstaluje se náš projekt z testovací PyPI.
@@ -381,7 +423,9 @@ nainstaluje se náš projekt z testovací PyPI.
 Jiná možnost je zadat přímo cestu k archivu s balíčkem místo jeho názvu.
 Zde pak na umístění balíčku ani verzi nezáleží:
 
-    (env)$ python -m pip install https://testpypi.python.org/packages/.../<název_balíčku>-0.3.tar.gz
+```bash
+(env)$ python -m pip install https://testpypi.python.org/packages/.../<název_balíčku>-0.3.tar.gz
+```
 
 Další
 -----
@@ -392,11 +436,14 @@ Další
 Úkol
 ----
 
-Vaším úkolem je udělat z vašeho dosavadního projektu balíček
+Vaším úkolem za 5 bodů je udělat z vašeho dosavadního projektu balíček
 instalovatelný přes pip a nahrát jej na testovací nebo opravdovou PyPI.
 
 Na opravdovou PyPI prosím nahrávejte pouze s rozumným názvem a pokud jde o dílo
 s nějakou open-source licencí.
+
+Pokud svůj kód za žádných okolností nechcete zveřejnit ani na testovací PyPI,
+dejte nám vědět a domluvíme se.
 
 Podmínky (je jich hodně, ale jsou triviální):
 
@@ -416,3 +463,8 @@ napište to do souboru vlastní podmínky. Nevymýšlejte si ale prosím vlastn�
 open-source licence.
 
 [choosealicense.com]: http://choosealicense.com/
+
+Odevzdáte tagem v0.3 v obvyklém repozitáři
+(ten můžete klidně přejmenovat podle modulu - na GitHubu v *Settings*).
+Odkaz na (testovací) PyPI můžete napsat někam do README, do release na GitHubu apod.
+V každém případě bychom ho měli mít možnost jednoduše najít.

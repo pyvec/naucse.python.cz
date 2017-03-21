@@ -60,17 +60,20 @@ První aplikace
 Napište si první aplikaci, ať vidíte jak kód v PyQt vypadá.
 Detaily toho, jak to funguje, si ukážeme později.
 
-    from PyQt5 import QtWidgets
+```python
+from PyQt5 import QtWidgets
 
-    app = QtWidgets.QApplication([])
+app = QtWidgets.QApplication([])
 
-    button = QtWidgets.QPushButton("Click to Exit")
-    button.setWindowTitle("Goodbye World")
-    button.clicked.connect(app.quit)
+button = QtWidgets.QPushButton("Click to Exit")
+button.setWindowTitle("Goodbye World")
+button.clicked.connect(app.quit)
 
-    button.show()
+button.show()
 
-    app.exec()
+app.exec()
+```
+
 
 O Qt, PyQt a PySide
 -------------------
@@ -115,9 +118,9 @@ Tady jsou některé zvláštnosti, na které se můžete připravit.
 Qt pojmenovává funkce, metody a atributy konvencí `camelCase`, místo pythonistického `snake_case`.
 PyQt tuto konvenci nemění: je užitečnější používat identická jména, a kromě toho knihovna PyQt vznikla ještě před PEP 8.
 
-Hledáte-li dokumentaci, doporučuji zadat do vyhledávače "qt5 &gt;hledaný objekt&lt;".
+Hledáte-li dokumentaci, doporučuji zadat do vyhledávače `qt5 <hledaný objekt>`.
 Dostanete se tak na dokumentaci pro C++ (např. [QObject](http://doc.qt.io/qt-5/qobject.html)).
-Hledáte-li "pyqt5 &gt;hledaný objekt&lt;", dostanete se k dokumentaci pro Python, která ale většinou jen odkazuje
+Hledáte-li `pyqt5 <hledaný objekt>`, dostanete se k dokumentaci pro Python, která ale většinou jen odkazuje
 na verzi pro C++ (např. [pro QObject](http://pyqt.sourceforge.net/Docs/PyQt5/api/qobject.html)).
 
 Rozdíly mezi C a pythonní verzí jsou většinou intuitivní (např. None místo NULL), ale jsou popsány
@@ -167,7 +170,9 @@ V PyQt takto musí být nadefinovány jen signály; za slot poslouží jakákoli
 V příkladu výše jsme připojili signál `clicked` tlačítka na slot `quit` aplikace.
 Stejně bychom mohli připojit jakoukoli funkci/metodu, která bere správný počet argumentů – v následujícím případě nula:
 
+```python
     button.clicked.connect(lambda: print('Exiting program'))
+```
 
 V C++ je časté přetěžování funkcí (včetně signálů), což Pythonistům občas ztěžuje život.
 PyQt většinou automaticky vybere variantu signálu podle připojené funkce, ale ne vždy je to možné.
@@ -176,25 +181,27 @@ Ukažme si to na následujícím kódu, který napojuje funkci `print` na dvě v
 Ten se vyšle při výběru položky ze seznamu buď jako `QComboBox.activated[int]`, kdy předává index vybrané položky,
 nebo jako `QComboBox.activated[str]`, kdy předává text položky:
 
-    from PyQt5 import QtWidgets
+```python
+from PyQt5 import QtWidgets
 
-    app = QtWidgets.QApplication([])
+app = QtWidgets.QApplication([])
 
-    # QComboBox - políčko pro výběr z několika možností
-    box = QtWidgets.QComboBox()
-    box.addItem('First Option')
-    box.addItem('Second Option')
+# QComboBox - políčko pro výběr z několika možností
+box = QtWidgets.QComboBox()
+box.addItem('First Option')
+box.addItem('Second Option')
 
-    # Základní varianta napojí na activated[int]
-    box.activated.connect(print)
+# Základní varianta napojí na activated[int]
+box.activated.connect(print)
 
-    # Výběr varianty signálu pomocí hranatých závorek
-    box.activated[str].connect(print)
-    box.activated[int].connect(print)
+# Výběr varianty signálu pomocí hranatých závorek
+box.activated[str].connect(print)
+box.activated[int].connect(print)
 
-    box.show()
+box.show()
 
-    app.exec()
+app.exec()
+```
 
 [QComboBox.activated]: http://doc.qt.io/qt-5/qcombobox.html#activated
 
@@ -213,36 +220,38 @@ do něj přidané.
 
 Ukažme to v kódu:
 
-    from PyQt5 import QtWidgets
+```python
+from PyQt5 import QtWidgets
 
-    app = QtWidgets.QApplication([])
+app = QtWidgets.QApplication([])
 
-    # Hlavní okno
-    main = QtWidgets.QWidget()
-    main.setWindowTitle('Hello Qt')
+# Hlavní okno
+main = QtWidgets.QWidget()
+main.setWindowTitle('Hello Qt')
 
-    # Layout pro hlavní okno
-    layout = QtWidgets.QHBoxLayout()
-    main.setLayout(layout)
+# Layout pro hlavní okno
+layout = QtWidgets.QHBoxLayout()
+main.setLayout(layout)
 
-    # Nápis
-    label = QtWidgets.QLabel('Click the button to change me')
-    # Přidáním do layoutu se nápis automaticky stane potomkem hlavního okna
-    layout.addWidget(label)
+# Nápis
+label = QtWidgets.QLabel('Click the button to change me')
+# Přidáním do layoutu se nápis automaticky stane potomkem hlavního okna
+layout.addWidget(label)
 
-    # Tlačítko
-    button = QtWidgets.QPushButton('Click me')
-    layout.addWidget(button)
+# Tlačítko
+button = QtWidgets.QPushButton('Click me')
+layout.addWidget(button)
 
-    # Funkcionalita
-    def change_label():
-        label.setText('Good job. +100 points.')
+# Funkcionalita
+def change_label():
+    label.setText('Good job. +100 points.')
 
-    button.clicked.connect(change_label)
+button.clicked.connect(change_label)
 
-    # Spuštění
-    main.show()
-    app.exec()
+# Spuštění
+main.show()
+app.exec()
+```
 
 Zabudovaných [layoutů][layout-gallery] i [widgetů][widget-gallery] existuje spousta, jednodušší
 programy stačí „poskládat“ z nich a napojit je na logiku.
@@ -297,21 +306,24 @@ základ pro vytváření UI v kódu (např. na vytvoření sady několika podobn
 
 Načíst `.ui` soubor z programu do předpřipraveného okna `QMainWindow` lze pomocí funkce [uic.loadUi]:
 
-    from PyQt5 import QtWidgets, uic
 
-    def main():
-        app = QtWidgets.QApplication([])
+```python
+from PyQt5 import QtWidgets, uic
 
-        window = QtWidgets.QMainWindow()
+def main():
+    app = QtWidgets.QApplication([])
 
-        with open('mainwindow.ui') as f:
-            uic.loadUi(f, window)
+    window = QtWidgets.QMainWindow()
 
-        window.show()
+    with open('mainwindow.ui') as f:
+        uic.loadUi(f, window)
 
-        return app.exec()
+    window.show()
 
-    main()
+    return app.exec()
+
+main()
+```
 
 [uic.loadUi]: http://pyqt.sourceforge.net/Docs/PyQt5/designer.html#the-uic-module
 
@@ -330,45 +342,49 @@ kdežto matice je uložená jako po políčkách `(řádek, sloupec)`.
 Abychom se v tom neztratili, je dobré hned ze začátku udělat funkce pro převod mezi souřadnými systémy,
 a důsledně rozlišovat `(x, y)` vs. `(row, column)`.
 
-    CELL_SIZE = 32
+```python
+CELL_SIZE = 32
 
 
-    def pixels_to_logical(x, y):
-        return y // CELL_SIZE, x // CELL_SIZE
+def pixels_to_logical(x, y):
+    return y // CELL_SIZE, x // CELL_SIZE
 
 
-    def logical_to_pixels(row, column):
-        return column * CELL_SIZE, row * CELL_SIZE
+def logical_to_pixels(row, column):
+    return column * CELL_SIZE, row * CELL_SIZE
 
 
-    class GridWidget(QtWidgets.QWidget):
-        def __init__(self, array):
-            super().__init__()  # musíme zavolat konstruktor předka
-            self.array = array
-            # nastavíme velikost podle velikosti matice, jinak je náš widget příliš malý
-            size = logical_to_pixels(*array.shape)
-            self.setMinimumSize(*size)
-            self.setMaximumSize(*size)
-            self.resize(*size)
+class GridWidget(QtWidgets.QWidget):
+    def __init__(self, array):
+        super().__init__()  # musíme zavolat konstruktor předka
+        self.array = array
+        # nastavíme velikost podle velikosti matice, jinak je náš widget příliš malý
+        size = logical_to_pixels(*array.shape)
+        self.setMinimumSize(*size)
+        self.setMaximumSize(*size)
+        self.resize(*size)
+```
 
 `GridWidget` vložíme do `QScrollArea`, kterou jsme si vytvořili v Qt Designeru:
 
-    import numpy
+```python
+import numpy
 
-        ...
+    ...
 
-        # bludiště zatím nadefinované rovnou v kódu
-        array = numpy.zeros((15, 20), dtype=numpy.int8)
-        array[:, 5] = -1  # nějaká zeď
+    # bludiště zatím nadefinované rovnou v kódu
+    array = numpy.zeros((15, 20), dtype=numpy.int8)
+    array[:, 5] = -1  # nějaká zeď
 
-        # získáme oblast s posuvníky z Qt Designeru
-        scroll_area = window.findChild(QtWidgets.QScrollArea, 'scrollArea')
+    # získáme oblast s posuvníky z Qt Designeru
+    scroll_area = window.findChild(QtWidgets.QScrollArea, 'scrollArea')
 
-        # dáme do ní náš grid
-        grid = GridWidget(array)
-        scroll_area.setWidget(grid)
+    # dáme do ní náš grid
+    grid = GridWidget(array)
+    scroll_area.setWidget(grid)
 
-        ...
+    ...
+```
 
 Po spuštění aplikace zatím nic nového neuvidíte, maximálně se trochu změní posuvníky.
 Potřebujeme ještě zařídit, aby se data z matice vykreslovala do gridu.
@@ -389,41 +405,45 @@ danou událost.
 V rámci reakce na událost `paintEvent` můžeme používat [QPainter], objekt, který generalizuje kreslení
 na různé „povrchy“ jako widgety, obrázky, nebo i instrukce pro tiskárnu.
 
-    from PyQt5 import QtWidgets, QtGui, QtCore, uic
+```python
+from PyQt5 import QtWidgets, QtGui, QtCore, uic
 
 
-    class GridWidget(QtWidgets.QWidget):
+class GridWidget(QtWidgets.QWidget):
 
-        ...
+    ...
 
-        def paintEvent(self, event):
-            rect = event.rect()  # získáme informace o překreslované oblasti
+    def paintEvent(self, event):
+        rect = event.rect()  # získáme informace o překreslované oblasti
 
-            # zjistíme, jakou oblast naší matice to představuje
-            # nesmíme se přitom dostat z matice ven
-            row_min, col_min = pixels_to_logical(rect.left(), rect.top())
-            row_min = max(row_min, 0)
-            col_min = max(col_min, 0)
-            row_max, col_max = pixels_to_logical(rect.right(), rect.bottom())
-            row_max = min(row_max + 1, self.array.shape[0])
-            col_max = min(col_max + 1, self.array.shape[1])
+        # zjistíme, jakou oblast naší matice to představuje
+        # nesmíme se přitom dostat z matice ven
+        row_min, col_min = pixels_to_logical(rect.left(), rect.top())
+        row_min = max(row_min, 0)
+        col_min = max(col_min, 0)
+        row_max, col_max = pixels_to_logical(rect.right(), rect.bottom())
+        row_max = min(row_max + 1, self.array.shape[0])
+        col_max = min(col_max + 1, self.array.shape[1])
 
-            painter = QtGui.QPainter(self)  # budeme kreslit
+        painter = QtGui.QPainter(self)  # budeme kreslit
 
-            for row in range(row_min, row_max):
-                for column in range(col_min, col_max):
-                    # získáme čtvereček, který budeme vybarvovat
-                    x, y = logical_to_pixels(row, column)
-                    rect = QtCore.QRectF(x, y, CELL_SIZE, CELL_SIZE)
+        for row in range(row_min, row_max):
+            for column in range(col_min, col_max):
+                # získáme čtvereček, který budeme vybarvovat
+                x, y = logical_to_pixels(row, column)
+                rect = QtCore.QRectF(x, y, CELL_SIZE, CELL_SIZE)
 
-                    # šedá pro zdi, zelená pro trávu
-                    if self.array[row, column] < 0:
-                        color = QtGui.QColor(115, 115, 115)
-                    else:
-                        color = QtGui.QColor(0, 255, 0)
+                # šedá pro zdi, zelená pro trávu
+                if self.array[row, column] < 0:
+                    color = QtGui.QColor(115, 115, 115)
+                else:
+                    color = QtGui.QColor(0, 255, 0)
 
-                    # vyplníme čtvereček barvou
-                    painter.fillRect(rect, QtGui.QBrush(color))
+                # vyplníme čtvereček barvou
+                painter.fillRect(rect, QtGui.QBrush(color))
+
+```
+
 
 [mouseEvent]: http://doc.qt.io/qt-5/qwidget.html#mousePressEvent
 [keyEvent]: http://doc.qt.io/qt-5/qwidget.html#keyPressEvent
@@ -436,7 +456,7 @@ Nyní by již bludiště mělo být v okně vidět barevně.
 
 Protože barvičky jsou příliš nudné, přidáme do bludiště obrázky.
 
-Veškerou ke cvičení i k úkolu potřebnou grafiku najdete na [GitHubu](https://github.com/cvut/MI-PYT/tree/master/tutorials/09-qt/pics).
+Veškerou ke cvičení i k úkolu potřebnou grafiku najdete na [GitHubu](https://github.com/pyvec/naucse.python.cz/tree/master/lessons/intro/pyqt/static/pics).
 Je k dispozici pod public domain (tj. „dělej si s tím, co chceš“), pochází ze studia [Kenney],
 a je (společně se další volně licencovanou grafikou) ke stažení z [OpenGameArt.org].
 
@@ -445,29 +465,33 @@ a je (společně se další volně licencovanou grafikou) ke stažení z [OpenGa
 
 Nejprve si načteme SVG soubory jako objekty `QSvgRenderer`:
 
-    from PyQt5 import QtWidgets, QtCore, QtGui, QtSvg, uic
+```python
+from PyQt5 import QtWidgets, QtCore, QtGui, QtSvg, uic
 
-    SVG_GRASS = QtSvg.QSvgRenderer('grass.svg')
-    SVG_WALL = QtSvg.QSvgRenderer('wall.svg')
+SVG_GRASS = QtSvg.QSvgRenderer('grass.svg')
+SVG_WALL = QtSvg.QSvgRenderer('wall.svg')
+```
 
 A poté je na správných místech vyrendrujeme:
 
-    ...
-    rect = QtCore.QRectF(x, y, CELL_SIZE, CELL_SIZE)
+```python
+                ...
+                rect = QtCore.QRectF(x, y, CELL_SIZE, CELL_SIZE)
 
-    # podkladová barva pod poloprůhledné obrázky
-    white = QtGui.QColor(255, 255, 255)
-    painter.fillRect(rect, QtGui.QBrush(white))
+                # podkladová barva pod poloprůhledné obrázky
+                white = QtGui.QColor(255, 255, 255)
+                painter.fillRect(rect, QtGui.QBrush(white))
 
-    # trávu dáme všude, protože i zdi stojí na trávě
-    SVG_GRASS.render(painter, rect)
+                # trávu dáme všude, protože i zdi stojí na trávě
+                SVG_GRASS.render(painter, rect)
 
-    # zdi dáme jen tam, kam patří
-    if self.array[row, column] < 0:
-        SVG_WALL.render(painter, rect)
+                # zdi dáme jen tam, kam patří
+                if self.array[row, column] < 0:
+                    SVG_WALL.render(painter, rect)
+```
 
-* [grass.svg](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/09-qt/pics/grass.svg)
-* [wall.svg](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/09-qt/pics/wall.svg)
+* [grass.svg]({{ static('pics/grass.svg') }})
+* [wall.svg]({{ static('pics/wall.svg') }})
 
 
 Model/View
@@ -504,16 +528,18 @@ My jsme si v Qt Designeru připravili `QListWidget` s názvem `palette`, který 
 jako paletu jednotlivých dílků, které budeme moci vkládat do bludiště.
 Položky se do tohoto modelu přidávají následovně:
 
-    def main():
-        ...
+```python
+def main():
+    ...
 
-        # získáme paletu vytvořenou v Qt Designeru
-        palette = window.findChild(QtWidgets.QListWidget, 'palette')
+    # získáme paletu vytvořenou v Qt Designeru
+    palette = window.findChild(QtWidgets.QListWidget, 'palette')
 
-        item = QtWidgets.QListWidgetItem('Grass')  # vytvoříme položku
-        icon = QtGui.QIcon('grass.svg')  # ikonu
-        item.setIcon(icon)  # přiřadíme ikonu položce
-        palette.addItem(item)  # přidáme položku do palety
+    item = QtWidgets.QListWidgetItem('Grass')  # vytvoříme položku
+    icon = QtGui.QIcon('grass.svg')  # ikonu
+    item.setIcon(icon)  # přiřadíme ikonu položce
+    palette.addItem(item)  # přidáme položku do palety
+```
 
 Stejným způsobem lze do palety přidat další položky: kromě trávy budeme na toto
 cvičení potřebovat i stěnu.
@@ -526,20 +552,23 @@ navázat volání funkce.
 (Pokud bychom měli pod kontrolou třídu widgetu, jako tomu je u třídy `Grid`,
 mohli bychom místo toho i předefinovat metodu `itemSelectionChanged()`.)
 
-    def main():
-        ...
+```python
+def main():
+    ...
 
-        def item_activated():
-            """Tato funkce se zavolá, když uživatel zvolí položku"""
+    def item_activated():
+        """Tato funkce se zavolá, když uživatel zvolí položku"""
 
-            # Položek může obecně být vybráno víc, ale v našem seznamu je to
-            # zakázáno (v Designeru selectionMode=SingleSelection).
-            # Projdeme "všechny vybrané položky", i když víme že bude max. jedna
-            for item in palette.selectedItems():
-                row_num = palette.indexFromItem(item).row()
-                print(row_num)
+        # Položek může obecně být vybráno víc, ale v našem seznamu je to
+        # zakázáno (v Designeru selectionMode=SingleSelection).
+        # Projdeme "všechny vybrané položky", i když víme že bude max. jedna
+        for item in palette.selectedItems():
+            row_num = palette.indexFromItem(item).row()
+            print(row_num)
 
-        palette.itemSelectionChanged.connect(item_activated)
+    palette.itemSelectionChanged.connect(item_activated)
+
+```
 
 Nyní, když uživatel zvolí položku, vypíše se do konzole její pořadí.
 Nás by ale spíš zajímalo, jak bude tato položka reprezentována v matici s bludištěm.
@@ -551,25 +580,30 @@ Pro případ, že budeme potřebovat rolí víc, je dobré si je vhodně pojmeno
 
 [roles]: http://doc.qt.io/qt-5/qt.html#ItemDataRole-enum
 
-    VALUE_ROLE = QtCore.Qt.UserRole
+```python
 
-    def main():
-        ...
-        self.palette.addItem(item)  # přidáme položku do palety
-        item.setData(VALUE_ROLE, -1)  # přiřadíme jí data
-        ...
+VALUE_ROLE = QtCore.Qt.UserRole
 
-        def item_activated():
-            for item in palette.selectedItems():
-                print(item.data(VALUE_ROLE))  # čteme data stejné role z položky
+def main():
+    ...
+    self.palette.addItem(item)  # přidáme položku do palety
+    item.setData(VALUE_ROLE, -1)  # přiřadíme jí data
+    ...
+
+    def item_activated():
+        for item in palette.selectedItems():
+            print(item.data(VALUE_ROLE))  # čteme data stejné role z položky
+```
 
 Nyní byste měli mít v paletě trávu a stěnu s patřičnými čísly (`0` a `-1`), které se vypisují do konzole při zvolení položky.
 
 Nakonec si číslo místo vypisování uložíme do gridu, abychom ho mohli později použít.
 
+```python
     def item_activated():
         for item in palette.selectedItems():
             grid.selected = item.data(QtCore.Qt.UserRole)
+```
 
 Klikání do gridu
 ----------------
@@ -577,20 +611,22 @@ Klikání do gridu
 Nyní nezbývá nic jiného, než pomocí klikání nanášet zvolené dílky do bludiště.
 K tomu opět použijeme událost, tentokrát událost kliknutí, tedy `mousePressEvent`.
 
-    class GridWidget(QtWidgets.QWidget):
-        ...
+```python
+class GridWidget(QtWidgets.QWidget):
+    ...
 
-        def mousePressEvent(self, event):
-            # převedeme klik na souřadnice matice
-            row, column = pixels_to_logical(event.x(), event.y())
+    def mousePressEvent(self, event):
+        # převedeme klik na souřadnice matice
+        row, column = pixels_to_logical(event.x(), event.y())
 
-            # Pokud jsme v matici, aktualizujeme data
-            if 0 <= row < self.array.shape[0] and 0 <= column < self.array.shape[1]:
-                self.array[row, column] = self.selected
+        # Pokud jsme v matici, aktualizujeme data
+        if 0 <= row < self.array.shape[0] and 0 <= column < self.array.shape[1]:
+            self.array[row, column] = self.selected
 
-                # tímto zajistíme překreslení widgetu v místě změny:
-                # (pro Python 3.4 a nižší volejte jen self.update() bez argumentů)
-                self.update(*logical_to_pixels(row, column), CELL_SIZE, CELL_SIZE)
+            # tímto zajistíme překreslení widgetu v místě změny:
+            # (pro Python 3.4 a nižší volejte jen self.update() bez argumentů)
+            self.update(*logical_to_pixels(row, column), CELL_SIZE, CELL_SIZE)
+```
 
 Poznámka: Zde víme, že kliknutí může změnit vykreslené bludiště pouze v místě kliknutí.
 V úkolu ale bude možné, že kliknutí někam změní vykreslení bludiště někde jinde,
@@ -598,8 +634,10 @@ proto bude lepší zavolat `self.update()` bez argumentů, a říct tak systému
 
 Protože po spuštění aplikace není zvolena žádná položka a `self.selected` není definován, je rozumné prostě nějakou položku zvolit:
 
-    # Za přidáním položek do palety a napojení signálu
-    palette.setCurrentRow(1)
+```python
+# Za přidáním položek do palety a napojení signálu
+palette.setCurrentRow(1)
+```
 
 ### Více tlačítek myši
 
@@ -607,16 +645,20 @@ Můžete si vyzkoušet, že bludiště se mění při použití jakéhokoliv tla
 Je to proto, že `mousePressEvent` se stane, kdykoli na widgetu stiskneme libovolné tlačítko.
 Pokud bychom chtěli řešit pouze levé (primární) tlačítko, můžeme zjistit, které tlačítko událost vyvolalo:
 
-    if event.button() == QtCore.Qt.LeftButton:
-        self.array[row, column] = self.selected
-    else:
-        return
-    self.update(*logical_to_pixels(row, column), CELL_SIZE, CELL_SIZE)
+```python
+            if event.button() == QtCore.Qt.LeftButton:
+                self.array[row, column] = self.selected
+            else:
+                return
+            self.update(*logical_to_pixels(row, column), CELL_SIZE, CELL_SIZE)
+```
 
 Na pravé tlačítko myši můžeme namapovat funkci mazání:
 
-    elif event.button() == QtCore.Qt.RightButton:
-        self.array[row, column] = 0
+```python
+            elif event.button() == QtCore.Qt.RightButton:
+                self.array[row, column] = 0
+```
 
 ### Tažení myši
 
@@ -656,52 +698,54 @@ Layout okna nejprve naklikáme v Qt Designeru:
 
 Poté připravíme funkci pro zobrazení dialogu a pro jeho vyhodnocení:
 
-    def new_dialog(window, grid):
-        # Vytvoříme nový dialog.
-        # V dokumentaci mají dialogy jako argument `this`;
-        # jde o "nadřazené" okno
-        dialog = QtWidgets.QDialog(window)
+```python
+def new_dialog(window, grid):
+    # Vytvoříme nový dialog.
+    # V dokumentaci mají dialogy jako argument `this`;
+    # jde o "nadřazené" okno
+    dialog = QtWidgets.QDialog(window)
 
-        # Načteme layout z Qt Designeru
-        with open('newmaze.ui') as f:
-            uic.loadUi(f, dialog)
+    # Načteme layout z Qt Designeru
+    with open('newmaze.ui') as f:
+        uic.loadUi(f, dialog)
 
-        # Zobrazíme dialog.
-        # Funkce exec zajistí modalitu (tj.  tzn. nejde ovládat zbytek aplikace,
-        # dokud je dialog zobrazen), a vrátí se až potom, co uživatel dialog zavře.
-        result = dialog.exec()
+    # Zobrazíme dialog.
+    # Funkce exec zajistí modalitu (tj.  tzn. nejde ovládat zbytek aplikace,
+    # dokud je dialog zobrazen), a vrátí se až potom, co uživatel dialog zavře.
+    result = dialog.exec()
 
-        # Výsledná hodnota odpovídá tlačítku/způsobu, kterým uživatel dialog zavřel.
-        if result == QtWidgets.QDialog.Rejected:
-            # Dialog uživatel zavřel nebo klikl na Cancel
-            return
+    # Výsledná hodnota odpovídá tlačítku/způsobu, kterým uživatel dialog zavřel.
+    if result == QtWidgets.QDialog.Rejected:
+        # Dialog uživatel zavřel nebo klikl na Cancel
+        return
 
-        # Načtení hodnot ze SpinBoxů
-        cols = dialog.findChild(QtWidgets.QSpinBox, 'widthBox').value()
-        rows = dialog.findChild(QtWidgets.QSpinBox, 'heightBox').value()
+    # Načtení hodnot ze SpinBoxů
+    cols = dialog.findChild(QtWidgets.QSpinBox, 'widthBox').value()
+    rows = dialog.findChild(QtWidgets.QSpinBox, 'heightBox').value()
 
-        # Vytvoření nového bludiště
-        grid.array = numpy.zeros((rows, cols), dtype=numpy.int8)
+    # Vytvoření nového bludiště
+    grid.array = numpy.zeros((rows, cols), dtype=numpy.int8)
 
-        # Bludiště může být jinak velké, tak musíme změnit velikost Gridu;
-        # (tento kód používáme i jinde, měli bychom si na to udělat funkci!)
-        size = logical_to_pixels(rows, cols)
-        grid.setMinimumSize(*size)
-        grid.setMaximumSize(*size)
-        grid.resize(*size)
+    # Bludiště může být jinak velké, tak musíme změnit velikost Gridu;
+    # (tento kód používáme i jinde, měli bychom si na to udělat funkci!)
+    size = logical_to_pixels(rows, cols)
+    grid.setMinimumSize(*size)
+    grid.setMaximumSize(*size)
+    grid.resize(*size)
 
-        # Překreslení celého Gridu
-        grid.update()
-
-
-    def main():
-        ...
+    # Překreslení celého Gridu
+    grid.update()
 
 
-         # Napojení signálu actionNew.triggered
+def main():
+    ...
 
-        action = window.findChild(QtWidgets.QAction, 'actionNew')
-        action.triggered.connect(lambda: new_dialog(window, grid))
+
+     # Napojení signálu actionNew.triggered
+
+    action = window.findChild(QtWidgets.QAction, 'actionNew')
+    action.triggered.connect(lambda: new_dialog(window, grid))
+```
 
 Další dialogy, které budeme potřebovat, jsou tak rozšířené (a mezi jednotlivými platformami tak různé),
 že je Qt má předpřipravené.
@@ -733,7 +777,7 @@ Doporučujeme udělat přípravu v `__init__`, a volání `window.show()` a `ret
 Úkol
 ====
 
-Vaším úkolem je vytvořit pomocí PyQt5 grafické uživatelské rozhraní,
+Vaším úkolem za 5 bodů je vytvořit pomocí PyQt5 grafické uživatelské rozhraní,
 které umožní vizualizovat a editovat bludiště.
 Můžete samozřejmě vyjít z práce na cvičení, ale zbývá toho poměrně dost dodělat.
 Rozhraní umožní:
@@ -776,8 +820,10 @@ Formát souboru s bludištěm
 
 Ukládejte a načítejte bludiště takto, umožní nám to jednodušší kontrolu:
 
-    numpy.savetxt(path, array)
-    array = numpy.loadtxt(path, dtype=numpy.int8)
+```python
+numpy.savetxt(path, array)
+array = numpy.loadtxt(path, dtype=numpy.int8)
+```
 
 Zobrazování cesty
 -----------------
@@ -794,9 +840,12 @@ Zobrazování cesty
     * matici šipek máte opět z úloh z minula, stačí je zobrazit pouze tam, kde jsou čáry
 * od některých postav logicky cesta k cíli nemusí existovat, od nich tedy žádnou nevykreslujte (aplikace s takovou situací musí počítat a nesmí spadnout)
 
-![Obrázek bludiště](https://raw.githubusercontent.com/cvut/MI-PYT/master/tutorials/09-qt/mazepic.png)
+![Obrázek bludiště]({{ static('mazepic.png') }})
 
-Pokud teprve začínáte, můžete použít naše [řešení] minulé úlohy (pozor na licenci\*).
+Odevzdání
+---------
+
+Jako obvykle. Tag `v0.3`, termín příští středu v 11:00. Pokud teprve začínáte, můžete použít naše [řešení] minulé úlohy (pozor na licenci\*), a nezapomeňte nás pozvat do repozitáře `maze`.
 
 [řešení]: https://github.com/encukou/maze
 
@@ -806,9 +855,11 @@ Uvítáme, pokud přidáte další testy k nově implementované logice, ale nen
 
 Aplikace musí jít spustit ve virtualenvu (na systému, pro který jsou PyQt5 wheels na PyPI, a na kterém je nainstalovaný překladač C a hlavičkové soubory Pythonu) takto:
 
-    python -m pip install -r requirements.txt
-    python setup.py develop
-    python -m maze
+```
+python -m pip install -r requirements.txt
+python setup.py develop
+python -m maze
+```
 
 Doporučujeme si sekvenci těchto příkazů vyzkoušet v novém virtualenvu, ať nedochází ke zbytečným chybám.
 
