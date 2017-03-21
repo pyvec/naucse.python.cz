@@ -66,6 +66,8 @@ def hello():
     return 'Hello, World'
 ```
 
+Na adrese `http://127.0.0.1:5000/hello` pak uvidíte druhou stránku.
+
 Pomocí `app.run()` jsme aplikaci spustili na lokálním počítači.
 V případě reálného nasazení pak aplikaci předáme nějakému webovému serveru.
 Argument `debug` slouží k zjednodušení debugování
@@ -101,9 +103,10 @@ Můžete použít různá pravidla, např.:
 
 ### Získání URL
 
-Opačným způsobem jak k routám přistupovat, je když potřebujete získat URL
+Opačným způsobem jak k routám přistupovat je, když potřebujete získat URL
 nějaké stránky, například protože potřebujete zobrazit odkaz.
-K tomu se používá funkce `url_for()`:
+K tomu se používá funkce `url_for()`, která jako první parametr bere jméno
+routy (neboli jméno funkce, která routu obsluhuje):
 
 ```python
 from flask import url_for
@@ -122,8 +125,9 @@ manager:
 /user/hroncok
 ```
 
-Možná si říkáte, proč tu cestu prostě nevytvořit ručně, ale mohli byste narazit
-na problém, pokud cestu později změníte.
+Možná si říkáte, proč tu URL prostě nevytvořit ručně, ale mohli byste narazit
+na problém, pokud cestu později změníte – což se může stát např. i když web
+nasadíte na jiný server.
 
 ### Šablony
 
@@ -153,22 +157,33 @@ Pak je třeba vedle souboru vytvořit složku `templates` a v ní `hello.html`:
 {% raw %}
 ```html+jinja
 <!doctype html>
-<title>Hello from Flask</title>
-{% if name %}
-  <h1>Hello {{ name }}!</h1>
-{% else %}
-  <h1>Hello, World!</h1>
-{% endif %}
+<html>
+    <head>
+        <title>Hello from Flask</title>
+    </head>
+    <body>
+        {% if name %}
+        <h1>Hello {{ name }}!</h1>
+        <a href=" {{ url_for('hello') }} ">Go back home</a>
+        {% else %}
+        <h1>Hello, World!</h1>
+        {% endif %}
+    </body>
+</html>
 ```
 {% endraw %}
 
-Šablony používají v Pythonu velmi oblíbený [Jinja2].
-(Základní použití najdete na odkaze.)
+{% raw %}
+Šablony používají v Pythonu velmi oblíbený šablonovací jazyk [Jinja2].
+Kompletní popis jazyke najdete v [dokumentaci][Jinja2], ale
+pro většinu stránek se obejdete s `{% if %}` a `{{ promenna }}` jako výše,
+případně s `{% for %}/{% endfor %}`.
+{% endraw %}
 
 Veškerý kontext do šablony musí přijít z volání `render_template()`,
 navíc můžete automaticky použít např, `url_for()`.
 
-[Jinja2]: http://jinja.pocoo.org/docs/dev/templates/
+[Jinja2]: http://jinja.pocoo.org/latest/templates/
 
 Pro debugování je vhodné nastavit automatické načítání změn šablon:
 
@@ -180,28 +195,39 @@ if __name__ == "__main__":
 
 #### Filtry
 
-Není úplně elegantní vzít nějaká data (např. tweety z Twitter API) a před
+Není úplně elegantní vzít nějaká data (např. tweety z Twitter API) a ještě před
 předáním šabloně do nich cpát svoje úpravy (např. HTML).
-Od toho jsou tu filtry. Filtr je funkce na transformaci řetězce, kterou lze
-použít v šabloně.
+Od toho jsou tu filtry. Filtr transformuje hodnotu na řetězec,
+který pak ukážeme uživateli.
 
-Zde je například filtr, který načte čas v určitém formátu a převede do jiného:
+Zde je například filtr `time`, který načte čas v určitém formátu
+a převede do jiného:
 
 ```python
+from datetime import datetime
+
 @app.template_filter('time')
 def convert_time(text):
     """Convert the time format to a different one"""
     dt = datetime.strptime(text, '%a %b %d %H:%M:%S %z %Y')
     return dt.strftime('%c')
+
+@app.route('/date_example')
+def date_example():
+    return render_template(
+        'date_example.html',
+        created_at='Tue Mar 21 15:50:59 +0000 2017',
+    )
 ```
 
-V šabloně:
+V šabloně `date_example.html`:
 
 {% raw %}
 ```html+jinja
-{{ tweet.created_at|time }}
+{{ created_at|time }}
 ```
 {% endraw %}
+
 
 #### Escaping
 
@@ -260,8 +286,13 @@ V šabloně pak například:
 ```
 {% endraw %}
 
-Další věci, které možná budete potřebovat, jako například zpracování formulářů,
-najdete [v dokumentaci](http://flask.pocoo.org/docs/0.11/quickstart/).
+### A další
+
+Flask umí i další věci – například zpracování formulářů, chybové stránky nebo
+přesměrování.
+
+Všechno to najdete
+[v dokumentaci](http://flask.pocoo.org/docs/0.11/quickstart/).
 
 Deployment
 ----------
@@ -279,8 +310,10 @@ Beginner Account.
 Po přihlášení se ukáže záložka "Consoles", kde vytvoříme "Bash" konzoli.
 V té vytvořte a aktivujte virtuální prostředí, a nainstalujte Flask (plus
 případně další závislosti).
-(Příkaz vypadá kvůli balíčkovací politice Debianu
-trochu jinak než na našich počítačích.)
+
+PythonAnywhere je postavený na Ubuntu, takže příkaz na vytvoření prostředí
+vypadá jinak než na vašich počítačích.
+Napište příkazy takto (bez úvodního `$`):
 
 ```console
 $ virtualenv --python=python3.5 env
@@ -314,7 +347,11 @@ V nastavení zvolte Manual Configuration a Python 3.5.
 
 V konfiguraci vzniklé webové aplikace je potřeba nastavit "Virtualenv"
 na cestu k virtuálnímu prostředí (`/home/<jméno>/env`),
-a obsah "WSGI Configuration File" přepsat na:
+a obsah "WSGI Configuration File" přepsat.
+To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor),
+nebo zpět v bashové konzoli pomocí editoru jako `vi` nebo `nano`.
+
+Nový obsah souboru by měl být:
 
 ```python
 import sys
@@ -326,10 +363,7 @@ from <jméno-souboru> import app as application
 ```
 
 (Za `<uživatelské-jméno>`, `<jméno-adresáře>` a `<jméno-souboru>` je samozřejmě potřeba doplnit
-vaše údaje. Jméno souboru je zde bez přípony.)
-
-To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor),
-nebo zpět v bashové konzoli pomocí editoru jako `vi` nebo `nano`.
+vaše údaje. Jméno souboru je zde bez přípony `py`.)
 
 Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce Web,
 a na adrese `<uživatelské-jméno>.pythonanywhere.com` si ji můžete
@@ -353,7 +387,7 @@ Twitter vyžaduje před vydáním API klíčů zadání a potvrzení telefonníh
 ### Aktualizace
 
 Když nahrajeme nový kód na Github, je vždy potřeba provést na PythonAnywhere
-`git pull` a aplikaci restartovat.
+v konzoli `git pull` a pak v záložce Web aplikaci restartovat.
 
 
 Úkol
