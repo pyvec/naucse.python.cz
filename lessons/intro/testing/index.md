@@ -13,7 +13,7 @@ pytest
 
 Rovnou se podíváme na velmi oblíbený balíček [pytest], který oproti standardnímu
 unittestu přináší mnoho výhod. Začneme jednoduchou ukázkou z modulu `isholiday`
-z [předchozího cvičení](03_moduly.md).
+z [předchozího cvičení]({{ lesson_url('intro/distribution') }}).
 
 ```python
 import isholiday

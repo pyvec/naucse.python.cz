@@ -208,7 +208,7 @@ To se dělá přes [nastavení] na GitHubu.
 Hvězdičku přidáte takto:
 
 ```python
->>> r = session.put('https://api.github.com/user/starred/cvut/MI-PYT')
+>>> r = session.put('https://api.github.com/user/starred/pyvec/naucse.python.cz')
 >>> r.text
 ''
 ```
@@ -298,7 +298,7 @@ Takto jednoduše se dá vytvořit command line aplikace s přepínači.
 Vaším úkolem za 5 bodů je vytvořit command line aplikaci nad vybraným webovým
 API, pomocí knihoven [requests] a [click].
 Hotovou aplikaci odevzdáte jako gitový repozitář na GitHubu, případně fakultním
-GitLabu. V obou případech nám nezapomeňte [dát přístup](00_uvod.md).
+GitLabu. V obou případech nám nezapomeňte dát přístup.
 
 Nebráníme se veřejným repozitářům, ale neradi bychom viděli, že jednu úlohu
 odevzdá úplně stejně několik různých lidí, pokud chcete, udělejte repozitář

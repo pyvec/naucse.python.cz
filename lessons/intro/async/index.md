@@ -5,7 +5,7 @@ Na část toto cvičení bude opět potřeba PyQt5.
 Můžete použít virtualenv z minula, nebo PyQt5 nainstalovat znovu (viz [minulá lekce]).
 (Nejde-li to, nevadí – úplně nezbytné dnes PyQt nebude.)
 
-[minulá lekce]: 09_pyqt.md
+[minulá lekce]: {{ lesson_url('intro/pyqt') }}
 
 Další knihovny pro dnešní den:
 
@@ -1114,7 +1114,7 @@ Do vizualizátoru bludiště doplňte funkcionalitu hry. V režimu hry:
 
 Máte k dispozici základní třídu `Actor`, která reprezentuje aktora (postavu v bludišti):
 
- * [class Actor](https://github.com/cvut/MI-PYT/blob/master/tutorials/10-async/actor.py)
+ * [class Actor]({{ static('actor.py') }})
 
 Tato třída definuje rozhraní jednotlivých postav a zároveň implementuje základní chování postavy - jde nejkratší cestou k cíli rychlostí jedno políčko za sekundu.
 Aby to mohlo fungovat, musí kód, který postavu používá:
