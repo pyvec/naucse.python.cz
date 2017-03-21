@@ -22,13 +22,14 @@ Flask
 Flask opět můžete nainstalovat do virtualenvu, nejlépe použít projekt
 z minulého cvičení:
 
-```bash
+```console
 $ cd project
 $ . env/bin/activate 
 (env)$ python -m pip install Flask
 ```
 
-Základní použití Flasku je poměrně primitivní:
+Základní použití Flasku je poměrně primitivní.
+Do souboru `hello.py` napište:
 
 ```python
 from flask import Flask
@@ -38,12 +39,15 @@ app = Flask(__name__)
 def hello():
     return 'MI-PYT je nejlepší předmět na FITu!'
 
-if __name__ == '__main__':
-    app.run(debug=True)
 ```
 
-```bash
-(env)$ python hello.py
+Pak aplikaci spusťte pomocí následujících příkazů.
+(Na Windows použijte místo `export` příkaz `set`.)
+
+```console
+(env)$ export FLASK_APP=hello.py
+(env)$ export FLASK_DEBUG=1
+(env)$ flask run
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
  * Restarting with stat
  * Debugger is active!
@@ -51,9 +55,25 @@ if __name__ == '__main__':
 ```
 Na zmíněné adrese byste měli v prohlížeči vidět použitý text.
 
-V příkladu jsme vytvořili flaskovou aplikaci (`app`), pomocí dekorátoru
-`@app.route` jsme vytvořili takzvanou routu (cestu). Říkáme tím, že na adrese
-`/` bude k dispozici obsah, který vrátí definovaná funkce.
+Proměnná prostředí `FLASK_APP` říká Flasku, kde aplikaci najít.
+V daném souboru Flask hledá automaticky proměnnou jménem `app`.
+([Jde nastavit](http://flask.pocoo.org/docs/0.12/cli/) i jiná.)
+
+Proměnná `FLASK_DEBUG` říká, že se aplikace má spustit v ladícím režimu:
+je zapnutý příjemnější výpis chyb, a aplikace se automaticky restartuje
+po změnách.
+Tento mód je užitečný, ale nebezpečný – návštěvníkům stránky může umožňit
+spustit jakýkoli Pythonní kód.
+Navíc aplikaci zpomaluje.
+Používejte ho proto pouze na svém počítači.
+
+V příkladu jsme vytvořili flaskovou aplikaci (`app`).
+Argument `__name__` je jméno modulu – Flask podle něj hledá soubory,
+které k aplikaci patří (viz `static` a `templates` níže).
+
+Pomocí dekorátoru `@app.route` jsme vytvořili takzvanou routu (cestu).
+Říkáme tím, že na adrese `/` bude k dispozici obsah, který vrátí
+definovaná funkce.
 Více různých cest lze vytvořit jednoduše přidáním další funkce.
 
 ```python
@@ -66,12 +86,7 @@ def hello():
     return 'Hello, World'
 ```
 
-Pomocí `app.run()` jsme aplikaci spustili na lokálním počítači.
-V případě reálného nasazení pak aplikaci předáme nějakému webovému serveru.
-Argument `debug` slouží k zjednodušení debugování
-(např. případné výjimky uvidíte přímo v prohlížeči),
-pro reálné nasazení by však tento režim neměl být zapnut, kvůli bezpečnosti a
-dopadům na výkon.
+Na adrese `http://127.0.0.1:5000/hello` pak uvidíte druhou stránku.
 
 ### Dynamické routy
 
@@ -101,9 +116,10 @@ Můžete použít různá pravidla, např.:
 
 ### Získání URL
 
-Opačným způsobem jak k routám přistupovat, je když potřebujete získat URL
+Opačným způsobem jak k routám přistupovat je, když potřebujete získat URL
 nějaké stránky, například protože potřebujete zobrazit odkaz.
-K tomu se používá funkce `url_for()`:
+K tomu se používá funkce `url_for()`, která jako první parametr bere jméno
+routy (neboli jméno funkce, která routu obsluhuje):
 
 ```python
 from flask import url_for
@@ -115,15 +131,16 @@ Tuto funkci jde použít jen uvnitř funkce obsluhující cestu, pokud ji chcete
 vyzkoušet například v interaktivní konzoli, můžete použít speciální kontext
 manager:
 
-```python
+```pycon
 >>> with app.test_request_context():
 ...     print(url_for('profile', username='hroncok'))
 ... 
 /user/hroncok
 ```
 
-Možná si říkáte, proč tu cestu prostě nevytvořit ručně, ale mohli byste narazit
-na problém, pokud cestu později změníte.
+Možná si říkáte, proč tu URL prostě nevytvořit ručně, ale mohli byste narazit
+na problém, pokud cestu později změníte – což se může stát např. i když web
+nasadíte na jiný server.
 
 ### Šablony
 
@@ -150,54 +167,79 @@ def hello(name=None):
 
 Pak je třeba vedle souboru vytvořit složku `templates` a v ní `hello.html`:
 
-```html
+{% raw %}
+```html+jinja
 <!doctype html>
-<title>Hello from Flask</title>
-{% if name %}
-  <h1>Hello {{ name }}!</h1>
-{% else %}
-  <h1>Hello, World!</h1>
-{% endif %}
+<html>
+    <head>
+        <title>Hello from Flask</title>
+    </head>
+    <body>
+        {% if name %}
+        <h1>Hello {{ name }}!</h1>
+        <a href=" {{ url_for('hello') }} ">Go back home</a>
+        {% else %}
+        <h1>Hello, World!</h1>
+        {% endif %}
+    </body>
+</html>
 ```
+{% endraw %}
 
-Šablony používají v Pythonu velmi oblíbený [Jinja2].
-(Základní použití najdete na odkaze.)
+{% raw %}
+Šablony používají v Pythonu velmi oblíbený šablonovací jazyk [Jinja2].
+Kompletní popis jazyka najdete v [dokumentaci][Jinja2], ale
+pro většinu stránek se obejdete s `{% if %}` a `{{ promenna }}` jako výše,
+případně s `{% for %}/{% endfor %}`.
+{% endraw %}
 
-Veškerý kontext do šablony musí přijít z volání `render_template()`,
-navíc můžete automaticky použít např, `url_for()`.
+Veškerý kontext (proměnné) do šablony musí přijít z volání `render_template()`,
+navíc můžete automaticky použít např. funkci `url_for()`.
 
-[Jinja2]: http://jinja.pocoo.org/docs/dev/templates/
+[Jinja2]: http://jinja.pocoo.org/latest/templates/
 
 Pro debugování je vhodné nastavit automatické načítání změn šablon:
 
 ```python
-if __name__ == "__main__":
+if app.config.get('DEBUG'):
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(debug=True)
 ```
 
 #### Filtry
 
-Není úplně elegantní vzít nějaká data (např. tweety z Twitter API) a před
+Není úplně elegantní vzít nějaká data (např. tweety z Twitter API) a ještě před
 předáním šabloně do nich cpát svoje úpravy (např. HTML).
-Od toho jsou tu filtry. Filtr je funkce na transformaci řetězce, kterou lze
-použít v šabloně.
+Od toho jsou tu filtry. Filtr transformuje hodnotu na řetězec,
+který pak ukážeme uživateli.
 
-Zde je například filtr, který načte čas v určitém formátu a převede do jiného:
+Zde je například filtr `time`, který načte čas v určitém formátu
+a převede ho do jiného:
 
 ```python
+from datetime import datetime
+
 @app.template_filter('time')
 def convert_time(text):
     """Convert the time format to a different one"""
     dt = datetime.strptime(text, '%a %b %d %H:%M:%S %z %Y')
     return dt.strftime('%c')
+
+@app.route('/date_example')
+def date_example():
+    return render_template(
+        'date_example.html',
+        created_at='Tue Mar 21 15:50:59 +0000 2017',
+    )
 ```
 
-V šabloně:
+V šabloně `date_example.html`:
 
-```html
-{{ tweet.created_at|time }}
+{% raw %}
+```html+jinja
+{{ created_at|time }}
 ```
+{% endraw %}
+
 
 #### Escaping
 
@@ -219,9 +261,11 @@ bude výsledné HTML vypadat takto:
 Někdy je ovšem potřeba do stránky opravdu vložit HTML.
 To se dá zajistit dvěma způsoby. Nejjednodušší je vestavěný filtr `safe`:
 
-```
+{% raw %}
+```html+jinja
 {{ "<em>Text</em>" | safe }}
 ```
+{% endraw %}
 
 Z Pythonu pak lze použít [jinja2.Markup](http://jinja.pocoo.org/docs/dev/api/#jinja2.Markup),
 čímž se daný text označí jako „bezpečný”.
@@ -248,12 +292,19 @@ url_for('static', filename='style.css')
 
 V šabloně pak například:
 
-```html
+{% raw %}
+```html+jinja
 <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 ```
+{% endraw %}
 
-Další věci, které možná budete potřebovat, jako například zpracování formulářů,
-najdete [v dokumentaci](http://flask.pocoo.org/docs/0.11/quickstart/).
+### A další
+
+Flask umí i další věci – například zpracování formulářů, chybové stránky nebo
+přesměrování.
+
+Všechno to najdete
+[v dokumentaci](http://flask.pocoo.org/docs/0.11/quickstart/).
 
 Deployment
 ----------
@@ -268,16 +319,19 @@ Nejprve proto uložte celý projekt do Gitu a nahrajte na Github.
 Potom se zaregistrujte na
 [www.pythonanywhere.com](https://www.pythonanywhere.com/) a vyberte
 Beginner Account.
-Po přihlášení se ukáže záložka "Consoles", kde vytvoříme "Bash" konzoli.
+Po přihlášení se ukáže záložka *Consoles*, kde vytvoříme "Bash" konzoli.
 V té vytvořte a aktivujte virtuální prostředí, a nainstalujte Flask (plus
 případně další závislosti).
-(Příkaz vypadá kvůli balíčkovací politice Debianu
-trochu jinak než na našich počítačích.)
 
-```bash
-virtualenv --python=python3.5 env
-. env/bin/activate
-python -m pip install flask
+PythonAnywhere používá specificky nastavený Linux,
+tak je ve webové konzoli potřeba použít jiný příkaz
+na vytvoření virtuální prostředí, než jste z toho kurzu zvyklí.
+Napište příkazy takto (bez úvodního `$`):
+
+```console
+$ virtualenv --python=python3.5 env
+$ . env/bin/activate
+$ python -m pip install flask
 ```
 
 Následně naklonujte na PythonAnywhere náš kód.
@@ -285,28 +339,32 @@ S veřejným repozitářem je to jednodušší – stačí ho naklonovat „anon
 (`git clone https://github.com/<github-username>/<github-repo>`).
 Pokud ale používáme privátní repozitář, bude potřeba si vygenerovat SSH klíč:
 
-```bash
-ssh-keygen  # (zeptá se na hesla ke klíči)
-cat ~/.ssh/id_rsa.pub
+```console
+$ ssh-keygen  # (zeptá se na hesla ke klíči)
+$ cat ~/.ssh/id_rsa.pub
 ```
 
 Obsah souboru `~/.ssh/id_rsa.pub` je pak potřeba přidat na Github v osobním
 nastavení v sekci "SSH and GPG Keys".
 Pak můžeme klonovat přes SSH:
 
-```bash
-git clone git@github.com:<github-username>/<github-repo>.git
+```console
+$ git clone git@github.com:<github-username>/<github-repo>.git
 ```
 
 Zbývá nastavit, aby PythonAnywhere tento kód spustil jako webovou aplikaci.
 
-Přejděte na stránkách PythonAnywhere do Dashboard do záložky Web,
+Přejděte na stránkách PythonAnywhere do Dashboard do záložky *Web*,
 a vytvořte novou aplikaci.
 V nastavení zvolte Manual Configuration a Python 3.5.
 
 V konfiguraci vzniklé webové aplikace je potřeba nastavit "Virtualenv"
 na cestu k virtuálnímu prostředí (`/home/<jméno>/env`),
-a obsah "WSGI Configuration File" přepsat na:
+a obsah "WSGI Configuration File" přepsat.
+To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor),
+nebo zpět v bashové konzoli pomocí editoru jako `vi` nebo `nano`.
+
+Nový obsah souboru by měl být:
 
 ```python
 import sys
@@ -318,12 +376,9 @@ from <jméno-souboru> import app as application
 ```
 
 (Za `<uživatelské-jméno>`, `<jméno-adresáře>` a `<jméno-souboru>` je samozřejmě potřeba doplnit
-vaše údaje. Jméno souboru je zde bez přípony.)
+vaše údaje. Jméno souboru je zde bez přípony `.py`.)
 
-To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor),
-nebo zpět v bashové konzoli pomocí editoru jako `vi` nebo `nano`.
-
-Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce Web,
+Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce *Web*,
 a na adrese `<uživatelské-jméno>.pythonanywhere.com` si ji můžete
 prohlédnout.
 
@@ -334,103 +389,17 @@ prohlédnout.
 
 Protože vaše tajné klíče nejsou v repozitáři, je nutné je předat aplikaci
 zvlášť.
-Konfigurační soubor jde nahrát v záložce Files, nebo opět vytvořit
+Konfigurační soubor jde nahrát v záložce *Files*, nebo opět vytvořit
 a editovat ve webové konzoli.
 
-**Poznámka:** Doporučujeme pro tyto potřeby stejně raději nepoužívat API klíče
-k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
-Twitter vyžaduje před vydáním API klíčů zadání a potvrzení telefonního čísla.
+!!! note ""
+    Doporučujeme pro tyto potřeby stejně raději nepoužívat API klíče
+    k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
+    Twitter vyžaduje před vydáním API klíčů zadání a potvrzení telefonního čísla.
 
 
 ### Aktualizace
 
 Když nahrajeme nový kód na Github, je vždy potřeba provést na PythonAnywhere
-`git pull` a aplikaci restartovat.
+v konzoli `git pull` a pak v záložce *Web* aplikaci restartovat.
 
-
-Úkol
-----
-
-Vaším úkolem za 5 bodů je rozšířit command line aplikaci z minulého
-cvičení o webové rozhraní. Stávající funkcionalita ale musí být zachována,
-k tomu můžete použít například podpříkazy pro click:
-
-```python
-@click.group()
-def cli():
-    pass
-
-@cli.command()
-def web():
-    """Run the web app"""
-    click.echo('Running the web app')
-
-@cli.command()
-def console():
-    """Run the console app"""
-    click.echo('Running the console app')
-```
-
-Výslednou aplikaci nasaďte na PythonAnywhere, nebo jiný veřejný hosting.
-Odkaz na běžící aplikaci a repozitář nám pošlete e-mailem.
-V repozitáři prosím nastavte tag `v0.2`.
-Termín odevzdání je začátek příštího cvičení (dřívější paralelky).
-
-### Twitter Wall
-
-Konzole není pro Twitter Wall dostatečně vhodné médium,
-doplňte do aplikace webový frontend, který bude zobrazovat
-výsledky hledání. Hledaný pojem by měl jít zadat pomocí URL.
-
-Pro plný počet bodů  musí rozhraní zobrazovat avatary uživatelů
-a zpracovávat [entity] jako obrázky, odkazy, zmínky a hash tagy.
-Ideální je k tomu využít filtr.
-
-[entity]: https://dev.twitter.com/overview/api/entities-in-twitter-objects
-
-### GitHub Issues Bot
-
-Bylo by dobré, kdyby labelovací robot neprocházel issues v určitém intervalu,
-ale dozvěděl se o nově založených issues.
-Vyrobte webovou aplikaci, která bude na nějakém URL naslouchat událostem na
-GitHubu a nově založenou issue olabeluje hned po založení.
-K tomu použijte [webhook].
-
-Pro načtení dat od GitHubu použijte globální objekt `request`:
-
-```python
-from flask import request
-
-@app.route('/hook', methods=['POST'])
-def hook():
-    data = request.get_json()
-    ...
-    return ''
-```
-
-Ve výchozí routě `/` by měla být jednoduchá
-HTML stránka, která bude informovat uživatele, jak lze aplikaci použít.
-
-#### Zabezpečení webhooku
-
-Protože příjmání událostí z internetu může být riskantní,
-nabízí Github možnost doplnit do vašeho webhooku `secret` položku.
-
-Abyste rozpoznali, že vám událost poslal právě Github, je ke každému
-requestu z Githubu přiložená hlavička `X-Hub-Signature`, např:
-```
-X-Hub-Signature: sha1=0b861d9a594a4f421cabcdef75d5aefc46df8967
-```
-která vám říká, že pokud použijete HMAC hexdigest
-s odpovídající hash funkcí a s klíčem, který je právě uvedený v položce `secret`,
-na celé tělo requestu a vámi spočítaný výsledek se shoduje s tím v hlavičce
-`X-Hub-Signature`, tak tento request přišel z Githubu, z vámi zabezpečeného hooku
-a dá se mu tedy věřit.
-Více informací a příklad v Ruby je na [github securing].
-
-[webhook]: https://developer.github.com/webhooks/
-[github securing]: https://developer.github.com/webhooks/securing/
-
-### Vlastní zadání
-
-Pokud jste minule pracovali na jiném API, konzultujte s cvičícím, co máte dělat.
