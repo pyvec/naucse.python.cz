@@ -61,6 +61,10 @@ class Page(Model):
         return self.info.get('jinja', True)
 
     @reify
+    def latex(self):
+        return self.info.get('latex', False)
+
+    @reify
     def css(self):
         return self.info.get('css')
 
