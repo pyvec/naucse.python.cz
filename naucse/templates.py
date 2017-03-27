@@ -101,37 +101,8 @@ def var(name):
 
 
 @template_function()
-def gnd(m, f, *, both=None):
-    """Return `m` or `f` based on the user's grammatical gender
-
-    If the gender is not known, return `both`, or "m/f" if not given.
-    """
-    gender = var('user-gender')
-    if gender == 'm':
-        return m
-    elif gender == 'f':
-        return f
-    elif both is None:
-        return '{}/{}'.format(m, f)
-    else:
-        return both
-
-
-@template_function()
 def anchor(name):
     return Markup('<a id="{}"></a>').format(name)
-
-
-class A:
-    """Stringifies to "" or "a", depending on user's grammatical gender
-
-    (Note for English speakers: This is needed to form the past participle
-    of most verbs, which is quite common in tutorials.)
-    """
-    def __str__(self):
-        return gnd('', 'a')
-
-template_globals['a'] = A()
 
 
 @template_function()
@@ -144,3 +115,38 @@ def figure(img, alt):
         </span>
     """.splitlines()))
     return t.strip().format(img=img, alt=alt)
+
+
+def vars_functions(vars):
+    if not vars:
+        vars = {}
+
+    def gnd(m, f, *, both=None):
+        """Return `m` or `f` based on the user's grammatical gender
+
+        If the gender is not known, return `both`, or "m/f" if not given.
+        """
+        gender = vars.get('user-gender')
+        if gender == 'm':
+            return m
+        elif gender == 'f':
+            return f
+        elif both is None:
+            return '{}/{}'.format(m, f)
+        else:
+            return both
+
+    class A:
+        """Stringifies to "" or "a", depending on user's grammatical gender
+
+        (Note for English speakers: This is needed to form the past participle
+        of most verbs, which is quite common in tutorials.)
+        """
+        def __str__(self):
+            return gnd('', 'a')
+
+    return {
+        'var': vars.get,
+        'gnd': gnd,
+        'a': A(),
+    }

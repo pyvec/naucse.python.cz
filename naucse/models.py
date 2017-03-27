@@ -4,7 +4,7 @@ import jinja2
 
 from naucse.modelutils import Model, YamlProperty, DataProperty, DirProperty
 from naucse.modelutils import reify
-from naucse.templates import setup_jinja_env
+from naucse.templates import setup_jinja_env, vars_functions
 from naucse.markdown_util import convert_markdown
 
 
@@ -155,8 +155,8 @@ class Page(Model):
             'lesson': lesson,
             'page': self,
             '$solutions': solutions,
-            'var': vars.get,
         }
+        kwargs.update(vars_functions(vars))
 
         if self.style == 'md':
             if self.jinja:

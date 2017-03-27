@@ -8,7 +8,7 @@ from werkzeug.local import LocalProxy
 
 from naucse import models
 from naucse.urlconverters import register_url_converters
-from naucse.templates import setup_jinja_env
+from naucse.templates import setup_jinja_env, vars_functions
 
 
 app = Flask('naucse')
@@ -115,7 +115,7 @@ def run(run):
             plan=run.sessions,
             title=run.title,
             lesson_url=lesson_url,
-            var=run.vars.get,
+            **vars_functions(run.vars),
         )
     except TemplateNotFound:
         abort(404)
@@ -176,7 +176,7 @@ def render_page(page, solution=None, vars=None, **kwargs):
     kwargs.setdefault('title', page.title)
     kwargs.setdefault('content', content)
 
-    return render_template(template_name, **kwargs)
+    return render_template(template_name, **kwargs, **vars_functions(vars))
 
 
 @app.route('/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
