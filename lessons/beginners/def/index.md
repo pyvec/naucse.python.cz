@@ -212,8 +212,8 @@ obsah = 0
 a = 30
 
 def obsah_elipsy(a, b):
-    obsah = pi * a * b  <span class="comment"># Přiřazení do `obsah`</span>
-    a = a + 3  <span class="comment"># Přiřazení do `a`</span>
+    obsah = pi * a * b  # Přiřazení do `obsah`
+    a = a + 3  # Přiřazení do `a`
     return obsah
 
 print(obsah_elipsy(a, 20))
