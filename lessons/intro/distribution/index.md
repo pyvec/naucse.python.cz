@@ -1,9 +1,10 @@
-moduly
+Moduly
 ======
 
 Zatím jsme tvořili programy v Pythonu tak nějak na divoko, tedy v jednom nebo
-více souborech bez nějakého zvláštního řádu. Na dnešním cvičení se podíváme na
-to, jak tvořit redistribuovatelné moduly, které jdou instalovat pomocí pipu.
+více souborech bez nějakého zvláštního řádu. V této lekci se podíváme na
+to, jak tvořit redistribuovatelné moduly, které jdou nahrát na PyPI (veřejný
+seznam pythonních balíčků) a instalovat pomocí pipu.
 
 Za příklad si vezmeme kód Ondřeje Caletky, který umožňuje určit české svátky
 v zadaném roce. Jako příklad je ideální, protože obsahuje jak funkce, které
@@ -49,14 +50,14 @@ setup(
 )
 ```
 
-Všimněte si, že jsme balíček pojmenoval stejně jako soubor se zdrojovým kódem.
+Všimněte si, že jsme balíček pojmenovali stejně jako soubor se zdrojovým kódem.
 Je to dobrá konvence, ale není to technicky nutné.
 
 Balíček můžeme zkusit nainstalovat do virtualenvu:
 
-```bash
-$ python3.5 -m venv env
-$ . env/bin/activate
+```console
+$ python3.5 -m venv env     # (nebo jinak -- podle vašeho OS)
+$ . env/bin/activate        # (nebo jinak -- podle vašeho OS)
 (env)$ python setup.py install
 ...
 (env)$ python
@@ -68,8 +69,8 @@ isholiday==0.1
 
 Přes `setup.py` můžeme dělat další věci, například vytvořit archiv s balíčkem:
 
-```bash
-(env)$ python3 setup.py sdist
+```console
+(env)$ python setup.py sdist
 ...
 warning: sdist: standard file not found: should have one of README, README.rst, README.txt
 ...
@@ -78,7 +79,8 @@ warning: sdist: standard file not found: should have one of README, README.rst, 
 Extra soubory do zdrojového balíčku
 -----------------------------------
 
-Jak vidíte, `setuptools` si stěžuje, že náš projekt nemá `README`.
+Jak vidíte, `setuptools` si stěžuje, že náš projekt nemá `README` – soubor,
+do kterého se tradičně píšou základní informace o projektu.
 Můžeme jej vytvořit a uložit jako `README` přímo v kořenovém adresáři projektu,
 tedy tam, kde byste jej nejspíš čekali.
 
@@ -86,11 +88,13 @@ tedy tam, kde byste jej nejspíš čekali.
 Czech public holiday checker...
 ```
 
-```bash
-(env)$ python3 setup.py sdist
+Poté spustíme `setup.py sdist` znovu:
+
+```console
+(env)$ python setup.py sdist
 ```
 
-V adresáři `dist` najdete archiv, jeho obsah můžete zkontrolovat, měl by tam
+V adresáři `dist` najdete archiv, jeho obsah můžete zkontrolovat. Měl by tam
 být i soubor `README`.
 
 Skvělé, pojďme vytvořit i další speciální soubor, `LICENSE`, který bude
@@ -105,13 +109,17 @@ Další soubory lze přidat pomocí souboru `MANIFEST.in`, dle [dokumentace].
 
 [dokumentace]: https://docs.python.org/3/distutils/sourcedist.html#specifying-the-files-to-distribute
 
-V tomto případě takto:
+V našem případě bude `MANIFEST.in` vypadat takto:
 
 ```
 include LICENSE
 ```
-```bash
-(env)$ python3 setup.py sdist
+
+Při dalším spuštění už `setup.py` přidá i soubor `LISENSE`.
+To můžete zkontrolovat i ve výsledném archivu.
+
+```console
+(env)$ python setup.py sdist
 ...
 hard linking LICENSE -> isholiday-0.1
 hard linking MANIFEST.in -> isholiday-0.1
@@ -119,11 +127,28 @@ hard linking README -> isholiday-0.1
 ...
 ```
 
+Hotový balíček pak můžete nainstalovat pomocí nástroje `pip`.
+Doporučuji to dělat v jiném virtuálním prostředí – v aktuálním už ho máte
+nainstalovaný.
+
+```console
+(v jiné konzoli, v jiném adresáři)
+$ python3 -m venv other_env     # (nebo jinak -- podle vašeho OS)
+$ . other_env/bin/activate      # (nebo jinak -- podle vašeho OS)
+(other_env)$ python -m pip install cesta/k/projektu/dist/isholiday-0.1.tar.gz
+Processing cesta/k/projektu/dist/isholiday-0.1.tar.gz
+Installing collected packages: isholiday
+  Running setup.py install for isholiday ... done
+Successfully installed isholiday-0.1
+```
+
+
 Více argumentů pro setup()
 --------------------------
 
 Na chvíli se vrátíme k volání funkce `setup()` a přidáme co nejvíc dalších
-položek ([jejich vysvětlení](https://packaging.python.org/distributing/#setup-args)).
+položek.
+Jejich vysvětlení najdete [v dokumentaci](https://packaging.python.org/distributing/#setup-args).
 
 ```python
 from setuptools import setup
@@ -162,13 +187,14 @@ Všimněte si několika věcí. V první řadě v `long_description` vidíte, ž
 pořád ještě v Pythonu a můžeme si ušetřit duplikaci nějakých informací pomocí
 malého kousku kódu. Dalším zajímavým argumentem je `classifiers`. Jsou to
 v podstatě takové tagy nebo strukturované informace o balíčku.
-Nevymýšlíme je sami, ale hledáme je v
+Zásadně si je nevymýšlíme sami, ale hledáme je v
 [seznamu](https://pypi.python.org/pypi?%3Aaction=list_classifiers).
-Tyto informace jsou později vidět na [PyPI](https://pypi.python.org/pypi).
+Tyto informace budou později vidět na [PyPI](https://pypi.python.org/pypi) a
+půjde podle nich hledat.
 
 Argument `zip_safe=False` zajistí, že se modul nainstaluje do adresáře.
-Setuptool totiž mají nepříjemný zlozvyk instalovat moduly jako `zip`,
-což komplikuje práci s datovými soubory jako *templates*.
+Setuptools totiž mají nepříjemný zlozvyk instalovat moduly jako `zip`,
+což komplikuje práci s datovými soubory (např. *templates* pro Flask).
 Je proto lepší `zip_safe=False` uvést.
 
 
@@ -179,10 +205,10 @@ Doteď jsme vytvářeli balíček jen z jednoho zdrojového souboru `isholiday.p
 Co ale dělat, pokud je náš projekt větší a obsahuje souborů více?
 Teoreticky je možné je přidat všechny do `py_modules`, ale není to dobrý nápad.
 
-V takovém případě uděláme modul ve formě složky. V našem případě soubor
+Raději uděláme modul ve formě složky. V našem případě soubor
 `isholiday.py` zatím přesuneme do `isholiday/__init__.py`:
 
-```bash
+```console
 (env)$ tree
 .
 ├── isholiday
@@ -195,10 +221,10 @@ V takovém případě uděláme modul ve formě složky. V našem případě sou
 1 directory, 5 files
 ```
 
-Soubor `__init__.py` jednak značí, že adresář `isholiday` je Pythonní modul,
-také obsahuje kód, který se spustí při importu modulu `isholiday`.
+Soubor `__init__.py` jednak značí, že adresář `isholiday` je pythonní modul,
+a také obsahuje kód, který se spustí při importu modulu `isholiday`.
 
-Musíme ještě mírně upravit `setup.py`:
+Musíme ještě mírně upravit `setup.py` – místo `py_modules` použijeme `packages`:
 
 ```diff
 diff --git a/setup.py b/setup.py
@@ -230,7 +256,11 @@ setup(
 
 Momentálně máme všechen kód přímo v `__init__.py`, což sice funguje,
 ale ideální to není. Dobré je mít kód v samostatných souborech a v `__init__.py`
-pouze importovat veřejné rozhraní, například takto:
+pouze importovat veřejné rozhraní, tedy to, co budou z vašeho modulu importovat
+jeho uživatelé.
+
+Přesuňte tedy obsah `__init__.py` do `holidays.py`, a do `__init__.py`
+místo toho napište:
 
 ```python
 from .holidays import getholidays, isholiday
@@ -250,7 +280,13 @@ Spouštění balíčku
 -----------------
 
 Pokusíme-li se teď program spustit pomocí `python -m isholiday`,
-narazíme na problém: na rozdíl od souboru se složka s kódem takto spustit nedá.
+narazíme na problém: na rozdíl od souboru se složka s kódem takto spustit nedá:
+
+```console
+$ python -m isholiday
+python: No module named isholiday.__main__; 'isholiday' is a package and cannot be directly executed
+```
+
 Namísto spuštění souboru (typicky s blokem `if __name__ == '__main__':`) totiž
 Python v tomto případě hledá *soubor* pojmenovaný `__main__.py`, a spustí ten.
 
@@ -267,33 +303,50 @@ main()
 a v `holidays.py` zaměňte `if __name__ == '__main__':` za `def main():`.
 
 Skript teď bude možné použít pomocí `python -m isholiday`.
+Bude to fungovat i tehdy, když vytvoříte balíček (`python setup.py sdist`)
+a nainstalujete ho v jiném virtuálním prostředí.
 
 
 Programy pro příkazovou řádku
 -----------------------------
 
-Pokud chcete, aby váš modul umožňoval spouštění z příkazové řádky, měli byste
-použít [entrypoints]:
+Pokud chcete, aby váš modul umožňoval spouštění přímo z příkazové řádky,
+bez `python -m`, měli byste použít [entrypoints].
+K tomu je potřeba přidat do volání `setup` v `setup.py` příslušný argument:
 
 [entrypoints]: https://setuptools.readthedocs.io/en/latest/setuptools.html#dynamic-discovery-of-services-and-plugins
 
 ```python
 setup(
+    ...
     entry_points={
         'console_scripts': [
-            'executable_name = isholiday.holidays:main',
+            'isholiday_demo = isholiday.holidays:main',
         ],
     },
 )
 ```
 
-`isholiday.holidays:main` je cesta k funkci ve tvaru `modul:funkce`, funkce může
-být v modulu definovaná nebo importovaná.
+`isholiday_demo` je jméno *entrypointu*, tedy příkazu pro příkazovou řádku.
+`isholiday.holidays:main` je pak cesta k funkci ve tvaru `modul:funkce`;
+funkce může být v modulu definovaná nebo importovaná.
 
 Skript bude možné použít, je-li aktivní prostředí kde je nainstalován, jen
 zadáním jména *entrypointu*:
 
-    $ executable_name
+```console
+(env)$ python setup.py sdist
+```
+
+```console
+(v jiné konzoli, v jiném virtuálním prostředí)
+(other_env)$ python -m pip install --upgrade cesta/k/projektu/dist/isholiday-0.1.tar.gz
+(other_env)$ isholiday_demo
+...
+Mon Mar 28 00:00:00 2016 True
+Tue Mar 28 00:00:00 2017 False
+Fri Apr 14 00:00:00 2017 True
+```
 
 
 Specifikace závislostí
@@ -302,17 +355,21 @@ Specifikace závislostí
 Balíčky na PyPI mohou záviset na dalších balíčkách. V případě `isholiday` to
 potřeba není, ale v úlohách z minulých cvičení ano.
 
-Možná jste se setkali se souborem `requirements.txt`. Pomocí `setuptools` to
-jde ale lépe. Existuje několik úrovní závislostí, ve většině případů si
-vystačíte s argumentem `install_requires`:
+Existuje několik úrovní závislostí, ve většině případů si
+vystačíte s argumentem `install_requires`.
+Balíček, který závisí na knihovnách `Flask` (jakékoli verze) a
+`click` (verze 6 a vyšší) by v `setup.py` měl mít:
 
 ```python
 setup(
+    ...
     install_requires=['Flask', 'click>=6'],
 )
 ```
 
-Kromě závislostí v `setup.py` se u Pythonních projektů často setkáme se souborem
+### Soubor requirements.txt
+
+Kromě závislostí v `setup.py` se u pythonních projektů často setkáme se souborem
 `requirements.txt`, který obsahuje přesné verze všech závislosti, včetně
 tranzitivních – t.j. závisí-li náš balíček na `Flask`, a `Flask` na `Jinja2`,
 najdeme v `requirements.txt` mimojiné řádky:
@@ -326,8 +383,8 @@ Tento soubor se používá, když je potřeba přesně replikovat prostředí, k
 program běží, například mezi testovacím strojem a produkčním nasazením
 webové aplikace.
 Tento soubor se dá vygenerovat z aktuálního prostředí zadáním
-`python -m pip freeze > requirements.txt`, a nainstalovat pomocí
-`python -m pip install -r requirements.txt`.
+`python -m pip freeze > requirements.txt`, a balíčky v něm se dají nainstalovat
+pomocí `python -m pip install -r requirements.txt`.
 My ho používat nebudeme, vystačíme si s volnější specifikací závislostí
 v `setup.py`.
 
@@ -337,11 +394,13 @@ Upload na PyPI
 
 Balíček jde zaregistrovat a nahrát na PyPI. Původně k tomu sloužily příkazy
 `setup.py` `register` a `upload`, ale tyto příkazy používají HTTP, což není
-bezpečné. Prototo je lepší použít program `twine` (instalovatelný přes pip).
+bezpečné. Prototo je lepší použít program `twine` (instalovatelný přes pip),
+který používá HTTPS.
 
-Budete potřebovat [účet na PyPI](https://pypi.python.org/pypi?%3Aaction=register_form).
+Budete si potřebovat zařídit
+[účet na PyPI](https://pypi.python.org/pypi?%3Aaction=register_form),
 [účet na testovací PyPI](https://testpypi.python.org/pypi?%3Aaction=register_form)
-a konfigurační soubor `~/.pypirc`:
+a vytvořit konfigurační soubor `~/.pypirc`:
 
 ```ini
 [distutils]
@@ -363,24 +422,33 @@ password = <your password goes here>
 Hesla můžete vynechat, pokud je budete chtít pokaždé zadávat.
 
 Používáte-li Windows, je potřeba nastavit proměnnou prostředí `HOME` na adresář
-se souborem `.pypirc`.
+se souborem `.pypirc`, např:
 
-Registrace projektu a nahrání na testovací PyPI se provádí pomocí:
+```console
+> set HOME=C:\cesta\k\nastaveni
+```
 
-```bash
-(env)$ twine register -r pypitest dist/<soubor>
+Registrace projektu a nahrání na testovací PyPI se provádí pomocí dvou příkazů:
+`register` zaregistruje nový projekt, a `upload` nahraje samotný balíček:
+
+```console
+(env)$ twine register -r pypitest dist/isholiday-0.1.tar.gz
 Registering package to https://testpypi.python.org/pypi
-Registering <soubor>
-(env)$ twine upload -r pypitest dist/<soubor>
+Registering isholiday-0.1.tar.gz
+(env)$ twine upload -r pypitest dist/isholiday-0.1.tar.gz
 Uploading distributions to https://testpypi.python.org/pypi
-Uploading <soubor>
+Uploading isholiday-0.1.tar.gz
 [================================] 8379/8379 - 00:00:02
 ```
 
-Registrace se zdaří jen pokud jméno projektu již není zabrané.
-Po úspěšném nahrání lze nahrát už jen novější verze modulu.
+Registrace se zdaří, jen pokud jméno projektu již není zabrané.
+Po úspěšném nahrání lze nahrávat další verze modulu, ale musí být novější
+než ta, co už na PyPI je. Nejde tedy jednou nahraný modul přepsat.
 
 Pro nahrání na opravdovou PyPI stačí vynechat `-r pypitest`.
+Zabírat jména na opravdové PyPI jen tak není hezké vůči ostatním Pythonistům;
+registrujte tedy prosím jen moduly, které budou nějak pro ostatní užitečné.
+
 
 Instalace pomocí pip
 --------------------
@@ -388,7 +456,7 @@ Instalace pomocí pip
 Projekt nahraný na PyPI by mělo jít nainstalovat pomocí pipu.
 V případě použití ostré verze PyPI stačí k instalaci zadat název balíčku:
 
-```bash
+```console
 (env)$ python -m pip install <název_balíčku>
 ```
 
@@ -400,7 +468,7 @@ tak i případné závislosti, které mohou být zastaralé, rozbité či jinak 
 Lepší by bylo, kdyby pip nainstaloval závislosti z ostré PyPI a na testovací
 hledal jen náš projekt. Toho se dá docílit přepínačem `--extra-index-url`.
 
-```bash
+```console
 (env)$ python -m pip install --extra-index-url https://testpypi.python.org/pypi <název_balíčku>
 ```
 
@@ -413,7 +481,7 @@ stejným názvem, nainstaluje se ten z ostré verze.
 V případě, že tento problém nastane, je možné ho částečně obejít specifikací
 verze instalovaného balíčku:
 
-```bash
+```console
 (env)$ python -m pip install --extra-index-url https://testpypi.python.org/pypi <název_balíčku>==0.3
 ```
 
@@ -427,13 +495,36 @@ Zde pak na umístění balíčku ani verzi nezáleží:
 (env)$ python -m pip install https://testpypi.python.org/packages/.../<název_balíčku>-0.3.tar.gz
 ```
 
+Archiv se dá najít na informační stránce o našem projektu na PyPI.
+
+
+Datové soubory
+--------------
+
+Některé balíčky kromě samotného kódu potřebují i datové soubory.
+Například aplikace ve Flasku potřebují *templates*.
+Taková data se dají přidat parametrem `package_data`:
+
+```python
+setup(...,
+    packages=['hello_flask'],
+    ...
+    package_data={'hello_flask': ['templates/*.html']},
+)
+```
+
+
+Další informace jsou odkázané v [dokumentaci](https://packaging.python.org/distributing/#package-data).
+
+
 Další
 -----
 
- * [instalace datových souborů](https://docs.python.org/3/distutils/setupscript.html#installing-package-data)
- * [obsáhlá dokumentace](https://packaging.python.org/)
+K balíčkování existuje [obsáhlá dokumentace](https://packaging.python.org/).
+Budete-li chtít dělat něco, co v tomto kurzu není, podívejte se tam!
+
 
 Úkol
 ----
 
-Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/03_moduly.md#%C3%9Akol)
+Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/03_moduly.md#%C3%9Akol).
