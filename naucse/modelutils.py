@@ -7,6 +7,7 @@ import yaml
 
 NOTHING = object()
 
+
 class Model:
     def __init__(self, root, path):
         self.root = root
@@ -125,4 +126,3 @@ if sys.version_info < (3, 6):
 
     class Model(Model, metaclass=ModelMeta):
         pass
-

@@ -1,7 +1,7 @@
 from textwrap import dedent
 import re
 
-from  ansi2html import Ansi2HTMLConverter
+from ansi2html import Ansi2HTMLConverter
 import mistune
 from jinja2 import Markup
 import pygments
@@ -123,9 +123,9 @@ class Markdown(mistune.Markdown):
 
 
 markdown = Markdown(
-    escape = False,
-    block = BlockLexer(),
-    renderer = Renderer(),
+    escape=False,
+    block=BlockLexer(),
+    renderer=Renderer(),
 )
 
 

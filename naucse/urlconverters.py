@@ -10,8 +10,8 @@ class ModelConverter(BaseConverter):
         self.model = model
 
 
-
 _converters = {}
+
 
 def _converter(name):
     def decorator(cls):
@@ -49,6 +49,7 @@ class RunConverter(ModelConverter):
         if isinstance(value, str):
             value = self.to_python(value)
         return value.slug
+
 
 @_converter('lesson')
 class LessonConverter(ModelConverter):

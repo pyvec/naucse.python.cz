@@ -7,6 +7,7 @@ from naucse import markdown_util
 
 template_filters = {}
 
+
 def template_filter(name=None):
     """Register a function as a Jinja template filter"""
     def _decorator(func):
@@ -16,6 +17,7 @@ def template_filter(name=None):
 
 
 template_globals = {}
+
 
 def template_function(name=None):
     """Register a function as a Jinja template global"""

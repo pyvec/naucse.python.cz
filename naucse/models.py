@@ -182,6 +182,7 @@ class Collection(Model):
 
     lessons = DirProperty(Lesson)
 
+
 def material(root, path, info, base_collection):
     if "lesson" in info:
         lesson = root.get_lesson(info['lesson'], base_collection)
@@ -223,8 +224,6 @@ class PageMaterial(Material):
             for slug, subpage in page.lesson.pages.items():
                 item = PageMaterial(root, path, subpage, default_prev=self, default_next=default_next, subpages=self.subpages)
                 self.subpages[slug] = item
-
-            print(self.subpages)
         else:
             self.subpages = subpages
 
@@ -280,9 +279,9 @@ class Session(Model):
     @reify
     def materials(self):
         materials = [material(self.root, self.path, s, self.base_collection)
-                for s in self.info['materials']]
+                     for s in self.info['materials']]
         materials_with_nav = [mat for mat in materials if mat.has_navigation]
-        for prev, current, next in zip([None] + materials_with_nav, 
+        for prev, current, next in zip([None] + materials_with_nav,
                                        materials_with_nav,
                                        materials_with_nav[1:] + [None]
                                        ):
@@ -301,7 +300,9 @@ def _get_sessions(model, plan, base_collection):
 
     sessions = list(result.values())
 
-    for prev, current, next in zip([None] + sessions, sessions, sessions[1:] + [None]):
+    for prev, current, next in zip([None] + sessions,
+                                   sessions,
+                                   sessions[1:] + [None]):
         current.prev = prev
         current.next = next
 

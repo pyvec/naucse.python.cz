@@ -1,7 +1,7 @@
 import os
 
-from flask import Flask, render_template, url_for, send_from_directory, redirect
-from flask import abort
+from flask import Flask, render_template, url_for, send_from_directory
+from flask import abort, redirect
 from jinja2 import StrictUndefined
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
@@ -182,7 +182,7 @@ def run_page(run, lesson, page, solution=None):
     def subpage_url(page_slug):
         return url_for('run_page', run=run, lesson=lesson, page=page_slug)
 
-    title = title='{}: {}'.format(run.title, page.title)
+    title = '{}: {}'.format(run.title, page.title)
 
     return render_page(page=page, title=title,
                        lesson_url=lesson_url,
