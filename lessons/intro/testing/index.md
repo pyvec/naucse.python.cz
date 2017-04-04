@@ -188,8 +188,8 @@ tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m
 tests/test_holidays.py::test_xmas[2017] ␛[32mPASSED␛[0m
 tests/test_holidays.py::test_xmas[2033] ␛[31mFAILED␛[0m
 tests/test_holidays.py::test_xmas[2048] ␛[31mFAILED␛[0m
-
-␛[32m␛[1m=========================== 5 passed in 0.25 seconds ===========================␛[0m
+...
+␛[31m␛[1m====================== 2 failed, 3 passed in 0.23 seconds ======================␛[0m
 ```
 
 
