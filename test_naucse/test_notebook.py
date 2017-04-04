@@ -52,7 +52,7 @@ def test_notebook_has_output_prompt(notebook):
 
 def test_notebook_has_highlighted_input_area(notebook):
     input_area = dedent("""
-        <div class="codehilite highlight hl-ipython3">
+        <div class=" highlight hl-ipython3">
         <pre>
         <span></span><span class="nb">print</span><span class="p">(</span>
         <span class="s1">&#39;foo&#39;</span><span class="p">)</span>

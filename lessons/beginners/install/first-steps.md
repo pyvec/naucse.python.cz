@@ -64,7 +64,7 @@ Python máš nejen nainstalovaný, ale taky ti funguje.
 Stačí ho už jen zavřít, a pak opustit i samotnou příkazovou řádku.
 V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.
 
-<div class="codehilite"><pre>
+<div class="highlight"><pre>
 <span class="gp">&gt;&gt;&gt;</span> quit()
 <span class="gp">(venv)$</span>
 </pre></div>
