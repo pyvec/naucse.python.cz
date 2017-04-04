@@ -5,6 +5,12 @@ V tomto cvičení se budeme zabývat automatickým testováním kódu.
 Modul unittest ze standardní knihovny už byste měli znát,
 co to jsou jednotkové testy a k čemu slouží tedy rovnou přeskočím.
 
+!!! note ""
+    Pokud modul unittest neznáte, projděte si
+    [začátečnickou lekci o testování]({{ lesson_url('beginners/testing') }}).
+    Obsah se zčásti překrývá, ale základní principy jsou tam vysvětleny trošku
+    podrobněji.
+
 Pokud si chcete přečíst krátký text o tom, jak testovat, zkuste [blogový
 zápisek Michala Hořejška](http://blog.horejsek.com/matka-moudrosti-jak-testovat).
 
@@ -13,7 +19,7 @@ pytest
 
 Rovnou se podíváme na velmi oblíbený balíček [pytest], který oproti standardnímu
 unittestu přináší mnoho výhod. Začneme jednoduchou ukázkou z modulu `isholiday`
-z [předchozího cvičení]({{ lesson_url('intro/distribution') }}).
+z [cvičení o modulech]({{ lesson_url('intro/distribution') }}).
 
 ```python
 import isholiday
@@ -27,17 +33,17 @@ def test_xmas_2016():
 Test uložíme někam do projektu, třeba do souboru `tests/test_holidays.py` a
 nainstalujeme a spustíme `pytest`:
 
-```bash
-(env)$ python -m pip install pytest
-(env)$ PYTHONPATH=. python -m pytest tests/test_holidays.py
-=============================== test session starts ================================
-platform linux -- Python 3.5.2, pytest-3.0.3, py-1.4.31, pluggy-0.4.0
-rootdir: ..isholiday, inifile: 
-collected 1 items 
+```ansi
+␛[36m(env)$␛[0m python -m pip install pytest
+␛[36m(env)$␛[0m python -m pytest tests/test_holidays.py
+␛[1m============================= test session starts ==============================␛[0m
+platform linux -- Python 3.6.0, pytest-3.0.7, py-1.4.33, pluggy-0.4.0
+rootdir: /tmp/tmp.wGP3zD7HeD, inifile:
+collected 1 items
 
 tests/test_holidays.py .
 
-============================= 1 passed in 0.24 seconds =============================
+␛[32m␛[1m=========================== 1 passed in 0.01 seconds ===========================␛[0m
 ```
 
 Všimněte si několika věcí:
@@ -61,18 +67,26 @@ Pytest upravuje chování assertu, což oceníte především, pokud test selže
     assert (23, 12) in holidays
 ```
 
-```
-===================================== FAILURES =====================================
-__________________________________ test_xmas_2016 __________________________________
+```ansi
+␛[36m(env)$␛[0m python -m pytest tests/test_holidays.py
+␛[1m============================= test session starts ==============================␛[0m
+platform linux -- Python 3.6.0, pytest-3.0.6, py-1.4.32, pluggy-0.4.0
+rootdir: /tmp/tmp.NsIa3sXVQA, inifile: 
+collected 1 items
 
-    def test_xmas_2016():
-        """Test whether there is Christmas in 2016"""
-        holidays = isholiday.getholidays(2016)
->       assert (23, 12) in holidays
-E       assert (23, 12) in {(1, 1), (1, 5), (5, 7), (6, 7), (8, 5), (17, 11), ...}
+tests/test_holidays.py F
 
-tests/test_holidays.py:6: AssertionError
-============================= 1 failed in 0.24 seconds =============================
+=================================== FAILURES ===================================
+␛[31m␛[1m________________________________ test_xmas_2016 ________________________________␛[0m
+
+␛[1m    def test_xmas_2016():␛[0m
+␛[1m        """Test whether there is Christmas in 2016"""␛[0m
+␛[1m        holidays = isholiday.getholidays(2016)␛[0m
+␛[1m>       assert (23, 12) in holidays␛[0m
+␛[1m␛[31mE       assert (23, 12) in {(1, 1), (1, 5), (5, 7), (6, 7), (8, 5), (17, 11), ...}␛[0m
+
+␛[1m␛[31mtests/test_holidays.py␛[0m:6: AssertionError
+␛[31m␛[1m=========================== 1 failed in 0.04 seconds ===========================␛[0m
 ```
 
 S obyčejným assertem si vystačíte pro většinu testovaných případů kromě
@@ -123,15 +137,16 @@ iterovat, tedy i např. volání `range()`.)
 
 Pro více podrobný výpis výsledku testů můžete použít přepínač `-v`:
 
-```bash
-(env)$ PYTHONPATH=. python -m pytest -v
+```ansi
+␛[36m(env)$␛[0m python -m pytest -v
 ...
-tests/test_holidays.py::test_xmas[2015] PASSED
-tests/test_holidays.py::test_xmas[2016] PASSED
-tests/test_holidays.py::test_xmas[2017] PASSED
-tests/test_holidays.py::test_xmas[2033] PASSED
-tests/test_holidays.py::test_xmas[2048] PASSED
-...
+tests/test_holidays.py::test_xmas[2015] ␛[32mPASSED␛[0m
+tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m
+tests/test_holidays.py::test_xmas[2017] ␛[32mPASSED␛[0m
+tests/test_holidays.py::test_xmas[2033] ␛[32mPASSED␛[0m
+tests/test_holidays.py::test_xmas[2048] ␛[32mPASSED␛[0m
+
+␛[32m␛[1m=========================== 5 passed in 0.26 seconds ===========================␛[0m
 ```
 
 Potřebujeme-li parametrizovat více argumentů, můžeme předat seznam jmen
@@ -157,7 +172,7 @@ def test_some_holidays(year, month, day):
 
 Vždy je dobré pokusit se nějaký test rozbít v samotném kódu, který testujeme,
 abychom se ujistili, že testujeme správně.
-Přidám tedy dočasně na konec funkce `getholidays()` tento pesimistický kus kódu:
+Přidáme tedy dočasně na konec funkce `getholidays()` tento pesimistický kus kódu:
 
 ```python
     if year > 2020:
@@ -165,15 +180,16 @@ Přidám tedy dočasně na konec funkce `getholidays()` tento pesimistický kus 
         holidays = set()
 ```
 
-```bash
-(env)$ PYTHONPATH=. python -m pytest -v
+```ansi
+␛[36m(env)$␛[0m python -m pytest -v
 ...
-tests/test_holidays.py::test_xmas[2015] PASSED
-tests/test_holidays.py::test_xmas[2016] PASSED
-tests/test_holidays.py::test_xmas[2017] PASSED
-tests/test_holidays.py::test_xmas[2033] FAILED
-tests/test_holidays.py::test_xmas[2048] FAILED
-...
+tests/test_holidays.py::test_xmas[2015] ␛[32mPASSED␛[0m
+tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m
+tests/test_holidays.py::test_xmas[2017] ␛[32mPASSED␛[0m
+tests/test_holidays.py::test_xmas[2033] ␛[31mFAILED␛[0m
+tests/test_holidays.py::test_xmas[2048] ␛[31mFAILED␛[0m
+
+␛[32m␛[1m=========================== 5 passed in 0.25 seconds ===========================␛[0m
 ```
 
 
@@ -418,7 +434,7 @@ class Client:
         ...
 
 def test_clent_foo(betamax_session):
-    client = Client(betamax_session)
+    client = Client(session=betamax_session)
     assert client.foo() == 42
 ```
 
@@ -513,6 +529,8 @@ def test_hello(testapp):
 
 Pozor, metody na testovacím klientu vrací [Response], ale trochu jinou, než tu
 z requests.
+Proto nelze použít přímo `response.text`; text dostaneme pomocí
+`response.data.decode('utf-8')`.
 
 [Response]: http://flask.pocoo.org/docs/0.11/api/#flask.Response
 
@@ -646,25 +664,4 @@ def test_is_even(n):
 Úkol
 ----
 
-Vaším úkolem za 5 bodů je napsat testy k dosavadním úlohám pomocí pytestu.
-Není nutné použít `flexmock` pokud to nepotřebujete.
-Využití `betamax`u je silně doporučeno.
-
-Podmínky:
-
- * Musí fungovat `setup.py test` a to nejen z gitu, ale i při rozbalení archivu z PyPI.
- * Všechny testovací závislosti se musí při uvedeném příkazu nainstalovat.
- * Testy samotné musí fungovat offline a bez nutnosti mít přístupové údaje k API.
- * Spuštění testů i znovu-nahrání kazet musí být zdokumentováno v README.
- * Nahrané kazety musí být v gitu a být součástí balíčku (ale neinstalují se).
- * Žádné nahrané kazety (ani jiné soubory) nesmí obsahovat citlivé údaje.
- * Alespoň část testu by měla být parametrická.
- * Musí být použit nativní způsob pytest testů (pytest umí spouštět i testy pro `unittest` apod.).
- * Testuje se všechno\*.
- * Testy musí běžet i na Travis CI.
- 
-\* Záměrně nestanovujeme podmínku na 100% pokrytí kódu testy.
-Otestujte prostě kód tak, aby byly otestovány všechny podstatné součásti
-včetně webové aplikace.
- 
-Úkol odevzdáváte tradičně s tagem v0.4 a nahráním nové verze na (testovací či pravou) PyPI.
+Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/04_testovani.md#%C3%9Akol).
