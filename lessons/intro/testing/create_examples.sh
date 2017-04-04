@@ -22,7 +22,7 @@ def test_xmas_2016():
 END
 
 python3 -m venv env
-. __env__/bin/activate
+. env/bin/activate
 PS4='————————————————————————————\n\e[36m(env)$\e[0m '
 
 python -m pip install pytest
