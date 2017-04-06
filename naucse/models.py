@@ -6,6 +6,7 @@ from naucse.modelutils import Model, YamlProperty, DataProperty, DirProperty
 from naucse.modelutils import reify
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.markdown_util import convert_markdown
+from naucse.notebook_util import convert_notebook
 
 
 class Lesson(Model):
@@ -58,6 +59,10 @@ class Page(Model):
     @reify
     def jinja(self):
         return self.info.get('jinja', True)
+
+    @reify
+    def latex(self):
+        return self.info.get('latex', False)
 
     @reify
     def css(self):
@@ -158,17 +163,20 @@ class Page(Model):
         }
         kwargs.update(vars_functions(vars))
 
+        if self.jinja:
+            template = self._get_template()
+            content = template.render(**kwargs)
+        else:
+            with self.path.open() as file:
+                content = file.read()
+
         if self.style == 'md':
-            if self.jinja:
-                template = self._get_template()
-                content = template.render(**kwargs)
-            else:
-                with self.path.open() as file:
-                    content = file.read()
             content = jinja2.Markup(convert_markdown(content))
+        elif self.style == 'ipynb':
+            content = jinja2.Markup(convert_notebook(content))
         else:
             template = self._get_template()
-            content = jinja2.Markup(template.render(**kwargs))
+            content = jinja2.Markup(content)
 
         if solution is None:
             return content

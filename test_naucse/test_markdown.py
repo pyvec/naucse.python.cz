@@ -108,7 +108,7 @@ def test_markdown_ansi_colors():
         ```
     """)
     expected = dedent("""
-        <div class="codehilite"><pre><code>On branch ansicolors
+        <div class="highlight"><pre><code>On branch ansicolors
         Changes to be committed:
           (use "git reset HEAD &lt;file&gt;..." to unstage)
 

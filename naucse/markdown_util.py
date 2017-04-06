@@ -12,7 +12,7 @@ import pygments.formatters.html
 ansi_convertor = Ansi2HTMLConverter(inline=True)
 
 pygments_formatter = pygments.formatters.html.HtmlFormatter(
-    cssclass='codehilite'
+    cssclass='highlight'
 )
 
 
@@ -63,7 +63,7 @@ def ansi_convert(code):
 
 
 class Renderer(mistune.Renderer):
-    code_tmpl = '<div class="codehilite"><pre><code>{}</code></pre></div>'
+    code_tmpl = '<div class="highlight"><pre><code>{}</code></pre></div>'
 
     def admonition(self, name, content):
         return '<div class="admonition {}">{}</div>'.format(name, content)

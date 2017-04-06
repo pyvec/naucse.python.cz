@@ -172,7 +172,7 @@ Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
 Nakonec virtuální prostředí aktivuj:
 
-<div class="codehilite">
+<div class="highlight">
 <pre><code><span class="gp">$</span> source <span class="pythondir">~/{{ rootname }}</span>/venv/bin/activate
 </code></pre>
 </div>

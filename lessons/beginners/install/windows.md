@@ -84,7 +84,7 @@ Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
 Nakonec virtuální prostředí aktivuj:
 
-<div class="codehilite">
+<div class="highlight">
 <pre><code><span class="gp">&gt;</span> <span class="pythondir">~/{{ rootname }}</span>\venv\Scripts\activate
 </code></pre></div>
 
