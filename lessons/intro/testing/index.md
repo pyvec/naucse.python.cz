@@ -112,7 +112,7 @@ Více o základním použití pytestu najdete v [dokumentaci].
 
 Jednou z vlastností pytestu, která často přichází vhod, jsou [parametrické testy].
 Pokud bychom například chtěli otestovat, jestli je štědrý den svátkem nejen
-v roce 2016, ale v jiných letech, nemusíme spát testů více ani použít cyklus.
+v roce 2016, ale v jiných letech, nemusíme psát testů více ani použít cyklus.
 
 Nevýhoda více téměř stejných testů je patrná sama o sobě, nevýhoda cyklu je
 v tom, že celý test selže, i pokud selže jen jeden průběh cyklem. Zároveň se
