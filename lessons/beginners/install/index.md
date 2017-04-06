@@ -1,10 +1,9 @@
 # Instalace Pythonu
 
-V této sekci uděláme tři věci:
+V této sekci uděláme dvě věci:
 
 * Nainstalujeme Python a Virtualenv
 * Vytvoříme si virtuální prostředí pro práci v Pythonu
-* Spustíme Python
 
 Možná se ptáš, proč je to všechno potřeba?
 

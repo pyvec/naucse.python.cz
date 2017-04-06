@@ -105,4 +105,4 @@ můžeš si ho poznačit tam :)
 
 Zkusme teď nainstalovaný Python použít!
 To už bude stejné pro tebe i pro lidi na Linuxu a Macu.
-Sejdeme se na [další stránce]({{ subpage_url('first-steps') }}).
+Sejdeme se na [další stránce]({{ lesson_url('beginners/first-steps') }}), kde uděláme první krůčky s Pythonem.

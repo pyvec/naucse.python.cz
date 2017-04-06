@@ -1,7 +1,7 @@
 # Instalace Pythonu na Linux
 
 Nainstalovat Pyhon na Linux je většinou jednoduché.
-Jen existuje spousta druhů Linuxu, a máme s ním největší zkušenosti,
+Jen existuje spousta druhů Linuxu a máme s ním největší zkušenosti,
 tak jsou tyhle instrukce trochu delší.
 Nezalekni se – většinu sekcí pravděpodobně přeskočíš :)
 
@@ -191,4 +191,4 @@ příkaz si poznač, ať ho do příště nezapomeneš :)
 
 Python máš, můžeš se pustit do programování!
 To už bude stejné pro tebe i pro lidi na Linuxu a Windows.
-Sejdeme se na [další stránce]({{ subpage_url('first-steps') }}).
+Sejdeme se na [další stránce]({{ lesson_url('beginners/first-steps') }}), kde uděláme první krůčky s Pythonem.
