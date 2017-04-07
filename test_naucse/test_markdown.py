@@ -1,5 +1,7 @@
 from textwrap import dedent
 
+import pytest
+
 from naucse.markdown_util import convert_markdown
 
 
@@ -126,3 +128,16 @@ def test_markdown_ansi_colors():
 def test_markdown_keeps_nbsp():
     text = 'Some text\N{NO-BREAK SPACE}more text'
     assert convert_markdown(text).strip() == '<p>{}</p>'.format(text)
+
+
+@pytest.mark.parametrize('what', ('image', 'link'))
+def test_static_link_conversion(what):
+    text = '[alt](foo/bar)'
+    if what == 'image':
+        text = '!' + text
+
+    def convert_url(url):
+        return url[::-1]
+
+    param = 'href' if what == 'link' else 'src'
+    assert '{}="rab/oof"'.format(param) in convert_markdown(text, convert_url)

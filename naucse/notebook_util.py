@@ -7,6 +7,10 @@ from . markdown_util import convert_markdown
 
 
 class NaucseHTMLExporter(HTMLExporter):
+    def __init__(self, convert_url, *args, **kwargs):
+        self._convert_url = convert_url
+        super().__init__(*args, **kwargs)
+
     @traitlets.default('template_file')
     def _template_file_default(self):
         return 'basic'
@@ -16,16 +20,19 @@ class NaucseHTMLExporter(HTMLExporter):
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
         highlight = Highlight2HTML(pygments_lexer=lexer, parent=self)
+
+        def convert_markdown_contexted(text):
+            return convert_markdown(text, self._convert_url)
+
+        self.register_filter('markdown2html', convert_markdown_contexted)
         self.register_filter('highlight_code', highlight)
-        self.register_filter('markdown2html', convert_markdown)
         return super(HTMLExporter,
                      self).from_notebook_node(nb, resources, **kw)
 
 
-html_exporter = NaucseHTMLExporter()
-
-
-def convert_notebook(raw):
+def convert_notebook(raw, convert_url=None):
+    convert_url = convert_url if convert_url else lambda x: x
     notebook = nbformat.reads(raw, as_version=4)
+    html_exporter = NaucseHTMLExporter(convert_url)
     body, resources = html_exporter.from_notebook_node(notebook)
     return body

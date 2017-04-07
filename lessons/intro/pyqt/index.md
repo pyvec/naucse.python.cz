@@ -490,8 +490,8 @@ A poté je na správných místech vyrendrujeme:
                     SVG_WALL.render(painter, rect)
 ```
 
-* [grass.svg]({{ static('pics/grass.svg') }})
-* [wall.svg]({{ static('pics/wall.svg') }})
+* [grass.svg](static/pics/grass.svg)
+* [wall.svg](static/pics/wall.svg)
 
 
 Model/View
@@ -840,7 +840,7 @@ Zobrazování cesty
     * matici šipek máte opět z úloh z minula, stačí je zobrazit pouze tam, kde jsou čáry
 * od některých postav logicky cesta k cíli nemusí existovat, od nich tedy žádnou nevykreslujte (aplikace s takovou situací musí počítat a nesmí spadnout)
 
-![Obrázek bludiště]({{ static('mazepic.png') }})
+![Obrázek bludiště](static/mazepic.png)
 
 Odevzdání
 ---------
