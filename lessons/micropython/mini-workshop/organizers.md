@@ -102,8 +102,8 @@ Pár věcí je potřeba nastavit:
   $ sudo dnf install picocom ampy
   ```
 
-  (Pro Fedoru 24: `ampy` ještě není v systému; nainstalujte tedy do systému
-  jen `picocom`. Pak nainstalujte ampy pomocí
+  (Na jiných systémech nemusí být `ampy` v systémových repozitářích.
+  V takovém případě se dá nainstalovat pomocí
   `python3 -m pip install --user adafruit-ampy`.)
 
 * Aplikace Terminal (`gnome-terminal`) a Textový editor (`gedit`)
@@ -126,13 +126,22 @@ K flashování je potřeba stáhnout
 binární obraz [MicroPythonu pro ESP8266][micropython] a
 náš předpřipravený začátečnický soubor [boot.py].
 
-Potřebný nástroj, [esptool] nainstalujeme do virtuálního prostředí:
+Potřebné nástroje, [esptool] a [ampy], můžeme na Fedoře nainstalovat z balíčků:
 
 ```console
-$ python3 -m venv venv
-$ . venv/bin/activate
-(venv)$ python -m pip install esptool
+$ sudo dnf install esptool ampy
 ```
+
+!!! note ""
+
+    Na systémech, kde tyto nástroje v systémových balíčcích nejsou,
+    se dají nainstalovat do virtuálního prostředí:
+
+    ```console
+    $ python3 -m venv venv
+    $ . venv/bin/activate
+    (venv)$ python -m pip install esptool adafruit-ampy
+    ```
 
 Připojíme NodeMCU přes USB a pomocí `esptool` ho naflashujeme:
 
