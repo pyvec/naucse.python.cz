@@ -113,13 +113,6 @@ tím, že konfigurační příkazy zadáš znovu.
     Spammeři se většinou zaměřují na méně technicky zdatné
     lidi, než jsou uživatelé Gitu :)
 
-Dále nastav editor:
-
-```console
-$ git config --global core.editor nano
-```
-
-
 Dále si můžeš nastavit barevné výpisy – pokud si tedy
 (jako někteří autoři Gitu) nemyslíš, že příkazová
 řádka má být černobílá:
