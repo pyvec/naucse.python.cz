@@ -1114,7 +1114,7 @@ Do vizualizátoru bludiště doplňte funkcionalitu hry. V režimu hry:
 
 Máte k dispozici základní třídu `Actor`, která reprezentuje aktora (postavu v bludišti):
 
- * [class Actor]({{ static('actor.py') }})
+ * [class Actor](static/actor.py)
 
 Tato třída definuje rozhraní jednotlivých postav a zároveň implementuje základní chování postavy - jde nejkratší cestou k cíli rychlostí jedno políčko za sekundu.
 Aby to mohlo fungovat, musí kód, který postavu používá:

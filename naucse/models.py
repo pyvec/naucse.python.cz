@@ -145,10 +145,16 @@ class Page(Model):
             with self.path.open() as file:
                 content = file.read()
 
+        def convert_url(url):
+            prefix = 'static/'
+            if not url.startswith(prefix):
+                return url
+            return static_url(url[len(prefix):])
+
         if self.style == 'md':
-            content = jinja2.Markup(convert_markdown(content))
+            content = jinja2.Markup(convert_markdown(content, convert_url))
         elif self.style == 'ipynb':
-            content = jinja2.Markup(convert_notebook(content))
+            content = jinja2.Markup(convert_notebook(content, convert_url))
         else:
             template = self._get_template()
             content = jinja2.Markup(content)

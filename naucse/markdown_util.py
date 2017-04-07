@@ -65,6 +65,10 @@ def ansi_convert(code):
 class Renderer(mistune.Renderer):
     code_tmpl = '<div class="highlight"><pre><code>{}</code></pre></div>'
 
+    def __init__(self, convert_url, *args, **kwargs):
+        self._convert_url = convert_url
+        super().__init__(*args, **kwargs)
+
     def admonition(self, name, content):
         return '<div class="admonition {}">{}</div>'.format(name, content)
 
@@ -86,6 +90,12 @@ class Renderer(mistune.Renderer):
             '<{tag}>{text}</{tag}>'.format(tag=tags[type], text=text)
             for type, text in items
         ))
+
+    def link(self, link, title, text):
+        return super().link(self._convert_url(link), title, text)
+
+    def image(self, src, title, text):
+        return super().image(self._convert_url(src), title, text)
 
 
 class Markdown(mistune.Markdown):
@@ -122,19 +132,20 @@ class Markdown(mistune.Markdown):
         return self.renderer.deflist(items)
 
 
-markdown = Markdown(
-    escape=False,
-    block=BlockLexer(),
-    renderer=Renderer(),
-)
+def convert_markdown(text, convert_url=None, *, inline=False):
+    convert_url = convert_url if convert_url else lambda x: x
 
-
-def convert_markdown(text, *, inline=False):
     # Workaround for https://github.com/lepture/mistune/issues/125
     NBSP_REPLACER = '\uf8ff'
     text = text.replace('\N{NO-BREAK SPACE}', NBSP_REPLACER)
 
     text = dedent(text)
+
+    markdown = Markdown(
+        escape=False,
+        block=BlockLexer(),
+        renderer=Renderer(convert_url),
+    )
     result = Markup(markdown(text))
 
     if inline and result.startswith('<p>') and result.endswith('</p>'):

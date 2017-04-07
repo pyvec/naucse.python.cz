@@ -93,7 +93,7 @@ obrázky:
 
 Nakresli čtverec.
 
-![Želví čtverec]({{ static('turtle-square.png') }})
+![Želví čtverec](static/turtle-square.png)
 
 Čtverec má čtyři rovné strany,
 a čtyři rohy po 90°.
@@ -121,7 +121,7 @@ Nakresli obdélník.
 
 Zkus zařídit, aby se po nakreslení „dívala” želva doprava (tak jako na začátku).
 
-![Želví obdélník]({{ static('turtle-rect.png') }})
+![Želví obdélník](static/turtle-rect.png)
 
 {% filter solution %}
 ```python
@@ -144,7 +144,7 @@ exitonclick()
 
 Nakresli tři čtverce, každý otočený třeba o 20°.
 
-![Tři želví čtverce]({{ static('turtle-squares.png') }})
+![Tři želví čtverce](static/turtle-squares.png)
 
 {% filter solution %}
 ```python
@@ -252,7 +252,7 @@ Nakresli čtverec.
 V programu použij `forward` jen dvakrát:
 jednou v importu, jednou jako volání.
 
-![Želví čtverec]({{ static('turtle-square.png') }})
+![Želví čtverec](static/turtle-square.png)
 
 {% filter solution %}
 ```python
@@ -274,7 +274,7 @@ aby přestala, resp. začala kreslit.
 
 Zkus nakreslit přerušovanou čáru.
 
-![Želva a přerušovaná čára]({{ static('turtle-dashed.png') }})
+![Želva a přerušovaná čára](static/turtle-dashed.png)
 
 {% filter solution %}
 ```python
@@ -293,7 +293,7 @@ exitonclick()
 Pak zkus zařídit, aby jednotlivé čárky byly postupně
 větší a větší.
 
-![Želva a přerušovaná čára]({{ static('turtle-dashed2.png') }})
+![Želva a přerušovaná čára](static/turtle-dashed2.png)
 
 !!! note "Nápověda"
 
@@ -320,7 +320,7 @@ Nakonec nakresli 3 čtverce, každý otočený o 20°.
 Tentokrát už víš, jak to dělat chytře: opakuj pomocí příkazu
 `for`, ne kopírováním kódu.
 
-![Tři želví čtverce]({{ static('turtle-squares.png') }})
+![Tři želví čtverce](static/turtle-squares.png)
 
 {% filter solution %}
 ```python
@@ -341,8 +341,8 @@ exitonclick()
 
 Máš-li hotovo, zkus nakreslit schody:
 
-![Želví schody]({{ static('turtle-stairs.png') }})
+![Želví schody](static/turtle-stairs.png)
 
 A máš-li i schody, zkus nakreslit těchto šest (nebo sedm?) šestiúhelníků:
 
-![Želví plástev]({{ static('turtle-hexagons.png') }})
+![Želví plástev](static/turtle-hexagons.png)

@@ -163,6 +163,6 @@ Nakonec na NodeMCU stiskneme tlačítko RST, a pak nahrajeme `boot.py`:
 [Fedora]: https://getfedora.org/
 [gedit-setup]: {{ lesson_url('beginners/install-editor', page='gedit') }}
 [micropython]: https://micropython.org/download#esp8266
-[boot.py]: {{ static('boot.py') }}
+[boot.py]: static/boot.py
 [esptool]: https://github.com/espressif/esptool
 [ampy]: https://github.com/adafruit/ampy

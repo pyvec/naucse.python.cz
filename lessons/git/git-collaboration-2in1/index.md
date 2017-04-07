@@ -102,7 +102,7 @@ Další kopie na GitHubu je "vaše" a můžete si do ní nahrát cokoliv
 (nejčastěji se v ní ale zveřejňují změny, které můžou být užitečné pro ostatní). 
 A třetí kopii repozitáře máte u sebe na počítači. 
 
-![Git workflow]({{ static('gh-workflow-diagram.svg') }})
+![Git workflow](static/gh-workflow-diagram.svg)
 
 ### Práce s lokálním repozitářem
 
@@ -192,7 +192,7 @@ Pak soubor uložíme a zavřeme editor.
 
 Pro lepší pochopení, co dělají jednotlivé příkazy, a v jakém stavu můžou být soubory/změny, přikládáme tento diagram: 
 
-![Git workflow]({{ static('diagram.png') }})
+![Git workflow](static/diagram.png)
 
 #### Log (`git log`)
 Teď, když za sebou máme první revizi, podívejme se, jak vypadá historie repozitáře, do kterého chceme přispívat.
