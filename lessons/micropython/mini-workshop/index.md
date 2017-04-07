@@ -86,7 +86,7 @@ Zkus třeba tyhle (zobáčky nepiš, ty vypíše sám MicroPython:
 
 ## Světýlko
 
-MicroPython na nach destičkách má připravený objekt `led`, jehož metodou
+MicroPython na našich destičkách má připravený objekt `led`, jehož metodou
 `value` jde ovládat svítící dioda.
 Stačí jen zadat správné příkazy:
 
@@ -139,7 +139,8 @@ Nakonec několikrát stiskni Enter, dokud se program nespustí.
 ```
 
 Nekonečný cyklus se opakuje donekonečna.
-Je ale způsob jak ho přerušit, až tě omrzí: zmáčkni Ctrl+C.
+Je ale způsob jak ho přerušit, až tě omrzí: zmáčkni
+<kbd>Ctrl</kbd>+<kbd>C</kbd>.
 
 <div style="page-break-after: always;"></div>
 
@@ -189,7 +190,7 @@ reagoval automaticky?
 
 ## Barvy
 
-Poslední věc připojená k destičce je LED pásek s *několika* světýlkama.
+Poslední věc připojená k destičce je LED pásek s *několika* světýlky.
 Každé z nich se dá nastavit na nějakou barvu.
 Zkus si to:
 
@@ -213,8 +214,8 @@ se barvy neukážou.
 
 Teď si přestaneme jen tak hrát, a začneme psát program.
 
-Spusť *editor*: Klikni na *Activities*; potom vyber z levého panelu Gedit
-(ikonka zápisníku s tužkou).
+Spusť *editor*: Klikni na *Activities*; potom vyber z levého panelu
+*Text Editor* (ikonka zápisníku s tužkou).
 
 Objeví se bílé okýnko, do kterého napiš:
 
@@ -228,7 +229,7 @@ strip.write()
 Soubor ulož (*Save*) pod jménem `main.py`.
 
 Potom se vrať k příkazové řádce a ukonči `picocom`:
-stiskni Ctrl+A a pak Ctrl+Q.
+stiskni <kbd>Ctrl</kbd>+<kbd>A</kbd> a pak <kbd>Ctrl</kbd>+<kbd>Q</kbd>.
 Měl by se objevit řádek končící dolarem.
 
 Za dolar napiš:
@@ -237,12 +238,14 @@ Za dolar napiš:
 ampy -p /dev/ttyUSB0 run main.py
 ```
 
-... a stiskni Enter. Program se spustí.
+... a stiskni Enter.
+Tento příkaz soubor s programem do zařízení nahraje a rovnou spustí.
 
-Zkus v editoru nastavit jiné barvy a program znovu uložit (Ctrl+S).
+Zkus v editoru nastavit jiné barvy a program znovu uložit
+(<kbd>Ctrl</kbd>+<kbd>S</kbd>).
 
 Potom v příkazové řádce zmáčkni *šipku nahoru*.
-Tím se vrátíš k předchozímu příkazu (ampy), a můžeš znovu stisknout Enter
+Tím se vrátíš k předchozímu příkazu (`ampy`), a můžeš znovu stisknout Enter
 a program spustit.
 
 
