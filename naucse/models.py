@@ -7,7 +7,6 @@ from naucse.modelutils import reify
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.markdown_util import convert_markdown
 from naucse.notebook_util import convert_notebook
-import yaml
 
 
 class Lesson(Model):
@@ -68,21 +67,6 @@ class Page(Model):
     @reify
     def css(self):
         return self.info.get('css')
-
-    @reify
-    def subpages(self):
-        if "subpages" in self.info.keys():
-            return self.info['subpages']
-        else:
-            return None
-
-    @reify
-    def previous_page(self):
-        return self.info.get('prev')
-
-    @reify
-    def next_page(self):
-        return self.info.get('next')
 
     @reify
     def attributions(self):
@@ -198,9 +182,9 @@ class Material(Model):
     """A link – either to a lesson, or an external URL"""
     def __init__(self, root, path):
         super().__init__(root, path)
-        self.default_prev = None
-        self.default_next = None
-        # default_prev and default_next is set later
+        self.prev = None
+        self.next = None
+        # prev and next is set later
 
     def __str__(self):
         return self.title
@@ -210,41 +194,31 @@ class PageMaterial(Material):
     type = "page"
     has_navigation = True
 
-    def __init__(self, root, path, page, title=None, default_prev=None,
-                 default_next=None, subpages=None):
+    def __init__(self, root, path, page, title=None, subpages=None):
         super().__init__(root, path)
         self.page = page
         self.title = title or page.title
-        self.default_prev = default_prev
-        self.default_next = default_next
-        
+
         if subpages is None:
             self.subpages = {}
 
             for slug, subpage in page.lesson.pages.items():
-                item = PageMaterial(root, path, subpage, default_prev=self, default_next=default_next, subpages=self.subpages)
+                if slug == self.page.slug:
+                    item = self
+                else:
+                    item = PageMaterial(root, path, subpage, subpages=self.subpages)
                 self.subpages[slug] = item
         else:
             self.subpages = subpages
 
-
-    @reify
-    def title(self):
-        return self.info.get("title", self.page.title)
-
-    @reify
-    def prev(self):
-        if self.page.previous_page is not None:
-            return PageMaterial(self.root, self.path, self.page.prev_page, default_prev=self.default_prev)
-        else:
-            return self.default_prev
-
-    @reify
-    def next(self):  
-        if self.page.next_page is not None:
-            return PageMaterial(self.root, self.path, self.page.next_page, default_next=self.default_next)
-        else:
-            return self.default_next
+    def set_prev_next(self, prev, next):
+        for slug, subpage in self.subpages.items():
+            if slug == self.page.slug:
+                subpage.prev = prev
+                subpage.next = next
+            else:
+                subpage.prev = self
+                subpage.next = next
 
 
 class UrlMaterial(Material):
@@ -285,8 +259,7 @@ class Session(Model):
                                        materials_with_nav,
                                        materials_with_nav[1:] + [None]
                                        ):
-            current.default_prev = prev
-            current.default_next = next
+            current.set_prev_next(prev, next)
 
         return materials
 
