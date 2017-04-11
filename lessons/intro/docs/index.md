@@ -38,7 +38,7 @@ Enter the root path for documentation.
 
 The project name will occur in several places in the built documentation.
 ␛[35m> Project name: ␛[39;49;00mcoolthing
-␛[35m> Author name(s): ␛[39;49;00mPythonic␛[Ksa␛[Kta d␛[KDokumentarista
+␛[35m> Author name(s): ␛[39;49;00mPythonista Dokumentarista
 
 Sphinx has the notion of a "version" and a "release" for the
 software. Each version can have multiple releases. For example, for
@@ -520,5 +520,5 @@ z `README.rst`.
 
 Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/05_dokumentace.md#%C3%9Akol).
 
-Z hlediska předmětu v pořádku projekt na GitHubu zveřejnit,
+Z hlediska předmětu je teď v pořádku projekt na GitHubu zveřejnit,
 abyste mohli použít službu Read the Docs.
