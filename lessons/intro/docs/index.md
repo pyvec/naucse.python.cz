@@ -14,50 +14,74 @@ betamaxu či Pythonu samotného, viděli jste dokumentaci vytvořenou ve Sphinxu
 
 [Sphinx]: http://www.sphinx-doc.org/
 
-Pro vytvoření základní kostry dokumentace se používá jednoduchý průvodce:
+Pro vytvoření základní kostry dokumentace se používá jednoduchý průvodce,
+`sphinx.quickstart`.
 
-```
-$ . env/bin/activate
-(env) $ python -m pip install sphinx
-(env) $ python -m sphinx.quickstart
-Welcome to the Sphinx 1.4.8 quickstart utility.
-...
+Postupujte podle následující ukázky. Jsou v ní zobrazeny jen věci,
+kde nestačí nechat výchozí hodnota; u ostatních otázek stačí výchozí hodnotu
+potvrdit (<kbd>Enter</kbd>).
+K modulům `autodoc` a `doctest` se dostaneme později.
+
+```ansi
+␛[36m$␛[0m . env/bin/activate
+␛[36m(env)$␛[0m python -m pip install sphinx
+␛[36m(env)$␛[0m python -m sphinx.quickstart
+␛[01mWelcome to the Sphinx 1.5.5 quickstart utility.␛[39;49;00m
+
+Please enter values for the following settings (just press Enter to
+accept a default value, if one is given in brackets).
+
 Enter the root path for documentation.
-> Root path for the documentation [.]: docs
+␛[35m> Root path for the documentation [.]: ␛[39;49;00mdocs
+
 ...
+
 The project name will occur in several places in the built documentation.
-> Project name: coolthing
-> Author name(s): Pythonista Dokumentarista
+␛[35m> Project name: ␛[39;49;00mcoolthing
+␛[35m> Author name(s): ␛[39;49;00mPythonic␛[Ksa␛[Kta d␛[KDokumentarista
 
 Sphinx has the notion of a "version" and a "release" for the
 software. Each version can have multiple releases. For example, for
 Python the version is something like 2.5 or 3.0, while the release is
 something like 2.5.1 or 3.0a1.  If you don't need this dual structure,
 just set both to the same value.
-> Project version: 0.5
+␛[35m> Project version []: ␛[39;49;00m0.1
+␛[35m> Project release [0.1]: ␛[39;49;00m
+
 ...
+
 Please indicate if you want to use one of the following Sphinx extensions:
-> autodoc: automatically insert docstrings from modules (y/n) [n]: y
-> doctest: automatically test code snippets in doctest blocks (y/n) [n]: y
+␛[35m> autodoc: automatically insert docstrings from modules (y/n) [n]: ␛[39;49;00my
+␛[35m> doctest: automatically test code snippets in doctest blocks (y/n) [n]: ␛[39;49;00my
+␛[35m> intersphinx: link between Sphinx documentation of different projects (y/n) [n]: ␛[39;49;00my
+
 ...
+
+␛[01mFinished: An initial directory structure has been created.␛[39;49;00m
 ```
 
-V ukázce jsou zobrazeny jen věci, kde nestačí nechat výchozí hodnota.
-K modulům `autodoc` a `doctest` se dostaneme později.
+Průvodce vytvoří složku `docs` a v ní několik souborů:
 
-Průvodce vytvoří složku docs a v ní několik souborů.
+* `conf.py` – konfigurační soubor,
+* `index.rst` – vlastní text dokumantace,
+* `Makefile`, `make.bat` – spouštěcí soubory,
+* `_static` –  adresář na obrázky, CSS, apod,
+* `_templates` – Adresář na vlastní šablony,
+* `_build` – adresář pro výstup, tedy hotovou dokumentaci.
+
 Do gitu patří všechny nyní vytvořené soubory, kromě složky `docs/_build`,
 která by měla být ignorována.
 
 Zatím se nebudeme zabývat obsahem těchto souborů, ale zkusíme základní kostru
 dokumentace sestavit do HTML.
 
-**Poznámka:** Sphinx umí generovat dokumentaci ve více formátech (LaTeX,
-manuálové stránky atd.), pro nás bude podstatné především HTML.
+!!! note ""
+    Sphinx umí generovat dokumentaci ve více formátech (LaTeX,
+    manuálové stránky atd.), pro nás bude podstatné především HTML.
 
-```
-(env) $ cd docs
-(env) $ make html
+```console
+(env)$ cd docs
+(env)$ make html
 ...
 Build finished. The HTML pages are in _build/html.
 ```
@@ -76,9 +100,10 @@ reStructuredText se od Markdownu liší v syntaxi, která je komplikovanější 
 psaní, ale umožňuje dělat komplexnější věci.
 
 Pro přehled o tom, co reStructuredText umí a jakou má syntaxi,
-můžete použít [tahák].
+můžete použít [přehled] z dokumentace Sphinxu, případně [tahák].
 
 [reStructuredText]: http://www.sphinx-doc.org/en/stable/rest.html
+[přehled]: http://www.sphinx-doc.org/en/stable/rest.html
 [tahák]: https://github.com/ralsina/rst-cheatsheet
 
 V `index.rst` je seznam kapitol:
@@ -100,8 +125,9 @@ Tam můžete přidat další kapitoly:
    ...
 ```
 
-Soubory s kapitolami je třeba vytvořit ve složce `docs` s příponou `.rst`.
-Obsah (ve smyslu *content*) lze pak přidávat samozřejmě do těchto souborů i do
+Soubory s kapitolami je třeba vytvořit ve složce `docs` s příponou `.rst`
+(např. `tutorial/foo.rst`).
+Text lze pak přidávat samozřejmě do těchto souborů i do
 `index.rst`.
 
 Chcete-li odkazovat na některou sekci, označíme si ji pomocí `.. _label:`:
@@ -125,11 +151,59 @@ It could refer to a different section as well :)
 
 [konstrukce ref]: http://www.sphinx-doc.org/en/1.4.8/markup/inline.html#role-ref
 
+
+Co do dokumentace psát
+----------------------
+
+Teď, když víte jak něco napsat, pojďme si povědět *co* vlastně psát.
+K čemu dokumentace vlastně je?
+
+Dobrá dokumentace vysvětluje, proč a jak by váš projekt měl někdo používat.
+Jak říká Eric Holscher v [jedné své prezentaci](http://www.writethedocs.org/guide/writing/beginners-guide-to-docs/),
+
+> Když lidi neví, že váš projekt existuje,<br>
+> nebudou ho používat.<br>
+> Když lidi nepřijdou na to, jak váš projekt nainstalovat,<br>
+> nebudou ho používat.<br>
+> Když lidi nepřijdou na to, jak váš projekt použít,<br>
+> nebudou ho používat.<br>
+
+Pokud pracujete v malém týmu, teoreticky jde to všechno kolegům prostě říct,
+ale potom se musíte spoléhat na to, že to nezapomenete (a neodejdete z týmu).
+Mnohem lepší je dokumentaci sepsat co nejdřív, dokud máte všechno čerstvě
+v hlavě.
+
+Nechce-li se vám nastavovat Sphinx, můžete informace napsat aspoň do malého
+README. Ale i tam by měl být stejný druh informací jako ve „velké“ dokumentaci.
+
+Na první stránce dokumentace (nebo v README) typicky najdeme:
+
+* krátký text o tom, co projekt dělá;
+* ukázku – u knihovny příklad kódu, u aplikace screenshot, u webové stránky
+  odkaz na běžící instanci;
+* návod na instalaci;
+* odkazy na zbytek dokumentace;
+* odkazy pro přispěvatele – kde je repozitář, kde nahlásit chybu;
+* licenci.
+
+Delší dokumentace knihoven pak většinou obsahuje:
+
+* tutoriál – návod, který uživatele provede použitím a možnostmi knihovny;
+* popis architektury, návrhu, použitých konceptů;
+* API dokumentaci – popis všech veřejných modulů, tříd, funkcí a podobně;
+* podrobný návod jak přispívat.
+
+
 doctest
 -------
 
 `doctest` je modul ze standardní knihovny, který najde v dokumentaci bloky kódu
-a otestuje, jestli se váš kód chová tak, jak je to ukázáno v dokumentaci.
+a otestuje, jestli odpovídají ukázanému výstupu.
+
+Pro nás to bude způsob, jak testovat *dokumentaci* – tedy jestli jsou ukázky
+kódu v ní stále platné.
+Dá se sice použít i k testování samotného kódu, ale na to existují
+[lepší nástroje]({{lesson_url('intro/testing')}}).
 
 V kombinaci se Sphinxem se dá použít rozšíření `doctest`, které jsme v průvodci
 aktivovali. Můžete to dělat dvěma způsoby. První je mít v dokumentaci
@@ -182,7 +256,7 @@ standardní výstup. V dokumentaci bude zobrazen, pokud nepoužijete flag
 
 ### .. testoutput::
 
-Výstup posledního testcode bloku. V dokumentaci nebude kód zobrazen, pokud
+Výstup posledního testcode bloku. V dokumentaci bude kód zobrazen, pokud
 nepoužijete flag `:hide:`.
 
 ### Kompletní příklad
@@ -244,8 +318,8 @@ You can use other values:
 Testy se také dají zařazovat do skupin, více
 v [dokumentaci](http://www.sphinx-doc.org/en/1.4.8/ext/doctest.html).
 
-```
-(env) $ make doctest
+```console
+(env)$ make doctest
 ...
 Document: intro
 ---------------
@@ -273,7 +347,10 @@ Doctest summary
 
 Pokud nemáte nainstalovaný vlastní balíček, a budete z něj chtít v doctestu
 importovat, pravděpodobně dostanete `ImportError`.
-V takovém případě pomůže drobná editace `conf.py`:
+V takovém případě pomůže drobná editace na začátku `conf.py`.
+Musíte přidat adresář, ze kterého lze váš kód importovat, do `sys.path`.
+Pokud jste postupovali podle návodu výše, máte dokumentaci v adresáři `docs`,
+je tedy potřeba přidat nadřazený adresář (`..`):
 
 ```python
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -312,8 +389,21 @@ script:
 autodoc
 -------
 
-Pro dokumentaci API lze použít Sphinx rozšíření `autodoc`, které jsme povolili
-v průvodci (případně to lze udělat v souboru `conf.py`), a to takto:
+Pro dokumentaci API lze použít `autodoc`, rozšíření Sphinxu, které jsme povolili
+v průvodci.
+
+!!! note ""
+    Nemáte-li toto rozšíření povolené, přidejte jej do `conf.py`:
+
+    ```python
+    extensions = [
+        'sphinx.ext.autodoc',
+        'sphinx.ext.doctest',
+        'sphinx.ext.intersphinx',
+    ]
+    ```
+
+Rozšíření `autodoc` se používá takto:
 
 ```rst
 .. automodule:: mymodule
@@ -329,7 +419,9 @@ můžete použít i
 
 Pro vygenerování hezké struktury si můžete pomoci příkazem `apidoc`:
 
-    (env) $ python -m sphinx.apidoc -o docs mymodule
+```console
+(env)$ python -m sphinx.apidoc -o docs mymodule
+```
 
 V dokumentačních řetězcích samozřejmě můžete použít [reStructuredText] a je to
 dokonce žádoucí.
@@ -414,8 +506,7 @@ Při přejmenování na `README.rst` dejte pozor na patřičné změny v `setup.
 Read the Docs
 -------------
 
-Pokud svůj repositář na GitHubu změníte na veřejný
-(což je v tuto chvíli již z hlediska předmětu v pořádku), můžete využít službu
+Pokud svůj repositář na GitHubu změníte na veřejný, můžete využít službu
 [Read the Docs] k hostování dokumentace ve Sphinxu.
 Dokumentace se sestaví při každém pushnutí na GitHub.
 
@@ -427,43 +518,7 @@ z `README.rst`.
 Úkol
 ----
 
-Vaším úkolem za 5 bodů je vytvořit pomocí Sphinx dokumentaci k vašemu projektu.
+Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/05_dokumentace.md#%C3%9Akol).
 
-Měla by obsahovat textovou část, ze které bude jasné, co je, k čemu je,
-jak se nainstaluje a jak se používá vaše aplikace.
-Můžete předpokládat, že uživatel ví, co je to Twitter, tweet, hashtag, retweet
-apod.; GitHub, issue, pull request, label, repozitář apod.
-Nepředpokládejte ale, že ví, kde najde API klíče či tokeny, že ví, co to je,
-jak se k nim chovat apod. U GitHubu nepředpokládejte, že ví, co je to webhook.
-
-Pokud hypoteticky ukážeme dokumentaci kolegům, kteří nikdy neviděli zadání
-vašeho úkolu, musí to pro ně být stejně pochopitelné.
-
-Dále by dokumentace měla obsahovat textovou část s ukázkami kódu, které se
-testují pomocí doctestu. Tato část může vysvětlovat, jak váš kód použít pro
-výrobu jiné aplikace, nebo může popisovat, jak aplikace uvnitř funguje.
-
-V dokumentaci by měla existovat kapitola s kompletní API dokumentací vašich
-modulů, tříd, funkcí apod. Všechny tyto věci musí mít v kódu dokumentační
-řetězce, které v dokumentaci musí být zobrazeny (t.j. změna dokumentačního
-řetězce se automaticky promítne ve vygenerované dokumentaci).
-
-Jak sestavit a testovat dokumentaci by mělo být jasné z `README.rst`
-(a to musí mít reStructuredText syntaxi).
-
-Generování dokumentace ani doctesty nesmí způsobit chybu ani varování.
-Potlačení chybových a varovných hlášek (např. konfigurací, přesměrováním
-*stderr*, apod.) je povoleno jen po konzultaci s cvičícím.
-
-Na Travis CI spouštějte dokumentační testy.
-
-Dokumentace musí být v angličtině.
-
-Dosavadní funkcionalita aplikace musí být samozřejmě zachována.
-
-Úkol odevzdáváte tradičně s tagem v0.5 a nahráním nové verze na
-(testovací či pravou) PyPI.
-(Nahrání je nutné – čtenář dokumentace k verzi 0.5 se bude dívat po balíčku
-této verze.)
-
-Za fungující publikaci smysluplné dokumentace na [Read the Docs] je bod navíc.
+Z hlediska předmětu v pořádku projekt na GitHubu zveřejnit,
+abyste mohli použít službu Read the Docs.
