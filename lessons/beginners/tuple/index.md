@@ -10,7 +10,7 @@ neboli *pár* (angl. *pair*); se třemi
 prvky *trojice* (angl. *3-tuple*),
 se čtyřmi *čtveřice* (angl. *4-tuple*), atd.
 
-!! note ""
+!!! note ""
     Existují i <var>n</var>-tice s jedním prvkem (hmm… „jednice”?)
     a s nula prvky (prázdné <var>n</var>-tice, angl. *empty tuple*),
     ale těmi se ze začátku nebudeme zabývat.
