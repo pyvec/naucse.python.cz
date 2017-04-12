@@ -11,7 +11,7 @@ prvky *trojice* (angl. *3-tuple*),
 se čtyřmi *čtveřice* (angl. *4-tuple*), atd.
 
 !! note ""
-    Existují i <var>n</var>-tice s jedním prvkem (hmm... „jednice”?)
+    Existují i <var>n</var>-tice s jedním prvkem (hmm… „jednice”?)
     a s nula prvky (prázdné <var>n</var>-tice, angl. *empty tuple*),
     ale těmi se ze začátku nebudeme zabývat.
 
@@ -22,7 +22,7 @@ Chovají skoro stejně jako seznamy, jen nejdou měnit.
 Nemají tedy metody jako `append`
 a `pop`, a nedá se jim přiřazovat do prvků.
 Dají se ale použít v cyklu `for`,
-a dájí se z nich brát jednotlivé prvky.
+a dájí se z nich číst jednotlivé prvky.
 
 ```python
 osoby = 'máma', 'teta', 'babička'
@@ -37,7 +37,7 @@ Vypadá to povědomě? Aby ne!
 `for jmeno in 'Hynek', 'Vilém', 'Jarmila':`
 ve skutečnosti používá <var>n</var>-tici!
 
-Když chceš <var>n</var>-tici předat funkci,
+Když chceš <var>n</var>-tici předat do funkce,
 narazíš na problém, že čárka odděluje jednotlivé
 argumenty funkce.
 V podobných případech musíš <var>n</var>-tici
@@ -65,7 +65,7 @@ def podil_a_zbytek(a, b):
 
 !!! note ""
     Tahle funkce už mimochodem v Pythonu je: jmenuje se
-    vardivmod` a je vždy k dispozici
+    `divmod` a je vždy k dispozici
     (nemusí se importovat).
 
 Python umí ještě jeden trik: pokud chceš přiřadit
@@ -117,7 +117,7 @@ Jako argument bere seznam (či jinou věc použitelnou
 ve `for`), a vždy spáruje index (pořadí v seznamu) s příslušným prvkem.
 Jako první tedy dá
 (0, *první prvek seznamu*), potom
-(1, *první prvek seznamu*),
+(1, *druhý prvek seznamu*),
 (2, *třetí prvek seznamu*),
 a tak dále.
 
@@ -162,7 +162,7 @@ Například seznam můžeš použít na písmena abecedy,
 ale dvojice index–hodnota z `enumerate`
 je <var>n</var>-tice.
 
-Prázdné <i>n</i>-tice a <i>n</i>-tice s jedním
+Prázdné <var>n</var>-tice a <var>n</var>-tice s jedním
 prvkem se zapisují trochu divně, a má to své důvody:
 může-li nastat situace, kdy takovou sekvenci budeš
 potřebovat, většinou je lepší sáhnout po seznamu.

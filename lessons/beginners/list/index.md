@@ -26,7 +26,7 @@ print(cisla)
 
 !!! note ""
     Nemůžeš najít hranaté závorky?
-    Na české klávesnici zkus pravý Alt + F a G.
+    Na české klávesnici zkus pravý <kbd>Alt</kbd> + <kbd>F</kbd> a <kbd>G</kbd>.
 
 Seznam je hodnota, která může obsahovat spoustu dalších hodnot.
 Tak jako řetězec obsahuje sekvenci znaků,
@@ -391,7 +391,7 @@ zaznamy = '3A,8B,2E,9D'.split(',')
 print(zaznamy)
 ```
 
-Chceme-li spojit seznam řetězců zase dohromady,
+Chceme-li spojit seznam řetězců zase dohromady
 do jediného řetězce, použijeme metodu
 `join` (angl. *spojit*).
 Pozor, tahle metoda se volá na *oddělovači*,
@@ -412,7 +412,7 @@ Takové funkce se nedají přímo použít v turnaji,
 kde jeden z hráčů musí hrát za kolečka.
 
 Jedno z možných řešení je napsat funkci, která zamění v řetězci všechna `'x'`
-za `'o'~ a naopak.
+za `'o'` a naopak.
 
 ```python
 print(zamen_xo('---xo--xooxxox-'))  # → '---ox--oxxooxo-'
@@ -436,7 +436,7 @@ def tah_pocitace(pole, symbol):
         return zamen_xo(tah_pocitace_x(zamen_xo(pole)))
 ```
 
-Zkus napsat funkci <code>zamen_xo</code>.
+Zkus napsat funkci `zamen_xo`.
 Udělej v ní seznam jednotlivých znaků (viz sekce Tvoření seznamů),
 a pak ho převeď na řetězec pomocí
 `join`.
