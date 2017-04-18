@@ -1,13 +1,6 @@
 <div class="row stuff">
                 <div class="col-lg-12">
                     <h1>Hra typu Asteroids</h1>
-                    <div class="note">
-                        <strong>Tato sekce není dokončená!</strong>
-                        <br>
-                        Je to tu zatím v odrážkách, takže se to nehodí na samostudium.
-                        Jestli jsi sama došla až sem, ozvi se nám prosím;
-                        rádi to s projektem pomůžeme!
-                    </div>
                     <p>
                         Dnes to všechno – třídy, grafiku, slovníky i seznam –
                         spojíme dohromady do závěrečného projektu.
@@ -32,6 +25,12 @@
                         začneme kód psát v angličtině, aby se pak dal sdílet
                         s celým světem.
                     </p>
+                    <div class="note">
+                        Procházíš-li si projekt doma, je možné, že narazíš na
+                        něco s čím si nebudeš vědět rady.
+                        Kdyby se to stalo, prosím, ozvi se nám!
+                        Rádi ti s projektem pomůžeme.
+                    </div>
                     <h2>Vesmírná loď</h2>
                     <p>(asteroids1.py)</p>
                     <ul>
@@ -64,9 +63,11 @@
                             prvků a každý prvek v ní může být pouze jednou.
                             (Na množinu se dá dívat i jako na slovník bez
                             hodnot.)
-                            Pythoní dokumentace obsahuje k množinám
+                            Je k dispozici
+                            <a href="https://github.com/pyvec/cheatsheets/blob/master/sets/sets-cs.pdf">tahák na množiny</a>, a
+                            pythonní dokumentace obsahuje k množinám
                             <a href="https://docs.python.org/3/tutorial/datastructures.html#sets">tutoriál</a> i
-                            <a href="https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset">podrbný popis</a>.
+                            <a href="https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset">podrobný popis</a>.
                             <br>
                             Vesmírná loď se pak do množiny „podívá” v rámci
                             své metody <code>tick</code>.
@@ -100,7 +101,14 @@ batch.draw()
                         <li>
                             Základní pohyb raketky je jednoduchý: k x-ové
                             souřadnici se přičte x-ová rychlost krát uplunulý čas,
-                            a to samé v y-ové souřadnici i pro úhel otočení.
+                            a to samé v y-ové souřadnici i pro úhel otočení:
+<pre>
+self.x = self.x + dt * self.x_speed
+self.y = self.y + dt * self.y_speed
+self.rotation = self.rotation + dt * rotation_speed
+</pre>
+                            Rychlost otáčení závisí na stisknutých šipkách
+                            (doleva nebo doprava).
                         </li>
                         <li>
                             Zrychlení je trochu složitější: k x-ové rychlosti
@@ -138,18 +146,25 @@ self.y_speed += dt * ACCELERATION * math.sin(rotation_radians)
                             <br>
                             Pyglet na to má speciální nízkoúrovňové funkce,
                             kterými můžeš říct „tady kresli všechno posunuté o
-                            X pixelů vlevo”; úplné vysvětlení by bylo na dlouho
-                            takže si zatím jen zkopíruj kód a zkus si domyslet
-                            co která funkce dělá:
+                            X pixelů vlevo”. Úplné vysvětlení by bylo na dlouho,
+                            takže si zatím jen zkopíruj kód:
 <pre>
+from pyglet import gl
+
 def draw():
     window.clear()
 
     for x_offset in (-window.width, 0, window.width):
         for y_offset in (-window.height, 0, window.height):
+            # Remember the current state
             gl.glPushMatrix()
+            # Move everything drawn from now on by (x_offset, y_offset, 0)
             gl.glTranslatef(x_offset, y_offset, 0)
+
+            # Draw
             batch.draw()
+
+            # Restore remembered state (this cancels the glTranslatef)
             gl.glPopMatrix()
 </pre>
                             Pro přehled, dokumentace k použitým funkcím je
@@ -161,6 +176,10 @@ def draw():
                     <p>
                         Povedlo se? Můžeš létat vesmírem?
                         Čas to všechno dát do Gitu!
+                    </p>
+                    <p>
+                        Projdi si předchozí body, jestli máš opravdu všechno,
+                        a můžeš pokračovat dál!
                     </p>
                     <h2>Asteroidy</h2>
                     <p>(asteroids2.py)</p>
@@ -209,6 +228,10 @@ def draw():
                         Povedlo se? Máš dva typy objektů?
                         Čas to všechno dát do Gitu!
                     </p>
+                    <p>
+                        Zase si projdi, jestli máš všechno hotové,
+                        a jdeme na další část!
+                    </p>
                     <h2>Kolize</h2>
                     <p>(asteroids3.py)</p>
                     <ul>
@@ -223,7 +246,8 @@ def draw():
                             kolečkem, a budeme počítat kdy se srazí kolečka.
                         </li>
                         <li>
-                            Každý objekt tedy potřebuje poloměr.
+                            Každý objekt tedy potřebuje poloměr – atribut
+                            <code>radius</code>.
                         </li>
                         <li>
                             Aby bylo vidět co si hra o objektech „myslí”,
@@ -231,9 +255,10 @@ def draw():
                             Nejlepší je to udělat pomocí
                             <a href="http://pyglet.readthedocs.org/en/latest/programming_guide/gl.html">pyglet.gl</a>
                             a trochy matematiky; pro teď si stačí opsat funkci
-                            <code>circle</code> a pro každý objekt ji zavolat.
+                            <code>draw_circle</code> a pro každý objekt ji
+                            zavolat.
 <pre>
-def circle(x, y, radius):
+def draw_circle(x, y, radius):
     iterations = 20
     s = math.sin(2*math.pi / iterations)
     c = math.cos(2*math.pi / iterations)
@@ -252,7 +277,7 @@ def circle(x, y, radius):
                             Explozi necháme na později, teď je důležité odebrání
                             objektu ze hry.
                             Dejme ho do metody <code>SpaceObject.delete</code>,
-                            protože
+                            protože vyndávat ze hry se dá jakýkoli objekt.
                             V této metodě musíme objekt jednak odstranit
                             ze seznamu <code>objects</code>, a pak
                             zrušit jeho <code>Sprite</code>, aby se už v rámci
@@ -274,29 +299,33 @@ def circle(x, y, radius):
                             teď jen zkopíruj:
 <pre>
 def distance(a, b, wrap_size):
+    """Distance in one direction (x or y)"""
     result = abs(a - b)
     if result > wrap_size / 2:
         result = wrap_size - result
     return result
 
 def overlaps(a, b):
+    """Returns true iff two space objects overlap"""
     distance_squared = (distance(a.x, b.x, window.width) ** 2 +
                         distance(a.y, b.y, window.height) ** 2)
     max_distance_squared = (a.radius + b.radius) ** 2
     return distance_squared &lt; max_distance_squared
 </pre>
                             <br>
-                            Většina objektů s lodí nebude kolidovat,
+                            Většina objektů v dokončené hře (např. oheň z
+                            rakety, střela) nebude při kolizí s lodí,
                             takže metoda <code>SpaceObject.hit_by_spaceship</code>
-                            by neměla dělat nic.
-                            Ale asteroid loď rozbije, takže
-                            <code>Asteroid.hit_by_spaceship</code> by měla
-                            zavolat <code>delete</code> lodi.
+                            by neměla dělat nic (musí jen existovat).
+                            Jen asteroid loď rozbije, takže předefinuj
+                            <code>Asteroid.hit_by_spaceship</code>, aby
+                            zavolala <code>delete</code> lodi.
                         </li>
                     </ul>
                     <p>
                         Povedlo se? Konečně se dá prohrát?
-                        Čas to všechno dát do Gitu!
+                        Čas to všechno zkontrolovat, dát do Gitu,
+                        a můžeme pokračovat!
                     </p>
                     <h2>Útok</h2>
                     <p>(asteroids4.py)</p>
@@ -324,7 +353,7 @@ def overlaps(a, b):
                             Každý objekt třídy <code>Laser</code> si pamatuje,
                             jak dlouho ještě bude ve hře.
                             Na začátku se tohle číslo nastaví tak, aby přeletěl
-                            zhrube něco víc než jednu obrazovku.
+                            zhruba něco víc než jednu obrazovku.
                             Když dojde čas, <code>Laser</code> zmizí.
                         </li>
                         <li>
@@ -431,7 +460,7 @@ def overlaps(a, b):
                             vystřelí na místo kde je právě hráčova raketka,
                             takže pokud hráč stojí pořád na jednom místě a
                             jenom se točí dokola, UFO ho sestřelí.
-                            Můžeš zkusit dodělat třídy <code>Ufo</code>
+                            Můžeš zkusit dodělat třídu <code>Ufo</code>
                             a z <code>Laser</code> podědit
                             <code>ShipLaser</code> a <code>UfoLaser</code>.
                         </li>
