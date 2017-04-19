@@ -57,7 +57,7 @@ Hodnoty jdou podle klíče i měnit:
 ```pycon
 >>> ja['jazyk'] = 'Python'
 >>> ja
-{'jméno': 'Anna', 'město': 'Brno', 'čísla': [3, 7, 42], 'město': 'Brno'}
+{'jméno': 'Anna', 'město': 'Brno', 'čísla': [3, 7, 42], 'jazyk': 'Python'}
 ```
 
 ... nebo ubírat příkazem `del`, podobně jako u seznamů:
@@ -65,7 +65,7 @@ Hodnoty jdou podle klíče i měnit:
 ```pycon
 >>> del ja['čísla']
 >>> ja
-{'jméno': 'Anna', 'město': 'Brno', 'město': 'Brno'}
+{'jméno': 'Anna', 'město': 'Brno', 'jazyk': 'Python'}
 ```
 
 ## Vyhledávací tabulka
