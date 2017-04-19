@@ -16,7 +16,7 @@ Budeme předpokládat, že znáš alespoň základy HTTP protokolu a
 vrhneme se rovnou na příklad.
 
 !!! note ""
-    Pokut základy neznáš, můžeš se podívat na
+    Pokud základy neznáš, můžeš se podívat na
     [začátečnickou lekci]({{ lesson_url('projects/github-api') }}),
     která vysvětluje o trošičku víc.
 
