@@ -55,13 +55,12 @@ def lesson_url(lesson, page='index', solution=None):
 
 
 @template_function
-def session_url(run, session, page='front'):
-    session_page = "runs/" + run + "/sessions/" + session + '/' + page + ".md"
-    if (os.path.exists(session_page)):
-        return url_for('session_page', run=run, session=session, page=page)
+def session_url(run, session, coverpage='front'):
+    if models.coverpage_available(run, session, coverpage):
+        return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
     else:
         return url_for('run', run=run)
-    
+
 
 @app.route('/')
 def index():
@@ -215,35 +214,35 @@ def lesson(lesson, page, solution=None):
     return render_page(page=page, page_wip=True, solution=solution)
 
 
-def session_template_or_404(run, session, page):
+def session_template_or_404(run, session, coverpage):
     env = app.jinja_env.overlay(loader=session_template_loader)
-    name = '{}/sessions/{}/{}.md'.format(run.slug, session, page)
+    name = '{}/sessions/{}/{}.md'.format(run.slug, session, coverpage)
     try:
         return env.get_template(name)
     except TemplateNotFound:
         abort(404)
 
 
-@app.route('/runs/<run:run>/sessions/<session>/', defaults={'page': 'front'})
-@app.route('/runs/<run:run>/sessions/<session>/<page>/')
-def session_page(run, session, page):
-    """Render the session page.
+@app.route('/runs/<run:run>/sessions/<session>/', defaults={'coverpage': 'front'})
+@app.route('/runs/<run:run>/sessions/<session>/<coverpage>/')
+def session_coverpage(run, session, coverpage):
+    """Render the session coverpage.
 
     Args:
         run     run where the session belongs
         session name of the session
-        page    page of the session, front is default
+        coverpage    coverpage of the session, front is default
 
     Returns:
-        rendered session page
+        rendered session coverpage
     """
 
     def session_url(session):
-        return url_for('session_page', run=run, session=session, page=page)
+        return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
 
-    template = session_template_or_404(run, session, page)
+    template = session_template_or_404(run, session, coverpage)
     content = Markup(template.render())
     md_content = Markup(convert_markdown(content))
 
-    return render_template('lesson.html', content=md_content, page=page,
+    return render_template('coverpage.html', content=md_content, coverpage=coverpage,
                            session=True)

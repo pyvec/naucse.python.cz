@@ -7,6 +7,7 @@ from naucse.modelutils import reify
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.markdown_util import convert_markdown
 from naucse.notebook_util import convert_notebook
+from os import path
 
 
 class Lesson(Model):
@@ -290,6 +291,11 @@ def _get_sessions(model, plan, base_collection):
     return result
 
 
+def coverpage_available(run, session, coverpage):
+    cover_path = "runs/" + run + "/sessions/" + session + '/' + coverpage + ".md"
+    return path.exists(cover_path)
+
+
 class Course(Model):
     """A course – ordered collection of sessions"""
     def __str__(self):
@@ -332,10 +338,6 @@ class Run(Model):
     @reify
     def slug(self):
         return '/'.join(self.path.parts[-2:])
-
-    @reify
-    def year(self):
-        return self.path.parts[-2]
 
 
 class RunYear(Model):
