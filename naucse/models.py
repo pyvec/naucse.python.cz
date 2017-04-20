@@ -333,6 +333,10 @@ class Run(Model):
     def slug(self):
         return '/'.join(self.path.parts[-2:])
 
+    @reify
+    def year(self):
+        return self.path.parts[-2]
+
 
 class RunYear(Model):
     """A year of runs"""

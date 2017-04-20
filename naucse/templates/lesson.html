@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 
 {% block style %}
-    {% if page.css %}
+    {% if page.css is defined and page.css %}
         {{ page.css }}
     {% endif %}
 {% endblock style %}
@@ -22,7 +22,9 @@
             {{ content }}
         {% endblock %}
 
-        <hr class="lesson-end">
+        {% if page.slug is defined %}
+            <hr class="lesson-end">
+        {% endif %}
 
         {% if (prv is defined and prv != None) or (nxt is defined and nxt != None) %}
         <div class="row prev-next">
@@ -42,7 +44,8 @@
         <hr>
         {% endif %}
 
-        {% if page.attributions or page.license %}
+        {% if (page.attribution is defined and page.attributions) or
+              (page.license is defined and page.license) %}
             <div class="lesson-attribution">
                 {% for a in page.attributions %}
                     {{ a | markdown }}

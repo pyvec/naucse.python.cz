@@ -2,17 +2,20 @@ import os
 
 from flask import Flask, render_template, url_for, send_from_directory
 from flask import abort, redirect
-from jinja2 import StrictUndefined
+from jinja2 import StrictUndefined, FileSystemLoader, Markup
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
 
 from naucse import models
 from naucse.urlconverters import register_url_converters
 from naucse.templates import setup_jinja_env, vars_functions
+from naucse.markdown_util import convert_markdown
 
 
 app = Flask('naucse')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+session_template_loader = FileSystemLoader(os.path.join(app.root_path, '..', 'runs'))
 
 setup_jinja_env(app.jinja_env)
 
@@ -50,6 +53,15 @@ def run_url(run):
 def lesson_url(lesson, page='index', solution=None):
     return url_for('lesson', lesson=lesson, page=page, solution=solution)
 
+
+@template_function
+def session_url(run, session, page='front'):
+    session_page = "runs/" + run + "/sessions/" + session + '/' + page + ".md"
+    if (os.path.exists(session_page)):
+        return url_for('session_page', run=run, session=session, page=page)
+    else:
+        return url_for('run', run=run)
+    
 
 @app.route('/')
 def index():
@@ -201,3 +213,37 @@ def lesson(lesson, page, solution=None):
     """Render the html of the given lesson page."""
     page = lesson.pages[page]
     return render_page(page=page, page_wip=True, solution=solution)
+
+
+def session_template_or_404(run, session, page):
+    env = app.jinja_env.overlay(loader=session_template_loader)
+    name = '{}/sessions/{}/{}.md'.format(run.slug, session, page)
+    try:
+        return env.get_template(name)
+    except TemplateNotFound:
+        abort(404)
+
+
+@app.route('/runs/<run:run>/sessions/<session>/', defaults={'page': 'front'})
+@app.route('/runs/<run:run>/sessions/<session>/<page>/')
+def session_page(run, session, page):
+    """Render the session page.
+
+    Args:
+        run     run where the session belongs
+        session name of the session
+        page    page of the session, front is default
+
+    Returns:
+        rendered session page
+    """
+
+    def session_url(session):
+        return url_for('session_page', run=run, session=session, page=page)
+
+    template = session_template_or_404(run, session, page)
+    content = Markup(template.render())
+    md_content = Markup(convert_markdown(content))
+
+    return render_template('lesson.html', content=md_content, page=page,
+                           session=True)
