@@ -228,9 +228,6 @@ def session_coverpage(run, session, coverpage):
     def session_url(session):
         return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
 
-    if session.coverpage_available(run.slug, coverpage):
-        content = session.get_coverpage_content(run, coverpage, app)
-    else:
-        content = ""
+    content = session.get_coverpage_content(run, coverpage, app)
 
     return render_template('coverpage.html', content=content, session=session)

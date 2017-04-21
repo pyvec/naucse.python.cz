@@ -274,15 +274,13 @@ class Session(Model):
         coverpage += ".md"
         q = self.path / 'sessions' / self.slug / coverpage
 
-        with q.open() as f:
-            md_content = convert_markdown("".join(f.readlines()))
+        try:
+            with q.open() as f:
+                md_content = convert_markdown("".join(f.readlines()))
 
-        return md_content
-
-    def coverpage_available(self, run, coverpage):
-        coverpage += ".md"
-        cover_path = self.path / 'sessions' / self.slug / coverpage
-        return cover_path.exists()
+            return md_content
+        except FileNotFoundError:
+            return ""
 
 
 def _get_sessions(model, plan, base_collection):
