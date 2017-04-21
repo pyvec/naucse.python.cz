@@ -15,8 +15,6 @@ from naucse.markdown_util import convert_markdown
 app = Flask('naucse')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-session_template_loader = FileSystemLoader(os.path.join(app.root_path, '..', 'runs'))
-
 setup_jinja_env(app.jinja_env)
 
 
@@ -214,15 +212,6 @@ def lesson(lesson, page, solution=None):
     return render_page(page=page, page_wip=True, solution=solution)
 
 
-def session_template_or_404(run, session, coverpage):
-    env = app.jinja_env.overlay(loader=session_template_loader)
-    name = '{}/sessions/{}/{}.md'.format(run.slug, session, coverpage)
-    try:
-        return env.get_template(name)
-    except TemplateNotFound:
-        abort(404)
-
-
 @app.route('/runs/<run:run>/sessions/<session>/', defaults={'coverpage': 'front'})
 @app.route('/runs/<run:run>/sessions/<session>/<coverpage>/')
 def session_coverpage(run, session, coverpage):
@@ -240,9 +229,8 @@ def session_coverpage(run, session, coverpage):
     def session_url(session):
         return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
 
-    template = session_template_or_404(run, session, coverpage)
-    content = Markup(template.render())
-    md_content = Markup(convert_markdown(content))
 
-    return render_template('coverpage.html', content=md_content, coverpage=coverpage,
-                           session=True)
+    session_class = run.sessions.get(session)
+    content = session_class.get_coverpage_content(run, coverpage, app)
+
+    return render_template('coverpage.html', content=content)

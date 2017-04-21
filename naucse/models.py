@@ -271,6 +271,27 @@ class Session(Model):
         return materials
 
 
+    def get_coverpage_content(self, run, coverpage, app):
+        session_template_loader = jinja2.FileSystemLoader(path.join(app.root_path, '..', 'runs'))
+        env = app.jinja_env.overlay(loader=session_template_loader)
+        name = '{}/sessions/{}/{}.md'.format(run.slug, self.slug, coverpage)
+
+        try:
+            template = env.get_template(name)
+        except TemplateNotFound:
+            abort(404)
+
+        try:
+            content = jinja2.Markup(template.render())
+        except FileNotFoundError:
+            abort(404)
+
+        content = jinja2.Markup(template.render())
+        md_content = jinja2.Markup(convert_markdown(content))
+
+        return md_content
+
+
 def _get_sessions(model, plan, base_collection):
     result = OrderedDict(
         (s['slug'],
