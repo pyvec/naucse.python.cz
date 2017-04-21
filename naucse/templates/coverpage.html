@@ -5,6 +5,28 @@
 <div class="page">
     <div class="container">
 
+        <h2>
+            {% if session.date %}
+                Lekce: {{ session.title }} ({{ session.date }})
+            {% else %}
+                Lekce: {{ session.title }}
+            {% endif %}
+        </h2>
+
+        <ul>
+        {% for mat in session.materials %}
+            <li>
+                <div>
+                    {% if mat.type == "page" %}
+                        <a href="{{ lesson_url(lesson=mat.page.lesson, page=mat.page.slug) }}">{{ mat.title }}</a>
+                    {% else %}
+                        <a href={{ mat.url }}>{{ mat.title }}</a>
+                    {% endif %}
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+
         {% block coverpage_content %}
             {{ content }}
         {% endblock %}

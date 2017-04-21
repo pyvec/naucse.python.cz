@@ -54,10 +54,7 @@ def lesson_url(lesson, page='index', solution=None):
 
 @template_function
 def session_url(run, session, coverpage='front'):
-    if models.coverpage_available(run, session, coverpage):
-        return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
-    else:
-        return url_for('run', run=run)
+    return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
 
 
 @app.route('/')
@@ -226,11 +223,14 @@ def session_coverpage(run, session, coverpage):
         rendered session coverpage
     """
 
+    session = run.sessions.get(session)
+
     def session_url(session):
         return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
 
+    if session.coverpage_available(run.slug, coverpage):
+        content = session.get_coverpage_content(run, coverpage, app)
+    else:
+        content = ""
 
-    session_class = run.sessions.get(session)
-    content = session_class.get_coverpage_content(run, coverpage, app)
-
-    return render_template('coverpage.html', content=content)
+    return render_template('coverpage.html', content=content, session=session)

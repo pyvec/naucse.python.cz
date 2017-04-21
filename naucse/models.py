@@ -7,7 +7,6 @@ from naucse.modelutils import reify
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.markdown_util import convert_markdown
 from naucse.notebook_util import convert_notebook
-from os import path
 
 
 class Lesson(Model):
@@ -272,24 +271,18 @@ class Session(Model):
 
 
     def get_coverpage_content(self, run, coverpage, app):
-        session_template_loader = jinja2.FileSystemLoader(path.join(app.root_path, '..', 'runs'))
-        env = app.jinja_env.overlay(loader=session_template_loader)
-        name = '{}/sessions/{}/{}.md'.format(run.slug, self.slug, coverpage)
+        coverpage += ".md"
+        q = self.path / 'sessions' / self.slug / coverpage
 
-        try:
-            template = env.get_template(name)
-        except TemplateNotFound:
-            abort(404)
-
-        try:
-            content = jinja2.Markup(template.render())
-        except FileNotFoundError:
-            abort(404)
-
-        content = jinja2.Markup(template.render())
-        md_content = jinja2.Markup(convert_markdown(content))
+        with q.open() as f:
+            md_content = convert_markdown("".join(f.readlines()))
 
         return md_content
+
+    def coverpage_available(self, run, coverpage):
+        coverpage += ".md"
+        cover_path = self.path / 'sessions' / self.slug / coverpage
+        return cover_path.exists()
 
 
 def _get_sessions(model, plan, base_collection):
@@ -310,11 +303,6 @@ def _get_sessions(model, plan, base_collection):
     if len(result) != len(set(result)):
         raise ValueError('slugs not unique in {!r}'.format(model))
     return result
-
-
-def coverpage_available(run, session, coverpage):
-    cover_path = "runs/" + run + "/sessions/" + session + '/' + coverpage + ".md"
-    return path.exists(cover_path)
 
 
 class Course(Model):
