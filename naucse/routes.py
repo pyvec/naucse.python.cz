@@ -215,9 +215,9 @@ def session_coverpage(run, session, coverpage):
     """Render the session coverpage.
 
     Args:
-        run     run where the session belongs
-        session name of the session
-        coverpage    coverpage of the session, front is default
+        run         run where the session belongs
+        session     name of the session
+        coverpage   coverpage of the session, front is default
 
     Returns:
         rendered session coverpage
@@ -225,9 +225,17 @@ def session_coverpage(run, session, coverpage):
 
     session = run.sessions.get(session)
 
+    def lesson_url(lesson, *args, **kwargs):
+        return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
+
     def session_url(session):
         return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
 
     content = session.get_coverpage_content(run, coverpage, app)
 
-    return render_template('coverpage.html', content=content, session=session)
+    return render_template('coverpage.html',
+                            content=content,
+                            session=session,
+                            lesson_url=lesson_url,
+                            **vars_functions(run.vars)
+                            )
