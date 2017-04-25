@@ -2,14 +2,13 @@ import os
 
 from flask import Flask, render_template, url_for, send_from_directory
 from flask import abort, redirect
-from jinja2 import StrictUndefined, FileSystemLoader, Markup
+from jinja2 import StrictUndefined
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
 
 from naucse import models
 from naucse.urlconverters import register_url_converters
 from naucse.templates import setup_jinja_env, vars_functions
-from naucse.markdown_util import convert_markdown
 
 
 app = Flask('naucse')
