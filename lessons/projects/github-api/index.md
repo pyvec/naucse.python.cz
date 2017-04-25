@@ -165,7 +165,7 @@ with open('token.txt') as soubor:
 
 headers = {'Authorization': 'token ' + token}
 
-stranka = requests.put('https://api.github.com/user/starred/pyladiescz/pyladies.cz', headers=headers)
+stranka = requests.put('https://api.github.com/user/starred/pyvec/naucse.python.cz', headers=headers)
 stranka.raise_for_status()
 ```
 
