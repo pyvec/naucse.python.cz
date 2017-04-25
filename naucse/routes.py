@@ -51,6 +51,11 @@ def lesson_url(lesson, page='index', solution=None):
     return url_for('lesson', lesson=lesson, page=page, solution=solution)
 
 
+@template_function
+def session_url(run, session, coverpage='front'):
+    return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
+
+
 @app.route('/')
 def index():
     return render_template("index.html",
@@ -201,3 +206,35 @@ def lesson(lesson, page, solution=None):
     """Render the html of the given lesson page."""
     page = lesson.pages[page]
     return render_page(page=page, page_wip=True, solution=solution)
+
+
+@app.route('/runs/<run:run>/sessions/<session>/', defaults={'coverpage': 'front'})
+@app.route('/runs/<run:run>/sessions/<session>/<coverpage>/')
+def session_coverpage(run, session, coverpage):
+    """Render the session coverpage.
+
+    Args:
+        run         run where the session belongs
+        session     name of the session
+        coverpage   coverpage of the session, front is default
+
+    Returns:
+        rendered session coverpage
+    """
+
+    session = run.sessions.get(session)
+
+    def lesson_url(lesson, *args, **kwargs):
+        return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
+
+    def session_url(session):
+        return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
+
+    content = session.get_coverpage_content(run, coverpage, app)
+
+    return render_template('coverpage.html',
+                            content=content,
+                            session=session,
+                            lesson_url=lesson_url,
+                            **vars_functions(run.vars)
+                            )

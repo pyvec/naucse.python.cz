@@ -270,6 +270,20 @@ class Session(Model):
         return materials
 
 
+    def get_coverpage_content(self, run, coverpage, app):
+        coverpage += ".md"
+        q = self.path / 'sessions' / self.slug / coverpage
+
+        try:
+            with q.open() as f:
+                md_content = f.read()
+        except FileNotFoundError:
+            return ""
+        
+        html_content = convert_markdown(md_content)
+        return html_content
+
+
 def _get_sessions(model, plan, base_collection):
     result = OrderedDict(
         (s['slug'],
