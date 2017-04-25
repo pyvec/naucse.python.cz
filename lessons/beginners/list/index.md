@@ -443,12 +443,17 @@ print(opravene_zaznamy) # → ['Pepa Novák', 'Jiří Sládek', 'Ivo Navrátil',
     písmena, jinak vrací False. Například `'abc'.islower() == True` ale
     `'aBc'.islower() == False`.
 
+    Snadný způsob jak převést první písmenko na velké je metoda `capitalize()`:
+    např. `'abc'.capitalize() == 'Abc'`
+
 {% filter solution %}
 ```python
 def vyber_chybne(seznam):
     vysledek = []
     for zaznam in seznam:
-        jmeno, prijmeni = zaznam.split(' ')
+        jmeno_a_prijmeni = zaznam.split(' ')
+        jmeno = jmeno_a_prijmeni[0]
+        prijmeni = jmeno_a_prijmeni[1]
         if jmeno[0].islower() or prijmeni[0].islower():
             vysledek.append(zaznam)
     return vysledek
@@ -456,7 +461,9 @@ def vyber_chybne(seznam):
 def vyber_spravne(seznam):
     vysledek = []
     for zaznam in seznam:
-        jmeno, prijmeni = zaznam.split(' ')
+        jmeno_a_prijmeni = zaznam.split(' ')
+        jmeno = jmeno_a_prijmeni[0]
+        prijmeni = jmeno_a_prijmeni[1]
         if not jmeno[0].islower() and not prijmeni[0].islower():
             vysledek.append(zaznam)
     return vysledek
@@ -464,8 +471,10 @@ def vyber_spravne(seznam):
 def oprav_zaznamy(seznam):
     vysledek = []
     for zaznam in seznam:
-       jmeno, prijmeni = zaznam.split(' ')
-       vysledek.append(jmeno.capitalize() + ' ' + prijmeni.capitalize())
+        jmeno_a_prijmeni = zaznam.split(' ')
+        jmeno = jmeno_a_prijmeni[0]
+        prijmeni = jmeno_a_prijmeni[1]
+        vysledek.append(jmeno.capitalize() + ' ' + prijmeni.capitalize())
     return vysledek
 ```
 {% endfilter %}
