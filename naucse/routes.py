@@ -103,8 +103,7 @@ def lesson_static(lesson, path):
 def course_page(course):
     try:
         return render_template('course.html',
-                               course=course, plan=course.sessions,
-                               page_wip=True)
+                               course=course, plan=course.sessions)
     except TemplateNotFound:
         abort(404)
 
@@ -205,7 +204,7 @@ def run_page(run, lesson, page, solution=None):
 def lesson(lesson, page, solution=None):
     """Render the html of the given lesson page."""
     page = lesson.pages[page]
-    return render_page(page=page, page_wip=True, solution=solution)
+    return render_page(page=page, solution=solution)
 
 
 @app.route('/runs/<run:run>/sessions/<session>/', defaults={'coverpage': 'front'})
