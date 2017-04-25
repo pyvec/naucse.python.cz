@@ -2,6 +2,16 @@
 
 {% block content %}
 
+{% macro session_heading(session, index, plan) %}
+    {% if plan|length > 1 %}
+        Lekce {{ index }} -
+    {% endif %}
+    {{ session.title }}
+    {% if session.date %}
+        ({{ session.date }})
+    {% endif %}
+{% endmacro %}
+
 <div class="page">
     <section class="container">
 
@@ -13,18 +23,14 @@
                 {% for session in plan.values() %}
                 <div class="section{{ loop.index }}">
                     <h4>
-                    {% if run is defined %}
-                        <a href="{{ session_url(run.slug, session.slug) }}">
-                        {% if session.date %}
-                            Lekce {{ loop.index }} - {{ session.title }} ({{ session.date }})
+                        {% if run is defined %}
+                            <a href="{{ session_url(run.slug, session.slug) }}">
+                            {{ session_heading(session, loop.index, plan) }}
+                            </a>
                         {% else %}
-                            Lekce {{ loop.index }} - {{ session.title }}
+                            {{ session_heading(session, loop.index, plan) }}
                         {% endif %}
-                        </a>
-                    {% else %}
-                        Lekce {{ loop.index }} - {{ session.title }}
-                    {% endif %}
-                     </h4>
+                    </h4>
                     {% for mat in session.materials %}
                         <div>
                             <span class="glyphicon-pencil"></span>
