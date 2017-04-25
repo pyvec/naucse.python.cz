@@ -276,11 +276,12 @@ class Session(Model):
 
         try:
             with q.open() as f:
-                md_content = convert_markdown("".join(f.readlines()))
-
-            return md_content
+                md_content = f.read()
         except FileNotFoundError:
             return ""
+        
+        html_content = convert_markdown(md_content)
+        return html_content
 
 
 def _get_sessions(model, plan, base_collection):
