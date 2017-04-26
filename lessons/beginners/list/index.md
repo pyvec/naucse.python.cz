@@ -406,57 +406,77 @@ print(veta)
 
 ## Úkol
 
-Někte{{gnd('ří', 'ré', both='ří')}} z vás pro 1-D piškvorky udělali funkci
-`tah_pocitace`, která umí hrát jen za křížky.
-Takové funkce se nedají přímo použít v turnaji,
-kde jeden z hráčů musí hrát za kolečka.
-
-Jedno z možných řešení je napsat funkci, která zamění v řetězci všechna `'x'`
-za `'o'` a naopak.
+Představ si, že ti uživatelé zadávají jména a příjmení a ty si je ukládáš do
+seznamu pro další použití např. v evidenci studentů. Ne všichni jsou ale pořádní,
+a tak se v seznamu sem tam objeví i jméno s nesprávně zadanými velkými písmeny.
+Například:
 
 ```python
-print(zamen_xo('---xo--xooxxox-'))  # → '---ox--oxxooxo-'
+zaznamy = ['pepa novák', 'Jiří Sládek', 'Ivo navrátil', 'jan Poledník']
 ```
 
-Pak se dá napsat funkce, která pokud má hrát
-za kolečka,
+Úkolem je:
 
-* zamění v hracím poli 'x'↔'o',
-* na výsledek zavolá funkci, která zahraje křížek,
-* a ve výsledku opět zamění 'x'↔'o'.
+* Napsat funkci, která vybere jen ty správně zadané záznamy, které mají správně
+jméno i příjmení s velkým počátečním písmenem.
+* Napsat funkci, která vybere naopak jen ty nesprávně zadané záznamy.
+* *(Nepovinný)* – Napsat funkci, která vrátí seznam s opravenými záznamy.
 
-Původní křížky a kolečka tak zůstanou na svých
-místech, ale nově přidaný křížek se nahradí za kolečko.
+Výsledné funkce by měly fungovat takto:
 
 ```python
-def tah_pocitace(pole, symbol):
-    if symbol == 'x':
-        return tah_pocitace_x(pole)
-    else:
-        return zamen_xo(tah_pocitace_x(zamen_xo(pole)))
+zaznamy = ['pepa novák', 'Jiří Sládek', 'Ivo navrátil', 'jan Poledník']
+
+chybne_zaznamy = vyber_chybne(zaznamy)
+print(chybne_zaznamy) # → ['pepa novák', 'Ivo navrátil', 'jan Poledník']
+
+spravne_zaznamy = vyber_spravne(zaznamy)
+print(spravne_zaznamy) # → ['Jiří Sládek']
+
+opravene_zaznamy = oprav_zaznamy(zaznamy)
+print(opravene_zaznamy) # → ['Pepa Novák', 'Jiří Sládek', 'Ivo Navrátil', 'Jan Poledník']
 ```
 
-Zkus napsat funkci `zamen_xo`.
-Udělej v ní seznam jednotlivých znaků (viz sekce Tvoření seznamů),
-a pak ho převeď na řetězec pomocí
-`join`.
+!!! note ""
+    Snadný způsub jak zjistit, zda je řetězec složen jen z malých písmen,
+    je metoda `islower()`, která vrací True, pokud řetězec obsahuje jen malá
+    písmena, jinak vrací False. Například `'abc'.islower() == True` ale
+    `'aBc'.islower() == False`.
+
+    Snadný způsob jak převést první písmenko na velké je metoda `capitalize()`:
+    např. `'abc'.capitalize() == 'Abc'`
 
 {% filter solution %}
 ```python
-def zamen_xo(retezec):
+def vyber_chybne(seznam):
     vysledek = []
-    for znak in retezec:
-        if znak == 'o':
-            vysledek.append('x')
-        elif znak == 'x':
-            vysledek.append('o')
-        else:
-            vysledek.append(znak)
-    return ''.join(vysledek)
-```
+    for zaznam in seznam:
+        jmeno_a_prijmeni = zaznam.split(' ')
+        jmeno = jmeno_a_prijmeni[0]
+        prijmeni = jmeno_a_prijmeni[1]
+        if jmeno[0].islower() or prijmeni[0].islower():
+            vysledek.append(zaznam)
+    return vysledek
 
-Prázdný oddělovač způsobí, že se jednotlivé
-prvky seznamu „nalepí” těsně vedle sebe.
+def vyber_spravne(seznam):
+    vysledek = []
+    for zaznam in seznam:
+        jmeno_a_prijmeni = zaznam.split(' ')
+        jmeno = jmeno_a_prijmeni[0]
+        prijmeni = jmeno_a_prijmeni[1]
+        if not jmeno[0].islower() and not prijmeni[0].islower():
+            vysledek.append(zaznam)
+    return vysledek
+
+def oprav_zaznamy(seznam):
+    vysledek = []
+    for zaznam in seznam:
+        jmeno_a_prijmeni = zaznam.split(' ')
+        jmeno = jmeno_a_prijmeni[0]
+        prijmeni = jmeno_a_prijmeni[1]
+        vysledek.append(jmeno.capitalize() + ' ' + prijmeni.capitalize())
+    return vysledek
+```
 {% endfilter %}
 
 ## Seznamy a náhoda
