@@ -235,6 +235,7 @@ def session_coverpage(run, session, coverpage):
     return render_template('coverpage.html',
                             content=content,
                             session=session,
+                            run = run,
                             lesson_url=lesson_url,
                             **vars_functions(run.vars)
                             )
