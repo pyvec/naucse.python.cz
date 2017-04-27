@@ -478,7 +478,7 @@ Odkazy na třídy a moduly
 ------------------------
 
 Máte-li zdokumentovaný modul, funkci, třídu, metodu apod., je možné na ni
-odkázat pomocí konstrukce `:mod:`, `:func:`, `:cls:`, `:meth:` a dalších
+odkázat pomocí konstrukce `:mod:`, `:func:`, `:class:`, `:meth:` a dalších
 ze Sphinxové [domény Python]:
 
 ```rst
