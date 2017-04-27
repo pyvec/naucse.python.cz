@@ -24,9 +24,6 @@
 
         <hr class="lesson-end">
 
-        {% if (prv is defined and prv != None) or
-              (nxt is defined and nxt != None) or
-              (session is defined and session != None and run is defined) %}
         <div class="row prev-next">
             <div class="col text-left">
             {% if prv is defined and prv != None %}
@@ -36,19 +33,20 @@
 
             <div class="col text-center">
             {% if session is defined and session != None and run is defined%}
-                <a href="{{ session_url(run.slug, session.slug) }}"><span>{{ session.title }}</span></a>
+                <a href="{{ session_url(run.slug, session.slug) }}">↑ <span class="hidden-xs-down">Lekce: {{ session.title }}</span></a>
             {% endif %}
             </div>
 
             <div class="col text-right">
             {% if nxt is defined and nxt != None %}
                 <a href="{{ lesson_url(lesson=nxt.page.lesson, page=nxt.page.slug) }}"><span class="hidden-xs-down">{{ nxt.title }}</span> →</a>
+            {% elif session.next is defined and session.next != None %}
+                <a href="{{ session_url(run.slug, session.next.slug) }}"><span class="hidden-xs-down">Lekce: {{ session.next.title }}</span> →</a>
             {% endif %}
             </div>
         </div>
 
         <hr>
-        {% endif %}
 
         {% if page.attributions or page.license %}
             <div class="lesson-attribution">
