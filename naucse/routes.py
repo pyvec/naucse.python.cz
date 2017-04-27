@@ -195,7 +195,8 @@ def run_page(run, lesson, page, solution=None):
                        page_wip=not page.license,
                        solution=solution,
                        vars=run.vars,
-                       nxt=nxt, prv=prv)
+                       nxt=nxt, prv=prv,
+                       session=session)
 
 
 @app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
