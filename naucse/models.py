@@ -337,8 +337,10 @@ class Run(Model):
     description = DataProperty(info)
     long_description = DataProperty(info)
     vars = DataProperty(info)
-    time = DataProperty(info)
-    place = DataProperty(info)
+
+    time = DataProperty(info, default=None)
+    place = DataProperty(info, default=None)
+
 
     @reify
     def sessions(self):
