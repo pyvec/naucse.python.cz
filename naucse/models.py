@@ -338,6 +338,10 @@ class Run(Model):
     long_description = DataProperty(info)
     vars = DataProperty(info)
 
+    time = DataProperty(info, default=None)
+    place = DataProperty(info, default=None)
+
+
     @reify
     def sessions(self):
         base_collection = self.info.get('base_collection')

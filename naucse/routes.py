@@ -195,7 +195,8 @@ def run_page(run, lesson, page, solution=None):
                        page_wip=not page.license,
                        solution=solution,
                        vars=run.vars,
-                       nxt=nxt, prv=prv)
+                       nxt=nxt, prv=prv,
+                       session=session)
 
 
 @app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
@@ -234,6 +235,7 @@ def session_coverpage(run, session, coverpage):
     return render_template('coverpage.html',
                             content=content,
                             session=session,
+                            run = run,
                             lesson_url=lesson_url,
                             **vars_functions(run.vars)
                             )

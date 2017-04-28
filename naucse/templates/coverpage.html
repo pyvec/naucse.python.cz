@@ -5,13 +5,27 @@
 <div class="page">
     <div class="container">
 
-        <h2>
+        {% if run is defined %}
+            <header class="lesson-header">
+                <a href="{{ url_for('index') }}">Nauč se Python </a>
+                > <a href="{{ url_for('runs') }}">Kurzy</a>
+                > <a href="{{ run_url(run) }}">{{ run.title }}</a>
+                > {{ session.title }}
+                <hr>
+            </header>
+        {% endif %}
+
+        <h1>
             {% if session.date %}
                 Lekce: {{ session.title }} ({{ session.date }})
             {% else %}
                 Lekce: {{ session.title }}
             {% endif %}
-        </h2>
+        </h1>
+
+        {% if run is defined and run.place is defined and run.time is defined and run.place != None and run.time != None %}
+            <div class="details">{{run.place}}, {{run.time}}</div>
+        {% endif %}
 
         <ul>
         {% for mat in session.materials %}
@@ -30,6 +44,25 @@
         {% block coverpage_content %}
             {{ content }}
         {% endblock %}
+
+        <hr class="lesson-end">
+        <div class="row prev-next">
+            <div class="col text-left">
+            {% if session.prev is defined and session.prev != None %}
+                <a href="{{ session_url(run.slug, session.prev.slug) }}">← <span class="hidden-xs-down">Lekce: {{ session.prev.title }}</span></a>
+            {% endif %}
+            </div>
+
+            <div class="col text-left">
+                <a href="{{ run_url(run) }}">↑ <span class="hidden-xs-down">{{ run.title }}</span></a>
+            </div>
+
+            <div class="col text-right">
+            {% if session.next is defined and session.next != None %}
+                <a href="{{ session_url(run.slug, session.next.slug) }}"><span class="hidden-xs-down">Lekce: {{ session.next.title }}</span> →</a>
+            {% endif %}
+            </div>
+        </div>
 
     </div>
 </div>
