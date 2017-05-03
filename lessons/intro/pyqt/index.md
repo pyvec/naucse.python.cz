@@ -49,7 +49,7 @@ Pokud používáte na Macu `homebrew`, můžete to udělat i takto:
 
 ### Numpy
 
-Do virtuálního prostředí s PyQt5 si nainstalujte in NumPy:
+Do virtuálního prostředí s PyQt5 si nainstalujte i NumPy:
 
     python -m pip install numpy
 
