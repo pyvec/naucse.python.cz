@@ -6,7 +6,7 @@ podíváme na objekty.
 Co pro programátory znamená slovo *objekt*?
 
 V Pythonu je to jednoduché – každá hodnota
-(tj. něco, co můžeme uložit do proměnné, vrátit
+(tj. něco, co můžeš uložit do proměnné, vrátit
 z funkce nebo třeba seznamu) je objekt.
 Některé jazyky (třeba Javascript, C++ nebo Java) mají
 i jiné hodnoty než objekty, v některých
@@ -122,8 +122,8 @@ Třeba karetní hra by mohla mít třídu Karta,
 webová aplikace třídu Uživatel,
 tabulkový procesor třídu Řádek.
 
-My teď potřebujeme napsat program o zvířátkách,
-tak si napíšeme třídu pro koťátka, která umí mňoukat:
+My teď potřebujeme napsat program o zvířátkách.
+Začni tím, že napíšeš třídu pro koťátka, která umí mňoukat:
 
 ```python
 class Kotatko:
@@ -195,7 +195,7 @@ Na začátku jsme si řekl{{gnd('i', 'y', both='i')}}, že objekty spojují chov
 a data.
 Chování je definováno ve třídě, data se schovávají
 právě v atributech jednotlivých objektů.
-Podle atributů jako jméno můžeme jednotlivá koťátka
+Podle atributů jako jméno můžeš jednotlivá koťátka
 rozlišit.
 
 !!! note ""
@@ -236,7 +236,7 @@ mourek.zamnoukej()
 micka.zamnoukej()
 ```
 
-Co se stalo? Výraz `mourek.zamnoukej` udělá *metodu*, která, když ji zavoláme,
+Co se stalo? Výraz `mourek.zamnoukej` udělá *metodu*, která, když ji zavoláš,
 předá objekt `mourek` jako první argument
 funkce `zamnoukej`.
 
@@ -305,7 +305,7 @@ mourek.zamnoukej()
 ```
 
 A teď už není možnost, jak vytvořit koťátko bez jména,
-takže nám `zamnoukej` bude vždycky fungovat.
+takže `zamnoukej` bude vždycky fungovat.
 
 Podobných „opodtržítkovaných“ metod je víc,
 třeba `__str__` se volá, když je potřeba

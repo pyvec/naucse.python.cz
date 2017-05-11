@@ -37,7 +37,7 @@ několikrát (a hlavně ho potom udržovat), vymysleli
 mechanismus, jak se toho vyvarovat. Jak?
 
 Koťátka i štěňátka jsou zvířátka.
-Můžeme si vytvořit třídu společnou pro všechna
+Můžeš si vytvořit třídu společnou pro všechna
 zvířátka a do ní napsat všechno, co je společné.
 Ve třídách pro jednotlivé druhy zvířat pak zbude jen
 to, co se liší.
@@ -78,14 +78,14 @@ Příkazem `class Kotatko(Zviratko):`
 Případně se můžeš setkat s jinými termíny:
 „je odvozená” ze třídy `Zviratko`,
 (angl. *derived from*),
-nebo ji “rozšiřuje”, angl. *extends*).
+nebo ji “rozšiřuje” (angl. *extends*).
 A když už jsme u terminologie, odvozeným třídám se
 říká taky *podtřídy* (angl. *subclasses*)
 a `Zviratko` je tu *nadtřída*
 (angl. *superclass*).
 
 Když potom Python hledá nějakou metodu
-(nebo jiný atribut), třeba `micka.snez`
+(nebo jiný atribut), třeba `micka.snez`,
 a nenajde ji přímo ve třídě daného objektu (u nás
 `Kotatko`), podívá se do nadtřídy.
 Takže všechno, co je definované pro
@@ -160,7 +160,7 @@ Dokonce se to dělá poměrně často!
 
 Programátoři nezavedli dědičnost jen proto, že jsou
 líní a nechtějí psát dvakrát stejný kód.
-To je sice dobrý důvod, ale nadtřídy mají jednu
+To je sice dobrý důvod, ale nadtřídy mají ještě jednu
 důležitou vlastnost: když víme, že každé
 `Kotatko` nebo `Stenatko`
 nebo jakákoli jiná podtřída je zvířátko,
@@ -193,34 +193,40 @@ for zviratko in zviratka:
 ```
 
 Tohle je docela důležitá vlastnost podtříd:
-když mám nějaké `Kotatko`, můžu ho použít
+když máš nějaké `Kotatko`, můžeš ho použít
 kdekoliv kde program očekává `Zviratko`,
 protože každé koťátko *je* zvířátko.
 
 !!! note ""
-    Tohle je docela dobrá pomůcka, až nebudeš vědět
+    Tohle je docela dobrá pomůcka pro případy, kdy nebudeš vědět
     kterou třídu podědit z které.
     Každé *koťátko* nebo *štěňátko*
     je *zvířátko*, každá *chata*
     nebo *panelák* je *stavení*.
     V takových případech dává dědičnost smysl.
 
-    Někdy se ale stane, že tuhle pomůcku použiješ a narazíš
-    na nesmysl jako „každé auto je volant”.
+    Někdy se ale stane, že tuhle pomůcku zkusíš použít a vyjde ti
+    nesmysl jako „každé auto je volant”.
     V takovém případě dědičnost nepoužívej.
     I když jak auto tak volant se dají „otočit doprava”,
     u každého to znamená něco jiného – a určitě nejde auto
     použít kdekoli, kde bych chtěl{{a}} použít volant.
     Takže v tomto případě je lepší si říct „každé auto
     *má* volant”, stejně jako „každé kotě
-    *má* jméno”, udělat dvě nezávislé třídy
-    a do `Auto.__init__` napsat něco jako
-    `self.volant = Volant()`.
+    *má* jméno”, udělat dvě nezávislé třídy a napsat něco jako:
 
-    (A až bude nějaký vystudovaný informatik nespokojený
+    ```python
+    class Auto:
+        def __init__(self):
+            self.volant = Volant()
+    ```
+
+    (A až bude někdy nějaký vystudovaný informatik nespokojený
     s tím, že porušuješ
     [Liskovové substituční princip](https://en.wikipedia.org/wiki/Liskov_substitution_principle),
     jde o právě tento problém.)
+
+## Generalizace
 
 Když se teď podíváš na funkce `zamnoukej`
 a `zastekej`, možná tě napadne, že by se
@@ -256,7 +262,15 @@ for zviratko in zviratka:
     zviratko.snez('flákota')
 ```
 
-A to je zatím o třídách vše! Už toho víš dost na to,
+Jak tenhle příklad naznačuje, psát nadtřídy, ze kterých se dobře dědí,
+není jednoduché. Zvlášť to platí kdyby se z nich mělo dědit v jiném
+programu, než kde je nadtřída.
+I z toho důvodu je dobré dědičnost používat hlavně v rámci svého kódu:
+nedoporučuji dědit od tříd, které napsali ostatní (jako `bool` nebo
+`pyglet.sprite.Sprite`), pokud autor nadtřídy výslovně nezmíní, že (a jak) se
+z ní dědit má.
+
+A to je zatím o třídách vše. Už toho víš dost na to,
 aby sis napsal{{a}} vlastní zoo :)
 
 Nebo [hru](../../projects/asteroids/)?
