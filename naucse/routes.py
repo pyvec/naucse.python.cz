@@ -113,7 +113,7 @@ def course_page(course):
         return render_template("course.html",
                                course=course,
                                plan=course.sessions,
-                               edit_link=model.edit_link("course"))
+                               edit_link=model.edit_link("course", course=course.slug))
     except TemplateNotFound:
         abort(404)
 
@@ -131,7 +131,7 @@ def run(run):
             title=run.title,
             lesson_url=lesson_url,
             **vars_functions(run.vars),
-            edit_link=model.edit_link("run"))
+            edit_link=model.edit_link("run", run=run.slug))
     except TemplateNotFound:
         abort(404)
 
@@ -251,4 +251,4 @@ def session_coverpage(run, session, coverpage):
                            run=run,
                            lesson_url=lesson_url,
                            **vars_functions(run.vars),
-                           edit_link=model.edit_link("session", run=run.slug))
+                           edit_link=model.edit_link("session", run=run.slug, session=session, coverpage=coverpage))

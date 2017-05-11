@@ -212,7 +212,8 @@ class PageMaterial(Material):
                 if slug == self.page.slug:
                     item = self
                 else:
-                    item = PageMaterial(root, path, subpage, subpages=self.subpages)
+                    item = PageMaterial(root, path, subpage,
+                                        subpages=self.subpages)
                 self.subpages[slug] = item
         else:
             self.subpages = subpages
@@ -269,6 +270,11 @@ class Session(Model):
 
         return materials
 
+    def coverpage_exists(self, coverpage):
+        coverpage = coverpage + ".md"
+        coverpage_path = self.path / "sessions" / self.slug / coverpage
+        return coverpage_path.is_file()
+
     def get_coverpage_content(self, run, coverpage, app):
         coverpage += ".md"
         q = self.path / 'sessions' / self.slug / coverpage
@@ -278,7 +284,7 @@ class Session(Model):
                 md_content = f.read()
         except FileNotFoundError:
             return ""
-        
+
         html_content = convert_markdown(md_content)
         return html_content
 
@@ -339,7 +345,6 @@ class Run(Model):
 
     time = DataProperty(info, default=None)
     place = DataProperty(info, default=None)
-
 
     @reify
     def sessions(self):
@@ -405,8 +410,29 @@ class Root(Model):
         return env
 
     def edit_link(self, link_type, **kwargs):
+        github_base = "https://github.com/pyvec/naucse.python.cz/blob/master/"
+
         if link_type == "page":
-            return "https://github.com/pyvec/naucse.python.cz/blob/master/lessons/" + kwargs["page"].lesson.slug + "/" + kwargs["page"].slug + "." + kwargs["page"].style
+            return (github_base + "lessons/" + kwargs["page"].lesson.slug +
+                    "/" + kwargs["page"].slug + "." + kwargs["page"].style)
+
         elif link_type == "session":
-            return "https://github.com/pyvec/naucse.python.cz/blob/master/runs/" + kwargs["run"] + "/info.yml"
+            if kwargs["session"].coverpage_exists(kwargs["coverpage"]):
+                return (github_base + "runs/" + kwargs["run"] + "/sessions/" +
+                        kwargs["session"].slug + "/" +
+                        kwargs["coverpage"] + ".md")
+            return github_base + "runs/" + kwargs["run"] + "/info.yml"
+
+        elif link_type == "course":
+            return github_base + "courses/" + kwargs["course"] + "/info.yml"
+
+        elif link_type == "run":
+            return github_base + "runs/" + kwargs["run"] + "/info.yml"
+
+        elif link_type == "about":
+            return github_base + "naucse/templates/about.html"
+
+        elif link_type == "index":
+            return github_base + "naucse/templates/index.html"
+
         return "https://github.com/pyvec/naucse.python.cz"
