@@ -82,10 +82,6 @@ class Page(Model):
         return self.root.licenses[self.info['license']]
 
     @reify
-    def github_link(self):
-        return "https://github.com/pyvec/naucse.python.cz/blob/master/lessons/" + self.lesson.slug + "/" + self.slug + "." + self.style
-
-    @reify
     def vars(self):
         return self.info.get('vars', {})
 
@@ -273,9 +269,6 @@ class Session(Model):
 
         return materials
 
-    def github_link(self, run, coverpage):
-        return "https://github.com/pyvec/naucse.python.cz/blob/master/runs/" + run + "/sessions/" + self.slug + "/" + coverpage + ".md"
-
     def get_coverpage_content(self, run, coverpage, app):
         coverpage += ".md"
         q = self.path / 'sessions' / self.slug / coverpage
@@ -385,7 +378,6 @@ class Root(Model):
     courses = DirProperty(Course, 'courses')
     run_years = DirProperty(RunYear, 'runs', keyfunc=int)
     licenses = DirProperty(License, 'licenses')
-    github_link = "https://github.com/pyvec/naucse.python.cz/"
 
     @reify
     def runs(self):
@@ -411,3 +403,10 @@ class Root(Model):
         )
         setup_jinja_env(env)
         return env
+
+    def edit_link(self, link_type, **kwargs):
+        if link_type == "page":
+            return "https://github.com/pyvec/naucse.python.cz/blob/master/lessons/" + kwargs["page"].lesson.slug + "/" + kwargs["page"].slug + "." + kwargs["page"].style
+        elif link_type == "session":
+            return "https://github.com/pyvec/naucse.python.cz/blob/master/runs/" + kwargs["run"] + "/info.yml"
+        return "https://github.com/pyvec/naucse.python.cz"

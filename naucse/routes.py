@@ -63,14 +63,14 @@ def session_url(run, session, coverpage='front'):
 def index():
     return render_template("index.html",
                            page_wip=True,
-                           github_link=model.github_link)
+                           edit_link=model.edit_link("index"))
 
 
 @app.route('/about/')
 def about():
     return render_template("about.html",
                            page_wip=True,
-                           github_link=model.github_link)
+                           edit_link=model.edit_link("about"))
 
 
 @app.route('/runs/')
@@ -79,7 +79,7 @@ def runs():
                            run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu",
                            page_wip=True,
-                           github_link=model.github_link)
+                           edit_link=model.edit_link("runs"))
 
 
 @app.route('/courses/')
@@ -88,7 +88,7 @@ def courses():
                            courses=model.courses,
                            title="Seznam online kurzů Pythonu",
                            page_wip=True,
-                           github_link=model.github_link)
+                           edit_link=model.edit_link("courses"))
 
 
 @app.route('/lessons/<lesson:lesson>/static/<path:path>')
@@ -113,7 +113,7 @@ def course_page(course):
         return render_template("course.html",
                                course=course,
                                plan=course.sessions,
-                               github_link=model.github_link)
+                               edit_link=model.edit_link("course"))
     except TemplateNotFound:
         abort(404)
 
@@ -131,7 +131,7 @@ def run(run):
             title=run.title,
             lesson_url=lesson_url,
             **vars_functions(run.vars),
-            github_link=model.github_link)
+            edit_link=model.edit_link("run"))
     except TemplateNotFound:
         abort(404)
 
@@ -165,7 +165,7 @@ def render_page(page, solution=None, vars=None, **kwargs):
     kwargs.setdefault('content', content)
 
     return render_template(template_name, **kwargs, **vars_functions(vars),
-                           github_link=page.github_link)
+                           edit_link=model.edit_link("page", page=page))
 
 
 @app.route('/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
@@ -244,7 +244,6 @@ def session_coverpage(run, session, coverpage):
                        coverpage=coverpage)
 
     content = session.get_coverpage_content(run, coverpage, app)
-    github_link = session.github_link(run.slug, coverpage)
 
     return render_template("coverpage.html",
                            content=content,
@@ -252,4 +251,4 @@ def session_coverpage(run, session, coverpage):
                            run=run,
                            lesson_url=lesson_url,
                            **vars_functions(run.vars),
-                           github_link=github_link)
+                           edit_link=model.edit_link("session", run=run.slug))
