@@ -5,6 +5,7 @@ from flask import abort, redirect
 from jinja2 import StrictUndefined
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
+from pathlib import Path
 
 from naucse import models
 from naucse.urlconverters import register_url_converters
@@ -29,6 +30,34 @@ app.jinja_env.undefined = StrictUndefined
 def template_function(func):
     app.jinja_env.globals[func.__name__] = func
     return func
+
+
+def edit_link(link_type, **kwargs):
+    github_base = Path("https://github.com/pyvec/naucse.python.cz/blob/master")
+
+    if link_type == "page":
+        return github_base / kwargs["page"].edit_path
+
+    elif link_type == "session":
+        return (github_base / kwargs["session"].edit_path(kwargs["run"],
+                                                          kwargs["coverpage"]))
+
+    elif link_type == "course":
+        return github_base / kwargs["course"].edit_path
+
+    elif link_type == "courses" or link_type == "runs":
+        return github_base / link_type
+
+    elif link_type == "run":
+        return github_base / kwargs["run"].edit_path
+
+    elif link_type == "about":
+        return github_base / "naucse/templates/about.html"
+
+    elif link_type == "index":
+        return github_base / "naucse/templates/index.html"
+
+    return "https://github.com/pyvec/naucse.python.cz"
 
 
 @template_function
@@ -63,14 +92,14 @@ def session_url(run, session, coverpage='front'):
 def index():
     return render_template("index.html",
                            page_wip=True,
-                           edit_link=model.edit_link("index"))
+                           edit_link=edit_link("index"))
 
 
 @app.route('/about/')
 def about():
     return render_template("about.html",
                            page_wip=True,
-                           edit_link=model.edit_link("about"))
+                           edit_link=edit_link("about"))
 
 
 @app.route('/runs/')
@@ -79,7 +108,7 @@ def runs():
                            run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu",
                            page_wip=True,
-                           edit_link=model.edit_link("runs"))
+                           edit_link=edit_link("runs"))
 
 
 @app.route('/courses/')
@@ -88,7 +117,7 @@ def courses():
                            courses=model.courses,
                            title="Seznam online kurzů Pythonu",
                            page_wip=True,
-                           edit_link=model.edit_link("courses"))
+                           edit_link=edit_link("courses"))
 
 
 @app.route('/lessons/<lesson:lesson>/static/<path:path>')
@@ -113,7 +142,7 @@ def course_page(course):
         return render_template("course.html",
                                course=course,
                                plan=course.sessions,
-                               edit_link=model.edit_link("course", course=course.slug))
+                               edit_link=edit_link("course", course=course))
     except TemplateNotFound:
         abort(404)
 
@@ -131,7 +160,7 @@ def run(run):
             title=run.title,
             lesson_url=lesson_url,
             **vars_functions(run.vars),
-            edit_link=model.edit_link("run", run=run.slug))
+            edit_link=edit_link("run", run=run))
     except TemplateNotFound:
         abort(404)
 
@@ -165,7 +194,7 @@ def render_page(page, solution=None, vars=None, **kwargs):
     kwargs.setdefault('content', content)
 
     return render_template(template_name, **kwargs, **vars_functions(vars),
-                           edit_link=model.edit_link("page", page=page))
+                           edit_link=edit_link("page", page=page))
 
 
 @app.route('/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
@@ -251,4 +280,4 @@ def session_coverpage(run, session, coverpage):
                            run=run,
                            lesson_url=lesson_url,
                            **vars_functions(run.vars),
-                           edit_link=model.edit_link("session", run=run.slug, session=session, coverpage=coverpage))
+                           edit_link=edit_link("session", run=run, session=session, coverpage=coverpage))

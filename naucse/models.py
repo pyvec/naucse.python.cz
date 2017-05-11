@@ -7,6 +7,7 @@ from naucse.modelutils import reify
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.markdown_util import convert_markdown
 from naucse.notebook_util import convert_notebook
+from pathlib import Path
 
 
 class Lesson(Model):
@@ -67,6 +68,19 @@ class Page(Model):
     @reify
     def css(self):
         return self.info.get('css')
+
+    @reify
+    def edit_path(self):
+        edit_path = Path("lessons")
+
+        append_flag = False
+        for part in self.path.parts:
+            if append_flag:
+                edit_path = edit_path / part
+            if part == "lessons":
+                append_flag = True
+
+        return edit_path
 
     @reify
     def attributions(self):
@@ -275,6 +289,22 @@ class Session(Model):
         coverpage_path = self.path / "sessions" / self.slug / coverpage
         return coverpage_path.is_file()
 
+    def edit_path(self, run, coverpage):
+        edit_path = Path("runs")
+
+        if self.coverpage_exists(coverpage):
+            append_flag = False
+            for part in self.path.parts:
+                if append_flag:
+                    edit_path = edit_path / part
+                if part == "runs":
+                    append_flag = True
+
+            coverpage += ".md"
+            return edit_path / "sessions" / self.slug / coverpage
+
+        return run.edit_path
+
     def get_coverpage_content(self, run, coverpage, app):
         coverpage += ".md"
         q = self.path / 'sessions' / self.slug / coverpage
@@ -329,6 +359,19 @@ class Course(Model):
         base_collection = self.info.get('base_collection')
         return _get_sessions(self, self.info['plan'], base_collection)
 
+    @reify
+    def edit_path(self):
+        edit_path = Path("courses")
+
+        append_flag = False
+        for part in self.path.parts:
+            if append_flag:
+                edit_path = edit_path / part
+            if part == "courses":
+                append_flag = True
+
+        return edit_path / "info.yml"
+
 
 class Run(Model):
     """A run"""
@@ -354,6 +397,19 @@ class Run(Model):
     @reify
     def slug(self):
         return '/'.join(self.path.parts[-2:])
+
+    @reify
+    def edit_path(self):
+        edit_path = Path("runs")
+
+        append_flag = False
+        for part in self.path.parts:
+            if append_flag:
+                edit_path = edit_path / part
+            if part == "runs":
+                append_flag = True
+
+        return edit_path / "info.yml"
 
 
 class RunYear(Model):
@@ -408,31 +464,3 @@ class Root(Model):
         )
         setup_jinja_env(env)
         return env
-
-    def edit_link(self, link_type, **kwargs):
-        github_base = "https://github.com/pyvec/naucse.python.cz/blob/master/"
-
-        if link_type == "page":
-            return (github_base + "lessons/" + kwargs["page"].lesson.slug +
-                    "/" + kwargs["page"].slug + "." + kwargs["page"].style)
-
-        elif link_type == "session":
-            if kwargs["session"].coverpage_exists(kwargs["coverpage"]):
-                return (github_base + "runs/" + kwargs["run"] + "/sessions/" +
-                        kwargs["session"].slug + "/" +
-                        kwargs["coverpage"] + ".md")
-            return github_base + "runs/" + kwargs["run"] + "/info.yml"
-
-        elif link_type == "course":
-            return github_base + "courses/" + kwargs["course"] + "/info.yml"
-
-        elif link_type == "run":
-            return github_base + "runs/" + kwargs["run"] + "/info.yml"
-
-        elif link_type == "about":
-            return github_base + "naucse/templates/about.html"
-
-        elif link_type == "index":
-            return github_base + "naucse/templates/index.html"
-
-        return "https://github.com/pyvec/naucse.python.cz"
