@@ -71,16 +71,7 @@ class Page(Model):
 
     @reify
     def edit_path(self):
-        edit_path = Path("lessons")
-
-        append_flag = False
-        for part in self.path.parts:
-            if append_flag:
-                edit_path = edit_path / part
-            if part == "lessons":
-                append_flag = True
-
-        return edit_path
+        return self.path.relative_to(self.root.path)
 
     @reify
     def attributions(self):
@@ -289,19 +280,10 @@ class Session(Model):
         coverpage_path = self.path / "sessions" / self.slug / coverpage
         return coverpage_path.is_file()
 
-    def edit_path(self, run, coverpage):
-        edit_path = Path("runs")
-
+    def get_edit_path(self, run, coverpage):
         if self.coverpage_exists(coverpage):
-            append_flag = False
-            for part in self.path.parts:
-                if append_flag:
-                    edit_path = edit_path / part
-                if part == "runs":
-                    append_flag = True
-
             coverpage += ".md"
-            return edit_path / "sessions" / self.slug / coverpage
+            return self.path.relative_to(self.root.path) / "sessions" / self.slug / coverpage
 
         return run.edit_path
 
@@ -361,16 +343,7 @@ class Course(Model):
 
     @reify
     def edit_path(self):
-        edit_path = Path("courses")
-
-        append_flag = False
-        for part in self.path.parts:
-            if append_flag:
-                edit_path = edit_path / part
-            if part == "courses":
-                append_flag = True
-
-        return edit_path / "info.yml"
+        return self.path.relative_to(self.root.path) / "info.yml"
 
 
 class Run(Model):
@@ -400,16 +373,7 @@ class Run(Model):
 
     @reify
     def edit_path(self):
-        edit_path = Path("runs")
-
-        append_flag = False
-        for part in self.path.parts:
-            if append_flag:
-                edit_path = edit_path / part
-            if part == "runs":
-                append_flag = True
-
-        return edit_path / "info.yml"
+        return self.path.relative_to(self.root.path) / "info.yml"
 
 
 class RunYear(Model):
@@ -439,6 +403,8 @@ class Root(Model):
     courses = DirProperty(Course, 'courses')
     run_years = DirProperty(RunYear, 'runs', keyfunc=int)
     licenses = DirProperty(License, 'licenses')
+    courses_edit_path = Path("courses")
+    runs_edit_path = Path("runs")
 
     @reify
     def runs(self):

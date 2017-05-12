@@ -32,34 +32,6 @@ def template_function(func):
     return func
 
 
-def edit_link(link_type, **kwargs):
-    github_base = Path("https://github.com/pyvec/naucse.python.cz/blob/master")
-
-    if link_type == "page":
-        return github_base / kwargs["page"].edit_path
-
-    elif link_type == "session":
-        return (github_base / kwargs["session"].edit_path(kwargs["run"],
-                                                          kwargs["coverpage"]))
-
-    elif link_type == "course":
-        return github_base / kwargs["course"].edit_path
-
-    elif link_type == "courses" or link_type == "runs":
-        return github_base / link_type
-
-    elif link_type == "run":
-        return github_base / kwargs["run"].edit_path
-
-    elif link_type == "about":
-        return github_base / "naucse/templates/about.html"
-
-    elif link_type == "index":
-        return github_base / "naucse/templates/index.html"
-
-    return "https://github.com/pyvec/naucse.python.cz"
-
-
 @template_function
 def static(filename):
     return url_for('static', filename=filename)
@@ -92,14 +64,7 @@ def session_url(run, session, coverpage='front'):
 def index():
     return render_template("index.html",
                            page_wip=True,
-                           edit_link=edit_link("index"))
-
-
-@app.route('/about/')
-def about():
-    return render_template("about.html",
-                           page_wip=True,
-                           edit_link=edit_link("about"))
+                           edit_path=Path("."))
 
 
 @app.route('/runs/')
@@ -108,7 +73,7 @@ def runs():
                            run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu",
                            page_wip=True,
-                           edit_link=edit_link("runs"))
+                           edit_path=model.runs_edit_path)
 
 
 @app.route('/courses/')
@@ -117,7 +82,7 @@ def courses():
                            courses=model.courses,
                            title="Seznam online kurzů Pythonu",
                            page_wip=True,
-                           edit_link=edit_link("courses"))
+                           edit_path=model.courses_edit_path)
 
 
 @app.route('/lessons/<lesson:lesson>/static/<path:path>')
@@ -142,7 +107,7 @@ def course_page(course):
         return render_template("course.html",
                                course=course,
                                plan=course.sessions,
-                               edit_link=edit_link("course", course=course))
+                               edit_path=course.edit_path)
     except TemplateNotFound:
         abort(404)
 
@@ -160,7 +125,7 @@ def run(run):
             title=run.title,
             lesson_url=lesson_url,
             **vars_functions(run.vars),
-            edit_link=edit_link("run", run=run))
+            edit_path=run.edit_path)
     except TemplateNotFound:
         abort(404)
 
@@ -194,7 +159,7 @@ def render_page(page, solution=None, vars=None, **kwargs):
     kwargs.setdefault('content', content)
 
     return render_template(template_name, **kwargs, **vars_functions(vars),
-                           edit_link=edit_link("page", page=page))
+                           edit_path=page.edit_path)
 
 
 @app.route('/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
@@ -280,4 +245,4 @@ def session_coverpage(run, session, coverpage):
                            run=run,
                            lesson_url=lesson_url,
                            **vars_functions(run.vars),
-                           edit_link=edit_link("session", run=run, session=session, coverpage=coverpage))
+                           edit_path=session.get_edit_path(run, coverpage))

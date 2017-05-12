@@ -1,4 +1,5 @@
 import textwrap
+from pathlib import Path
 
 from jinja2 import Markup, contextfilter
 
@@ -41,6 +42,14 @@ def markdown(text, inline=False):
 @template_filter()
 def dedent(text):
     return textwrap.dedent(text)
+
+
+@template_filter()
+def edit_link(path):
+    if path == Path("."):
+        return "https://github.com/pyvec/naucse.python.cz"
+    github_base = "https://github.com/pyvec/naucse.python.cz/blob/master/"
+    return github_base + str(path)
 
 
 @template_filter()
