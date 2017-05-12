@@ -7,6 +7,7 @@ from naucse.modelutils import reify
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.markdown_util import convert_markdown
 from naucse.notebook_util import convert_notebook
+from pathlib import Path
 
 
 class Lesson(Model):
@@ -67,6 +68,10 @@ class Page(Model):
     @reify
     def css(self):
         return self.info.get('css')
+
+    @reify
+    def edit_path(self):
+        return self.path.relative_to(self.root.path)
 
     @reify
     def attributions(self):
@@ -212,7 +217,8 @@ class PageMaterial(Material):
                 if slug == self.page.slug:
                     item = self
                 else:
-                    item = PageMaterial(root, path, subpage, subpages=self.subpages)
+                    item = PageMaterial(root, path, subpage,
+                                        subpages=self.subpages)
                 self.subpages[slug] = item
         else:
             self.subpages = subpages
@@ -269,6 +275,12 @@ class Session(Model):
 
         return materials
 
+    def get_edit_path(self, run, coverpage):
+        coverpage_path = self.path / "sessions" / self.slug / (coverpage + ".md")
+        if coverpage_path.exists():
+            return coverpage_path.relative_to(self.root.path)
+
+        return run.edit_path
 
     def get_coverpage_content(self, run, coverpage, app):
         coverpage += ".md"
@@ -279,7 +291,7 @@ class Session(Model):
                 md_content = f.read()
         except FileNotFoundError:
             return ""
-        
+
         html_content = convert_markdown(md_content)
         return html_content
 
@@ -324,6 +336,10 @@ class Course(Model):
         base_collection = self.info.get('base_collection')
         return _get_sessions(self, self.info['plan'], base_collection)
 
+    @reify
+    def edit_path(self):
+        return self.path.relative_to(self.root.path) / "info.yml"
+
 
 class Run(Model):
     """A run"""
@@ -341,7 +357,6 @@ class Run(Model):
     time = DataProperty(info, default=None)
     place = DataProperty(info, default=None)
 
-
     @reify
     def sessions(self):
         base_collection = self.info.get('base_collection')
@@ -350,6 +365,10 @@ class Run(Model):
     @reify
     def slug(self):
         return '/'.join(self.path.parts[-2:])
+
+    @reify
+    def edit_path(self):
+        return self.path.relative_to(self.root.path) / "info.yml"
 
 
 class RunYear(Model):
@@ -379,6 +398,8 @@ class Root(Model):
     courses = DirProperty(Course, 'courses')
     run_years = DirProperty(RunYear, 'runs', keyfunc=int)
     licenses = DirProperty(License, 'licenses')
+    courses_edit_path = Path("courses")
+    runs_edit_path = Path("runs")
 
     @reify
     def runs(self):

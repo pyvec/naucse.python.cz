@@ -5,6 +5,7 @@ from flask import abort, redirect
 from jinja2 import StrictUndefined
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
+from pathlib import Path
 
 from naucse import models
 from naucse.urlconverters import register_url_converters
@@ -53,19 +54,17 @@ def lesson_url(lesson, page='index', solution=None):
 
 @template_function
 def session_url(run, session, coverpage='front'):
-    return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
+    return url_for("session_coverpage",
+                   run=run,
+                   session=session,
+                   coverpage=coverpage)
 
 
 @app.route('/')
 def index():
     return render_template("index.html",
-                           page_wip=True)
-
-
-@app.route('/about/')
-def about():
-    return render_template("about.html",
-                           page_wip=True)
+                           page_wip=True,
+                           edit_path=Path("."))
 
 
 @app.route('/runs/')
@@ -73,14 +72,17 @@ def runs():
     return render_template("run_list.html",
                            run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu",
-                           page_wip=True)
+                           page_wip=True,
+                           edit_path=model.runs_edit_path)
 
 
 @app.route('/courses/')
 def courses():
-    return render_template("course_list.html", courses=model.courses,
+    return render_template("course_list.html",
+                           courses=model.courses,
                            title="Seznam online kurzů Pythonu",
-                           page_wip=True)
+                           page_wip=True,
+                           edit_path=model.courses_edit_path)
 
 
 @app.route('/lessons/<lesson:lesson>/static/<path:path>')
@@ -102,8 +104,10 @@ def lesson_static(lesson, path):
 @app.route('/courses/<course:course>/')
 def course_page(course):
     try:
-        return render_template('course.html',
-                               course=course, plan=course.sessions)
+        return render_template("course.html",
+                               course=course,
+                               plan=course.sessions,
+                               edit_path=course.edit_path)
     except TemplateNotFound:
         abort(404)
 
@@ -121,7 +125,7 @@ def run(run):
             title=run.title,
             lesson_url=lesson_url,
             **vars_functions(run.vars),
-        )
+            edit_path=run.edit_path)
     except TemplateNotFound:
         abort(404)
 
@@ -137,8 +141,7 @@ def render_page(page, solution=None, vars=None, **kwargs):
             solution=solution,
             static_url=static_url,
             lesson_url=kwargs.get('lesson_url', lesson_url),
-            vars=vars,
-        )
+            vars=vars)
     except FileNotFoundError:
         abort(404)
 
@@ -155,7 +158,8 @@ def render_page(page, solution=None, vars=None, **kwargs):
     kwargs.setdefault('title', page.title)
     kwargs.setdefault('content', content)
 
-    return render_template(template_name, **kwargs, **vars_functions(vars))
+    return render_template(template_name, **kwargs, **vars_functions(vars),
+                           edit_path=page.edit_path)
 
 
 @app.route('/<run:run>/<lesson:lesson>/', defaults={'page': 'index'})
@@ -228,14 +232,17 @@ def session_coverpage(run, session, coverpage):
         return url_for('run_page', run=run, lesson=lesson, *args, **kwargs)
 
     def session_url(session):
-        return url_for('session_coverpage', run=run, session=session, coverpage=coverpage)
+        return url_for("session_coverpage",
+                       run=run,
+                       session=session,
+                       coverpage=coverpage)
 
     content = session.get_coverpage_content(run, coverpage, app)
 
-    return render_template('coverpage.html',
-                            content=content,
-                            session=session,
-                            run = run,
-                            lesson_url=lesson_url,
-                            **vars_functions(run.vars)
-                            )
+    return render_template("coverpage.html",
+                           content=content,
+                           session=session,
+                           run=run,
+                           lesson_url=lesson_url,
+                           **vars_functions(run.vars),
+                           edit_path=session.get_edit_path(run, coverpage))
