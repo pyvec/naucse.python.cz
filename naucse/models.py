@@ -275,15 +275,10 @@ class Session(Model):
 
         return materials
 
-    def coverpage_exists(self, coverpage):
-        coverpage = coverpage + ".md"
-        coverpage_path = self.path / "sessions" / self.slug / coverpage
-        return coverpage_path.is_file()
-
     def get_edit_path(self, run, coverpage):
-        if self.coverpage_exists(coverpage):
-            coverpage += ".md"
-            return self.path.relative_to(self.root.path) / "sessions" / self.slug / coverpage
+        coverpage_path = self.path / "sessions" / self.slug / (coverpage + ".md")
+        if coverpage_path.exists():
+            return coverpage_path.relative_to(self.root.path)
 
         return run.edit_path
 

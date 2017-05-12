@@ -62,31 +62,28 @@
 
         <script type="text/javascript" src="{{ url_for('static', filename='js/solutions.js') }}"></script>
 
-        <div class="footer">
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <h2>Zapoj se</h2>
-                        <p>Uprav tuto stránku na <a href="{{ edit_path|edit_link }}">GitHubu</a></p>
-                    </div>
-                    <div class="col">
-                        <h2>Licence</h2>
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                <p>Uprav tuto stránku na <a href="{{ edit_path|edit_link }}">GitHubu</a>.</p>
+
+                {% if page is defined and (page.attributions or page.license) %}
+                    {% for a in page.attributions %}
+                        {{ a | markdown }}
+                    {% endfor %}
+                    {% if page.license %}
                         <p>
-                            {% if page is defined and (page.attributions or page.license) %}
-                                {% for a in page.attributions %}
-                                    {{ a | markdown }}
-                                {% endfor %}
-                                {% if page.license %}
-                                    <a href="{{ page.license.url }}">
-                                        {{ page.license.title }}
-                                    </a>
-                                {% endif %}
-                            {% else %}
-                                <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a>
-                            {% endif %}
+                            Licence:
+                            <a href="{{ page.license.url }}">
+                                {{ page.license.title }}
+                            </a>
                         </p>
-                    </div>
-                </div>
+                    {% endif %}
+                {% else %}
+                    <p>
+                        Licence: <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a>
+                    </p>
+                {% endif %}
             </div>
         </div>
 
