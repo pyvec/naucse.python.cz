@@ -4,18 +4,42 @@
 <div class="page">
     <section class="container">
 
-    <p>Momentálně jsou dostupné tyto kurzy:</p>
+        {% if run_years is defined %}
+            <p>Materiály právě probíhajících kurzů:</p>
+        {% else %}
+            <p>Momentálně jsou dostupné tyto kurzy:</p>
+        {% endif %}
 
         <div class="row">
             <div class="sections col-xs-12 col-sm-12 col-md-8 col-lg-8">
-                {% for course in courses.values() %}
-                <div class="section{{ loop.index }}">
-                    <h4><a href="{{ course_url(course) }}">{{ course.title }}</a></h4>
-                    <p> {{ course.description }} </p>
-                </div>
-                {% endfor %}
+
+                {% if run_years is defined %}
+                    {% for year, run_year in run_years.items() %}
+                        <h2>{{ year }}</h2>
+                        {% for slug, run in run_year.runs.items() %}
+                            <div class="section{{ loop.index }}">
+                                <h4>
+                                    <a href="{{ run_url(run) }}">{{ run.title }}</a>
+                                    {% if run.subtitle %}
+                                        <small>– {{ run.subtitle }}</small>
+                                    {% endif %}
+                                </h4>
+                                <p>{{ run.description }}</p>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    {% for course in courses.values() %}
+                        <div class="section{{ loop.index }}">
+                            <h4><a href="{{ course_url(course) }}">{{ course.title }}</a></h4>
+                            <p>{{ course.description }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
             </div>
         </div>
+
     </section>
 </div>
 

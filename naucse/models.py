@@ -319,52 +319,29 @@ def _get_sessions(model, plan, base_collection):
 class Course(Model):
     """A course – ordered collection of sessions"""
     def __str__(self):
-        return self.slug
+        return '{} - {}'.format(self.slug, self.title)
 
     info = YamlProperty()
-
     title = DataProperty(info)
     description = DataProperty(info)
     long_description = DataProperty(info)
 
+    # Only runs use this:
+    vars = DataProperty(info)
+    subtitle = DataProperty(info, default=None)
+    time = DataProperty(info, default=None)
+    place = DataProperty(info, default=None)
+
     @reify
     def slug(self):
+        if self.place is not None:
+            return '/'.join(self.path.parts[-2:])
         return self.path.parts[-1]
 
     @reify
     def sessions(self):
         base_collection = self.info.get('base_collection')
         return _get_sessions(self, self.info['plan'], base_collection)
-
-    @reify
-    def edit_path(self):
-        return self.path.relative_to(self.root.path) / "info.yml"
-
-
-class Run(Model):
-    """A run"""
-    def __str__(self):
-        return '{} - {}'.format(self.slug, self.title)
-
-    info = YamlProperty()
-
-    title = DataProperty(info)
-    subtitle = DataProperty(info)
-    description = DataProperty(info)
-    long_description = DataProperty(info)
-    vars = DataProperty(info)
-
-    time = DataProperty(info, default=None)
-    place = DataProperty(info, default=None)
-
-    @reify
-    def sessions(self):
-        base_collection = self.info.get('base_collection')
-        return _get_sessions(self, self.info['plan'], base_collection)
-
-    @reify
-    def slug(self):
-        return '/'.join(self.path.parts[-2:])
 
     @reify
     def edit_path(self):
@@ -376,7 +353,7 @@ class RunYear(Model):
     def __str__(self):
         return self.path.parts[-1]
 
-    runs = DirProperty(Run)
+    runs = DirProperty(Course)
 
 
 class License(Model):

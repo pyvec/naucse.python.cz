@@ -2,7 +2,25 @@
 
 {% block headline %}
 
-    <h2>{{ course.title }}</h2>
+    <header class="lesson-header">
+        <a href="{{ url_for('index') }}">Nauč se Python </a>
+
+        {% if course.place is defined %}
+        > <a href="{{ url_for('runs') }}">Kurzy</a>
+        {% else %}
+        > <a href="{{ url_for('courses') }}">Materiály</a>
+        {% endif%}
+
+        > {{ course.title }}
+        <hr>
+    </header>
+
+    <h1>{{ course.title }}</h1>
+
+    {% if course.subtitle is defined and course.subtitle != None %}
+        <h2>{{ course.subtitle }}</h2>
+    {% endif%}
+
     {{ course.long_description | markdown }}
 
 {% endblock headline %}
