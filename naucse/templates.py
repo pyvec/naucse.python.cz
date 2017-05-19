@@ -117,15 +117,22 @@ def anchor(name):
 
 
 @template_function()
-def figure(img, alt):
+def figure(img, alt, float=None):
+    classes = ['figure']
+    if float == 'left':
+        classes.append('float-left')
+    elif float == 'right':
+        classes.append('float-right')
+    elif float is not None:
+        raise ValueError('bad float: {}'.format(float))
     t = Markup(''.join(p.strip() for p in """
-        <span class="figure">
+        <span class="{classes}">
             <a href="{img}">
                 <img src="{img}" alt="{alt}">
             </a>
         </span>
     """.splitlines()))
-    return t.strip().format(img=img, alt=alt)
+    return t.strip().format(img=img, alt=alt, classes=' '.join(classes))
 
 
 def vars_functions(vars):
