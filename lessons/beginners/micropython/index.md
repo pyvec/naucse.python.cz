@@ -40,7 +40,7 @@ hrany a příliš se nedotýkat elektroniky a kovových
 Teď, když destičku držíš v ruce, si
 pojďme projít její základní součásti.
 
-<br class="clearfix" style='clear: both;'>
+<br style='clear: both;'>
 
 {{ figure(
     img=static("nodemcu-popisky.svg"),
@@ -83,13 +83,22 @@ Zkontroluj si, jestli jsou všechny nožičky rovné;
 kdyby byla některá ohnutá, tak ji (nejlépe s pomocí
 kouče) narovnej, nebo si vezmi jinou destičku.
 
+<br style='clear: both;'>
+
 
 ## Instalace
 
 Bohužel se dnes neobejdeme bez instalace. Musíš naučit
 svůj počítač, aby si s destičkou povídal.
 
-Propoj modul s počítačem přes USB kabel,
+Nejdřív si do virtuálního prostředí nainstaluj program Ampy od Adafruitu.
+Ten budeme později používat na nahrávání kódu:
+
+```console
+(env)$ python -m pip install adafruit-ampy
+```
+
+Pak propoj modul s počítačem přes USB kabel,
 jako kdybys připojoval{{a}} třeba mobil.
 
 !!! note ""
@@ -444,7 +453,7 @@ while True:
 {% endfilter %}
 
 
-## Triky MicroPythoní konzole
+## Pouštění kódu ze souboru
 
 Jak začneš psát trochu složitější programy,
 mohlo by se stát, že tě konzole MicroPythonu začne trochu štvát.
@@ -453,26 +462,39 @@ Pojďme se podívat, jak naštvání předejít.
 
 Doporučuju si větší kousky kódu – a určitě takové,
 ve kterých je nějaký cyklus, podmínka či funkce –
-psát vedle do editoru, a pro provedení je vždycky
-zkopírovat a vložit do konzole.
+psát v textovém editoru, a do modulu pak posílat celý soubor.
 
-Máš-li v kódu odsazení, zmáčkni před vložením
-<kbd>Ctrl</kbd>+<kbd>E</kbd>, a po něm <kbd>Ctrl</kbd>+<kbd>D</kbd>.
-Tím vypneš automatické odsazování, které při vkládání jenom vadí.
+Zkus si to. Do souboru `led_podle_tlacitka.py` dej následující kód:
 
-Vkládací mód (který <kbd>Ctrl</kbd>+<kbd>E</kbd> spouští) je docela vybíravý.
-Nemá rád, když jsou na začátku vkládaného textu prázdné řádky.
-Taky nefunguje, pokud na konci vkládaného textu není
-dokončený řádek: <kbd>Ctrl</kbd>+<kbd>D</kbd> je potřeba
-zmáčknout když je kurzor na začátku řádku.
+```python
+from machine import Pin
+from time import sleep
+pin_diody = Pin(14, Pin.OUT)
+while True:
+    pin_diody.value(0)
+    sleep(1/2)
+    pin_diody.value(1)
+    sleep(1/2)
+```
 
-Další funkce – <kbd>Ctrl</kbd>+<kbd>C</kbd> pro zrušení
-programu – funguje jako v Pythonu na počítačích.
-Možná sis toho už všimla u minulé nekonečné smyčky.
+Potom zavři konzoli (`picocom`, PuTTY, nebo `screen`).
 
-A nakonec dobrá zpráva pro Windows{{gnd('áky', 'ačky', both='áky')}}:
-když zmáčkneš v PuTTY prostřední tlačítko myši, vloží se obsah schránky.
-Nemusíš tedy, jako v příkazové řádce Windows, vkládat přes menu.
+K pouštění programu použijeme `ampy`, který jsi nainstaloval{{a}} dříve.
+Ke spuštění budeš potřebovat znát port:
+
+* Linux: port používáš v příkazu `picocom`, např. `/dev/ttyUSB0`
+* Windows: port používáš v PuTTY, např. `COM13`
+* MacOS: port používáš v příkazu `screen`, např. `/dev/tty.usbmodem*`
+
+`ampy` spusť následujícím příkazem, jen za `PORT` doplň svůj port:
+
+```console
+(venv)$ ampy -p PORT run led_podle_tlacitka.py
+```
+
+Program by měl blikat diodou.
+Využívá k tomu funkci `time.sleep()`, která počká daný počet vteřin –
+tedy `time.sleep(1/2)` zastaví program na půl sekundy.
 
 
 ## Velice rychle blikat
@@ -491,30 +513,28 @@ změny, které probíhají rychleji než zhruba za
 setinu vteřiny.
 
 Pojďme tedy velice rychle blikat – a oblafnout tak naše oči a mozky!
-Využijeme k tomu funkci `time.sleep()`, která počká daný počet vteřin.
-Třeba `time.sleep(1/100)` zastaví program na jednu setinu sekundy.
 
 ```python
 from machine import Pin
 from time import sleep
 pin_diody = Pin(14, Pin.OUT)
 while True:
-    pin_diody.value(0)
-    sleep(1/100)
-    pin_diody.value(1)
-    sleep(1/200)
+    pin_diody.value(0)  # vypnout LED
+    sleep(2/100)  # počkat dvě setiny vteřiny
+    pin_diody.value(1)  # zapnout LED
+    sleep(1/100)  # počkat jednu setinu vteřiny
 ```
 
 Zkus si pohrát shodnotami pro `time.sleep`.
-
-Dokážeš napsat program, který diodu postupně, plynule rozsvítí?
-
-<!-- XXX: Solution? -->
 
 !!! note ""
     Takhle fungují prakticky všechna stmívatelná LED
     světla – rychlé blikání je ekonomičtější a přesnější
     než např. nastavování nižšího napětí.
+
+Dokážeš napsat program, který diodu postupně, plynule rozsvítí?
+
+<!-- XXX: Solution? -->
 
 Protože je takovéhle rychlé blikání užitečné ve spoustě
 různých situací, obsahuje MicroPython speciální funkci: umí blikat samostatně.
