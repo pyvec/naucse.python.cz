@@ -1,4 +1,4 @@
-# MicroPython a malé počítače
+# MicroPython na malém zařízení
 
 !!! note "Tahle sekce bohužel nejde jednoduše projít z domu."
     Využíváme speciální vybavení, které je potřeba nejdřív
@@ -18,27 +18,27 @@
     float='right',
 ) }}
 
-Dnes budeme programovat malý počítač –
-tak malý počítač, že se ho pohodlně schováš v ruce.
-Konkrétně budeme používat „chytrou destičku” zvanou
+Dnes budeme programovat malé zařízení –
+tak malé, že se ho pohodlně schováš v ruce.
+Konkrétně budeme používat „chytrou destičku”, modul zvaný
 *NodeMCU Devkit*, která by měla ležet před tebou.
 Než ji vyndáš z obalu, měla by ses *vybít*:
 dotkni se něčeho kovového, co je spojeno se zemí,
 třeba radiátoru nebo kovové části schránky nějakého
 spotřebiče, který je zapojený do zásuvky.
 Tím se zbavíš statické elektřiny, která by mohla
-malinký počítač poškodit.
+malinké zařízení poškodit.
 Pak přístroj vyndej z obalu. Snaž se ho držet za
 hrany a příliš se nedotýkat elektroniky a kovových
 částí.
 
 !!! note ""
     Obal bude nejspíš roztržený, protože organizátoři
-    do počítače před začátkem kurzu nainstalovali
+    na destičku před začátkem kurzu nainstalovali
     MicroPython.
 
-Teď, když malý počítač držíš v ruce, si
-pojďme projít jeho základní součásti.
+Teď, když destičku držíš v ruce, si
+pojďme projít její základní součásti.
 
 <br class="clearfix" style='clear: both;'>
 
@@ -48,11 +48,11 @@ pojďme projít jeho základní součásti.
     float='left',
 ) }}
 
-Nejdůležitější část našeho počítače je v oplechované
+Nejdůležitější část vývojové desky je v oplechované
 krabičce s logem "Wi-Fi" a "FCC":
 <span class="part-green">mikroprocesor ESP8266</span>.
 To je „mozek” celého zařízení, který – když je
-správně naprogramován – umí provádět Pythoní
+správně naprogramován – umí provádět Pythonní
 příkazy a programy.
 Procesor sedí na malé destičce, na které je ještě
 <span class="part-cyan">anténa</span>, kterou
@@ -60,20 +60,20 @@ přístroj může komunikovat s okolím.
 
 Tahle malá destička se dá použít i samostatně;
 všechno ostatní, co kolem ní zabírá tolik místa,
-nám jen ulehčí hraní a umožní s malým počítačem
+nám jen ulehčí hraní a umožní se zařízením
 jednoduše komunikovat a krmit ho elektřinou.
 
 Komunikace a „krmení” se děje přes
 <span class="part-red">μUSB konektor</span>,
-do kterého zapojíš kabel do svého velkého počítače.
+do kterého zapojíš kabel do svého počítače.
 Když je modul naprogramovaný, stačí ho místo do
 počítače zapojit do nabíječky či externího zdroje
 (powerbanky), a bude fungovat samostatně.
 
 Kolem USB konektoru jsou dvě tlačítka:
-<code class="part-orange">RST</code>, kterým se počítač restartuje
+<code class="part-orange">RST</code>, kterým se destička restartuje
 (skoro jako kdybys ho odpojila a zase zapojila, což
-se hodí když něco uděláš špatně a počítač „zamrzne”),
+se hodí když něco uděláš špatně a modul „zamrzne”),
 a <code class="part-yellow">FLASH</code>, o kterém si povíme později.
 
 Po stranách modulu jsou dvě řady
@@ -81,41 +81,43 @@ Po stranách modulu jsou dvě řady
 se dá napojit celá řada nejrůznějších hraček.
 Zkontroluj si, jestli jsou všechny nožičky rovné;
 kdyby byla některá ohnutá, tak ji (nejlépe s pomocí
-kouče) narovnej nebo si vezmi jiný počítač.
+kouče) narovnej, nebo si vezmi jinou destičku.
 
 
 ## Instalace
 
 Bohužel se dnes neobejdeme bez instalace. Musíš naučit
-svůj velký počítač, aby si povídal s tím malým.
+svůj počítač, aby si s destičkou povídal.
 
-Propoj oba počítače přes USB kabel, jako kdybys připojovala třeba mobil.
+Propoj modul s počítačem přes USB kabel,
+jako kdybys připojoval{{a}} třeba mobil.
 
 !!! note ""
     Je potřeba použít kvalitní datový kabel.
     Nekvalitní kabely (např. spousta kabelů k
     nabíječkám) jsou často nepoužitelné.
 
-Dál postupuj podle operačního systému na svém velkém
-počítači. Kdyby něco nefungovalo, poraď se s koučem.
+Dál postupuj podle operačního systému na svém počítači.
+Kdyby něco nefungovalo, poraď se s koučem.
 Původní (anglický) návod k této části je na
 <a href="http://docs.micropython.org/en/latest/pyboard/pyboard/tutorial/repl.html">stránkách MicroPythonu</a>.
 
+
 ### Linux
 
-Na správně nastaveném velkém počítači stačí zadat:
+Na správně nastaveném počítači stačí zadat:
 
 ```console
 $ picocom -b 115200 --flow n /dev/ttyUSB0
 ```
 
-Pokud příkaz neskončí s chybou, stiskni `RST` na malém počítači.
+Pokud příkaz neskončí s chybou, stiskni tlačítko `RST` na modulu.
 Měly by se nakonec objevit tři zobáčky, `>>>`.
 
 Většina počítačů ale na komunikaci s malými zařízeními nastavená není.
 Skončí-li příkaz `picocom` s chybou,
 oprav ji podle následujícího návodu, a zkus to znova.
-(Možná bude potřeba vyřešit víc nejednu chybu.)
+(Možná bude potřeba vyřešit víc než jednu chybu.)
 
 * Nemáš-li příkaz `picocom` nainstalovaný,
   je potřeba ho nainstalovat (např.
@@ -138,24 +140,44 @@ oprav ji podle následujícího návodu, a zkus to znova.
   [703177.062781] usb 1-1.1: ch341-uart converter now attached to ttyUSB0
   ```
 
-  Máš-li místo `ttyUSB0` něco jiného, v předchozím příkazu to použij místo
+  Máš-li místo `ttyUSB0` něco jiného, v příkazu `picocom` to použij místo
   `ttyUSB0`.
 
 * Pokud `picocom` skončil s chybou `Permission denied`, potřebuješ získat
   přístup k souboru zařízení.
-  To znamená, že by ses měl{{a}} přidat do příslušné skupiny:
+  To znamená přidat se do příslušné skupiny:
 
-  * Fedora: `$ sudo usermod -a -G dialout $(whoami)`
-  * Debian/Ubuntu: `$ sudo usermod -a -G dialout $(whoami)`
+  * Fedora:
 
-  Poté je potřeba se znovu přihlásit, třeba příkazem: `$ su - $(whoami)`
+    ```console
+    $ sudo usermod -a -G dialout $(whoami)
+    ```
+
+  * Debian/Ubuntu:
+
+    ```console
+    $ sudo usermod -a -G dialout $(whoami)
+    ```
+
+  Poté je potřeba se znovu přihlásit, třeba příkazem:
+
+  ```console
+  $ su - $(whoami)
+  ```
 
   Pro ověření spusť příkaz `groups`; v jeho výstupu by mělo být `dialout`.
+  Například:
+
+  ```console
+  $ groups
+  kristyna lp wheel dialout mock
+  ```
 
   Kdyby to nefungovalo, na srazu ti může pomoci nějaký kouč.
   Jestli procházíš materiály z domu a nepovedlo
   se ti přidat do skupiny, dá se to obejít tak,
   že místo `picocom` použiješ `sudo picocom`.
+
 
 ### Windows
 
@@ -186,7 +208,7 @@ do políčka *Saved Sessions* zadej *MicroPython* a klikni OK.
 
 Nakonec klikni *Open*. Mělo by se otevřít
 okýnko podobné konzoli, kde se, když zmáčkneš
-na malém počítači `RST`, objeví nakonec tři zobáčky: `>>>`.
+na modulu `RST`, objeví nakonec tři zobáčky: `>>>`.
 
 
 ### MacOS
@@ -198,7 +220,7 @@ $ screen /dev/tty.usbmodem* 115200
 ```
 
 a stiskni Enter.
-Pak na malém počítači zmáčkni `RST`.
+Pak na modulu zmáčkni `RST`.
 Měly by se nakonec objevit tři zobáčky, `>>>`.
 
 Nejde-li to, je možná potřeba nainstalovat driver. Ten se dá stáhnout
@@ -207,14 +229,14 @@ z [tohoto blogu](https://tzapu.com/ch340-ch341-serial-adapters-macos-sierra/).
 
 ## MicroPython – taky Python
 
-Tak jako máš na velkém počítači nainstalovaný operační
-systém, na malém počítači je takzvaný *firmware*,
+Tak jako máš na počítači nainstalovaný operační
+systém, na vývojové desce je takzvaný *firmware*,
 program, který ovládá všechny ty drátky,
-čipy a světýlka co v počítači jsou.
+čipy a světýlka co v ní jsou.
 My používáme firmware zvaný *MicroPython*,
 který navíc rozumí jazyku Python a umí provádět pythoní příkazy. Zkus si to!
 Tři zobáčky, které vyskočily v minulém kroku, přišly
-z malého počítače, který teď netrpělivě čeká na příkaz.
+ze zařízení, které teď netrpělivě čeká na příkaz.
 
 ```pycon
 >>> 1+1
@@ -223,13 +245,13 @@ z malého počítače, který teď netrpělivě čeká na příkaz.
 Hello World
 ```
 
-Téměř vše, co používáš v Pythonu na velkém počítači,
+Téměř vše, co používáš v Pythonu na počítači,
 umí MicroPython taky: čísla, řetězce, seznamy, třídy,
 výjimky, moduly, a tak dál.
 Některé detaily ale jsou trochu osekané, aby se všechno
 vešlo do extrémně malého prostoru.
 Zkus si, jak se liší efekt následujících příkazů
-od Pythonu na velkém počítači:
+od „velkého” Pythonu:
 
 ```pycon
 >>> print
@@ -238,11 +260,11 @@ od Pythonu na velkém počítači:
 ```
 
 Nejdůležitější věc, která je osekaná, je *standardní
-knihovna* – většina modulů, které na velkém
+knihovna* – většina modulů, které na
 počítači můžeš naimportovat, v MicroPythonu chybí.
 U modulů jako `turtle` je to pochopitelné,
 ale v rámci šetření místem chybí i moduly jako `random`.
-Většinou to příliš nevadí – malé počítače se používají
+Většinou to příliš nevadí – malá zařízení se používají
 na jiné věci než ty velké – ale je potřeba si na to
 dát pozor.
 
@@ -259,7 +281,7 @@ náhodné číslo od 0 do 255 se dá získat pomocí:
 
 ## Vstup
 
-MicroPython na našem malém počítači obsahuje některé
+MicroPython na malé destičce obsahuje některé
 moduly, které jinde nenajdeš. Ten hlavní se jmenuje
 `machine`, a zpřístupňuje základní funkce zařízení. Zkus si:
 
@@ -275,7 +297,7 @@ Jak se hodnota změní?
 
 Jak tomuhle kódu rozumět?
 Třída `Pin` ti umožňuje ovládat jednotlivé
-„nožičky”, kterými malý počítač: komunikuje s vnějším
+„nožičky”, kterými zařízení komunikuje s vnějším
 světem: buď na nich nastavovat napětí, nebo zkoumat
 jestli na nich nějaké napětí je.
 
@@ -289,8 +311,7 @@ No a „nožička” číslo 0 je připojená k tlačítku `FLASH`,
 kterým se tak dá on napětí ovládat.
 Informace o tom, která nožička je kam připojená,
 máš na [taháku](https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf) –
-můžeš si zkontrolovat,
-že Pin(0) u sebe má poznámku FLASH.
+můžeš si zkontrolovat, že Pin(0) u sebe má poznámku FLASH.
 
 
 ## Obvod
@@ -302,7 +323,7 @@ Zkusíme světýlko rozsvítit.
 
 LED rozsvítíš tak, že ji připojíš ke *zdroji napětí*, například k baterce.
 
-Jako zdroj napětí můžeme použít i náš počítač.
+Jako zdroj napětí můžeme použít i náš modul.
 Ten bere elektřinu přes USB a dává nám ji k dispozici
 na některých svých „nožičkách”:
 konkrétně plus na nožičce označené `3V`
@@ -330,17 +351,17 @@ Té druhé nožičce se říká anoda (`+`).
 Tak, teď víš kam diodu zapojit: katodu (kratší nožičku)
 na `G`, a anodu na `3V`.
 
-Držení nožiček diody u nožiček počítače by ti nejspíš
+Držení nožiček diody u nožiček modulu by ti nejspíš
 zaměstnalo obě ruce. Aby sis je uvolnila, použij
-„Hloupou destičku”: *nepájivé pole* (angl. *breadboard*).
-Je v ní spousta dírek, do kterých se dají strkat dráty.
+*nepájivé pole* (angl. *breadboard*).
+Je v něm spousta dírek, do kterých se dají strkat dráty.
 V rámci každé poloviny destičky je každá řada dírek –
 tedy každá pětice – spojená dohromady.
 Když zapojíš drátky do stejné řady, spojíš je tím.
 
-Zasuň počítač do nepájivého pole. Pak připoj katodu
+Zasuň modul do nepájivého pole. Pak připoj katodu
 do dírky ve stejné řadě, kde je nožička
-`3V` počítače, a podobně anodu k `G`.
+`3V` modulu, a podobně anodu k `G`.
 Mělo by to vypadat jako na tomto obrázku:
 
 {{ figure(
@@ -360,7 +381,8 @@ Zkus si, co se stane když obě nožičky diody zapojíš ke `G`.
 Aby dioda svítila, musí být připojená na dvě místa,
 mezi kterými je takzvaný *potenciálový rozdíl* — napětí.
 Na nožičce `G` je 0 voltů; na nožičce
-`3V` jsou 3,3 volty – je tedy mezi nimi rozdíl 3,3 V.
+`3V` jsou 3,3 volty – je tedy mezi nimi rozdíl 3,3 V, přesně tolik,
+kolik modrá LED potřebuje ke svícení.
 
 !!! note ""
     Samotná hodnota napětí nedává smysl – například
@@ -374,14 +396,15 @@ Na nožičce `G` je 0 voltů; na nožičce
 
 ## Výstup
 
-Proč jsme diodu na to, aby se rozsvítila, připojili k počítači a ne k baterce?
-Počítač je trošku složitější zařízení než baterka,
-a jedna důležitá věc, kterou umí, je nastavovat napětí na různých nožičkách.
+Proč jsme diodu na to, aby se rozsvítila,
+připojili k modulu a ne jen k baterce?
+Ten modul je trošku složitější zařízení než baterka, a jedna důležitá věc,
+kterou umí navíc, je nastavovat napětí na různých nožičkách.
 Umí zařídit, aby se nožička chovala jednou jako `3V` a jindy jako `G`.
 Když připojíš diodu mezi `G` a takovou
 přepínatelnou nožičku, můžeš nastavit, kdy svítí a kdy ne.
 
-Přepoj drát k anodě z `3V3` na `D5`.
+Přepoj anodu diody z `3V3` na `D5`. Katodu nech na `G`.
 
 Máš-li zapojeno, znovu se připoj k MicroPythonu a zadej následující kód:
 
@@ -444,11 +467,11 @@ dokončený řádek: <kbd>Ctrl</kbd>+<kbd>D</kbd> je potřeba
 zmáčknout když je kurzor na začátku řádku.
 
 Další funkce – <kbd>Ctrl</kbd>+<kbd>C</kbd> pro zrušení
-programu – funguje jako v Pythonu na velkých počítačích.
+programu – funguje jako v Pythonu na počítačích.
 Možná sis toho už všimla u minulé nekonečné smyčky.
 
-A nakonec dobrá zpráva pro Windowsačky: když zmáčkneš v PuTTY
-prostřední tlačítko myši, vloží se obsah schránky.
+A nakonec dobrá zpráva pro Windows{{gnd('áky', 'ačky', both='áky')}}:
+když zmáčkneš v PuTTY prostřední tlačítko myši, vloží se obsah schránky.
 Nemusíš tedy, jako v příkazové řádce Windows, vkládat přes menu.
 
 
@@ -496,7 +519,7 @@ Dokážeš napsat program, který diodu postupně, plynule rozsvítí?
 Protože je takovéhle rychlé blikání užitečné ve spoustě
 různých situací, obsahuje MicroPython speciální funkci: umí blikat samostatně.
 Nastavíš jak rychle má blikat, a jak dlouho má trvat
-každé bliknutí, a počítač pak bude blikat automaticky,
+každé bliknutí, a MicroPython pak bude blikat automaticky,
 zatímco tvůj program se může věnovat něčemu jinému.
 
 Téhle funkci se říká *pulzně šířková modulace* –
@@ -530,7 +553,7 @@ Zkus nastavit i nižší frekvenci, třeba 3 nebo 1, ať blikání vidíš pří
 
 PWM se dá zrušit metodou `pwm.deinit()`.
 Jako s otvíráním souborů, je dobré po sobě uklidit –
-i když zatím můžeš jednoduše restartovat celý počítač.
+i když zatím můžeš jednoduše restartovat celé zařízení.
 
 
 ## Tóny a melodie
@@ -571,7 +594,7 @@ který vypočítá další frekvence.
 
 ## Další ovládání
 
-Teď si vezmi dvě tlačítka a připoj je k počítači:
+Teď si vezmi dvě tlačítka a připoj je k modulu:
 `GND` vždycky na `G`, `VCC` vždycky na `3V`, a
 `OUT` u jednoho tlačítka na `D1` a u druhého na `D2`.
 
@@ -585,7 +608,7 @@ Mělo by to být podobné jako u příkladu s tlačítkem FLASH.
 Zvládneš napsat program, který bude bzučet bzučítkem,
 a přitom se jedním tlačítkem bude dát zvyšovat tón, a druhým snižovat?
 
-Program si (na velkém počítači) ulož, ať se k němu můžeš vrátit.
+Program si (na svém počítači) ulož, ať se k němu můžeš vrátit.
 
 
 ## Rotace
@@ -593,7 +616,7 @@ Program si (na velkém počítači) ulož, ať se k němu můžeš vrátit.
 Čas na další součástku! Tentokrát to bude *servomotor*.
 
 Servomotor je součástka, která má v sobě zabudovaný
-ovladač, se kterým si náš počítač může povídat
+ovladač, se kterým si naše zařízení může povídat
 jednoduchým „elektronickým jazykem” – *protokolem*.
 Motorku můžeš posílat impulzy, a podle délky impulzu
 se servomotor natočí.
@@ -634,7 +657,7 @@ pwm.duty(35)
 ```
 
 Zkus motorkem otáčet nastavováním `duty` na 35 do 120.
-Kdyby se náhodou stalo, že se počítač restartuje a
+Kdyby se náhodou stalo, že se modul restartuje a
 konzole přestane fungovat, zkus ho odpojit a znovu
 připojit. Kdyby to nepomohlo, motorek ti dneska
 nebude fungovat. Za chvíli si řekneme proč; zatím (jsi-li na kurzu)
@@ -645,19 +668,20 @@ se přidej do dvojice k někomu, komu to funguje.
 
 K tomu, aby se otočil motor, je potřeba mnohem víc
 energie, než k rozsvícení světýlka.
-Z USB z počítače té energie dostaneš docela málo,
+Z USB z počítače té energie dostaneš docela málo,
 proto můžou být s motorkem problémy.
 
 Jak to řešit, až si přestaneš hrát a budeš chtít motorkem otáčet „doopravdy”?
 
-Elektronika, která je na našem malém počítači mimo
+Elektronika, která je na našem modulu mimo
 malou destičku s „mozkem” má dva hlavní úkoly:
 
 * Převádět *komunikaci* z USB, která je
-  celkem složitě zakódovaná, na něco čemu malý
-  počítač rozumí (konkrétně protokol [UART](https://en.wikipedia.org/wiki/UART) přes nožičky `TX` a `RX`).
+  celkem složitě zakódovaná, na něco čemu
+  malé zařízení rozumí
+  (konkrétně protokol [UART](https://en.wikipedia.org/wiki/UART) přes nožičky `TX` a `RX`).
 * Převádět napětí 5V, které poskytuje USB,
-  na 3,3V které potřebuje malý počítač.
+  na 3,3V které potřebuje modul.
 
 Když energie z USB přestane stačit, dá se koupit
 zařízení, které zvládne převádět komunikaci,
@@ -671,14 +695,14 @@ nejčastěji takhle:
     alt="USB-TTL adapter",
 ) }}
 
-K malému počítač pak tento převodník a zdroj napětí připojíš takto:
+K modulu pak tento převodník a zdroj napětí připojíš takto:
 
 <!-- XXX: obrázek -->
-* `GND` na převodníku – `G` na počítači
-* `RX` na převodníku – `TX` (!) na počítači
-* `TX` na převodníku – `RX` (!) na počítači
-* `+5V` na zdroji napětí na `VIN` na počítači
-* Zem na zdroji napětí na `G` na počítači
+* `GND` na převodníku – `G` na desce
+* `RX` na převodníku – `TX` (!) na desce
+* `TX` na převodníku – `RX` (!) na desce
+* `+5V` na zdroji napětí na `VIN` na desce
+* Zem na zdroji napětí na `G` na desce
 
 Pozor, 5V nepřipojuj jinam než na `VIN`!
 
@@ -686,7 +710,7 @@ Pozor, 5V nepřipojuj jinam než na `VIN`!
 ## Napětí
 Další důvod, proč ti servomotor někdy nefunguje dobře,
 je to, že je stavěný na 5 voltů, ne na 3,3 které
-poskytuje malý počítač.
+poskytuje modul.
 
 Když připojíš zařízení k menšímu napětí, než
 potřebuje, většinou buď nebude fungovat, nebo bude
@@ -733,7 +757,7 @@ Na pásku máš 8 malých čtverečků.
 Každý z nich obsahuje docela hodně elektroniky:
 tři barevné LED (červenou, zelenou, a modrou),
 a čip který je umí ovládat pomocí informací,
-které dostane přes jediný drátek z malého počítače.
+které dostane přes jediný drátek z modulu.
 
 Takové pásky se prodávají po metrech, a dají se
 nastříhat – mezi jednotlivými světýlky si všimni čárky,
