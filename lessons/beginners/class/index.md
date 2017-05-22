@@ -300,6 +300,9 @@ class Kotatko:
     def zamnoukej(self):
         print("{}: Mňau!".format(self.jmeno))
 
+    def snez(self, jidlo):
+        print("{}: Mňau mňau! {} mi chutná!".format(self.jmeno, jidlo))
+
 mourek = Kotatko('Mourek')
 mourek.zamnoukej()
 ```
@@ -321,6 +324,9 @@ class Kotatko:
 
     def zamnoukej(self):
         print("{}: Mňau!".format(self.jmeno))
+
+    def snez(self, jidlo):
+        print("{}: Mňau mňau! {} mi chutná!".format(self.jmeno, jidlo))
 
 mourek = Kotatko('Mourek')
 print(mourek)
