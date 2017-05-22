@@ -246,7 +246,7 @@ class Zviratko:
 
 
 class Kotatko(Zviratko):
-    def udelej_zvuk</span>:
+    def udelej_zvuk(self):
         print("{}: Mňau!".format(self.jmeno))
 
 
