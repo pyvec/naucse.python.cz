@@ -333,7 +333,7 @@ Teď, když už umíš dělat koťátka, zkus vytvořit třídu pro kočku.
 - Kočka umí mňoukat metodou `zamnoukej`.
 - Kočka má na začátku (při vytvoření) 9 životů
 (nemůže mít nikdy víc než 9 nebo míň než 0!).
-- Kočka umí říct, jestli je živá (nemá 0 životů) metodou `je_ziva`.
+- Kočka umí říct, jestli je živá (nemá 0 životů), metodou `je_ziva`.
 - Kočka může ztratit život metodou `uber_zivot`.
 - Kočku můžeš nakrmit metodou `snez`, která bere 1 argument -
 nějaké konkrétní jídlo (řetězec). Pokud je toto jídlo `"ryba"`, kočce se obnoví
