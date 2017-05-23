@@ -1,10 +1,18 @@
 Dnes budeme potřebovat do virtuálního prostředí nainstalovat tyto knihovny:
 
-    python -m pip install --upgrade pip
-    python -m pip install notebook numpy cython pytest-profiling
+```console
+$ python -m pip install --upgrade pip
+$ python -m pip install notebook numpy cython pytest pytest-profiling
+```
 
-Také je potřeba nainstalovat překladač jazyka C (`gcc`)
-a hlavičkové soubory Pythonu (`python3-dev`/`python3-devel`).
+Také je potřeba nainstalovat překladač jazyka C
+a hlavičkové soubory Pythonu:
+
+* Na Linuxu bude stačit nainstalovat balíčky `gcc`
+  a `python3-dev` (Fedora) nebo `python3-devel` (Ubuntu/Debian).
+* Na Windows se řiďte instrukcemi pro vaši verzi Pythonu
+  na [Python wiki](https://wiki.python.org/moin/WindowsCompilers).
+
 
 ---
 
@@ -47,11 +55,16 @@ První krok k tomu je vždy zkontrolovat, co zabírá více času, než by mělo
 K tomu se dá použít nástroj `profile` ze standardní knihovny, který vypíše
 tabulku počtu volání jednotlivých funkcí a času v nich stráveného:
 
-    python -m profile -s cumtime program.py
+```console
+$ python -m profile -s cumtime program.py
+```
 
 Profilovat běh pytest testů se dá jednoduše pomocí modulu [pytest-profiling]:
 
-    python -m pytest --profile
+```console
+$ python -m pip install pytest-profiling
+$ python -m pytest --profile
+```
 
 [pytest-profiling]: https://pypi.python.org/pypi/pytest-profiling
 
@@ -370,7 +383,9 @@ Cython je jazyk podobný Pythonu, který ale lze přeložit na C, a dále optima
 
 Cython si nainstalujte pomocí příkazu:
 
-    python -m pip install cython
+```console
+$ python -m pip install cython
+```
 
 
 Kompilace Pythonu
@@ -384,7 +399,8 @@ Jazyky Python a Cython nejsou 100% kompatibilní, ale zvláště u kódu, který
 čísly, se nekompatibilita neprojeví.
 Vývojáři Cythonu považují každou odchylku od specifikace jazyka za chybu, kterou je nutno opravit.
 
-Jako příklad můžete použít tuto naivní implementaci celočíselného a maticového násobení:
+Jako příklad můžete použít tuto naivní implementaci celočíselného a maticového násobení.
+Uložte si ji jako `matmul.py`:
 
 ```python
 import numpy
@@ -409,8 +425,12 @@ def matmul(a, b):
     return result
 ```
 
-Výsledek můžeme převést na C pomocí příkazu `cython -3 soubor.pyx`, čímž vznikne `soubor.c`, který
-můžeme přeložit výše uvedeným způsobem.
+Stáhněte si [testy](static/test_matmul.py) a zkontrolujte, že prochází.
+
+Potom soubor přejmenujte na `matmul.pyx`.
+
+Výsledek bychom mohli převést na C pomocí příkazu `cython -3 matmul.pyx`, čímž
+vznikne `matmul.c`. Ten můžeme přeložit výše uvedeným způsobem.
 
 Jednodušší varianta je použít Cython v `setup.py`.
 Pro naše účely bude `setup.py` s Cythonem a NumPy vypadat takto:
@@ -431,13 +451,16 @@ setup(
 )
 ```
 
-Poznámka: `include_dirs` je tady dvakrát. Ale na některých platformách (Mac OS X)
-se jako parametr funkce `setup()` z nějakého důvodu neaplikuje a musí se použít
-jako parametr funkce `cythonize`. To ale samo někdy nefunguje na některých Linuxech,
+Poznámka:
+`include_dirs` je tady dvakrát. Na některých platformách (Mac OS X)
+se jako parametr funkce `setup()` z nějakého důvodu neaplikuje a musí se
+použít jako parametr funkce `cythonize`.
+To ale samo někdy nefunguje na některých Linuxech,
 proto jako workaround je to zde uvedeno dvakrát, aby to fungovalo všude.
 
 Po zadání `python setup.py develop` nebo `python setup.py build_ext --inplace` atp.
 se modul `matmul.pyx` zkompiluje s použitím nainstalovaného NumPy a bude připraven na použití.
+(Zkontrolujte, že testy prochází i se zkompilovaným modulem.)
 
 Nevýhoda tohoto přístupu je, že k spuštění takového `setup.py` je již potřeba
 mít nainstalovaný `cython` a `numpy`.
@@ -458,8 +481,10 @@ ale každá operace pracuje s generickými pythonními objekty, takže musí pro
 a výsledek převést zpět na `int64` a uložit do matice.
 
 Na situaci se můžeme podívat pomocí přepínače `--annotate`:
-    
-    cython -3 --annotate matmul.pyx
+
+```console
+$ cython -3 --annotate matmul.pyx
+```
 
 To vygeneruje soubor `matmul.html`, kde jsou potencionálně pomalé operace vysvíceny žlutě.
 Ke každému řádku se navíc dá kliknutím ukázat odpovídající kód v C (který bývá docela složitý,
@@ -503,33 +528,50 @@ cpdef int intmul(int a, int b):
 ```
 
 Tím se zbavíme nákladného převodu výsledku na PyObject.
-Bohužel ale toto zrychlení pocíte jen když takovou funkci zavoláme z jiné funkce napsané v
-Cythonu.
+Bohužel ale toto zrychlení pocíme jen když takovou funkci zavoláme
+z jiné funkce napsané v Cythonu.
 
 Tři typy funkcí
 ---------------
 
 Funkce jdou deklarovat třemi způsoby:
 
- * `def func(...):` je funkce, která jde volat z Pythonu i z Cythonu, ale volání z Cythonu je pomalé (převod na pythonní objekty a zpět)
- * `cdef <type> func(...):` je funkce, která jde volat pouze z Cythonu, ale volání je rychlé (pracuje se s C typy)
- * `cpdef <type> func(...):` je funkce, která se z Cythonu volá rychle ale jde volat i z Pythonu (ve skutečnosti Cython vytvoří dva druhy této funkce)
+ * `def func(...):` je funkce, která jde volat z Pythonu i z Cythonu, ale volání z Cythonu je pomalé (argumenty a výsledek se převádí na pythonní objekty a zpět),
+ * `cdef <type> func(...):` je funkce, která jde volat pouze z Cythonu, ale volání je rychlé (pracuje se s C typy),
+ * `cpdef <type> func(...):` je funkce, která se z Cythonu volá rychle ale jde volat i z Pythonu (ve skutečnosti Cython vytvoří dva druhy této funkce).
 
 Třídy
 -----
 
+Cython umožňuje vytvářet tzv. *built-in* třídy: stejný druh tříd jako je
+např. `str` nebo `int`.
+Práce s takovými třídami je rychlejší, ale mají pevně danou strukturu.
+Ani jim ani jejich instancím nelze z Pythonu nastavovat nové atributy:
+
+```pycon
+>>> "foo".bar = 3
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'str' object has no attribute 'bar'
+```
+
+Příklad definice *built-in* třídy:
+
 ```python
 cdef class Foo:
-    # Tady si musím nadefinovat všechny členské proměnné
-    # Není možné dynamicky na selfu vytvářet nové atributy
+    # Všechny členské proměnné musí být nadefinované tady
     cdef int foo
     ...
 
     def __cinit__(self, int f):
+        # Inicializace třídy.
+        # Cython zajistí, že se tato funkce zavolá pouze jednou (na rozdíl
+        # od __init__, kterou lze z pythonního kódu za volat kdykoli)
         self.foo = f
         ...
 
     def __dealloc__(self):
+        # Deinicializace třídy
         ...
 
     cpdef int method(self):
@@ -537,7 +579,7 @@ cdef class Foo:
         return self.foo
 ```
 
-Více o třídách v [dokumentaci](http://cython.readthedocs.io/en/latest/src/tutorial/cdef_classes.html).
+Více o definici tříd najdete v [dokumentaci Cythonu](http://cython.readthedocs.io/en/latest/src/tutorial/cdef_classes.html).
 
 Používání NumPy
 ---------------
@@ -576,7 +618,7 @@ ctypedef numpy.int64_t DATATYPE
 ...a pak používat tento alias.
 Na maticové typy bohužel typedef zatím nefunguje.
 
-Pro práci s maticí ASCII znaků lze použít typ `numpy.int8_t`, ale je třeba při zapisování přímo na konkrétní pozice zapisovat typ `char`:
+Pro práci s maticí ASCII znaků lze použít typ `numpy.int8_t`, ale je třeba při zapisování přímo na konkrétní pozice zapisovat číselný typ `char`:
 
 ```python
 cdef numpy.ndarray[numpy.int8_t, ndim=2]  directions = numpy.full((h, w), b'#', dtype=('a', 1))
@@ -588,12 +630,12 @@ Direktivy
 ---------
 
 Anotací typů matic se naše demo maticového násobení dostalo skoro na úroveň
-C, ale ne úplně: řádky, které pracují s maicemi, jsou ve výstupu `--annotate`
+C, ale ne úplně: řádky, které pracují s maticemi, jsou ve výstupu `--annotate`
 stále trochu žluté.
 Cython totiž při každém přístupu k matici kontroluje, jestli nečteme nebo
 nezapisujeme mimo pole, a případně vyvolá `IndexError`.
 
-Pokud víme – jako v našem případě – že je takové kontrola zbytečná,
+Pokud víme – jako v našem případě – že je taková kontrola zbytečná,
 můžeme Cythonu říct aby ji nedělal.
 Přístupy mimo pole pak způsobí nedefinované chování (většinou program spadne,
 nebo hůř, bude pracovat se špatnými daty).
@@ -632,10 +674,12 @@ potřebujeme vyhodit výjimku.
 Struktury, ukazatele, a dynamická alokace
 -----------------------------------------
 
-Přestože v Cythonu můžete používat pythonní tuply, slovníky, seznamy a další podobné nehomogenní typy, jejich použití je pomalé, protože vždy pracují s pythonními objekty.
+Přestože v Cythonu můžete používat pythonní *n*-tice, slovníky, seznamy a další
+podobné nehomogenní typy, jejich použití je pomalé, protože vždy pracují
+s pythonními objekty.
 
 Pokud máte kód, který potřebuje dočasné pole takových záznamů,
-je pro časově kritické části kódu lepší k problému přistoupit spíše céčkovsky,
+je pro časově kritické části kódu lepší k problému přistoupit spíše „céčkovsky“,
 přes alokaci paměti a ukazatele.
 
 Následující příklad ukazuje, jak naplnit pole heterogenních záznamů:
@@ -656,7 +700,7 @@ def path(...):
     # Definice ukazatele, přetypování
     cdef coords * path = <coords *>PyMem_Malloc(MAXSIZE*sizeof(coords))
     if path == NULL:
-        # no available memory left
+        # nedostatek paměti
         raise MemoryError()
 
     cdef int used = 0
@@ -726,21 +770,17 @@ print(rand())
 ```
 
 
-pyximport a %%cython
---------------------
+Zkratky: `pyximport` a `%%cython`
+---------------------------------
 
-Pro interaktivní práci vJupyter Notebook má Cython vlastní „magii“.
+Pro interaktivní práci v Jupyter Notebook má Cython vlastní „magii“.
 Na začátku Notebooku můžeme zadat:
 
 ```python
 %load_ext cython
 ```
 
-a potom můžeme na začátku kterékoli buňky zadat `\%\%cython`:
-
-(Omlouváme se za zpětná lomítka – ta tam být nemají, ale Edux používá znak
-procenta pro speciální účel a bez nich se to rozbije.
-Uvítáme fix v pull requestu.)
+a potom můžeme na začátku kterékoli buňky zadat `%%cython`:
 
 ```python
 %%cython
@@ -752,7 +792,7 @@ cpdef int mul(int a, int b):
 Kód v takové buňce pak Notebook zkompiluje Cythonem, a funkce/proměnné v něm
 nadefinované dá k dispozici.
 
-Můžeme použít i `\%\%cython --annotate`, což vypíše anotace přímo do Notebooku.
+Můžeme použít i `%%cython --annotate`, což vypíše anotace přímo do Notebooku.
 
 Další zkratka je modul `pyximort`, který dává možnost importovat moduly `.pyx`
 přímo: hledají se podobně jako `.py` nebo `.so`, a před importem se zkompilují.
@@ -762,14 +802,14 @@ Zapíná se to následovně:
 import pyximport
 pyximport.install()
 
-import demo
+import matmul
 ```
 
 
 Video
 -----
 
-Před nedávnem měl @hroncok na Středisku unixových technologií nahrávanou ukázku přepsání
+Před nedávnem měl [Miro] na Středisku unixových technologií nahrávanou ukázku přepsání
 úlohy ruksaku z předmětu MI-PAA z Pythonu do Cythonu (včetně nepříjemného záseku a live
 ukázky debugování problému).
 Na [video] se můžete podívat, mohlo by vám prozradit spustu tipů, které se vám mohou hodit
@@ -777,26 +817,11 @@ ke splnění úlohy.
 K obsahu jen dodáme, že místo `malloc` a `free` je lepší použít `PyMem_Malloc` a
 `PyMem_Free` z ukázky výše.
 
+[Miro]: https://github.com/hroncok/
 [video]: https://www.youtube.com/watch?v=Ksv4RA6yhkY
 
 
 Úkol
 ====
 
-Vaším úkolem za 5 bodů je zrychlit pomocí Cythonu úkol z předchozího cvičení tak, aby zvládal řešit i bludiště o rozměrech v řádech *nižší jednotky tisíců* × *nižší jednotky tisíců* na moderním počítači (srovnatelném s těmi ve školní učebně) v průměrném čase maximálně 1 sekundu (a volání `.path()` by se u takového bludiště mělo stihnout za sekundu aspoň 50). Úkol musí splňovat všechny náležitosti z minulého týdne + podmínku na čas.
-
-Odevzdávejte s tagem v0.2. Následující příkazy musí po instalaci závislostí z `requirements.txt` fungovat:
-
-```
-python setup.py build_ext -i  # sestaví modul napsaný v Cythonu
-python -m pytest  # pustí testy
-python -c 'from maze import analyze; analyze(...)'  # lze importovat a použít z Pythonu
-```
- 
-Nepoužívejte pyximport.
-
-Pokud řešení úlohy z minula nemáte, nebo si např. chcete rozšířit testy o ty naše,
-můžete použít [naše řešení minulé úlohy](https://github.com/encukou/maze).
-Nezapomeňte na splnění podmínek licence.
-
-Termín je jako obvykle začátek příštího **prvního** cvičení, tedy středa 11:00.
+Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/08_cython.md#%C3%9Akol).
