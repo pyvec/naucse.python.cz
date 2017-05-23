@@ -9,7 +9,7 @@ Také je potřeba nainstalovat překladač jazyka C
 a hlavičkové soubory Pythonu:
 
 * Na Linuxu bude stačit nainstalovat balíčky `gcc`
-  a `python3-dev` (Fedora) nebo `python3-devel` (Ubuntu/Debian).
+  a `python3-devel` (Fedora) nebo `python3-dev` (Ubuntu/Debian).
 * Na Windows se řiďte instrukcemi pro vaši verzi Pythonu
   na [Python wiki](https://wiki.python.org/moin/WindowsCompilers).
 
@@ -528,7 +528,7 @@ cpdef int intmul(int a, int b):
 ```
 
 Tím se zbavíme nákladného převodu výsledku na PyObject.
-Bohužel ale toto zrychlení pocíme jen když takovou funkci zavoláme
+Bohužel ale toto zrychlení pocítíme, jen když takovou funkci zavoláme
 z jiné funkce napsané v Cythonu.
 
 Tři typy funkcí
@@ -548,7 +548,7 @@ např. `str` nebo `int`.
 Práce s takovými třídami je rychlejší, ale mají pevně danou strukturu.
 Ani jim ani jejich instancím nelze z Pythonu nastavovat nové atributy:
 
-```pycon
+```python
 >>> "foo".bar = 3
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -566,7 +566,7 @@ cdef class Foo:
     def __cinit__(self, int f):
         # Inicializace třídy.
         # Cython zajistí, že se tato funkce zavolá pouze jednou (na rozdíl
-        # od __init__, kterou lze z pythonního kódu za volat kdykoli)
+        # od __init__, kterou lze z pythonního kódu zavolat kdykoli)
         self.foo = f
         ...
 
