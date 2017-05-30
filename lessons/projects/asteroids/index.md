@@ -115,29 +115,29 @@ První krok bude naprogramovat vesmírnou loď, která půjde ovládat klávesni
   X pixelů vlevo”. Úplné vysvětlení by bylo na dlouho,
   takže si zatím jen zkopíruj kód:
 
-    ```python
-    from pyglet import gl
+  ```python
+  from pyglet import gl
 
-    def draw():
-        window.clear()
+  def draw():
+      window.clear()
 
-        for x_offset in (-window.width, 0, window.width):
-            for y_offset in (-window.height, 0, window.height):
-                # Remember the current state
-                gl.glPushMatrix()
-                # Move everything drawn from now on by (x_offset, y_offset, 0)
-                gl.glTranslatef(x_offset, y_offset, 0)
+      for x_offset in (-window.width, 0, window.width):
+          for y_offset in (-window.height, 0, window.height):
+              # Remember the current state
+              gl.glPushMatrix()
+              # Move everything drawn from now on by (x_offset, y_offset, 0)
+              gl.glTranslatef(x_offset, y_offset, 0)
 
-                # Draw
-                batch.draw()
+              # Draw
+              batch.draw()
 
-                # Restore remembered state (this cancels the glTranslatef)
-                gl.glPopMatrix()
-    ```
-    Pro přehled, dokumentace k použitým funkcím je
-    tady:
-    [glPushMatrix, glPopMatrix](https://www.opengl.org/sdk/docs/man2/xhtml/glPushMatrix.xml),
-    [glTranslatef](https://www.opengl.org/sdk/docs/man2/xhtml/glTranslate.xml).
+              # Restore remembered state (this cancels the glTranslatef)
+              gl.glPopMatrix()
+  ```
+  Pro přehled, dokumentace k použitým funkcím je tady:
+
+  [glPushMatrix, glPopMatrix](https://www.opengl.org/sdk/docs/man2/xhtml/glPushMatrix.xml),
+  [glTranslatef](https://www.opengl.org/sdk/docs/man2/xhtml/glTranslate.xml).
 
 Povedlo se? Můžeš létat vesmírem?
 Čas to všechno dát do Gitu!
@@ -201,20 +201,20 @@ Naše asteroidy jsou zatím docela neškodné. Pojďme to změnit.
   a trochy matematiky; pro teď si jen opiš funkci
   `draw_circle` a pro každý objekt ji zavolej.
 
-    ```python
-    def draw_circle(x, y, radius):
-        iterations = 20
-        s = math.sin(2*math.pi / iterations)
-        c = math.cos(2*math.pi / iterations)
+  ```python
+  def draw_circle(x, y, radius):
+      iterations = 20
+      s = math.sin(2*math.pi / iterations)
+      c = math.cos(2*math.pi / iterations)
 
-        dx, dy = radius, 0
+      dx, dy = radius, 0
 
-        gl.glBegin(gl.GL_LINE_STRIP)
-        for i in range(iterations+1):
-            gl.glVertex2f(x+dx, y+dy)
-            dx, dy = (dx*c - dy*s), (dy*c + dx*s)
-        gl.glEnd()
-    ```
+      gl.glBegin(gl.GL_LINE_STRIP)
+      for i in range(iterations+1):
+          gl.glVertex2f(x+dx, y+dy)
+          dx, dy = (dx*c - dy*s), (dy*c + dx*s)
+      gl.glEnd()
+  ```
 * Když asteroid narazí do lodi, loď exploduje a zmizí.
   Explozi necháme na později, teď je důležité odebrání objektu ze hry.
   Dej ho do metody `SpaceObject.delete`,
@@ -234,29 +234,29 @@ Naše asteroidy jsou zatím docela neškodné. Pojďme to změnit.
   [objekty které vyletí ven vrací na druhé straně](https://en.wikipedia.org/wiki/Wraparound_%28video_games%29),
   není úplně přímočaré, takže si příslušný kód pro teď jen zkopíruj:
 
-    ```python
-    def distance(a, b, wrap_size):
-        """Distance in one direction (x or y)"""
-        result = abs(a - b)
-        if result > wrap_size / 2:
-            result = wrap_size - result
-        return result
+  ```python
+  def distance(a, b, wrap_size):
+     """Distance in one direction (x or y)"""
+      result = abs(a - b)
+      if result > wrap_size / 2:
+          result = wrap_size - result
+      return result
 
-    def overlaps(a, b):
-        """Returns true iff two space objects overlap"""
-        distance_squared = (distance(a.x, b.x, window.width) ** 2 +
-                            distance(a.y, b.y, window.height) ** 2)
-        max_distance_squared = (a.radius + b.radius) ** 2
-        return distance_squared &lt; max_distance_squared
-    ```
+  def overlaps(a, b):
+      """Returns true iff two space objects overlap"""
+      distance_squared = (distance(a.x, b.x, window.width) ** 2 +
+                          distance(a.y, b.y, window.height) ** 2)
+      max_distance_squared = (a.radius + b.radius) ** 2
+      return distance_squared < max_distance_squared
+  ```
 
-    Většina objektů v dokončené hře (např. oheň z
-    rakety, střela) nebude při kolizi s lodí dělat nic,
-    takže metoda `SpaceObject.hit_by_spaceship`
-    by neměla dělat nic (musí jen existovat).
-    Jen asteroid loď rozbije, takže předefinuj
-    `Asteroid.hit_by_spaceship`, aby
-    zavolala `delete` lodi.
+  Většina objektů v dokončené hře (např. oheň z
+  rakety, střela) nebude při kolizi s lodí dělat nic,
+  takže metoda `SpaceObject.hit_by_spaceship`
+  by neměla dělat nic (musí jen existovat).
+  Jen asteroid loď rozbije, takže předefinuj
+  `Asteroid.hit_by_spaceship`, aby
+  zavolala `delete` lodi.
 
 Povedlo se? Konečně se dá prohrát?
 Čas to všechno zkontrolovat, dát do Gitu a můžeme pokračovat!
