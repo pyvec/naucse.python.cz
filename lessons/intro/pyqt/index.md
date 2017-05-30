@@ -4,7 +4,7 @@ GUI v Pythonu: PyQt5
 Způsobů, jak dělat v Pythonu aplikace s GUI, je mnoho. Dá se použít zabudovaný, ale ošklivý Tkinter, nebo nějaký externí framework.
 
 V tomto cvičení budeme používat framework Qt, protože je multiplatformní, používá se i v jiných oblastech, než je Python,
-je dostatečně robustní a (například na rozdíl od GTK3) nemění API téměř s každou vydanou verzí.
+je dostatečně robustní a dá se na většinu systémů nainstalovat bez větších problémů.
 
 Pomocí aplikace Qt Designer se dá navíc základní kostra GUI poměrně jednoduše *naklikat*, takže není nutné psát layout aplikace v kódu.
 
@@ -18,14 +18,18 @@ Pokud budete používat svůj počítač, prosíme vás o instalaci již předem
 
 Pokud máte Python 3.5 a jednu z platforem, pro které je připraven [wheel na PyPI](https://pypi.python.org/pypi/PyQt5), stačí udělat:
 
-    python -m pip install --upgrade pip
-    python -m pip install PyQt5
+```console
+$ python -m pip install --upgrade pip
+$ python -m pip install PyQt5
+```
 
 Pro starší verzi Pythonu nebo 32bitový Linux to ale nebude fungovat.
 V takovém případě můžete PyQt5 zkusit najít v balíčkovacím systému vaší distribuce (např. balíček `python3-qt5` ve Fedoře nebo `python3-pyqt5` v Debianu).
 Virtualenv pak může vytvořit s přepínačem `--system-site-packages`, který zajistí, že i z virtualenvu uvidíte PyQt5 nainstalované z distribučního balíčku.
 
-    python3 -m venv --system-site-packages env
+```console
+$ python3 -m venv --system-site-packages env
+```
 
 Pokud nic z toho nepomůže, můžete zkusit přeložit PyQt5 ze [zdrojových souborů](https://www.riverbankcomputing.com/software/pyqt/download5)
 ([návod](http://pyqt.sourceforge.net/Docs/PyQt5/installation.html#building-and-installing-from-source)).
@@ -44,14 +48,18 @@ Na Windows (i na Macu) si můžete [stáhnout] instalátor Qt 5, který (doufám
 
 Pokud používáte na Macu `homebrew`, můžete to udělat i takto:
 
-    brew install qt5
-    brew linkapps qt5
+```console
+$ brew install qt5
+$ brew linkapps qt5
+```
 
 ### Numpy
 
 Do virtuálního prostředí s PyQt5 si nainstalujte i NumPy:
 
-    python -m pip install numpy
+```console
+$ python -m pip install numpy
+```
 
 
 První aplikace
@@ -81,7 +89,7 @@ O Qt, PyQt a PySide
 [Qt](https://www.qt.io/) je aplikační framework napsaný v C++, který zjednodušuje psaní multiplatformních aplikací (od počítačů s Linuxem, Mac OS či Windows po různá vestavěná zařízení).
 
 [PyQt](https://riverbankcomputing.com/software/pyqt) je knihovna, která umožňuje použít Qt z Pythonu.
-Na rozdíl od samotného Qt je licencovaná pod [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html), která (stručně řečeno) vyžaduje, že programy napsané s použitím PyQt byly šířeny pod stejnou licencí a se zdrojovým kódem.
+Na rozdíl od samotného Qt je licencovaná pod [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html), která (stručně řečeno) vyžaduje, aby programy napsané s použitím PyQt byly šířeny pod stejnou licencí a se zdrojovým kódem.
 Tedy: kdokoliv, kdo dostane kopii programu, musí mít možnost dostat odpovídající zdrojový kód, a má možnost tento kód dál šířit pod stejnou licencí.
 
 Pokud by se vám tato licence nelíbila, je možnost použít [PySide](https://wiki.qt.io/PySide), které má permisivnější licenci a téměř stejné API jako PyQt, ale není tak stabilní.
@@ -149,13 +157,13 @@ ho „nevlastníte“ i ve smyslu C++/Qt.
 
 Občase se stane, že program spadne pro chybu jako nepovolený přístup do paměti.
 Bez hlubší znalosti Qt a PyQt se taková chyba odstraňuje poměrně těžko, ale vaše znalosti C++ (z jiných kurzů)
-a CPython C API (z minula) vám v tom pomůžou.
+a CPython C API (z [minula](../cython/)) vám v tom pomůžou.
 Doporučujeme dělat malé commity a psát jednoduchý kód.
 
 ### Smyčka událostí, signály a sloty
 
 Qt funguje na principu smyčky událostí (event loop).
-Metoda `QApplication.exec` obsahuje v podstatě nekonečnou smyčku, která čeká na externí události (klik myši,
+Metoda `QApplication.exec` obsahuje v podstatě nekonečnou smyčku, která čeká na externí *události* (klik myši,
 žádost OS o vykreslení okna, atd.), a na jejich základě volá příslušné funkce – ať už interní
 nebo námi definované.
 
@@ -265,6 +273,16 @@ Pro složitější programy jsou pak možnosti, jak si widgety přizpůsobit.
 Qt Designer
 -----------
 
+Na tomto cvičení si připravíme aplikaci pro editaci dlaždicových map (*tile maps*)
+– obrázků složených z omezené nabídky čtverečků („dlaždic“),
+známých mj. ze [starých her](https://www.google.cz/search?q=game+boy+overworld+map&tbm=isch).
+
+Aplikace bude mít část s mapou, paletu pro výběr dlaždice ke kreslení a navíc
+menu a panel nástrojů pro akce jako ukládání a otevírání souborů:
+
+![Obrázek aplikace](static/basic-screenshot.png)
+
+
 Vytvářet GUI v kódu je poměrně neefektivní, a tak existuje nástroj, kde si okna můžeme „naklikat“.
 Jmenuje se Qt Designer, a měli byste ho mít nainstalovaný.
 Na školních počítačích se spouští příkazem `designer -qt=5`.
@@ -290,10 +308,10 @@ Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> opět zkontrolujeme, jak okno vypadá, a ja
 
 V Designeru jde i napojovat signály. V panelu *Signal/Slot Editor* přidáme tento řádek:
 
-    Sender: actionQuit
-    Signal: triggered()
-    Receiver: MainWindow
-    Slot: close()
+* Sender: `actionQuit`
+* Signal: `triggered()`
+* Receiver: `MainWindow`
+* Slot: `close()`
 
 Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> jde ověřit, že zavírání okna funguje.
 
@@ -331,10 +349,12 @@ main()
 Vlastní widget - Grid
 ---------------------
 
-Nejprve si vyrobíme vlastní *widget*, který bude sloužit k vizualizaci bludiště.
-Zde na cvičení bude zobrazovat jen trávu a stěny, pro splnění úkolu toho ale musí umět víc.
+Qt neobsahuje předpřipravený widget na dlaždicové mapy. Musíme si tedy vyrobit vlastní.
 
-Velikost widgetu se zadává v pixelech. Musíme ho udělat dostatečně velký, aby se do něj vešla všechna políčka bludiště.
+Mapu budeme reprezentovat jako NumPy matici (viz [lekce o NumPy](../numpy/)).
+Zatím budeme používat dva druhy dlaždic: trávu (v matici reprezentovanou jako 0) a zeď (-1).
+
+Velikost widgetu se zadává v pixelech. Musíme ho udělat dostatečně velký, aby se do něj vešla všechna políčka mapy.
 Velikost jednoho políčka v pixelech zvolíme pro jednoduchost konstantou.
 
 Souřadnice v Qt jsou v pixelech ve formě `(x, y)` – klasicky jak jsme zvyklí, `x` je horizontální souřadnice –
@@ -372,7 +392,7 @@ import numpy
 
     ...
 
-    # bludiště zatím nadefinované rovnou v kódu
+    # mapa zatím nadefinovaná rovnou v kódu
     array = numpy.zeros((15, 20), dtype=numpy.int8)
     array[:, 5] = -1  # nějaká zeď
 
@@ -389,14 +409,14 @@ import numpy
 Po spuštění aplikace zatím nic nového neuvidíte, maximálně se trochu změní posuvníky.
 Potřebujeme ještě zařídit, aby se data z matice vykreslovala do gridu.
 Nejlepší je vykreslovat, kdykoliv nás OS (nebo Qt) vyzve, že potřebuje kus okna překreslit:
-při prvním zobrazení, odminimalizování okna, ukázání nové části bludiště přes scrollování.
-Také je zbytečně vykreslovat obrázky mimo oblast, která je vidět na obrazovce.
+při prvním zobrazení, odminimalizování okna, ukázání nové části mapy přes scrollování.
+Také je zbytečně vykreslovat obrázky mimo oblast, kterou je vidět na obrazovce.
 
 K tomuto účelu nám poslouží událost (*event*).
 Jak bylo řečeno v úvodu, na rozdíl od signálů a slotů, které zajišťují komunikaci v rámci aplikace,
 události vznikají mimo aplikaci.
 Jde například o kliknutí myší ([mouse*Event][mouseEvent]), vstup z klávesnice ([key*Event][keyEvent]),
-nebo právě žádost OS o překreslení okna ([paintEvent]).
+nebo žádost OS o překreslení okna ([paintEvent]).
 Na poslední jmenovanou událost, `paintEvent`, teď budeme reagovat.
 
 Události se obsluhují předefinováním příslušné metody, která jako argument bere objekt popisující
@@ -450,11 +470,11 @@ class GridWidget(QtWidgets.QWidget):
 [paintEvent]: http://doc.qt.io/qt-5/qwidget.html#paintEvent
 [QPainter]: http://doc.qt.io/qt-5/qpainter.html
 
-Nyní by již bludiště mělo být v okně vidět barevně.
+Nyní by již mapa měla být v okně vidět barevně.
 
 ### Obrázky
 
-Protože barvičky jsou příliš nudné, přidáme do bludiště obrázky.
+Protože barvičky jsou příliš nudné, přidáme do mapového widgetu obrázky.
 
 Veškerou ke cvičení i k úkolu potřebnou grafiku najdete na [GitHubu](https://github.com/pyvec/naucse.python.cz/tree/master/lessons/intro/pyqt/static/pics).
 Je k dispozici pod public domain (tj. „dělej si s tím, co chceš“), pochází ze studia [Kenney],
@@ -462,6 +482,11 @@ a je (společně se další volně licencovanou grafikou) ke stažení z [OpenGa
 
 [Kenney]: http://kenney.nl/
 [OpenGameArt.org]: http://opengameart.org/users/kenney
+
+Zatím budeme potřebovat jen dva obrázky:
+
+* [grass.svg](static/pics/grass.svg)
+* [wall.svg](static/pics/wall.svg)
 
 Nejprve si načteme SVG soubory jako objekty `QSvgRenderer`:
 
@@ -490,9 +515,6 @@ A poté je na správných místech vyrendrujeme:
                     SVG_WALL.render(painter, rect)
 ```
 
-* [grass.svg](static/pics/grass.svg)
-* [wall.svg](static/pics/wall.svg)
-
 
 Model/View
 ----------
@@ -501,18 +523,15 @@ Nyní trochu odbočíme a povíme si krátce o dalším podsystmému Qt: o model
 
 Qt obsahuje framework, který mapuje informace do podoby tabulek, seznamů, nebo obecných stromů.
 Vzniklé modely se potom dají zobrazit ve specializovaných widgetech.
-
 Samotná data můžou být uložena kdekoli – v paměti, SQL databázi, souborech a podobně.
 Dokonce nemusí být všechna dostupná: existuje vestavěný model pro souborový systém,
 který se dá zobrazit aniž by se procházely všechny soubory.
 Když je informace potřeba, model se postará o její načtení.
-
 Pomocí modelů a modelových widgetů lze informace i měnit, a pokud je model
 zobrazen ve více widgetech zároveň, změny se projeví ve všech.
 
 Obecné modely je bohužel relativně obtížné implementovat v Pythonu, protože používají třídy,
 které nedědí z QObject, takže je potřeba sledovat, jestli je „vlastní“ Python nebo C++.
-
 Naštěstí ale existují widgety se zabudovanými modely, které obsahují i samotná data.
 Tyto modely je složitější napojit na existující aplikační logiku, ale pro většinu účelů postačí.
 
@@ -525,7 +544,7 @@ QListWidget - Paleta
 Jeden z widgetů se zabudovaným modelem je `QListWidget`, který umí spravovat a zobrazovat
 nějaký seznam.
 My jsme si v Qt Designeru připravili `QListWidget` s názvem `palette`, který použijeme
-jako paletu jednotlivých dílků, které budeme moci vkládat do bludiště.
+jako paletu jednotlivých dílků, které budeme moci vkládat do mapy.
 Položky se do tohoto modelu přidávají následovně:
 
 ```python
@@ -571,7 +590,7 @@ def main():
 ```
 
 Nyní, když uživatel zvolí položku, vypíše se do konzole její pořadí.
-Nás by ale spíš zajímalo, jak bude tato položka reprezentována v matici s bludištěm.
+Nás by ale spíš zajímalo, jak bude tato položka reprezentována v matici s mapou.
 K položce v paletě můžeme uložit informace pomocí `item.setData(<role>, <data>)`.
 Rolí pro informace je [spousta][roles], a několik z nich Qt používá pro vykreslování.
 Pro vlastní data můžeme použít `QtCore.Qt.UserRole`.
@@ -608,7 +627,7 @@ Nakonec si číslo místo vypisování uložíme do gridu, abychom ho mohli pozd
 Klikání do gridu
 ----------------
 
-Nyní nezbývá nic jiného, než pomocí klikání nanášet zvolené dílky do bludiště.
+Nyní nezbývá nic jiného, než pomocí klikání nanášet zvolené dílky do mapy.
 K tomu opět použijeme událost, tentokrát událost kliknutí, tedy `mousePressEvent`.
 
 ```python
@@ -628,8 +647,8 @@ class GridWidget(QtWidgets.QWidget):
             self.update(*logical_to_pixels(row, column), CELL_SIZE, CELL_SIZE)
 ```
 
-Poznámka: Zde víme, že kliknutí může změnit vykreslené bludiště pouze v místě kliknutí.
-V úkolu ale bude možné, že kliknutí někam změní vykreslení bludiště někde jinde,
+Poznámka: Zde víme, že kliknutí může změnit vykreslenou mapu pouze v místě kliknutí.
+V úkolu ale bude možné, že kliknutí někam změní obsah mapy někde jinde,
 proto bude lepší zavolat `self.update()` bez argumentů, a říct tak systému že se má překreslit celý widget.
 
 Protože po spuštění aplikace není zvolena žádná položka a `self.selected` není definován, je rozumné prostě nějakou položku zvolit:
@@ -641,7 +660,7 @@ palette.setCurrentRow(1)
 
 ### Více tlačítek myši
 
-Můžete si vyzkoušet, že bludiště se mění při použití jakéhokoliv tlačítka myši.
+Můžete si vyzkoušet, že se mapa mění při použití jakéhokoliv tlačítka myši.
 Je to proto, že `mousePressEvent` se stane, kdykoli na widgetu stiskneme libovolné tlačítko.
 Pokud bychom chtěli řešit pouze levé (primární) tlačítko, můžeme zjistit, které tlačítko událost vyvolalo:
 
@@ -677,8 +696,8 @@ Jednotlivé body můžete spojit čárou pomocí knihovny [bresenham].)
 Menu a modální dialog
 ---------------------
 
-Naše aplikace bude umět vytvořit nové, prázdné bludiště.
-Ukážeme si, jak vytvořit modální dialog pro volby (šířka a výška nového bludiště).
+Naše aplikace bude umět vytvořit novou, prázdnou mapu.
+Ukážeme si, jak vytvořit modální dialog pro volby (šířka a výška nové mapy).
 „Modální dialog“ znamená okno, které musí uživatel zavřít, než může pracovat se zbytkem aplikace.
 
 Layout okna nejprve naklikáme v Qt Designeru:
@@ -710,7 +729,7 @@ def new_dialog(window, grid):
         uic.loadUi(f, dialog)
 
     # Zobrazíme dialog.
-    # Funkce exec zajistí modalitu (tj.  tzn. nejde ovládat zbytek aplikace,
+    # Funkce exec zajistí modalitu (tzn. nejde ovládat zbytek aplikace,
     # dokud je dialog zobrazen), a vrátí se až potom, co uživatel dialog zavře.
     result = dialog.exec()
 
@@ -723,10 +742,10 @@ def new_dialog(window, grid):
     cols = dialog.findChild(QtWidgets.QSpinBox, 'widthBox').value()
     rows = dialog.findChild(QtWidgets.QSpinBox, 'heightBox').value()
 
-    # Vytvoření nového bludiště
+    # Vytvoření nové mapy
     grid.array = numpy.zeros((rows, cols), dtype=numpy.int8)
 
-    # Bludiště může být jinak velké, tak musíme změnit velikost Gridu;
+    # Mapa může být jinak velká, tak musíme změnit velikost Gridu;
     # (tento kód používáme i jinde, měli bychom si na to udělat funkci!)
     size = logical_to_pixels(rows, cols)
     grid.setMinimumSize(*size)
@@ -773,96 +792,11 @@ Abychom si zjednodušili práci, můžeme logiku místo do funkce dát do tříd
 uložíme do atributů (`self.grid`, `self.window`, `self.app`, atd.).
 Doporučujeme udělat přípravu v `__init__`, a volání `window.show()` a `return app.exec()` dát do metody `run`.
 
+A to je zatím vše!
+Další vylepšení budete mít za úkol – nebo si aplikaci přetvořte podle svého uvážení.
+
 
 Úkol
 ====
 
-Vaším úkolem za 5 bodů je vytvořit pomocí PyQt5 grafické uživatelské rozhraní,
-které umožní vizualizovat a editovat bludiště.
-Můžete samozřejmě vyjít z práce na cvičení, ale zbývá toho poměrně dost dodělat.
-Rozhraní umožní:
-
-* vytvářet nové bludiště zadaných rozměrů (prázdné, náhodně generované apod., jak chcete)
-    * generování náhodného bludiště však musí trvat snesitelně dlouho, v případě nutnosti si vypomožte Cythonem
-* ukládat a načítat bludiště ve formě NumPy matic do/ze souborů dle volby uživatele
-    * pokud se to nepovede, musí aplikace zobrazit chybové hlášení v grafické podobě (tj. ne jen do konzole)
-    * formát souborů viz níže
-* prohlížet bludiště v grafické podobě
-    * včetně všech objektů v něm a vizualizace cest (viz níže)
-    * pokud se bludiště celé nevejde do okna, musí mít posuvníky (jako na cvičení)
-    * zoom (např. <kbd>Ctrl</kbd> + kolečko myši) není nutný, ale je příjemný
-* klást do bludiště objekty (zdi, cíle, postavy) a odebírat je (tyto změny se projeví v paměti na úrovni NumPy matice)
-* automaticky zobrazovat nejkratší cesty mezi postavami a cílem
-* nabídka *Help ‣ About* vyvolá okno s informacemi o aplikaci:
-    * název
-    * stručný popis
-    * autor/autoři (vy, případně i my, pokud používáte náš kód)
-    * odkaz na repozitář
-    * informace o licenci
-    * pokud používáte public domain grafiku z [OpenGameArt.org], nemáte právní povinnost zdroj zmínit, ale považujeme to za slušnost
-
-Veškerou potřebnou grafiku najdete výše v materiálech.
-
-Objekty a jejich reprezentace v matici
---------------------------------------
-
-* vystačíte si s jedním typem zdi (-1)
-    * pokud to chcete mít později zajímavější, vytvořte si typy dva (-1 a -2)
-* jako cíl (1) můžete použít obrázek hradu
-* postavy jsou průchozí a je jich 5 různých druhů (2 až 6)
-* pokud vaše algoritmy dokáží pracovat jen s jedním cílem, zabraňte vzniku bludiště s více cíli
-    * buďto přidání druhého cíle nebude možné
-    * nebo se tím odstraní předchozí cíl
-* podobně pokud vaše algoritmy neumí pracovat s bludištěm bez cíle, zabraňte vzniku této situace
-
-Formát souboru s bludištěm
---------------------------
-
-Ukládejte a načítejte bludiště takto, umožní nám to jednodušší kontrolu:
-
-```python
-numpy.savetxt(path, array)
-array = numpy.loadtxt(path, dtype=numpy.int8)
-```
-
-Zobrazování cesty
------------------
-
-* nejkratší cesty od všech postav k cíli zobrazte pomocí obrázků čar z materiálů
-* výpočet cesty pro jednu postavu máte připraven z minulých úkolů
-    * aplikaci nebudeme testovat na bludiště tisíce krát tisíce jako minulý úkol, ale pro rozumné velikosti (cca do 200 na 200) výpočet musí proběhnout dostatečně svižně, aby aplikace byla použitelná
-* musíte si zvolit vhodný způsob, jaky více cest od více postav složit do jedné tak, abyste mohli použít křižovatky apod.
-    * *tip:* názvy souborů s čarami nejsou náhodné
-    * *tip:* jelikož cesta vede přes políčka, na kterých může být postava nebo cíl, nemůžete cestu ukládat do matice s bludištěm
-* výpočet nových cest musíte provést po každé změně bludiště (vytvoření, načtení, přidání/odebrání objektu)
-    * kód spojující cesty by měl proto být relativně rychlý (v případě nutnosti si vypomožte Cythonem, ale při vhodně zvoleném algoritmu to není nutné)
-* na cestě musí být znázorněny šipky směrem k cíli
-    * matici šipek máte opět z úloh z minula, stačí je zobrazit pouze tam, kde jsou čáry
-* od některých postav logicky cesta k cíli nemusí existovat, od nich tedy žádnou nevykreslujte (aplikace s takovou situací musí počítat a nesmí spadnout)
-
-![Obrázek bludiště](static/mazepic.png)
-
-Odevzdání
----------
-
-Jako obvykle. Tag `v0.3`, termín příští středu v 11:00. Pokud teprve začínáte, můžete použít naše [řešení] minulé úlohy (pozor na licenci\*), a nezapomeňte nás pozvat do repozitáře `maze`.
-
-[řešení]: https://github.com/encukou/maze
-
-\* Licence našeho řešení je (zatím) MIT. Při použití PyQt5 ale musíte použít GPL. Což jde, ale někam musíte napsat, že části vašeho programu mají MIT licenci, a přiložit kopii této licence. Abyste to měli jednodušší, dáváme vám souhlas, abyste naše řešení šířili pod stejnou licencí, jako má GPL varianta PyQt5. V takovém případě nás však nezapomeňte uvést jako autory.
-
-Uvítáme, pokud přidáte další testy k nově implementované logice, ale není to nutné.
-
-Aplikace musí jít spustit ve virtualenvu (na systému, pro který jsou PyQt5 wheels na PyPI, a na kterém je nainstalovaný překladač C a hlavičkové soubory Pythonu) takto:
-
-```
-python -m pip install -r requirements.txt
-python setup.py develop
-python -m maze
-```
-
-Doporučujeme si sekvenci těchto příkazů vyzkoušet v novém virtualenvu, ať nedochází ke zbytečným chybám.
-
-Aplikace nesmí při žádné akci uživatele zhavarovat (tím nemyslíme, když uživatel udělá z terminálu <kbd>Ctrl</kbd>+<kbd>C</kbd>, ale když např. klikne někam, kde jste to nečekali, nebo zruší dialog pro výběr jména souboru).
-Pokud se vám zdá v zadání něco nelogické, prosím, zeptejte se.
-
+Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/09_pyqt.md#%C3%9Akol).
