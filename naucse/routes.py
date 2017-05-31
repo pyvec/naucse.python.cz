@@ -69,7 +69,7 @@ def index():
 
 @app.route('/runs/')
 def runs():
-    return render_template("course_list.html",
+    return render_template("run_list.html",
                            run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu",
                            page_wip=True,
