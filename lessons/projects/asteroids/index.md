@@ -165,7 +165,7 @@ Přidej druhý typ vesmírného objektu: `Asteroid`.
   pomocí klávesnice).
   Využij funkci `super()` z [lekce o dědičnosti](../../beginners/inheritance/).
 * Napiš ještě třídu `Asteroid`,
-  která taky dědí ze `Spaceship`,
+  která taky dědí ze `SpaceObject`,
   ale má svoje vlastní chování:
   může mít jednu ze čtyř velikostí,
   začíná buď na levé nebo spodní straně obrazovky*
