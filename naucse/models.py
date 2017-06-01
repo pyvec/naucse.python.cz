@@ -184,7 +184,7 @@ def material(root, path, info, base_collection):
         page = lesson.pages[info.get("page", "index")]
         return PageMaterial(root, path, page, info.get("title"))
     elif "url" in info:
-        return UrlMaterial(root, path, info["url"], info["title"])
+        return UrlMaterial(root, path, info["url"], info["title"], info.get("type"))
     else:
         raise ValueError("Unknown material type")
 
@@ -239,10 +239,11 @@ class UrlMaterial(Material):
     type = "url"
     has_navigation = False
 
-    def __init__(self, root, path, url, title):
+    def __init__(self, root, path, url, title, url_type):
         super().__init__(root, path)
         self.url = url
         self.title = title
+        self.url_type = url_type
 
 
 class Session(Model):

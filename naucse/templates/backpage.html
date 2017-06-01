@@ -5,6 +5,8 @@
 <div class="page">
     <div class="container">
 
+        {% set glob={} %}
+
         {% if run is defined %}
             <header class="lesson-header">
                 <a href="{{ url_for('index') }}">Nauč se Python </a>
@@ -27,23 +29,39 @@
             <div class="details">{{run.place}}, {{run.time}}</div>
         {% endif %}
 
-        <ul>
-        {% for mat in session.materials %}
-            {% if mat.url_type is not defined or
-               (mat.url_type != "homework" and
-                mat.url_type != "link") %}
-            <li>
-                <div>
-                    {% if mat.type == "page" %}
-                        <a href="{{ lesson_url(lesson=mat.page.lesson, page=mat.page.slug) }}">{{ mat.title }}</a>
-                    {% else %}
+        <h2>Domácí úkoly</h2>
+
+        {% if homework_section %}
+            <ul>
+            {% for mat in session.materials %}
+                {% if mat.url_type is defined and mat.url_type == "homework" %}
+                <li>
+                    <div>
                         <a href="{{ mat.url }}">{{ mat.title }}</a>
-                    {% endif %}
-                </div>
-            </li>
-            {% endif %}
-        {% endfor %}
-        </ul>
+                    </div>
+                </li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        {% else %}
+            K této lekci nejsou žádné domácí úkoly.
+        {% endif %}
+
+        {% if link_section %}
+            <h2>Zajímavé odkazy</h2>
+
+            <ul>
+            {% for mat in session.materials %}
+                {% if mat.url_type is defined and mat.url_type == "link" %}
+                <li>
+                    <div>
+                        <a href="{{ mat.url }}">{{ mat.title }}</a>
+                    </div>
+                </li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        {% endif %}
 
         {% block coverpage_content %}
             {{ content }}
@@ -52,9 +70,7 @@
         <hr class="lesson-end">
         <div class="row prev-next">
             <div class="col text-left">
-            {% if session.prev is defined and session.prev != None %}
-                <a href="{{ session_url(run.slug, session.prev.slug) }}">← <span class="hidden-xs-down">Lekce: {{ session.prev.title }}</span></a>
-            {% endif %}
+                <a href="{{ session_url(run.slug, session.slug) }}">← <span class="hidden-xs-down">Lekce: {{ session.title }}</span></a>
             </div>
 
             <div class="col text-left">
@@ -62,7 +78,9 @@
             </div>
 
             <div class="col text-right">
-                <a href="{{ session_url(run.slug, session.slug, 'back') }}"><span class="hidden-xs-down">Závěr lekce</span> →</a>
+            {% if session.next is defined and session.next != None %}
+                <a href="{{ session_url(run.slug, session.next.slug) }}"><span class="hidden-xs-down">Lekce: {{ session.next.title }}</span> →</a>
+            {% endif %}
             </div>
         </div>
 
