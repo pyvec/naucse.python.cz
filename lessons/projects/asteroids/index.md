@@ -29,8 +29,6 @@ začneme kód psát v angličtině, aby se pak dal sdílet s celým světem.
 
 ## Vesmírná loď
 
-{# XXX: (asteroids1.py) #}
-
 První krok bude naprogramovat vesmírnou loď, která půjde ovládat klávesnicí.
 
 * Vesmírnou loď bude reprezentovat objekt třídy `Spaceship`.
@@ -144,9 +142,12 @@ Povedlo se? Můžeš létat vesmírem?
 
 Projdi si předchozí body, jestli máš opravdu všechno, a můžeš pokračovat dál!
 
-## Asteroidy
+(Nevíš-li si s touhle sekcí rady, zeptej se někoho zkušenějšího o radu!
+Nejvíc se naučíš, když to naprogramuješ {{gnd('sám', 'sama')}}.
+Pro případ nouze tu ale máme [vzorové řešení](static/game/asteroids1.py))
 
-{# XXX: (asteroids2.py) #}
+
+## Asteroidy
 
 Přidej druhý typ vesmírného objektu: `Asteroid`.
 
@@ -183,9 +184,12 @@ Povedlo se? Máš dva typy objektů?
 Zase si projdi, jestli máš všechno hotové,
 a jdeme na další část!
 
-## Kolize
+(Nevíš-li si s touhle sekcí rady, zeptej se někoho zkušenějšího o radu!
+Nejvíc se naučíš, když to naprogramuješ {{gnd('sám', 'sama')}}.
+Pro případ nouze tu ale máme [vzorové řešení](static/game/asteroids2.py))
 
-{# XXX: (asteroids3.py) #}
+
+## Kolize
 
 Naše asteroidy jsou zatím docela neškodné. Pojďme to změnit.
 
@@ -260,9 +264,12 @@ Naše asteroidy jsou zatím docela neškodné. Pojďme to změnit.
 Povedlo se? Konečně se dá prohrát?
 Čas to všechno zkontrolovat, dát do Gitu a můžeme pokračovat!
 
-## Útok
+(Nevíš-li si s touhle sekcí rady, zeptej se někoho zkušenějšího o radu!
+Nejvíc se naučíš, když to naprogramuješ {{gnd('sám', 'sama')}}.
+Pro případ nouze tu ale máme [vzorové řešení](static/game/asteroids3.py))
 
-{# XXX: (asteroids4.py) #}
+
+## Útok
 
 Teď zkusíme asteroidy rozbíjet.
 
@@ -296,10 +303,12 @@ Teď zkusíme asteroidy rozbíjet.
 
 Povedlo se? Dá se i vyhrát? Čas to všechno dát do Gitu!
 
+(Nevíš-li si s touhle sekcí rady, zeptej se někoho zkušenějšího o radu!
+Nejvíc se naučíš, když to naprogramuješ {{gnd('sám', 'sama')}}.
+Pro případ nouze tu ale máme [vzorové řešení](static/game/asteroids4.py))
+
 
 ## Dokončení a rozšíření
-
-{# XXX: (asteroids5.py) #}
 
 Chceš-li ve hře pokračovat, tady jsou další nápady.
 Můžeš je dělat v jakémkoli pořadí – nebo si vymysli
@@ -367,3 +376,6 @@ vlastní rozšíření!
 
 Povedlo se? Vypadá to a chová se to profesionálně?
 Čas to všechno dát do Gitu!
+
+(I pro tuto sekci tu je [vzorové řešení](static/game/asteroids5.py). Zkus
+to ale {{gnd('sám', 'sama')}})
