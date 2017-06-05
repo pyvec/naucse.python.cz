@@ -227,8 +227,7 @@ Naše asteroidy jsou zatím docela neškodné. Pojďme to změnit.
   každý objekt, zjisti jestli vzdálenost mezi lodí
   a objektem je menší než součet poloměrů
   (t.j. narazily do sebe) a pokud jo,
-  zavolej na objektu funkci
-  `hit_by_spaceship`.
+  zavolej na objektu metodu `hit_by_spaceship`.
 
   Zjišťování vzdálenosti ve hře, kde se
   [objekty které vyletí ven vrací na druhé straně](https://en.wikipedia.org/wiki/Wraparound_%28video_games%29),
