@@ -27,11 +27,13 @@
             <div class="details">{{run.place}}, {{run.time}}</div>
         {% endif %}
 
+        <h2>Materiály</h2>
         <ul>
         {% for mat in session.materials %}
             {% if mat.url_type is not defined or
                (mat.url_type != "homework" and
-                mat.url_type != "link") %}
+                mat.url_type != "link" and
+                mat.url_type != "cheatsheet") %}
             <li>
                 <div>
                     {% if mat.type == "page" %}
@@ -44,6 +46,22 @@
             {% endif %}
         {% endfor %}
         </ul>
+
+        {% if cheatsheet_section %}
+            <h2>Taháky</h2>
+
+            <ul>
+            {% for mat in session.materials %}
+                {% if mat.url_type is defined and mat.url_type == "cheatsheet" %}
+                <li>
+                    <div>
+                        <a href="{{ mat.url }}">{{ mat.title }}</a>
+                    </div>
+                </li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        {% endif %}
 
         {% block coverpage_content %}
             {{ content }}
