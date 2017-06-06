@@ -2,20 +2,23 @@ Generátory a AsyncIO
 ====================
 
 Na část toto cvičení bude opět potřeba PyQt5.
-Můžete použít virtualenv z minula, nebo PyQt5 nainstalovat znovu (viz [minulá lekce]).
+Můžete použít virtualenv z minula, nebo PyQt5 nainstalovat znovu (viz [lekce o PyQt]).
 (Nejde-li to, nevadí – úplně nezbytné dnes PyQt nebude.)
 
-[minulá lekce]: {{ lesson_url('intro/pyqt') }}
+[lekce o PyQt]: {{ lesson_url('intro/pyqt') }}
 
 Další knihovny pro dnešní den:
 
-    python -m pip install --upgrade pip
-    python -m pip install notebook aiohttp quamash
+```console
+$ python -m pip install --upgrade pip
+$ python -m pip install notebook aiohttp quamash
+```
 
-Případně pro Python 3.3:
+Případně pro Python 3.3 i:
 
-    python -m pip install asyncio
-
+```console
+$ python -m pip install asyncio
+```
 
 ---
 
@@ -41,7 +44,7 @@ který pracuje se dvěma druhy objektů: s *iterovatelnými objekty* a s *iterá
 Iterovatelné objekty (*iterables*) se vyznačují tím, že je na ně možné zavolat
 funkci `iter()`, která vrátí příslušný iterátor:
 
-```python
+```pycon
 >>> iter([1, 2, 3])
 <list_iterator object at 0x...>
 ```
@@ -50,7 +53,7 @@ Na iterátor pak je možné opakovaně volat funkci `next()`, čímž dostávám
 prvky iterace.
 Po vyčerpání iterátoru způsobuje `next()` výjimku `StopIteration`:
 
-```python
+```pycon
 >>> it = iter([1, 2, 3])
 >>> next(it)
 1
@@ -73,11 +76,11 @@ dostaneme ten stejný iterátor (nikoli jeho kopii) zpět.
 Naopak to ale obecně neplatí: seznamy jsou iterovatelné, ale nejsou samy o sobě
 iterátory.
 
-Iterátor je ve většině případů "malý" objekt, který si "pamatuje" jen původní iterovatelný
+Iterátor je ve většině případů „malý“ objekt, který si „pamatuje“ jen původní iterovatelný
 objekt a aktuální pozici. Příklady jsou iterátor seznamů (`iter([])`), slovníků (`iter({})`),
 n-tic, nebo množin, iterátor pro `range`, a podobně.
 
-Iterátory ale můžou být i "větší": třeba otevřený soubor je iterátor, z něhož `next()`
+Iterátory ale můžou být i „větší“: třeba otevřený soubor je iterátor, z něhož `next()`
 načítá jednotlivé řádky.
 
 
@@ -101,7 +104,7 @@ def generate2():
 
 Zavoláním takové funkce dostáváme *generátorový iterátor* (angl. *generator iterator*):
 
-```python
+```pycon
 >>> generate2()
 <generator object generate2 at 0x...>
 ```
@@ -111,7 +114,7 @@ tam se *zastaví*, a hodnota `yield`-u se vrátí z `next()`.
 Při dalším volání se začne provádět zbytek funkce od místa, kde byla naposled
 zastavena.
 
-```python
+```pycon
 >>> it = generate2()
 >>> next(it)
 A
@@ -128,7 +131,8 @@ StopIteration
 
 Tahle vlastnost přerušit provádění funkce je velice užitečná nejen pro vytváření
 sekvencí, ale má celou řadu dalších užití.
-Existuje třeba dekorátor, který generátorovou funkci s jedním `yield` převede na *context manager*:
+Existuje třeba dekorátor, který generátorovou funkci s jedním `yield` převede na *context manager*,
+tedy objekt použitelný s příkazem `with`:
 
 ```python
 import contextlib
@@ -146,7 +150,7 @@ with ctx_manager() as obj:
 
 Vše před `yield` se provede při vstupu do kontextu, hodnota `yield` se předá
 dál, a vše po `yield` se provede na konci.
-Můžeme si představit, že místo `yield` se "doplní" obsah bloku `with` –
+Můžeme si představit, že místo `yield` se „doplní“ obsah bloku `with` –
 funkce se tam na chvíli zastaví a může se tedy provádět něco jiného.
 
 
@@ -166,7 +170,7 @@ def generator(a, b):
     return a + b
 ```
 
-```python
+```pycon
 >>> it = generator(2, 3)
 >>> next(it)
 2
@@ -207,7 +211,7 @@ Upřímě řečeno, metoda `send()` není příliš užitečná.
 stav uchovávat v atributech, a měňte ji třeba metodami. Bude to pravděpodobně
 přehlednější.)
 Existuje ale příbuzná metoda, která už je užitečnější: `throw()`.
-Ta do generátoru "vhodí" výjimku.
+Ta do generátoru „vhodí“ výjimku.
 Z pohledu generátorové funkce to vypadá, jako by výjimka nastala na příkazu
 `yield`.
 
@@ -220,7 +224,7 @@ def report_exception():
     yield 123
 ```
 
-```python
+```pycon
 >>> it = report_exception()
 >>> next(it)  # opět – v první iteraci nelze throw() použít
 >>> value = it.throw(ValueError())
@@ -230,17 +234,17 @@ Death by ValueError
 ```
 
 Podobná věc se děje, když generátorový iterátor zanikne: Python do generátoru
-"vhodí" výjimku GeneratorExit.
+„vhodí“ výjimku GeneratorExit.
 Ta dědí z `BaseException`, ale ne `Exception`, takže klasické `except Exception:`
 ji nechytí (ale např. `finally` funguje jak má).
 Pokud generátor tuto výjimku chytá, měl by se co nejdřív ukončit.
-(Když to neudělá a provede další `yield`, Python ho ukončí "násilně".)
+(Když to neudělá a provede další `yield`, Python ho ukončí „násilně“.)
 
-```python
+```pycon
 >>> import gc
 >>> it = report_exception()
 >>> next(it)
->>> del it; gc.collect()  # zbavíme se objektu "it" (i v interpretech, které nepoužívají reference counting)
+>>> del it; gc.collect()  # zbavíme se objektu "it"
 Death by GeneratorExit
 Exception ignored in: <generator object report_exception at 0x...>
 RuntimeError: generator ignored GeneratorExit
@@ -300,8 +304,8 @@ můžeme delegovat vytváření podsekvence na jiný generátor pomocí:
     yield from dance_hands()
 ```
 
-Příkaz `yield from` deleguje nejen hodnoty, které jdou z generátoru "ven" pomocí
-`yield`, ale i ty, které jdou "dovnitř" pomocí `send()` či `throw()`.
+Příkaz `yield from` deleguje nejen hodnoty, které jdou z generátoru „ven“ pomocí
+`yield`, ale i ty, které jdou „dovnitř“ pomocí `send()` či `throw()`.
 A dokonce funguje jako výraz, jehož hodnota odpovídá tomu, co
 daný generátor vrátil:
 
@@ -331,7 +335,7 @@ def performance():
         print(action)
 ```
 
-```python
+```pycon
 >>> performance()
 putting hands forward
 putting hands down
@@ -349,7 +353,7 @@ AsyncIO
 
 A teď něco úplně jiného: asynchronní programování.
 
-Jak jsme si řekli v lekci o C API, Python má globální zámek, takže pythonní kód
+Jak jsme si řekli v [lekci o C API](../cython/), Python má globální zámek, takže pythonní kód
 může běžet jen v jednom vlákně najednou.
 Taky jsme si řekli, že to většinou příliš nevadí: typický síťový nebo GUI program
 stráví hodně času čekáním na události (odpověď z internetu, kliknutí myší atp.),
@@ -368,7 +372,7 @@ Ověřit si, že je na to program připravený, je poměrně složité, a na zaj
 správné funkčnosti je potřeba zamykání či jiné techniky, které bývají relativně
 pomalé, a tak se jim programátoři snaží vyhnout.
 A chyby vzniklé nesprávným ošetřením přepínání vláken bývají složité na odhalení
-a vyřešení. Pokud jste absolvovali předmět BI-OSY, jistě víte, o čem mluvíme.
+a vyřešení.
 
 Vlákna jsou příklad *preemptivního multitaskingu*, kdy operační systém rozhoduje,
 kdy přepne z jednoho vlákna do druhého, a tuto změnu si prakticky vynutí.
@@ -473,8 +477,10 @@ def print_blinkies():
 ```
 
 Tohle se samozřejmě dá řešit např. zámkem kolem volání `print_blinkies`.
-Chyby tohoto typu ale mají tendenci se projevovat jen zřídka: i původní
-program bez `sleep` byl napsaný špatně, jen se to *většinou* neprojevilo.
+Problém ale není v tom tuto chybu opravit, ale přijít na to, že v programu je.
+Podobné chyby mají tendenci se projevovat jen zřídka.
+Koneckonců i původní program bez `sleep` byl napsaný špatně, jen se to
+*většinou* neprojevilo.
 
 Jiný způsob, jak tohle vyřešit, je naimplementovat *smyčku událostí*.
 Kdykoli je potřeba pozastavit běh některé úlohy, tak zbytek úlohy naplánujeme
@@ -546,7 +552,7 @@ a ostatní úlohy běží pouze mezi jednotlivými funkcemi jedné úlohy.
 Mnohem lépe se tak ověřuje správnost programu.
 
 Tohle řešení je ale docela těžkopádné.
-Chtěli jsme napsat *cyklus*, ale místo toho máme dvě funkce, co se "volají"
+Chtěli jsme napsat *cyklus*, ale místo toho máme dvě funkce, co se „volají“
 navzájem. Není z toho poznat, že jde o cyklus.
 A to je jen jednoduchý příklad – složitější logika by byla ještě
 nepřehlednější.
@@ -554,7 +560,7 @@ nepřehlednější.
 Jazyky jako JavaStript na to mají trochu pohodlnější syntaxi, přesto se
 pro extrémní případy této nepřehlednosti vžilo označení *callback hell*.)
 
-Naštěstí ale v Pythonu umíme napsat funkce, které lze "pozastavit" – generátory!
+Naštěstí ale v Pythonu umíme napsat funkce, které lze „pozastavit“ – generátory!
 S drobnou změnou smyčky událostí lze náš program zapsat opět téměř
 procedurálně, ale s tím, že k přepínání úloh dochází jen na
 vyznačených místech: tam, kde použijeme `yield`.
@@ -621,8 +627,8 @@ Než si ho ale ukážeme, pojďme se na chvíli podívat do historie.
 Souběžnost v Pythonu
 --------------------
 
-V Pythonu existovala a existuje řada knihoven, které nám umožňují "dělat více
-věcí zároveň".
+V Pythonu existovala a existuje řada knihoven, které nám umožňují „dělat více
+věcí zároveň“.
 Základ jsou `threading`, tedy podpora pro vlákna, a `multiprocessing`, tedy
 způsob jak spustit nový pythonní proces, ve kterém se provede určitá funkce
 (přičemž vstup a výstup se předává serializovaný přes *pipes*).
@@ -663,11 +669,11 @@ Toto API je definováno v [PEP 3156], a jeho referenční implementace, `asyncio
 je od Pythonu 3.4 ve standardní knihovně.
 (Pro Python 3.3 se dá asyncio stáhnout [z PyPI][pypi-asyncio].)
 Interně je `asyncio` postavené na konceptu *futures* inspirovaných Tornado/Twisted,
-ale jeho "hlavní" API je postavené na *coroutines* podobných generátorům.
+ale jeho „hlavní“ API je postavené na *coroutines* podobných generátorům.
 
 Od Pythonu verze 3.5 používá asyncio místo normálních generátorů (`yield from`)
-speciální syntaxi, která "asynchronní funkce" dovoluje kombinovat s příkazy
-`for` a `with` (a v budoucnu snad i se samotným `yield`).
+speciální syntaxi, která „asynchronní funkce“ dovoluje kombinovat s příkazy
+`for` a `with` nebo i se samotným `yield`.
 Tuto syntaxi použijeme i tady; máte-li starší Python, podívejte se na potřebné změny uvedené níže.
 
 Náš příklad s animací vypadá v `asyncio` takto:
@@ -728,11 +734,6 @@ def ...:
     yield from ...
 ```
 
-(Zajímavé je, že dekorátor `asyncio.coroutine` toho nedělá mnoho: označí funkci
-jako *coroutine*, v *debug* módu zapne něco navíc, a pokud ve funkci není `yield`,
-udělá z ní generátor. Téměř vše tak bude fungovat i bez tohoto dekorátoru – ale
-doporučujeme ho použít, už jen jako dokumentaci.)
-
 Starý způsob zatím funguje i v novějším Pythonu, a dokonce se objevuje i v dokumentaci.
 
 [greenlet]: https://greenlet.readthedocs.io/en/latest/
@@ -754,7 +755,7 @@ Každé vlákno může mít vlastní smyčku událostí, kterou získáme pomoc�
 
 * `loop.run_forever` spustí smyčku na tak dlouho, dokud jsou nějaké úlohy
   naplánovány (to trochu odporuje názvu, ale většinou se nestává že by se
-  úlohy "vyčerpaly"), nebo
+  úlohy „vyčerpaly“), nebo
 * `loop.run_until_complete` – tahle funkce skončí hned, jakmile je hotová
   daná úloha, a vrátí její výsledek.
 
@@ -769,7 +770,7 @@ Copak to je?
 `Future` je objekt, který reprezentuje budoucí výsledek nějaké operace.
 Poté, co tato operace skončí, se výsledek dá zjistit pomocí metody `result()`;
 jestli je operace hotová se dá zjistit pomocí `done()`.
-`Future` se dá popsat jako "krabička" na vrácenou hodnotu – než tam něco
+`Future` se dá popsat jako „krabička“ na vrácenou hodnotu – než tam něco
 tu hodnotu dá, musíme počkat, a poté je hodnota stále k dispozici.
 Tohle čekání se dělá pomocí `await` (nebo `loop.run_until_complete`).
 
@@ -825,7 +826,7 @@ async def get_future(fut):
     return (await fut)
 ```
 
-Další vlastnost `Future` je ta, že se dá "zrušit": pomocí `Future.cancel()`
+Další vlastnost `Future` je ta, že se dá „zrušit“: pomocí `Future.cancel()`
 signalizujeme úloze, která má připravit výsledek, že už ten výsledek
 nepotřebujeme.
 Po zrušení bude `result()` způsobovat `CancelledError`.
@@ -835,7 +836,7 @@ Async funkce a Task
 -------------------
 
 Jak jsme viděli v příkladu s animací, používání *callback* funkcí je těžkopádné.
-`Future` situaci trochu zlepšije, ale ne o moc.
+`Future` situaci trochu zlepšuje, ale ne o moc.
 V `asyncio` se `Future` používají hlavně proto, že je na ně jednoduché
 navázat existující knihovny.
 Aplikační kód je ale lepší psát pomocí `async` funkcí, tak jako v příkladu
@@ -865,10 +866,10 @@ result = loop.run_until_complete(demo())
 loop.close()
 ```
 
-Tenhle problém můžeme vyřešit tak, že asynchronní funkci "zabalíme" do `Future`.
+Tenhle problém můžeme vyřešit tak, že asynchronní funkci „zabalíme“ do `Future`.
 Na to ma dokonce `asyncio` speciální funkci `ensure_future`, která:
 
-* dostane-li asynchronní funkci, "zabalí" ji do `Future`, a
+* dostane-li asynchronní funkci, „zabalí“ ji do `Future`, a
 * výsledek přímo naplánuje na smyčce událostí, takže se asynchronní funkce
   časem začne provádět.
 
@@ -889,8 +890,8 @@ Fan-Out a Fan-In
 ----------------
 
 S pomocí asynchronních funkcí můžeme nad našimi programy přemýšlet tak,
-jako by to byly "normální" procedurálně zapsané algoritmy: máme jedno
-"vlákno", které se provádí od začátku do konce, jen na některých místech
+jako by to byly „normální“ procedurálně zapsané algoritmy: máme jedno
+„vlákno“, které se provádí od začátku do konce, jen na některých místech
 (označených `await`) se provádění přeruší a zatímco náš kód čeká na výsledek
 nějaké operace, může se spustit jiný kus kódu.
 Funkce, na které je takto potřeba čekat, bývají v dokumentaci patřičně
@@ -899,7 +900,7 @@ V síťovém programování je to většinou čtení ze socketů nebo inicializa
 či ukončení serveru.
 
 Pomocí `ensure_future` a `await` můžeme ale dělat něco navíc:
-rozdělit běh našeho programu na víc úloh, které se budou vykonávat "souběžně" –
+rozdělit běh našeho programu na víc úloh, které se budou vykonávat „souběžně“ –
 například autor scraperu chce stáhnout několik stránek najednou,
 nebo server souběžně odpovídá na několik požadavků.
 Tomuto rozdělení se říká *fan-out*.
@@ -912,7 +913,7 @@ pokračovat zpracováním získaných dat.
 Co se týče Webového serveru, může se zdát, že tady není potřeba explicitně
 počkat na výsledek každého úkolu.
 Ale není to tak – i tady je poměrně důležité na každou úlohu nastartovanou
-pomocí `ensure_future` "počkat" pomocí `await` – už jen proto, abychom
+pomocí `ensure_future` „počkat“ pomocí `await` – už jen proto, abychom
 zachytili případnou výjimku.
 Neuděláme-li to, `asyncio` bude (minimálně v *debug módu*) vypisovat
 chybové hlášky.
@@ -921,10 +922,10 @@ chybové hlášky.
 Asynchronní cykly a kontexty
 ----------------------------
 
-Až budete používat některé "asynchronní" knihovny, setkáte se pravděpodobně se dvěma
+Až budete používat některé „asynchronní“ knihovny, setkáte se pravděpodobně se dvěma
 novými konstrukcemi: `async for` a `async with`.
 
-Fungují jako jejich "ne-`async`" varianty, jen na začátku a konci každé iterace (resp.
+Fungují jako jejich „ne-`async`“ varianty, jen na začátku a konci každé iterace (resp.
 na začátku a konci bloku) můžou přerušit vykonávání funkce – podobně jako `await`.
 
 Typický příklad je u databází: začátek a konec transakce i získávání jednotlivých
@@ -963,7 +964,7 @@ V dokumentaci najdete podrobnější popis včetně [příkladů][transport-prot
 
 [transport-proto-examples]: https://docs.python.org/3/library/asyncio-protocol.html#tcp-echo-server-protocol
 
-Kromě toho existuje i "Stream API" založené na asynchronních funkcích.
+Kromě toho existuje i „Stream API“ založené na asynchronních funkcích.
 Většinou platí, že operace *otevření*, *čtení*, *flush* a *zavření* Streamu
 jsou asynchronní funkce (v dokumentaci označované jako *coroutines*), a je
 tedy nutné je použít s `await`; oproti tomu *zápis* asynchronní není – data
@@ -1087,186 +1088,4 @@ loop.run_forever()
 Úkol
 ====
 
-Vaším úkolem za 5 bodů je vytvořit asynchronní třídy reprezentující jednotlivé postavy v bludišti a rozhraní umožňující je spustit.
-
-Program musí stále splňovat zadání z předchozího cvičení, zejména:
-
- * nesmí při žádné interakci uživatele s rozhraním zhavarovat
- * musí se dát nainstalovat a spustit pomocí `python -m pip install -r requirements.txt`; `python setup.py develop`; `python -m maze`
-
-Do programu přidejte rozhraní pro spuštění hry.
-Doporučujeme přidat do menu a lišty nástrojů `QAction` s atributem `checkable=True`.
-Můžete ale použít i jiný vhodný způsob, kterým lze režim hry zapnout, ale i vypnout (přechod zpět do editačního módu).
-
-Není možné začít hrát, pokud od některé z postav nevede žádná cesta k cíli. Této situaci vhodně zabraňte.
-
-Do vizualizátoru bludiště doplňte funkcionalitu hry. V režimu hry:
-
- * nebudou zobrazeny čáry od postav k cíli
- * půjde pouze bořit či stavět zdi
-  * pokud máte více typů zdí, půjde bořit/stavět pouze jeden druh z nich (`-1`)
-  * zeď nepůjde stavět na políčko, kde je aktuálně nějaké postava
-  * postavit zeď půjde pouze tehdy, pokud to žádnou postavu neodřízne od cíle
- * nebude vidět paleta
- * úkolem hráče je měnit bludiště tak, aby co nejdéle bránil postavám dojít do cíle
-  * v případě že libovolná postava dojde do libovolného cíle, hra končí
-   * v takovém případě informujte hráče o tom, jak dlouho vydržel odolávat náporu postav
-
-Máte k dispozici základní třídu `Actor`, která reprezentuje aktora (postavu v bludišti):
-
- * [class Actor](static/actor.py)
-
-Tato třída definuje rozhraní jednotlivých postav a zároveň implementuje základní chování postavy - jde nejkratší cestou k cíli rychlostí jedno políčko za sekundu.
-Aby to mohlo fungovat, musí kód, který postavu používá:
-
- * na začátku hry udělat kopii matici bludiště (aby se bylo možné vrátit do editačního módu) a všechny postavy z ní "vyndat" a inicializovat je jako aktory
- * při zavolání `update_actor(actor)` zjistit, kde se postava nachází a překreslit ji,
- * při ukončení hry nebo programu všem aktorům říct, že se mají zrušit svůj task
-   * *tip:* na úklid po skončení hlavní smyčky událostí se hodí `loop.run_until_complete()`
-
-Je třeba použít smyčku událostí z `quamash`.
-
-Rozhraní je definováno tak, aby nezáviselo na konkrétní implementaci vizualizace, uvnitř aktorů byste tedy neměli používat nic z Qt.
-Některé charaktery (viz další sekce) možná budou potřebovat použít další API vašeho gridu.
-
-Kromě úpravy rozhraní musíte implementovat několik aktorů, kteří dědí z třídy Actor a chovají se trochu jinak.
-
-Aktoři
-------
-
-V bludišti máte 5 typů postav. Každá by měla mít jiné chování.
-Každá postava vychází svým chováním ze základního aktora, jde tedy k cíli nejkratší možnou cestou rychlostí jedno políčko za sekundu,
-pokud popis neříká jinak.
-
-Zde je seznam různých charakterů. Každé postavě přiřaďte jeden charakter podle typu postavy (barva na obrázku, číslo v matici).
-
-Charakterů je více než 5. Můžete si vybrat, kterých 5 použijete, musíte jich však použít minimálně 5 různých.
-Musíte implementovat alespoň dva z hvězdičkou označených charakterů.
-
-Poznámka o rychlostech: Když je nějaká postava rychlejší, neznamená to, že ve vašem cyklu v metodě `behavior` bude dělat delší kroky,
-ale že jeden krok bude trvat kratší dobu (metoda `step` má atribut `duration`).
-
-Při rozhodování o chování postav berte v úvahu hratelnost hry.
-
-### Rychlík
-
-Rychlík má stabilně o 75 % vyšší rychlost než základní aktor.
-
-### Zrychlovač
-
-Zrychlovač může po každém kroku s určitou pravděpodobností trvale zvýšit svou rychlost.
-Čím déle chodí, tím rychlejší může být. Pravděpodobnost nastavte tak, aby hra byla hratelná; zrychlení tak, aby bylo znatelné (např. o čtvrt políčka za sekundu).
-Doporučujeme nastavit i rychlostní strop, případně zrychlovat stále o menší a menší hodnotu.
-
-### Skokan \*
-
-Pokud je za jedním políčkem zdi průchozí políčko, odkud je cesta do cíle alespoň o 5 políček kratší, než z místa, kde se Skokan nachází,
-Skokan touto zdí projde (přeskočí ji). Kvůli hratelnosti doporučujeme nastavit limity na to, jak často se toto může dít,
-případně zakázat projít zdí přímo na cíl apod.
-
-Chcete-li, můžete implementovat animaci skoku přes zeď.
-
-### Teleportér \*
-
-Teleportér se místo kroku může s určitou pravděpodobností teleportovat na náhodné průchozí a dostupné místo bludiště.
-Při teleportu se postavička na malou chvíli rozechvěje, pak se přemístí a po chvilce se přestane chvět.
-Celá akce by měla trvat méně než sekundu.
-Doporučujeme zakázat teleport na políčka příliš blízko cíli.
-
-### Zmatkář
-
-Zmatkář s určitou pravděpodobností místo kroku směrem k cíli provede krok náhodným průchozím směrem (pokud to je možné, tak jiným, než ze kterého přišel).
-
-### Sprinter
-
-Sprinter zrychluje na rovných trasách.
-Pokud půjde klikatou cestou, je stejně pomalý jako základní aktor. Pokud ale půjde déle rovně, může být velmi rychlý.
-Na začátku hry a po každé změně směru má rychlost jako základní aktor.
-Každý další pohyb ve stejném směru ale vykonává rychleji, než ten předchozí.
-Pohyb v jiném směru je opět základní rychlostí.
-
-Doporučujeme nastavit rychlostní strop, případně zrychlovat stále o menší a menší hodnotu.
-
-Poznámka: Sprinter může chodit stejnou cestou jako základní aktor, nemusí cestu optimalizovat pro svoji schopnost.
-
-### Pravák \*
-
-Pravák se pohybuje bludištěm podle [pravidla pravé ruky](https://en.wikipedia.org/wiki/Maze_solving_algorithm#Wall_follower), místo toho, aby šel rovnou nejkratší cestou k cíli.
-Pokud má kolem sebe nějakou zeď, jde podél ní.
-Pokud se nachází ve volném prostoru a pravidlo nemůže aplikovat (např. na začátku, nebo pokud mu hráč jeho zeď zboří), chová se jako standardní aktor, dokud zeď nenajde nebo nedojde do cíle.
-
-Chcete-li, můžete detekovat, jestli se Pravák někde nezacyklil, a pokud ano, udělat nějaké rozumné kroky k tomu, aby se z prekérní situace dostal.
-
-### Dobíječ
-
-Dobíječ nejprve stojí na místě náhodnou dobu (s exponenciálním rozdělením a střední hodnotou 5 sekund), dobíjí energii.
-Pak ujde tolik kroků, kolik celých sekund čekal, rychlostí 3 políčka za sekundu. A opět dobíjí/čeká...
-Z dlouhodobého hlediska se tedy pohybuje pomaleji než základní aktor, ale je nevyzpytatelnější.
-Při dobíjení si jednou za sekundu poskočí, aby hráč věděl, že tato postava se nezasekla.
-(Dobíjení můžete signalizovat nějak sofistikovaněji.)
-
-### Tanečník
-
-Před každým krokem zkontroluje políčko před sebou (tj. ve směru cesty k cíli),
-diagonálně vpravo před sebou, a vpravo od sebe. Pokud jsou všechna tři volná, projde je
-a vrátí se zpět na původní políčko.
-Poté to samé udělá s políčky před sebou, diagonálně vlevo před sebou, a vlevo
-od sebe.
-Pak teprve udělá krok dopředu.
-
-Pokud hráč políčko, na které by měl Tanečník vstoupit, zastaví zdí,
-Tanečník poskočí, zbytek aktuálního "tance" neprovede, a pokračuje z aktuálního políčka.
-
-### Tlusťoch \*
-
-Pohybuje se o 25 % pomaleji než základní aktor.
-
-Nesmí vstoupit na políčko, na kterém je právě jiný aktor.
-Měl-li by to udělat, stojí místo toho na místě a odpočívá.
-
-Ostatní aktoři nesmí vstoupit na políčko, kde se právě nachází (nebo na které
-právě vstupuje) Tlusťoch. Pohybují se tak, jako by na pozici Tlusťocha byla zeď,
-tj. základní aktor se Tlusťocha snaží obejít, a pokud to nejde, skáče na místě.
-
-(Pravák Tlusťocha nepovažuje za zeď, podél které má jít; v případě, že mu Tlusťoch překáží, skáče na místě.
-Teleportér se na Tlusťocha nesmí teleportovat.)
-
-Tlusťoch ale nemá vliv na hráčovu schopnost stavět zdi, tj. pro tento účel se
-nepočítá jako překážka.
-
-### Smraďoch \*
-
-Smraďoch všem kromě ostatních Smraďochů smrdí, a chtějí od něj pryč.
-Pokud je v bezprostředním okolí (určete sami) ostatních aktorů (jiných charakterů), tito aktoři, pokud mohou, jdou směrem pryč od Smraďocha
-(bez ohledu na svou plánovanou trasu), až dokud se z dosahu Smraďocha nedostanou.
-Pokud nemohou pryč, se smradem se smíří a chovají se normálně.
-
-Při chůzi směrem pryč od Smraďocha se aktoři pohybují rychlostí dle svého charakteru.
-Tanečník (pokud může) tančí, Dobíječ (pokud musí) se dobíjí atp.
-
-Je na vás, jestli Smraďoch smrdí i přes zdi. Chcete-li, můžete rozsah smradu vizualizovat.
-
-### Vlastní
-
-Implementujte jiné netriviální chovaní. Svůj záměr popište v README.
-
-Vyhněte se i triviálním variantám jiných chování, které jste již implementovali
-(např. máte-li Rychlíka, nedělejte v rámci vlastního zadání "Pomalíka", který je jen o trochu pomalejší než základní aktor.)
-
-Nakolik je chování netriviální, určujeme při hodnocení my.
-V případě pochybností se zeptejte pomocí issue nebo na cvičení.
-
-
-Odevzdání, deadliny apod.
--------------------------
-
-Váš úkol se skládá prakticky ze dvou částí:
-
- * úprava GUI pro novou funkcionalitu
- * asynchronní programování aktorů
-
-A zároveň je to poslední úkol kromě semestrálky.
-
-Proto na něj máte čas až do středy 28.12. 11:00. Nekažte si ale prosím kvůli úkolu Vánoce (a ani od nás v průběhu svátků nečekejte velkou komunikaci).
-
-Odevzdávejte standardně s tagem `v0.4`. V případě potřeby opět můžete využít naše [řešení](http://github.com/encukou/maze) minulého úkolu.
+Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/1_async.md#%C3%9Akol).
