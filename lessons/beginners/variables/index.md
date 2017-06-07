@@ -1,7 +1,7 @@
 # Čtverec
 
-Teď se vrátíme do základní školy, a zkusíme si napsat program,
-který vypočítá obsah a obvod čtverce u kterého známe délku strany.
+Teď se vrátíme do základní školy a zkusíme si napsat program,
+který vypočítá obsah a obvod čtverce, u kterého známe délku strany.
 
 > [note] Matematika!
 > Doufám, že tenhle příklad nikoho neodradí,
@@ -11,7 +11,7 @@ který vypočítá obsah a obvod čtverce u kterého známe délku strany.
 > znalostmi ze základní školy.
 
 Pro připomenutí, obvod čtverce se stranou <var>a</var>
-se dá vypočítat jako <var>O</var> = 4<var>a</var>,
+se dá vypočítat jako <var>O</var> = 4<var>a</var>
 a obsah jako <var>S</var> = <var>a</var>².
 Řekněme, že náš čtverec má stranu <var>a</var> = 356 cm.
 
@@ -67,7 +67,7 @@ jak bys zajistil{{a}}, že jedno z těch čísel nepřehlédneš?
 
 Existuje způsob, jak program napsat,
 aniž bys musela pokaždé přepisovat všechna čísla:
-stranu čtverce si „pojmenuješ“, a potom používáš jenom její jméno.
+stranu čtverce si „pojmenuješ“ a potom používáš jenom její jméno.
 V Pythonu na pojmenovávání hodnot slouží *proměnné* (angl. *variables*).
 Používají se takto:
 
@@ -84,13 +84,13 @@ použije se zapamatovaná hodnota.
 
 To nás vede k jedné ze základních programátorských
 zásad: „neopakuj se“ (anglicky *Don't repeat yourself*, <abbr class="initialism">DRY</abbr>).
-Když se někde opakuje stejná hodnota, stejný výraz,
+Když se někde opakuje stejná hodnota, stejný výraz
 nebo stejný kus kódu,
 {{ gnd('dobrý programátor', 'dobrá programátorka', both='dobrý programátor') }}
 ten kus programu pojmenuje
 a několikrát pak použije jen jméno.
 Často se totiž stává, že je program potřeba změnit –
-buď je v něm chyba, nebo se změní zadání.
+buď je v něm chyba nebo se změní zadání.
 A potom je mnohem jednodušší změnu udělat jen na jednom místě.
 
 Kromě toho dobrá jména usnadňují čtení programu:
@@ -110,7 +110,7 @@ u `4 * 183` není příliš jasné, co ta čísla znamenají.
 > jakou má čtverec stranu.
 >
 > Pro připomenutí, obvod kruhu s poloměrem <var>r</var>
-> je <var>o</var> = 2π<var>r</var>, obsah <var>S</var> = π<var>r</var>²,
+> je <var>o</var> = 2π<var>r</var>, obsah <var>S</var> = π<var>r</var>²
 > a π je zhruba 3,1415926.
 >
 > Všechna čísla, která matematici označují jen jedním
@@ -126,7 +126,7 @@ za který můžeš napsat úplně cokoliv – až do konce
 
 Komentáře jsou důležité: programy nečte jen počítač, ale i lidé.
 Do komentářů si můžeš poznamenat, co dělá celý program,
-vysvětlit, jak funguje nějaká složitější část,
+vysvětlit, jak funguje nějaká složitější část
 nebo vyjasnit něco, co není jasné přímo z programu.
 
 Vždycky, když píšeš program, snaž se vžít do role někoho,
@@ -148,7 +148,7 @@ print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 Nakonec se podíváme, jak zařídit, aby číslo nemuselo být
 zapsáno v programu, ale aby ho mohl uživatel zadat sám.
 
-Stejně jako když ses naučil{{a}} používat `print`,
+Stejně jako když ses naučil{{a}} používat `print`
 i tady jen řeknu, že na to použijeme *funkce*.
 Detaily si vysvětlíme později;
 pro teď to budou kouzelná zaříkadla:

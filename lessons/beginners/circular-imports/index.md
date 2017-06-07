@@ -30,7 +30,7 @@ Výsledek bude vypadat třeba nějak takhle:
 Jenže funkce `tah_pocitace`
 většinou potřebuje volat funkci `tah`.
 Co s tím?
-Můžeš importovat `ai` z `piskvorky`, a zároveň
+Můžeš importovat `ai` z `piskvorky` a zároveň
 `piskvorky` z `ai`?
 
 ```plain
@@ -50,20 +50,20 @@ Můžeme se na to podívat z hlediska Pythonu,
 který příkazy v souborech vykonává.
 Když má spustit (nebo importovat) soubor
 `piskvorky.py`, začne ho
-zpracovávat ho řádek po řádku,
+zpracovávat řádek po řádku,
 když tu (docela brzo) narazí na příkaz
 `import ai`.
-Otevře tedy soubor `ai.py`,
-a začne ho zpracovávat, řádek po řádku.
+Otevře tedy soubor `ai.py`
+a začne ho zpracovávat řádek po řádku.
 Brzy narazí na příkaz `import piskvorky`. Co teď?
 
-Aby nenastala by situace podobná nekonečné smyčce –
+Aby nenastala situace podobná nekonečné smyčce –
 jeden soubor by importoval druhý, druhý zase první,
 a tak stále dokola –
 udělá Python taková malý „podvod“:
 když zjistí, že soubor `piskvorky.py`
 už importuje, zpřístupní v modulu `ai`
-modul `piskvorky` tak jak ho
+modul `piskvorky` tak, jak ho
 má: nekompletní, bez většiny funkcí co v něm mají
 být nadefinované.
 A až potom, co dokončí import `ai.py`,
@@ -83,11 +83,11 @@ Jak na to? Máme dvě možnosti.
 
 ## Organizace modulů podle závislostí
 
-První možnost je importovat funkci `tah` v modulu `ai`,
+První možnost je importovat funkci `tah` v modulu `ai`
 a používat ji odtam.
 To je jednoduché, ale nerespektuje účel modulu
 `ai`, který má obsahovat jenom logiku
-vybírání tahu počítače, a ne pomocné funkce které
+vybírání tahu počítače, a ne pomocné funkce, které
 můžou být potřeba i jinde.
 
 ```plain

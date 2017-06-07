@@ -17,7 +17,7 @@ a nainstaluj.
 {% block setup %}
 
 Odsazování
-:   V menu Nastavení zvol Předvolby, a pak nastav
+:   V menu Nastavení zvol Předvolby a pak nastav
     „Nastavení tabulátoru<span class="en">/Tab Settings</span>“ na 
     „Zaměnit za mezery<span class="en">/Replace by Space</span>“.
 

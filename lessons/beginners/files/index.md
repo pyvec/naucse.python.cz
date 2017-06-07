@@ -76,7 +76,7 @@ Při procházení souboru Python tento znak nechává na konci řetězce
 `radek` ¹.
 Funkce `print` pak přidá další nový řádek, protože ta na konci
 výpisu vždycky odřádkovává – pokud nedostane argument `end=''`.
-To je jeden způso jak řádkování „spravit“; další je použít na každý řádek
+To je jeden způsob jak řádkování „spravit“; další je použít na každý řádek
 metodu `rstrip`, která odstraní mezery a nové řádky z konce řetězce.
 
 ¹ Proč to dělá? Kdyby `'\n'` na konci řádků nebylo,
@@ -98,14 +98,14 @@ otevřený, otevřít znovu.
 
 Soubory se dají přirovnat k ledničce: abychom něco
 mohly z ledničky vzít, nebo dát dovnitř, musíme
-ji napřed otevřít, a nakonec zavřít.
+ji napřed otevřít a nakonec zavřít.
 Bez zavření to sice na první pohled funguje taky,
 ale pravděpodobně potom brzo něco zplesniví.
 
 
 Zapomenout zavřít soubor je docela jednoduché:
 například pokud by v rámci zpracování souboru
-nastane výjimka nebo kdybys vyskočila z funkce
+nastala výjimka nebo kdybys vyskočila z funkce
 pomocí `return`, náš předchozí kód by `close` nezavolal,
 a soubor by zůstal otevřený.
 
@@ -154,7 +154,7 @@ print(iniciala())
 ```
 Tenhle příkaz jsme už viděl{{gnd('i', 'y', both='i')}} u testování,
 kde uvozoval blok, ve kterém má nastat výjimka –
-potom, co blok skončí, se zkontroluje jestli
+potom, co blok skončí, se zkontroluje, jestli
 nastala a jestli je toho správného typu.
 V našem případě se po skončení bloku
 zavře soubor, ať už výjimka nastala nebo ne.
@@ -191,7 +191,7 @@ with open('basnicka.txt', mode='w', encoding='utf-8') as soubor:
 Případně se dá použít funkce `print`,
 která kromě do terminálu umí, pomocí pojmenovaného argumentu `file`,
 vypisovat i do otevřeného souboru.
-Ostatní možnosti printu – automatické odřádkování a
+Ostatní možnosti printu – automatické odřádkování,
 převádnění na řetězce, možnost vypsat víc
 hodnot najednou apod. – samozřejmě zůstávají.
 

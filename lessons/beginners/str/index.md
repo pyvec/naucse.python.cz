@@ -10,7 +10,7 @@ Už víš, jak je zapisovat:
 
 Někdy potřebuješ řetězce, které obsahují více řádků.
 Pythonní řetězce ale můžeš normálně napsat jen na jeden řádek.
-Jinak by koncová uvozovka mohla být kdekoli,
+Jinak by koncová uvozovka mohla být kdekoli
 a špatně by se hledala, kdybys na ni zapomněl{{a}}.
 
 Můžeš ale do řetězce znak pro nový řádek vložit pomocí speciálního
@@ -22,7 +22,7 @@ print('Haló haló!\nCo se stalo?')
 
 Obecně zpětné lomítko umožňuje zapsat znaky, které by se špatně zadávaly.
 Třeba uvozovka se dá zapsat jako `\"` a „apostrof“ jako `\'`.
-To se dá použít když potřebuješ mít v jednom
+To se dá použít, když potřebuješ mít v jednom
 řetězci uvozovku i apostrof:
 
 ```python
@@ -33,7 +33,7 @@ print('"Jen ho nech," řek\' děd. "Kdo zná líp kraj?"')
 Zpětným lomítkem se dají přidávat i
 exotické znaky, které nemáš na klávesnici.
 Ty se dají zapsat jako `\N` a jméno znaku
-v „kudrnatých“ závorkách.
+v složených („kudrnatých“) závorkách.
 Třeba následující znaky.
 (Do konzoli na Windows bohužel nemusí jít všechny
 vypsat, ale aspoň první by jít měl):
@@ -72,7 +72,7 @@ u funkcí.
 
 ```python
 def vynasob(a, b):
-    """Vynásobí argumenty, a vrátí výsledek.
+    """Vynásobí argumenty a vrátí výsledek.
 
     Oba argumenty by měly být čísla.
     """
@@ -100,7 +100,6 @@ dlouhy_retezec = 'ó' * 100
 Teď se podíváme na opačný proces: jak z dlouhého
 řetězce dostat kratší součásti.
 Začneme jednotlivými znaky.
-Ty se dají dostat operací *vybrání prvku*
 Dělá se to operací *vybrání prvku* (angl. *subscripting*),
 která se píše podobně jako volání funkce, jen s hranatými závorkami:
 
@@ -117,7 +116,7 @@ Nedostal{{a}} – dostal{{a}} jsi *šesté* písmeno.
 {% endfilter %}
 
 Jak sis možná už všiml{{a}}, programátoři počítají od nuly.
-„První“ prvek má vždy číslo nula, druhý číslo jedna, a tak dál.
+„První“ prvek má vždy číslo nula, druhý číslo jedna a tak dál.
 
 Stejně je to i s písmeny v řetězcích: první písmeno má číslo nula,
 druhé jedna, ... a osmé písmeno má číslo sedm.
@@ -129,7 +128,7 @@ což nebude hned, takže pro teď nám bude
 stačit vědět,
 že programátoři jsou prostě divní.
 
-A nebo, že mají rádi divná čísla, jako nulu.
+A nebo že mají rádi divná čísla jako nulu.
 
 ```plain
    [0] [1] [2] [3] [4] [5] [6] [7]
@@ -164,7 +163,7 @@ Záporná čísla vybírají písmenka od konce.
 {% endfilter %}
 
 Řetězce umí i jiné triky.
-Třeba můžeš zjistit, jak je řetězec dlouhý,
+Třeba můžeš zjistit, jak je řetězec dlouhý
 nebo jestli v sobě obsahuje daný menší řetězec.
 
 <table class="table">
@@ -193,7 +192,7 @@ nebo jestli v sobě obsahuje daný menší řetězec.
 Řetězce vždy berou v potaz velikost písmen,
 takže např. `'ČOKO' in 'čokoláda'` je `False`.
 Kdybys chtěl{{a}} porovnávat bez ohledu na velikost písmen,
-musel{{a}} bys oba řetězce převést třeba na malá písmena,
+musel{{a}} bys oba řetězce převést třeba na malá písmena
 a pak je porovnat.
 
 A jak se převádí na malá písmena?
@@ -204,7 +203,7 @@ K tomu budeme potřebovat další novou vlastnost Pythonu: metody.
 *Metoda* (angl. *method*) je jako funkce – něco, co se dá zavolat.
 Na rozdíl od funkce je svázaná s nějakým *objektem* (hodnotou).
 Volá se tak, že se za objekt napíše tečka,
-za ní jméno metody, a za to celé se, jako u funkcí, připojí závorky
+za ní jméno metody a za to celé se, jako u funkcí, připojí závorky
 s případnými argumenty.
 
 Řetězcové metody `upper()` a `lower()`
@@ -228,7 +227,7 @@ print(retezec)
 ### Iniciály
 
 Pro procvičení metod a vybírání znaků si zkus napsat program,
-který se zeptá na jméno, pak na příjmení,
+který se zeptá na jméno, pak na příjmení
 a pak vypíše iniciály – první písmena zadaných jmen.
 
 Iniciály jsou vždycky velkými písmeny
@@ -259,7 +258,7 @@ Je sice delší, ale mnohem přehlednější.
 {% endfilter %}
 
 Řetězcových metod je celá řada.
-Nejužitečnější z nich nadeš v [taháku](https://github.com/pyvec/cheatsheets/raw/master/strings/strings-cs.pdf), který si můžeš stáhnout či vytisknout.
+Nejužitečnější z nich najdeš v [taháku](https://github.com/pyvec/cheatsheets/raw/master/strings/strings-cs.pdf), který si můžeš stáhnout či vytisknout.
 
 A úplně všechny řetězcové metody jsou popsány v [dokumentaci Pythonu](https://docs.python.org/3/library/stdtypes.html#string-methods) (anglicky; plné věcí, které ještě neznáš).
 

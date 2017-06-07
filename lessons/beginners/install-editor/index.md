@@ -17,7 +17,7 @@ Stejně tak nejsou vhodné programy jako Word či Writer.
 
 Editor pro programátory nám umožňuje upravovat *prostý text* – písmenka.
 Na rozdíl od programů jako Word, Writer či Pages neumožňuje text *formátovat*,
-tedy dělat nadpisy, obarvovat, zvětšovat font, vkládat obrázky, a podobně.
+tedy dělat nadpisy, obarvovat, zvětšovat font, vkládat obrázky a podobně.
 
 Pomocí editoru budeme zadávat počítači příkazy, takže formátování nepotřebujeme.
 Porovnej {{ gnd('sám', 'sama') }}, jaký je rozdíl mezi následujícími příkazy
@@ -31,8 +31,8 @@ nástroje.
 Aby se nám programy upravovaly pohodlněji, mají několik vychytávek:
 
 Podpora více souborů
-:   Větší projekty sestávají z více souborů, které můžeš mít v editoru otevřené
-    všechny najednou.
+:   Větší projekty se sestávají z více souborů, které můžeš mít v editoru 
+    otevřené všechny najednou.
 
 Číslování řádků
 :   Před každým řádkem se ukazuje číslo.
@@ -107,9 +107,9 @@ a podobně.
 Na začátek ale nejsou moc vhodné.
 
 Chceš-li takový editor přesto použít, měl{{a}} bys ho už poměrně dobře znát:
-vědět, co za tebe dělá editor, a jak to spravit, až něco udělá špatně.
+vědět, co za tebe dělá editor a jak to spravit, až něco udělá špatně.
 {% if var('coach-present') -%}
-Koučové většinou znají jen jeden editor – ten který používají –
+Koučové většinou znají jen jeden editor – ten, který používají –
 takže nemusí být schopní s pokročilým IDE rychle pomoct.
 {%- endif %}
 

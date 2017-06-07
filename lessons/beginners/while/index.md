@@ -1,10 +1,10 @@
 # While
 
-Kromě cyklu `for` máme ještě druhý typ cyklu, uvozený příkazem `while`
+Kromě cyklu `for` máme ještě druhý typ cyklu uvozený příkazem `while`
 (angl. *dokud*).
 Na rozdíl od `for`, kde *předem známe počet opakování*,
-se while používá když cyklus závisí na nějaké podmínce.
-Tělo cyklu se opakuje, dokud je podmínka splněna. Například:
+se while používá, když cyklus závisí na nějaké podmínce.
+Tělo cyklu se opakuje dokud je podmínka splněna. Například:
 
 ```python
 odpoved = input('Řekni Ááá! ')
@@ -29,7 +29,7 @@ Program se dá přerušit zmáčknutím
 <kbd>Ctrl</kbd>+<kbd>C</kbd>.
 
 > [note]
-> Tahle klávesová zkratka vyvolá v programu chybu,
+> Tahle klávesová zkratka vyvolá v programu chybu
 > a program se – jako po každé chybě – ukončí.
 
 A nakonec, existuje příkaz `break`, který z cyklu „vyskočí“:
@@ -46,7 +46,7 @@ while True:
 print('Hotovo, ani to nebolelo.')
 ```
 
-Příkaz `break` se dá použít jenom v cyklu (`while` nebo `for`),
+Příkaz `break` se dá použít jenom v cyklu (`while` nebo `for`)
 a pokud máme víc cyklů zanořených v sobě, vyskočí jen z toho vnitřního.
 
 ```python
@@ -64,7 +64,7 @@ Dokážeš napsat tenhle program?
 ## Oko bere
 
 * Začínáš s 0 body.
-* Počítač v každém kole vypíše, kolik máš bodů,
+* Počítač v každém kole vypíše kolik máš bodů
   a zeptá se hráče, jestli chce pokračovat.
 * Pokud hráč odpoví „ne“, hra končí.
 * Pokud hráč odpoví „ano“, počítač „otočí kartu“
@@ -87,7 +87,7 @@ while soucet < 21:
     elif odpoved == 'ne':
         break
     else:
-        print('Nerozumím! Odpovídej "ano" nebo "ne"')
+        print('Nerozumím! Odpovídej "ano", nebo "ne"')
 
 if soucet == 21:
     print('Gratuluji! Vyhrál{{a}} jsi!')

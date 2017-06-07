@@ -62,7 +62,7 @@ které se programátorům nechtělo přepisovat:
 Ne že by neexistovaly programovací jazyky,
 na které je potřeba speciální klávesnice.
 Ale programy v nich se většinou nedají
-dost dobře ani psát, ani číst.
+dost dobře psát, ani číst.
 
 > [note]
 > Třeba tady je program v jazyce APL:
@@ -270,7 +270,7 @@ print(2, 3, 4, sep=", ")
 ```
 
 Základní funkce na výstup, `input`,
-vypíše otázku, načte vstup od uživatele,
+vypíše otázku, načte vstup od uživatele
 a vrátí ho jako řetězec.
 
 ```python
@@ -282,10 +282,10 @@ input('zadej vstup: ')
 
 Co ale když nechceme pracovat s řetězcem, ale třeba s číslem?
 Tady nám pomůže skupina funkcí, které umí převádět čísla na řetězce a zpátky.
-Každý ze tří <em>typů</em> (angl. <em>types</em>) proměnných, které zatím známe
+Každý ze tří <em>typů</em> (angl. <em>types</em>) proměnných, které zatím známe,
 má funkci, která vezme nějakou hodnotu a vrátí podobnou hodnotu „svého“ typu.
-Na celá čísla je funkce `int` (a angl. *integer*), na reálná čísla je `float`
-(a angl. *floating-point*), a pro řetězce `str` (s angl. *string*).
+Na celá čísla je funkce `int` (z angl. *integer*), na reálná čísla je `float`
+(z angl. *floating-point*), a pro řetězce `str` (z angl. *string*).
 
 ```python
 int(x)              # převod na celé číslo

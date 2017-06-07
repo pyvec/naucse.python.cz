@@ -3,7 +3,7 @@
 Nainstalovat Pyhon na Linux je většinou jednoduché.
 Jen existuje spousta druhů Linuxu a máme s ním největší zkušenosti,
 tak jsou tyhle instrukce trochu delší.
-Nezalekni se – většinu sekcí pravděpodobně přeskočíš :)
+Nezalekni se – většinu sekcí pravděpodobně přeskočíš. :)
 
 ## Instalace Pythonu 3
 
@@ -14,7 +14,7 @@ v [příkazové řádce]({{ lesson_url('beginners/cmdline') }}) příkaz:
 $ python3 --version
 ```
 
-Objeví-li se „Python“ a číslo verze (např. `Python 3.5.2`),
+Objeví-li se „Python“ a číslo verze (např. `Python 3.5.2`)
 a verze je 3.4 nebo vyšší, máš nainstalováno.
 Přejdi na další sekci, [kontrolu `tkinter`](#check-tkinter).
 
@@ -42,7 +42,7 @@ Konkrétní příkaz záleží na distribuci:
   ```
   {% endfilter %}
 
-Používáš-li jinou distribuci, předpokládám, že instalovat programy už umíš :)
+Používáš-li jinou distribuci, předpokládám, že instalovat programy už umíš. :)
 
 
 {{ anchor('check-tkinter') }}
@@ -52,7 +52,7 @@ Některé linuxové distribuce obsahují standardně jen část celkové funkčn
 Pythonu.
 Konkrétně knihovnu `tkinter` (která umožňuje např. kreslit „želví obrázky“)
 často musíme nainstalovat zvlášť.
-Abys zjistil{{a}} jestli je už je nainstalovaná, zadej příkaz:
+Abys zjistil{{a}}, jestli je už je nainstalovaná, zadej příkaz:
 
 ```console
 $ python3 -m tkinter
@@ -76,7 +76,7 @@ Jestli ne, modul `tkinter` ještě nainstaluj:
   ```
   {% endfilter %}
 
-Používáš-li jinou distribuci, musíš si správné jméno blíčku najít na Internetu.
+Používáš-li jinou distribuci, musíš si správné jméno balíčku najít na Internetu.
 
 {{ anchor('install-virtualenv') }}
 ## Doinstalování Virtualenv
@@ -84,7 +84,7 @@ Používáš-li jinou distribuci, musíš si správné jméno blíčku najít na
 Novější verze Pythonu mají zabudovaný nástroj `venv`, který použijeme níže.
 Starší verze ho ale nemají (a některé distribuce Linuxu ho dokonce z Pythonu
 vyřadily).
-Potřebuješ proto zjistit, jestli `venv` máš, a kdyžtak nainstalovat alternativu.
+Potřebuješ proto zjistit, jestli `venv` máš, a případně nainstalovat alternativu.
 
 Spusť v příkazové řádce příkaz:
 
@@ -109,7 +109,7 @@ a nainstaluj ho:
   ```
   {% endfilter %}
 
-Používáš-li jinou distribuci, předpokládám, že instalovat programy už umíš :)
+Používáš-li jinou distribuci, předpokládám, že instalovat programy už umíš. :)
 
 
 {{ anchor('setup-venv') }}
@@ -118,13 +118,13 @@ Používáš-li jinou distribuci, předpokládám, že instalovat programy už u
 <!-- Pozn. Tahle sekce je velice podobná pro Linux, Mac i Windows;
      měníš-li ji, koukni se jestli není změna potřeba i jinde. -->
 
-Nakonec vytvoř virtuální prostředí.
-
 {%- if var('pyladies') -%}
 {% set rootname = 'pyladies' %}
 {%- else -%}
 {% set rootname = 'naucse-python' %}
 {%- endif -%}
+
+Nakonec vytvoř virtuální prostředí.
 
 Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
 Může to být třeba <code>/home/<i>jméno</i>/{{ rootname }}</code>,
@@ -181,7 +181,7 @@ Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
 (před `$`) objevit slovo `(venv)`.
 Tak poznáš, že je virtuální prostředí *aktivní*.
 
-Tenhle příkaz si zapiš. Budeš ho muset zadat vždycky když pustíš příkazovou řádku,
+Tenhle příkaz si zapiš. Budeš ho muset zadat vždycky, když pustíš příkazovou řádku,
 než se pustíš do programování.
 
 {% if var('pyladies') %}

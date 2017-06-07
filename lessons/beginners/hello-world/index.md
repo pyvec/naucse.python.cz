@@ -73,7 +73,7 @@ Jestli to nefunguje, zkontroluj, že:
 * Soubor `ahoj.py` obsahuje správný příkaz, včetně všech uvozovek a závorek.
 * Znak `$` nezadáváš – ten je tam proto, aby bylo poznat že jde o příkaz příkazové
   řádky.
-  Na `$` (nebo, na Windows, `>`) končí dotaz který vypíše počítač.
+  Na `$` (nebo, na Windows, `>`) končí dotaz, který vypíše počítač.
   Příkaz, který zadáváš ty, je jen `python ahoj.py`.
 
 A jestli to pořád nefunguje, zeptej se

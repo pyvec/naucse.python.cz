@@ -20,9 +20,9 @@ Stačí čárky mezi prvky.
 
 Chovají skoro stejně jako seznamy, jen nejdou měnit.
 Nemají tedy metody jako `append`
-a `pop`, a nedá se jim přiřazovat do prvků.
-Dají se ale použít v cyklu `for`,
-a dájí se z nich číst jednotlivé prvky.
+a `pop` a nedá se jim přiřazovat do prvků.
+Dají se ale použít v cyklu `for`
+a dají se z nich číst jednotlivé prvky.
 
 ```python
 osoby = 'máma', 'teta', 'babička'
@@ -41,7 +41,7 @@ Když chceš <var>n</var>-tici předat do funkce,
 narazíš na problém, že čárka odděluje jednotlivé
 argumenty funkce.
 V podobných případech musíš <var>n</var>-tici
-uzavřít do závorky, aby bylo jasné že jde o jednu
+uzavřít do závorek, aby bylo jasné, že jde o jednu
 hodnotu (byť složenou).
 
 ```python
@@ -56,7 +56,7 @@ print(seznam_dvojic)
 víc než jednu hodnotu.
 Prostě v příkazu `return` oddělíš vracené hodnoty čárkou.
 Vypadá to, že vracíš několik hodnot, ale
-ve skutečnosti vrací jen jedna <var>n</var>-tice.
+ve skutečnosti se vrací jen jedna <var>n</var>-tice.
 
 ```python
 def podil_a_zbytek(a, b):
@@ -70,7 +70,7 @@ def podil_a_zbytek(a, b):
 
 Python umí ještě jeden trik: pokud chceš přiřadit
 do několika proměnných najednou, stačí je na levé
-straně rovnítka oddělit čárkou, a na pravou stranu
+straně rovnítka oddělit čárkou a na pravou stranu
 dát nějakou „složenou” hodnotu – třeba právě
 <var>n</var>-tici.
 
@@ -89,7 +89,7 @@ jedna, dva, tri = [1, 2, 3]
 ## Funkce, které vracejí <var>n</var>-tice
 
 `zip` je zajímavá funkce.
-Používá se ve `for` cyklech, podobně jako funkce `range` která „dává” čísla.
+Používá se ve `for` cyklech, podobně jako funkce `range`, která „dává” čísla.
 
 Když funkce `zip` dostane dva seznamy
 (či jiné věci použitelné ve `for`),
@@ -99,7 +99,7 @@ druhého seznamu,
 pak druhý s druhým, třetí s třetím a tak dál.
 
 Hodí se to, když máš dva seznamy se stejnou
-strukturou – příslušné prvky k sobě „patří”,
+strukturou – příslušné prvky k sobě „patří”
 a chceš je zpracovávat společně:
 
 ```python
@@ -110,15 +110,15 @@ for osoba, vlastnost in zip(osoby, vlastnosti):
 ```
 
 Když `zip` dostane tři seznamy,
-bude tvořit trojice, ze čtyř seznamů nadělá čtveřice, a tak dále.
+bude tvořit trojice, ze čtyř seznamů nadělá čtveřice a tak dále.
 
 Další funkce, která vrací dvojice, je `enumerate`.
 Jako argument bere seznam (či jinou věc použitelnou
-ve `for`), a vždy spáruje index (pořadí v seznamu) s příslušným prvkem.
+ve `for`) a vždy spáruje index (pořadí v seznamu) s příslušným prvkem.
 Jako první tedy dá
 (0, *první prvek seznamu*), potom
 (1, *druhý prvek seznamu*),
-(2, *třetí prvek seznamu*),
+(2, *třetí prvek seznamu*)
 a tak dále.
 
 ```python
@@ -144,13 +144,13 @@ Když budeš *opravdu* potřebovat jednoprvkovou
 <var>n</var>-tici, radši ji pro přehlednost ozávorkuj.
 
 
-## Kdy použít seznam, a kdy <var>n</var>-tici?
+## Kdy použít seznam a kdy <var>n</var>-tici?
 
 Seznamy se používají, když předem nevíš,
-kolik v nich přesně bude hodnot,
+kolik v nich přesně bude hodnot
 nebo když je hodnot mnoho.
 Například seznam slov ve větě,
-seznam účastníků soutěže, seznam tahů ve hře,
+seznam účastníků soutěže, seznam tahů ve hře
 nebo seznam karet v balíčku.
 Oproti tomu `for pozdrav in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN':`
 používá <var>n</var>-tici.
@@ -163,7 +163,7 @@ ale dvojice index–hodnota z `enumerate`
 je <var>n</var>-tice.
 
 Prázdné <var>n</var>-tice a <var>n</var>-tice s jedním
-prvkem se zapisují trochu divně, a má to své důvody:
+prvkem se zapisují trochu divně a má to své důvody:
 může-li nastat situace, kdy takovou sekvenci budeš
 potřebovat, většinou je lepší sáhnout po seznamu.
 Například seznam hracích karet v ruce nebo
@@ -171,9 +171,9 @@ seznam lidí aktuálně přihlášených do soutěže
 může být občas prázdný.
 
 Seznamy i n-tice mají i technické limity:
-<var>n</var>-tice nejdou měnit, a až se naučíme pracovat se slovníky,
+<var>n</var>-tice nejdou měnit a až se naučíme pracovat se slovníky,
 zjistíme že seznamy tam nepůjdou použít jako klíče.
 
 Často není úplně jasné, který typ použít
 – v takovém případě je to pravděpodobně jedno.
-Řiď se instinktem :)
+Řiď se instinktem. :)
