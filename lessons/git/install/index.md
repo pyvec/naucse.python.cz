@@ -6,7 +6,7 @@ na vznikajících programech s ostatními.
 Jmenuje se Git.
 Pojďme si ho nainstalovat a nastavit.
 
-Instalace je různá pro růné operační systémy, vyber ten svůj.
+Instalace je různá pro různé operační systémy, vyber ten svůj.
 
 
 ## Linux
@@ -42,7 +42,7 @@ Dál pokračuj obecným [nastavením](#config) níže.
 ## Windows
 
 Jdi na stránku [git-scm.org](https://git-scm.org), stáhni si
-Git, a nainstaluj si ho.
+Git a nainstaluj si ho.
 Při instalaci vyber tyto volby:
 
 * Run Git from the Windows Command Prompt
@@ -111,7 +111,7 @@ tím, že konfigurační příkazy zadáš znovu.
 > Adresa se zobrazí jen lidem, kteří si stáhnou projekt,
 > do kterého jsi přispíval{{a}}.
 > Spammeři se většinou zaměřují na méně technicky zdatné
-> lidi, než jsou uživatelé Gitu :)
+> lidi, než jsou uživatelé Gitu. :)
 
 Dále si můžeš nastavit barevné výpisy – pokud si tedy
 (jako někteří autoři Gitu) nemyslíš, že příkazová

@@ -17,8 +17,8 @@ Výstup programu
 
 Osobní soubory
 :   Občas se stane, že v adresáři s repozitářem máš soubor s osobními
-    poznámkami, nebo třeba s heslem.
-    Zbytek repozitáře pláneuješ zveřejnit, ale tyto soubory by měly zůstat
+    poznámkami nebo třeba s heslem.
+    Zbytek repozitáře plánuješ zveřejnit, ale tyto soubory by měly zůstat
     jen ve tvé kopii.
 
 My budeme chtít Git nastavit tak, aby tyto soubory ignoroval: aby
@@ -57,12 +57,12 @@ Založ si nový repozitář a vytvoř v něm tři soubory s tímto obsahem:
     automaticky vzniklý soubor.
 
 Pythonní program spusť (pomocí `python obrazek.py`).
-Mělo by se na chvíli ukázat okno s želvou, a měl by vzniknout nový soubor
+Mělo by se na chvíli ukázat okno s želvou a měl by vzniknout nový soubor
 `obrazek.ps`.
 
 > [note]
-> Obrázek ve formátu PostScript (.ps) se dá otevřít ve většině programů které
-> zvládaji i PDF, případně v [Inkscape](https://inkscape.org/).
+> Obrázek ve formátu PostScript (.ps) se dá otevřít ve většině programů, které
+> zvládají i PDF, případně v [Inkscape](https://inkscape.org/).
 
 Jak se na to dívá Git?
 
@@ -89,7 +89,7 @@ Co s těmi ostatními?
 
 ## Výstupy programu a pomocné soubory společných nástrojů
 
-Nejjednoduší je vyrovnat se se souborem `obrazek.ps`.
+Nejjednodušší je vyrovnat se se souborem `obrazek.ps`.
 V repozitáři ho nechceš (je to repozitář *zdrojového* kódu; výsledky bývá
 lepší schraňovat jinde než v Gitu).
 Zároveň víš, že každý, kdo s repozitářem bude pracovat, pravděpodobně
@@ -164,7 +164,7 @@ soubor se stejným jménem.
 Dejme ho tedy do souboru, který se nebude šířit s repozitářem.
 Tento soubor je `.git/info/exclude`.
 (Může být trochu složité ho najít, protože adresář `.git` je skrytý. 
-Nevidíš–li ho, Napiš okýnku pro otevření souboru `.git`, a dostaneš se do něj.)
+Nevidíš–li ho, napiš okýnku pro otevření souboru `.git` a dostaneš se do něj.)
 
 Soubory v adresáři `.git` bys neměl{{a}} měnit, protože se tak dá přijít
 o historii projektu.
@@ -198,7 +198,7 @@ Untracked files:
 
 Některé programy automaticky vytvářejí pomocné soubory.
 Často to dělají správci souborů (často `.Thumbnails` na Linuxu,
-`.DS_Store` naMacu, nebo `Thumbs.db` na Windows).
+`.DS_Store` naMacu nebo `Thumbs.db` na Windows).
 Některé editory si taky nechávají na disku nastavení.
 
 Podobné soubory se dají dát do `.gitignore`.
@@ -211,9 +211,9 @@ a programy.
 > ten program, který používáš ty, použij `.gitignore`.
 > Příklad je adresář `__pycache__`, který vytváří Python při importu modulu.
 
-Soubor s osobním nastavením si můžeš pojmenovat jak chceš, a můžeš ho uložit
+Soubor s osobním nastavením si můžeš pojmenovat jak chceš a můžeš ho uložit
 kde budeš chtít.
-Já doporučuji ho pojmenovat `.gitignore_global`, a dát ho do tvého domovského
+Já doporučuji ho pojmenovat `.gitignore_global` a dát ho do tvého domovského
 adresáře.
 
 Do souboru zase napiš jméno ignorovaného souboru:
@@ -288,7 +288,7 @@ Tečka je jméno pro aktuální adresář – celý adresář a všechno pod ní
 do revize.
 
 Doporučuji si před použitím téhle zkratky zkontrolovat `git status`, aby sis
-ověřil{{a}}, že nepřidáváš nic co nechceš.
+ověřil{{a}}, že nepřidáváš nic, co nechceš.
 
 Taky doporučuji si nastavit Git, aby se v editoru, kam píšeš popisek revize,
 ukazovala poznámka s tím, co vlastně v nové revizi bude:
@@ -296,4 +296,3 @@ ukazovala poznámka s tím, co vlastně v nové revizi bude:
 ```console
 $ git config --global commit.verbose 1
 ```
-

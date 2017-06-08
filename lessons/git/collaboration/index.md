@@ -6,21 +6,22 @@
 Víc hlav víc ví, a tak je dobré si na projekt vytvořit tým.
 
 Každý člen týmu potřebuje mít přístup k práci ostatních.
-K tomu se dá použít Git: někde na internetu si zařídíme *sdílený repozitář*,
+K tomu se dá použít Git: někde na Internetu si zařídíme *sdílený repozitář*,
 se kterým se všichni budou synchronizovat.
 
 > [note] Pro samostudium
-> Pokud materiály čteš z domu, a máš možnost se
+> Pokud materiály čteš z domu a máš možnost se
 > v budoucnu dostat na nějaký sraz, zatím tuhle sekci přeskoč.
 > Na sraze pak popros zkušenější programátory, aby ti pomohli.
 > (Nechystáš-li se na sraz, můžeš pokračovat –
 > zvládnout se to dá.)
 
 > [note] Pro kouče
-> Udělej na GitHubu repozitář jménem `prezencka`, a dej do
+> Udělej na GitHubu repozitář jménem `prezencka` a dej do
 > něj soubor se svým jménem. Příklad je na
 > [encukou/prezencka](https://github.com/encukou/prezencka).
 > Nasdílej s účastnicemi příkaz na jeho naklonování (přes https).
+
 
 ## Open Source
 
@@ -57,19 +58,19 @@ které tyto základní svobody zaručují.
 Ne všechny jsou v Pythonu (a těm co jsou zatím
 nebudeš všem rozumět). Ne všechny jsou v Gitu.
 Ne všechny jsou kvalitní – protože si
-každý může zveřejnit co chce, válí na internetu
+každý může zveřejnit co chce, na Internetu se válí
 spousta nedodělků, opuštěných nápadů a nepodařených experimentů.
 A bohužel, ne všechny projekty mají přátelské autory.
 
 Na druhou stranu ale open-source programy
-mají svoje výhody: nejenom se z nich může kdokoli
+mají svoje výhody: nejenom že se z nich může kdokoli
 učit, ale každý může i zkontrolovat, jestli
-dělají to co dělat mají.
+dělají to, co dělat mají.
 Populární open-source programy tě například
 pravděpodobně nebudou špehovat (tj. hlásit autorovi,
 co na počítači děláš), ani většinou neobsahují
 reklamy: kdyby to dělaly, najde se
-někdo kdo tyhle „funkce” odstraní, a lidi – časem –
+někdo kdo tyhle „funkce” odstraní a lidi – časem –
 začnou používat opravenou verzi.
 
 Některé příklady populárních open-source projektů:
@@ -100,7 +101,7 @@ Některé příklady populárních open-source projektů:
 A jak vidno z posledního příkladu, nejen softwarové
 projekty se dají vést takhle veřejně.
 Tento kurz vychází z principů open source:
-všechno know-how je sdílené, a budeme rádi, když
+všechno know-how je sdílené a budeme rádi, když
 se zapojíš.
 
 Až příště uvidíš v materiálech chybu (nebo jestli
@@ -139,17 +140,17 @@ V příkazové řádce zadej příkaz, který ti oznámí kouč; něco jako
 $ git clone https://github.com/{{coach_username}}/prezencka
 ```
 
-Vytvoří se ti nový repozitář – adresář jménem
+Vytvoří se ti nový repozitář – adresář se jménem
 `prezencka`, ve kterém je nějaký soubor.
 
 
 Na URL (adresu), kterou jsi v tomhle příkladě
 použil{{a}}, se můžeš podívat i v prohlížeči.
-Uvidíš seznam souborů, a spoustu odkazů k
+Uvidíš seznam souborů a spoustu odkazů k
 informacím o repozitáři (například pod „commits”
 je historie).
 
-Přepni se do nového adresáře (`cd prezencka`),
+Přepni se do nového adresáře (`cd prezencka`)
 a zkus se podívat na historii (`gitk` nebo `git log`).
 Možná je krátká, ale hlavně, že nějaká je.
 Máš na počítači kopii projektu, který založil někdo jiný!
@@ -158,22 +159,22 @@ Máš na počítači kopii projektu, který založil někdo jiný!
 ## Posílání změn <small>(<code>git push</code>)</small>
 
 Teď se do projektu zapoj.
-Přidej soubor se svým jménem (nebo přezdívkou),
+Přidej soubor se svým jménem (nebo přezdívkou)
 a dej ho do gitu (`git add jmeno.txt`, `git commit`).
 
 Teď zbývá „jen” změnu začlenit do původního sdíleného repozitáře.
 To ale není jen tak: repozitář, který jsi
 naklonoval{{a}}, patří koučovi. A tomu by se asi
-nelíbilo, kdyby kdokoliv na internetu mohl přijít
+nelíbilo, kdyby kdokoliv na Internetu mohl přijít
 a nahrát mu do repozitáře změny.
 
-Spousta míst na internetu funguje tak, že vybraná
+Spousta míst na Internetu funguje tak, že vybraná
 skupina lidí má „přístup”: můžou dělat změny,
 jak se jim líbí.
 
 S Gitem se používá jiný přístup:
 změny nahraješ do *vlastního* sdíleného
-repozitáře, a majiteli původního projektu napíšeš
+repozitáře a majiteli původního projektu napíšeš
 žádost o začlenění těch změn (angl. *pull request*).
 Může to být třeba mail se slovy „Hele, na té a té
 adrese mám nějaké změny, které by se ti mohli hodit!
@@ -188,20 +189,20 @@ ne, to už je jiná věc. Ale záleží hlavně na samotné
 změně, ne na tom, kdo ji udělal.
 
 Služba [github.com](https://github.com/)
-ti umožňuje si udělat vlastní sdílený repozitář, a zjednodušuje
+ti umožňuje si udělat vlastní sdílený repozitář a zjednodušuje
 začleňování změn (místo posílání mailů stačí
 zmáčknout tlačítko). Pojďme se podívat, jak na to.
 
-Přihlaš se na GitHub, a pak zajdi na adresu
+Přihlaš se na GitHub a pak zajdi na adresu
 kterou jsi použil{{a}} pro `git clone`.
-Vlevo nahoře najdi tlačítko „Fork”, a klikni na něj.
+Vlevo nahoře najdi tlačítko „Fork” a klikni na něj.
 Tím si vytvoříš na GitHubu vlastní kopii repozitáře:
 adresa by měla být něco jako
 <code>https://github.com/<i>tvojejmeno</i>/prezencka</code>.
 
 
 > [note]
-> Kdybys měla v různých kopiích repozitáře zmatek,
+> Kdybys měl{{a}} v různých kopiích repozitáře zmatek,
 > přijde vhod malé vysvětlení: jedna kopie je původní
 > projekt na GitHubu, kam správce projektu dává
 > aktuální "oficiální verzi". Další kopie na GitHubu
@@ -209,7 +210,7 @@ adresa by měla být něco jako
 > (nejčastěji v ní ale zveřejňuješ změny, které můžou
 > být užitečné pro ostatní). A třetí kopii repozitáře
 > máš u sebe na počítači.
->
+
 > {{ figure(
     img=static('gh-workflow-diagram.svg'),
     alt='Diagram tří repozitářů'
@@ -265,7 +266,7 @@ větev `master`.
 
 Funguje? Podívej se na
 <code>https://github.com/<i>tvojejmeno</i>/prezencka</code>
-v prohlížeči, a ujisti se že tam tvoje změny jsou.
+v prohlížeči a ujisti se, že tam tvoje změny jsou.
 
 
 ## Žádost o začlenění <small>(<em>pull request</em>)</small>
@@ -274,7 +275,7 @@ Teď zbývá požádat autory původního projektu,
 aby změny z tvého sdíleného repozitáře přidali do svojí kopie.
 GitHub na to má mechanismus zvaný *pull request* (žádost o začlenění).
 
-Jdi na stránku původniho projektu (na adresu,
+Jdi na stránku původního projektu (na adresu,
 kterou jsi použil{{a}} na začátku pro
 `git clone`).
 Měl{{a}} bys tam vidět oznámení o své nově nahrané větvi
@@ -285,19 +286,19 @@ Pak zmáčkni další tlačítko.
 
 > [note]
 > Jestli tlačítko *Compare & pull request* nevidíš, běž na adresu
-> *své* kopie repozitáře, a stiskni tlačítko *New pull request*.
-> Vyber co kam chceš začlenit, dopiš/změň popisek, a pak zmáčkni
+> *své* kopie repozitáře a stiskni tlačítko *New pull request*.
+> Vyber, co kam chceš začlenit, dopiš/změň popisek a pak zmáčkni
 > *Create pull request*.
 
 Hotovo; teď je na autorech projektu, aby
 se na změny podívali a přijali – nebo začali diskusi
 o tom, jak je ještě vylepšit.
-(Diskutovat se dá na stránce *pull requestu*, nebo přes mail.)
+(Diskutovat se dá na stránce *pull requestu* nebo přes mail.)
 
 > [note]
 > Procházíš-li materiály z domu, musíš teď počkat,
 > než si někdo tvé žádosti všimne a začlení ji.
-> To může trvat i pár dní; kdyby to bylo přes týden
+> To může trvat i pár dní; kdyby to bylo přes týden,
 > tak se zkus ozvat znovu.
 
 
@@ -314,8 +315,8 @@ Pomocí `gitk` nebo `git log`
 se můžeš podívat, jak se projekt mezitím vyvinul.
 
 Gratuluji! Právě jsi {{gnd('prošel', 'prošla')}} „kolečkem“,
-kteří většina programátorů dělá denně: udělání nějaké změny,
-odeslání kolegům na kontrolu a začlenění, a stažení změn od ostatních.
+které většina programátorů dělá denně: udělání nějaké změny,
+odeslání kolegům na kontrolu a začlenění a stažení změn od ostatních.
 
 
 ## Hlášení chyb <small>(<em>issues</em>)</small>
@@ -323,7 +324,7 @@ odeslání kolegům na kontrolu a začlenění, a stažení změn od ostatních.
 Občas nastane situace, kdy v nějakém projektu
 na GitHubu najdeš chybu, ale nemáš čas nebo
 znalosti, abys ji opravil{{a}}. V takovém případě
-často na Githubu na stránce projektu pod záložkou *Issues*
+často na GitHubu na stránce projektu pod záložkou *Issues*
 najdeš seznam nahlášených problémů.
 Nenajdeš-li mezi nimi „svoji” chybu, můžeš ji
 nahlásit – stačí kliknout na *New Issue*
@@ -345,10 +346,10 @@ Musíš taky oficiálně oznámit, že si s ním ostatní můžou hrát.
 Bez *licence* totiž nemá nikdo právo tvůj
 program ani používat, natož vylepšovat.
 
-Problematika licencí může, bohužel, být docela složitá.
+Problematika licencí může být, bohužel, docela složitá.
 Když to ale zjednodušíme na minimum, budeš
 chtít jen zajistit, aby každý mohl tvůj výtvor
-používat, učit se z něj, předávat ho dál,
+používat, učit se z něj, předávat ho dál
 a vylepšovat ho. V tom případě vyber třeba
 licenci [MIT](https://choosealicense.com/licenses/mit/).
 
@@ -364,7 +365,7 @@ licenci [MIT](https://choosealicense.com/licenses/mit/).
 > protože výše jmenované licence jsou dělané na programy, ne na text.
 
 Kód se nejčastěji licencuje tak, že text licence
-dáš do souboru jménem `LICENSE`, a přidáš do Gitu.
+dáš do souboru jménem `LICENSE` a přidáš do Gitu.
 
 Chceš-li si o licencích přečíst něco víc, odkážu tě na
 [choosealicense.com](http://choosealicense.com/),
