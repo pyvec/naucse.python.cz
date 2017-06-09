@@ -52,7 +52,7 @@ Nejdůležitější část vývojové desky je v oplechované
 krabičce s logem "Wi-Fi" a "FCC":
 <span class="part-green">mikroprocesor ESP8266</span>.
 To je „mozek” celého zařízení, který – když je
-správně naprogramován – umí provádět Pythonní
+správně naprogramován – umí provádět pythonní
 příkazy a programy.
 Procesor sedí na malé destičce, na které je ještě
 <span class="part-cyan">anténa</span>, kterou
@@ -65,15 +65,15 @@ jednoduše komunikovat a krmit ho elektřinou.
 
 Komunikace a „krmení” se děje přes
 <span class="part-red">μUSB konektor</span>,
-do kterého zapojíš kabel do svého počítače.
+do kterého zapojíš kabel ze svého počítače.
 Když je modul naprogramovaný, stačí ho místo do
 počítače zapojit do nabíječky či externího zdroje
-(powerbanky), a bude fungovat samostatně.
+(powerbanky) a bude fungovat samostatně.
 
 Kolem USB konektoru jsou dvě tlačítka:
 <code class="part-orange">RST</code>, kterým se destička restartuje
 (skoro jako kdybys ho odpojila a zase zapojila, což
-se hodí když něco uděláš špatně a modul „zamrzne”),
+se hodí, když něco uděláš špatně a modul „zamrzne”),
 a <code class="part-yellow">FLASH</code>, o kterém si povíme později.
 
 Po stranách modulu jsou dvě řady
@@ -81,7 +81,7 @@ Po stranách modulu jsou dvě řady
 se dá napojit celá řada nejrůznějších hraček.
 Zkontroluj si, jestli jsou všechny nožičky rovné;
 kdyby byla některá ohnutá, tak ji (nejlépe s pomocí
-kouče) narovnej, nebo si vezmi jinou destičku.
+kouče) narovnej nebo si vezmi jinou destičku.
 
 <br style='clear: both;'>
 
@@ -125,7 +125,7 @@ Měly by se nakonec objevit tři zobáčky, `>>>`.
 
 Většina počítačů ale na komunikaci s malými zařízeními nastavená není.
 Skončí-li příkaz `picocom` s chybou,
-oprav ji podle následujícího návodu, a zkus to znova.
+oprav ji podle následujícího návodu a zkus to znova.
 (Možná bude potřeba vyřešit víc než jednu chybu.)
 
 * Nemáš-li příkaz `picocom` nainstalovaný,
@@ -191,7 +191,7 @@ oprav ji podle následujícího návodu, a zkus to znova.
 ### Windows
 
 MicroPython se přihlásí jako COM port. Otevři
-správce zařízení, a zjisti který COM port to je (kouč s tím pomůže).
+správce zařízení a zjisti, který COM port to je (kouč s tím pomůže).
 
 Nebylo-li zařízení nalezeno, je potřeba nainstalovat
 *driver*, který je ke stažení třeba
@@ -200,7 +200,7 @@ případně z [materiálů pro Arduino workshop](https://onedrive.live.com/?aut
 
 Pak si nainstaluj si program
 [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html)
-(`putty.exe`), a spusť ho.
+(`putty.exe`) a spusť ho.
 V konfiguračním okýnku zaškrtni *Connection Type: Serial* a
 do *Serial line:* zadej svůj COM port.
 Pak přepni v seznamu vlevo na *Serial* a nastav *Speed* na *115200*
@@ -241,9 +241,9 @@ z [tohoto blogu](https://tzapu.com/ch340-ch341-serial-adapters-macos-sierra/).
 Tak jako máš na počítači nainstalovaný operační
 systém, na vývojové desce je takzvaný *firmware*,
 program, který ovládá všechny ty drátky,
-čipy a světýlka co v ní jsou.
+čipy a světýlka, co v ní jsou.
 My používáme firmware zvaný *MicroPython*,
-který navíc rozumí jazyku Python a umí provádět pythoní příkazy. Zkus si to!
+který navíc rozumí jazyku Python a umí provádět pythonní příkazy. Zkus si to!
 Tři zobáčky, které vyskočily v minulém kroku, přišly
 ze zařízení, které teď netrpělivě čeká na příkaz.
 
@@ -256,7 +256,7 @@ Hello World
 
 Téměř vše, co používáš v Pythonu na počítači,
 umí MicroPython taky: čísla, řetězce, seznamy, třídy,
-výjimky, moduly, a tak dál.
+výjimky, moduly a tak dál.
 Některé detaily ale jsou trochu osekané, aby se všechno
 vešlo do extrémně malého prostoru.
 Zkus si, jak se liší efekt následujících příkazů
@@ -292,7 +292,7 @@ náhodné číslo od 0 do 255 se dá získat pomocí:
 
 MicroPython na malé destičce obsahuje některé
 moduly, které jinde nenajdeš. Ten hlavní se jmenuje
-`machine`, a zpřístupňuje základní funkce zařízení. Zkus si:
+`machine` a zpřístupňuje základní funkce zařízení. Zkus si:
 
 ```python
 from machine import Pin
@@ -307,17 +307,17 @@ Jak se hodnota změní?
 Jak tomuhle kódu rozumět?
 Třída `Pin` ti umožňuje ovládat jednotlivé
 „nožičky”, kterými zařízení komunikuje s vnějším
-světem: buď na nich nastavovat napětí, nebo zkoumat
+světem: buď na nich nastavovat napětí nebo zkoumat
 jestli na nich nějaké napětí je.
 
 `Pin(0, Pin.IN)` vytvoří objekt třídy Pin,
 který bude načítat data z „nožičky” číslo 0.
 (`IN` znamená načítání – informace jdou *do* procesoru).
 Funkce `pin.value()` změří napětí na dané
-„nožičce”, a vrátí buď 1 nebo 0 podle toho, jestli nějaké naměřila.
+„nožičce” a vrátí buď 1 nebo 0 podle toho, jestli nějaké naměřila.
 
 No a „nožička” číslo 0 je připojená k tlačítku `FLASH`,
-kterým se tak dá on napětí ovládat.
+kterým se tak dá ono napětí ovládat.
 Informace o tom, která nožička je kam připojená,
 máš na [taháku](https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf) –
 můžeš si zkontrolovat, že Pin(0) u sebe má poznámku FLASH.
@@ -339,7 +339,7 @@ konkrétně plus na nožičce označené `3V`
 a mínus na nožičce označené `G`.
 Na tyhle nožičky musíš zapojit diodu.
 
-Připojování diody má to jeden háček:
+Připojování diody má jeden háček:
 musíš ji zapojit správným směrem – plus na plus, mínus na mínus.
 Opačně dioda svítit nebude. Dobrá zpráva je, že
 když diodu otočíš špatně, nic se jí nestane.
@@ -352,13 +352,13 @@ když diodu otočíš špatně, nic se jí nestane.
 
 Je potřeba rozpoznat rozdíl mezi nožičkami diody.
 *Katoda* (`-`) je ta kratší nožička.
-Pouzdro diody je u katody trochu seříznuté,
+Pouzdro diody je u katody trochu seříznuté
 a vevnitř v pouzdře, když se pozorně podíváš, uvidíš
 u katody větší plíšek.
 Té druhé nožičce se říká anoda (`+`).
 
-Tak, teď víš kam diodu zapojit: katodu (kratší nožičku)
-na `G`, a anodu na `3V`.
+Tak, teď víš, kam diodu zapojit: katodu (kratší nožičku)
+na `G` a anodu na `3V`.
 
 Držení nožiček diody u nožiček modulu by ti nejspíš
 zaměstnalo obě ruce. Aby sis je uvolnila, použij
@@ -380,7 +380,7 @@ Mělo by to vypadat jako na tomto obrázku:
 
 Potom zapoj USB kabel. Dioda by se měla rozsvítit!
 
-Zkus si, co se stane když obě nožičky diody zapojíš ke `G`.
+Zkus si, co se stane, když obě nožičky diody zapojíš ke `G`.
 
 {{ figure(
     img=static("circuits/led_bb_off.svg"),
@@ -399,15 +399,16 @@ kolik modrá LED potřebuje ke svícení.
 > Hodnota ve voltech se vždycky musí k něčemu vztahovat;
 > vyjadřuje rozdíl mezi dvěma místy.
 > V elektronice používáme rozdíl oproti „zemi” – napětí
-> na nožičce `G`. Stanovíme si že tam je
-> 0 voltů, a ostatní napětí počítáme vzhledem k ní.
+> na nožičce `G`. Stanovíme si, že tam je
+> 0 voltů a ostatní napětí počítáme vzhledem k ní.
 > Na nožičce `3V` je tedy napětí 3,3 V vzhledem k zemi.
+
 
 ## Výstup
 
 Proč jsme diodu na to, aby se rozsvítila,
 připojili k modulu a ne jen k baterce?
-Ten modul je trošku složitější zařízení než baterka, a jedna důležitá věc,
+Ten modul je trošku složitější zařízení než baterka a jedna důležitá věc,
 kterou umí navíc, je nastavovat napětí na různých nožičkách.
 Umí zařídit, aby se nožička chovala jednou jako `3V` a jindy jako `G`.
 Když připojíš diodu mezi `G` a takovou
@@ -425,7 +426,7 @@ pin.value(1)
 ```
 
 Když objekt Pin vytvoříš s `Pin.OUT`, MicroPython na něm bude nastavovat
-napětí – buď 3,3V (`value(1)`) nebo 0V (`value(0)`).
+napětí – buď 3,3 V (`value(1)`) nebo 0 V (`value(0)`).
 A tak se dá s diodou blikat.
 
 > [note]
@@ -460,9 +461,9 @@ mohlo by se stát, že tě konzole MicroPythonu začne trochu štvát.
 Špatně se v ní opravují chyby a automatické odsazování funguje jen většinou.
 Pojďme se podívat, jak naštvání předejít.
 
-Doporučuju si větší kousky kódu – a určitě takové,
+Doporučuji si větší kousky kódu – a určitě takové,
 ve kterých je nějaký cyklus, podmínka či funkce –
-psát v textovém editoru, a do modulu pak posílat celý soubor.
+psát v textovém editoru a do modulu pak posílat celý soubor.
 
 Zkus si to. Do souboru `led_podle_tlacitka.py` dej následující kód:
 
@@ -477,7 +478,7 @@ while True:
     sleep(1/2)
 ```
 
-Potom zavři konzoli (`picocom`, PuTTY, nebo `screen`).
+Potom zavři konzoli (`picocom`, PuTTY nebo `screen`).
 
 K pouštění programu použijeme `ampy`, který jsi nainstaloval{{a}} dříve.
 Ke spuštění budeš potřebovat znát port:
@@ -500,7 +501,7 @@ tedy `time.sleep(1/2)` zastaví program na půl sekundy.
 ## Velice rychle blikat
 
 Jedna z nevýhod „našeho” čipu ESP8266 je, že na svých
-nožičkách umí nastavovat jen dvě hodnoty – 3,3V a zem, jedničku a nulu.
+nožičkách umí nastavovat jen dvě hodnoty – 3,3 V a zem, jedničku a nulu.
 Dioda tak buď svítí, nebo nesvítí – nedá se
 nastavit poloviční intenzita, nedá se plynule rozsvěcet nebo zhasínat.
 
@@ -525,7 +526,7 @@ while True:
     sleep(1/100)  # počkat jednu setinu vteřiny
 ```
 
-Zkus si pohrát shodnotami pro `time.sleep`.
+Zkus si pohrát s hodnotami pro `time.sleep`.
 
 > [note]
 > Takhle fungují prakticky všechna stmívatelná LED
@@ -538,7 +539,7 @@ Dokážeš napsat program, který diodu postupně, plynule rozsvítí?
 
 Protože je takovéhle rychlé blikání užitečné ve spoustě
 různých situací, obsahuje MicroPython speciální funkci: umí blikat samostatně.
-Nastavíš jak rychle má blikat, a jak dlouho má trvat
+Nastavíš, jak rychle má blikat a jak dlouho má trvat
 každé bliknutí, a MicroPython pak bude blikat automaticky,
 zatímco tvůj program se může věnovat něčemu jinému.
 
@@ -546,10 +547,10 @@ Téhle funkci se říká *pulzně šířková modulace* –
 angl. *Pulse Width Modulation*, neboli *PWM*.
 Z MicroPythonu jde tahle funkce ovládat pomocí třídy
 `machine.PWM`.
-Každý objekt téhle třídy umí ovládat jednu nožičku,
+Každý objekt téhle třídy umí ovládat jednu nožičku
 a dají se u něj nastavit dva parametry:
 
-* `freq` – frekvence, tedy kolikrát za sekundu se LED rozsvítí a zase zhasne, a
+* `freq` – frekvence, tedy kolikrát za sekundu se LED rozsvítí a zase zhasne a
 * `duty` – anglicky *duty cycle*, česky *střída*, nastavuje „šířku pulzu”,
   tedy jak dlouho bude dioda při každém bliknutí svítit.
   Hodnota `duty` může být od 0, kdy LED
@@ -615,7 +616,7 @@ který vypočítá další frekvence.
 ## Další ovládání
 
 Teď si vezmi dvě tlačítka a připoj je k modulu:
-`GND` vždycky na `G`, `VCC` vždycky na `3V`, a
+`GND` vždycky na `G`, `VCC` vždycky na `3V` a
 `OUT` u jednoho tlačítka na `D1` a u druhého na `D2`.
 
 Tlačítko funguje tak, že OUT spojí buď s VCC (5V)
@@ -625,8 +626,8 @@ nebo GND, podle toho, jestli je tlačítko stisknuté.
 Zkus si, jestli se zvládneš MicroPythonu zeptat, jestli je tlačítko zapnuté.
 Mělo by to být podobné jako u příkladu s tlačítkem FLASH.
 
-Zvládneš napsat program, který bude bzučet bzučítkem,
-a přitom se jedním tlačítkem bude dát zvyšovat tón, a druhým snižovat?
+Zvládneš napsat program, který bude bzučet bzučítkem
+a přitom se jedním tlačítkem bude dát zvyšovat tón a druhým snižovat?
 
 Program si (na svém počítači) ulož, ať se k němu můžeš vrátit.
 
@@ -638,7 +639,7 @@ Program si (na svém počítači) ulož, ať se k němu můžeš vrátit.
 Servomotor je součástka, která má v sobě zabudovaný
 ovladač, se kterým si naše zařízení může povídat
 jednoduchým „elektronickým jazykem” – *protokolem*.
-Motorku můžeš posílat impulzy, a podle délky impulzu
+Motorku můžeš posílat impulzy a podle délky impulzu
 se servomotor natočí.
 Při krátkých impulzech se natočí víc na jednu stranu,
 při dlouhých na druhou.
@@ -651,7 +652,7 @@ se ozve lupnutí – a LED, kde o intenzitě rozhodovala
 střída (`duty`) – poměr mezi dobou kdy
 dioda svítí a kdy nesvítí, u servomotoru rozhoduje
 tzv. *šířka pulzu*: jak dlouho se napětí udrží
-na 3,3V, než se přepne zpátky na 0V.
+na 3,3 V, než se přepne zpátky na 0 V.
 <!-- XXX: Actual typical pulse widths -->
 
 
@@ -662,7 +663,7 @@ na 50 Hz, a `duty` měnit cca od 35
 Dost ale teorie, pojďme si to vyzkoušet! Napřed musíš motorek zapojit:
 
 * hnědý drát (zem) na `G`,
-* červený drát (napájení) na `3V`, a
+* červený drát (napájení) na `3V` a
 * oranžový drát (data) na `D4`.
 
 Nožička `D4` odpovídá `Pin(2)`, takže kód k otáčení motorku je:
@@ -700,14 +701,14 @@ malou destičku s „mozkem” má dva hlavní úkoly:
   celkem složitě zakódovaná, na něco čemu
   malé zařízení rozumí
   (konkrétně protokol [UART](https://en.wikipedia.org/wiki/UART) přes nožičky `TX` a `RX`).
-* Převádět napětí 5V, které poskytuje USB,
-  na 3,3V které potřebuje modul.
+* Převádět napětí 5 V, které poskytuje USB,
+  na 3,3 V které potřebuje modul.
 
 Když energie z USB přestane stačit, dá se koupit
-zařízení, které zvládne převádět komunikaci,
-a napájení vyřešit z jiného zdroje 5V.
+zařízení, které zvládne převádět komunikaci
+a napájení vyřešit z jiného zdroje 5 V.
 Kdybys to někdy zkoušela, příslušné zařízení
-koupíš pod názvem *USB-TTL adapter*, a vypadá
+koupíš pod názvem *USB-TTL adapter* a vypadá
 nejčastěji takhle:
 
 {{ figure(
@@ -740,12 +741,12 @@ reproduktor bude tišší, motorek se bude točit pomaleji nebo s menší silou.
 Když naopak připojíš zařízení k *většímu* napětí,
 než na jaké je stavěno, nejspíš ho nadobro zničíš.
 Když připojíš červenou LED přímo na 3,3 V, přestane fungovat;
-když připojíš malý servomotorek na zdroj 24V, může začít hořet.
-A ačkoli lidem malá napětí jako 5V nevadí,
-když připojíš do zásuvky s 230V {{ gnd('sám', 'sama') }} sebe, můžeš umřít.
+když připojíš malý servomotorek na zdroj 24 V, může začít hořet.
+A ačkoli lidem malá napětí jako 5 V nevadí,
+když připojíš do zásuvky s 230 V {{ gnd('sám', 'sama') }} sebe, můžeš umřít.
 Takže na velká napětí pozor!
 
-My motorek připojujeme na malé napětí, a zmenšený
+My motorek připojujeme na malé napětí a zmenšený
 výkon nám příliš nevadí – dokud se to
 otáčí, víc rychlosti ani síly nepotřebujeme.
 
@@ -759,7 +760,7 @@ těžké náklady, budeš potřebovat dvě věci:
   který převede třívoltový signál na pětivoltový.
 
 Kdybys to někdy potřebovala, ozvi se koučům – i po
-workshopu ti určitě rádi poradí, nebo ti aspoň řeknou
+workshopu ti určitě rádi poradí nebo ti aspoň řeknou
 koho se zeptat!
 
 {#
@@ -770,25 +771,25 @@ XXX: Tahle kapitola ještě bohužel není dopsaná.
 
 ## Barevná světýlka
 
-Tak, dost teorie; vem si novou hračku!
+Tak, dost teorie; vezmi si novou hračku!
 Tentokrát to bude LED pásek.
 
 Na pásku máš 8 malých čtverečků.
 Každý z nich obsahuje docela hodně elektroniky:
-tři barevné LED (červenou, zelenou, a modrou),
-a čip který je umí ovládat pomocí informací,
+tři barevné LED (červenou, zelenou a modrou)
+a čip, který je umí ovládat pomocí informací,
 které dostane přes jediný drátek z modulu.
 
-Takové pásky se prodávají po metrech, a dají se
+Takové pásky se prodávají po metrech a dají se
 nastříhat – mezi jednotlivými světýlky si všimni čárky,
-naznačující kde máš střihnout.
+která naznačuje, kde máš střihnout.
 Energie z USB stačí zhruba na osm světýlek, proto jsi jich dostal{{a}} tolik.
 
 Tenhle LED pásek je, podobně jako servomotorek, stavěný
-na pět voltů. Na rozdíl od motorku, který se s 3,3V
+na pět voltů. Na rozdíl od motorku, který se s 3,3 V
 trochu roztočil, se ale s nižším napětím ani nerozsvítí.
-Naštěstí ale potřebuje 5V jen na <em>napájení</em>;
-řídící signál s informacemi o barvičkách může mít 3,3V.
+Naštěstí ale potřebuje 5 V jen na <em>napájení</em>;
+řídící signál s informacemi o barvičkách může mít 3,3 V.
 
 Pojďme pásek zapojit:
 
