@@ -4,7 +4,7 @@ Dnes si ukážeme, jak s Pythonem napsat grafickou aplikaci.
 
 Použijeme knihovnu, která není zabudovaná přímo
 v Pythonu (podobně jako pytest, který používáme na testování).
-Musíme si ji nejdřív nainstalovat, a na to použijeme
+Musíme si ji nejdřív nainstalovat a na to použijeme
 v zapnutém virtualenvu modul `pip` –
 konkrétně příkaz `python -m pip install pyglet`.
 U mě vypadá instalace nějak takto:
@@ -41,7 +41,7 @@ Hotovo? Pojďme si vysvětlit, co se tu vlastně děje.
 
 ## Interaktivní programy
 
-Podívejme se ještě jednou jak zhruba vypadá hlavní
+Podívejme se ještě jednou, jak zhruba vypadá hlavní
 program pro Piškvorky, který jsme napsal{{gnd('i', 'y', both='i')}}
 na projektech.
 V komentářích je napsané, co která část kódu dělá:
@@ -64,8 +64,8 @@ def piskvorky1d():
 
 
 V tomhle programu máme dva druhy akcí, které se pravidelně střídají.
-Jakmile taková akce nastane, ať vstup od člověka, nebo
-od počítače, tak se zpracuje, a výsledný stav se oznámí.
+Jakmile taková akce nastane, ať vstup od člověka nebo
+od počítače, tak se zpracuje a výsledný stav se oznámí.
 
 Podobnou strukturu „reakcí“ jsme použily už dřív,
 třeba u hry kámen-nůžky-papír:
@@ -77,12 +77,12 @@ třeba u hry kámen-nůžky-papír:
   * Vypiš výstup
 
 A podobně funguje většina programů, které nějakým
-způsobem reagují na vstup od uživatele, nebo i na jiné
+způsobem reagují na vstup od uživatele nebo i na jiné
 události.
 
 Webový server čeká na *požadavek* (angl. *request*)
 o webovou stránku. Když nějaký přijme, zpracuje ho
-(např. přečte příslušnou stránku z disku),
+(např. přečte příslušnou stránku z disku)
 a jako výstup pošle odpověď.
 
 Složitější programy reagují na spoustu druhů událostí,
@@ -90,20 +90,20 @@ ne jen na „požadavek“ nebo „tah hráče“/„tah počítače“.
 Co se stane ve „vyhodnocení vstupu“ pak závisí
 na druhu události.
 
-Webový prohlížeč čeká na kliknutí myši nebo stisk klávesy,
-a zachová se podle něj – třeba pošle přes internet
+Webový prohlížeč čeká na kliknutí myši nebo stisk klávesy
+a zachová se podle něj – třeba pošle přes Internet
 požadavek vzdálenému serveru.
 A potom čeká na další akci. Může přijít odpověď od
 serveru, a až ta přijde, vykreslí příslušnou stránku
-na obrazovku. Nebo může uživatel zmáčknout „STOP“,
+na obrazovku. Nebo může uživatel zmáčknout „STOP“
 a požadavek se zruší.
 
 Textový editor čeká na různé druhy vstupu z klávesnice
-či myši, a každý musí nějak zpracovat.
+či myši a každý musí nějak zpracovat.
 
 Prostě, podobná struktura programu – smyčka která
-načte vstup, zpracuje ho, a vyprodukuje výstup – je velice užitečná.
-Říká se jí *smyčka událostí* (angl. *event loop*),
+načte vstup, zpracuje ho a vyprodukuje výstup – je velice užitečná.
+Říká se jí *smyčka událostí* (angl. *event loop*)
 a programy na ní postavené jsou
 *řízené událostmi* (angl. *event-driven*).
 
@@ -112,7 +112,7 @@ Programátoři jsou líní.
 Když je něco užitečné pro více programů, nebývá
 zvykem, že to každý programátor v každém programu opakuje.
 Napíše se to jednou a dobře, zabalí se to jako tzv.
-*knihovna* (angl. *library*),
+*knihovna* (angl. *library*)
 a ostatní to pak můžou používat.
 
 
@@ -121,7 +121,7 @@ a ostatní to pak můžou používat.
 Jedna z takových knihoven je Pyglet.
 Obsahuje kromě smyčky událostí taky funkce na
 vykreslování 2D grafiky (pomocí jiné knihovny zvané
-OpenGL), nebo třeba načítání událostí z klávesnice a myši.
+OpenGL) nebo třeba načítání událostí z klávesnice a myši.
 
 Pojďme se vrátit k prográmku, který ukazuje okno:
 
@@ -140,7 +140,7 @@ naprogramovat {{gnd('sám', 'sama')}}.
 
 Zatím pro nás Pyglet zpracovává jen dvě události:
 zavření okna (tlačítkem „✕“, které k okýnkům přidává
-operační systém), a stisk klávesy <kbd>Esc</kbd>,
+operační systém) a stisk klávesy <kbd>Esc</kbd>,
 který taky zavře okno.
 Po zavření okna skončí smyčka událostí
 (funkce `pyglet.app.run()`)
@@ -153,7 +153,7 @@ Klávesa <kbd>Esc</kbd> není příliš zajímavá.
 Zkusme reagovat i na jiné klávesy.
 
 V Pygletu se na události reaguje tak, že napíšeš
-funkci, a pak ji *zaregistruješ* (angl. *register*) – řekneš
+funkci a pak ji *zaregistruješ* (angl. *register*) – řekneš
 Pygletu, aby ji vždy v pravý čas zavolal.
 Události, která nastane, když uživatel píše na klávesnici,
 se v Pygletu říká `on_text` a zpracovává se takto:
@@ -273,16 +273,16 @@ tisícinu vteřiny než zařídí samotné zavolání naší funkce.
 
 <img src="{{ static('had.png') }}" alt="" style="display:block;float:right;">
 
-Program který vypisuje na terminál spoustu čísel,
+Program, který vypisuje na terminál spoustu čísel,
 není asi zas tak zajímavý.
 Téma téhle stránky je ale grafika, tak se začněme od
 terminálu odpoutávat. Pojďme kreslit.
 
-Najdi si na internetu nějaký obrázek. Ne moc velký,
+Najdi si na Internetu nějaký obrázek. Ne moc velký,
 tak 3cm, ať je kolem něj v našem černém okýnku dost
 místa, a nejlépe ve formátu PNG. Začni třeba na
 [téhle stránce](https://www.google.cz/search?tbs=ift:png&tbm=isch&q=snake+icon).
-Ulož si ho do adresáře, odkud spouštíš svůj Pythonní
+Ulož si ho do adresáře, odkud spouštíš svůj pythonní
 program. Já mám třeba obrázek hada v souboru `had.png`.
 
 Pak obrázek vykresli (použij jméno souboru se svým obrázkem):
@@ -326,9 +326,9 @@ Vysvětleme si, co se tady děje:
   který určuje, že tento obrázek chceme „posadit“
   na určité místo v černém okýnku.
   Když neuděláme nic dalšího, bude obrázek čekat v levém rohu.
-* Funkce `vykresli()` se stará vykreslení okna – výstup našeho programu.
+* Funkce `vykresli()` se stará o vykreslení okna – výstup našeho programu.
   Volá se vždycky, když je potřeba okno překreslit –
-  například když okno minimalizuješ a pak vrátíš,
+  například když okno minimalizuješ a pak vrátíš
   nebo přesuneš částečně ven z obrazovky a pak dáš zase zpět.
   A nebo když budeme něco animovat.
 
@@ -336,7 +336,7 @@ Vysvětleme si, co se tady děje:
 > Některé operační systémy si pamatují i obsah oken,
 > které nejsou vidět, ale není radno na to spoléhat.
 
-* `window.clear()` vyčistí okno – natře ho černou barvou, a smaže
+* `window.clear()` vyčistí okno – natře ho černou barvou a smaže
   všechno, co v něm bylo předtím.
 
 > [note]
@@ -346,7 +346,7 @@ Vysvětleme si, co se tady děje:
 
 * `had.draw()` nakreslí obrázek pomocí předpřipraveného *spritu* `had`.
 * `window.push_handlers(on_draw=vykresli)` zaregistruje funkci `vykresli` –
-  řekne Pygletu, aby ji volal vždy když je třeba.
+  řekne Pygletu, aby ji volal vždy, když je třeba.
   <br>
   Když potřebuješ zaregistrovat pro jedno okno
   víc funkcí na obsluhu událostí,
@@ -519,14 +519,14 @@ pyglet.app.run()
 Se vstupem z klávesnice a myši, časováním a vykreslováním
 Spritu si vystačíš u leckteré hry nebo grafické aplikace.
 
-To, co jsme tu probral{{gnd('i', 'y', both='i')}}, a pár věcí navíc,
+To, co jsme tu probral{{gnd('i', 'y', both='i')}} a pár věcí navíc,
 je shrnuto v [taháku na Pyglet](https://github.com/pyvec/cheatsheets/raw/master/pyglet/pyglet-basics-cs.pdf),
 který si můžeš stáhnout a vytisknout.
 
 Až budeš nějakou dělat, zkus udržovat
 stav aplikace v seznamech a <var>n</var>-ticích (případně
 slovnících a třídách, které se naučíme později).
-Jedna funkce by měla umět takový stav vykreslit, a
+Jedna funkce by měla umět takový stav vykreslit a
 jiné s ním pak budou manipulovat.
 Tyhle dvě sady funkcí můžeš mít i v jiných souborech,
 aby se nezapletly dohromady.
@@ -534,7 +534,7 @@ aby se nezapletly dohromady.
 Zajímá-li tě toto téma, zkus si zahrát přiloženou hru
 [Pong](static/pong.py),
 která ukazuje některé další
-možnosti Pygletu: psaní textu, kreslení obdélníků,
+možnosti Pygletu: psaní textu, kreslení obdélníků
 a obsluhu jednotlivých kláves (např. šipek).
 Na první pohled může její kód vypadat složitě,
 ale zkus si k němu sednout a s pomocí komentářů ho pochopit.

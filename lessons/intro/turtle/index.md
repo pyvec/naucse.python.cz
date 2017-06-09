@@ -19,7 +19,7 @@ $ python
 > [note]
 > (Znaky `>` a `$` píše počítač, ne ty.
 > Na Windows bude místo `$` znak
-> `>`, a před `$` nebo
+> `>` a před `$` nebo
 > `>` může být ještě něco dalšího.)
 
 Pak napiš:
@@ -61,7 +61,7 @@ forward(50)
 ```
 
 Zkus chvíli dávat želvě příkazy.
-Když se něco nelíbí, můžeš buď zavřít kreslící okno
+Když se ti něco nelíbí, můžeš buď zavřít kreslící okno,
 nebo naimportovat a použít funkci `clear()`.
 
 
@@ -79,14 +79,14 @@ Vytvoř si soubor <code><span class="pythondir">~/{{ rootname }}</span>/03/zelva
 Jestli chceš pro soubor použít jiné jméno, můžeš, ale 
 nepojmenovávej ho `turtle.py`.
 
-Do souboru napiš příkazy na nakreslení obrázku,
+Do souboru napiš příkazy na nakreslení obrázku
 a na konec zavolej funkci `exitonclick`
 (importovanou z modulu `turtle`).
 
 > [note] Otázka
 > Co dělá funkce <code>exitonclick</code>?
 
-Až ti budeš mít hotové, zkusíme začít kreslit
+Až to budeš mít hotové, zkusíme začít kreslit
 obrázky:
 
 ### Čtverec
@@ -95,7 +95,7 @@ Nakresli čtverec.
 
 ![Želví čtverec](static/turtle-square.png)
 
-Čtverec má čtyři rovné strany,
+Čtverec má čtyři rovné strany
 a čtyři rohy po 90°.
 
 {% filter solution %}
@@ -211,9 +211,9 @@ Co dělá příkaz `for`?
 {% filter solution %}
 Příkaz `for` opakuje část programu.
 Opakují se příkazy, které jsou pod `for`-em odsazené.
-podobně jako se `if` vztahuje jen na odsazené příkazy pod ním.
+Podobně jako se `if` vztahuje jen na odsazené příkazy pod ním.
 
-Příkaz `for x in range(n):` opakuje příkazy pod ním <var>n</var>-krát,
+Příkaz `for x in range(n):` opakuje příkazy pod ním <var>n</var>-krát
 a proměnnou `x` nastaví postupně na čísla od 0 do <var>n</var>-1.
 
 Příkaz `for x in a, b, c, d, ...:` opakuje příkazy pod ním;
@@ -236,11 +236,11 @@ print(soucet)
 
 {% filter solution %}
 Příkaz `soucet = soucet + cislo` vypočítá hodnotu
-`soucet + cislo`, tedy přičte aktuální číslo k součtu,
+`soucet + cislo`, tedy přičte aktuální číslo k součtu
 a výsledek uloží do proměnné `soucet`.
 Nová hodnota součtu se pak použije v dalším průchodu cyklem.
 
-Na začátku je součet 0, a na konci se součet všech čísel vypíše.
+Na začátku je součet 0 a na konci se součet všech čísel vypíše.
 {% endfilter %}
 
 ### Čtverec

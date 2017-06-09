@@ -65,7 +65,7 @@ $ python -m pip install numpy
 První aplikace
 --------------
 
-Napište si první aplikaci, ať vidíte jak kód v PyQt vypadá.
+Napište si první aplikaci, ať vidíte, jak kód v PyQt vypadá.
 Detaily toho, jak to funguje, si ukážeme později.
 
 ```python
@@ -90,7 +90,7 @@ O Qt, PyQt a PySide
 
 [PyQt](https://riverbankcomputing.com/software/pyqt) je knihovna, která umožňuje použít Qt z Pythonu.
 Na rozdíl od samotného Qt je licencovaná pod [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html), která (stručně řečeno) vyžaduje, aby programy napsané s použitím PyQt byly šířeny pod stejnou licencí a se zdrojovým kódem.
-Tedy: kdokoliv, kdo dostane kopii programu, musí mít možnost dostat odpovídající zdrojový kód, a má možnost tento kód dál šířit pod stejnou licencí.
+Tedy: kdokoliv někdo dostane kopii programu, musí mít možnost dostat odpovídající zdrojový kód a má možnost tento kód dál šířit pod stejnou licencí.
 
 Pokud by se vám tato licence nelíbila, je možnost použít [PySide](https://wiki.qt.io/PySide), které má permisivnější licenci a téměř stejné API jako PyQt, ale není tak stabilní.
 
@@ -100,7 +100,7 @@ Qt je rozděleno na několik tzv. [modulů](http://doc.qt.io/qt-5/qtmodules.html
 Pro grafická uživatelská rozhraní (GUI), kterými se budeme zabývat, použijeme hlavně [QtGui] a [QtWidgets].
 
 Dále je tu modul [QtCore], který obsahuje mj. základní datové typy jako QString a QList (které PyQt
-automaticky převádí na pythonní ekvivalenty a zpět), nebo třeba [QRect](http://doc.qt.io/qt-5/qrect.html) – abstraktní obdélník.
+automaticky převádí na pythonní ekvivalenty a zpět) nebo třeba [QRect](http://doc.qt.io/qt-5/qrect.html) – abstraktní obdélník.
 
 Další moduly jsou nadstavby od [vykreslování SVG][QtSVG] nebo [práci s multimédii][QtMultimedia] (které se můžou hodit) po
 třeba práci s [SQL][QtSQL] a [XML][QtXML] nebo [síťovou komunikaci][QtNetwork], kde je pro Python pohodlnější použít jiné knihovny.
@@ -123,7 +123,7 @@ Tady jsou některé zvláštnosti, na které se můžete připravit.
 
 ### Jména a dokumentace
 
-Qt pojmenovává funkce, metody a atributy konvencí `camelCase`, místo pythonistického `snake_case`.
+Qt pojmenovává funkce, metody a atributy konvencí `camelCase`, místo pythonnního `snake_case`.
 PyQt tuto konvenci nemění: je užitečnější používat identická jména, a kromě toho knihovna PyQt vznikla ještě před PEP 8.
 
 Hledáte-li dokumentaci, doporučuji zadat do vyhledávače `qt5 <hledaný objekt>`.
@@ -151,11 +151,11 @@ Ten má seznam potomků (children), o které se „stará“, a když uvolníme 
 Z Pythonu pak můžeme dostat chybu `wrapped C/C++ object has been deleted`.
 Jinak ale kombinace QObject a pythonních objektů funguje dobře.
 
-Větší problémy můžou nastat s pomocnými objekty, které nedědí z QObject, a nemají potřebné „dynamické“ vlastnosti.
+Větší problémy můžou nastat s pomocnými objekty, které nedědí z QObject a nemají potřebné „dynamické“ vlastnosti.
 Takový objekt doporučujeme používat jen v rámci jedné funkce (t.j. neukládat si ho jinde), pokud si nejste jistí že
 ho „nevlastníte“ i ve smyslu C++/Qt.
 
-Občase se stane, že program spadne pro chybu jako nepovolený přístup do paměti.
+Občas se stane, že program spadne pro chybu jako nepovolený přístup do paměti.
 Bez hlubší znalosti Qt a PyQt se taková chyba odstraňuje poměrně těžko, ale vaše znalosti C++ (z jiných kurzů)
 a CPython C API (z [minula](../cython/)) vám v tom pomůžou.
 Doporučujeme dělat malé commity a psát jednoduchý kód.
@@ -164,13 +164,13 @@ Doporučujeme dělat malé commity a psát jednoduchý kód.
 
 Qt funguje na principu smyčky událostí (event loop).
 Metoda `QApplication.exec` obsahuje v podstatě nekonečnou smyčku, která čeká na externí *události* (klik myši,
-žádost OS o vykreslení okna, atd.), a na jejich základě volá příslušné funkce – ať už interní
+žádost OS o vykreslení okna atd.) a na jejich základě volá příslušné funkce – ať už interní
 nebo námi definované.
 
 Pro komunikaci mezi objekty v rámci aplikace pak Qt používá mechanismus *signálů a slotů* (variantu *observer pattern*).
 Signál je vyslán (*emitted*) při události jako kliknutí na tlačítko, výběr položky z menu, zavření okna atp.
 K signálu může být připojeno několik slotů, což jsou funkce, které se po vyslání signálu zavolají.
-Kód který vysílá signál obecně neví o tom, kolik slotů je připojeno (a jsou-li nějaké).
+Kód, který vysílá signál, obecně neví o tom, kolik slotů je připojeno (a jsou-li nějaké).
 
 V C++ jsou signály a sloty vždy staticky nadefinované na nějaké třídě, která dědí z `QObject`.
 V PyQt takto musí být nadefinovány jen signály; za slot poslouží jakákoli pythonní funkce.
@@ -284,7 +284,7 @@ menu a panel nástrojů pro akce jako ukládání a otevírání souborů:
 
 
 Vytvářet GUI v kódu je poměrně neefektivní, a tak existuje nástroj, kde si okna můžeme „naklikat“.
-Jmenuje se Qt Designer, a měli byste ho mít nainstalovaný.
+Jmenuje se Qt Designer a měli byste ho mít nainstalovaný.
 Na školních počítačích se spouští příkazem `designer -qt=5`.
 
 Spustíme Designer a vytvoříme v něm nové *Main Window*.
@@ -294,7 +294,7 @@ Poté aplikujeme layout: na volnou plochu okna klikneme pravým tlačítkem a vy
 
 Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> lze zkontrolovat, jak okno vypadá a jak reaguje na změny velikosti.
 
-Potom přidáme položku do menu: místo *Type Here* napíšeme *Map*, a pod něj podobně přidáme položky *New* a *Quit*.
+Potom přidáme položku do menu: místo *Type Here* napíšeme *Map* a pod něj podobně přidáme položky *New* a *Quit*.
 
 V panelu *Property Editor* jde měnit vlastnosti jednotlivých prvků.
 U skrolovacího okna nastavíme *objectName* na *scrollArea*.
@@ -302,9 +302,9 @@ U *ListWidget* nastavíme *objectName* na *palette* a *sizePolicy ‣ Horizontal
 V panelu *ActionEditor* najdeme položky pro *New* a *Quit* a nastavíme jim *objectName* na *actionNew*, resp. *actionQuit*.
 
 Potom přes pravé tlačítko na nevyužité ploše okna přidáme lištu nástrojů (*Add Toolbar*) a z panelu
-*Action Editor* do něj akci *actionQuit* přetáhnéme.
+*Action Editor* do něj akci *actionQuit* přetáhneme.
 
-Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> opět zkontrolujeme, jak okno vypadá, a jak po nastavení *sizePolicy* reaguje na změny velikosti .
+Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> opět zkontrolujeme, jak okno vypadá a jak po nastavení *sizePolicy* reaguje na změny velikosti.
 
 V Designeru jde i napojovat signály. V panelu *Signal/Slot Editor* přidáme tento řádek:
 
@@ -317,7 +317,7 @@ Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> jde ověřit, že zavírání okna funguje.
 
 Návrh okna uložíme do souboru `mainwindow.ui`.
 
-Soubor s návrhem jde převést na pythonní zdrojový soubor pomocí programu `pyuic5`, nebo
+Soubor s návrhem jde převést na pythonní zdrojový soubor pomocí programu `pyuic5` nebo
 ho vždy načíst přímo z programu.
 My použijeme druhou variantu, je však dobré o `pyuic5` vědět, kdybyste někdy potřebovali
 základ pro vytváření UI v kódu (např. na vytvoření sady několika podobných tlačítek v cyklu).
@@ -358,8 +358,8 @@ Velikost widgetu se zadává v pixelech. Musíme ho udělat dostatečně velký,
 Velikost jednoho políčka v pixelech zvolíme pro jednoduchost konstantou.
 
 Souřadnice v Qt jsou v pixelech ve formě `(x, y)` – klasicky jak jsme zvyklí, `x` je horizontální souřadnice –
-kdežto matice je uložená jako po políčkách `(řádek, sloupec)`.
-Abychom se v tom neztratili, je dobré hned ze začátku udělat funkce pro převod mezi souřadnými systémy,
+kdežto matice je uložená po políčkách `(řádek, sloupec)`.
+Abychom se v tom neztratili, je dobré hned ze začátku udělat funkce pro převod mezi souřadnými systémy
 a důsledně rozlišovat `(x, y)` vs. `(row, column)`.
 
 ```python
@@ -410,12 +410,12 @@ Po spuštění aplikace zatím nic nového neuvidíte, maximálně se trochu zm�
 Potřebujeme ještě zařídit, aby se data z matice vykreslovala do gridu.
 Nejlepší je vykreslovat, kdykoliv nás OS (nebo Qt) vyzve, že potřebuje kus okna překreslit:
 při prvním zobrazení, odminimalizování okna, ukázání nové části mapy přes scrollování.
-Také je zbytečně vykreslovat obrázky mimo oblast, kterou je vidět na obrazovce.
+Také je zbytečné vykreslovat obrázky mimo oblast, kterou je vidět na obrazovce.
 
 K tomuto účelu nám poslouží událost (*event*).
 Jak bylo řečeno v úvodu, na rozdíl od signálů a slotů, které zajišťují komunikaci v rámci aplikace,
 události vznikají mimo aplikaci.
-Jde například o kliknutí myší ([mouse*Event][mouseEvent]), vstup z klávesnice ([key*Event][keyEvent]),
+Jde například o kliknutí myší ([mouse*Event][mouseEvent]), vstup z klávesnice ([key*Event][keyEvent])
 nebo žádost OS o překreslení okna ([paintEvent]).
 Na poslední jmenovanou událost, `paintEvent`, teď budeme reagovat.
 
@@ -476,8 +476,8 @@ Nyní by již mapa měla být v okně vidět barevně.
 
 Protože barvičky jsou příliš nudné, přidáme do mapového widgetu obrázky.
 
-Veškerou ke cvičení i k úkolu potřebnou grafiku najdete na [GitHubu](https://github.com/pyvec/naucse.python.cz/tree/master/lessons/intro/pyqt/static/pics).
-Je k dispozici pod public domain (tj. „dělej si s tím, co chceš“), pochází ze studia [Kenney],
+Veškerou, ke cvičení i k úkolu potřebnou, grafiku najdete na [GitHubu](https://github.com/pyvec/naucse.python.cz/tree/master/lessons/intro/pyqt/static/pics).
+Je k dispozici pod public domain (tj. „dělej si s tím, co chceš“), pochází ze studia [Kenney]
 a je (společně se další volně licencovanou grafikou) ke stažení z [OpenGameArt.org].
 
 [Kenney]: http://kenney.nl/
@@ -519,9 +519,9 @@ A poté je na správných místech vyrendrujeme:
 Model/View
 ----------
 
-Nyní trochu odbočíme a povíme si krátce o dalším podsystmému Qt: o modelech.
+Nyní trochu odbočíme a povíme si krátce o dalším podsystému Qt: o modelech.
 
-Qt obsahuje framework, který mapuje informace do podoby tabulek, seznamů, nebo obecných stromů.
+Qt obsahuje framework, který mapuje informace do podoby tabulek, seznamů nebo obecných stromů.
 Vzniklé modely se potom dají zobrazit ve specializovaných widgetech.
 Samotná data můžou být uložena kdekoli – v paměti, SQL databázi, souborech a podobně.
 Dokonce nemusí být všechna dostupná: existuje vestavěný model pro souborový systém,
@@ -535,7 +535,7 @@ které nedědí z QObject, takže je potřeba sledovat, jestli je „vlastní“
 Naštěstí ale existují widgety se zabudovanými modely, které obsahují i samotná data.
 Tyto modely je složitější napojit na existující aplikační logiku, ale pro většinu účelů postačí.
 
-O obecných modelech si můzete přečíst v [dokumentaci](http://doc.qt.io/qt-5/model-view-programming.html).
+O obecných modelech si můžete přečíst v [dokumentaci](http://doc.qt.io/qt-5/model-view-programming.html).
 
 
 QListWidget - Paleta
@@ -580,7 +580,7 @@ def main():
 
         # Položek může obecně být vybráno víc, ale v našem seznamu je to
         # zakázáno (v Designeru selectionMode=SingleSelection).
-        # Projdeme "všechny vybrané položky", i když víme že bude max. jedna
+        # Projdeme "všechny vybrané položky", i když víme že bude max. jedna.
         for item in palette.selectedItems():
             row_num = palette.indexFromItem(item).row()
             print(row_num)
@@ -592,7 +592,7 @@ def main():
 Nyní, když uživatel zvolí položku, vypíše se do konzole její pořadí.
 Nás by ale spíš zajímalo, jak bude tato položka reprezentována v matici s mapou.
 K položce v paletě můžeme uložit informace pomocí `item.setData(<role>, <data>)`.
-Rolí pro informace je [spousta][roles], a několik z nich Qt používá pro vykreslování.
+Rolí pro informace je [spousta][roles] a několik z nich Qt používá pro vykreslování.
 Pro vlastní data můžeme použít `QtCore.Qt.UserRole`.
 V případě potřeby ukládat více dat můžeme dále zvolit `QtCore.Qt.UserRole + 1` atd.
 Pro případ, že budeme potřebovat rolí víc, je dobré si je vhodně pojmenovat.
@@ -649,7 +649,7 @@ class GridWidget(QtWidgets.QWidget):
 
 Poznámka: Zde víme, že kliknutí může změnit vykreslenou mapu pouze v místě kliknutí.
 V úkolu ale bude možné, že kliknutí někam změní obsah mapy někde jinde,
-proto bude lepší zavolat `self.update()` bez argumentů, a říct tak systému že se má překreslit celý widget.
+proto bude lepší zavolat `self.update()` bez argumentů a říct tak systému, že se má překreslit celý widget.
 
 Protože po spuštění aplikace není zvolena žádná položka a `self.selected` není definován, je rozumné prostě nějakou položku zvolit:
 
@@ -711,7 +711,7 @@ Layout okna nejprve naklikáme v Qt Designeru:
  7. Nastavíme v panelu *Property Editor* rozumné limity a výchozí hodnoty pro *Spin Boxy*.
  8. Okno případně zmenšíme, aby nebylo zbytečně velké.
  9. V menu zvolíme *Edit ‣ Edit Buddies* a táhnutím z *Labelu* na *Spin Box* nastavíme, ke kterému prvku se *Label* vztahuje.
- 10. V menu zvolíme *Edit ‣ Edit Tab Order* a zkontrolujeme, že pořadí ve kterém bude prvky vybírat klávesa `Tab` je rozumné.
+ 10. V menu zvolíme *Edit ‣ Edit Tab Order* a zkontrolujeme, že pořadí, ve kterém bude prvky vybírat klávesa `Tab`, je rozumné.
  11. Můžeme se vrátit zpět na *Edit ‣ Edit Widgets*.
  12. Dialog uložíme jako `newmaze.ui`.
 
@@ -721,21 +721,21 @@ Poté připravíme funkci pro zobrazení dialogu a pro jeho vyhodnocení:
 def new_dialog(window, grid):
     # Vytvoříme nový dialog.
     # V dokumentaci mají dialogy jako argument `this`;
-    # jde o "nadřazené" okno
+    # jde o "nadřazené" okno.
     dialog = QtWidgets.QDialog(window)
 
-    # Načteme layout z Qt Designeru
+    # Načteme layout z Qt Designeru.
     with open('newmaze.ui') as f:
         uic.loadUi(f, dialog)
 
     # Zobrazíme dialog.
     # Funkce exec zajistí modalitu (tzn. nejde ovládat zbytek aplikace,
-    # dokud je dialog zobrazen), a vrátí se až potom, co uživatel dialog zavře.
+    # dokud je dialog zobrazen) a vrátí se až potom, co uživatel dialog zavře.
     result = dialog.exec()
 
     # Výsledná hodnota odpovídá tlačítku/způsobu, kterým uživatel dialog zavřel.
     if result == QtWidgets.QDialog.Rejected:
-        # Dialog uživatel zavřel nebo klikl na Cancel
+        # Dialog uživatel zavřel nebo klikl na Cancel.
         return
 
     # Načtení hodnot ze SpinBoxů
@@ -768,7 +768,7 @@ def main():
 
 Další dialogy, které budeme potřebovat, jsou tak rozšířené (a mezi jednotlivými platformami tak různé),
 že je Qt má předpřipravené.
-Jsou to dialogy pro ukázání hlášky, výběr souboru, barvy nebo fontu, nebo pro nastavení tisku.
+Jsou to dialogy pro ukázání hlášky, výběr souboru, barvy nebo fontu nebo pro nastavení tisku.
 
 Tyto předpřipravené dialogy mají typicky statické metody, které dialog vytvoří a přímo zavolají
 `exec()` a vrátí výsledek.
@@ -786,11 +786,11 @@ Pro splnění úkolu (dalších položek v menu) se vám můžou hodit tyto dial
 Třída pro GUI aplikace
 ----------------------
 
-Funkce `main` se nám pomalu rozrůstá, a další funkce, které volá, musí být buď definované v ní (jako `item_activated`)
+Funkce `main` se nám pomalu rozrůstá a další funkce, které volá, musí být buď definované v ní (jako `item_activated`)
 nebo musí brát relativně hodně argumentů (jako `new_dialog`).
 Abychom si zjednodušili práci, můžeme logiku místo do funkce dát do třídy, ve které si důležité prvky
-uložíme do atributů (`self.grid`, `self.window`, `self.app`, atd.).
-Doporučujeme udělat přípravu v `__init__`, a volání `window.show()` a `return app.exec()` dát do metody `run`.
+uložíme do atributů (`self.grid`, `self.window`, `self.app` atd.).
+Doporučujeme udělat přípravu v `__init__` a volání `window.show()` a `return app.exec()` dát do metody `run`.
 
 A to je zatím vše!
 Další vylepšení budete mít za úkol – nebo si aplikaci přetvořte podle svého uvážení.

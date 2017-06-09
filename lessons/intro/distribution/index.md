@@ -17,7 +17,7 @@ Volání z příkazové řádky, pomocí příkazu `python isholiday.py` nebo
 `python -m isholiday`, zajišťuje blok `if __name__ == '__main__':`.
 Toto je rychlý způsob, jak napsat modul který jde jak importovat, tak spustit.
 Když nějaký modul importujeme, má v proměnné `__name__` k dispozici své jméno.
-„Hlavní” modul ale není importován, a jeho jméno není vždy k dispozici
+„Hlavní” modul ale není importován a jeho jméno není vždy k dispozici
 (např. v `cat isholiday.py | python`).
 Python proto `__name__` „hlavního” modulu nastavuje na `'__main__'`,
 čehož se často využívá.
@@ -115,7 +115,7 @@ V našem případě bude `MANIFEST.in` vypadat takto:
 include LICENSE
 ```
 
-Při dalším spuštění už `setup.py` přidá i soubor `LISENSE`.
+Při dalším spuštění už `setup.py` přidá i soubor `LICENSE`.
 To můžete zkontrolovat i ve výsledném archivu.
 
 ```console
@@ -259,7 +259,7 @@ ale ideální to není. Dobré je mít kód v samostatných souborech a v `__ini
 pouze importovat veřejné rozhraní, tedy to, co budou z vašeho modulu importovat
 jeho uživatelé.
 
-Přesuňte tedy obsah `__init__.py` do `holidays.py`, a do `__init__.py`
+Přesuňte tedy obsah `__init__.py` do `holidays.py` a do `__init__.py`
 místo toho napište:
 
 ```python
@@ -288,7 +288,7 @@ python: No module named isholiday.__main__; 'isholiday' is a package and cannot 
 ```
 
 Namísto spuštění souboru (typicky s blokem `if __name__ == '__main__':`) totiž
-Python v tomto případě hledá *soubor* pojmenovaný `__main__.py`, a spustí ten.
+Python v tomto případě hledá *soubor* pojmenovaný `__main__.py` a spustí ten.
 
 Soubor `__main__.py` není určený k tomu, aby se z něho importovalo, proto
 by měl obsahovat co nejméně kódu – ideálně jen volání funkce, která je
@@ -331,7 +331,7 @@ setup(
 `isholiday.holidays:main` je pak cesta k funkci ve tvaru `modul:funkce`;
 funkce může být v modulu definovaná nebo importovaná.
 
-Skript bude možné použít, je-li aktivní prostředí kde je nainstalován, jen
+Skript bude možné použít, je-li aktivní prostředí, kde je nainstalován, jen
 zadáním jména *entrypointu*:
 
 ```console
@@ -370,8 +370,8 @@ setup(
 ### Soubor requirements.txt
 
 Kromě závislostí v `setup.py` se u pythonních projektů často setkáme se souborem
-`requirements.txt`, který obsahuje přesné verze všech závislosti, včetně
-tranzitivních – t.j. závisí-li náš balíček na `Flask`, a `Flask` na `Jinja2`,
+`requirements.txt`, který obsahuje přesné verze všech závislostí, včetně
+tranzitivních – t.j. závisí-li náš balíček na `Flask` a `Flask` na `Jinja2`,
 najdeme v `requirements.txt` mimojiné řádky:
 
 ```
@@ -383,7 +383,7 @@ Tento soubor se používá, když je potřeba přesně replikovat prostředí, k
 program běží, například mezi testovacím strojem a produkčním nasazením
 webové aplikace.
 Tento soubor se dá vygenerovat z aktuálního prostředí zadáním
-`python -m pip freeze > requirements.txt`, a balíčky v něm se dají nainstalovat
+`python -m pip freeze > requirements.txt` a balíčky v něm se dají nainstalovat
 pomocí `python -m pip install -r requirements.txt`.
 My ho používat nebudeme, vystačíme si s volnější specifikací závislostí
 v `setup.py`.
@@ -429,7 +429,7 @@ se souborem `.pypirc`, např:
 ```
 
 Registrace projektu a nahrání na testovací PyPI se provádí pomocí dvou příkazů:
-`register` zaregistruje nový projekt, a `upload` nahraje samotný balíček:
+`register` zaregistruje nový projekt a `upload` nahraje samotný balíček:
 
 ```console
 (env)$ twine register -r pypitest dist/isholiday-0.1.tar.gz

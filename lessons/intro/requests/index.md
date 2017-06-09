@@ -12,7 +12,7 @@ Instaluje se standardním způsobem:
 $ python -m pip install requests
 ```
 
-Budeme předpokládat, že znáš alespoň základy HTTP protokolu a
+Budeme předpokládat, že znáš alespoň základy HTTP protokolu, a
 vrhneme se rovnou na příklad.
 
 > [note]
@@ -47,7 +47,7 @@ Příklady použití pro další HTTP metody najdeš v [dokumentaci].
 
 ## Použití session
 
-Hlavně v budoucnu se nám bude hodit použití tz. *session*.
+Hlavně v budoucnu se nám bude hodit použití tzv. *session*.
 
 Session má několik výhod.
 První je, že využívá na pozadí jedno otevřené HTTP spojení a poskytuje tak
@@ -190,7 +190,7 @@ def twitter_session(api_key, api_secret):
 
 Podíváme se i na GitHub API, které má jednodušší autentizaci (od GitHubu přímo
 získáš token). Stačí jít do [nastavení] a vyrobit nový token
-(zatím není třeba zaškrtávat žádná opravnění).
+(zatím není třeba zaškrtávat žádná oprávnění).
 Token musíš opět patřičně chránit.
 
 Pomocí tokenu pak můžeš z Githubu získávat informace.
@@ -225,7 +225,7 @@ Jak vidíš, API nevrací žádný text. Můžeš ale zkontrolovat návratový s
 ```
 
 Případně vyhodit výjimku, pokud je stavový kód divný (např 404 Nenalezeno,
-401 Chybí oprávnění, apod.):
+401 Chybí oprávnění apod.):
 
 ```pycon
 >>> r.raise_for_status()
