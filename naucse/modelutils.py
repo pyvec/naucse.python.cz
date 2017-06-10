@@ -87,6 +87,9 @@ class DataProperty:
 
 class DirProperty(LazyProperty):
     """Ordered dict of models from a subdirectory
+    
+    If ``info.yml`` is present in the subdirectory, use it for the order
+    of the models.  The rest is appended alphabetically.
     """
     def __init__(self, cls, *subdir, keyfunc=str):
         self.cls = cls
@@ -95,10 +98,17 @@ class DirProperty(LazyProperty):
 
     def compute(self, instance):
         base = instance.path.joinpath(*self.subdir)
+        
+        model_paths = []
+        info_path = base.joinpath("info.yml")
+        if info_path.is_file():
+            with info_path.open(encoding='utf-8') as f:
+                model_paths = [base.joinpath(p) for p in yaml.safe_load(f)]
+        
+        subdirectories = [p for p in sorted(base.iterdir()) if p.is_dir()]
         return OrderedDict(
             (self.keyfunc(p.parts[-1]), self.cls(instance.root, p))
-            for p in sorted(base.iterdir())
-            if p.is_dir()
+            for p in model_paths + subdirectories
         )
 
 
