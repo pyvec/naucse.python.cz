@@ -103,7 +103,7 @@ class DirProperty(LazyProperty):
         info_path = base.joinpath("info.yml")
         if info_path.is_file():
             with info_path.open(encoding='utf-8') as f:
-                model_paths = [base.joinpath(p) for p in yaml.safe_load(f)]
+                model_paths = [base.joinpath(p) for p in yaml.safe_load(f)['order']]
         
         subdirectories = [p for p in sorted(base.iterdir()) if p.is_dir()]
         return OrderedDict(
