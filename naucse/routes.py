@@ -190,11 +190,14 @@ def run_page(run, lesson, page, solution=None):
     def subpage_url(page_slug):
         return url_for('run_page', run=run, lesson=lesson, page=page_slug)
 
+    canonical_url = url_for('lesson', lesson=lesson, _external=True)
+
     title = '{}: {}'.format(run.title, page.title)
 
     return render_page(page=page, title=title,
                        lesson_url=lesson_url,
                        subpage_url=subpage_url,
+                       canonical_url=canonical_url,
                        run=run,
                        page_wip=not page.license,
                        solution=solution,
