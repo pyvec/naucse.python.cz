@@ -5,8 +5,6 @@
 <div class="page">
     <div class="container">
 
-        {% set glob={} %}
-
         {% if run is defined %}
             <header class="lesson-header">
                 <a href="{{ url_for('index') }}">Nauč se Python </a>
@@ -21,12 +19,11 @@
             Závěr lekce: {{ session.title }}
         </h1>
 
-        <h2>Domácí projekty</h2>
-
         {% if homework_section %}
+            <h2>Domácí projekty</h2>
             <ul>
             {% for mat in session.materials %}
-                {% if mat.url_type is defined and mat.url_type == "homework" %}
+                {% if mat.url_type == "homework" %}
                 <li>
                     <div>
                         <a href="{{ mat.url }}">{{ mat.title }}</a>
@@ -35,8 +32,6 @@
                 {% endif %}
             {% endfor %}
             </ul>
-        {% else %}
-            K této lekci nejsou žádné domácí projekty.
         {% endif %}
 
         {% if link_section %}
@@ -44,7 +39,7 @@
 
             <ul>
             {% for mat in session.materials %}
-                {% if mat.url_type is defined and mat.url_type == "link" %}
+                {% if mat.url_type == "link" %}
                 <li>
                     <div>
                         <a href="{{ mat.url }}">{{ mat.title }}</a>

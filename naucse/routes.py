@@ -250,21 +250,12 @@ def session_coverpage(run, session, coverpage):
     link_section = False
     cheatsheet_section = False
     for mat in session.materials:
-        try:
-            if mat.url_type == "homework":
-                homework_section = True
-        except AttributeError:
-            pass
-        try:
-            if mat.url_type == "link":
-                link_section = True
-        except AttributeError:
-            pass
-        try:
-            if mat.url_type == "cheatsheet":
-                cheatsheet_section = True
-        except AttributeError:
-            pass
+        if mat.url_type == "homework":
+            homework_section = True
+        if mat.url_type == "link":
+            link_section = True
+        if mat.url_type == "cheatsheet":
+            cheatsheet_section = True
 
     return render_template(template,
                            content=content,
