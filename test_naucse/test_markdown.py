@@ -54,14 +54,14 @@ def test_markdown_admonition_code():
         > foo
         > ```python
         > cat = Kitty()
-        > cat.make_soundé()
+        > cat.make_sound()
         > ```
     """)
     expected = dedent("""
         <div class="admonition note"><p class="admonition-title">NB!</p>
         <p>foo</p>
         <div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">=</span> <span class="n">Kitty</span><span class="p">()</span>
-        <span class="n">cat</span><span class="o">.</span><span class="n">make_soundé</span><span class="p">()</span>
+        <span class="n">cat</span><span class="o">.</span><span class="n">make_sound</span><span class="p">()</span>
         </pre></div></div>
     """).strip()
     assert convert_markdown(src) == expected
