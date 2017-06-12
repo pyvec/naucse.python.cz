@@ -60,9 +60,9 @@ Pythonní program spusť (pomocí `python obrazek.py`).
 Mělo by se na chvíli ukázat okno s želvou, a měl by vzniknout nový soubor
 `obrazek.ps`.
 
-!!! note ""
-    Obrázek ve formátu PostScript (.ps) se dá otevřít ve většině programů které
-    zvládaji i PDF, případně v [Inkscape](https://inkscape.org/).
+> [note]
+> Obrázek ve formátu PostScript (.ps) se dá otevřít ve většině programů které
+> zvládaji i PDF, případně v [Inkscape](https://inkscape.org/).
 
 Jak se na to dívá Git?
 
@@ -206,10 +206,10 @@ Je ale lepší si je dát do osobního nastavení, protože ostatní lidé,
 kteří na projektu můžou spolupracovat, nemusí používat stejný systém
 a programy.
 
-!!! note ""
-    Pokud si můžeš být jist{{gnd('ý', 'á')}}, že ostatní budou používat právě
-    ten program, který používáš ty, použij `.gitignore`.
-    Příklad je adresář `__pycache__`, který vytváří Python při importu modulu.
+> [note]
+> Pokud si můžeš být jist{{gnd('ý', 'á')}}, že ostatní budou používat právě
+> ten program, který používáš ty, použij `.gitignore`.
+> Příklad je adresář `__pycache__`, který vytváří Python při importu modulu.
 
 Soubor s osobním nastavením si můžeš pojmenovat jak chceš, a můžeš ho uložit
 kde budeš chtít.

@@ -78,9 +78,9 @@ nepravda = 1 == 3
 print(nepravda)
 ```
 
-!!! note ""
-    Všimni si, že rovnost se zjišťuje pomocí dvou rovnítek: `3 == 3`.
-    Jedno rovnítko přiřazuje do proměnné; dvě rovnítka porovnávají.
+> [note]
+> Všimni si, že rovnost se zjišťuje pomocí dvou rovnítek: `3 == 3`.
+> Jedno rovnítko přiřazuje do proměnné; dvě rovnítka porovnávají.
 
 Slova <code>True</code> a <code>False</code> jdou
 v programu použít i přímo,
@@ -157,12 +157,12 @@ a odsazené příkazy, které se provedou v opačném případě.<br>
 Potom můžeš psát příkazy, které se provedou vždycky – ty odsazené nebudou,
 podmíněná část programu už skončila.
 
-!!! note ""
-    Čistě technicky, odsazení nemusí být o čtyři mezery.
-    Může být třeba o dvě nebo o jedenáct, nebo dokonce o tabulátor.
-    V rámci jednoho bloku musí být ale odsazení vždycky stejné,
-    takže když pak na jednom programu spolupracuje více lidí, musí se shodnout.
-    No a na čtyřech mezerách se shodla většina Pythonního světa.
+> [note]
+> Čistě technicky, odsazení nemusí být o čtyři mezery.
+> Může být třeba o dvě nebo o jedenáct, nebo dokonce o tabulátor.
+> V rámci jednoho bloku musí být ale odsazení vždycky stejné,
+> takže když pak na jednom programu spolupracuje více lidí, musí se shodnout.
+> No a na čtyřech mezerách se shodla většina Pythonního světa.
 
 ## Další podmíněné příkazy
 

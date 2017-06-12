@@ -217,12 +217,12 @@ print(retezec.lower())
 print(retezec)
 ```
 
-!!! note ""
-    Všimni si, že původní řetězec se nemění; metoda vrátí nový řetězec, ten
-    starý zůstává.
-
-    To je obecná vlastnost řetězců v Pythonu: jednou existující řetězec se už
-    nedá změnit, dá se jen vytvořit nějaký odvozený.
+> [note]
+> Všimni si, že původní řetězec se nemění; metoda vrátí nový řetězec, ten
+> starý zůstává.
+>
+> To je obecná vlastnost řetězců v Pythonu: jednou existující řetězec se už
+> nedá změnit, dá se jen vytvořit nějaký odvozený.
 
 
 ### Iniciály

@@ -5,11 +5,11 @@ V tomto cvičení se budeme zabývat automatickým testováním kódu.
 Modul unittest ze standardní knihovny už byste měli znát,
 co to jsou jednotkové testy a k čemu slouží tedy rovnou přeskočím.
 
-!!! note ""
-    Pokud modul unittest neznáte, projděte si
-    [začátečnickou lekci o testování]({{ lesson_url('beginners/testing') }}).
-    Obsah se zčásti překrývá, ale základní principy jsou tam vysvětleny trošku
-    podrobněji.
+> [note]
+> Pokud modul unittest neznáte, projděte si
+> [začátečnickou lekci o testování]({{ lesson_url('beginners/testing') }}).
+> Obsah se zčásti překrývá, ale základní principy jsou tam vysvětleny trošku
+> podrobněji.
 
 Pokud si chcete přečíst krátký text o tom, jak testovat, zkuste [blogový
 zápisek Michala Hořejška](http://blog.horejsek.com/matka-moudrosti-jak-testovat).

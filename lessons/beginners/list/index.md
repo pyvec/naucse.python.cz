@@ -24,9 +24,9 @@ cisla = [1, 1, 2, 3, 5, 8, 13]
 print(cisla)
 ```
 
-!!! note ""
-    Nemůžeš najít hranaté závorky?
-    Na české klávesnici zkus pravý <kbd>Alt</kbd> + <kbd>F</kbd> a <kbd>G</kbd>.
+> [note]
+> Nemůžeš najít hranaté závorky?
+> Na české klávesnici zkus pravý <kbd>Alt</kbd> + <kbd>F</kbd> a <kbd>G</kbd>.
 
 Seznam je hodnota, která může obsahovat spoustu dalších hodnot.
 Tak jako řetězec obsahuje sekvenci znaků,
@@ -437,14 +437,14 @@ opravene_zaznamy = oprav_zaznamy(zaznamy)
 print(opravene_zaznamy) # → ['Pepa Novák', 'Jiří Sládek', 'Ivo Navrátil', 'Jan Poledník']
 ```
 
-!!! note ""
-    Snadný způsub jak zjistit, zda je řetězec složen jen z malých písmen,
-    je metoda `islower()`, která vrací True, pokud řetězec obsahuje jen malá
-    písmena, jinak vrací False. Například `'abc'.islower() == True` ale
-    `'aBc'.islower() == False`.
-
-    Snadný způsob jak převést první písmenko na velké je metoda `capitalize()`:
-    např. `'abc'.capitalize() == 'Abc'`
+> [note]
+> Snadný způsub jak zjistit, zda je řetězec složen jen z malých písmen,
+> je metoda `islower()`, která vrací True, pokud řetězec obsahuje jen malá
+> písmena, jinak vrací False. Například `'abc'.islower() == True` ale
+> `'aBc'.islower() == False`.
+>
+> Snadný způsob jak převést první písmenko na velké je metoda `capitalize()`:
+> např. `'abc'.capitalize() == 'Abc'`
 
 {% filter solution %}
 ```python

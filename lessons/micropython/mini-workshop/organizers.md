@@ -132,16 +132,16 @@ Potřebné nástroje, [esptool] a [ampy], můžeme na Fedoře nainstalovat z ba
 $ sudo dnf install esptool ampy
 ```
 
-!!! note ""
-
-    Na systémech, kde tyto nástroje v systémových balíčcích nejsou,
-    se dají nainstalovat do virtuálního prostředí:
-
-    ```console
-    $ python3 -m venv venv
-    $ . venv/bin/activate
-    (venv)$ python -m pip install esptool adafruit-ampy
-    ```
+> [note]
+>
+> Na systémech, kde tyto nástroje v systémových balíčcích nejsou,
+> se dají nainstalovat do virtuálního prostředí:
+>
+> ```console
+> $ python3 -m venv venv
+> $ . venv/bin/activate
+> (venv)$ python -m pip install esptool adafruit-ampy
+> ```
 
 Připojíme NodeMCU přes USB a pomocí `esptool` ho naflashujeme:
 

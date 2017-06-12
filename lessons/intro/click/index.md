@@ -26,11 +26,11 @@ a dokonce jich není málo: [os.environ], [argparse], [optparse], [getopt].
 S knihovnou `click` je ale práce mnohem příjemnější, a výsledky většinou
 lépe odpovídají zavedeným konvencím.
 
-!!! note ""
-    Cena za jednoduchost a konzistenci je, že některé styly návrhu CLI Click
-    nepodporuje.
-    Máš-li existující rozhraní které chceš jen převést do Pythonu,
-    Click nejspíš nebude nejlepší volba.
+> [note]
+> Cena za jednoduchost a konzistenci je, že některé styly návrhu CLI Click
+> nepodporuje.
+> Máš-li existující rozhraní které chceš jen převést do Pythonu,
+> Click nejspíš nebude nejlepší volba.
 
 [os.environ]: https://docs.python.org/3/library/os.html#os.environ
 [argparse]: https://docs.python.org/3/library/argparse.html

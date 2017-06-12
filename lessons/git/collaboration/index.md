@@ -9,18 +9,18 @@ Každý člen týmu potřebuje mít přístup k práci ostatních.
 K tomu se dá použít Git: někde na internetu si zařídíme *sdílený repozitář*,
 se kterým se všichni budou synchronizovat.
 
-!!! note "Pro samostudium"
-    Pokud materiály čteš z domu, a máš možnost se
-    v budoucnu dostat na nějaký sraz, zatím tuhle sekci přeskoč.
-    Na sraze pak popros zkušenější programátory, aby ti pomohli.
-    (Nechystáš-li se na sraz, můžeš pokračovat –
-    zvládnout se to dá.)
+> [note] Pro samostudium
+> Pokud materiály čteš z domu, a máš možnost se
+> v budoucnu dostat na nějaký sraz, zatím tuhle sekci přeskoč.
+> Na sraze pak popros zkušenější programátory, aby ti pomohli.
+> (Nechystáš-li se na sraz, můžeš pokračovat –
+> zvládnout se to dá.)
 
-!!! note "Pro kouče"
-    Udělej na GitHubu repozitář jménem `prezencka`, a dej do
-    něj soubor se svým jménem. Příklad je na
-    [encukou/prezencka](https://github.com/encukou/prezencka).
-    Nasdílej s účastnicemi příkaz na jeho naklonování (přes https).
+> [note] Pro kouče
+> Udělej na GitHubu repozitář jménem `prezencka`, a dej do
+> něj soubor se svým jménem. Příklad je na
+> [encukou/prezencka](https://github.com/encukou/prezencka).
+> Nasdílej s účastnicemi příkaz na jeho naklonování (přes https).
 
 ## Open Source
 
@@ -200,20 +200,20 @@ adresa by měla být něco jako
 <code>https://github.com/<i>tvojejmeno</i>/prezencka</code>.
 
 
-!!! note ""
-    Kdybys měla v různých kopiích repozitáře zmatek,
-    přijde vhod malé vysvětlení: jedna kopie je původní
-    projekt na GitHubu, kam správce projektu dává
-    aktuální "oficiální verzi". Další kopie na GitHubu
-    je "tvoje" a můžeš si s do ní nahrát co chceš
-    (nejčastěji v ní ale zveřejňuješ změny, které můžou
-    být užitečné pro ostatní). A třetí kopii repozitáře
-    máš u sebe na počítači.
-
-    {{ figure(
-        img=static('gh-workflow-diagram.svg'),
-        alt='Diagram tří repozitářů'
-    ) }}
+> [note]
+> Kdybys měla v různých kopiích repozitáře zmatek,
+> přijde vhod malé vysvětlení: jedna kopie je původní
+> projekt na GitHubu, kam správce projektu dává
+> aktuální "oficiální verzi". Další kopie na GitHubu
+> je "tvoje" a můžeš si s do ní nahrát co chceš
+> (nejčastěji v ní ale zveřejňuješ změny, které můžou
+> být užitečné pro ostatní). A třetí kopii repozitáře
+> máš u sebe na počítači.
+>
+> {{ figure(
+    img=static('gh-workflow-diagram.svg'),
+    alt='Diagram tří repozitářů'
+) }}
 
 A teď, jak z tvého počítače nahrát změny na GitHub?
 Git si u každého repozitáře na tvém počítači
@@ -283,22 +283,22 @@ Klikni na něj. Pokud chceš, tak dopiš/změň popisek
 toho, co tahle změna obnáší.
 Pak zmáčkni další tlačítko.
 
-!!! note ""
-    Jestli tlačítko *Compare & pull request* nevidíš, běž na adresu
-    *své* kopie repozitáře, a stiskni tlačítko *New pull request*.
-    Vyber co kam chceš začlenit, dopiš/změň popisek, a pak zmáčkni
-    *Create pull request*.
+> [note]
+> Jestli tlačítko *Compare & pull request* nevidíš, běž na adresu
+> *své* kopie repozitáře, a stiskni tlačítko *New pull request*.
+> Vyber co kam chceš začlenit, dopiš/změň popisek, a pak zmáčkni
+> *Create pull request*.
 
 Hotovo; teď je na autorech projektu, aby
 se na změny podívali a přijali – nebo začali diskusi
 o tom, jak je ještě vylepšit.
 (Diskutovat se dá na stránce *pull requestu*, nebo přes mail.)
 
-!!! note ""
-    Procházíš-li materiály z domu, musíš teď počkat,
-    než si někdo tvé žádosti všimne a začlení ji.
-    To může trvat i pár dní; kdyby to bylo přes týden
-    tak se zkus ozvat znovu.
+> [note]
+> Procházíš-li materiály z domu, musíš teď počkat,
+> než si někdo tvé žádosti všimne a začlení ji.
+> To může trvat i pár dní; kdyby to bylo přes týden
+> tak se zkus ozvat znovu.
 
 
 ## Aktualizace <small>(<code>git pull</code>)</small>
@@ -330,11 +330,11 @@ nahlásit – stačí kliknout na *New Issue*
 a můžeš psát, kdy chyba nastává, co program dělá
 špatně a co by měl dělat místo toho.
 
-!!! note ""
-    Některé projekty nepoužívají Issues na GitHubu.
-    Kdybys záložku Issues {{gnd('nenašel', 'nenašla')}}, podívej se
-    do dokumentace projektu, jestli tam není odkaz na
-    seznam chyb.
+> [note]
+> Některé projekty nepoužívají Issues na GitHubu.
+> Kdybys záložku Issues {{gnd('nenašel', 'nenašla')}}, podívej se
+> do dokumentace projektu, jestli tam není odkaz na
+> seznam chyb.
 
 
 ## Licence a jazyk
@@ -352,16 +352,16 @@ používat, učit se z něj, předávat ho dál,
 a vylepšovat ho. V tom případě vyber třeba
 licenci [MIT](https://choosealicense.com/licenses/mit/).
 
-!!! note ""
-    Pokud chceš navíc zabránit tomu, že si tvůj kód
-    někdo vezme a začne ho "vylepšovat" a vydělávat na
-    něm, aniž by se o vylepšení podělil s ostatními,
-    zkus licenci [AGPL](https://choosealicense.com/licenses/agpl-3.0/).
+> [note]
+> Pokud chceš navíc zabránit tomu, že si tvůj kód
+> někdo vezme a začne ho "vylepšovat" a vydělávat na
+> něm, aniž by se o vylepšení podělil s ostatními,
+> zkus licenci [AGPL](https://choosealicense.com/licenses/agpl-3.0/).
 
-!!! note ""
-    A tyto materiály jsou pod ještě jinou licencí –
-    [CC BY-SA](https://choosealicense.com/licenses/cc-by-sa-4.0/) –
-    protože výše jmenované licence jsou dělané na programy, ne na text.
+> [note]
+> A tyto materiály jsou pod ještě jinou licencí –
+> [CC BY-SA](https://choosealicense.com/licenses/cc-by-sa-4.0/) –
+> protože výše jmenované licence jsou dělané na programy, ne na text.
 
 Kód se nejčastěji licencuje tak, že text licence
 dáš do souboru jménem `LICENSE`, a přidáš do Gitu.

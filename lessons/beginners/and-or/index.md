@@ -1,6 +1,6 @@
 {% if var('bonus') %}
-!!! note ""
-    Na tuto stránku odkazuje domácí projekt.
+> [note]
+> Na tuto stránku odkazuje domácí projekt.
 {% endif %}
 
 # *Nebo* anebo *a*
@@ -71,10 +71,10 @@ else:
     print('To je mi líto.')
 ```
 
-!!! note ""
-    Všimni si co se stane když zadáš něco jiného než „ano“ nebo „ne“.
-
-    Proměnná `stastna` nebo `bohata` se nenastaví, a když je ji potom
-    potřeba použít, program skončí s chybou.
-    
-    O tom, jak se vypořádat s chybami, si povíme [později]({{ lesson_url('beginners/exceptions') }}).
+> [note]
+> Všimni si co se stane když zadáš něco jiného než „ano“ nebo „ne“.
+>
+> Proměnná `stastna` nebo `bohata` se nenastaví, a když je ji potom
+> potřeba použít, program skončí s chybou.
+>
+> O tom, jak se vypořádat s chybami, si povíme [později]({{ lesson_url('beginners/exceptions') }}).

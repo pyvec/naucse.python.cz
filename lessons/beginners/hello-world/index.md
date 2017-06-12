@@ -54,11 +54,11 @@ a zadej tento příkaz:
 $ python ahoj.py
 ```
 
-!!! note "Poznámka pro Windows a starší Python"
-    V nečeských Windows s Pythonem 3.5 či nižším bude třeba před
-    programem spustit `chcp 1250`, jinak bude program píšící české
-    znaky končit chybou `UnicodeEncodeError`.
-    Je to trochu polovičaté řešení, ale pro naše příklady bude stačit.
+> [note] Poznámka pro Windows a starší Python
+> V nečeských Windows s Pythonem 3.5 či nižším bude třeba před
+> programem spustit `chcp 1250`, jinak bude program píšící české
+> znaky končit chybou `UnicodeEncodeError`.
+> Je to trochu polovičaté řešení, ale pro naše příklady bude stačit.
 
 Pokud se vypíše hláška, gratuluji!
 Napsal{{a}} jsi svůj první program v Pythonu!

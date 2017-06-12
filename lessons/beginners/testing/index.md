@@ -32,12 +32,12 @@ mnohem jednodušeji a je velice populární.
 
 Je ji ale potřeba nainstalovat.
 
-!!! note ""
-    Zatím jsme v kurzu pracovaly s tím, co se instaluje
-    se samotným Pythonem.
-    Kromě věcí jako `math` nebo `turtle` ale existuje ale spousta
-    dalších užitečných *knihoven*, které se dají jednoduše doinstalovat
-    a používat.
+> [note]
+> Zatím jsme v kurzu pracovaly s tím, co se instaluje
+> se samotným Pythonem.
+> Kromě věcí jako `math` nebo `turtle` ale existuje ale spousta
+> dalších užitečných *knihoven*, které se dají jednoduše doinstalovat
+> a používat.
 
 Následující příkaz nainstaluje do aktivního virtuálního prostředí knihovnu
 `pytest`.
@@ -53,26 +53,26 @@ aktivované.)
 (venv)$ python -m pip install pytest
 ```
 
-!!! note "Co to znamená?"
-    `python -m pip` zavolá Python s tím, že má pustit modul
-    `pip`. Tento modul umí instalovat nebo
-    odinstalovávat knihovny.
-    Jestli si pamatuješ vytváření virtuálního prostředí, použil{{a}} jsi tam
-    příkaz `python -m venv`.
-    Modul `venv` umí vytvářet virtuální prostředí.
-    No a slova `install pytest` říkají Pipu, že má nainstalovat `pytest`.
+> [note] Co to znamená?
+> `python -m pip` zavolá Python s tím, že má pustit modul
+> `pip`. Tento modul umí instalovat nebo
+> odinstalovávat knihovny.
+> Jestli si pamatuješ vytváření virtuálního prostředí, použil{{a}} jsi tam
+> příkaz `python -m venv`.
+> Modul `venv` umí vytvářet virtuální prostředí.
+> No a slova `install pytest` říkají Pipu, že má nainstalovat `pytest`.
+>
+> Nápověda k použití Pipu se dá vypsat pomocí příkazu
+> `python -m pip --help`.
 
-    Nápověda k použití Pipu se dá vypsat pomocí příkazu
-    `python -m pip --help`.
-
-!!! warning "Pro Windows"
-    Jsi-li na Windows, od této lekce bude důležité
-    spouštět Pythoní programy pomocí `python program.py`, ne jen
-    `program.py`.
-    Ačkoli se v těchto materiálech všude používá `python` na začátku, zatím
-    mohlo všechno fungovat i bez toho.
-    Program se ale bez příkazu `python` spouští v jiném Pythonu,
-    než v tom z virtuálního prostředí.
+> [warning] Pro Windows
+> Jsi-li na Windows, od této lekce bude důležité
+> spouštět Pythoní programy pomocí `python program.py`, ne jen
+> `program.py`.
+> Ačkoli se v těchto materiálech všude používá `python` na začátku, zatím
+> mohlo všechno fungovat i bez toho.
+> Program se ale bez příkazu `python` spouští v jiném Pythonu,
+> než v tom z virtuálního prostředí.
 
 
 ## Psaní testů
@@ -151,15 +151,15 @@ Je to tak přehlednější, a taky to zjednodušuje
 distribuci – předávání kódu někomu, kdo ho chce
 jen spustit a testy nepotřebuje
 
-!!! note ""
-    Máš-li hotové 1D piškvorky, zkus si následující
-    příklad.
-    Jinak si rozděl soubor s testem sečítání: do
-    `secteni.py` dej funkci `secti`,
-    a do `test_secteni.py` test.
-    Do `test_secteni.py` pak přidej
-    `from secteni import secti`, aby byla
-    funkce testu k dispozici.
+> [note]
+> Máš-li hotové 1D piškvorky, zkus si následující
+> příklad.
+> Jinak si rozděl soubor s testem sečítání: do
+> `secteni.py` dej funkci `secti`,
+> a do `test_secteni.py` test.
+> Do `test_secteni.py` pak přidej
+> `from secteni import secti`, aby byla
+> funkce testu k dispozici.
 
 Vytvoř si modul `test_piskvorky` (tedy soubor
 `test_piskvorky.py`), a do něj napiš:

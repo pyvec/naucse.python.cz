@@ -20,11 +20,11 @@ Věřím, že ale přesto zvládneš všechno pochopit nebo dohledat!
 A ještě jedna věc: protože začátečnický kurz končí,
 začneme kód psát v angličtině, aby se pak dal sdílet s celým světem.
 
-!!! note ""
-    Procházíš-li si projekt doma, je možné, že narazíš na
-    něco s čím si nebudeš vědět rady.
-    Kdyby se to stalo, prosím, ozvi se nám!
-    Rádi ti s projektem pomůžeme.
+> [note]
+> Procházíš-li si projekt doma, je možné, že narazíš na
+> něco s čím si nebudeš vědět rady.
+> Kdyby se to stalo, prosím, ozvi se nám!
+> Rádi ti s projektem pomůžeme.
 
 
 ## Vesmírná loď

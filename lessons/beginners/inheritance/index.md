@@ -109,12 +109,12 @@ micka = Kotatko('Micka')
 micka.snez('granule')
 ```
 
-!!! python ""
-    Je to podobné jako když jsme minule přepisoval{{gnd('i', 'y', both='i')}}
-    atribut pomocí `micka.zamnoukej = 12345`.
-    Python atributy hledá napřed na samotném objektu,
-    potom na třídě toho objektu a pak na nadtřídě
-    (a případně dalších nadtřídách té nadtřídy).
+> [python]
+> Je to podobné jako když jsme minule přepisoval{{gnd('i', 'y', both='i')}}
+> atribut pomocí `micka.zamnoukej = 12345`.
+> Python atributy hledá napřed na samotném objektu,
+> potom na třídě toho objektu a pak na nadtřídě
+> (a případně dalších nadtřídách té nadtřídy).
 
 Občas se může stát, že v takovéto přepsané metodě budeš
 potřebovat použít původní funkčnost, jen budeš chtít udělat ještě něco navíc.
@@ -197,34 +197,34 @@ když máš nějaké `Kotatko`, můžeš ho použít
 kdekoliv kde program očekává `Zviratko`,
 protože každé koťátko *je* zvířátko.
 
-!!! note ""
-    Tohle je docela dobrá pomůcka pro případy, kdy nebudeš vědět
-    kterou třídu podědit z které.
-    Každé *koťátko* nebo *štěňátko*
-    je *zvířátko*, každá *chata*
-    nebo *panelák* je *stavení*.
-    V takových případech dává dědičnost smysl.
-
-    Někdy se ale stane, že tuhle pomůcku zkusíš použít a vyjde ti
-    nesmysl jako „každé auto je volant”.
-    V takovém případě dědičnost nepoužívej.
-    I když jak auto tak volant se dají „otočit doprava”,
-    u každého to znamená něco jiného – a určitě nejde auto
-    použít kdekoli, kde bych chtěl{{a}} použít volant.
-    Takže v tomto případě je lepší si říct „každé auto
-    *má* volant”, stejně jako „každé kotě
-    *má* jméno”, udělat dvě nezávislé třídy a napsat něco jako:
-
-    ```python
-    class Auto:
-        def __init__(self):
-            self.volant = Volant()
-    ```
-
-    (A až bude někdy nějaký vystudovaný informatik nespokojený
-    s tím, že porušuješ
-    [Liskovové substituční princip](https://en.wikipedia.org/wiki/Liskov_substitution_principle),
-    jde o právě tento problém.)
+> [note]
+> Tohle je docela dobrá pomůcka pro případy, kdy nebudeš vědět
+> kterou třídu podědit z které.
+> Každé *koťátko* nebo *štěňátko*
+> je *zvířátko*, každá *chata*
+> nebo *panelák* je *stavení*.
+> V takových případech dává dědičnost smysl.
+>
+> Někdy se ale stane, že tuhle pomůcku zkusíš použít a vyjde ti
+> nesmysl jako „každé auto je volant”.
+> V takovém případě dědičnost nepoužívej.
+> I když jak auto tak volant se dají „otočit doprava”,
+> u každého to znamená něco jiného – a určitě nejde auto
+> použít kdekoli, kde bych chtěl{{a}} použít volant.
+> Takže v tomto případě je lepší si říct „každé auto
+> *má* volant”, stejně jako „každé kotě
+> *má* jméno”, udělat dvě nezávislé třídy a napsat něco jako:
+>
+> ```python
+> class Auto:
+>     def __init__(self):
+>         self.volant = Volant()
+> ```
+>
+> (A až bude někdy nějaký vystudovaný informatik nespokojený
+> s tím, že porušuješ
+> [Liskovové substituční princip](https://en.wikipedia.org/wiki/Liskov_substitution_principle),
+> jde o právě tento problém.)
 
 ## Generalizace
 

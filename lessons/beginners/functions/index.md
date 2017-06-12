@@ -1,8 +1,8 @@
 {% if var('pyladies') %}
 
-!!! note "Pro kouče"
-    Slajdy jsou k dispozici na stránkách
-    [PyLadies](http://pyladies.cz/v1/s003-looping/functions.html#/).
+> [note] Pro kouče
+> Slajdy jsou k dispozici na stránkách
+> [PyLadies](http://pyladies.cz/v1/s003-looping/functions.html#/).
 
 Pokud jsi minule udělal{{a}} projekt navíc, tak jsi nejspíš
 do programu zadal{{a}} hotnotu čísla π.
@@ -64,12 +64,12 @@ na které je potřeba speciální klávesnice.
 Ale programy v nich se většinou nedají
 dost dobře ani psát, ani číst.
 
-!!! note ""
-    Třeba tady je program v jazyce APL:
-
-    <!--z http://catpad.net/michael/apl/ -->
-
-        ⍎’⎕’,∈Nρ⊂S←’←⎕←(3=T)∨M∧2=T←⊃+/(V⌽”⊂M),(V⊖”⊂M),(V,⌽V)⌽”(V,V←1¯1)⊖”⊂M’
+> [note]
+> Třeba tady je program v jazyce APL:
+>
+> <!--z http://catpad.net/michael/apl/ -->
+>
+> ⍎’⎕’,∈Nρ⊂S←’←⎕←(3=T)∨M∧2=T←⊃+/(V⌽”⊂M),(V⊖”⊂M),(V,⌽V)⌽”(V,V←1¯1)⊖”⊂M’
 
 
 V Pythonu je operátorů poměrně málo.
@@ -233,9 +233,9 @@ s rovnítkem, ale uvnitř závorek.
 Třeba funkce `print` normálně ukončí výpis novým řádkem,
 ale pomocí argumentu `end` se dá vypsat i něco jiného.
 
-!!! note ""
-    Tenhle příklad je potřeba napsat do souboru; v interaktivní konzoli
-    nebude výstup vypadat jak má.
+> [note]
+> Tenhle příklad je potřeba napsat do souboru; v interaktivní konzoli
+> nebude výstup vypadat jak má.
 
 ```python
 print('1 + 2', end=' ')
@@ -259,9 +259,9 @@ Pojmenovaný argument `end` určuje, co se vypíše na konci (místo přechodu
 na nový řádek);
 `sep` zase, co se vypíše mezi jednotlivými argumenty (místo mezery).
 
-!!! note ""
-    Příklad opět doporučuji spustit ze souboru, ne
-    interaktivně:
+> [note]
+> Příklad opět doporučuji spustit ze souboru, ne
+> interaktivně:
 
 ```python
 print(1, "dvě", False)

@@ -10,10 +10,10 @@ neboli *pár* (angl. *pair*); se třemi
 prvky *trojice* (angl. *3-tuple*),
 se čtyřmi *čtveřice* (angl. *4-tuple*), atd.
 
-!!! note ""
-    Existují i <var>n</var>-tice s jedním prvkem (hmm… „jednice”?)
-    a s nula prvky (prázdné <var>n</var>-tice, angl. *empty tuple*),
-    ale těmi se ze začátku nebudeme zabývat.
+> [note]
+> Existují i <var>n</var>-tice s jedním prvkem (hmm… „jednice”?)
+> a s nula prvky (prázdné <var>n</var>-tice, angl. *empty tuple*),
+> ale těmi se ze začátku nebudeme zabývat.
 
 <var>N</var>-tice se tvoří jako seznamy, jen kolem sebe nemají hranaté závorky.
 Stačí čárky mezi prvky.
@@ -31,11 +31,11 @@ for osoba in osoby:
 print('První je {}'.format(osoby[0]))
 ```
 
-!!! note ""
-Vypadá to povědomě? Aby ne!
-<var>N</var>-tice jsme už použil{{gnd('i', 'y', both='i')}} dříve:
-`for jmeno in 'Hynek', 'Vilém', 'Jarmila':`
-ve skutečnosti používá <var>n</var>-tici!
+> [note]
+> Vypadá to povědomě? Aby ne!
+> <var>N</var>-tice jsme už použil{{gnd('i', 'y', both='i')}} dříve:
+> `for jmeno in 'Hynek', 'Vilém', 'Jarmila':`
+> ve skutečnosti používá <var>n</var>-tici!
 
 Když chceš <var>n</var>-tici předat do funkce,
 narazíš na problém, že čárka odděluje jednotlivé
@@ -63,10 +63,10 @@ def podil_a_zbytek(a, b):
     return a // b, a % b
 ```
 
-!!! note ""
-    Tahle funkce už mimochodem v Pythonu je: jmenuje se
-    `divmod` a je vždy k dispozici
-    (nemusí se importovat).
+> [note]
+> Tahle funkce už mimochodem v Pythonu je: jmenuje se
+> `divmod` a je vždy k dispozici
+> (nemusí se importovat).
 
 Python umí ještě jeden trik: pokud chceš přiřadit
 do několika proměnných najednou, stačí je na levé

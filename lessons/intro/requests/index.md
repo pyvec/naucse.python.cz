@@ -15,10 +15,10 @@ $ python -m pip install requests
 Budeme předpokládat, že znáš alespoň základy HTTP protokolu a
 vrhneme se rovnou na příklad.
 
-!!! note ""
-    Pokud základy neznáš, můžeš se podívat na
-    [začátečnickou lekci]({{ lesson_url('projects/github-api') }}),
-    která vysvětluje o trošičku víc.
+> [note]
+> Pokud základy neznáš, můžeš se podívat na
+> [začátečnickou lekci]({{ lesson_url('projects/github-api') }}),
+> která vysvětluje o trošičku víc.
 
 ```pycon
 >>> import getpass
@@ -93,11 +93,11 @@ Po vytvoření najdeš na kartě *Keys and Access Tokens* **API Key** a **API Se
 Pozor, jedná prakticky o hesla k tvému Twitter účtu,
 a proto by je nikdo kromě tebe neměl vidět.
 
-!!! warning "Ochrana přihlašovacích tokenů"
-    Ještě jednou – *API Key* a *API Secret* se chovají jako hesla.
-    Nikomu je nesmíš ukazovat!
-    Stane-li se přesto, že se k nim dostane někdo nepovolaný, na kartě
-    *Keys and Access Tokens* je můžeš zrušit.
+> [note] Ochrana přihlašovacích tokenů
+> Ještě jednou – *API Key* a *API Secret* se chovají jako hesla.
+> Nikomu je nesmíš ukazovat!
+> Stane-li se přesto, že se k nim dostane někdo nepovolaný, na kartě
+> *Keys and Access Tokens* je můžeš zrušit.
 
 Prozatím klíče nastav do proměnných, později je schováme například do
 konfiguračního souboru.

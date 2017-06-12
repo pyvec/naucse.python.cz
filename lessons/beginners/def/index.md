@@ -90,9 +90,9 @@ else:
     print('Škoda.')
 ```
 
-!!! note ""
-    Stejně jako `if` nebo `break` je `return` *příkaz*, ne funkce.
-    Kolem „své“ hodnoty nepotřebuje závorky.
+> [note]
+> Stejně jako `if` nebo `break` je `return` *příkaz*, ne funkce.
+> Kolem „své“ hodnoty nepotřebuje závorky.
 
 Zkus napsat funkci, která vrátí obsah elipsy
 daných rozměrů.

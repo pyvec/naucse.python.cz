@@ -30,13 +30,13 @@ správu verzí (angl. version control system. VCS).
 Asi nejpopulárnější z nich je Git, se kterým
 se teď seznámíme.
 
-!!! note ""
-    Budeme hodně pracovat s příkazovou řádkou.
-    Jestli se s ní ještě nekamarádíš, koukni se na
-    [úvod]({{ lesson_url('beginners/cmdline') }}).
-
-    Nezapomeň: `$` na začátku se nepíše;
-    je tu proto, aby šlo poznat že jde o příkaz.
+> [note]
+> Budeme hodně pracovat s příkazovou řádkou.
+> Jestli se s ní ještě nekamarádíš, koukni se na
+> [úvod]({{ lesson_url('beginners/cmdline') }}).
+> 
+> Nezapomeň: `$` na začátku se nepíše;
+> je tu proto, aby šlo poznat že jde o příkaz.
 
 
 ## Instalace
@@ -154,29 +154,29 @@ Předvyplněné řádky začínající `#` nech být
 (nebo vymaž, podle chuti – Git je ignoruje).
 Pak soubor ulož, a zavři editor.
 
-!!! note "Jak na editory?"
-
-    Na Windows, máš-li
-    [správně nastavený Git]({{ lesson_url('git/install') }}),
-    se použije Poznámkový blok (Notepad) – stačí něco
-    napsat, uložit (<kbd>Ctrl</kbd>+<kbd>S</kbd>) a zavřít
-    (<kbd>Alt</kbd>+<kbd>F4</kbd>).
-
-    Na Linuxu a macOS se objeví editor v příkazové řádce,
-    který se jmenuje Nano.
-    Pozná se tak, že v dolních dvou řádcích má malou nápovědu.
-    Něco napiš, pomocí <kbd>Ctrl</kbd>+<kbd>O</kbd>
-    soubor ulož, potvrď jméno souboru (<kbd>Enter</kbd>),
-    a pomocí <kbd>Ctrl</kbd>+<kbd>X</kbd> editor zavři.
-
-    Nemáš-li Git nastavený podle instrukcí, objeví se přímo
-    v příkazové řádce Vim – poměrně složitý editor, který
-    se teď učit nebudeme. Pozná se tak, že úplně
-    spodní řádek je prázdný.
-    V takovém případě stiskni
-    <kbd>Esc</kbd>, napiš `:q!` (dvojtečka, Q, vykřičník),
-    a potvrď pomocí <kbd>Enter</kbd>.
-    Pak si nastav Git a zkus `git commit` znovu.
+> [note] Jak na editory?
+>
+> Na Windows, máš-li
+> [správně nastavený Git]({{ lesson_url('git/install') }}),
+> se použije Poznámkový blok (Notepad) – stačí něco
+> napsat, uložit (<kbd>Ctrl</kbd>+<kbd>S</kbd>) a zavřít
+> (<kbd>Alt</kbd>+<kbd>F4</kbd>).
+>
+> Na Linuxu a macOS se objeví editor v příkazové řádce,
+> který se jmenuje Nano.
+> Pozná se tak, že v dolních dvou řádcích má malou nápovědu.
+> Něco napiš, pomocí <kbd>Ctrl</kbd>+<kbd>O</kbd>
+> soubor ulož, potvrď jméno souboru (<kbd>Enter</kbd>),
+> a pomocí <kbd>Ctrl</kbd>+<kbd>X</kbd> editor zavři.
+>
+> Nemáš-li Git nastavený podle instrukcí, objeví se přímo
+> v příkazové řádce Vim – poměrně složitý editor, který
+> se teď učit nebudeme. Pozná se tak, že úplně
+> spodní řádek je prázdný.
+> V takovém případě stiskni
+> <kbd>Esc</kbd>, napiš `:q!` (dvojtečka, Q, vykřičník),
+> a potvrď pomocí <kbd>Enter</kbd>.
+> Pak si nastav Git a zkus `git commit` znovu.
 
 
 Znovu zkus vypsat stav repozitáře:
@@ -225,10 +225,10 @@ popisek,
 a nakonec shrnutí změn: byl přidán soubor <tt class="strong">basnicka.txt</tt>
 s nějakým <span class="green">obsahem</span>.
 
-!!! note ""
-    Když je výpis moc dlouhý, můžeš se v něm pohybovat
-    (<kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>PgUp</kbd>, <kbd>PgDn</kbd>),
-    a zpět se dostaneš klávesou <kbd>Q</kbd> jako *Quit*.
+> [note]
+> Když je výpis moc dlouhý, můžeš se v něm pohybovat
+> (<kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>PgUp</kbd>, <kbd>PgDn</kbd>),
+> a zpět se dostaneš klávesou <kbd>Q</kbd> jako *Quit*.
 
 ## Druhá revize
 
@@ -276,22 +276,22 @@ Změny se ukazují po řádcích.
 odebrané řádky; zeleně s <tt class="green">+</tt>
 řádky přidané.
 
-!!! note ""
-    Změnilo-li se na řádku jen jedno slovo nebo i písmeno,
-    celý řádek se ukáže jako smazaný a zase přidaný.
-    Dá se to nastavit i jinak, když je potřeba,
-    ale je dobré si na tento standard zvyknout.
+> [note] Test
+> Změnilo-li se na řádku jen jedno slovo nebo i písmeno,
+> celý řádek se ukáže jako smazaný a zase přidaný.
+> Dá se to nastavit i jinak, když je potřeba,
+> ale je dobré si na tento standard zvyknout.
 
 Takhle se dá jednoduše zjistit, co se dělo od poslední verze.
 Když ti program přestane fungovat (a v poslední uložené
 revizi fungoval), použij <code>git diff</code> –
 v jedné ze změn musí být chyba!
 
-!!! note ""
-    Řádek začínající <tt class="blue">@@</tt> říká,
-    kde v souboru změna je (u mě začínal vypsaný kousek
-    souboru řádkem 3, a měl 8 řádků; v nové verzi je
-    opět od 3. řádku, ale má už jen 7 řádků).
+> [note]
+> Řádek začínající <tt class="blue">@@</tt> říká,
+> kde v souboru změna je (u mě začínal vypsaný kousek
+> souboru řádkem 3, a měl 8 řádků; v nové verzi je
+> opět od 3. řádku, ale má už jen 7 řádků).
 
 Jsi-li se změnami spokojen{{a}}, řekni Gitu ať je
 použije v další revizi:
@@ -337,12 +337,12 @@ takhle se to líp čte. (Ale, co si budeme povídat, hlavní
 důvod je ukázat co dělá git diff.)
 ```
 
-!!! note ""
-    Nebude-li se ti někdy dařit shrnout změnu
-    v 70 znacích, zamysli se, jestli neděláš moc velkou
-    změnu najednou – např. "změna řetězce X
-    a dopsání nového cyklu Y" by bývalo lepší uložit
-    jako dvě různé revize.
+> [note]
+> Nebude-li se ti někdy dařit shrnout změnu
+> v 70 znacích, zamysli se, jestli neděláš moc velkou
+> změnu najednou – např. "změna řetězce X
+> a dopsání nového cyklu Y" by bývalo lepší uložit
+> jako dvě různé revize.
 
 Pomocí `git commit` vytvoř druhou revizi.
 Pak ji zkontroluj:
@@ -422,16 +422,16 @@ na obrazovku, můžeš se v logu pohybovat pomocí šipek a
 „Ven“ se dostaneš klávesou <kbd>q</kbd>.
 
 
-!!! note ""
-    Je spousta možností jak vypisovat historii pomocí `git log`.
-    Všechno je podrobně – možná až moc podrobně –
-    popsáno v dokumentaci; stačí zadat `git help log`.
-    „Ven“ z dokumentace se opět dostaneš klávesou <kbd>q</kbd>.
-
-    Já často používám `git log --oneline --graph --decorate --cherry-mark --boundary`.
-    Chceš-li tyhle možnosti studovat, začni v tomto
-    pořadí, a dej si pauzu vždycky když přestaneš
-    rozumět :)
+> [note]
+> Je spousta možností jak vypisovat historii pomocí `git log`.
+> Všechno je podrobně – možná až moc podrobně –
+> popsáno v dokumentaci; stačí zadat `git help log`.
+> „Ven“ z dokumentace se opět dostaneš klávesou <kbd>q</kbd>.
+>
+> Já často používám `git log --oneline --graph --decorate --cherry-mark --boundary`.
+> Chceš-li tyhle možnosti studovat, začni v tomto
+> pořadí, a dej si pauzu vždycky když přestaneš
+> rozumět :)
 
 Když se na nějakou verzi budeš chtít podívat podrobněji,
 napiš `git show 5ff0b`, kde místo `5ff0b`

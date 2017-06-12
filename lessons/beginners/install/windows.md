@@ -8,15 +8,15 @@ Jak poznat, který instalátor je ten pravý?
 Pokud má tvůj počítač 64bitovou verzi Windows, stáhni si *Windows x86-64 executable installer*.
 Pokud máš starší počítač s 32bitovými Windows, stáhni si *Windows x86 executable installer*.
 
-!!! note ""
-    Kde zjistíš, zda máš 32bitové nebo 64bitové Windows? Stačí otevřít nabídku
-    **Start**, vyhledat „Systém“ a otevřít **Systémové informace**.
-    Pokud máš novější počítač, téměř jistě budeš mít 64bitový systém.
-
-    {{ figure(
-        img=static('windows_32v64-bit.png'),
-        alt='Screenshot zjišťování verze systému',
-    ) }}
+> [note]
+> Kde zjistíš, zda máš 32bitové nebo 64bitové Windows? Stačí otevřít nabídku
+> **Start**, vyhledat „Systém“ a otevřít **Systémové informace**.
+> Pokud máš novější počítač, téměř jistě budeš mít 64bitový systém.
+>
+> {{ figure(
+    img=static('windows_32v64-bit.png'),
+    alt='Screenshot zjišťování verze systému',
+) }}
 
 Pak instalátor spusť
 Na začátku instalace zaškrtni **Install launcher for all Users**
@@ -58,9 +58,9 @@ Zvolený adresář po vytvoření nesmíš přesouvat jinam – když to udělá
 přestane virtuální prostředí fungovat.
 Proto ho nedoporučuji vytářet na Ploše.
 
-!!! note ""
-    Kdybys někdy chtěl{{a}} adresář přece jen přesunout,
-    musel{{a}} bys smazat virtuální prostředí a vytvořit nové.
+> [note]
+> Kdybys někdy chtěl{{a}} adresář přece jen přesunout,
+> musel{{a}} bys smazat virtuální prostředí a vytvořit nové.
 
 Ve zbytku materiálů budeme tento adresář nazývat <code class="pythondir">~/{{ rootname }}</code>,
 i když se u tebe pravděpodobně jmenuje jinak.
@@ -88,9 +88,9 @@ Nakonec virtuální prostředí aktivuj:
 <pre><code><span class="gp">&gt;</span> <span class="pythondir">~/{{ rootname }}</span>\venv\Scripts\activate
 </code></pre></div>
 
-!!! note ""
-    Nezapomeň místo <span class="pythondir">~/{{ rootname }}</span> zadat
-    „svůj“ adresář!
+> [note]
+> Nezapomeň místo <span class="pythondir">~/{{ rootname }}</span> zadat
+> „svůj“ adresář!
 
 Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
 (před `>`) objevit slovo `(venv)`.

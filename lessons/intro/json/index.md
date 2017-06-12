@@ -86,14 +86,14 @@ který se pro svou jednoduchost rozšířil na Internetu nejvíc:
 }
 ```
 
-!!! note ""
-    Pozor na to, že ačkoli JSON vypadá podobně jako zápis
-    v Pythonu, je to jiný formát s vlastními pravidly.
-    Nezaměňuj je!
-
-    Aspoň ze začátku nedoporučuji JSON psát ručně;
-    nech na počítači, aby dal na správné místo správné
-    čárky a uvozovky.
+> [note]
+> Pozor na to, že ačkoli JSON vypadá podobně jako zápis
+> v Pythonu, je to jiný formát s vlastními pravidly.
+> Nezaměňuj je!
+>
+> Aspoň ze začátku nedoporučuji JSON psát ručně;
+> nech na počítači, aby dal na správné místo správné
+> čárky a uvozovky.
 
 ## JSON v Pythonu
 

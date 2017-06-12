@@ -28,13 +28,13 @@ pyglet.app.run()
 print('Hotovo!')
 ```
 
-!!! note ""
-    Jestli okýnko není černé ale je v něm nějaký
-    „nepořádek“, představuj si zatím, že černé je.
-    Stává se to hlavně na počítačích s Mac OS a některými
-    druhy Linuxu.
-    Než do okýnka začneme kreslit obrázky, nepořádek
-    uklidíme.
+> [note]
+> Jestli okýnko není černé ale je v něm nějaký
+> „nepořádek“, představuj si zatím, že černé je.
+> Stává se to hlavně na počítačích s Mac OS a některými
+> druhy Linuxu.
+> Než do okýnka začneme kreslit obrázky, nepořádek
+> uklidíme.
 
 Hotovo? Pojďme si vysvětlit, co se tu vlastně děje.
 
@@ -260,14 +260,14 @@ Počítač má i jiné věci na práci, takže se k naší aplikaci
 nemusí dostat hned; a taky Pythonu trvá nějakou tu
 tisícinu vteřiny než zařídí samotné zavolání naší funkce.
 
-!!! note ""
-    A proč vlastně třicetina vteřiny?
-    Je to kvůli tomu, že potom budeme stavět animace.
-    Když se nám před očima vystřídá 30 obrázků za vteřinu,
-    mozek si je spojí a vznikne iluze plynulého pohybu.
-    <br>
-    Většina filmů používá jen 24 obrázků za vteřinu;
-    realistické 3D hry až 60.
+> [note]
+> A proč vlastně třicetina vteřiny?
+> Je to kvůli tomu, že potom budeme stavět animace.
+> Když se nám před očima vystřídá 30 obrázků za vteřinu,
+> mozek si je spojí a vznikne iluze plynulého pohybu.
+> <br>
+> Většina filmů používá jen 24 obrázků za vteřinu;
+> realistické 3D hry až 60.
 
 ## Vykreslování 🖌
 
@@ -332,17 +332,17 @@ Vysvětleme si, co se tady děje:
   nebo přesuneš částečně ven z obrazovky a pak dáš zase zpět.
   A nebo když budeme něco animovat.
 
-!!! note ""
-        Některé operační systémy si pamatují i obsah oken,
-        které nejsou vidět, ale není radno na to spoléhat.
+> [note]
+> Některé operační systémy si pamatují i obsah oken,
+> které nejsou vidět, ale není radno na to spoléhat.
 
 * `window.clear()` vyčistí okno – natře ho černou barvou, a smaže
   všechno, co v něm bylo předtím.
 
-!!! note ""
-      Na spoustě počítačů tohle není potřeba.
-      Ale je lepší psát programy tak, aby
-      běžely správně kdekoli.
+> [note]
+> Na spoustě počítačů tohle není potřeba.
+> Ale je lepší psát programy tak, aby
+> běžely správně kdekoli.
 
 * `had.draw()` nakreslí obrázek pomocí předpřipraveného *spritu* `had`.
 * `window.push_handlers(on_draw=vykresli)` zaregistruje funkci `vykresli` –
@@ -456,11 +456,11 @@ pomocí řádku `on_mouse_press=klik,`.
 
 Co znamená který argument, to zkus zjistit sama.
 
-!!! note "Nápověda"
-  * Dokud příkazovou řádku neopustíš úplně, bude fungovat `print`!
-    Kdykoliv budeš chtít zjistit nějakou hodnotu, prostě si ji vypiš.
-  * Kolik má myš tlačítek?
-  * Jak se projeví <kbd>Shift</kbd>+klik?
+> [note] Nápověda
+> * Dokud příkazovou řádku neopustíš úplně, bude fungovat `print`!
+>   Kdykoliv budeš chtít zjistit nějakou hodnotu, prostě si ji vypiš.
+> * Kolik má myš tlačítek?
+> * Jak se projeví <kbd>Shift</kbd>+klik?
 
 
 ## Pokračování příště

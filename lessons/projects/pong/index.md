@@ -366,15 +366,15 @@ def pusteni_klavesy(symbol, modifikatory):
 ```
 {% endfilter %}
 
-!!! note ""
-    Proč vlastně používáme k odebrání <var>n</var>-tice metodu
-    `discard()` místo metody `remove()`,
-    kterou známe ze seznamů a množiny ji také mají?
-    Nezpůsobí totiž chybu, když se pokusíme odebrat
-    prvek, který v množině není. To by se mohlo stát,
-    kdyby uživatel stiskl jednu z funkčních kláves
-    a teprve pak se přepnul do našeho okna a pak jí
-    pustil.
+> [note]
+> Proč vlastně používáme k odebrání <var>n</var>-tice metodu
+> `discard()` místo metody `remove()`,
+> kterou známe ze seznamů a množiny ji také mají?
+> Nezpůsobí totiž chybu, když se pokusíme odebrat
+> prvek, který v množině není. To by se mohlo stát,
+> kdyby uživatel stiskl jednu z funkčních kláves
+> a teprve pak se přepnul do našeho okna a pak jí
+> pustil.
 
 
 Zaregistruj si obě funkce na příslušné události:

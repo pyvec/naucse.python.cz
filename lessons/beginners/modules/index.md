@@ -30,14 +30,14 @@ import math
 print(math.cos(math.pi))
 ```
 
-!!! note "Hvězdičky nechceme"
-
-    Možná jsi v dokumentaci nebo na jiném kurzu viděla příkaz import
-    s hvězdičkou (`*`).
-    Pokud ano, v rámci tohoto kurzu na hvězdičku prosím
-    zapomeň, a importuj místo toho radši celý modul.
-    Až začneš psát větší programy, zjednoduší ti
-    to práci.
+> [note] Hvězdičky nechceme
+>
+> Možná jsi v dokumentaci nebo na jiném kurzu viděl{{a}} příkaz import
+> s hvězdičkou (`*`).
+> Pokud ano, v rámci tohoto kurzu na hvězdičku prosím
+> zapomeň, a importuj místo toho radši celý modul.
+> Až začneš psát větší programy, zjednoduší ti
+> to práci.
 
 
 ## Vlastní moduly

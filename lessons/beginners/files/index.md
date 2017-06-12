@@ -11,15 +11,15 @@ Ke čtení textu ze souboru jsou potřeba tři kroky:
 Vytvoř si v editoru soubor `basnicka.txt` a napiš do něj libovolnou básničku.
 Soubor ulož.
 
-!!! note ""
-    Na uložení souboru s básničkou doporučuji použít
-    stejný editor, jaký používáš na Pythonní programy.
-
-    Používáš-li jiný editor než Atom, dej si při ukládání pozor na kódování:
-    * Nabízí-li ti editor při ukládání výběr kódování, vyber UTF-8.
-    * Je-li k dispozici kódování „UTF-8 bez BOM”, použij to.
-    * Pokud musíš použít Notepad, pak v kódu níže použij místo
-      `'utf-8'` nestandardní `'utf-8-sig'`.
+> [note]
+> Na uložení souboru s básničkou doporučuji použít
+> stejný editor, jaký používáš na Pythonní programy.
+>
+> Používáš-li jiný editor než Atom, dej si při ukládání pozor na kódování:
+> * Nabízí-li ti editor při ukládání výběr kódování, vyber UTF-8.
+> * Je-li k dispozici kódování „UTF-8 bez BOM”, použij to.
+> * Pokud musíš použít Notepad, pak v kódu níže použij místo
+>   `'utf-8'` nestandardní `'utf-8-sig'`.
 
 Potom napiš tento program:
 

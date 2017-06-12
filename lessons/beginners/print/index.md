@@ -50,9 +50,9 @@ a nakonec oznámí <span class="err-exctype">druh chyby</span>
 (v tomto případě je to „syntaktická chyba“),
 a případně nějaké bližší upřesnění.
 
-!!! note "Pro zvídavé"
-    Jak se od téhle chyby liší ta, která nastane, když zkusíš sečíst číslo a řetězec?
-    Nebo když zkusíš dělit nulou?
+> [note] Pro zvídavé
+> Jak se od téhle chyby liší ta, která nastane, když zkusíš sečíst číslo a řetězec?
+> Nebo když zkusíš dělit nulou?
 
 Chybové hlášky můžou být ze začátku těžko pochopitelné,
 zvyknout se na ně dá asi jenom praxí.
