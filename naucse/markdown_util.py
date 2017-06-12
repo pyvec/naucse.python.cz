@@ -15,11 +15,11 @@ pygments_formatter = pygments.formatters.html.HtmlFormatter(
     cssclass='highlight'
 )
 
-_admonition_leading_pattern = re.compile(r'^> *', re.M)
+_admonition_leading_pattern = re.compile(r' *> *', re.M)
 
 
 class BlockGrammar(mistune.BlockGrammar):
-    admonition = re.compile(r'^> *\[(\S+)\]([^\n]*)\n((> *[^\n]*[\n])*)')
+    admonition = re.compile(r'^> *\[(\S+)\]([^\n]*)\n((>[^\n]*[\n]{0,1})*)')
     deflist = re.compile(r'^(([^\n: ][^\n]*\n)+)((:( {0,3})[^\n]*\n)( \5[^\n]*\n|\n)+)')
 
 
@@ -35,7 +35,7 @@ class BlockLexer(mistune.BlockLexer):
         self.tokens.append({
             'type': 'admonition_start',
             'name': m.group(1),
-            'title': m.group(2),
+            'title': m.group(2).strip(),
         })
 
         text = _admonition_leading_pattern.sub('', m.group(3))

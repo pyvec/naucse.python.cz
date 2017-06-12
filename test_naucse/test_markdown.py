@@ -7,8 +7,8 @@ from naucse.markdown_util import convert_markdown
 
 def test_markdown_admonition():
     src = dedent("""
-        !!! note ""
-            Foo *bar*
+        > [note]
+        > Foo *bar*
     """)
     expected = '<div class="admonition note"><p>Foo <em>bar</em></p>\n</div>'
     assert convert_markdown(src) == expected
@@ -16,13 +16,13 @@ def test_markdown_admonition():
 
 def test_markdown_admonition_paragraphs():
     src = dedent("""
-        !!! note ""
-
-            Foo *fi*
-
-            fo
-
-            fum
+        > [note]
+        >
+        > Foo *fi*
+        >
+        > fo
+        >
+        > fum
     """)
     expected = dedent("""
         <div class="admonition note"><p>Foo <em>fi</em></p>
@@ -33,16 +33,36 @@ def test_markdown_admonition_paragraphs():
     assert convert_markdown(src) == expected
 
 
-def test_markdown_admonition_name():
+def test_markdown_admonition_name_and_title():
     src = dedent("""
-        !!! note "NB!"
+        > [warning] NB!
+        >
+        > foo
+    """)
+    expected = dedent("""
+        <div class="admonition warning"><p class="admonition-title">NB!</p>
+        <p>foo</p>
+        </div>
+    """).strip()
+    assert convert_markdown(src) == expected
 
-            foo
+
+def test_markdown_admonition_code():
+    src = dedent("""
+        > [note] NB!
+        >
+        > foo
+        > ```python
+        > cat = Kitty()
+        > cat.make_soundé()
+        > ```
     """)
     expected = dedent("""
         <div class="admonition note"><p class="admonition-title">NB!</p>
         <p>foo</p>
-        </div>
+        <div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">=</span> <span class="n">Kitty</span><span class="p">()</span>
+        <span class="n">cat</span><span class="o">.</span><span class="n">make_soundé</span><span class="p">()</span>
+        </pre></div></div>
     """).strip()
     assert convert_markdown(src) == expected
 
