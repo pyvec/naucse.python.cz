@@ -27,19 +27,38 @@
             <div class="details">{{run.place}}, {{run.time}}</div>
         {% endif %}
 
+        <h2>Materiály</h2>
         <ul>
         {% for mat in session.materials %}
+            {% if mat.url_type == "lesson" %}
             <li>
                 <div>
                     {% if mat.type == "page" %}
                         <a href="{{ lesson_url(lesson=mat.page.lesson, page=mat.page.slug) }}">{{ mat.title }}</a>
                     {% else %}
-                        <a href={{ mat.url }}>{{ mat.title }}</a>
+                        <a href="{{ mat.url }}">{{ mat.title }}</a>
                     {% endif %}
                 </div>
             </li>
+            {% endif %}
         {% endfor %}
         </ul>
+
+        {% if cheatsheet_section %}
+            <h2>Taháky</h2>
+
+            <ul>
+            {% for mat in session.materials %}
+                {% if mat.url_type == "cheatsheet" %}
+                <li>
+                    <div>
+                        <a href="{{ mat.url }}">{{ mat.title }}</a>
+                    </div>
+                </li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        {% endif %}
 
         {% block coverpage_content %}
             {{ content }}
@@ -58,9 +77,7 @@
             </div>
 
             <div class="col text-right">
-            {% if session.next is defined and session.next != None %}
-                <a href="{{ session_url(run.slug, session.next.slug) }}"><span class="hidden-xs-down">Lekce: {{ session.next.title }}</span> →</a>
-            {% endif %}
+                <a href="{{ session_url(run.slug, session.slug, 'back') }}"><span class="hidden-xs-down">Závěr lekce</span> →</a>
             </div>
         </div>
 

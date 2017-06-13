@@ -242,10 +242,28 @@ def session_coverpage(run, session, coverpage):
 
     content = session.get_coverpage_content(run, coverpage, app)
 
-    return render_template("coverpage.html",
+    template = "coverpage.html"
+    if coverpage == "back":
+        template = "backpage.html"
+
+    homework_section = False
+    link_section = False
+    cheatsheet_section = False
+    for mat in session.materials:
+        if mat.url_type == "homework":
+            homework_section = True
+        if mat.url_type == "link":
+            link_section = True
+        if mat.url_type == "cheatsheet":
+            cheatsheet_section = True
+
+    return render_template(template,
                            content=content,
                            session=session,
                            run=run,
                            lesson_url=lesson_url,
                            **vars_functions(run.vars),
-                           edit_path=session.get_edit_path(run, coverpage))
+                           edit_path=session.get_edit_path(run, coverpage),
+                           homework_section=homework_section,
+                           link_section=link_section,
+                           cheatsheet_section=cheatsheet_section)

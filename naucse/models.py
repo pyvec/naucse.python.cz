@@ -182,17 +182,18 @@ def material(root, path, info, base_collection):
     if "lesson" in info:
         lesson = root.get_lesson(info['lesson'], base_collection)
         page = lesson.pages[info.get("page", "index")]
-        return PageMaterial(root, path, page, info.get("title"))
+        return PageMaterial(root, path, page, info.get("type"), info.get("title"))
     elif "url" in info:
-        return UrlMaterial(root, path, info["url"], info["title"])
+        return UrlMaterial(root, path, info["url"], info["title"], info.get("type"))
     else:
         raise ValueError("Unknown material type")
 
 
 class Material(Model):
     """A link – either to a lesson, or an external URL"""
-    def __init__(self, root, path):
+    def __init__(self, root, path, url_type):
         super().__init__(root, path)
+        self.url_type = url_type
         self.prev = None
         self.next = None
         # prev and next is set later
@@ -205,8 +206,8 @@ class PageMaterial(Material):
     type = "page"
     has_navigation = True
 
-    def __init__(self, root, path, page, title=None, subpages=None):
-        super().__init__(root, path)
+    def __init__(self, root, path, page, url_type, title=None, subpages=None):
+        super().__init__(root, path, url_type)
         self.page = page
         self.title = title or page.title
 
@@ -217,7 +218,7 @@ class PageMaterial(Material):
                 if slug == self.page.slug:
                     item = self
                 else:
-                    item = PageMaterial(root, path, subpage,
+                    item = PageMaterial(root, path, subpage, url_type,
                                         subpages=self.subpages)
                 self.subpages[slug] = item
         else:
@@ -239,8 +240,8 @@ class UrlMaterial(Material):
     type = "url"
     has_navigation = False
 
-    def __init__(self, root, path, url, title):
-        super().__init__(root, path)
+    def __init__(self, root, path, url, title, url_type):
+        super().__init__(root, path, url_type)
         self.url = url
         self.title = title
 
