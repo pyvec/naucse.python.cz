@@ -39,8 +39,8 @@ To prosazuje 4 následujících svobody (převzato z [Wikipedie](https://cs.wiki
 Dnes je spousta projektů s otevřeným zdrojovým kódem dostupných na Internetu a každý je používáme. 
 Jejich další sdílení je upraveno jednou z licencí, které tyto základní svobody zaručují. 
 
-!!! note "Pozor"
-    Termíny **open-source** a **free software** nejsou zcela zaměnitelné, ale pro naše účely je zatím můžeme chápat jako synonyma.
+> [note] Pozor
+> Termíny **open-source** a **free software** nejsou zcela zaměnitelné, ale pro naše účely je zatím můžeme chápat jako synonyma.
 
 Spoustu open-source projektů najdete právě na GitHubu. Ne všechny jsou v Pythonu. Ne všechny jsou kvalitní - 
 protože si každý může zveřejnit co chce, na GitHubu se válí spousta nedodělků, opuštěných nápadů a nepodařených experimentů. 
@@ -114,9 +114,9 @@ jen Gitu řekneme, že z něj chceme ten repozitář udělat. To má za následe
 2. Budeme schopni vytvořit verzi tohoto adresáře, ke které se můžeme kdykoliv vrátit.
 3. Můžeme nastavit vzdálené repozitáře, kam chceme změny nahrávat nebo naopak stahovat změny od jiných lidí. 
 
-!!! note "Pozor"
-    Budeme hodně pracovat s příkazovou řádkou. Jestli se s ní ještě nekamarádíš, koukni se na [úvod](../../beginners/cmdline/).
-    Nezapomeň: $ na začátku se nepíše; je tu proto, aby šlo poznat že jde o příkaz.
+> [note] Pozor
+> Budeme hodně pracovat s příkazovou řádkou. Jestli se s ní ještě nekamarádíš, koukni se na [úvod](../../beginners/cmdline/).
+> Nezapomeň: $ na začátku se nepíše; je tu proto, aby šlo poznat že jde o příkaz.
 
 Naším dnešním cílem je ale přispět do projektu, který založil někdo jiný. Proto použijeme příkaz `git clone` ke stažení vzdáleného repozitáře.
 
@@ -274,9 +274,9 @@ Po kliknutí na tlačítko můžeme doplnit popis toho, co tahle změna obnáš�
 Hotovo; teď je na autorech projektu, aby se na změny podívali a přijali ‒ nebo začali diskusi o tom, jak je ještě vylepšit. 
 (Diskutovat se dá na stránce pull requestu, nebo přes mail.)
 
-!!! note "Poznámka"
-    Procházíte-li materiály z domu, musíte počkat, než si někdo žádosti všimne a začlení ji. 
-    To může trvat i pár dní; kdyby to bylo přes týden tak se zkuste se ozvat znovu.
+> [note] Poznámka
+> Procházíte-li materiály z domu, musíte počkat, než si někdo žádosti všimne a začlení ji.
+> To může trvat i pár dní; kdyby to bylo přes týden tak se zkuste se ozvat znovu.
 
 
 ### Aktualizace (`git pull`)

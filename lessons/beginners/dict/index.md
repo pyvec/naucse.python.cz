@@ -135,14 +135,14 @@ dict: slovník
 len: délka
 ```
 
-!!! note ""
-    Existuje i metoda `keys()`, která vrací klíče.
-
-    To, co `keys()`, `values()` a `items()` vrací, jsou speciální objekty,
-    které kromě použití ve `for` umožňují další
-    operace: například pracovat s klíči jako s množinou.
-    V [dokumentaci](https://docs.python.org/3.0/library/stdtypes.html#dictionary-view-objects)
-    Pythonu je to všechno popsáno.
+> [note]
+> Existuje i metoda `keys()`, která vrací klíče.
+>
+> To, co `keys()`, `values()` a `items()` vrací, jsou speciální objekty,
+> které kromě použití ve `for` umožňují další
+> operace: například pracovat s klíči jako s množinou.
+> V [dokumentaci](https://docs.python.org/3.0/library/stdtypes.html#dictionary-view-objects)
+> Pythonu je to všechno popsáno.
 
 V průběhu takového `for` cyklu nesmíš
 do slovníku přidávat záznamy, ani záznamy odebírat:
@@ -199,11 +199,11 @@ popisy_funkci = dict(len='délka', str='řetězec', dict='slovník')
 print(popisy_funkci['len'])
 ```
 
-!!! note ""
-    Pozor na to, že v tomhle případě musí být klíče
-    pythonní „jména“ – musí být použitelné jako jména proměnných.
-    Například takhle nejde zadat jako klíč řetězec
-    `"def"` nebo `"propan-butan"`.
+> [note]
+> Pozor na to, že v tomhle případě musí být klíče
+> pythonní „jména“ – musí být použitelné jako jména proměnných.
+> Například takhle nejde zadat jako klíč řetězec
+> `"def"` nebo `"propan-butan"`.
 
 Pojmenované argumenty jde kombinovat s ostatními
 způsoby vytvoření `dict`.

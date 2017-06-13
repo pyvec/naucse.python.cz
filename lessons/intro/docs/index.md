@@ -75,9 +75,9 @@ která by měla být ignorována.
 Zatím se nebudeme zabývat obsahem těchto souborů, ale zkusíme základní kostru
 dokumentace sestavit do HTML.
 
-!!! note ""
-    Sphinx umí generovat dokumentaci ve více formátech (LaTeX,
-    manuálové stránky atd.), pro nás bude podstatné především HTML.
+> [note]
+> Sphinx umí generovat dokumentaci ve více formátech (LaTeX,
+> manuálové stránky atd.), pro nás bude podstatné především HTML.
 
 ```console
 (env)$ cd docs
@@ -392,16 +392,16 @@ autodoc
 Pro dokumentaci API lze použít `autodoc`, rozšíření Sphinxu, které jsme povolili
 v průvodci.
 
-!!! note ""
-    Nemáte-li toto rozšíření povolené, přidejte jej do `conf.py`:
-
-    ```python
-    extensions = [
-        'sphinx.ext.autodoc',
-        'sphinx.ext.doctest',
-        'sphinx.ext.intersphinx',
-    ]
-    ```
+> [note]
+> Nemáte-li toto rozšíření povolené, přidejte jej do `conf.py`:
+>
+> ```python
+> extensions = [
+>     'sphinx.ext.autodoc',
+>     'sphinx.ext.doctest',
+>     'sphinx.ext.intersphinx',
+> ]
+> ```
 
 Rozšíření `autodoc` se používá takto:
 

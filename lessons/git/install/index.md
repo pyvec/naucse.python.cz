@@ -105,13 +105,13 @@ zapojit do týmových projektů.
 Každopádně, jméno i e-mail jdou kdykoli změnit
 tím, že konfigurační příkazy zadáš znovu.
 
-!!! note ""
-    Pokud se bojíš spamu, neboj: nezačneš ho dostávat víc
-    než při normálním používání e-mailu.
-    Adresa se zobrazí jen lidem, kteří si stáhnou projekt,
-    do kterého jsi přispíval{{a}}.
-    Spammeři se většinou zaměřují na méně technicky zdatné
-    lidi, než jsou uživatelé Gitu :)
+> [note]
+> Pokud se bojíš spamu, neboj: nezačneš ho dostávat víc
+> než při normálním používání e-mailu.
+> Adresa se zobrazí jen lidem, kteří si stáhnou projekt,
+> do kterého jsi přispíval{{a}}.
+> Spammeři se většinou zaměřují na méně technicky zdatné
+> lidi, než jsou uživatelé Gitu :)
 
 Dále si můžeš nastavit barevné výpisy – pokud si tedy
 (jako někteří autoři Gitu) nemyslíš, že příkazová

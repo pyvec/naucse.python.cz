@@ -28,11 +28,11 @@ My to uděláme co nejjednodušeji, ať se rychle dostaneme k jádru věci:
 * Vytvoř si nový token ("Generate new token"). Nezaškrtávej žádná oprávnění navíc.
 * Zkopíruj si heslo, které takto dostaneš, do souboru `token.txt`.
 
-!!! warning "Pozor!"
-    Vygenerovaný kód je heslo, které držitele
-    opravňuje pracovat s Githubem pod tvým jménem!
-    Drž ho v tajnosti. Kdyby se přece jen dostalo „ven”, na stránce
-    [Personal Accesss Tokens](https://github.com/settings/tokens) ho deaktivuj.
+> [warning] Pozor!
+> Vygenerovaný kód je heslo, které držitele
+> opravňuje pracovat s Githubem pod tvým jménem!
+> Drž ho v tajnosti. Kdyby se přece jen dostalo „ven”, na stránce
+> [Personal Accesss Tokens](https://github.com/settings/tokens) ho deaktivuj.
 
     
 ## Requests

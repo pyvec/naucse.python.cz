@@ -28,9 +28,9 @@ while True:
 Program se dá přerušit zmáčknutím
 <kbd>Ctrl</kbd>+<kbd>C</kbd>.
 
-!!! note ""
-    Tahle klávesová zkratka vyvolá v programu chybu,
-    a program se – jako po každé chybě – ukončí.
+> [note]
+> Tahle klávesová zkratka vyvolá v programu chybu,
+> a program se – jako po každé chybě – ukončí.
 
 A nakonec, existuje příkaz `break`, který z cyklu „vyskočí“:
 začnou se hned vykonávat příkazy za cyklem.

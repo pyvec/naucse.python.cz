@@ -1,16 +1,16 @@
 # MicroPython na malém zařízení
 
-!!! note "Tahle sekce bohužel nejde jednoduše projít z domu."
-    Využíváme speciální vybavení, které je potřeba nejdřív
-    sehnat. Máš-li možnost se dostat na sraz, nebo
-    aspoň kontaktovat organizátory, doporučujeme shánět
-    spíš tímto způsobem.
-    Případně jde případný hardware objednat přes Internet,
-    typicky z čínských e-shopů.
+> [note] Tahle sekce bohužel nejde jednoduše projít z domu.
+> Využíváme speciální vybavení, které je potřeba nejdřív
+> sehnat. Máš-li možnost se dostat na sraz, nebo
+> aspoň kontaktovat organizátory, doporučujeme shánět
+> spíš tímto způsobem.
+> Případně jde případný hardware objednat přes Internet,
+> typicky z čínských e-shopů.
 
-!!! note ""
-    Materiály byly připraveny pro celodenní workshop;
-    na kratší lekcích může být něco vynecháno.
+> [note]
+> Materiály byly připraveny pro celodenní workshop;
+> na kratší lekcích může být něco vynecháno.
 
 {{ figure(
     img=static('nodemcu-devkit.jpg'),
@@ -32,10 +32,10 @@ Pak přístroj vyndej z obalu. Snaž se ho držet za
 hrany a příliš se nedotýkat elektroniky a kovových
 částí.
 
-!!! note ""
-    Obal bude nejspíš roztržený, protože organizátoři
-    na destičku před začátkem kurzu nainstalovali
-    MicroPython.
+> [note]
+> Obal bude nejspíš roztržený, protože organizátoři
+> na destičku před začátkem kurzu nainstalovali
+> MicroPython.
 
 Teď, když destičku držíš v ruce, si
 pojďme projít její základní součásti.
@@ -101,10 +101,10 @@ Ten budeme později používat na nahrávání kódu:
 Pak propoj modul s počítačem přes USB kabel,
 jako kdybys připojoval{{a}} třeba mobil.
 
-!!! note ""
-    Je potřeba použít kvalitní datový kabel.
-    Nekvalitní kabely (např. spousta kabelů k
-    nabíječkám) jsou často nepoužitelné.
+> [note]
+> Je potřeba použít kvalitní datový kabel.
+> Nekvalitní kabely (např. spousta kabelů k
+> nabíječkám) jsou často nepoužitelné.
 
 Dál postupuj podle operačního systému na svém počítači.
 Kdyby něco nefungovalo, poraď se s koučem.
@@ -344,11 +344,11 @@ musíš ji zapojit správným směrem – plus na plus, mínus na mínus.
 Opačně dioda svítit nebude. Dobrá zpráva je, že
 když diodu otočíš špatně, nic se jí nestane.
 
-!!! note ""
-    Základní vlastnost *diody* je ta, že pustí
-    elektrický proud jen jedním směrem. Svítící dioda
-    – *angl. Light Emitting Diode, LED* – ještě k
-    tomu navíc svítí.
+> [note]
+> Základní vlastnost *diody* je ta, že pustí
+> elektrický proud jen jedním směrem. Svítící dioda
+> – *angl. Light Emitting Diode, LED* – ještě k
+> tomu navíc svítí.
 
 Je potřeba rozpoznat rozdíl mezi nožičkami diody.
 *Katoda* (`-`) je ta kratší nožička.
@@ -393,15 +393,15 @@ Na nožičce `G` je 0 voltů; na nožičce
 `3V` jsou 3,3 volty – je tedy mezi nimi rozdíl 3,3 V, přesně tolik,
 kolik modrá LED potřebuje ke svícení.
 
-!!! note ""
-    Samotná hodnota napětí nedává smysl – například
-    říct, že je na jednom místě 3,3 V je nepřesné.
-    Hodnota ve voltech se vždycky musí k něčemu vztahovat;
-    vyjadřuje rozdíl mezi dvěma místy.
-    V elektronice používáme rozdíl oproti „zemi” – napětí
-    na nožičce `G`. Stanovíme si že tam je
-    0 voltů, a ostatní napětí počítáme vzhledem k ní.
-    Na nožičce `3V` je tedy napětí 3,3 V vzhledem k zemi.
+> [note]
+> Samotná hodnota napětí nedává smysl – například
+> říct, že je na jednom místě 3,3 V je nepřesné.
+> Hodnota ve voltech se vždycky musí k něčemu vztahovat;
+> vyjadřuje rozdíl mezi dvěma místy.
+> V elektronice používáme rozdíl oproti „zemi” – napětí
+> na nožičce `G`. Stanovíme si že tam je
+> 0 voltů, a ostatní napětí počítáme vzhledem k ní.
+> Na nožičce `3V` je tedy napětí 3,3 V vzhledem k zemi.
 
 ## Výstup
 
@@ -428,19 +428,19 @@ Když objekt Pin vytvoříš s `Pin.OUT`, MicroPython na něm bude nastavovat
 napětí – buď 3,3V (`value(1)`) nebo 0V (`value(0)`).
 A tak se dá s diodou blikat.
 
-!!! note ""
-    Číslování nožiček je bohužel dvojí – nožička
-    označená jako `D5` má v procesoru přiřazené číslo 14.
-    Třída `Pin` v MicroPythonu používá číslování procesoru.
-    Naštěstí máš [tahák](https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf),
-    kde snadno dohledáš že `D5` a `Pin(14)` jsou dvě jména stejné nožičky.
+> [note]
+> Číslování nožiček je bohužel dvojí – nožička
+> označená jako `D5` má v procesoru přiřazené číslo 14.
+> Třída `Pin` v MicroPythonu používá číslování procesoru.
+> Naštěstí máš [tahák](https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf),
+> kde snadno dohledáš že `D5` a `Pin(14)` jsou dvě jména stejné nožičky.
 
 Zvládneš napsat program, který zařídí, aby dioda
 svítila když je zmáčknuté tlačítko `FLASH`, jinak ne?
 
-!!! note ""
-    Nápověda: Můžeš pořád dokola zjišťovat stav tlačítka
-    a nastavovat podle něj stav LED.
+> [note]
+> Nápověda: Můžeš pořád dokola zjišťovat stav tlačítka
+> a nastavovat podle něj stav LED.
 
 {% filter solution %}
 ```python
@@ -527,10 +527,10 @@ while True:
 
 Zkus si pohrát shodnotami pro `time.sleep`.
 
-!!! note ""
-    Takhle fungují prakticky všechna stmívatelná LED
-    světla – rychlé blikání je ekonomičtější a přesnější
-    než např. nastavování nižšího napětí.
+> [note]
+> Takhle fungují prakticky všechna stmívatelná LED
+> světla – rychlé blikání je ekonomičtější a přesnější
+> než např. nastavování nižšího napětí.
 
 Dokážeš napsat program, který diodu postupně, plynule rozsvítí?
 

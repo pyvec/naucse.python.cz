@@ -33,9 +33,9 @@ Nejjednodušší příkaz Pythonu je prosté číslo. Zkus to:
 -8.3
 ```
 
-!!! note ""
-    Zobáčky `>>>` i odpověď vypisuje sám Python!
-    {{ gnd('sám', 'sama') }} zadej jen číslo a Enter.
+> [note]
+> Zobáčky `>>>` i odpověď vypisuje sám Python!
+> {{ gnd('sám', 'sama') }} zadej jen číslo a Enter.
 
 Čísla umí Python i sečítat. Třeba takhle:
 

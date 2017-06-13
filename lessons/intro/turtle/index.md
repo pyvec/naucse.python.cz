@@ -16,11 +16,11 @@ $ python
 >>>
 ```
 
-!!! note ""
-    (Znaky `>` a `$` píše počítač, ne ty.
-    Na Windows bude místo `$` znak
-    `>`, a před `$` nebo
-    `>` může být ještě něco dalšího.)
+> [note]
+> (Znaky `>` a `$` píše počítač, ne ty.
+> Na Windows bude místo `$` znak
+> `>`, a před `$` nebo
+> `>` může být ještě něco dalšího.)
 
 Pak napiš:
 
@@ -72,9 +72,9 @@ ale teď přejdeme zase na soubory.
 
 Vytvoř si soubor <code><span class="pythondir">~/{{ rootname }}</span>/03/zelva.py</code>.
 
-!!! note ""
-    Adresář <code class="pythondir">~/{{ rootname }}</code>
-    se u tebe může jmenovat jinak – viz [instalace Pythonu]({{ lesson_url('beginners/install') }}).
+> [note]
+> Adresář <code class="pythondir">~/{{ rootname }}</code>
+> se u tebe může jmenovat jinak – viz [instalace Pythonu]({{ lesson_url('beginners/install') }}).
 
 Jestli chceš pro soubor použít jiné jméno, můžeš, ale 
 nepojmenovávej ho `turtle.py`.
@@ -83,8 +83,8 @@ Do souboru napiš příkazy na nakreslení obrázku,
 a na konec zavolej funkci `exitonclick`
 (importovanou z modulu `turtle`).
 
-!!! note "Otázka"
-    Co dělá funkce <code>exitonclick</code>?
+> [note] Otázka
+> Co dělá funkce <code>exitonclick</code>?
 
 Až ti budeš mít hotové, zkusíme začít kreslit
 obrázky:
@@ -295,10 +295,10 @@ větší a větší.
 
 ![Želva a přerušovaná čára](static/turtle-dashed2.png)
 
-!!! note "Nápověda"
-
-    Co přesně dělá příkaz `for`?
-    Dá se využít proměnná, kterou nastavuje?
+> [note] Nápověda
+>
+> Co přesně dělá příkaz `for`?
+> Dá se využít proměnná, kterou nastavuje?
 
 {% filter solution %}
 ```python

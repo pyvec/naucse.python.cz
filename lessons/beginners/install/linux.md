@@ -139,9 +139,9 @@ Zvolený adresář po vytvoření nesmíš přesouvat jinam – když to udělá
 přestane virtuální prostředí fungovat.
 Proto ho nedoporučuji vytářet na Ploše.
 
-!!! note ""
-    Kdybys někdy chtěl{{a}} adresář přece jen přesunout,
-    musel{{a}} bys smazat virtuální prostředí a vytvořit nové.
+> [note]
+> Kdybys někdy chtěl{{a}} adresář přece jen přesunout,
+> musel{{a}} bys smazat virtuální prostředí a vytvořit nové.
 
 Teď když je tenhle adresář vytvořený, otevři příkazovou řádku
 a příkazem `cd` se do něj přepni:

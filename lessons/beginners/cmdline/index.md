@@ -61,19 +61,19 @@ $
 
 Podle systému se potom liší i samotné příkazy, které budeš zadávat.
 
-!!! note "Velikost písma"
-    Je-li ve Windows moc malé písmo, klikni na ikonku okna a vyber Možnosti.
-    V záložce Písmo si pak můžeš vybrat větší font.
-    <!-- XXX: are the Czech names correct? -->
-
-    {{ figure(
-        img=static('windows-cmd-properties.png'),
-        alt='Screenshot menu příkazové řádky',
-    ) }}
-
-    Na ostatních systémech hledej v nastavení, nebo zkus
-    <kbd>Ctrl</kbd>+<kbd>+</kbd> a
-    <kbd>Ctrl</kbd>+<kbd>-</kbd> (příp. se Shift).
+> [note] Velikost písma
+> Je-li ve Windows moc malé písmo, klikni na ikonku okna a vyber Možnosti.
+> V záložce Písmo si pak můžeš vybrat větší font.
+> <!-- XXX: are the Czech names correct? -->
+>
+> {{ figure(
+     img=static('windows-cmd-properties.png'),
+     alt='Screenshot menu příkazové řádky',
+) }}
+>
+> Na ostatních systémech hledej v nastavení, nebo zkus
+> <kbd>Ctrl</kbd>+<kbd>+</kbd> a
+> <kbd>Ctrl</kbd>+<kbd>-</kbd> (příp. se Shift).
 
 
 ## První příkaz
@@ -93,13 +93,13 @@ pocitac\Helena
 
 
 
-!!! note ""
-    Znak `$` nebo `>` je v ukázce jen proto, aby bylo jasné, že zadáváme
-    příkaz do příkazové řádky.
-    Vypíše ho počítač, většinou ještě s něčím před ním,
-    takže ho nepiš sama! Zadej jen `whoami` a <kbd>Enter</kbd>.
-
-    Stejně tak počítač sám vypíše přihlašovací jméno.
+> [note]
+> Znak `$` nebo `>` je v ukázce jen proto, aby bylo jasné, že zadáváme
+> příkaz do příkazové řádky.
+> Vypíše ho počítač, většinou ještě s něčím před ním,
+> takže ho nepiš sama! Zadej jen `whoami` a <kbd>Enter</kbd>.
+>
+> Stejně tak počítač sám vypíše přihlašovací jméno.
 
 
 ## Aktuální adresář
@@ -172,11 +172,10 @@ $ pwd
 C:\Users\helena\Desktop
 {% endcall %}
 
-!!! note "Poznámka pro Windows"
-    Pokud přecházíš do adresáře na jiném disku,
-    například `D:` místo `C:`, je potřeba kromě `cd`
-    zadat jméno disku s dvojtečkou jako zvláštní příkaz (např. `D:`).
-
+> [note] Poznámka pro Windows
+> Pokud přecházíš do adresáře na jiném disku,
+> například `D:` místo `C:`, je potřeba kromě `cd`
+> zadat jméno disku s dvojtečkou jako zvláštní příkaz (např. `D:`).
 
 ## Vytvoření adresáře
 
@@ -246,10 +245,10 @@ Teď můžeš smazat vytvořený adresář `{{ dirname }}`.
 K tomu použij příkaz `rm` nebo `rmdir`
 (z *remove* – odstraň, resp. *remove directory* – odstraň adresář).
 
-!!! warning "Pozor!"
-    Příkazová řádka nepoužívá odpadkový koš!
-    Všechno se nadobro smaže. Takže si dobře překontroluj, že mažeš
-    správný adresář.
+> [warning] Pozor!
+> Příkazová řádka nepoužívá odpadkový koš!
+> Všechno se nadobro smaže. Takže si dobře překontroluj, že mažeš
+> správný adresář.
 
 Na Unixu za tento příkaz musíš napsat ještě jedno slovo: `-rv` (minus,
 `r`, `v`).

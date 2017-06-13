@@ -15,12 +15,12 @@ zhruba stejně.
 Až ho zprovozníme, nebudeme potřebovat materiály zvlášť pro Linux, zvlášť pro
 Windows, a zvlášť pro Mac.
 
-!!! note ""
-    V budoucnu využijeme druhou výhodu: každé virtuální prostředí je oddělené od
-    ostatních, takže když doinstalujeme nějakou knihovnu (rozšíření pro Python),
-    projeví se to jen v jednom virtuálním prostředí.
-    Pokud by se při práci na projektu něco pokazilo, neohrozí to další projekty
-    ve tvém počítači.
+> [note]
+> V budoucnu využijeme druhou výhodu: každé virtuální prostředí je oddělené od
+> ostatních, takže když doinstalujeme nějakou knihovnu (rozšíření pro Python),
+> projeví se to jen v jednom virtuálním prostředí.
+> Pokud by se při práci na projektu něco pokazilo, neohrozí to další projekty
+> ve tvém počítači.
 
 Instalace samotná je na každém počítači jiná.
 Vyber si stránku podle svého operačního systému:

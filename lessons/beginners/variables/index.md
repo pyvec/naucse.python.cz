@@ -3,12 +3,12 @@
 Teď se vrátíme do základní školy, a zkusíme si napsat program,
 který vypočítá obsah a obvod čtverce u kterého známe délku strany.
 
-!!! note "Matematika!"
-    Doufám, že tenhle příklad nikoho neodradí,
-    ale „počítač“ je holt od slova *počítat*.
-    Není třeba se děsit;
-    na základy programování si vystačíme s matematickými
-    znalostmi ze základní školy.
+> [note] Matematika!
+> Doufám, že tenhle příklad nikoho neodradí,
+> ale „počítač“ je holt od slova *počítat*.
+> Není třeba se děsit;
+> na základy programování si vystačíme s matematickými
+> znalostmi ze základní školy.
 
 Pro připomenutí, obvod čtverce se stranou <var>a</var>
 se dá vypočítat jako <var>O</var> = 4<var>a</var>,
@@ -98,23 +98,23 @@ Kromě toho dobrá jména usnadňují čtení programu:
 u `4 * 183` není příliš jasné, co ta čísla znamenají.
 
 
-!!! extra-activity ""
-
-    ## Kruhy
-
-    *Tohle je příklad navíc! Klidně ho přeskoč.*
-
-    Změna zadání!
-    Zkus program doplnit tak, aby kromě čtverce počítal
-    i obvod a obsah kruhu se stejným poloměrem,
-    jakou má čtverec stranu.
-
-    Pro připomenutí, obvod kruhu s poloměrem <var>r</var>
-    je <var>o</var> = 2π<var>r</var>, obsah <var>S</var> = π<var>r</var>²,
-    a π je zhruba 3,1415926.
-
-    Všechna čísla, která matematici označují jen jedním
-    písmenkem (klidně řeckým), vhodně pojmenuj.
+> [extra-activity]
+>
+> ## Kruhy
+>
+> *Tohle je příklad navíc! Klidně ho přeskoč.*
+>
+> Změna zadání!
+> Zkus program doplnit tak, aby kromě čtverce počítal
+> i obvod a obsah kruhu se stejným poloměrem,
+> jakou má čtverec stranu.
+>
+> Pro připomenutí, obvod kruhu s poloměrem <var>r</var>
+> je <var>o</var> = 2π<var>r</var>, obsah <var>S</var> = π<var>r</var>²,
+> a π je zhruba 3,1415926.
+>
+> Všechna čísla, která matematici označují jen jedním
+> písmenkem (klidně řeckým), vhodně pojmenuj.
 
 
 ## Komentáře

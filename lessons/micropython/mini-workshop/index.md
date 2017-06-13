@@ -1,9 +1,9 @@
 
-!!! note ""
-
-    Tento workshop nejde projít jen tak z domu – je potřeba speciální příprava.
-    Pokyny pro organizátory najdeš
-    na [podstránce]({{ subpage_url('organizers') }}).
+> [note]
+>
+> Tento workshop nejde projít jen tak z domu – je potřeba speciální příprava.
+> Pokyny pro organizátory najdeš
+> na [podstránce]({{ subpage_url('organizers') }}).
 
 Jedna varianta Pythonu, MicroPython, běží na malých zařízeních.
 Taková zařízení si teď můžeš vyzkoušet.

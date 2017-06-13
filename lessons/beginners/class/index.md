@@ -26,11 +26,11 @@ Kdyby řetězce nebyly objekty, musel by Python mít
 spoustu funkcí jako `str_upper` a `str_count`.
 Objekty spojují data a funkčnost dohromady.
 
-!!! note ""
-    Možná namítneš, že třeba `len` je funkce.
-    Je to tak, Python není „stoprocentně“ objektový jazyk.
-    Funkce `len` ale funguje i na
-    objektech, které s řetězci nemají nic společného.
+> [note]
+> Možná namítneš, že třeba `len` je funkce.
+> Je to tak, Python není „stoprocentně“ objektový jazyk.
+> Funkce `len` ale funguje i na
+> objektech, které s řetězci nemají nic společného.
 
 # Třídy
 
@@ -56,9 +56,9 @@ samotná metoda je společná všem řetězcům.
 Tohle společné chování určuje
 *typ* (angl. *type*) neboli *třída* (angl. *class*) daného objektu.
 
-!!! note ""
-    V historických verzích Pythonu byl rozdíl mezi „typem“
-    a „třídou“, ale dnes už jsou to synonyma.
+> [note]
+> V historických verzích Pythonu byl rozdíl mezi „typem“
+> a „třídou“, ale dnes už jsou to synonyma.
 
 Typ objektu umí zjistit funkce `type`:
 
@@ -142,10 +142,10 @@ do proměnné daného jména (tady `Kotatko`).
 Třídy se tradičně pojmenovávají s velkým písmenem,
 aby se nepletly s „normálními“ hodnotami.
 
-!!! note ""
-    Základní třídy (`str`, `int` atd.)
-    velká písmena nemají, a to hlavně z historických
-    důvodů – původně to byly opravdu funkce.
+> [note]
+> Základní třídy (`str`, `int` atd.)
+> velká písmena nemají, a to hlavně z historických
+> důvodů – původně to byly opravdu funkce.
 
 V těle třídy můžeš definovat metody, které vypadají
 úplně jako funkce – jen mají první argument `self`.
@@ -198,18 +198,18 @@ právě v atributech jednotlivých objektů.
 Podle atributů jako jméno můžeš jednotlivá koťátka
 rozlišit.
 
-!!! note ""
-    Asi sis všiml{{a}}, že tečkou se dostaneš jak k metodám
-    převzaným z třídy, tak k atributům specifickým
-    pro konkrétní objekt.
-    Co se stane, když má atribut stejné jméno jako
-    metoda z třídy? Vyzkoušej si to:
-
-    ```python
-    micka = Kotatko()
-    micka.zamnoukej = 12345
-    micka.zamnoukej()
-    ```
+> [note]
+> Asi sis všiml{{a}}, že tečkou se dostaneš jak k metodám
+> převzaným z třídy, tak k atributům specifickým
+> pro konkrétní objekt.
+> Co se stane, když má atribut stejné jméno jako
+> metoda z třídy? Vyzkoušej si to:
+>
+> ```python
+> micka = Kotatko()
+> micka.zamnoukej = 12345
+> micka.zamnoukej()
+> ```
 
 ## Parametr `self`
 
@@ -240,9 +240,9 @@ Co se stalo? Výraz `mourek.zamnoukej` udělá *metodu*, která, když ji zavol�
 předá objekt `mourek` jako první argument
 funkce `zamnoukej`.
 
-!!! note ""
-    Tohle je to, čím se *metoda* liší od normální *funkce*:
-    metoda si „pamatuje“ objekt, na kterém pracuje.
+> [note]
+> Tohle je to, čím se *metoda* liší od normální *funkce*:
+> metoda si „pamatuje“ objekt, na kterém pracuje.
 
 A takový první argument, který obsahuje konkrétní
 objekt právě definované třídy, se tradičně pojmenovává `self`.
