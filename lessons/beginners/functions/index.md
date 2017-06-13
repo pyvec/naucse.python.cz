@@ -69,7 +69,7 @@ dost dobře ani psát, ani číst.
 >
 > <!--z http://catpad.net/michael/apl/ -->
 >
-> ⍎’⎕’,∈Nρ⊂S←’←⎕←(3=T)∨M∧2=T←⊃+/(V⌽”⊂M),(V⊖”⊂M),(V,⌽V)⌽”(V,V←1¯1)⊖”⊂M’
+>     ⍎’⎕’,∈Nρ⊂S←’←⎕←(3=T)∨M∧2=T←⊃+/(V⌽”⊂M),(V⊖”⊂M),(V,⌽V)⌽”(V,V←1¯1)⊖”⊂M’
 
 
 V Pythonu je operátorů poměrně málo.

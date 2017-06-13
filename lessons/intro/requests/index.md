@@ -93,7 +93,7 @@ Po vytvoření najdeš na kartě *Keys and Access Tokens* **API Key** a **API Se
 Pozor, jedná prakticky o hesla k tvému Twitter účtu,
 a proto by je nikdo kromě tebe neměl vidět.
 
-> [note] Ochrana přihlašovacích tokenů
+> [warning] Ochrana přihlašovacích tokenů
 > Ještě jednou – *API Key* a *API Secret* se chovají jako hesla.
 > Nikomu je nesmíš ukazovat!
 > Stane-li se přesto, že se k nim dostane někdo nepovolaný, na kartě

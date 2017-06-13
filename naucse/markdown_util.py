@@ -15,7 +15,7 @@ pygments_formatter = pygments.formatters.html.HtmlFormatter(
     cssclass='highlight'
 )
 
-_admonition_leading_pattern = re.compile(r' *> *', re.M)
+_admonition_leading_pattern = re.compile(r'^ *> ?', flags=re.M)
 
 
 class BlockGrammar(mistune.BlockGrammar):

@@ -67,6 +67,15 @@ def test_markdown_admonition_code():
     assert convert_markdown(src) == expected
 
 
+def test_markdown_admonition_html():
+    src = dedent("""
+            > [note]
+            > Foo <var>bar</var>
+        """)
+    expected = '<div class="admonition note"><p>Foo <var>bar</var></p>\n</div>'
+    assert convert_markdown(src) == expected
+
+
 def test_markdown_definition_list():
     src = dedent("""
         Bla Bla

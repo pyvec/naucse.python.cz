@@ -276,7 +276,7 @@ Změny se ukazují po řádcích.
 odebrané řádky; zeleně s <tt class="green">+</tt>
 řádky přidané.
 
-> [note] Test
+> [note]
 > Změnilo-li se na řádku jen jedno slovo nebo i písmeno,
 > celý řádek se ukáže jako smazaný a zase přidaný.
 > Dá se to nastavit i jinak, když je potřeba,

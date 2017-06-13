@@ -174,7 +174,10 @@ C:\Users\helena\Desktop
 
 > [note] Poznámka pro Windows
 > Pokud přecházíš do adresáře na jiném disku,
-> [příklad] D:` místo `C:`, je potřeba kromě `cd> > [dat jmé]n disku s dvojtečkou jako zvláštní příkaz (např. `D:`)> ## Vytvoření adresáře
+> například `D:` místo `C:`, je potřeba kromě `cd`
+> zadat jméno disku s dvojtečkou jako zvláštní příkaz (např. `D:`).
+
+## Vytvoření adresáře
 
 Co takhle si vytvořit adresář na {{ purpose }}? To se dělá příkazem `mkdir`
 (z angl. *make directory* – vytvořit adresář).
