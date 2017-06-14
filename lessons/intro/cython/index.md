@@ -490,7 +490,7 @@ Ke každému řádku se navíc dá kliknutím ukázat odpovídající kód v C (
 protože řeší věci jako zpětnou kompatibilitu a ošetřování chyb, a navíc používá hodně pomocných
 maker).
 
-Obecně nebývá problém mít "žluté" řádky na úrovni funkce, které se provádí pouze jednou.
+Obecně nebývá problém mít „žluté“ ty řádky, které se ve funkci provádí pouze jednou.
 Ale v cyklech, zvláště těch třikrát zanořených, se autor rozšíření typicky snaží žlutým řádkům
 vyhnout.
 Nejjednodušší způsob, jak toho docílit, je doplnění statických informací o typech.
@@ -661,7 +661,7 @@ Seznam dalších direktiv najdete v [dokumentaci][directives].
 Cython podporuje ještě blok `with cython.nogil:`, který je podobný direktivám,
 ale dá se použít jen s `with`.
 V rámci tohoto bloku je odemčený GIL (globální zámek).
-Smí se použít pouze pokud nepracujeme s pythonními objekty – například když
+Smí se použít, pouze pokud nepracujeme s pythonními objekty – například když
 operujeme jen na obsahu už existujících maticí.
 Opak je `with cython.gil:`, kterým zámek zase zamkneme – například když
 potřebujeme vyhodit výjimku.

@@ -4,7 +4,7 @@ Kromě cyklu `for` máme ještě druhý typ cyklu uvozený příkazem `while`
 (angl. *dokud*).
 Na rozdíl od `for`, kde *předem známe počet opakování*,
 se while používá, když cyklus závisí na nějaké podmínce.
-Tělo cyklu se opakuje dokud je podmínka splněna. Například:
+Tělo cyklu se opakuje, dokud je podmínka splněna. Například:
 
 ```python
 odpoved = input('Řekni Ááá! ')
@@ -64,7 +64,7 @@ Dokážeš napsat tenhle program?
 ## Oko bere
 
 * Začínáš s 0 body.
-* Počítač v každém kole vypíše kolik máš bodů
+* Počítač v každém kole vypíše, kolik máš bodů,
   a zeptá se hráče, jestli chce pokračovat.
 * Pokud hráč odpoví „ne“, hra končí.
 * Pokud hráč odpoví „ano“, počítač „otočí kartu“

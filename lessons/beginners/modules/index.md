@@ -32,7 +32,7 @@ print(math.cos(math.pi))
 
 > [note] Hvězdičky nechceme
 >
-> Možná jsi v dokumentaci nebo na jiném kurzu viděla příkaz import
+> Možná jsi v dokumentaci nebo na jiném kurzu viděl{{a}} příkaz import
 > s hvězdičkou (`*`).
 > Pokud ano, v rámci tohoto kurzu na hvězdičku prosím
 > zapomeň a importuj místo toho radši celý modul.
@@ -45,7 +45,7 @@ print(math.cos(math.pi))
 A teď to hlavní!
 Můžeš vytvořit vlastní importovatelný modul
 a to jen tak, že uděláš pythonní soubor.
-Funkce, které v něm nadefinuješ a proměnné,
+Funkce, které v něm nadefinuješ, a proměnné,
 které v něm nastavíš, pak budou k dispozici tam, kde modul naimportuješ.
 
 Zkus si to!

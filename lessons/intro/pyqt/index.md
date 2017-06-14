@@ -90,7 +90,7 @@ O Qt, PyQt a PySide
 
 [PyQt](https://riverbankcomputing.com/software/pyqt) je knihovna, která umožňuje použít Qt z Pythonu.
 Na rozdíl od samotného Qt je licencovaná pod [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html), která (stručně řečeno) vyžaduje, aby programy napsané s použitím PyQt byly šířeny pod stejnou licencí a se zdrojovým kódem.
-Tedy: kdokoliv někdo dostane kopii programu, musí mít možnost dostat odpovídající zdrojový kód a má možnost tento kód dál šířit pod stejnou licencí.
+Tedy: kdokoliv, kdo dostane kopii programu, musí mít možnost dostat odpovídající zdrojový kód a má možnost tento kód dál šířit pod stejnou licencí.
 
 Pokud by se vám tato licence nelíbila, je možnost použít [PySide](https://wiki.qt.io/PySide), které má permisivnější licenci a téměř stejné API jako PyQt, ale není tak stabilní.
 
@@ -123,7 +123,7 @@ Tady jsou některé zvláštnosti, na které se můžete připravit.
 
 ### Jména a dokumentace
 
-Qt pojmenovává funkce, metody a atributy konvencí `camelCase`, místo pythonnního `snake_case`.
+Qt pojmenovává funkce, metody a atributy konvencí `camelCase`, místo pythonistického `snake_case`.
 PyQt tuto konvenci nemění: je užitečnější používat identická jména, a kromě toho knihovna PyQt vznikla ještě před PEP 8.
 
 Hledáte-li dokumentaci, doporučuji zadat do vyhledávače `qt5 <hledaný objekt>`.

@@ -84,7 +84,7 @@ Jak na to? Máme dvě možnosti.
 ## Organizace modulů podle závislostí
 
 První možnost je importovat funkci `tah` v modulu `ai`
-a používat ji odtam.
+a používat ji odtamtud.
 To je jednoduché, ale nerespektuje účel modulu
 `ai`, který má obsahovat jenom logiku
 vybírání tahu počítače, a ne pomocné funkce, které

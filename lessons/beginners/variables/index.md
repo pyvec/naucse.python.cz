@@ -126,7 +126,7 @@ za který můžeš napsat úplně cokoliv – až do konce
 
 Komentáře jsou důležité: programy nečte jen počítač, ale i lidé.
 Do komentářů si můžeš poznamenat, co dělá celý program,
-vysvětlit, jak funguje nějaká složitější část
+vysvětlit, jak funguje nějaká složitější část,
 nebo vyjasnit něco, co není jasné přímo z programu.
 
 Vždycky, když píšeš program, snaž se vžít do role někoho,

@@ -274,15 +274,9 @@ Po kliknutí na tlačítko můžeme doplnit popis toho, co tahle změna obnáš�
 Hotovo; teď je na autorech projektu, aby se na změny podívali a přijali ‒ nebo začali diskusi o tom, jak ji ještě vylepšit.
 (Diskutovat se dá na stránce pull requestu nebo přes mail.)
 
-<<<<<<< 806633fc60ec4f2fdd194cd0af79e6764c2e6ff8
 > [note] Poznámka
 > Procházíte-li materiály z domu, musíte počkat, než si někdo žádosti všimne a začlení ji.
-> To může trvat i pár dní; kdyby to bylo přes týden tak se zkuste se ozvat znovu.
-=======
-!!! note "Poznámka"
-    Procházíte-li materiály z domu, musíte počkat, než si někdo žádosti všimne a začlení ji. 
-    To může trvat i pár dní; kdyby to bylo přes týden, tak se zkuste se ozvat znovu.
->>>>>>> Fix typos & grammar in Git lessons.
+> To může trvat i pár dní; kdyby to bylo přes týden, tak se zkuste se ozvat znovu.
 
 
 ### Aktualizace (`git pull`)

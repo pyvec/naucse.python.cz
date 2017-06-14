@@ -198,7 +198,7 @@ Untracked files:
 
 Některé programy automaticky vytvářejí pomocné soubory.
 Často to dělají správci souborů (často `.Thumbnails` na Linuxu,
-`.DS_Store` naMacu nebo `Thumbs.db` na Windows).
+`.DS_Store` na Macu nebo `Thumbs.db` na Windows).
 Některé editory si taky nechávají na disku nastavení.
 
 Podobné soubory se dají dát do `.gitignore`.
@@ -211,7 +211,7 @@ a programy.
 > ten program, který používáš ty, použij `.gitignore`.
 > Příklad je adresář `__pycache__`, který vytváří Python při importu modulu.
 
-Soubor s osobním nastavením si můžeš pojmenovat jak chceš a můžeš ho uložit
+Soubor s osobním nastavením si můžeš pojmenovat, jak chceš, a můžeš ho uložit
 kde budeš chtít.
 Já doporučuji ho pojmenovat `.gitignore_global` a dát ho do tvého domovského
 adresáře.

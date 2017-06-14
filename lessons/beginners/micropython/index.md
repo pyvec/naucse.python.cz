@@ -307,7 +307,7 @@ Jak se hodnota změní?
 Jak tomuhle kódu rozumět?
 Třída `Pin` ti umožňuje ovládat jednotlivé
 „nožičky”, kterými zařízení komunikuje s vnějším
-světem: buď na nich nastavovat napětí nebo zkoumat
+světem: buď na nich nastavovat napětí, nebo zkoumat
 jestli na nich nějaké napětí je.
 
 `Pin(0, Pin.IN)` vytvoří objekt třídy Pin,

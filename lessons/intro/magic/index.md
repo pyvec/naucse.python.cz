@@ -13,7 +13,7 @@ S tím souvisí koncept „magie“. Magie je něco, co funguje, ačkoli tomu ne
 
 Magie, která *funguje*, nevadí. Věci které nechápu, můžu stále používat – jen nevím jak fungují, a tudíž je neumím *opravit*. Problém nastane až v momentě, kdy se něco pokazí.
 
-Přehlednost a udržitelnost kódu je samozřejmě potřeba vyvážit s ostatními aspekty. Kód musí být například dostatečně rychlý a optimalizace ho často znepřehlední. Proto je dobré optimalizovat až potom co vím, že je kód *správný* a řeší opravdu problém, který potřebuji vyřešit. V ten moment napíšu testy a potom, když je potřeba, můžu optimalizovat – trochu přehlednosti vyměnit za rychlost.
+Přehlednost a udržitelnost kódu je samozřejmě potřeba vyvážit s ostatními aspekty. Kód musí být například dostatečně rychlý a optimalizace ho často znepřehlední. Proto je dobré optimalizovat až potom, co vím, že je kód *správný* a řeší opravdu problém, který potřebuji vyřešit. V ten moment napíšu testy a potom, když je potřeba, můžu optimalizovat – trochu přehlednosti vyměnit za rychlost.
 
 Na jiný důvod, proč použít méně pochopitelné techniky, narazíme při psaní knihoven a frameworků. To je kód, který používá hodně programátorů – a často jsou to programátoři s méně zkušenostmi, než mají autoři knihovny. Tady proto bývá dobré občas použít nějakou tu magii – znepřehlednit kód knihovny, aby kód který knihovnu *používá*, mohl být přehlednější.
 
@@ -191,7 +191,7 @@ print(add(1, '2'))
 
 Takto funguje většina dekorátorů, které mění chování dekorované funkce.
 Naráží s tím ale na jeden problém: nově nadefinovaná funkce má vlastní jméno
-(a dokumentační řetězecs a podobné informace), což kazí iluzi, že jsme
+(a dokumentační řetězec a podobné informace), což kazí iluzi, že jsme
 původní funkci jen trošku změnili:
 
 ```python
@@ -410,7 +410,7 @@ print(Rect.pos)
 Deskriptory jsou tedy součást třídy – atributy s nějakým jménem. Popisují, jak se bude přistupovat k atributu daného jména.
 
 Existují dva druhy deskriptorů: *data descriptor* a *non-data descriptor*.
-Liší se v tom, jestli popisují jen jak se daný atribut *čte*, nebo i jak se do něj *zapisuje*.
+Liší se v tom, jestli popisují jen, jak se daný atribut *čte*, nebo i jak se do něj *zapisuje*.
 Výše uvedený deskriptor je *non-data*: ovládá jen čtení. Zápis funguje jako u normálních atributů:
 přepíše aktuální hodnotu – a nová hodnota se pak použije místo volání deskriptoru:
 

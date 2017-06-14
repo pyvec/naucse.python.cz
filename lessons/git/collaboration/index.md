@@ -6,7 +6,7 @@
 Víc hlav víc ví, a tak je dobré si na projekt vytvořit tým.
 
 Každý člen týmu potřebuje mít přístup k práci ostatních.
-K tomu se dá použít Git: někde na Internetu si zařídíme *sdílený repozitář*,
+K tomu se dá použít Git: někde na internetu si zařídíme *sdílený repozitář*,
 se kterým se všichni budou synchronizovat.
 
 > [note] Pro samostudium

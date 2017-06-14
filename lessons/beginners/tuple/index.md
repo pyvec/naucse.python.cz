@@ -147,7 +147,7 @@ Když budeš *opravdu* potřebovat jednoprvkovou
 ## Kdy použít seznam a kdy <var>n</var>-tici?
 
 Seznamy se používají, když předem nevíš,
-kolik v nich přesně bude hodnot
+kolik v nich přesně bude hodnot,
 nebo když je hodnot mnoho.
 Například seznam slov ve větě,
 seznam účastníků soutěže, seznam tahů ve hře

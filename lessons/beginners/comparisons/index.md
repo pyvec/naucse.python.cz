@@ -112,7 +112,7 @@ print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 ```
 
 
-Tady je vidět, jak počítač dělá přesně co se mu řekne a nepřemýšlí o významu.
+Tady je vidět, jak počítač dělá přesně, co se mu řekne, a nepřemýšlí o významu.
 Bylo by dobré uživateli, který zadá záporné číslo,
 přímo říct, že zadal blbost. Jak na to?
 

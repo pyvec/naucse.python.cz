@@ -31,7 +31,7 @@ nástroje.
 Aby se nám programy upravovaly pohodlněji, mají několik vychytávek:
 
 Podpora více souborů
-:   Větší projekty se sestávají z více souborů, které můžeš mít v editoru 
+:   Větší projekty sestávají z více souborů, které můžeš mít v editoru
     otevřené všechny najednou.
 
 Číslování řádků

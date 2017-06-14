@@ -20,7 +20,7 @@ Pokud ne, podívej se do nastavení a zjisti, jak se to zapíná.
 
 ## Obarvování
 
-Ulož soubor s koncovkou `.py` – například `zkouska.py` a zkopíruj do něj
+Ulož soubor s koncovkou `.py` – například `zkouska.py` – a zkopíruj do něj
 následující program:
 
 ```python

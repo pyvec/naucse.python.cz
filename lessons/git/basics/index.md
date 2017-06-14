@@ -431,7 +431,7 @@ na obrazovku, můžeš se v logu pohybovat pomocí šipek a
 >
 > Já často používám `git log --oneline --graph --decorate --cherry-mark --boundary`.
 > Chceš-li tyhle možnosti studovat, začni v tomto
-> pořadí a dej si pauzu vždycky když přestaneš
+> pořadí a dej si pauzu vždycky, když přestaneš
 > rozumět. :)
 
 Když se na nějakou verzi budeš chtít podívat podrobněji,
