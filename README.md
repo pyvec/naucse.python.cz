@@ -8,8 +8,8 @@ Dostupné na [naucse.python.cz](http://naucse.python.cz).
 
 ## Instalace a spuštění
 
-Chceš-li server spustit na svém počítači, např. proto, že se chceš zapojit,
-nebo abys ho měl/a k dispozici i bez připokení k Intenetu, je potřeba ho
+Chceš-li server spustit na svém počítači, např. proto, že se chceš zapojit
+nebo abys ho měl/a k dispozici i bez připojení k Intenetu, je potřeba ho
 nejdřív nainstalovat:
 
 * Vytvoř a aktivuj si [virtuální prostředí](http://naucse.python.cz/lessons/beginners/install/).
