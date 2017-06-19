@@ -10,7 +10,7 @@ Spusť v [příkazové řádce]({{ lesson_url('beginners/cmdline') }}) příkaz
 $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-Pak stačí zadat následující příkaz, a Python bude nainstalovaný:
+Pak stačí zadat následující příkaz a Python bude nainstalovaný:
 
 ```console
 $ brew install python3
@@ -21,20 +21,20 @@ $ brew install python3
 <!-- Pozn. Tahle sekce je velice podobná pro Linux, Mac i Windows;
      měníš-li ji, koukni se jestli není změna potřeba i jinde. -->
 
-Nakonec vytvoř virtuální prostředí.
-
 {%- if var('pyladies') -%}
 {% set rootname = 'pyladies' %}
 {%- else -%}
 {% set rootname = 'naucse-python' %}
 {%- endif -%}
 
+Nakonec vytvoř virtuální prostředí.
+
 Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
 Může to být třeba <code>/home/<i>jméno</i>/{{ rootname }}</code>,
 neboli <code class="pythondir">~/{{ rootname }}</code>.
 Vytvoř ho a poznamenej si, kde je.
 
-Vytváříš-li adresář jinde, nebo s jiným názvem, tak kdykoli ve zbytku
+Vytváříš-li adresář jinde nebo s jiným názvem, tak kdykoli ve zbytku
 materiálů uvidíš <code class="pythondir">~/{{ rootname }}</code>, doplň
 místo toho „svůj“ adresář.
 
@@ -77,7 +77,7 @@ Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
 (před `$`) objevit slovo `(venv)`.
 Tak poznáš, že je virtuální prostředí *aktivní*.
 
-Tenhle příkaz si zapiš. Budeš ho muset zadat vždycky když pustíš příkazovou řádku,
+Tenhle příkaz si zapiš. Budeš ho muset zadat vždycky, když pustíš příkazovou řádku,
 než se pustíš do programování.
 
 {% if var('pyladies') %}

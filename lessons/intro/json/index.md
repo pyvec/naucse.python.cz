@@ -2,9 +2,9 @@
 
 Existují i jiné programovací jazyky než Python.
 
-Ostatní jazyky neumí pracovat s Pythonními hodnotami.
+Ostatní jazyky neumí pracovat s pythonními hodnotami.
 Budeš-li se chtít s takovými programy „domluvit” –
-předat jim nějaké informace ke zpracování,
+předat jim nějaké informace ke zpracování
 nebo od nich dostat výsledky –
 musíš informace předávat v nějaké zjednodušené podobě.
 
@@ -12,7 +12,7 @@ musíš informace předávat v nějaké zjednodušené podobě.
 ## Typy
 
 Většina programovacích jazyků má nějaká čísla, nějaký druh seznamů,
-nějakou odrůdu řetězců, a nějakou variaci na slovníky
+nějakou odrůdu řetězců a nějakou variaci na slovníky
 (nebo několik způsobů jak slovníky vytvořit).
 Dále má spousta jazyků způsob, jak zapsat
 `True`, `False` a `None`.
@@ -34,7 +34,7 @@ Zjednodušeně řečeno, musíš je převést na řetězec.
 Existuje spousta způsobů, jak zakódovat data do textu.
 Každý způsob se snaží najít vhodnou rovnováhu mezi
 čitelností pro lidi/počítače, délkou zápisu,
-bezpečností, možnostmi a rozšířitelností.
+bezpečností, možnostmi a rozšiřitelností.
 My už známe syntaxi Pythonu:
 
 ```python
@@ -117,7 +117,7 @@ print(data)
 print(data['město'])
 ```
 
-A pak tu je metoda `dumps`, která naopak daná data zakóduje,
+A pak tu je metoda `dumps`, která naopak daná data zakóduje
 a vrátí řetězec:
 
 ```pycon

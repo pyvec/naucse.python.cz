@@ -35,7 +35,7 @@ print(math.cos(math.pi))
 > Možná jsi v dokumentaci nebo na jiném kurzu viděl{{a}} příkaz import
 > s hvězdičkou (`*`).
 > Pokud ano, v rámci tohoto kurzu na hvězdičku prosím
-> zapomeň, a importuj místo toho radši celý modul.
+> zapomeň a importuj místo toho radši celý modul.
 > Až začneš psát větší programy, zjednoduší ti
 > to práci.
 
@@ -43,13 +43,13 @@ print(math.cos(math.pi))
 ## Vlastní moduly
 
 A teď to hlavní!
-Můžeš vytvořit vlastní importovatelný modul,
+Můžeš vytvořit vlastní importovatelný modul
 a to jen tak, že uděláš pythonní soubor.
-Funkce, které v něm nadefinuješ, a proměnné
+Funkce, které v něm nadefinuješ, a proměnné,
 které v něm nastavíš, pak budou k dispozici tam, kde modul naimportuješ.
 
 Zkus si to!
-Vytvoř soubor `louka.py`, a do něj napiš:
+Vytvoř soubor `louka.py` a do něj napiš:
 
 ```python
 barva_travy = 'zelená'

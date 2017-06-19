@@ -60,9 +60,9 @@ V daném souboru Flask hledá automaticky proměnnou jménem `app`.
 ([Jde nastavit](http://flask.pocoo.org/docs/0.12/cli/) i jiná.)
 
 Proměnná `FLASK_DEBUG` říká, že se aplikace má spustit v ladícím režimu:
-je zapnutý příjemnější výpis chyb, a aplikace se automaticky restartuje
+je zapnutý příjemnější výpis chyb a aplikace se automaticky restartuje
 po změnách.
-Tento mód je užitečný, ale nebezpečný – návštěvníkům stránky může umožňit
+Tento mód je užitečný, ale nebezpečný – návštěvníkům stránky může umožnit
 spustit jakýkoli Pythonní kód.
 Navíc aplikaci zpomaluje.
 Používejte ho proto pouze na svém počítači.
@@ -309,18 +309,18 @@ Všechno to najdete
 Deployment
 ----------
 
-Aplikace běží na našem počítači, ale jak ji dostat do internetu?
+Aplikace běží na našem počítači, ale jak ji dostat do Internetu?
 Existují různé možnosti, jednou z nich je nasadit ji do cloudu.
 My použijeme [Python Anywhere], protože je pro limitované použití zdarma.
 
-K posílání kódu na produkční prostědí budeme používat Git.
+K posílání kódu na produkční prostředí budeme používat Git.
 Nejprve proto uložte celý projekt do Gitu a nahrajte na Github.
 
 Potom se zaregistrujte na
 [www.pythonanywhere.com](https://www.pythonanywhere.com/) a vyberte
 Beginner Account.
 Po přihlášení se ukáže záložka *Consoles*, kde vytvoříme "Bash" konzoli.
-V té vytvořte a aktivujte virtuální prostředí, a nainstalujte Flask (plus
+V té vytvořte a aktivujte virtuální prostředí a nainstalujte Flask (plus
 případně další závislosti).
 
 PythonAnywhere používá specificky nastavený Linux,
@@ -361,7 +361,7 @@ V nastavení zvolte Manual Configuration a Python 3.5.
 V konfiguraci vzniklé webové aplikace je potřeba nastavit "Virtualenv"
 na cestu k virtuálnímu prostředí (`/home/<jméno>/env`),
 a obsah "WSGI Configuration File" přepsat.
-To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor),
+To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor)
 nebo zpět v bashové konzoli pomocí editoru jako `vi` nebo `nano`.
 
 Nový obsah souboru by měl být:
@@ -378,7 +378,7 @@ from <jméno-souboru> import app as application
 (Za `<uživatelské-jméno>`, `<jméno-adresáře>` a `<jméno-souboru>` je samozřejmě potřeba doplnit
 vaše údaje. Jméno souboru je zde bez přípony `.py`.)
 
-Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce *Web*,
+Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce *Web*
 a na adrese `<uživatelské-jméno>.pythonanywhere.com` si ji můžete
 prohlédnout.
 
@@ -389,7 +389,7 @@ prohlédnout.
 
 Protože vaše tajné klíče nejsou v repozitáři, je nutné je předat aplikaci
 zvlášť.
-Konfigurační soubor jde nahrát v záložce *Files*, nebo opět vytvořit
+Konfigurační soubor jde nahrát v záložce *Files* nebo opět vytvořit
 a editovat ve webové konzoli.
 
 > [note]

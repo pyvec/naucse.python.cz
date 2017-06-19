@@ -54,7 +54,7 @@ Všimněte si několika věcí:
  * V ukázce je použit obyčejný `assert` a žádná metoda z `unittest`.
 
 Co se má testovat se pytestu dá zadat argumenty příkazové řádky.
-Buď to můžou být jednotlivé soubory, nebo adresáře, ve kterých pytest
+Buď to můžou být jednotlivé soubory nebo adresáře, ve kterých pytest
 rekurzivně hledá všechny soubory začínající na `test_`.
 Vynecháme-li argumenty úplně, projdou se testy z aktuálního adresáře.
 (To se často hodí, ale obsahuje-li aktuální adresář i vaše virtuální prostředí,
@@ -115,7 +115,7 @@ Pokud bychom například chtěli otestovat, jestli je štědrý den svátkem nej
 v roce 2016, ale v jiných letech, nemusíme psát testů více ani použít cyklus.
 
 Nevýhoda více téměř stejných testů je patrná sama o sobě, nevýhoda cyklu je
-v tom, že celý test selže, i pokud selže jen jeden průběh cyklem. Zároveň se
+v tom, že celý test selže i pokud selže jen jeden průběh cyklem. Zároveň se
 průběh testu při selhání ukončí.
 
 Místo toho tedy použijeme parametrický test:
@@ -225,7 +225,7 @@ Fixtures se hledají pomocí jména: když má testovací funkce (nebo i jiná
 fixture) parametr, podle jména tohoto parametru se najde odpovídající fixture.
 Fixtures můžou být definovány v aktuálním souboru,
 v [pluginu](http://doc.pytest.org/en/latest/plugins.html),
-[konfiguračním souboru](http://doc.pytest.org/en/latest/writing_plugins.html#conftest-py-local-per-directory-plugins),
+[konfiguračním souboru](http://doc.pytest.org/en/latest/writing_plugins.html#conftest-py-local-per-directory-plugins)
 a některé jsou zabudované přímo v pytestu.
 
 Pokud potřebujete po použití s fixturou ještě něco udělat, můžete místo `return`
@@ -267,7 +267,7 @@ Standardní výstup z testů se normálně zobrazuje jen když test selže.
 Chceme-li výstup vidět u všech testů, je třeba použít `pytest -s`.
 
 I fixtury jdou parametrizovat, jen trochu jiným způsobem než testovací funkce:
-parametry předané dekorátoru `pytest.fixture`, získáme ze zabudované
+parametry předané dekorátoru `pytest.fixture` získáme ze zabudované
 fixtury `request`:
 
 ```python
@@ -278,15 +278,15 @@ def connection(request):
     d.cleanup()
 ```
 
-Hromadu dalších příkladů použití pytestu najdete dokumentaci, v
+Hromadu dalších příkladů použití pytestu najdete dokumentaci v
 [sekci s příklady](http://doc.pytest.org/en/latest/example/index.html).
 
 flexmock
 --------
 
 Při psaní testů se občas hodí trochu podvádět. Například když nechceme,
-aby testy měli nějaký vedlejší účinek, když chceme testovat něco, co závisí na
-náhodě a podobně. Obecně se tomuto říká *mocking* \*, a existuje více různých
+aby testy měly nějaký vedlejší účinek, když chceme testovat něco, co závisí na
+náhodě a podobně. Obecně se tomuto říká *mocking* \* a existuje více různých
 knihoven, které to umožňují. Jednou z nich je [flexmock].
 
 [flexmock]: https://flexmock.readthedocs.io/
@@ -370,7 +370,7 @@ Je ale jednoduché sklouznout do fáze, kdy jsou vaše testy natolik přemockova
 projdou, i když je implementace rozbitá; nebo proto, že při sebemenší úpravě
 vnitřní implementace musíte vždy upravit i testy.
 
-Mějte toto na paměti, a k mockování se uchylujte až po vyčerpání „slušnějších”
+Mějte toto na paměti a k mockování se uchylujte až po vyčerpání „slušnějších”
 možností.
 Často jde trochu změnit kód, aby byl testovatelnější – například napsat funkci,
 která čte soubor formátu `/etc/passwd`, ale jméno souboru jí předat argumentem.
@@ -381,12 +381,12 @@ betamax
 Vaše úlohy používají webová API. Při testování funkcionality API klientů
 se vynoří řada problémů:
 
- * výsledky volání API mohou být pokaždé různé
- * k některým volání API je potřeba mít přístupové údaje
- * API může být zrovna nedostupné
+ * výsledky volání API mohou být pokaždé různé,
+ * k některým volání API je potřeba mít přístupové údaje,
+ * API může být zrovna nedostupné.
 
 V zásadě můžete omockovat knihovnu requests tak, aby
-jednotlivé volání jako `get()` apod. vracela předem definovanou odpověď.
+jednotlivá volání jako `get()` apod. vracela předem definovanou odpověď.
 Při ponoření do hloubky ale zjistíte, že komplexita takového mockování může
 velmi přesáhnout komplexitu samotného kódu, který testujete.
 Jednodušší je tak použít již hotové řešení, [betamax].
@@ -585,8 +585,8 @@ Standardně se testy v Pythonu nespouští pomocí `python -m pytest`, ale
 `python setup.py test`, což funguje i s jinými nástroji než je pytest.
 Pokud pytest používáme, je proto dobré `setup.py` naučit spouštět pytest.
 
-K tomu potřeujeme nakonfigurovat závislosti: v `setup_requires` musí být
-`pytest-runner`, a v `tests_require` pak `pytest` a další testovací závislosti
+K tomu potřebujeme nakonfigurovat závislosti: v `setup_requires` musí být
+`pytest-runner` a v `tests_require` pak `pytest` a další testovací závislosti
 (`flexmock`, `betamax`...).
 
 ```python

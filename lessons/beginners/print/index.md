@@ -45,9 +45,9 @@ Třeba program výše vypíše po spuštění následující chybu:
 Při chybě Python napřed vypíše
 jméno souboru a <span class="err-lineno">číslo řádku</span>,
 na kterém chyba je.
-Potom vypíše celý řádek s chybou,
+Potom vypíše celý řádek s chybou
 a nakonec oznámí <span class="err-exctype">druh chyby</span>
-(v tomto případě je to „syntaktická chyba“),
+(v tomto případě je to „syntaktická chyba“)
 a případně nějaké bližší upřesnění.
 
 > [note] Pro zvídavé
@@ -80,7 +80,7 @@ Program je jako recept na vaření: seznam instrukcí, které říkají co je po
 udělat.
 
 Zanedlouho budou tvoje programy připomínat spíš recepty na
-čarodějné lektvary (*počkej do úplňku, a pokud je Mars
+čarodějné lektvary (*počkej do úplňku a pokud je Mars
 v konjunkci s Jupiterem, třikrát zamíchej*),
 ale základní myšlenka je stále stejná:
 počítač čte odshora dolů a provádí příkazy jeden po druhém.
@@ -97,7 +97,7 @@ oddělených čárkou, hodnoty těchto výrazů se vypíšou.
 
 A co že je ten výraz?
 V našem programu máš několik příkladů:
-výraz je číslo, řetězec, nebo nějaká (třeba matematická) operace
+výraz je číslo, řetězec nebo nějaká (třeba matematická) operace
 složená z více výrazů.
 Třeba výraz `3 + 8` sečítá výrazy `3` a `8`.
 

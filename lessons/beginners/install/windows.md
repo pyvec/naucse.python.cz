@@ -18,7 +18,7 @@ Pokud máš starší počítač s 32bitovými Windows, stáhni si *Windows x86 
     alt='Screenshot zjišťování verze systému',
 ) }}
 
-Pak instalátor spusť
+Pak instalátor spusť.
 Na začátku instalace zaškrtni **Install launcher for all Users**
 a také **Add Python 3.6 to PATH**.
 Tyto volby ti zjednoduší vytvoření virtuálního prostředí.
@@ -43,13 +43,13 @@ Instalace mění systémové nastavení, které se musí načíst znovu.
 <!-- Pozn. Tahle sekce je velice podobná pro Linux, Mac i Windows;
      měníš-li ji, koukni se jestli není změna potřeba i jinde. -->
 
-Až bude Python nainstalovaný, vytvoř virtuální prostředí.
-
 {%- if var('pyladies') -%}
 {% set rootname = 'pyladies' %}
 {%- else -%}
 {% set rootname = 'naucse-python' %}
 {%- endif -%}
+
+Až bude Python nainstalovaný, vytvoř virtuální prostředí.
 
 Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
 Může to být třeba `C:\{{ rootname }}`.
@@ -64,7 +64,7 @@ Proto ho nedoporučuji vytářet na Ploše.
 
 Ve zbytku materiálů budeme tento adresář nazývat <code class="pythondir">~/{{ rootname }}</code>,
 i když se u tebe pravděpodobně jmenuje jinak.
-Takže kdykoli odteď uvidíš <code class="pythondir">~/{{ rootname }}</code>,
+Takže kdykoli od teď uvidíš <code class="pythondir">~/{{ rootname }}</code>,
 doplň místo toho „svůj“ adresář.
 
 Teď když je tenhle adresář vytvořený, otevři [příkazovou řádku]({{ lesson_url('beginners/cmdline') }})
@@ -96,7 +96,7 @@ Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
 (před `>`) objevit slovo `(venv)`.
 Tak poznáš, že je virtuální prostředí *aktivní*.
 
-Tenhle příkaz si zapiš. Budeš ho muset zadat vždycky když pustíš příkazovou řádku,
+Tenhle příkaz si zapiš. Budeš ho muset zadat vždycky, když pustíš příkazovou řádku,
 než se pustíš do programování.
 {% if var('pyladies') -%}
 Máš-li vytištěné <a href="http://pyladies.cz/v1/s001-install/handout/handout.pdf">domácí projekty</a>,

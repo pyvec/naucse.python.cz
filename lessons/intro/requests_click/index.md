@@ -61,7 +61,7 @@ Hlavně v budoucnu se nám bude hodit použití tz. session.
 Session využívá na pozadí jedno otevřené HTTP spojení a poskytuje tak
 při více sousledných požadavcích výrazné zrychlení.
 
-Kromě jiného session automaticky ukládá cookies a je možné ji nastavit výchozí
+Kromě jiného session automaticky ukládá cookies a je možné jí nastavit výchozí
 hlavičky.
 
 ```python
@@ -107,7 +107,7 @@ konfiguračního souboru.
 ```
 
 Tyto kódy je potřeba určitým způsobem slepit a poslat Twitteru,
-aby vytvořil token, které pak půjde použít pro API.
+aby vytvořil token, který pak půjde použít pro API.
 
 ```python
 >>> import base64
@@ -189,7 +189,7 @@ def twitter_session(api_key, api_secret):
 
 Podíváme se i na GitHub API, které má jednodušší autentizaci (od GitHubu přímo
 získáte token). Stačí jít do [nastavení] a vyrobit nový token
-(zatím není třeba zaškrtávat žádná opravnění).
+(zatím není třeba zaškrtávat žádná oprávnění).
 Token je opět třeba patřičně chránit.
 
 ```python
@@ -227,7 +227,7 @@ Případně vyhodit výjimku, pokud je stavový kód divný:
 ```
 
 Pokud hvězdičku chcete odebrat, použijte metodu DELETE.
-My ale věříme, že ji odebrat nechcete :)
+My ale věříme, že ji odebrat nechcete. :)
 
 [Dokumentace] ke GitHub API.
 
@@ -271,7 +271,7 @@ click
 -----
 
 Nechme internety na chvíli být a pojďme se podívat na úplně jinou knihovnu,
-[click]. Slouží opět k něčemu, co jde  v Pythonu i bez ní, ale umožňuje to
+[click]. Slouží opět k něčemu, co jde v Pythonu i bez ní, ale umožňuje to
 dělat příjemněji: čtení argumentů z příkazové řádky.
 
 ```python
@@ -321,11 +321,11 @@ a v nějakém intervalu se bude dotazovat na nové tweety (použijte API argumen
 
 Pomocí argumentů půjde nastavit:
 
- * cesta ke konfiguračnímu souboru s přístupovými údaji
- * hledaný výraz
- * počet na začátku načtených tweetů
- * časový interval dalších dotazů
- * nějaké vlastnosti ovlivňující chování (např. zda zobrazovat retweety)
+ * cesta ke konfiguračnímu souboru s přístupovými údaji,
+ * hledaný výraz,
+ * počet na začátku načtených tweetů,
+ * časový interval dalších dotazů,
+ * nějaké vlastnosti ovlivňující chování (např. zda zobrazovat retweety).
 
 ### GitHub Issues Bot
 
@@ -338,12 +338,12 @@ Pravidla by měla být nějakým způsobem konfigurovatelná
 
 Pomocí argumentů půjde nastavit:
 
- * cesta ke konfiguračnímu souboru s přístupovými údaji
- * který repozitář se má procházet
- * kde je soubor s definovanými pravidly
- * jak často issues kontrolovat
- * jaký label nastavit, pokud žádné pravidlo nezabralo
- * nějaké vlastnosti ovlivňující chování (např. zda má robot vyhodnocovat i komentáře, či procházet i Pull Requesty)
+ * cesta ke konfiguračnímu souboru s přístupovými údaji,
+ * který repozitář se má procházet,
+ * kde je soubor s definovanými pravidly,
+ * jak často issues kontrolovat,
+ * jaký label nastavit, pokud žádné pravidlo nezabralo,
+ * nějaké vlastnosti ovlivňující chování (např. zda má robot vyhodnocovat i komentáře, či procházet i Pull Requesty).
 
 ### Vlastní nápad
 

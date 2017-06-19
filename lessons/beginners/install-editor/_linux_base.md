@@ -14,7 +14,7 @@ Ubuntu
     $ sudo apt-get install {{ editor_cmd }}
     ```
 
-Používáš-li jiný Linux, předpokládám že programy instalovat umíš :)
+Používáš-li jiný Linux, předpokládám že programy instalovat umíš. :)
 
 Pro Windows a MacOS se {{ editor_name }} dá stáhnout z [domovské stránky]({{ editor_url }}).
 

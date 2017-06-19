@@ -144,7 +144,7 @@ def nakresli_obdelnik(x1, y1, x2, y2):
 Teď začneme pracovat na funkci `vykresli()`
 Nejprve ji vytvoř prázdnou a zaregistruj ji
 v Pygletu na událost `on_draw`, jak jsme to
-dělali lekci o Pygletu. To znamená, že se tato funkce
+dělali v lekci o Pygletu. To znamená, že se tato funkce
 zavolá pokaždé, když Pyglet překreslí okno. Pokud se
 mezitím např. změnila poloha míčku, funkce ho vykreslí
 o kousek jinde. Tím vlastně vytváříme dynamiku hry.
@@ -201,7 +201,7 @@ je podobný jako u vykreslení míčku.
 ```python
 def vykresli():
     ...
-    # palky - udelame si seznam souradnic palek, a pro kazdou dvojici souradnic
+    # palky - udelame si seznam souradnic palek a pro kazdou dvojici souradnic
     # v tom seznamu palku vykreslime
     for x, y in [(0, pozice_palek[0]), (SIRKA, pozice_palek[1])]:
         nakresli_obdelnik(
@@ -243,7 +243,7 @@ V Pygletu je modul `text`, který obsahuje
 objekt `Label` (Nápis). Ten se hodí k vykreslení hodnoty
 skóre. Objekt musíme nejdřív vytvořit. To uděláme
 kulatými závorkami za jménem objektu, jako bychom
-volali funkci a uložíme si ho do proměnné:
+volali funkci, a uložíme si ho do proměnné:
 `napis = Label()`. Normálně bychom objekt
 vytvořili jen jednou a pak měnili jeho hodnotu, ale
 pro jednoduchost vytvoříme vždy nový a celé to zabalíme
@@ -266,7 +266,7 @@ def nakresli_text(text, x, y, pozice_x):
 ```
 
 Teď zkus tuto funkci použít ve funkci `vykresli()`
-k nakreslení skóre. K určení pozice textu použijte
+k nakreslení skóre. K určení pozice textu použij
 konstanty SIRKA, VYSKA, ODSAZENI_TEXTU a VELIKOST_FONTU.
 
 {% filter solution %}
@@ -432,7 +432,7 @@ jejího středu, což znamená, že když se pálka přiblíží na
 na <var>y</var>-ovou pozici `DELKA_PALKY / 2`, začíná
 překračovat dolní hranici hracího pole. V tom případě
 její pozici zafixujeme na nejnižší možné souřadnici.
-Analogicky to provedeme když se blíží hornímu okraji.
+Analogicky to provedeme, když se blíží hornímu okraji.
 
 Zaregistruj vytvořenou funkci na tik hodin jako
 
@@ -577,4 +577,4 @@ def obnov_stav(dt):
 
 Hurá, prokousali jsme se k zdárnému konci Pongu!
 Máš teď plně funkční interaktivní grafickou
-hru zakládající se na reálné předloze :)
+hru zakládající se na reálné předloze. :)

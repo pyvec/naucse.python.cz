@@ -13,7 +13,7 @@ S tím souvisí koncept „magie“. Magie je něco, co funguje, ačkoli tomu ne
 
 Magie, která *funguje*, nevadí. Věci které nechápu, můžu stále používat – jen nevím jak fungují, a tudíž je neumím *opravit*. Problém nastane až v momentě, kdy se něco pokazí.
 
-Přehlednost a udržitelnost kódu je samozřejmě potřeba vyvážit s ostatními aspekty. Kód musí být například dostatečně rychlý, a optimalizace ho často znepřehlední. Proto je dobré optimalizovat až potom, co vím, že je kód *správný* a řeší opravdu problém, který potřebuji vyřešit. V ten moment napíšu testy, a potom, když je potřeba, můžu optimalizovat – trochu přehlednosti vyměnit za rychlost.
+Přehlednost a udržitelnost kódu je samozřejmě potřeba vyvážit s ostatními aspekty. Kód musí být například dostatečně rychlý a optimalizace ho často znepřehlední. Proto je dobré optimalizovat až potom, co vím, že je kód *správný* a řeší opravdu problém, který potřebuji vyřešit. V ten moment napíšu testy a potom, když je potřeba, můžu optimalizovat – trochu přehlednosti vyměnit za rychlost.
 
 Na jiný důvod, proč použít méně pochopitelné techniky, narazíme při psaní knihoven a frameworků. To je kód, který používá hodně programátorů – a často jsou to programátoři s méně zkušenostmi, než mají autoři knihovny. Tady proto bývá dobré občas použít nějakou tu magii – znepřehlednit kód knihovny, aby kód který knihovnu *používá*, mohl být přehlednější.
 
@@ -26,7 +26,7 @@ Velká moc a velká zodpovědnost
 Druhý možný význam slova *magie* je něco, co neodpovídá „normálnímu“ chování podobných věcí.
 
 Jazyk Python standardizuje syntaxi relativně malého počtu operací (operátory, volání funkcí, atributy, ...), způsobů řízení toku programu (cykly, `with`, ...) a strukturování kódu (moduly, `def`, `class`).
-To, že je jich relativně málo, má dvě výhody: zaprvé fungují s ostatními části jazyka, a zadruhé nebývá problém rozhodnout, který způsob je pro daný problém nejlepší.
+To, že je jich relativně málo, má dvě výhody: zaprvé fungují s ostatními části jazyka a zadruhé nebývá problém rozhodnout, který způsob je pro daný problém nejlepší.
 
 Téměř všechno v Pythonu ale jde předefinovat. Operátor `/` nemusí jen dělit: můžu si napsat třídu pro jméno souboru, která umí pomocí `/` oddělovat adresáře \*.
 Cyklus `for` nemusí iterovat přes předem danou sekvenci prvků; iterovatelný objekt může poskytovat jakékoli hodnoty podle jakýchkoli pravidel.
@@ -101,7 +101,7 @@ Další věc, na kterou se podíváme, jsou *dekorátory* – způsob, jak si
 přizpůsobovat funkce.
 
 Nejjednodušší použití dekorátorů je *registrace*:
-k funkci přidáme dekorátor, a funkce se někam zaregistruje, uloží,
+k funkci přidáme dekorátor a funkce se někam zaregistruje, uloží,
 aby se dala zavolat později.
 Typický příklad je `@app.route` ve Flasku.
 
@@ -164,7 +164,7 @@ add = register_operator(add)
 
 Chování samotného `@` je tedy celkem triviální.
 Magie (složitost) spočívá v tom, že dekorátor je většinou funkce vyššího řádu:
-bere jinou funkci jako argument, a taky jinou funkci vrací.
+bere jinou funkci jako argument a taky jinou funkci vrací.
 V případě registrace vrací stejnou funkci jako dostala – ale to není povinné.
 
 Často se setkáme s dekorátory, které dekorovanou funkci nějak modifikují.
@@ -191,7 +191,7 @@ print(add(1, '2'))
 
 Takto funguje většina dekorátorů, které mění chování dekorované funkce.
 Naráží s tím ale na jeden problém: nově nadefinovaná funkce má vlastní jméno
-(a dokumentační řetězec, a podobné informace), což kazí iluzi, že jsme
+(a dokumentační řetězec a podobné informace), což kazí iluzi, že jsme
 původní funkci jen trošku změnili:
 
 ```python
@@ -199,7 +199,7 @@ print(add)
 help(add)
 ```
 
-Řešení je jednoduché – zkopírovat jméno, dokumentační řetězec, atd. z jedné
+Řešení je jednoduché – zkopírovat jméno, dokumentační řetězec atd. z jedné
 funkce na druhou.
 Na to ve standardní knihovně existuje dekorátor jménem `functools.wraps`:
 
@@ -219,7 +219,7 @@ def to_floats(func):
 S `wraps` bude `help(add)` fungovat správně – ukáže původní jméno
 a dokumentační řetězec.
 
-Z volání `wraps(func)` de je vidět, že jako dekorátor můžeme použít i volání
+Z volání `wraps(func)` je vidět, že jako dekorátor můžeme použít i volání
 funkce, ne jen funkci samotnou.
 Budeme-li chtít napsat dekorátor, který tohle umí, potřebujeme napsat
 funkci ještě vyššího řádu – totiž funkci, která po zavolání vrátí dekorátor:
@@ -291,7 +291,7 @@ def mul(a, b):
 ```
 
 Úplně stejně jako funkce se dají dekorovat i třídy.
-Dekorátor dostane třídu jako první argument, a třída se nahradí tím,
+Dekorátor dostane třídu jako první argument a třída se nahradí tím,
 co dekorátor vrátí.
 
 
@@ -317,7 +317,7 @@ Speciální metody, které se nevolají pomocí tečky, přeskakují první krok
 
 > *(Poznámka navíc pro ty, kdo čtou tento text podruhé: na metatřídě se atribut nehledá; např. existuje-li `type.mro`, najde se `str.mro`, ale už ne `"".mro`)*
 
-Podívejme se teď na získávání atributu trošku podrobněji. Je to poměrně komplikovaný proces, a existuje několik způsobů, jak ho přizpůsobit. Nejjednodušší je dvojice speciálních metod:
+Podívejme se teď na získávání atributu trošku podrobněji. Je to poměrně komplikovaný proces a existuje několik způsobů, jak ho přizpůsobit. Nejjednodušší je dvojice speciálních metod:
 
 * `__getattribute__`, která *kompletně předefinuje* funkci `.` pro čtení atributu, a
 * `__getattr__`, která se zavolá, až když se atribut nenajde normálním způsobem.
@@ -345,7 +345,7 @@ print(palette.dark_red)
 (Předpokládám že znáte funkci `getattr`; kdyby ne: `getattr(foo, "bar")` dělá totéž co `foo.bar` – jen je jméno atributu předáno jako řetězec, takže může být např. v proměnné. Podobně existují `setattr(instance, attr_name, new_value)` a `delattr(setattr(instance, attr_name)`.)
 
 Metoda `__getattr__` je většinou tak trochu kanón na vrabce: ve většině případů nepotřebujeme nastavit chování *všech* neexistujících atributů, ale jenom jednoho nebo několika konkrétních.
-Například máme třídu pro 2D bod s atributy `x` a `y`, a potřebujeme i atribut pro dvojici `(x, y)`.
+Například máme třídu pro 2D bod s atributy `x` a `y` a potřebujeme i atribut pro dvojici `(x, y)`.
 Toto se často dělá pomocí dekorátoru `property`:
 
 ```python
@@ -412,7 +412,7 @@ Deskriptory jsou tedy součást třídy – atributy s nějakým jménem. Popisu
 Existují dva druhy deskriptorů: *data descriptor* a *non-data descriptor*.
 Liší se v tom, jestli popisují jen, jak se daný atribut *čte*, nebo i jak se do něj *zapisuje*.
 Výše uvedený deskriptor je *non-data*: ovládá jen čtení. Zápis funguje jako u normálních atributů:
-přepíše aktuální hodnotu – a nové hodnota se pak použije místo volání deskriptoru:
+přepíše aktuální hodnotu – a nová hodnota se pak použije místo volání deskriptoru:
 
 ```python
 rect.pos = 'haha'
@@ -453,7 +453,7 @@ rect.pos = 123, 456
 print(rect.pos)
 ```
 
-Už zmíněný vestavěný deskriptor `property`, je *data descriptor*.
+Už zmíněný vestavěný deskriptor `property` je *data descriptor*.
 Popisuje jak čtení, tak zápis atributu. Pokud mu nenastavíme funkci pro zápis, vyhodí ze své metody  `__set__` výjimku `AttributeError` se zprávou, že do atributu se zapisovat nedá. (To je trochu magická odchylka od normálního chování Pythonu, kdy atributy zapisovat jdou.)
 
 Nejčastější příklad *non-data* deskriptoru je obyčejná funkce.
@@ -523,10 +523,10 @@ Třídy v Pythonu můžou mít *konstruktor* – funkci, která se zavolá, aby
 vytvořila objekt daného typu.
 Toto není známá metoda `__init__` – ta objekt nevytváří, ta dostane už
 předpřipravený `self`, který jen naplní atributy.
-Opravdový konstruktor se jmenuje `__new__`, a chová se jako `classmethod`:
+Opravdový konstruktor se jmenuje `__new__` a chová se jako `classmethod`:
 místo `self` bere třídu, jejíž instanci má vytvořit.
 
-Opravdový konstruktor se „hodí“ pro vytváření *singletonů*, tříd které mají jen
+Opravdový konstruktor se „hodí“ pro vytváření *singletonů*, tříd, které mají jen
 jednu instanci:
 
 ```python
@@ -566,7 +566,7 @@ Metatřídy
 
 Poslední věc, na kterou se podíváme, jsou metatřídy.
 
-Začneme zlehka: pokud při definici třídy zadáme nějakou funkci jako pojemnovaný
+Začneme zlehka: pokud při definici třídy zadáme nějakou funkci jako pojmenovaný
 parametr `metaclass`, funkce se zavolá s informacemi potřebnými pro vytvoření
 třídy.
 Ty můžeme použít, nebo úplně ignorovat a vrátit něco jiného:
@@ -582,7 +582,7 @@ print(NotAClass)
 ```
 
 Argumenty, které „metatřída” dostane, jsou tři: jméno třídy, *n*-tice
-nadtříd, a jmenný prostor – slovník s proměnnými, které vznikly vykonáním
+nadtříd a jmenný prostor – slovník s proměnnými, které vznikly vykonáním
 těla příkazu `class`.
 (Ve jmenném prostoru jsou implicitně nastavené záznamy `__module__`
 a `__qualname__`, které přidává samotný příkaz `class`.)
@@ -613,11 +613,11 @@ print(three.inc())
 
 Kromě toho se `type` dá zavolat i s jedním argumentem; v tom případě vrátí
 typ (třídu) daného argumentu.
-(Tohle chování – funkce která dělá úplně různé věci v závislosti na počtu
-argumentů – v Pythonu čast nevidíme.
+(Tohle chování – funkce, která dělá úplně různé věci v závislosti na počtu
+argumentů – v Pythonu často nevidíme.
 Je to nešťastná výjimka, která přežívá z historických důvodů.)
 
-Pojďme se podívat na třídy několika základích objektů:
+Pojďme se podívat na třídy několika základních objektů:
 
 ```python
 # Třída základních objektů
@@ -636,7 +636,7 @@ print(type(type(type(1))))
 ```
 
 Objekty třídy `type` (tedy třídy) se normálně tvoří příkazem `class`.
-Explicitně to můžeme nasat takto:
+Explicitně to můžeme napsat takto:
 
 ```python
 class NormalClass(metaclass=type):
@@ -646,9 +646,9 @@ class NormalClass(metaclass=type):
 Když budeme chtít chování třídy změnit, budeme postupovat podobně jako
 u jiných objektů.
 Kdybych chtěl celé číslo, přes které jde iterovat, podědím z `int`
-a předefiuji `__iter__`.
+a předefinuji `__iter__`.
 Pokud chci třídu, přes kterou jde iterovat (tedy ne přes objekty dané
-třídy – přes třídu samotnou!), podědím z `type` a předefiuji `__iter__`:
+třídy – přes třídu samotnou!), podědím z `type` a předefinuji `__iter__`:
 
 ```python
 class IterableMeta(type):
@@ -669,7 +669,7 @@ print(SimpleEnum.a)
 print(list(SimpleEnum))
 ```
 
-(V metatřídě se většinou používá `cls` místo `self`, aby bylo jasné že
+(V metatřídě se většinou používá `cls` místo `self`, aby bylo jasné, že
 instance, se kterou pracujeme, je třída – ale to je jen konvence.)
 
 Metatřídy se dědí.
@@ -686,12 +686,12 @@ print(AnotherEnum.a)
 print(list(AnotherEnum))
 ```
 
-Tímto způsobem lze vnuknout třídám magické schopnosti, bez toho aby
+Tímto způsobem lze vnuknout třídám magické schopnosti bez toho, aby
 uživatel naší knihovny musel použít `metaclass` – stačí mu podědit z námi
 připravené třídy.
 
-Další věc kterou metatřídy umí, je připravit počáteční jmenný prostor.
-Medoda `__init__` (nebo `__new__`) v metatřídě normálně dostane slovník,
+Další věc, kterou metatřídy umí, je připravit počáteční jmenný prostor.
+Metoda `__init__` (nebo `__new__`) v metatřídě normálně dostane slovník,
 což nemusí být vždy to, co potřebuji.
 Můžu si chtít třeba „zapamatovat” pořadí, v jakém byly jednotlivé atributy
 vytvořeny – a slovník toto pořadí neuchovává.
@@ -781,5 +781,3 @@ užitečné pro ladění. V produkčním kódu to ale, prosím, nedělejte.
 
 Budete-li chtít některé techniky z této lekce ve svém kódu (včetně semestrálky) použít, zamyslete se, jestli se problém nedá vyřešit jednodušeji, čitelněji, přehledněji, udržovatelněji.
 Dobrý mág ví, kdy magii *nepoužít*.
-
-

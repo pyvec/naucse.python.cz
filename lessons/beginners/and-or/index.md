@@ -72,7 +72,7 @@ else:
 ```
 
 > [note]
-> Všimni si co se stane když zadáš něco jiného než „ano“ nebo „ne“.
+> Všimni si co se stane, když zadáš něco jiného než „ano“ nebo „ne“.
 >
 > Proměnná `stastna` nebo `bohata` se nenastaví, a když je ji potom
 > potřeba použít, program skončí s chybou.

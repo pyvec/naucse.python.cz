@@ -5,7 +5,7 @@ Důležité je si i ověřit, že opravdu funguje (a případně ho pak opravit)
 Ověřování, že program funguje, se říká *testování*.
 
 Zatím jsi asi svoje programy testoval{{a}} tak, že jsi
-je zkusil{{a}} spustit, něco zadal{aa}, a podíval{{a}} se
+je zkusil{{a}} spustit, něco zadal{{a}} a podíval{{a}} se
 jestli jsou výsledky v pořádku.
 U větších programů, které budou mít více a více
 možností, ale bude těžší a těžší takhle zkontrolovat,
@@ -16,10 +16,10 @@ které testují za ně.
 
 *Automatické testy* jsou funkce, které
 zkontrolují, že náš program funguje správně.
-Spuštěním testů můžeš kdykoli ověřit že kód funguje.
+Spuštěním testů můžeš kdykoli ověřit, že kód funguje.
 Hlavní výhoda je, že když v otestovaném kódu
 v budoucnu uděláš nějakou změnu,
-testy ověří, že jsi nerozbil{{a}} nic co dříve
+testy ověří, že jsi nerozbil{{a}} nic, co dříve
 fungovalo.
 
 
@@ -27,7 +27,7 @@ fungovalo.
 
 Na testy je v samotném Pythonu zabudovaná knihovna `unittest`.
 My ji však používat nebudeme: nainstalujeme si
-kniihovnu <code>pytest</code>, která se používá
+knihovnu <code>pytest</code>, která se používá
 mnohem jednodušeji a je velice populární.
 
 Je ji ale potřeba nainstalovat.
@@ -67,7 +67,7 @@ aktivované.)
 
 > [warning] Pro Windows
 > Jsi-li na Windows, od této lekce bude důležité
-> spouštět Pythoní programy pomocí `python program.py`, ne jen
+> spouštět pythonní programy pomocí `python program.py`, ne jen
 > `program.py`.
 > Ačkoli se v těchto materiálech všude používá `python` na začátku, zatím
 > mohlo všechno fungovat i bez toho.
@@ -99,9 +99,9 @@ def test_secti():
 
 Co se v té testovací funkci děje?
 
-Příkaz `assert` vyhodnotí výraz za ním,
+Příkaz `assert` vyhodnotí výraz za ním
 a pokud výsledek není pravdivý, vyvolá výjimku,
-která způsobí že test selže.
+která způsobí, že test selže.
 Můžeš si představit, že `assert a == b` dělá následující:
 
 ```python
@@ -139,7 +139,7 @@ Tento příkaz projde všechny soubory v aktuálním
 adresáři, jejichž jméno začíná na `test_`, zavolá v nich všechny funkce,
 jejichž jméno začíná na `test_`, a ověří, že nevyvolají žádnou výjimku.
 Pokud výjimka nastane, dá to velice červeně
-najevo, a přidá několik informací které můžou
+najevo a přidá několik informací, které můžou
 usnadnit nalezení a opravu chyby.
 
 
@@ -147,22 +147,22 @@ usnadnit nalezení a opravu chyby.
 
 Testy se většinou nepíšou přímo ke kódu,
 ale do souboru vedle.
-Je to tak přehlednější, a taky to zjednodušuje
+Je to tak přehlednější a taky to zjednodušuje
 distribuci – předávání kódu někomu, kdo ho chce
-jen spustit a testy nepotřebuje
+jen spustit a testy nepotřebuje.
 
 > [note]
 > Máš-li hotové 1D piškvorky, zkus si následující
 > příklad.
 > Jinak si rozděl soubor s testem sečítání: do
-> `secteni.py` dej funkci `secti`,
+> `secteni.py` dej funkci `secti`
 > a do `test_secteni.py` test.
 > Do `test_secteni.py` pak přidej
 > `from secteni import secti`, aby byla
 > funkce testu k dispozici.
 
 Vytvoř si modul `test_piskvorky` (tedy soubor
-`test_piskvorky.py`), a do něj napiš:
+`test_piskvorky.py`) a do něj napiš:
 
 ```python
 import piskvorky
@@ -208,7 +208,7 @@ No jo, ale po takovém odstranění
 už nejde jednoduše spustit hra! Co s tím?
 
 Můžeš na to vytvořit nový modul.
-Pojmenuj ho `hra.py`, a dej to něj jenom to odstraněné volání:
+Pojmenuj ho `hra.py` a dej to něj jenom to odstraněné volání:
 
 ```python
 import piskvorky
@@ -250,7 +250,7 @@ def test_tah_chyba():
 
 Testy, které kontrolují reakci na „špatný“ vstup,
 se jmenují *negativní testy*.
-Většinou kontrolují že nastane (správná) chyba,
+Většinou kontrolují že nastane (správná) chyba
 nebo nějaký negativní výsledek (např.
 že volání jako <code>cislo_je_sude(7)</code> vrátí `False`).
 Když kód pak použiješ ve větším programu,

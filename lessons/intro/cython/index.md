@@ -26,7 +26,7 @@ Interpretů tohoto jazyka je více, například:
 
 * CPython, referenční implementace napsaná v C; interpret, který spouštíme příkazem `python3`
 * PyPy, implementace zaměřená na rychlost, napsaná v Pythonu
-* MicroPython, implementace pro mikroprocesory a zařízení s minimem paměťi
+* MicroPython, implementace pro mikroprocesory a zařízení s minimem paměti
 * Jython, implementace napsaná v Javě, která umožňuje využívat javovské třídy
 * IronPython, napsaný v C#, s integrací do .NET
 * Batavia, Brython, pyjs – různé pokusy o integraci do JavaScriptu
@@ -37,7 +37,7 @@ k interním strukturám interpretu.
 Správně napsaný pythonní program by neměl na takových detailech záviset, pokud
 není k nekompatibilitě mezi interprety dobrý důvod.
 
-Někdy to ale je potřeba, a dnešní přednáška specifická pro CPython
+Někdy to ale je potřeba, a dnešní přednáška bude specifická pro CPython
 a přímé využití jeho API pro jazyk C.
 
 
@@ -48,7 +48,7 @@ Rychlost
 Tradiční metoda optimalizace je zjistit, které části jsou kritické, a přepsat
 je do C.
 Využijí se tak výhody obou jazyků: Python pro rychlý vývoj, snadné
-prototypování, a přehlednost kódu, a C pro rychlost.
+prototypování a přehlednost kódu, a C pro rychlost.
 
 Když je náš program příliš pomalý, je potřeba ho optimalizovat.
 První krok k tomu je vždy zkontrolovat, co zabírá více času, než by mělo.
@@ -78,7 +78,7 @@ PyPy, který obsahuje optimalizovaný překladač. To je ale jiná kapitola.
 Externí knihovny
 ----------------
 
-Druhý důvod proč programátoři používají C API je použití knihoven, které mají
+Druhý důvod, proč programátoři používají C API, je použití knihoven, které mají
 rozhraní pro C.
 Takových knihoven existuje mnoho – pokud není něco specifické pro určitý jazyk,
 často se to dá volat i z C.
@@ -96,8 +96,8 @@ CPython
 
 Třetí důvod, proč použít C API, je práce s CPythonem samotným.
 Když člověk zabředne do složitého problému, může na CPython pustit C debugger
-jako [gdb] nebo [Valgrind], prozkoumat potíže na nižší úrovni,
-a zjistit kde přesně se chyba nachází.
+jako [gdb] nebo [Valgrind], prozkoumat potíže na nižší úrovni
+a zjistit, kde přesně se chyba nachází.
 
 [gdb]: https://en.wikipedia.org/wiki/GNU_Debugger]
 [valgrind]: http://valgrind.org/
@@ -107,7 +107,7 @@ Modul v C
 ---------
 
 Pojďme začít příkladem.
-Vytvořte si následující soubory, který implementuje rozšíření
+Vytvořte si následující soubor, který implementuje rozšíření
 (importovatelný modul) s jednou funkcí.
 
 (Nebudeme chtít, abyste podobný kód uměli napsat, ale měli byste být schopní
@@ -166,16 +166,16 @@ PyInit_demo(void)
 
 Z tohoto souboru by měla být patrná struktura podobných rozšíření:
 máme funkci (`demo_system`), která převádí objekty Pythonu
-na datové typy C, volá samotnou funkci, a výsledek převádí zpět na pythonní
+na datové typy C, volá samotnou funkci a výsledek převádí zpět na pythonní
 objekt.
 
 Dále máme pole záznamů o funkcích (`DemoMethods`), kde je ke každé funkci
-přiřazeno jméno, dokumentační řetězec, a způsob volání (v našem případě
+přiřazeno jméno, dokumentační řetězec a způsob volání (v našem případě
 METH_VARARGS, tedy volání s proměnným počtem nepojmenovaných argumentů,
-podobně jako bychom v Pythonu napsali  `def system(*args)`).
+podobně jako bychom v Pythonu napsali `def system(*args)`).
 
 Další potřebná proměnná, `demo_module`, obsahuje  informace o modulu:
-jméno, dokumentační řetězec, a seznam funkcí.
+jméno, dokumentační řetězec a seznam funkcí.
 Kdybychom potřebovali kromě funkcí definovat i třídy nebo konstanty,
 zde bychom pomocí [slotů][PyModuleDef_Slot] definovali funkci, která modul
 inicializuje, t.j. má podobnou funkci jako `__init__` u třídy v Pythonu.
@@ -184,7 +184,7 @@ inicializuje, t.j. má podobnou funkci jako `__init__` u třídy v Pythonu.
 
 Poslední část je funkce `PyInit`, jediná která není definována jako `static`,
 takže jediná, která je exportována jako API knihovny, kterou vytváříme.
-Až bude Python tento modul importovat, najde tuto funkci podle jména, spustí ji,
+Až bude Python tento modul importovat, najde tuto funkci podle jména, spustí ji
 a podle vrácené struktury typu `PyModuleDef` vytvoří pythonní objekt s modulem.
 
 
@@ -196,7 +196,7 @@ z něj sdílenou knihovnu – soubor .so (nebo .dll) – s názvem modulu:
 buď jen `demo.so`, nebo i s identifikací architektury a verze Pythonu,
 např. `demo.cpython-35m-x86_64-linux-gnu.so`.
 (Výhoda delších názvů je v tom, že v jednom adresáři může být víc modulů pro
-různé architektury, a že se Python nebude snažit načíst nekompatibilní moduly.)
+různé architektury a že se Python nebude snažit načíst nekompatibilní moduly.)
 
 Překlad je nutné provést se správnými přepínači a volbami, nejlépe takovými,
 s jakými byl sestaven samotný Python.
@@ -229,7 +229,7 @@ setup(
 Příkazy `python setup.py sdist` a `python setup.py install` budou fungovat jako normálně,
 jen je na instalaci potřeba překladač jazyka C.
 
-Aby uživatelé překladač mít nemuseli, můžeme nainstalovat knihovnu `wheel` (`python -m pip install wheel`), a pak příkazem `python setup.py bdist_wheel` vygenerovat tzv. *wheel* archiv,
+Aby uživatelé překladač mít nemuseli, můžeme nainstalovat knihovnu `wheel` (`python -m pip install wheel`) a pak příkazem `python setup.py bdist_wheel` vygenerovat tzv. *wheel* archiv,
 např. `dist/demo-0.1-cp35-cp35m-linux_x86_64.whl`. Tento archiv jde nahrát na PyPI a následně
 nainstalovat, ovšem jen na architektuře a verzi Pythonu, pro které byl vytvořen.
 
@@ -268,12 +268,12 @@ ze kterých je možné k tomuto objektu přistoupit.
 Když objekt uložíme do proměnné nebo do seznamu, zvýší se počet referencí o 1.
 Když seznam nebo proměnná zanikne (nebo náš objekt přepíšeme jiným),
 počet referencí se zase sníží.
-Když počet referencí dosáhne nuly, znamená to, že se k objektu už nedá dostat, a Python ho
+Když počet referencí dosáhne nuly, znamená to, že se k objektu už nedá dostat a Python ho
 uvolní z paměti.
 
 Druhý prvek struktury PyObject je ukazatel na typ.
 Typ je pythonní objekt (`class`), který definuje chování třídy objektů: operátory,
-atributy a metody, které ten který objekt má.
+atributy a metody, které ten objekt má.
 
 Struktura PyObject slouží jako hlavička, za kterou pak následují data interpretovaná podle
 typu daného objektu.
@@ -298,9 +298,8 @@ NumPy matice mají metadata (velikost, typ, popis rozložení v paměti) a ukaza
 [list]: https://github.com/python/cpython/blob/3.5/Include/listobject.h#L23
 [int]: https://github.com/python/cpython/blob/3.5/Include/longintrepr.h#L89
 
-To základní, co potřebujeme vědět, je že na úrovni C je každý pythonní objekt reprezentován
-jako struktura počtu referencí, ukazatele na typ, a dat specifických pro daný typ.
-
+To základní, co potřebujeme vědět, je, že na úrovni C je každý pythonní objekt reprezentován
+jako struktura počtu referencí, ukazatele na typ a dat specifických pro daný typ.
 
 
 Reference counting
@@ -308,11 +307,11 @@ Reference counting
 
 Tak jako v C je důležité správně alokovat a dealokovat paměť, při tvorbě rozšíření do CPythonu
 je třeba správně pracovat s referencemi: ke každému [Py_INCREF] (přičtení 1 k počtu referencí)
-je potřeba později zavolat [Py_DECREF] (odečtení 1, a případné uvolnění objektu).
+je potřeba později zavolat [Py_DECREF] (odečtení 1 a případné uvolnění objektu).
 Jakákoli práce s objektem se smí provádět jen mezi INCREF a příslušným DECREF.
 
 Platí konvence, že argumenty funkcí se předávají jako tzv. *borrowed reference*: o počitadlo
-se stará volající, a v průběhu volané funkce se objekt dá používat.
+se stará volající a v průběhu volané funkce se objekt dá používat.
 Pokud bychom ale argument potřebovali i po skončení volané funkce (např. si ho uložíme
 do globální proměnné), je potřeba mu počitadlo zvýšit (a po skončení práce zase snížit).
 
@@ -339,7 +338,7 @@ Další konvence, kterou většina funkcí v C API dodržuje, je způsob vracen�
 
 Funkce, které vrací pythonní objekty, na úrovni C vrací `PyObject*`.
 Nastane-li výjimka, objekt výjimky se zaznamená do globální (přesněji, *thread-local*)
-proměnné, a funkce vrátí NULL.
+proměnné a funkce vrátí NULL.
 
 V našem modulu `demo` voláme funkci `PyArg_ParseTuple`, která může vyvolat výjimku: typicky
 `TypeError` kvůli nesprávnému počtu nebo typu argumentů.
@@ -379,7 +378,7 @@ Další způsob, jak použít C API ale nepsat C, je použít překladač z př�
 
 Jeden takový jazyk je Cython (neplést s CPython).
 
-Cython je jazyk podobný Pythonu, který ale lze přeložit na C, a dále optimalizovat.
+Cython je jazyk podobný Pythonu, který ale lze přeložit na C a dále optimalizovat.
 
 Cython si nainstalujte pomocí příkazu:
 
@@ -491,7 +490,7 @@ Ke každému řádku se navíc dá kliknutím ukázat odpovídající kód v C (
 protože řeší věci jako zpětnou kompatibilitu a ošetřování chyb, a navíc používá hodně pomocných
 maker).
 
-Obecně nebývá problém mít "žluté" řádky na úrovni funkce, kde se provádí pouze jednou.
+Obecně nebývá problém mít „žluté“ ty řádky, které se ve funkci provádí pouze jednou.
 Ale v cyklech, zvláště těch třikrát zanořených, se autor rozšíření typicky snaží žlutým řádkům
 vyhnout.
 Nejjednodušší způsob, jak toho docílit, je doplnění statických informací o typech.
@@ -517,7 +516,7 @@ ale ani reálná čísla (`float`), a dokonce ani celá čísla, která se nevej
 jiné velikosti, dle systému).
 Typ int v Cythonu je totiž int z C, ne ten neomezený z Pythonu.
 
-Další věc, kterou můžeme udělat, je změnit příkaz `def` na `cpdef`, a doplnit typ návratové
+Další věc, kterou můžeme udělat, je změnit příkaz `def` na `cpdef` a doplnit typ návratové
 hodnoty:
     
 ```python
@@ -538,7 +537,7 @@ Funkce jdou deklarovat třemi způsoby:
 
  * `def func(...):` je funkce, která jde volat z Pythonu i z Cythonu, ale volání z Cythonu je pomalé (argumenty a výsledek se převádí na pythonní objekty a zpět),
  * `cdef <type> func(...):` je funkce, která jde volat pouze z Cythonu, ale volání je rychlé (pracuje se s C typy),
- * `cpdef <type> func(...):` je funkce, která se z Cythonu volá rychle ale jde volat i z Pythonu (ve skutečnosti Cython vytvoří dva druhy této funkce).
+ * `cpdef <type> func(...):` je funkce, která se z Cythonu volá rychle, ale jde volat i z Pythonu (ve skutečnosti Cython vytvoří dva druhy této funkce).
 
 Třídy
 -----
@@ -633,10 +632,10 @@ Anotací typů matic se naše demo maticového násobení dostalo skoro na úrov
 C, ale ne úplně: řádky, které pracují s maticemi, jsou ve výstupu `--annotate`
 stále trochu žluté.
 Cython totiž při každém přístupu k matici kontroluje, jestli nečteme nebo
-nezapisujeme mimo pole, a případně vyvolá `IndexError`.
+nezapisujeme mimo pole a případně vyvolá `IndexError`.
 
 Pokud víme – jako v našem případě – že je taková kontrola zbytečná,
-můžeme Cythonu říct aby ji nedělal.
+můžeme Cythonu říct, aby ji nedělal.
 Přístupy mimo pole pak způsobí nedefinované chování (většinou program spadne,
 nebo hůř, bude pracovat se špatnými daty).
 Kontrola se vypíná direktivou `boundscheck`, která se dá zadat dvěma hlavními
@@ -662,7 +661,7 @@ Seznam dalších direktiv najdete v [dokumentaci][directives].
 Cython podporuje ještě blok `with cython.nogil:`, který je podobný direktivám,
 ale dá se použít jen s `with`.
 V rámci tohoto bloku je odemčený GIL (globální zámek).
-Smí se použít pouze pokud nepracujeme s pythonnímmi objekty – například když
+Smí se použít, pouze pokud nepracujeme s pythonními objekty – například když
 operujeme jen na obsahu už existujících maticí.
 Opak je `with cython.gil:`, kterým zámek zase zamkneme – například když
 potřebujeme vyhodit výjimku.
@@ -671,7 +670,7 @@ potřebujeme vyhodit výjimku.
 [directives]: http://cython.readthedocs.io/en/latest/src/reference/compilation.html#compiler-directives
 
 
-Struktury, ukazatele, a dynamická alokace
+Struktury, ukazatele a dynamická alokace
 -----------------------------------------
 
 Přestože v Cythonu můžete používat pythonní *n*-tice, slovníky, seznamy a další
@@ -789,13 +788,13 @@ cpdef int mul(int a, int b):
     return a * b
 ```
 
-Kód v takové buňce pak Notebook zkompiluje Cythonem, a funkce/proměnné v něm
+Kód v takové buňce pak Notebook zkompiluje Cythonem a funkce/proměnné v něm
 nadefinované dá k dispozici.
 
 Můžeme použít i `%%cython --annotate`, což vypíše anotace přímo do Notebooku.
 
 Další zkratka je modul `pyximort`, který dává možnost importovat moduly `.pyx`
-přímo: hledají se podobně jako `.py` nebo `.so`, a před importem se zkompilují.
+přímo: hledají se podobně jako `.py` nebo `.so` a před importem se zkompilují.
 Zapíná se to následovně:
 
 ```python
@@ -812,7 +811,7 @@ Video
 Před nedávnem měl [Miro] na Středisku unixových technologií nahrávanou ukázku přepsání
 úlohy ruksaku z předmětu MI-PAA z Pythonu do Cythonu (včetně nepříjemného záseku a live
 ukázky debugování problému).
-Na [video] se můžete podívat, mohlo by vám prozradit spustu tipů, které se vám mohou hodit
+Na [video] se můžete podívat, mohlo by vám prozradit spoustu tipů, které se vám mohou hodit
 ke splnění úlohy.
 K obsahu jen dodáme, že místo `malloc` a `free` je lepší použít `PyMem_Malloc` a
 `PyMem_Free` z ukázky výše.

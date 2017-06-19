@@ -4,7 +4,7 @@ Ať už programuješ nebo píšeš dokumenty, stává se,
 že vytvoříš několik verzí.
 Tuhle chceš archivovat část, která už není potřeba,
 tamhle chceš svoji práci poslat k ohodnocení,
-nebo dokonce kolegům kteří na ni spolupracují.
+nebo dokonce kolegům, kteří na ni spolupracují.
 A když se verze začnou kupit, může být problém se v nich vyznat.
 
 Část těchto problémů řeší nástroje jako Dropbox či
@@ -59,7 +59,7 @@ pomocí příkazu `git init`:
 Initialized empty Git repository in ./.git/
 ```
 
-Na první pohled to vypadá že se nic nestalo.
+Na první pohled to vypadá, že se nic nestalo.
 Tenhle příkaz totiž vytvořil *skrytý* adresář
 `.git`, do kterého uložil nějaké informace.
 Přesvědč se příkazem `ls -a` (Linux) nebo `dir /a` (Windows).
@@ -152,7 +152,7 @@ abys věděl{{a}}, co tahle revize obsahuje za změny.
 Pro začátek napiš jen `První revize`.
 Předvyplněné řádky začínající `#` nech být
 (nebo vymaž, podle chuti – Git je ignoruje).
-Pak soubor ulož, a zavři editor.
+Pak soubor ulož a zavři editor.
 
 > [note] Jak na editory?
 >
@@ -166,7 +166,7 @@ Pak soubor ulož, a zavři editor.
 > který se jmenuje Nano.
 > Pozná se tak, že v dolních dvou řádcích má malou nápovědu.
 > Něco napiš, pomocí <kbd>Ctrl</kbd>+<kbd>O</kbd>
-> soubor ulož, potvrď jméno souboru (<kbd>Enter</kbd>),
+> soubor ulož, potvrď jméno souboru (<kbd>Enter</kbd>)
 > a pomocí <kbd>Ctrl</kbd>+<kbd>X</kbd> editor zavři.
 >
 > Nemáš-li Git nastavený podle instrukcí, objeví se přímo
@@ -174,7 +174,7 @@ Pak soubor ulož, a zavři editor.
 > se teď učit nebudeme. Pozná se tak, že úplně
 > spodní řádek je prázdný.
 > V takovém případě stiskni
-> <kbd>Esc</kbd>, napiš `:q!` (dvojtečka, Q, vykřičník),
+> <kbd>Esc</kbd>, napiš `:q!` (dvojtečka, Q, vykřičník)
 > a potvrď pomocí <kbd>Enter</kbd>.
 > Pak si nastav Git a zkus `git commit` znovu.
 
@@ -221,14 +221,15 @@ Vidíš unikátní
 pomocí kterého se vždy bude dát dostat k této konkrétní
 verzi projektu.
 Pak je tam jméno autor{{ gnd('a', 'ky', both='a') }} a datum vytvoření,
-popisek,
+popisek
 a nakonec shrnutí změn: byl přidán soubor <tt class="strong">basnicka.txt</tt>
 s nějakým <span class="green">obsahem</span>.
 
 > [note]
 > Když je výpis moc dlouhý, můžeš se v něm pohybovat
-> (<kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>PgUp</kbd>, <kbd>PgDn</kbd>),
+> (<kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>PgUp</kbd>, <kbd>PgDn</kbd>)
 > a zpět se dostaneš klávesou <kbd>Q</kbd> jako *Quit*.
+
 
 ## Druhá revize
 
@@ -290,17 +291,17 @@ v jedné ze změn musí být chyba!
 > [note]
 > Řádek začínající <tt class="blue">@@</tt> říká,
 > kde v souboru změna je (u mě začínal vypsaný kousek
-> souboru řádkem 3, a měl 8 řádků; v nové verzi je
+> souboru řádkem 3 a měl 8 řádků; v nové verzi je
 > opět od 3. řádku, ale má už jen 7 řádků).
 
-Jsi-li se změnami spokojen{{a}}, řekni Gitu ať je
+Jsi-li se změnami spokojen{{a}}, řekni Gitu, ať je
 použije v další revizi:
 
 ```ansi
 ␛[36m$␛[0m git add basnicka.txt
 ```
 
-A pro úplnost se znovu koukni co říká
+A pro úplnost se znovu koukni, co říká
 `status` – co je zelené, přidá se do další
 revize.
 
@@ -318,13 +319,13 @@ Než uděláš druhou revizi, ještě řeknu něco o tom,
 jak správně psát k revizím popisky.
 Na to je totiž úzus, který téměř všichni programátoři
 respektují: na prvním řádku je krátké shrnutí změn,
-následuje prázdný řádek, a pak detailnější popis důvodů
+následuje prázdný řádek a pak detailnější popis důvodů
 ke změně a případně změny samotné.
 Snaž se délku řádků držet do zhruba 70 znaků;
 vodítkem můžou být předvyplněné řádky začínající `#`.
-Nemá cenu popisovat co je jasné ze změn samotných,
+Nemá cenu popisovat, co je jasné ze změn samotných,
 zajímavé jsou hlavně širší souvislosti a důvody ke změnám.
-Cokoli, co může přijít vhod až se změny bude snažit někdo pochopit.
+Cokoli, co může přijít vhod, až se změny bude snažit někdo pochopit.
 (Ten někdo můžeš být klidně ty, za pár měsíců.)
 
 Můj popisek bude znít takhle:
@@ -333,15 +334,15 @@ Můj popisek bude znít takhle:
 Rozdělení dlouhých řádků
 
 Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
-takhle se to líp čte. (Ale, co si budeme povídat, hlavní 
-důvod je ukázat co dělá git diff.)
+takhle se to líp čte. (Ale co si budeme povídat, hlavní 
+důvod je ukázat, co dělá git diff.)
 ```
 
 > [note]
 > Nebude-li se ti někdy dařit shrnout změnu
 > v 70 znacích, zamysli se, jestli neděláš moc velkou
 > změnu najednou – např. "změna řetězce X
-> a dopsání nového cyklu Y" by bývalo lepší uložit
+> a dopsání nového cyklu Y" by bylo lepší uložit
 > jako dvě různé revize.
 
 Pomocí `git commit` vytvoř druhou revizi.
@@ -356,8 +357,8 @@ Date:   Mon Mar 20 14:51:34 2017 +0100
     Rozdělení dlouhých řádků
     
     Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
-    takhle se to líp čte. (Ale, co si budeme povídat, hlavní
-    důvod je ukázat co dělá git diff.)
+    takhle se to líp čte. (Ale co si budeme povídat, hlavní
+    důvod je ukázat, co dělá git diff.)
 
 ␛[1mdiff --git a/basnicka.txt b/basnicka.txt␛[m
 ␛[1mindex 558d133..24e2384 100644␛[m
@@ -403,8 +404,8 @@ Date:   Mon Mar 20 14:51:34 2017 +0100
     Rozdělení dlouhých řádků
     
     Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
-    takhle se to líp čte. (Ale, co si budeme povídat, hlavní
-    důvod je ukázat co dělá git diff.)
+    takhle se to líp čte. (Ale co si budeme povídat, hlavní
+    důvod je ukázat, co dělá git diff.)
 
 ␛[33mcommit 1a009f4267d5a6ab7ece87cb7514f5b803692e39␛[m
 Author: Adéla Novotná <adela.novotna@example.cz>
@@ -413,10 +414,10 @@ Date:   Mon Mar 20 14:51:34 2017 +0100
     První revize
 ```
 
-Git log vypíše všecny revize od té nejnovější až po
+Git log vypíše všechny revize od té nejnovější až po
 úplný začátek projektu.
 
-Až budeš mít verzí tolik, že se nevejdou najednu
+Až budeš mít verzí tolik, že se nevejdou najednou
 na obrazovku, můžeš se v logu pohybovat pomocí šipek a
 <kbd>PgUp</kbd>/<kbd>PgDn</kbd>.
 „Ven“ se dostaneš klávesou <kbd>q</kbd>.
@@ -430,8 +431,8 @@ na obrazovku, můžeš se v logu pohybovat pomocí šipek a
 >
 > Já často používám `git log --oneline --graph --decorate --cherry-mark --boundary`.
 > Chceš-li tyhle možnosti studovat, začni v tomto
-> pořadí, a dej si pauzu vždycky když přestaneš
-> rozumět :)
+> pořadí a dej si pauzu vždycky, když přestaneš
+> rozumět. :)
 
 Když se na nějakou verzi budeš chtít podívat podrobněji,
 napiš `git show 5ff0b`, kde místo `5ff0b`
@@ -456,10 +457,10 @@ $ gitk --all
 
 
 Tenhle program vypadá celkem šeredně (skoro jako by ho
-psali programátoři, které místo designu zajímá co je
+psali programátoři, které místo designu zajímá, co je
 „vevnitř“), ale pro naše účely postačí.
 Zkus se v něm trochu zorientovat, pak ho zavři,
-udělej dalších pár revizí, a koukni se na ně přes
+udělej dalších pár revizí a koukni se na ně přes
 `git log` a `gitk --all`.
 
 ## Závěr
@@ -467,9 +468,9 @@ udělej dalších pár revizí, a koukni se na ně přes
 A to je všechno, co z Gitu zatím budeš potřebovat.
 Vždycky, když uděláš <code>git add <var>soubor</var></code>
 a `git commit`,
-aktuální verze souborů se uloží, a už nejde (jednoduše)
+aktuální verze souborů se uloží a už nejde (jednoduše)
 smazat – pokud nesmažeš celý adresář `.git`.
-Jednotlivé verze, a změny od posledního uložení,
+Jednotlivé verze a změny od posledního uložení,
 si umíš i prohlížet.
 
 Možná to všechno zní jako zbytečně moc práce.
@@ -479,5 +480,5 @@ Ale je dobré ho používat už od začátku.
 Až bude správa verzí opravdu potřeba, bude se tenhle
 trénink hodit.
 
-Takže, odteď, kdykoliv uděláš v rámci PyLadies funkční
+Takže odteď, kdykoliv uděláš v rámci PyLadies funkční
 verzi nějakého programu, pomocí `git add` a `git commit` si ji ulož do Gitu.

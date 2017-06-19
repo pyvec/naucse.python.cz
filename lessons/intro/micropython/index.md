@@ -14,14 +14,14 @@ Před sebou byste měli mít:
 
 Přichystejte si MicroUSB kabel. Pokud nemáte vlastní, několik jich můžeme zapůjčit.
 
-Obsah lekce vychází z tutoriálů pro PyLadies ([a](http://pyladies.cz/v1/s016-micropython/index.html), [b](https://github.com/stlk/micropython/tree/master/workshop)), na které se můžete podívat pokud tu bude něco vysvětleno příliš rychle.
+Obsah lekce vychází z tutoriálů pro PyLadies ([a](http://pyladies.cz/v1/s016-micropython/index.html), [b](https://github.com/stlk/micropython/tree/master/workshop)), na které se můžete podívat, pokud tu bude něco vysvětleno příliš rychle.
 
 
 ## Popis desky
 
 V posledních letech se dá za relativně málo peněz pořídit počítač dost „velký” na to, aby se na něm dal spustit MicroPython – speciální implementace Pythonu pro prostředí s omezenou pamětí.
 NodeMCU, které budeme používat my, obsahuje čip ESP8266, čip navržený jako ovladač WiFi k vestavěným systémům (např. k Arduinu).
-Kromě samotného čipu a flash paměti, které se skrývají v oplechované krabičce, je na desce převodník napětí z 5 V (USB) na 3,3 V a datový převodník z USB na sériový protokol, a jednotlivé piny procesoru jsou vyvedeny na „nožičky” desky.
+Kromě samotného čipu a flash paměti, které se skrývají v oplechované krabičce, je na desce převodník napětí z 5 V (USB) na 3,3 V a datový převodník z USB na sériový protokol a jednotlivé piny procesoru jsou vyvedeny na „nožičky” desky.
 
 V paměti je už nahraný firmware MicroPython; pojďme se k němu připojit.
 
@@ -78,7 +78,7 @@ print(pin.value())
 API MicroPythonu často používá metody tam, kde bychom čekali atributy, proto ne `pin.value` ale `pin.value()`.
 
 Konstanta `Pin.IN` konfiguruje daný pin pro čtení.
-Zkusme si i zápis: zapojte stranu desky s piny D0-D8 do nepájivého pole, a mezi piny `D5` a `G` zapojte diodu.
+Zkusme si i zápis: zapojte stranu desky s piny D0-D8 do nepájivého pole a mezi piny `D5` a `G` zapojte diodu.
 Následující kód diodu rozsvítí:
 
 ```python
@@ -89,7 +89,7 @@ pin.value(1)
 
 Pro zhasnutí zadejte `pin.value(0)`. (Opět jde o volání metody, není to `pin.value = 0`.)
 
-`Pin(14)` odpovídá pinu označenému `D5` – číslování, které používá procesor (a MicroPython), ze bohužel liší od toho, které používá deska.
+`Pin(14)` odpovídá pinu označenému `D5` – číslování, které používá procesor (a MicroPython), se bohužel liší od toho, které používá deska.
 Odpovídající si označení lze zjistit z [taháku](https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf).
 
 Zkuste zajistit, aby dioda svítila, právě pokud je stisknuté tlačítko FLASH.
@@ -151,13 +151,13 @@ Co znamenají čísla 0 a 255 na posledním řádku, jistě zjistíte experiment
 
 ## Flashování
 
-Na našich destičkách je MicroPython už nahraný, ale kdybyste si koupili vlastní NodeMCU, nebo chtěli firmware aktualizovat, budete ho potřebovat umět nahrát.
+Na našich destičkách je MicroPython už nahraný, ale kdybyste si koupili vlastní NodeMCU nebo chtěli firmware aktualizovat, budete ho potřebovat umět nahrát.
 
 K tomu je potřeba nástroj `esptool`, který se dá nainstalovat pomocí:
 
     python -m pip install esptool
 
-Po instalaci esptool si stáhněte nejnovější stabilní firmware pro ESP8266 z [micropython.org/download](http://micropython.org/download#esp8266), a zadejte:
+Po instalaci esptool si stáhněte nejnovější stabilní firmware pro ESP8266 z [micropython.org/download](http://micropython.org/download#esp8266) a zadejte:
 
     esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash 0 esp8266-20161110-v1.8.6.bin
 
@@ -168,12 +168,12 @@ Je-li na desce nahraný MicroPython, tento příkaz by měl fungovat. U jiného 
 
 ## WebREPL
 
-ESP8266 byl původně navržen i jako čip pro WiFi, a i s MicroPythonem se umí připojit k síti.
+ESP8266 byl původně navržen i jako čip pro WiFi a i s MicroPythonem se umí připojit k síti.
 Dokonce se přes WiFi dá i ovládat.
 
 Otevřete si stránku [micropython.org/webrepl](http://micropython.org/webrepl/), přes kterou budete po připojení s destičkou komunikovat.
 
-Poté se buď připojte k existující WiFi síti (Eduroam fungovat nebude), nebo použijte destičku jako samostatný *access point*:
+Poté se buď připojte k existující WiFi síti (Eduroam fungovat nebude) nebo použijte destičku jako samostatný *access point*:
 
 ```python
 
@@ -209,8 +209,9 @@ print('network config:', ap_if.ifconfig())
 import webrepl_setup
 ```
 
-S počítačem se připojte na stejnou síť, a na stránce webrepl otevřené výše se připojte k IP vypsané z `ifconfig()`.
+S počítačem se připojte na stejnou síť a na stránce webrepl otevřené výše se připojte k IP vypsané z `ifconfig()`.
 Měli byste dostat konzoli, jako přes USB.
+
 
 ## Souborový systém
 
@@ -227,7 +228,7 @@ Není ho pak potřeba připojovat k počítači – stačí powerbanka nebo 3,3V
 ## Komunikace
 
 MicroPython pro ESP8266 nemá (z důvodu šetření místem) knihovnu pro HTTP.
-Dá se buď nějaká stáhnout a nainstalovat, nebo použít nízkoúrovňový `socket`.
+Dá se buď nějaká stáhnout a nainstalovat nebo použít nízkoúrovňový `socket`.
 Následující kód (převzatý z velké míry z [oficiální dokumentace]) stáhne data
 ze stránky [api.thingspeak.com/channels/1417/field/2/last.txt](http://api.thingspeak.com/channels/1417/field/2/last.txt), kde se objevuje poslední barva tweetnutá s hashtagem `#cheerlights`.
 
@@ -274,4 +275,3 @@ def download_color():
 ```
 
 Opravdové projekty používají lehčí protokoly než HTTP, například MQTT.
-

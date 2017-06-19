@@ -65,7 +65,7 @@ Průvodce vytvoří složku `docs` a v ní několik souborů:
 * `conf.py` – konfigurační soubor,
 * `index.rst` – vlastní text dokumantace,
 * `Makefile`, `make.bat` – spouštěcí soubory,
-* `_static` –  adresář na obrázky, CSS, apod,
+* `_static` –  adresář na obrázky, CSS apod.,
 * `_templates` – Adresář na vlastní šablony,
 * `_build` – adresář pro výstup, tedy hotovou dokumentaci.
 
@@ -141,7 +141,7 @@ Section to cross-reference
 This is the text of the section.
 ```
 
-Poté na ni lze odkazovat, odkudkoli z dokumentace, odkazovat pomocí
+Poté na ni lze odkazovat odkudkoli z dokumentace pomocí
 [konstrukce ref]:
 
 ```rst
@@ -345,7 +345,7 @@ Doctest summary
 
 ### Import z vlastního kódu
 
-Pokud nemáte nainstalovaný vlastní balíček, a budete z něj chtít v doctestu
+Pokud nemáte nainstalovaný vlastní balíček a budete z něj chtít v doctestu
 importovat, pravděpodobně dostanete `ImportError`.
 V takovém případě pomůže drobná editace na začátku `conf.py`.
 Musíte přidat adresář, ze kterého lze váš kód importovat, do `sys.path`.

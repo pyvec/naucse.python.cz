@@ -8,7 +8,7 @@ Spousta webových služeb poskytuje takzvané
 *API* (z *application programming interface*,
 programátorské rozhraní), přes které je možné s danou
 službou komunikovat programově.
-Místo klikání na tlačítek a čtení stránek „očima”
+Místo klikání na tlačítka a čtení stránek „očima”
 dostaneme data ve formátu, kterým rozumí počítače –
 a v dnešní době to bude většinou formát JSON.
 
@@ -20,7 +20,7 @@ tak se zkusme zeptat Githubu, co o nás ví.
 
 První, a mnohdy nejsložitější, krok k použití API
 je přihlášení. Počítače se totiž přihlašují jinak
-než lidi, a problematika bezpečnosti a oprávnění by vydala na samostatný kurz.
+než lidi a problematika bezpečnosti a oprávnění by vydala na samostatný kurz.
 My to uděláme co nejjednodušeji, ať se rychle dostaneme k jádru věci:
 
 * Přihlaš se na [github.com](https://github.com).
@@ -61,8 +61,8 @@ print(stranka.text)
 
 Měl by se vypsat obsah stránky
 [https://github.com](https://github.com) –
-HTML kód; který se objeví když v prohlížeči dáš
-„Ukázat zdroj” (*View Page Source*, většinou <kbd>Ctrl</kbd>+<kbd>U</kbd>),
+HTML kód, který se objeví když v prohlížeči dáš
+„Ukázat zdroj” (*View Page Source*, většinou <kbd>Ctrl</kbd>+<kbd>U</kbd>)
 a ze kterého prohlížeč umí vykreslit stránku.
 
 Ale my nechceme obsah pro lidi.
@@ -86,9 +86,9 @@ stranka.raise_for_status()
 print(stranka.text)
 ```
 
-Co se stalo? Tím, že jsi Githubu dal{{a}} svůj token,
+Co se stalo? Tím, že jsi Githubu dal{{a}} svůj token
 (načtený ze souboru, předaný přes slovník `headers`),
-poznal že jde dotaz od tebe, a vrátil nějaké informace
+poznal, že jde dotaz od tebe a vrátil nějaké informace
 ve formátu JSON.
 
 Zkus řetězec `stranka.text` převést z JSON na slovník
@@ -144,7 +144,7 @@ Co to přesně jsou HTTP metody je na trochu delší povídání
 (viz [Wikipedia](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods)),
 ale stručně řečeno, pomocí `GET` se většinou stahuje
 obsah, pomocí `POST` se přidává nový,
-`PUT` mění něco, co už na webu existuje,
+`PUT` mění něco, co už na webu existuje
 a `DELETE` něco maže.
 Jakou metodu poujeme závisí na tom, co chceme udělat;
 většinou to bude `POST`, `PUT` nebo `DELETE`.
@@ -154,7 +154,7 @@ se přidání hvězdičky dělá pomocí `PUT`
 dotazu na adresu `/user/starred/:owner/:repo`.
 Za `:owner` a `:repo`
 dosadíš vlastníka a jméno repozitáře
-(v našem případě `pyvec` a `naucse.python.cz`),
+(v našem případě `pyvec` a `naucse.python.cz`)
 a `PUT` metodu zvolíš tak, že zavoláš místo `get` funkci `put`:
 
 ```python

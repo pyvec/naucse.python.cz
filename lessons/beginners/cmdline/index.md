@@ -196,10 +196,10 @@ prohlížení adresářů: zjistíš, že adresář se opravdu vytvořil!
 
 ## Úkol
 Zkus v nově vytvořeném adresáři `{{ dirname }}`
-vytvořit adresář `test`,
+vytvořit adresář `test`
 a zkontrolovat, že se opravdu vytvořil.
 
-Budou se hodit příkazy `cd`, `mkdir`, a `ls` či `dir`.
+Budou se hodit příkazy `cd`, `mkdir` a `ls` či `dir`.
 
 {% filter solution %}
 {% call sidebyside() %}
@@ -370,7 +370,7 @@ Proto už nebudu používat ukázku rozdělenou pro Unix a Windows.
 $ exit
 ```
 
-Ve zbytku těchto materiálů budeme pro pro kód, který je potřeba zadat do
+Ve zbytku těchto materiálů budeme pro kód, který je potřeba zadat do
 příkazové řádky, používat unixovské `$`.
 S touto konvencí se setkáš i ve většině návodů na internetu.
 Používáš-li Windows, je dobré si na `$` zvyknout, i když ve své

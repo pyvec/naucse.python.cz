@@ -23,13 +23,13 @@ $ python -m pip install click colorama
 
 Nástroje na zpracování argumentů z CLI jsou i přímo ve standardní knihovně,
 a dokonce jich není málo: [os.environ], [argparse], [optparse], [getopt].
-S knihovnou `click` je ale práce mnohem příjemnější, a výsledky většinou
+S knihovnou `click` je ale práce mnohem příjemnější a výsledky většinou
 lépe odpovídají zavedeným konvencím.
 
 > [note]
 > Cena za jednoduchost a konzistenci je, že některé styly návrhu CLI Click
 > nepodporuje.
-> Máš-li existující rozhraní které chceš jen převést do Pythonu,
+> Máš-li existující rozhraní, které chceš jen převést do Pythonu,
 > Click nejspíš nebude nejlepší volba.
 
 [os.environ]: https://docs.python.org/3/library/os.html#os.environ
@@ -59,10 +59,10 @@ if __name__ == '__main__':
 ## Příkazy a přepínače
 
 Funkce s dekorátorem `@click.command` je *příkaz* – když ji zavoláš,
-Click zpracuje argumenty příkazové řádky, a zavolá původní funkci
-s příslušnými Pythonními hodnotami.
+Click zpracuje argumenty příkazové řádky a zavolá původní funkci
+s příslušnými pythonními hodnotami.
 Proto se dává do bloku `if __name__ == '__main__':`, který se spustí jen
-když se Pythonní program spustíš „přímo“.
+když si pythonní program spustíš „přímo“.
 Když ho importuješ, tenhle blok se neprovede.
 
 Dekorátory `@click.option` a `@click.argument` pak přidávají přepínače
@@ -123,7 +123,7 @@ Přepínač `--help` přidává Click sám.
 
 Kromě přepínačů podporuje Click i *argumenty*.
 Přepínače musí uživatel na řádce pojmenovat; argumenty se zadávají pozičně.
-Používají se ve dvou případech: pro povinné argumenty, a pro agrumenty kterých
+Používají se ve dvou případech: pro povinné argumenty a pro argumenty, kterých
 může být libovolný počet.
 Na všechno ostatní radši použij přepínače.
 
@@ -146,7 +146,7 @@ def mv(source, destination):
 
 Má-li uživatel zadat jméno souboru, nepoužívej řetězce, ale zadej speciální typ
 `click.File()`.
-Click za soubor automaticky otevře a zavře.
+Click za tebe soubor automaticky otevře a zavře.
 Kromě toho podporuje Unixovskou konvenci, že `-` znamená standardní
 vstup/výstup.
 
@@ -167,7 +167,7 @@ Click má dobrou podporu pro *podpříkazy* známé z verzovacích systémů ja
 příkaz `git` sám o sobě nedělá nic, jen sdružuje podpříkazy jako `git add`
 a `git commit`.
 
-Umí-li tvůj program více akcí, souhrnný příkaz označ `@click.group()`,
+Umí-li tvůj program více akcí, souhrnný příkaz označ `@click.group()`
 a jednotlivé podpříkazy pak přidávej pomocí `command()`:
 
 ```python

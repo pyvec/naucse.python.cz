@@ -47,7 +47,7 @@ protože si každý může zveřejnit co chce, na GitHubu se válí spousta nedo
 A bohužel, ne všechny projekty mají přátelské autory.
 
 Na druhou stranu ale open-source programy mají svoje výhody: nejenom se z nich může kdokoli učit, 
-ale každý může i zkontrolovat, jestli dělají to co dělat mají. 
+ale každý může i zkontrolovat, jestli dělají to, co dělat mají.
 Populární open-source programy nás například pravděpodobně nebudou špehovat (tj. hlásit autorovi, co na počítači děláme), 
 ani většinou neobsahují reklamy: kdyby to dělaly, najde se někdo kdo tyhle „funkce” odstraní 
 a lidé časem začnou používat opravenou verzi. 
@@ -58,13 +58,13 @@ Některé příklady populárních open-source projektů:
 * Atom, gedit (textové editory)
 * CPython (jazyk Python)
 * Linux, Android (jádra operačních systémů)
-* Pytest (pythoní knihovna na testování)
+* Pytest (pythonní knihovna na testování)
 * Django, Flask, Requests (webové knihovny pro Python)
-* Numpy, Jupyter, Matplotlib (pythoní knihovny pro vědce a analytiky)
+* Numpy, Jupyter, Matplotlib (pythonní knihovny pro vědce a analytiky)
 * Materiály k tomuto kurzu     
 
 A jak vidno z posledního příkladu, nejen softwarové projekty se dají vést takhle veřejně. Tento kurz vychází z principů open source: 
-všechno know-how je sdílené, a budeme rádi, když se zapojíš.
+všechno know-how je sdílené a budeme rádi, když se zapojíte.
 
 Pokud vás tato problematika zajímá, doporučujeme krátkou knihu [Katedrála a tržiště](https://www.root.cz/knihy/katedrala-a-trziste/), která nabízí srovnání open-source s tradičním vývojem softwaru za zavřenými dveřmi.
 
@@ -77,9 +77,9 @@ Informace o open-source licencích najdete např. na [choosealicence.com](https:
 
 ## Git a GitHub
 
-Open-source znamená sdílení kódu mezi mnoha lidmi. K tomu se dá použít verzovací nástroj Git ‒ někde na internetu existuje sdílený gitový repozitář s kódem, se kterým se všichni synchronizují.
+Open-source znamená sdílení kódu mezi mnoha lidmi. K tomu se dá použít verzovací nástroj Git ‒ někde na Internetu existuje sdílený gitový repozitář s kódem, se kterým se všichni synchronizují.
 
-Spousta míst na internetu funguje tak, že vybraná skupina lidí má „přístup”: můžou dělat změny, jak se jim líbí.
+Spousta míst na Internetu funguje tak, že vybraná skupina lidí má „přístup”: můžou dělat změny, jak se jim líbí.
 S Gitem se používá jiný model: změny nahrajeme do vlastního sdíleného repozitáře 
 a majiteli původního projektu napíšeme žádost o začlenění těch změn (angl. pull request). 
 Může to být třeba mail se slovy „Hele, na té a té adrese mám nějaké změny, které by se ti mohly hodit! Přidej je do svého projektu!” 
@@ -164,7 +164,7 @@ U každého nového souboru musíme Gitu říct, že chceme jeho obsah sledovat.
 
     $ git add magdalena_rettigova.txt
 
-a znovu zkontroluj stav repozitáře:
+a znovu zkontrolujte stav repozitáře:
 
     $ git status
     On branch master
@@ -190,7 +190,7 @@ Pak soubor uložíme a zavřeme editor.
       (use "git push" to publish your local commits)
     nothing to commit, working tree clean
 
-Pro lepší pochopení, co dělají jednotlivé příkazy, a v jakém stavu můžou být soubory/změny, přikládáme tento diagram: 
+Pro lepší pochopení, co dělají jednotlivé příkazy a v jakém stavu můžou být soubory/změny, přikládáme tento diagram:
 
 ![Git workflow](static/diagram.png)
 
@@ -225,7 +225,7 @@ a všichni uživatelé projektu, na kterém pracujeme, budou mít užitek z naš
 Nemáme ale do původního repozitáře práva na zápis, musíme tedy poslat změny nejprve do naší kopie repozitáře,
 vizte obrázek na začátku.
 
-Udělejte si účet na GitHubu (jestli ho ještě nemáte), a pak jděte na adresu [prezencky](https://github.com/asgeirrr/prezencka/), 
+Udělejte si účet na GitHubu (jestli ho ještě nemáte) a pak jděte na adresu [prezencky](https://github.com/asgeirrr/prezencka/),
 kterou jste použili pro `git clone`. 
 Vlevo nahoře je tlačítko „Fork”, klikněte na něj. Tím se na GitHubu vytvoří vaše kopie repozitáře: 
 adresa by měla být něco jako `https://github.com/tvojejmeno/prezencka.git`.
@@ -238,7 +238,7 @@ Seznam těchto adres nám ukáže příkaz `git remote -v`. Třeba:
     origin  https://github.com/asgeirrr/prezencka.git (fetch)
     origin  https://github.com/asgeirrr/prezencka.git (push)
 
-Tenhle výstup znamená, že pod zkratkou *origin* se schovává adresa, ze kterého jsme repozitář naklonovali.
+Tenhle výstup znamená, že pod zkratkou *origin* se schovává adresa, ze které jsme repozitář naklonovali.
 
 Přidejme si podobnou zkratku pro vlastní repozitář na GitHubu. Můžeme ho pojmenovat např. *public*,
 aby nám bylo jasné, že do tohoto repozitáře můžeme nahrávat změny.
@@ -259,7 +259,7 @@ Tolik k nastavení ‒ `git remote add` stačí udělat jednou pro každý repoz
 
 což znamená: pošli na adresu uloženou pod zkratkou `public` větev `master`.
 
-Funguje? Můžeme se podívat na `https://github.com/tvojejmeno/prezencka` v prohlížeči, a ujistit se, že tam změny jsou.
+Funguje? Můžeme se podívat na `https://github.com/tvojejmeno/prezencka` v prohlížeči a ujistit se, že tam změny jsou.
 
 
 ### Žádost o začlenění (pull request)
@@ -271,12 +271,12 @@ Na stránce původního projektu (na adrese, kterou jsme použili na začátku p
 by mělo být oznámení o nově nahrané větvi s velkým zeleným tlačítkem `Compare & pull request`. 
 Po kliknutí na tlačítko můžeme doplnit popis toho, co tahle změna obnáší, a pak zmáčkneme další tlačítko.
 
-Hotovo; teď je na autorech projektu, aby se na změny podívali a přijali ‒ nebo začali diskusi o tom, jak je ještě vylepšit. 
-(Diskutovat se dá na stránce pull requestu, nebo přes mail.)
+Hotovo; teď je na autorech projektu, aby se na změny podívali a přijali ‒ nebo začali diskusi o tom, jak ji ještě vylepšit.
+(Diskutovat se dá na stránce pull requestu nebo přes mail.)
 
 > [note] Poznámka
 > Procházíte-li materiály z domu, musíte počkat, než si někdo žádosti všimne a začlení ji.
-> To může trvat i pár dní; kdyby to bylo přes týden tak se zkuste se ozvat znovu.
+> To může trvat i pár dní; kdyby to bylo přes týden, tak se zkuste se ozvat znovu.
 
 
 ### Aktualizace (`git pull`)
@@ -291,5 +291,5 @@ Pomocí `git log` se můžeme podívat, jak se projekt mezitím vyvinul.
 Kruh se uzavřel, jsme schopni začlenit do projektu vlastní změny a naopak si stáhnout změny od ostatních. 
 Až příště uvidíte chyby v materiálech nebo nešikovnou formulaci, zkuste to opravit a udělat pull request.
 
-Git je velké téma a mohli bychom probírat větvění nebo řešení konfliktů a spoustu dalšího, 
+Git je velké téma a mohli bychom probírat větvení nebo řešení konfliktů a spoustu dalšího,
 ale nechme si to na pokračovací srazy nebo workshop. 

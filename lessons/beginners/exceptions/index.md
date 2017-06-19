@@ -1,7 +1,7 @@
 # Výjimky
 
 O [chybových výpisech]({{ lesson_url('beginners/print') }}) už v tomto
-kurzu byla zmínka: Python si postěžuje, řekne kde je chyba, a ukončí program.
+kurzu byla zmínka: Python si postěžuje, řekne, kde je chyba, a ukončí program.
 O chybách se toho ale dá říct mnohem víc.
 Pojďme si o nich ukázat něco víc.
 
@@ -50,7 +50,7 @@ Ve složitějších programech se to bude hodit.
 
 Chybu neboli *výjimku* (angl. *exception*) můžeš vyvolat i {{gnd('sám', 'sama')}},
 pomocí příkazu `raise`.
-Za příkaz dáš jméno výjimky, a pak do závorek nějaký popis toho, co je špatně.
+Za příkaz dáš jméno výjimky a pak do závorek nějaký popis toho, co je špatně.
 
 ```python
 VELIKOST_POLE = 20
@@ -156,7 +156,7 @@ def nacti_cislo():
 
 Kromě `except` existují dva jiné bloky,
 které můžeš „přilepit“ k `try`, a to `else` a `finally`.
-První se provede když v `try` bloku
+První se provede, když v `try` bloku
 žádná chyba nenastane; druhý se provede vždy – ať
 už chyba nastala nebo ne.
 

@@ -22,7 +22,6 @@ Objeví se černé okýnko s bílým textem, kam můžeš zadávat příkazy –
 řádka.
 
 
-
 ## Otevření komunikačního kanálu
 
 V příkazové řádce by měl být řádek končící dolarem.
@@ -65,8 +64,8 @@ Měly by se objevit tři zobáčky, kterými MicroPython prosí o instrukce:
 >>>
 ```
 
-
 <div style="page-break-after: always;"></div>
+
 
 ## Kalkulačka
 
@@ -99,7 +98,7 @@ Stačí jen zadat správné příkazy:
 ## Tlačítko
 
 K destičce je připojeno i tlačítko.
-Metodou `btn.value()` se zeptáš, jestli je právě zmáčknuté nebo ne.
+Metodou `btn.value()` se zeptáš, jestli je právě zmáčknuté, nebo ne.
 
 ```pycon
 >>> btn.value()
@@ -111,9 +110,9 @@ Zkus tenhle příkaz zadat, zatímco tlačítko držíš.
 ## Výrazy
 
 Informace o tom, jestli je tlačítko zmáčknuté – `btn.value()` – je číslo:
-buď 0 nebo 1.
+buď 0, nebo 1.
 Výraz `btn.value()` můžeš použít kdekoliv, kde se objevuje číslo
-0 nebo 1 – třeba pro rozsvícení nebo zhasnutí diody:
+0, nebo 1 – třeba pro rozsvícení nebo zhasnutí diody:
 
 ```pycon
 >>> led.value(btn.value())
@@ -124,7 +123,7 @@ Výraz `btn.value()` můžeš použít kdekoliv, kde se objevuje číslo
 
 Existuje způsob, jak nechat MicroPython něco opakovat stále dokola:
 takzvaný *nekonečný cyklus*.
-Na jeden řádek napiš `while True:` (s velkým T a dvojtečkou na konci),
+Na jeden řádek napiš `while True:` (s velkým T a dvojtečkou na konci)
 a potom *tělo cyklu* – příkaz, který se má provést.
 MicroPython tělo cyklu automaticky *odsadí* – přidá na začátek řádku
 mezery. Ty mezery nemaž.
@@ -143,6 +142,7 @@ Je ale způsob jak ho přerušit, až tě omrzí: zmáčkni
 <kbd>Ctrl</kbd>+<kbd>C</kbd>.
 
 <div style="page-break-after: always;"></div>
+
 
 ## Motorek
 
@@ -168,7 +168,7 @@ Před chvílí jsme si ukázali tento kód:
 >>> led.value(btn.value())
 ```
 
-Hodnota `btn.value()` může být buď 1 nebo 0.
+Hodnota `btn.value()` může být buď 1, nebo 0.
 Pojďme ji použít pro motorek: chceme, aby se natočil buď na `40` nebo na
 `120`, podle toho, jestli je tlačítko zmáčknuté.
 Použij trochu matematiky:
@@ -201,18 +201,19 @@ Zkus si to:
 >>> strip.write()
 ```
 
-První tři příkazy připravují jednotlivé barvy, a poslední všechno připravené
+První tři příkazy připravují jednotlivé barvy a poslední všechno připravené
 pošle do LED pásku.
 Až budeš experimentovat, nezapomeň na `strip.write()` – bez toho
 se barvy neukážou.
 
 <div style="page-break-after: always;"></div>
 
+
 ## Program
 
 <img src="{{ static('icon_gedit.png')}}" style="float:right;height:5em;">
 
-Teď si přestaneme jen tak hrát, a začneme psát program.
+Teď si přestaneme jen tak hrát a začneme psát program.
 
 Spusť *editor*: Klikni na *Activities*; potom vyber z levého panelu
 *Text Editor* (ikonka zápisníku s tužkou).
@@ -245,7 +246,7 @@ Zkus v editoru nastavit jiné barvy a program znovu uložit
 (<kbd>Ctrl</kbd>+<kbd>S</kbd>).
 
 Potom v příkazové řádce zmáčkni *šipku nahoru*.
-Tím se vrátíš k předchozímu příkazu (`ampy`), a můžeš znovu stisknout Enter
+Tím se vrátíš k předchozímu příkazu (`ampy`) a můžeš znovu stisknout Enter
 a program spustit.
 
 
@@ -274,6 +275,7 @@ while True:
     strip.write()
     sleep(1/4)
 ```
+
 
 ## Semafor
 
@@ -308,7 +310,7 @@ led.value(1)
 Polož na tlačítko nějaký těžší předmět (třeba myš) tak, aby bylo zmáčknuté.
 Když někdo předmět vezme, tlačítko přestane být zmáčknuté.
 
-Napiš program, který na to bude čekat, a jakmile někdo myš ukradne,
+Napiš program, který na to bude čekat a jakmile někdo myš ukradne,
 LED pásek začne zuřivě blikat.
 
 
@@ -318,5 +320,3 @@ Tím dnešní krátká exkurze do světa MicroPythonu končí.
 Jestli tě programování zaujalo a chceš v něm pokračovat, dej nám vědět!
 
 Nebo pak z klidu domova napiš Petrovi na pviktori@redhat.com.
-
-

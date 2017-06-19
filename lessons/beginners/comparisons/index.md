@@ -112,7 +112,7 @@ print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 ```
 
 
-Tady je vidět, jak počítač dělá přesně co se mu řekne, a nepřemýšlí o významu.
+Tady je vidět, jak počítač dělá přesně, co se mu řekne, a nepřemýšlí o významu.
 Bylo by dobré uživateli, který zadá záporné číslo,
 přímo říct, že zadal blbost. Jak na to?
 
@@ -132,7 +132,7 @@ když uživatel zadal kladné číslo nebo nulu.
 A nyní řekneme počítači, aby tuhle proměnnou použil.
 K tomu se používá dvojice příkazů `if` (*pokud*)
 a `else` (*jinak*).
-Nejepší bude je ukázat na příkladu:
+Nejlepší bude je ukázat na příkladu:
 
 ```python
 strana = float(input('Zadej stranu v centimetrech: '))

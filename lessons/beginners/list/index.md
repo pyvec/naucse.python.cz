@@ -1,13 +1,13 @@
 Tahle kapitola je plná nových věcí.
-Doufám že vydržíš až do konce. A kdyby něco
-zatím nedávalo úlně smysl, nevěš hlavu:
+Doufám, že vydržíš až do konce. A kdyby něco
+zatím nedávalo úplně smysl, nevěš hlavu:
 věci, které si teď vysvětlíme, se opravdu naučíš
 až v dalších lekcích, kde je budeme využívat
 prakticky.
 
 Encyklopedické informace z této stránky shrnuje
 [Tahák na seznamy](https://github.com/pyvec/cheatsheets/blob/master/lists/lists-cs.pdf),
-který si doporučuju vytisknout.
+který si doporučuji vytisknout.
 
 Každý příklad v tomto textu si vyzkoušej;
 to, co Python vypíše, je důležitá součást lekce,
@@ -16,7 +16,7 @@ i když v materiálech není přímo napsaná.
 # Seznamy
 
 Dnes si ukážeme, jak pracovat se *seznamy* (angl. *lists*).
-Doufám že víš, kde máš na klávesnici hranaté
+Doufám, že víš, kde máš na klávesnici hranaté
 závorky, protože právě těmi se seznamy vytváří:
 
 ```python
@@ -119,7 +119,7 @@ a = [1, 2, 3]   # vytvoření seznamu
 b = a           # tady se nový seznam nevytváří
 
 # seznam vytvořený v prvním řádku má teď dvě jména: "a" a "b",
-# ale stále pracujeme jenom s jedním seznamem.
+# ale stále pracujeme jenom s jedním seznamem
 
 print(b)
 a.append(4)
@@ -141,7 +141,7 @@ print(prvocisla)
 
 Metoda `extend` umí pracovat i s jinými
 typy než se seznamy – ráda zpracuje cokoli, přes
-co umí cykilt `for`: např.
+co umí cyklit `for`: např.
 jednotlivé znaky řetězců, řádky souborů, nebo čísla z `range()`.
 
 ```python
@@ -154,8 +154,8 @@ print(seznam)
 ## Měnění prvků
 
 Ale dost přidávání.
-Seznamům se dají i měnit jednotlivé prvky,
-a to jednoduše tak, že do prvku přiřadíme
+Seznamům se dají i měnit jednotlivé prvky
+a to jednoduše tak, že do prvku přiřadíme,
 jako by to byla proměnná:
 
 ```python
@@ -245,7 +245,7 @@ jak přesně se řadí (např. čísla podle velikosti;
 velká písmena za malá, česká až za anglická, atd.).
 
 Metoda `sort` zná pojmenovaný argument
-`reverse`. Pokud ho nastavíš na *true*, řadí se „naopak”.
+`reverse`. Pokud ho nastavíš na *True*, řadí se „naopak”.
 
 ```python
 seznam = [4, 7, 8, 3, 5, 2, 4, 8, 5]
@@ -292,7 +292,7 @@ print(melodie.index('DE'))
 ## Seznam jako podmínka
 
 Seznam se dá použít v příkazu `if` (nebo `while`) jako podmínka,
-která platí když v tom seznamu něco je.
+která platí, když v tom seznamu něco je.
 Jinými slovy, `seznam` je tu „zkratka“ pro `len(seznam) > 0`.
 
 ```python
@@ -341,10 +341,10 @@ print(b)
 
 Další způsob, jak tvořit seznamy
 (zvláště složitější), je nejdřív udělat prázdný
-seznam, a pak ho postupně naplnit pomocí funkce `append`.
+seznam a pak ho postupně naplnit pomocí funkce `append`.
 Třeba pokud z nějakého důvodu chceš seznam
-mocnin dvou, projdi čísla kterými chceme mocnit
-cyklem `for`, a pro každé z nich
+mocnin dvou, projdi čísla, kterými chceme mocnit,
+cyklem `for` a pro každé z nich
 do seznamu přidej příslušnou mocninu:
 
 ```python
@@ -438,7 +438,7 @@ print(opravene_zaznamy) # → ['Pepa Novák', 'Jiří Sládek', 'Ivo Navrátil',
 ```
 
 > [note]
-> Snadný způsub jak zjistit, zda je řetězec složen jen z malých písmen,
+> Snadný způsob jak zjistit, zda je řetězec složen jen z malých písmen,
 > je metoda `islower()`, která vrací True, pokud řetězec obsahuje jen malá
 > písmena, jinak vrací False. Například `'abc'.islower() == True` ale
 > `'aBc'.islower() == False`.
@@ -486,7 +486,7 @@ Jako `random.randrange`, obě mají něco
 společného s náhodou.
 
 Funkce `shuffle` seznam „zamíchá” – všechny prvky náhodně popřehází.
-Jako metoda `sort`, i funkce `shuffle` nic nevrací.
+Jako metoda `sort` i funkce `shuffle` nic nevrací.
 
 ```python
 import random
@@ -514,7 +514,7 @@ tah_pocitace = random.choice(mozne_tahy)
 ## Vnořené seznamy
 
 A perlička na konec!
-Na začátku tohoto textu je napsáno, že v seznam
+Na začátku tohoto textu je napsáno, že seznam
 může obsahovat jakýkoli typ hodnot.
 Může třeba obsahovat i další seznamy:
 
@@ -583,5 +583,5 @@ for radek in nasobilka:
 
 Co s takovou „zapamatovanou” tabulkou?
 Můžeš si do ní uložit třeba pozice
-figurek na šachovnici, nebo křížků a koleček
+figurek na šachovnici nebo křížků a koleček
 ve *2D* piškvorkách.

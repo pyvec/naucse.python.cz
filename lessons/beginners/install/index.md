@@ -7,13 +7,13 @@ V této sekci uděláme dvě věci:
 
 Možná se ptáš, proč je to všechno potřeba?
 
-Python je jak programovací jazyk (způsob, jak říkat počítačům co dělat),
+Python je jak programovací jazyk (způsob, jak říkat počítačům, co dělat),
 tak program, který potřebujeme, aby se s námi počítač tím jazykem domluvil.
 
 Virtuální prostředí pak je něco, co zajistí, aby se všechny počítače chovaly
 zhruba stejně.
 Až ho zprovozníme, nebudeme potřebovat materiály zvlášť pro Linux, zvlášť pro
-Windows, a zvlášť pro Mac.
+Windows a zvlášť pro Mac.
 
 > [note]
 > V budoucnu využijeme druhou výhodu: každé virtuální prostředí je oddělené od

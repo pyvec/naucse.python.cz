@@ -2,7 +2,7 @@ Generátory a AsyncIO
 ====================
 
 Na část toto cvičení bude opět potřeba PyQt5.
-Můžete použít virtualenv z minula, nebo PyQt5 nainstalovat znovu (viz [lekce o PyQt]).
+Můžete použít virtualenv z minula nebo PyQt5 nainstalovat znovu (viz [lekce o PyQt]).
 (Nejde-li to, nevadí – úplně nezbytné dnes PyQt nebude.)
 
 [lekce o PyQt]: {{ lesson_url('intro/pyqt') }}
@@ -24,7 +24,7 @@ $ python -m pip install asyncio
 
 Dnes se podíváme na dvě témata, která spolu souvisí čím dál tím méně, ale stále je
 dobré je pochopit společně.
-Napřed si ukážeme *generátory*, a poté si vysvětlíme *asynchronní programování*.
+Napřed si ukážeme *generátory* a poté si vysvětlíme *asynchronní programování*.
 
 
 Generátory
@@ -78,7 +78,7 @@ iterátory.
 
 Iterátor je ve většině případů „malý“ objekt, který si „pamatuje“ jen původní iterovatelný
 objekt a aktuální pozici. Příklady jsou iterátor seznamů (`iter([])`), slovníků (`iter({})`),
-n-tic, nebo množin, iterátor pro `range`, a podobně.
+n-tic nebo množin, iterátor pro `range` a podobně.
 
 Iterátory ale můžou být i „větší“: třeba otevřený soubor je iterátor, z něhož `next()`
 načítá jednotlivé řádky.
@@ -110,7 +110,7 @@ Zavoláním takové funkce dostáváme *generátorový iterátor* (angl. *genera
 ```
 
 Voláním `next()` se pak stane zajímavá věc: funkce se provede až po první `yield`,
-tam se *zastaví*, a hodnota `yield`-u se vrátí z `next()`.
+tam se *zastaví* a hodnota `yield`-u se vrátí z `next()`.
 Při dalším volání se začne provádět zbytek funkce od místa, kde byla naposled
 zastavena.
 
@@ -149,7 +149,7 @@ with ctx_manager() as obj:
 ```
 
 Vše před `yield` se provede při vstupu do kontextu, hodnota `yield` se předá
-dál, a vše po `yield` se provede na konci.
+dál a vše po `yield` se provede na konci.
 Můžeme si představit, že místo `yield` se „doplní“ obsah bloku `with` –
 funkce se tam na chvíli zastaví a může se tedy provádět něco jiného.
 
@@ -188,7 +188,7 @@ Obousměrná komunikace
 
 Oproti normálním iterátorům, které hodnoty jen poskytují, mají generátory metodu
 `send()`, kterou je možné posílat hodnoty *do* běžícího generátoru.
-Klíčové slovo `yield` totiž může fungovat jako výraz, a tento výraz nabývá poslanou
+Klíčové slovo `yield` totiž může fungovat jako výraz a tento výraz nabývá poslanou
 hodnotu (nebo `None`, byl-li použit normální `next()`).
 
 ```python
@@ -356,7 +356,7 @@ A teď něco úplně jiného: asynchronní programování.
 Jak jsme si řekli v [lekci o C API](../cython/), Python má globální zámek, takže pythonní kód
 může běžet jen v jednom vlákně najednou.
 Taky jsme si řekli, že to většinou příliš nevadí: typický síťový nebo GUI program
-stráví hodně času čekáním na události (odpověď z internetu, kliknutí myší atp.),
+stráví hodně času čekáním na události (odpověď z internetu, kliknutí myší atp.)
 a u tohoto čekání není potřeba držet zámek zamčený.
 
 Servery typicky při zpracovávání požadavku stráví *většinu* času síťovou komunikací.
@@ -368,7 +368,7 @@ Každé vlákno potřebuje vlastní stack, tj. poměrně velkou část paměti; 
 bývá omezen i jinak (na Linuxu je globální limit počtu procesů, do kterého se počítají
 i jednotlivá vlákna – viz `cat /proc/sys/kernel/threads-max`).
 Druhý problém je, že přepnutí z jednoho vlákna do druhého se může stát *kdykoli*.
-Ověřit si, že je na to program připravený, je poměrně složité, a na zajištění
+Ověřit si, že je na to program připravený, je poměrně složité a na zajištění
 správné funkčnosti je potřeba zamykání či jiné techniky, které bývají relativně
 pomalé, a tak se jim programátoři snaží vyhnout.
 A chyby vzniklé nesprávným ošetřením přepínání vláken bývají složité na odhalení
@@ -463,7 +463,7 @@ for blinky in blinkies:
 ```
 
 Ale po docela jednoduchých změnách se může stát, že se jednotlivá vlákna začnou
-přepínat nevhodně, a celý program se rozsype.
+přepínat nevhodně a celý program se rozsype.
 Nám stačí malá změna ve funkci `print_blinkies` (podobná funkce by v reálném programu
 mohla být z externí knihovny, která při přechodu na novou verzi trošku změnila
 vnitřní implementaci):
@@ -484,7 +484,7 @@ Koneckonců i původní program bez `sleep` byl napsaný špatně, jen se to
 
 Jiný způsob, jak tohle vyřešit, je naimplementovat *smyčku událostí*.
 Kdykoli je potřeba pozastavit běh některé úlohy, tak zbytek úlohy naplánujeme
-na nějaký pozdější čas, a mezitím spouštíme úlohy, které byly naplánovány
+na nějaký pozdější čas a mezitím spouštíme úlohy, které byly naplánovány
 na dříve.
 
 ```python
@@ -547,7 +547,7 @@ while task_entries:
     task()
 ```
 
-V tomto řešení nefigurují vlákna: každá funkce se provede celá najednou,
+V tomto řešení nefigurují vlákna: každá funkce se provede celá najednou
 a ostatní úlohy běží pouze mezi jednotlivými funkcemi jedné úlohy.
 Mnohem lépe se tak ověřuje správnost programu.
 
@@ -648,7 +648,7 @@ Obě jsou relativně staré (2002, resp. 2009), ale stále populární.
 Ačkoli byly Twisted, Tornado a podobné knihovny užitečné, jejich problém
 byl v tom, že má každá jiné API.
 Vznikaly tak kolem nich ekosystémy vázané na konkrétní knihovnu:
-server napsaný pro Tornado se nedal použít pod Twisted, a aplikace
+server napsaný pro Tornado se nedal použít pod Twisted a aplikace
 využívající Twisted nemohla využít knihovnu pro Tornado.
 
 Jak to vyřešit?
@@ -663,9 +663,9 @@ Jeden standard
 
 Podobně jako přístup k různým SQL databázím je v Pythonu standardizovaný
 (knihovny pro SQLite, Postgres, MySQL atd. všechny podporují API definované
-v [PEP 249]), nebo je standardizované API webových serverů (WSGI, [PEP 3333]),
+v [PEP 249]) nebo je standardizované API webových serverů (WSGI, [PEP 3333]),
 tak vzniklo standardizované API pro kooperativní multitasking.
-Toto API je definováno v [PEP 3156], a jeho referenční implementace, `asyncio`,
+Toto API je definováno v [PEP 3156] a jeho referenční implementace, `asyncio`,
 je od Pythonu 3.4 ve standardní knihovně.
 (Pro Python 3.3 se dá asyncio stáhnout [z PyPI][pypi-asyncio].)
 Interně je `asyncio` postavené na konceptu *futures* inspirovaných Tornado/Twisted,
@@ -751,10 +751,10 @@ Event Loop
 Knihovna `asyncio` nám dává k dispozici *smyčku událostí*, která se, podobně jako
 `app.exec` v Qt, stará o plánování jednotlivých úloh.
 Každé vlákno může mít vlastní smyčku událostí, kterou získáme pomocí
-`asyncio.get_event_loop`, a pak ji můžeme spustit dvěma způsoby:
+`asyncio.get_event_loop` a pak ji můžeme spustit dvěma způsoby:
 
 * `loop.run_forever` spustí smyčku na tak dlouho, dokud jsou nějaké úlohy
-  naplánovány (to trochu odporuje názvu, ale většinou se nestává že by se
+  naplánovány (to trochu odporuje názvu, ale většinou se nestává, že by se
   úlohy „vyčerpaly“), nebo
 * `loop.run_until_complete` – tahle funkce skončí hned, jakmile je hotová
   daná úloha, a vrátí její výsledek.
@@ -807,7 +807,7 @@ print(result)
 ```
 
 Do `Future` se dá vložit i výjimka: pokud proces, který by `Future`
-naplnil, selže, může výjimku uložit do `Future` místo výsledku,
+naplnil, selže, může výjimku uložit do `Future` místo výsledku
 a `result()` potom tuto výjimku způsobí v kódu, který by výsledek zpracovával.
 
 Na `Future` se navíc dají navázat funkce, které se zavolají jakmile je
@@ -869,7 +869,7 @@ loop.close()
 Tenhle problém můžeme vyřešit tak, že asynchronní funkci „zabalíme“ do `Future`.
 Na to ma dokonce `asyncio` speciální funkci `ensure_future`, která:
 
-* dostane-li asynchronní funkci, „zabalí“ ji do `Future`, a
+* dostane-li asynchronní funkci, „zabalí“ ji do `Future` a
 * výsledek přímo naplánuje na smyčce událostí, takže se asynchronní funkce
   časem začne provádět.
 
@@ -901,7 +901,7 @@ V síťovém programování je to většinou čtení ze socketů nebo inicializa
 
 Pomocí `ensure_future` a `await` můžeme ale dělat něco navíc:
 rozdělit běh našeho programu na víc úloh, které se budou vykonávat „souběžně“ –
-například autor scraperu chce stáhnout několik stránek najednou,
+například autor scraperu chce stáhnout několik stránek najednou
 nebo server souběžně odpovídá na několik požadavků.
 Tomuto rozdělení se říká *fan-out*.
 
@@ -946,7 +946,7 @@ Komunikace
 Ono `io` v `asyncio` naznačuje, že je tato knihovna dělaná především na
 vstup a výstup – konkrétně na komunikaci přes síť (případně s jinými procesy).
 
-Ke komunikaci používá `asyncio` tři úrovně abstrakce: `Transport`, `Protocol`,
+Ke komunikaci používá `asyncio` tři úrovně abstrakce: `Transport`, `Protocol`
 a `Stream`.
 V krátkosti si je tu popíšeme; detaily pak najdete v dokumentaci (je pro nás
 totiž mnohem důležitější abyste pochopili principy, než abyste uměli konkrétní
@@ -959,7 +959,7 @@ Transporty a protokoly jsou postaveny na konceptech knihovny `Twisted`.
 `Transport` většinou nepíšeme sami, použijeme existující.
 V `asyncio` jsou zabudované transporty pro TCP, UDP a SSL.
 `Protocol` je pak použit pro implementaci konkrétních protokolů jako
-`HTTP`, `FTP`, a podobně.
+`HTTP`, `FTP` a podobně.
 V dokumentaci najdete podrobnější popis včetně [příkladů][transport-proto-examples].
 
 [transport-proto-examples]: https://docs.python.org/3/library/asyncio-protocol.html#tcp-echo-server-protocol
@@ -1004,7 +1004,7 @@ Nakonec několik tipů, o kterých je dobré vědět.
 V `asyncio` najdeme synchronizační mechanismy známé z vláknového programování, např.
 `Lock` a `Semaphore` – viz [dokumentace](https://docs.python.org/3/library/asyncio-sync.html).
 
-Musíme-li použít blokující funkci, která např. komunikuje po síti bez `await`, a která by
+Musíme-li použít blokující funkci, která např. komunikuje po síti bez `await` a která by
 tedy zablokovala i všechny ostatní úlohy, můžeme použít
 `loop.run_in_executor()`, a tím danou funkci zavolat ve vlákně nebo podprocesu, ale výsledek zpřístupnit
 pomocí `asyncio.Future`.

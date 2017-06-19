@@ -61,7 +61,7 @@ takže si ji dobře prohlédni, ať ji příště poznáš.
 
 Pokud ses dostala až sem, gratuluji!
 Python máš nejen nainstalovaný, ale taky ti funguje.
-Stačí ho už jen zavřít, a pak opustit i samotnou příkazovou řádku.
+Stačí ho už jen zavřít a pak opustit i samotnou příkazovou řádku.
 V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.
 
 <div class="highlight"><pre>
