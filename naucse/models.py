@@ -185,6 +185,10 @@ def material(root, path, info, base_collection):
         return PageMaterial(root, path, page, info.get("type"), info.get("title"))
     elif "url" in info:
         return UrlMaterial(root, path, info["url"], info["title"], info.get("type"))
+    elif "homework" in info:
+        lesson = root.get_lesson(info['homework'], base_collection)
+        page = lesson.pages[info.get("page", "index")]
+        return PageMaterial(root, path, page, info.get("type"), info.get("title"))
     else:
         raise ValueError("Unknown material type")
 
@@ -223,6 +227,9 @@ class PageMaterial(Material):
                 self.subpages[slug] = item
         else:
             self.subpages = subpages
+
+        if url_type == "homework":
+            self.has_navigation = False
 
     def set_prev_next(self, prev, next):
         for slug, subpage in self.subpages.items():
@@ -372,7 +379,7 @@ class Root(Model):
     def __init__(self, path):
         super().__init__(self, path)
 
-    collections = DirProperty(Collection, 'lessons')
+    collections = DirProperty(Collection, 'materials')
     courses = DirProperty(Course, 'courses')
     run_years = DirProperty(RunYear, 'runs', keyfunc=int)
     licenses = DirProperty(License, 'licenses')
@@ -398,7 +405,7 @@ class Root(Model):
     @reify
     def lesson_jinja_env(self):
         env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader([str(self.path / 'lessons')]),
+            loader=jinja2.FileSystemLoader([str(self.path / 'materials')]),
             autoescape=jinja2.select_autoescape(['html', 'xml']),
         )
         setup_jinja_env(env)
