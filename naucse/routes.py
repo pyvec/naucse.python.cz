@@ -215,8 +215,8 @@ def lesson(lesson, page, solution=None):
     return render_page(page=page, solution=solution)
 
 
-@app.route('/runs/<run:run>/sessions/<session>/', defaults={'coverpage': 'front'})
-@app.route('/runs/<run:run>/sessions/<session>/<coverpage>/')
+@app.route('/<run:run>/sessions/<session>/', defaults={'coverpage': 'front'})
+@app.route('/<run:run>/sessions/<session>/<coverpage>/')
 def session_coverpage(run, session, coverpage):
     """Render the session coverpage.
 
