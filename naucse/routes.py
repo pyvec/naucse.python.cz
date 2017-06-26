@@ -39,7 +39,7 @@ def static(filename):
 
 @template_function
 def course_url(course):
-    return url_for('course_page', course=course)
+    return url_for('run', run=course)
 
 
 @template_function
@@ -99,17 +99,6 @@ def lesson_static(lesson, path):
     directory = str(lesson.path)
     filename = os.path.join('static', path)
     return send_from_directory(directory, filename)
-
-
-@app.route('/courses/<course:course>/')
-def course_page(course):
-    try:
-        return render_template("course.html",
-                               course=course,
-                               plan=course.sessions,
-                               edit_path=course.edit_path)
-    except TemplateNotFound:
-        abort(404)
 
 
 @app.route('/<run:run>/')

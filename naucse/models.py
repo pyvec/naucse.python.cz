@@ -337,7 +337,7 @@ class Course(Model):
     def slug(self):
         if self.place is not None:
             return '/'.join(self.path.parts[-2:])
-        return self.path.parts[-1]
+        return "course/"+self.path.parts[-1] # XXX
 
     @reify
     def sessions(self):
