@@ -38,11 +38,6 @@ def static(filename):
 
 
 @template_function
-def course_url(course):
-    return url_for('run', run=course)
-
-
-@template_function
 def run_url(run):
     return url_for('run', run=run)
 
