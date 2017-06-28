@@ -20,8 +20,8 @@ def _converter(name):
     return decorator
 
 
-@_converter('run')
-class RunConverter(ModelConverter):
+@_converter('course')
+class CourseConverter(ModelConverter):
     regex = r'([0-9]{4}|course)/[^/]+'
 
     def to_python(self, value):
