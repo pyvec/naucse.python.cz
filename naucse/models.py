@@ -182,7 +182,7 @@ def material(root, path, info, base_collection):
     if "lesson" in info:
         lesson = root.get_lesson(info['lesson'], base_collection)
         page = lesson.pages[info.get("page", "index")]
-        return PageMaterial(root, path, page, info.get("type"), info.get("title"))
+        return PageMaterial(root, path, page, info.get("type", "lesson"), info.get("title"))
     elif "url" in info:
         return UrlMaterial(root, path, info["url"], info["title"], info.get("type"))
     else:
