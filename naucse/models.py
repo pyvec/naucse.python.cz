@@ -327,11 +327,13 @@ class Course(Model):
     description = DataProperty(info)
     long_description = DataProperty(info)
 
-    # Only runs use this:
     vars = DataProperty(info)
     subtitle = DataProperty(info, default=None)
     time = DataProperty(info, default=None)
     place = DataProperty(info, default=None)
+    
+    canonical = DataProperty(info, default=False)
+    derives = DataProperty(info, default=None)
 
     @reify
     def slug(self):
