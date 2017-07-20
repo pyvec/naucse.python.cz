@@ -1088,4 +1088,4 @@ loop.run_forever()
 Úkol
 ====
 
-Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/1_async.md#%C3%9Akol).
+Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/10_async.md#%C3%9Akol).
