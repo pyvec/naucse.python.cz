@@ -794,9 +794,3 @@ Doporučujeme udělat přípravu v `__init__` a volání `window.show()` a `retu
 
 A to je zatím vše!
 Další vylepšení budete mít za úkol – nebo si aplikaci přetvořte podle svého uvážení.
-
-
-Úkol
-====
-
-Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/09_pyqt.md#%C3%9Akol).

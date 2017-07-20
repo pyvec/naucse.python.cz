@@ -514,11 +514,3 @@ Pokud Read the Docs použijete, nezapomeňte na dokumentaci odkázat
 z `README.rst`.
 
 [Read the Docs]: https://readthedocs.org/
-
-Úkol
-----
-
-Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/05_dokumentace.md#%C3%9Akol).
-
-Z hlediska předmětu je teď v pořádku projekt na GitHubu zveřejnit,
-abyste mohli použít službu Read the Docs.

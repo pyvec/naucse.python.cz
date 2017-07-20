@@ -818,9 +818,3 @@ K obsahu jen dodáme, že místo `malloc` a `free` je lepší použít `PyMem_Ma
 
 [Miro]: https://github.com/hroncok/
 [video]: https://www.youtube.com/watch?v=Ksv4RA6yhkY
-
-
-Úkol
-====
-
-Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/08_cython.md#%C3%9Akol).

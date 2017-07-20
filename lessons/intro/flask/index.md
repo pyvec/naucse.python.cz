@@ -402,8 +402,3 @@ a editovat ve webové konzoli.
 
 Když nahrajeme nový kód na Github, je vždy potřeba provést na PythonAnywhere
 v konzoli `git pull` a pak v záložce *Web* aplikaci restartovat.
-
-
-### Úkol
-
-Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/02_flask.md#%C3%9Akol)

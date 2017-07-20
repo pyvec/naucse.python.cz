@@ -660,8 +660,3 @@ def is_even(n):
 def test_is_even(n):
     assert is_even(n)
 ```
-
-Úkol
-----
-
-Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/04_testovani.md#%C3%9Akol).

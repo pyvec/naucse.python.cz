@@ -522,9 +522,3 @@ Další
 
 K balíčkování existuje [obsáhlá dokumentace](https://packaging.python.org/).
 Budete-li chtít dělat něco, co v tomto kurzu není, podívejte se tam!
-
-
-Úkol
-----
-
-Úkol je k dispozici na [stránkách předmětu MI-PYT](https://github.com/cvut/MI-PYT/blob/master/tutorials/03_moduly.md#%C3%9Akol).
