@@ -337,9 +337,11 @@ class Course(Model):
 
     @reify
     def slug(self):
-        if self.place is not None:
-            return '/'.join(self.path.parts[-2:])
-        return "course/"+self.path.parts[-1] # XXX
+        directory = self.path.parts[-1]
+        parent_directory = self.path.parts[-2]
+        if parent_directory == "courses":
+            parent_directory = "course" # legacy URL
+        return parent_directory + "/" + directory
 
     @reify
     def sessions(self):
