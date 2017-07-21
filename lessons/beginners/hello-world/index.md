@@ -29,7 +29,8 @@ print("Ahoj světe!")
 
 Pak soubor ulož pod jménem <code><span class="pythondir">~/{{ rootname }}</span>/02/ahoj.py</code>.
 Za <code class="pythondir">~/{{ rootname }}</code> musíš doplnit adresář,
-který jsi vytvořil{{a}} minule. Podadresář `02` musíš vytvořit.
+který jsi vytvořil{{a}} minule, při [instalaci Pythonu](../../beginners/install/).
+Podadresář `02` musíš vytvořit.
 Do něj pak soubor ulož jako `ahoj.py`.
 
 Pokud máš v ukládacím okýnku možnost zvolit <em>kódování</em>, zvol <code>UTF-8</code>.
@@ -46,13 +47,20 @@ jmenuje `ahoj.py` a ne třeba `ahoj.py.txt`.
 
 ## Spuštění
 
-Aktivuj si virtuální prostředí,
+Otevři si příkazovou řádku, aktivuj si v ní virtuální prostředí,
 vlez do adresáře <code><span class="pythondir">~/{{ rootname }}</span>/02</code>
 a zadej tento příkaz:
 
 ```console
 $ python ahoj.py
 ```
+
+> [note]
+> S příkazovou řádkou jsme se seznámil{{gnd('i', 'y', both='i')}}
+> v [minulé lekci](../../beginners/cmdline/), která popisuje i změnu aktuálního
+> adresáře pomocí příkazu `cd`.
+> Aktivaci virtuálního prostředí jsme probral{{gnd('i', 'y', both='i')}} společně
+> s [instalací Pythonu](../../beginners/install/).
 
 > [note] Poznámka pro Windows a starší Python
 > V nečeských Windows s Pythonem 3.5 či nižším bude třeba před
