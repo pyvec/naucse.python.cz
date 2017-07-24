@@ -22,31 +22,22 @@ def _converter(name):
 
 @_converter('course')
 class CourseConverter(ModelConverter):
-    def to_python(self, slug):
-        try:
-            return self.model.courses[slug]
-        except KeyError:
-            abort(404)
-
-    def to_url(self, value):
-        if isinstance(value, str):
-            value = self.to_python(value)
-        return value.slug
-
-
-@_converter('run')
-class RunConverter(ModelConverter):
-    regex = r'[0-9]{4}/[^/]+'
+    regex = r'([0-9]{4}|course)/[^/]+'
 
     def to_python(self, value):
         year, slug = value.split('/')
-        try:
-            return self.model.runs[int(year), slug]
-        except KeyError:
-            abort(404)
+        if year == "course":
+            return self.model.courses[slug]
+        else:
+            try:
+                return self.model.runs[int(year), slug]
+            except KeyError:
+                abort(404)
 
     def to_url(self, value):
         if isinstance(value, str):
+            if "/" not in value: # XXX
+                value = "course/"+value
             value = self.to_python(value)
         return value.slug
 

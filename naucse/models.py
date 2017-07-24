@@ -182,7 +182,7 @@ def material(root, path, info, base_collection):
     if "lesson" in info:
         lesson = root.get_lesson(info['lesson'], base_collection)
         page = lesson.pages[info.get("page", "index")]
-        return PageMaterial(root, path, page, info.get("type"), info.get("title"))
+        return PageMaterial(root, path, page, info.get("type", "lesson"), info.get("title"))
     elif "url" in info:
         return UrlMaterial(root, path, info["url"], info["title"], info.get("type"))
     else:
@@ -327,17 +327,21 @@ class Course(Model):
     description = DataProperty(info)
     long_description = DataProperty(info)
 
-    # Only runs use this:
     vars = DataProperty(info)
     subtitle = DataProperty(info, default=None)
     time = DataProperty(info, default=None)
     place = DataProperty(info, default=None)
+    
+    canonical = DataProperty(info, default=False)
+    derives = DataProperty(info, default=None)
 
     @reify
     def slug(self):
-        if self.place is not None:
-            return '/'.join(self.path.parts[-2:])
-        return self.path.parts[-1]
+        directory = self.path.parts[-1]
+        parent_directory = self.path.parts[-2]
+        if parent_directory == "courses":
+            parent_directory = "course" # legacy URL
+        return parent_directory + "/" + directory
 
     @reify
     def sessions(self):
