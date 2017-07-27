@@ -60,7 +60,7 @@ Některé příklady populárních open-source projektů:
 * Linux, Android (jádra operačních systémů)
 * Pytest (pythonní knihovna na testování)
 * Django, Flask, Requests (webové knihovny pro Python)
-* Numpy, Jupyter, Matplotlib (pythonní knihovny pro vědce a analytiky)
+* NumPy, Jupyter, Matplotlib (pythonní knihovny pro vědce a analytiky)
 * Materiály k tomuto kurzu     
 
 A jak vidno z posledního příkladu, nejen softwarové projekty se dají vést takhle veřejně. Tento kurz vychází z principů open source: 

@@ -92,7 +92,7 @@ Některé příklady populárních open-source projektů:
   [Flask](https://github.com/mitsuhiko/flask),
   [Requests](https://github.com/kennethreitz/requests)
   (webové knihovny pro Python)
-* [Numpy](https://github.com/numpy/numpy),
+* [NumPy](https://github.com/numpy/numpy),
   [Jupyter](https://github.com/jupyter/notebook),
   [Matplotlib](https://github.com/matplotlib/matplotlib)
   (pythonní knihovny pro vědce a analytiky)

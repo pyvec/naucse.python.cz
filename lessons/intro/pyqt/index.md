@@ -53,7 +53,7 @@ $ brew install qt5
 $ brew linkapps qt5
 ```
 
-### Numpy
+### NumPy
 
 Do virtuálního prostředí s PyQt5 si nainstalujte i NumPy:
 
