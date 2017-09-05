@@ -108,28 +108,42 @@ konfiguračního souboru.
 >>> api_secret = 'rhvasRMhvbuHJpu4MIuAb4WO50gnoQa1b2c3d4e5f6g7h8i9j0'
 ```
 
-Tyto kódy je potřeba určitým způsobem slepit a poslat Twitteru,
-aby vytvořil token, které pak půjde použít pro API.
+Pomocí těchto kódů je potřeba si od Twitter API vyžádat přístupový token.
+Používá se k tomu běžné HTTP přihlášení ([HTTP Basic authentication]),
+kde je `api_key` použit jako uživatelské jméno a `api_secret` jako heslo.
+
+Pro běžné HTTP přihlášení se v knihovně requests používá
+`requests.auth.HTTPBasicAuth`:
+
+[HTTP Basic authentication]: https://cs.wikipedia.org/wiki/Basic_access_authentication
 
 ```pycon
->>> import base64
->>> secret = '{}:{}'.format(api_key, api_secret)
->>> secret64 = base64.b64encode(secret.encode('ascii')).decode('ascii')
->>> headers = {
-...     'Authorization': 'Basic {}'.format(secret64),
-...     'Host': 'api.twitter.com',
-... }
 >>> r = session.post('https://api.twitter.com/oauth2/token',
-...                  headers=headers,
-...                  data={'grant_type': 'client_credentials'})
+                     auth=requests.auth.HTTPBasicAuth(api_key, api_secret),
+                     data={'grant_type': 'client_credentials'})
 >>> 
 >>> r.json()
 {'token_type': 'bearer', 'access_token': 'AAAAAAAAAAAAAAAAAAAAAHhKXAAAAAAAaA1abB2bcC3cdD4deE5efF6fgG7ghH8hiI9ijJ0ja1b2c3d4e5f6g7h8i9j0a1b2c3d4e5f6g7h8i9j0'}
 >>> bearer_token = r.json()['access_token']
 ```
 
-Pro komunikaci s Twitter API je nutné přidat hlavičku se získaným tokenem,
-tady využijte faktu, že používáte *session* a nastavte *autentizační funkci*:
+Parametr `auth` v příkladu výše je autentizační funkce, která nějakým způsobem
+modifikuje HTTP požadavek za účelem autentizace, většinou přidává specifické
+hlavičky.
+`requests.auth.HTTPBasicAuth` zde dle specifikace zakóduje jméno a heslo pomocí
+algoritmu base64 a přidá hlavičku `Authorization`.
+
+Ve skutečnosti je základní HTTP přihlášení tak běžné, že lze použít zkratku:
+
+```pycon
+>>> r = session.post('https://api.twitter.com/oauth2/token',
+                     auth=(api_key, api_secret),
+                     data={'grant_type': 'client_credentials'})
+```
+
+Pro další komunikaci s Twitter API je nutné přidat hlavičku se získaným tokenem.
+Jelikož používáte session, není nutné to dělat u každého požadavku zvlášť,
+ale je možné nastavit autentizační funkci pro celou session.
 
 ```pycon
 >>> def bearer_auth(req):
@@ -158,21 +172,13 @@ Zde je pro zjednodušení k dispozici celá funkce pro vytvoření autentizovan�
 
 ```python
 import requests
-import base64
 
 def twitter_session(api_key, api_secret):
     session = requests.Session()
-    secret = '{}:{}'.format(api_key, api_secret)
-    secret64 = base64.b64encode(secret.encode('ascii')).decode('ascii')
-
-    headers = {
-        'Authorization': 'Basic {}'.format(secret64),
-        'Host': 'api.twitter.com',
-    }
 
     r = session.post('https://api.twitter.com/oauth2/token',
-                        headers=headers,
-                        data={'grant_type': 'client_credentials'})
+                     auth=(api_key, api_secret),
+                     data={'grant_type': 'client_credentials'})
 
     bearer_token = r.json()['access_token']
 
@@ -200,10 +206,20 @@ Tímto kódem lze například získat popis přihlášeného uživatele, tedy se
 ```pycon
 >>> token = 'xxxxxxx'
 >>> session = requests.Session()
->>> session.headers = {'Authorization': 'token ' + token, 'User-Agent': 'Python'}
+>>> session.headers = {'User-Agent': 'Python'}
+>>> def token_auth(req):
+...     req.headers['Authorization'] = 'token ' + token
+...     return req
+... 
+>>> session.auth = token_auth
 >>> r = session.get('https://api.github.com/user')
 >>> r.json()
 ```
+
+> [note]
+> Všimněte si hlavičky `User-Agent`. Ta je potřeba při komunikaci s GitHub API
+> explicitně nastavit. Nastavení na objektu session zajistí, že tato hlavička
+> bude ve všech požadavcích.
 
 Pokud budete chtít něco provést, například dát hvězdičku repozitáři s těmito
 materiály, musíte tokenu nastavit patřičné oprávnění
