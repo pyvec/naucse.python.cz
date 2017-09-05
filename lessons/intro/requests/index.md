@@ -12,11 +12,11 @@ Instaluje se standardním způsobem:
 $ python -m pip install requests
 ```
 
-Budeme předpokládat, že znáš alespoň základy HTTP protokolu, a
-vrhneme se rovnou na příklad.
+Budeme předpokládat, že znáte alespoň základy HTTP protokolu,
+a vrhneme se rovnou na příklad.
 
 > [note]
-> Pokud základy neznáš, můžeš se podívat na
+> Pokud základy neznáte, můžete se podívat na
 > [začátečnickou lekci]({{ lesson_url('projects/github-api') }}),
 > která vysvětluje o trošičku víc.
 
@@ -40,7 +40,7 @@ Password:
 {'avatar_url': 'https://avatars.githubusercontent.com/u/2401856?v=3', ...}
 ```
 
-Příklady použití pro další HTTP metody najdeš v [dokumentaci].
+Příklady použití pro další HTTP metody najdete v [dokumentaci].
 
 [dokumentaci]: http://docs.python-requests.org/en/master/user/quickstart/
 
@@ -56,7 +56,7 @@ při více sousledných požadavcích výrazné zrychlení.
 Dále pak session automaticky ukládá *cookies* a je možné u ní nastavit výchozí
 hlavičky.
 
-Zkus si *cookies* vyzkoušet s [httpbin.org](http://httpbin.org) – službou
+Zkuste si *cookies* vyzkoušet s [httpbin.org](http://httpbin.org) – službou
 k testování HTTP dotazů:
 
 ```pycon
@@ -83,23 +83,24 @@ Z Twitteru nebudeme samozřejmě nic parsovat, ale použijeme jejich [API].
 {'errors': [{'code': 215, 'message': 'Bad Authentication data.'}]}
 ```
 
-Jak můžeš vidět v odpovědi, Twitter API neumožňuje data číst bez autentizace.
-Jak se autentizovat bys při troše hledání našel v dokumentaci, ale protože
+Jak můžete vidět v odpovědi, Twitter API neumožňuje data číst bez autentizace.
+Jak se autentizovat byste při troše hledání našli v dokumentaci, ale protože
 tu nevyučujeme úvod do OAuthu, ale Python, rozhodli jsme se ti to zjednodušit.
 
-Po přihlášení na Twitter (pokud nemáš, můžeš si vytvořit nějaký *dummy* účet)
-jdi na [apps.twitter.com] a vytvoř aplikaci (URL si můžeš vymyslet).
-Po vytvoření najdeš na kartě *Keys and Access Tokens* **API Key** a **API Secret**.
-Pozor, jedná prakticky o hesla k tvému Twitter účtu,
-a proto by je nikdo kromě tebe neměl vidět.
+Po přihlášení na Twitter (pokud nemáte účet, můžete si vytvořit nějaký *dummy*
+účet, ale budete potřebovat ověřitelné telefonní číslo)
+jděte na [apps.twitter.com] a vytvořte aplikaci (URL si můžete vymyslet).
+Po vytvoření najdete na kartě *Keys and Access Tokens* **API Key** a **API Secret**.
+Pozor, jedná se prakticky o hesla k vašemu Twitter účtu,
+a proto by je nikdo kromě vás neměl vidět.
 
 > [warning] Ochrana přihlašovacích tokenů
 > Ještě jednou – *API Key* a *API Secret* se chovají jako hesla.
-> Nikomu je nesmíš ukazovat!
+> Nikomu je nesmíte ukazovat!
 > Stane-li se přesto, že se k nim dostane někdo nepovolaný, na kartě
-> *Keys and Access Tokens* je můžeš zrušit.
+> *Keys and Access Tokens* je můžete zrušit.
 
-Prozatím klíče nastav do proměnných, později je schováme například do
+Prozatím klíče nastavte do proměnných, později je schováme například do
 konfiguračního souboru.
 
 ```pycon
@@ -127,8 +128,8 @@ aby vytvořil token, které pak půjde použít pro API.
 >>> bearer_token = r.json()['access_token']
 ```
 
-Pro komunikaci s Twitter API musíš přidat hlavičku se získaným tokenem,
-tady využij faktu, že používáš *session* a nastav *autentizační funkci*:
+Pro komunikaci s Twitter API je nutné přidat hlavičku se získaným tokenem,
+tady využijte faktu, že používáte *session* a nastavte *autentizační funkci*:
 
 ```pycon
 >>> def bearer_auth(req):
@@ -152,7 +153,7 @@ Once a framework decides to abstract the HTML layer from you. Customizing your U
 ...
 ```
 
-Zde máš pro zjednodušení k dispozici celou funkci pro vytvoření autentizované
+Zde je pro zjednodušení k dispozici celá funkce pro vytvoření autentizované
 *session*:
 
 ```python
@@ -189,12 +190,12 @@ def twitter_session(api_key, api_secret):
 ### GitHub API
 
 Podíváme se i na GitHub API, které má jednodušší autentizaci (od GitHubu přímo
-získáš token). Stačí jít do [nastavení] a vyrobit nový token
+získáte token). Stačí jít do [nastavení] a vyrobit nový token
 (zatím není třeba zaškrtávat žádná oprávnění).
-Token musíš opět patřičně chránit.
+Token je opět třeba patřičně chránit.
 
-Pomocí tokenu pak můžeš z Githubu získávat informace.
-Tímto kódem například pak získáš popis přihlášeného uživatele, tedy sebe.
+Pomocí tokenu pak můžete z GitHubu získávat informace.
+Tímto kódem lze například získat popis přihlášeného uživatele, tedy sebe sama.
 
 ```pycon
 >>> token = 'xxxxxxx'
@@ -204,12 +205,12 @@ Tímto kódem například pak získáš popis přihlášeného uživatele, tedy 
 >>> r.json()
 ```
 
-Pokud budeš chtít něco provést, například dát hvězdičku repozitáři s těmito
-materiály, musíš tokenu nastavit patřičné oprávnění
+Pokud budete chtít něco provést, například dát hvězdičku repozitáři s těmito
+materiály, musíte tokenu nastavit patřičné oprávnění
 (u hvězdičky je to `public_repo`).
 To se dělá přes [nastavení] na GitHubu.
 
-Hvězdičku pak přidáš takto:
+Hvězdičku pak přidáte takto:
 
 ```pycon
 >>> r = session.put('https://api.github.com/user/starred/pyvec/naucse.python.cz')
@@ -217,22 +218,23 @@ Hvězdičku pak přidáš takto:
 ''
 ```
 
-Jak vidíš, API nevrací žádný text. Můžeš ale zkontrolovat návratový stav:
+Jak vidíte, API nevrací žádný text (žádné tělo odpovědi).
+Můžete ale zkontrolovat návratový stav:
 
 ```pycon
 >>> r.status_code
 204
 ```
 
-Případně vyhodit výjimku, pokud je stavový kód divný (např 404 Nenalezeno,
-401 Chybí oprávnění apod.):
+Případně vyhodit výjimku, pokud je stavový kód divný (např _404 Nenalezeno_,
+_401 Chybí oprávnění_ apod.):
 
 ```pycon
 >>> r.raise_for_status()
 ```
 
-Pokud hvězdičku chceš odebrat, použij metodu DELETE.
-My ale věříme, že ji odebrat nechceš :)
+Pokud hvězdičku chcete odebrat, použijte metodu DELETE.
+My ale věříme, že ji odebrat nechcete :)
 
 [Dokumentace] ke GitHub API.
 
@@ -240,10 +242,10 @@ My ale věříme, že ji odebrat nechceš :)
 [Dokumentace]: https://developer.github.com/v3/
 
 
-### Chraň své tokeny
+### Chraňte své tokeny
 
-Když ukládáš skript do Gitu, měj na paměti, že tokeny a klíče do něj nikdy
-nepatří. Můžeš je uložit do konfiguračního souboru, který bude gitem ignorován,
+Když ukládáte skript do gitu, mějte na paměti, že tokeny a klíče do něj nikdy
+nepatří. Můžete je uložit do konfiguračního souboru, který bude gitem ignorován,
 například takhle:
 
 ```ini
@@ -255,7 +257,7 @@ secret = rhvasRMhvbuHJpu4MIuAb4WO50gnoQa1b2c3d4e5f6g7h8i9j0
 token = xxxxxxx
 ```
 
-A následně konfiguraci načteš pomocí modulu
+A následně konfiguraci načtete pomocí modulu
 [configparser](https://docs.python.org/3/library/configparser.html):
 
 ```pycon
@@ -266,11 +268,11 @@ A následně konfiguraci načteš pomocí modulu
 D4HJp6PKmpon9eya1b2c3d4e5
 ```
 
-Do souboru `.gitignore` pak musíš přidat název ignorovaného souboru, např.:
+Do souboru `.gitignore` pak musíte přidat název ignorovaného souboru, např.:
 
     auth.cfg
 
-Jelikož ostatní tvůj konfigurační soubor neuvidí,
+Jelikož ostatní tento konfigurační soubor neuvidí,
 je vhodné jim vysvětlit, jak takový soubor (s jejich údaji) vytvořit.
-Můžeš například vložit do gitu soubor `auth.cfg.sample`
+Můžete například vložit do gitu soubor `auth.cfg.sample`
 s vymyšlenými údaji, či příklad uvést v README.
