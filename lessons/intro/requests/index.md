@@ -204,7 +204,7 @@ Pomocí tokenu pak můžete z GitHubu získávat informace.
 Tímto kódem lze například získat popis přihlášeného uživatele, tedy sebe sama.
 
 ```pycon
->>> token = 'xxxxxxx'
+>>> token = 'd7313dab254b7fd0d0f3ec3cbf754b3abce462d5'
 >>> session = requests.Session()
 >>> session.headers = {'User-Agent': 'Python'}
 >>> def token_auth(req):
@@ -270,7 +270,7 @@ key = D4HJp6PKmpon9eya1b2c3d4e5
 secret = rhvasRMhvbuHJpu4MIuAb4WO50gnoQa1b2c3d4e5f6g7h8i9j0
 
 [github]
-token = xxxxxxx
+token = d7313dab254b7fd0d0f3ec3cbf754b3abce462d5
 ```
 
 A následně konfiguraci načtete pomocí modulu
