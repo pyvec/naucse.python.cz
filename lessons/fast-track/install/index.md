@@ -39,7 +39,7 @@ Jinak použij:
 ```console
 $ mkdir project
 $ cd project
-$ python3.5 -m venv __venv__  # vytvoření virtualenvu -- použij Python dle systému
+$ python3.6 -m venv __venv__  # vytvoření virtualenvu -- použij Python dle systému
 $ . __venv__/bin/activate  # aktivace
 (__venv__)$ python -m pip install requests  # příkaz na instalaci balíčků puštěný ve virtualenvu
 (__venv__)$ ...  # práce "uvnitř"
