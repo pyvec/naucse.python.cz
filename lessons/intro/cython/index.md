@@ -625,6 +625,11 @@ directions[maze >= 0] = b' '  # Python level, using b' '
 directions[1, 2] == ord('x')  # C level, using char
 ```
 
+> [note]
+> Použití `matrix[a, b]` je v Cythonu rychlejší než `matrix[a][b]`, protože se
+> uvnitř dějí jiné věci.
+
+
 Direktivy
 ---------
 
