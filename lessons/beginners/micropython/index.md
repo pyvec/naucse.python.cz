@@ -220,7 +220,7 @@ okýnko podobné konzoli, kde se, když zmáčkneš
 na modulu `RST`, objeví nakonec tři zobáčky: `>>>`.
 
 
-### MacOS
+### macOS
 
 V příkazové řádce zadej:
 
@@ -485,7 +485,7 @@ Ke spuštění budeš potřebovat znát port:
 
 * Linux: port používáš v příkazu `picocom`, např. `/dev/ttyUSB0`
 * Windows: port používáš v PuTTY, např. `COM13`
-* MacOS: port používáš v příkazu `screen`, např. `/dev/tty.usbmodem*`
+* macOS: port používáš v příkazu `screen`, např. `/dev/tty.usbmodem*`
 
 `ampy` spusť následujícím příkazem, jen za `PORT` doplň svůj port:
 

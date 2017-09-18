@@ -27,9 +27,9 @@ Vyber si stránku podle svého operačního systému:
 
 * [Linux]({{ subpage_url('linux') }})
 * [Windows]({{ subpage_url('windows') }})
-* [MacOS]({{ subpage_url('macos') }})
+* [macOS]({{ subpage_url('macos') }})
 
-Pokud máš jiný systém než Linux, Windows nebo MacOS,
+Pokud máš jiný systém než Linux, Windows nebo macOS,
 nebo pokud ke svému počítači neznáš administrátorské heslo,
 {% if var('coach-present') -%}
 poraď se s koučem hned, jinak se ptej, až bude něco nejasné.

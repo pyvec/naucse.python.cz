@@ -16,7 +16,7 @@ Ubuntu
 
 Používáš-li jiný Linux, předpokládám že programy instalovat umíš. :)
 
-Pro Windows a MacOS se {{ editor_name }} dá stáhnout z [domovské stránky]({{ editor_url }}).
+Pro Windows a macOS se {{ editor_name }} dá stáhnout z [domovské stránky]({{ editor_url }}).
 
 {% endblock %}
 
