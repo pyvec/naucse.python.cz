@@ -762,9 +762,24 @@ cdef extern from "stdlib.h":
     void srand(long int seedval)
 
 cdef extern from "time.h":
-    long int time(int)
+    ctypedef long time_t
+    long int time(time_t *)
 
-srand(time(0))
+srand(time(NULL))
+print(rand())
+```
+
+Deklarace můžete vložit přímo do `.pyx` souboru, ale pokud je chcete používat
+z různých míst, pojmenujte soubor `.pxd`, to vám umožní na něj použít `cimport`.
+
+Pro části standardní knihovny jsou takové deklarace již v Cythonu
+předpřipravené, můžete tedy použít `cimport` rovnou:
+
+```python
+from libc.stdlib cimport rand, srand
+from libc.time cimport time
+
+srand(time(NULL))
 print(rand())
 ```
 
