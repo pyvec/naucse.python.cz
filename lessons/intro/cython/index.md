@@ -625,6 +625,16 @@ directions[maze >= 0] = b' '  # Python level, using b' '
 directions[1, 2] == ord('x')  # C level, using char
 ```
 
+> [note]
+> Použití `matrix[a, b]` je v Cythonu rychlejší než `matrix[a][b]`, protože se
+> uvnitř dějí jiné věci. Při použití `matrix[a, b]` u matice deklarované jako
+> dvourozměrné pole nějakého typu Cython přistoupí přímo k obsahu na úrovni
+> jazyka C. Při použití `matrix[a][b]` se ale dějí operace dvě, nejprve
+> `matrix[a]` vrací jeden řádek matice a až poté `[b]` vrací jeden prvek z
+> tohoto řádku. Obě operace probíhají na úrovni Pythonu a proto budou pomalejší
+> a při použití `--annotate` bude řádek s takovou operací označen žlutě.
+
+
 Direktivy
 ---------
 
