@@ -36,7 +36,7 @@ se na různých systémech otevírá různě:
 
 * Windows (české): Start → napsat na klávesnici „cmd“ → Příkazový řádek
 * Windows (anglické): Start → napsat na klávesnici „cmd“ → Command Prompt
-* MacOS (anglický): Applications → Utilities → Terminal
+* macOS (anglický): Applications → Utilities → Terminal
 * Linux (KDE): Hlavní Menu → hledat Konsole
 * Linux (Gnome): Super → hledat Terminál
 
@@ -53,7 +53,7 @@ kterým počítač vybízí k zadání příkazu.
 Podle systému bude končit buď znakem `$` nebo `>`,
 před nímž můžou být ještě další informace:
 
-{% call sidebyside(titles=['Unix (Linux, MacOS)', 'Windows']) %}
+{% call sidebyside(titles=['Unix (Linux, macOS)', 'Windows']) %}
 $
 ---
 >
@@ -156,7 +156,7 @@ Za `cd` se píše jméno adresáře, kam chceme přejít.
 Pokud máš adresář `Desktop` nebo `Plocha`, přejdi tam. Pak nezapomeň ověřit,
 že jsi na správném místě.
 
-Jsi-li na Linuxu nebo MacOS, dej si pozor na velikost písmen: na těchto
+Jsi-li na Linuxu nebo macOS, dej si pozor na velikost písmen: na těchto
 systémech jsou `Desktop` a `desktop` dvě různá jména.
 
 Jsi-li na Windows, `cd` už jsi používala – tento příkaz se chová různě

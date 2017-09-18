@@ -60,10 +60,10 @@ V nové příkazové řádce zadej:
 > git config --global format.commitMessageColumns 80
 ```
 
-A teď pokračuj v sekci [Nastavením](#config) níže – MacOS přeskoč.
+A teď pokračuj v sekci [Nastavením](#config) níže – macOS přeskoč.
 
 
-## MacOS
+## macOS
 
 Spusť v příkazové řádce `git`.
 Je-li už nainstalovaný, dozvíš se, jak ho používat

@@ -73,11 +73,11 @@ Vybereš-li editor, klikni na jeho jméno a dostaneš se na instrukce ke stažen
 a nastavení.
 (Na tuhle stránku se pak už nemusíš vracet.)
 
-Nemáš-li už vlastní oblíbený editor, pro Windows a MacOS
+Nemáš-li už vlastní oblíbený editor, pro Windows a macOS
 doporučujeme *Atom*:
 
 * [Atom]({{ subpage_url('atom') }}) – doporučený editor pro
-  Windows a MacOS.
+  Windows a macOS.
 
 Na Linuxu budeš mít pravděpodobně už nainstalovaný Gedit nebo Kate.
 Zkus se podívat do systémové nabídky, jestli jeden z nich máš (případně je

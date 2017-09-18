@@ -1,4 +1,4 @@
-# Instalace Pythonu pro MacOS
+# Instalace Pythonu pro macOS
 
 Nainstaluj si nástroj [Homebrew](http://brew.sh), který řeší a zjednodušuje
 instalaci aplikací a knihoven, které budeme potřebovat pro programování.

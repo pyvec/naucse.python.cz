@@ -23,7 +23,7 @@ Podrobný postup instalace Pythonu a vytvoření prostředí je je popsán
 v příslušné [lekci pro začátečníky]({{ lesson_url('beginners/install') }}).
 Modul `venv` je součást [standardní knihovny](https://docs.python.org/3/library/venv.html).
 
-## Unix (Linux, MacOS)
+## Unix (Linux, macOS)
 
 Zkontroluj, že máš modul `ensurepip`:
 
