@@ -178,9 +178,9 @@ class Collection(Model):
     lessons = DirProperty(Lesson)
 
 
-def material(root, path, info, base_collection):
+def material(root, path, info):
     if "lesson" in info:
-        lesson = root.get_lesson(info['lesson'], base_collection)
+        lesson = root.get_lesson(info['lesson'])
         page = lesson.pages[info.get("page", "index")]
         return PageMaterial(root, path, page, info.get("type", "lesson"), info.get("title"))
     elif "url" in info:
@@ -248,10 +248,9 @@ class UrlMaterial(Material):
 
 class Session(Model):
     """An ordered collection of materials"""
-    def __init__(self, root, path, info, base_collection=None):
+    def __init__(self, root, path, info):
         super().__init__(root, path)
         self.info = info
-        self.base_collection = base_collection
         # self.prev and self.next are set later
 
     def __str__(self):
@@ -265,7 +264,7 @@ class Session(Model):
 
     @reify
     def materials(self):
-        materials = [material(self.root, self.path, s, self.base_collection)
+        materials = [material(self.root, self.path, s)
                      for s in self.info['materials']]
         materials_with_nav = [mat for mat in materials if mat.has_navigation]
         for prev, current, next in zip([None] + materials_with_nav,
@@ -297,10 +296,10 @@ class Session(Model):
         return html_content
 
 
-def _get_sessions(model, plan, base_collection):
+def _get_sessions(model, plan):
     result = OrderedDict(
         (s['slug'],
-            Session(model.root, model.path, s, base_collection))
+            Session(model.root, model.path, s))
         for s in plan
     )
 
@@ -347,8 +346,7 @@ class Course(Model):
 
     @reify
     def sessions(self):
-        base_collection = self.info.get('base_collection')
-        return _get_sessions(self, self.info['plan'], base_collection)
+        return _get_sessions(self, self.info['plan'])
 
     @reify
     def edit_path(self):
@@ -393,12 +391,11 @@ class Root(Model):
             for slug, run in run_year.runs.items()
         }
 
-    def get_lesson(self, name, base_collection=None):
+    def get_lesson(self, name):
         if isinstance(name, Lesson):
             return name
-        if '/' in name:
-            base_collection, name = name.split('/', 2)
-        collection = self.collections[base_collection]
+        collection_name, name = name.split('/', 2)
+        collection = self.collections[collection_name]
         return collection.lessons[name]
 
     @reify
