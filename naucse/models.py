@@ -248,9 +248,14 @@ class UrlMaterial(Material):
 
 class Session(Model):
     """An ordered collection of materials"""
-    def __init__(self, root, path, info):
+    def __init__(self, root, path, base_course, info):
         super().__init__(root, path)
-        self.info = info
+        base_name = info.get('base')
+        if base_name is None:
+            self.info = info
+        else:
+            base = base_course.sessions[base_name].info
+            self.info = {**base, **info}
         # self.prev and self.next are set later
 
     def __str__(self):
@@ -296,12 +301,11 @@ class Session(Model):
         return html_content
 
 
-def _get_sessions(model, plan):
-    result = OrderedDict(
-        (s['slug'],
-            Session(model.root, model.path, s))
-        for s in plan
-    )
+def _get_sessions(course, plan):
+    result = OrderedDict()
+    for sess_info in plan:
+        session = Session(course.root, course.path, course.base_course, sess_info)
+        result[session.slug] = session
 
     sessions = list(result.values())
 
@@ -312,9 +316,9 @@ def _get_sessions(model, plan):
         current.next = next
 
     if len(result) != len(set(result)):
-        raise ValueError('slugs not unique in {!r}'.format(model))
+        raise ValueError('slugs not unique in {!r}'.format(course))
     if sessions != sorted(sessions, key=lambda d: d.date or 0):
-        raise ValueError('sessions not ordered by date in {!r}'.format(model))
+        raise ValueError('sessions not ordered by date in {!r}'.format(course))
     return result
 
 
@@ -332,9 +336,15 @@ class Course(Model):
     subtitle = DataProperty(info, default=None)
     time = DataProperty(info, default=None)
     place = DataProperty(info, default=None)
-    
+
     canonical = DataProperty(info, default=False)
-    derives = DataProperty(info, default=None)
+
+    @reify
+    def base_course(self):
+        name = self.info.get('derives')
+        if name is None:
+            return None
+        return self.root.courses[name]
 
     @reify
     def slug(self):
