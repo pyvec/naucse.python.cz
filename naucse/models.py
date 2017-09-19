@@ -314,6 +314,8 @@ def _get_sessions(model, plan, base_collection):
 
     if len(result) != len(set(result)):
         raise ValueError('slugs not unique in {!r}'.format(model))
+    if sessions != sorted(sessions, key=lambda d: d.date or 0):
+        raise ValueError('sessions not ordered by date in {!r}'.format(model))
     return result
 
 
