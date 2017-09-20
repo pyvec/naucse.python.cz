@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import copy
 
 import jinja2
 
@@ -186,7 +187,7 @@ def material(root, path, info):
     elif "url" in info:
         return UrlMaterial(root, path, info["url"], info["title"], info.get("type"))
     else:
-        raise ValueError("Unknown material type")
+        raise ValueError("Unknown material type: {}".format(info))
 
 
 class Material(Model):
@@ -246,6 +247,40 @@ class UrlMaterial(Material):
         self.title = title
 
 
+def merge_dict(base, patch):
+    """Recursively merge `patch` into `base`
+
+    If a key exists in both `base` and `patch`, then:
+    - if the values are dicts, they are merged recursively
+    - if the values are lists, the value from `patch` is used,
+      but if the string `'+merge'` occurs in the list, it is replaced
+      with the value from `base`.
+    """
+
+    result = dict(base)
+
+    for key, value in patch.items():
+        if key not in result:
+            result[key] = value
+            continue
+
+        previous = base[key]
+        if isinstance(value, dict):
+            result[key] = merge_dict(previous, value)
+        elif isinstance(value, list):
+            result[key] = new = []
+            for item in value:
+                if item == '+merge':
+                    new.extend(previous)
+                else:
+                    new.append(item)
+        else:
+            result[key] = value
+    return result
+
+    return _merge_dict(result, patch)
+
+
 class Session(Model):
     """An ordered collection of materials"""
     def __init__(self, root, path, base_course, info):
@@ -255,7 +290,7 @@ class Session(Model):
             self.info = info
         else:
             base = base_course.sessions[base_name].info
-            self.info = {**base, **info}
+            self.info = merge_dict(base, info)
         # self.prev and self.next are set later
 
     def __str__(self):
