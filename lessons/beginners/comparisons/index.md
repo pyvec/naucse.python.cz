@@ -106,7 +106,7 @@ Co se stane, když jako stranu zadáš záporné číslo?
 Dává výstup smysl?
 
 ```python
-strana = float(input('Zadej stranu v centimetrech: '))
+strana = float(input('Zadej stranu čtverce v centimetrech: '))
 print('Obvod čtverce se stranou', strana, 'je', 4 * strana, 'cm')
 print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 ```
@@ -117,14 +117,14 @@ Bylo by dobré uživateli, který zadá záporné číslo,
 přímo říct, že zadal blbost. Jak na to?
 
 Nejdřív zkus nastavit proměnnou která bude `True`,
-když uživatel zadal kladné číslo nebo nulu.
+když uživatel zadal kladné číslo.
 
 
 {% filter solution %}
     Taková proměnná se dá nastavit pomocí tohoto kódu:
 
     ```python
-    strana = float(input('Zadej stranu v centimetrech: '))
+    strana = float(input('Zadej stranu čtverce v centimetrech: '))
     cislo_je_spravne = strana > 0
     ```
 {% endfilter %}
@@ -135,14 +135,14 @@ a `else` (*jinak*).
 Nejlepší bude je ukázat na příkladu:
 
 ```python
-strana = float(input('Zadej stranu v centimetrech: '))
+strana = float(input('Zadej stranu čtverce v centimetrech: '))
 cislo_je_spravne = strana > 0
 
 if cislo_je_spravne:
     print('Obvod čtverce se stranou', strana, 'je', 4 * strana, 'cm')
     print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 else:
-    print('Už jsi někdy viděla záporný čtverec?')
+    print('Strana musí být kladná, jinak z toho nebude čtverec!')
 
 print('Děkujeme za použití geometrické kalkulačky.')
 ```

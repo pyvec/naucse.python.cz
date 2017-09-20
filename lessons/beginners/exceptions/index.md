@@ -196,7 +196,7 @@ Možné řešení pro geometrickou kalkulačku:
 
 while True:
     try:
-        strana = float(input('Zadej stranu v centimetrech: '))
+        strana = float(input('Zadej stranu čtverce v centimetrech: '))
     except ValueError:
         print('To nebylo číslo!')
     else:
