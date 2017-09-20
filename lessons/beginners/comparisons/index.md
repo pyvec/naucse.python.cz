@@ -117,7 +117,7 @@ Bylo by dobré uživateli, který zadá záporné číslo,
 přímo říct, že zadal blbost. Jak na to?
 
 Nejdřív zkus nastavit proměnnou která bude `True`,
-když uživatel zadal kladné číslo nebo nulu.
+když uživatel zadal kladné číslo.
 
 
 {% filter solution %}
@@ -142,7 +142,7 @@ if cislo_je_spravne:
     print('Obvod čtverce se stranou', strana, 'je', 4 * strana, 'cm')
     print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 else:
-    print('Už jsi někdy viděla záporný čtverec?')
+    print('Už jsi někdy viděla nulový nebo záporný čtverec?')
 
 print('Děkujeme za použití geometrické kalkulačky.')
 ```
