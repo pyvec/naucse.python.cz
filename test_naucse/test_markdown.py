@@ -3,6 +3,7 @@ from textwrap import dedent
 import pytest
 
 from naucse.markdown_util import convert_markdown
+from naucse.markdown_util import style_space_after_prompt
 
 
 def test_markdown_admonition():
@@ -170,3 +171,63 @@ def test_static_link_conversion(what):
 
     param = 'href' if what == 'link' else 'src'
     assert '{}="rab/oof"'.format(param) in convert_markdown(text, convert_url)
+
+
+@pytest.fixture(params=['$', '(__venv__)$', '>>>', '...'])
+def prompt(request):
+    return request.param.replace('>', '&gt;')
+
+
+def test_single_space_after_prompt(prompt):
+    original = '<span class="gp">{}</span> foo'.format(prompt)
+    expected = '<span class="gp">{} </span>foo'.format(prompt)
+    assert style_space_after_prompt(original) == expected
+
+
+def test_multiple_spaces_after_prompt(prompt):
+    original = '<span class="gp">{}</span>     foo'.format(prompt)
+    expected = '<span class="gp">{} </span>    foo'.format(prompt)
+    assert style_space_after_prompt(original) == expected
+
+
+def test_prompt_already_with_space(prompt):
+    original = '<span class="gp">{} </span>foo'.format(prompt)
+    assert style_space_after_prompt(original) == original
+
+
+def test_prompt_already_with_space_extra_spaces(prompt):
+    original = '<span class="gp">{} </span>    foo'.format(prompt)
+    assert style_space_after_prompt(original) == original
+
+
+def test_convert_with_prompt_spaces_pycon():
+    src = dedent("""
+        ```pycon
+        >>> def foo(req):
+        ...     return req
+        ```
+    """)
+    expected = dedent("""
+        <div class="highlight"><pre><span></span>
+        <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span>
+         <span class="nf">foo</span><span class="p">(</span>
+        <span class="n">req</span><span class="p">):</span>
+        <span class="gp">... </span>
+            <span class="k">return</span> <span class="n">req</span>
+        </pre></div>
+    """).strip().replace('\n', '')
+    assert convert_markdown(src).replace('\n', '') == expected
+
+
+def test_convert_with_prompt_spaces_console():
+    src = dedent("""
+        ```console
+        (__venv__)$ python
+        ```
+    """)
+    expected = dedent("""
+        <div class="highlight"><pre><span></span>
+        <span class="gp">(__venv__)$ </span>python
+        </pre></div>
+    """).strip().replace('\n', '')
+    assert convert_markdown(src).replace('\n', '') == expected
