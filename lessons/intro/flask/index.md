@@ -329,7 +329,7 @@ na vytvoření virtuální prostředí, než jste z toho kurzu zvyklí.
 Napište příkazy takto (bez úvodního `$`):
 
 ```console
-$ virtualenv --python=python3.5 env
+$ virtualenv --python=python3.6 env
 $ . env/bin/activate
 $ python -m pip install flask
 ```

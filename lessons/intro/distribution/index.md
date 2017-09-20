@@ -56,7 +56,7 @@ Je to dobrá konvence, ale není to technicky nutné.
 Balíček můžeme zkusit nainstalovat do virtualenvu:
 
 ```console
-$ python3.5 -m venv env     # (nebo jinak -- podle vašeho OS)
+$ python3.6 -m venv env     # (nebo jinak -- podle vašeho OS)
 $ . env/bin/activate        # (nebo jinak -- podle vašeho OS)
 (env)$ python setup.py install
 ...

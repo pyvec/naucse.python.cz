@@ -377,7 +377,7 @@ Poté na Travisu můžete udělat něco jako:
 ```yaml
 language: python
 python:
-- '3.5'
+- '3.6'
 install:
 - python setup.py install
 - pip install -r docs/requirements.txt
