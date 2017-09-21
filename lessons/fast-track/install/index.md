@@ -52,7 +52,7 @@ $ . __venv__/bin/activate  # aktivace
 > mkdir project
 > cd project
 > py -3 -m venv __venv__
-> . __venv__/bin/activate
+> __venv__\Scripts\activate
 (__venv__)> python -m pip install requests  # příkaz na instalaci balíčků puštěný ve virtualenvu
 (__venv__)> ...  # práce "uvnitř"
 (__venv__)> deactivate  # vypnutí virtualenvu
