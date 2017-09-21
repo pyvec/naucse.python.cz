@@ -85,7 +85,7 @@ Z Twitteru nebudeme samozřejmě nic parsovat, ale použijeme jejich [API].
 
 Jak můžete vidět v odpovědi, Twitter API neumožňuje data číst bez autentizace.
 Jak se autentizovat byste při troše hledání našli v dokumentaci, ale protože
-tu nevyučujeme úvod do OAuthu, ale Python, rozhodli jsme se ti to zjednodušit.
+tu nevyučujeme úvod do OAuthu, ale Python, rozhodli jsme se vám to zjednodušit.
 
 Po přihlášení na Twitter (pokud nemáte účet, můžete si vytvořit nějaký *dummy*
 účet, ale budete potřebovat ověřitelné telefonní číslo)
