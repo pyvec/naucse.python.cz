@@ -126,12 +126,6 @@ class Page(Model):
                     url += '{}/'.format(solution)
                 return url
 
-        def default_lesson_url(lesson, page='index'):
-            url = '../../{}/'.format(lesson.slug)
-            if page != 'index':
-                url += ''
-            return 'static/{}'.format(path)
-
         kwargs = {
             'static': lambda path: static_url(path),
             'lesson_url': lambda lesson, page='index', solution=None:
