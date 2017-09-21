@@ -8,11 +8,11 @@ Nechme internety na chvíli být a pojďme se podívat na úplně jinou knihovnu
 
 Knihovna `click` slouží k vytváření rozhraní pro příkazovou řádku
 (angl. *command line interface*, CLI).
-Primárně to je zpracování argumentů, ale Click umí zjednodušit i výstup.
+Primárně to je zpracování argumentů, ale click umí zjednodušit i výstup.
 
 Click je dobré používat s knihovnou `colorama`, která se stará o obarvování
 textu na příkazové řádce ve Windows (a na Unixu nedělá nic).
-Nainstaluj si tedy obě:
+Nainstalujte si tedy obě:
 
 ```console
 $ python -m pip install click colorama
@@ -27,10 +27,10 @@ S knihovnou `click` je ale práce mnohem příjemnější a výsledky většino
 lépe odpovídají zavedeným konvencím.
 
 > [note]
-> Cena za jednoduchost a konzistenci je, že některé styly návrhu CLI Click
+> Cena za jednoduchost a konzistenci je, že některé styly návrhu CLI click
 > nepodporuje.
-> Máš-li existující rozhraní, které chceš jen převést do Pythonu,
-> Click nejspíš nebude nejlepší volba.
+> Máte-li existující rozhraní, které chcete jen převést do Pythonu,
+> click nejspíš nebude nejlepší volba.
 
 [os.environ]: https://docs.python.org/3/library/os.html#os.environ
 [argparse]: https://docs.python.org/3/library/argparse.html
@@ -58,12 +58,12 @@ if __name__ == '__main__':
 
 ## Příkazy a přepínače
 
-Funkce s dekorátorem `@click.command` je *příkaz* – když ji zavoláš,
-Click zpracuje argumenty příkazové řádky a zavolá původní funkci
+Funkce s dekorátorem `@click.command` je *příkaz* – když ji zavoláte,
+click zpracuje argumenty příkazové řádky a zavolá původní funkci
 s příslušnými pythonními hodnotami.
-Proto se dává do bloku `if __name__ == '__main__':`, který se spustí jen
-když si pythonní program spustíš „přímo“.
-Když ho importuješ, tenhle blok se neprovede.
+Proto se dává do bloku `if __name__ == '__main__':`, který se spustí, jen
+když se pythonní soubor spoustí „přímo“.
+Když je importován, tenhle blok se neprovede.
 
 Dekorátory `@click.option` a `@click.argument` pak přidávají přepínače
 a argumenty.
@@ -116,16 +116,16 @@ Options:
   --help                        Show this message and exit.
 ```
 
-Přepínač `--help` přidává Click sám.
+Přepínač `--help` přidává click sám.
 
 
 ## Argumenty
 
-Kromě přepínačů podporuje Click i *argumenty*.
+Kromě přepínačů podporuje click i *argumenty*.
 Přepínače musí uživatel na řádce pojmenovat; argumenty se zadávají pozičně.
 Používají se ve dvou případech: pro povinné argumenty a pro argumenty, kterých
 může být libovolný počet.
-Na všechno ostatní radši použij přepínače.
+Na všechno ostatní radši použijte přepínače.
 
 ```python
 @click.command()
@@ -144,10 +144,10 @@ def mv(source, destination):
 
 ## Soubory
 
-Má-li uživatel zadat jméno souboru, nepoužívej řetězce, ale zadej speciální typ
+Má-li uživatel zadat jméno souboru, nepoužívejte řetězce, ale speciální typ
 `click.File()`.
-Click za tebe soubor automaticky otevře a zavře.
-Kromě toho podporuje Unixovskou konvenci, že `-` znamená standardní
+Click za vás soubor automaticky otevře a zavře.
+Kromě toho podporuje unixovskou konvenci, že `-` znamená standardní
 vstup/výstup.
 
 ```python
@@ -163,12 +163,12 @@ Existuje i varianta `click.Path()`, která soubor neotvírá.
 
 ## Podpříkazy
 
-Click má dobrou podporu pro *podpříkazy* známé z verzovacích systémů jako Git:
+Click má dobrou podporu pro *podpříkazy* známé z verzovacích systémů jako git:
 příkaz `git` sám o sobě nedělá nic, jen sdružuje podpříkazy jako `git add`
 a `git commit`.
 
-Umí-li tvůj program více akcí, souhrnný příkaz označ `@click.group()`
-a jednotlivé podpříkazy pak přidávej pomocí `command()`:
+Umí-li váš program více akcí, souhrnný příkaz označte `@click.group()`
+a jednotlivé podpříkazy pak přidávejte pomocí `command()`:
 
 ```python
 @click.group()
@@ -190,11 +190,11 @@ def add(files):
 
 ## A další
 
-Tahle lekce není popis všeho, co Click umí – je to jen ochutnávka, abys věděl
-co od téhle knihovny očekávat.
+Tahle lekce není popis všeho, co click umí – je to jen ochutnávka,
+abyste věděli, co od téhle knihovny očekávat.
 
-Click má velice dobrou [dokumentaci], ve které najdeš detaily i všechny ostatní
-možnosti.
+Click má velice dobrou [dokumentaci], ve které najdete detaily i všechny
+ostatní možnosti.
 
 [dokumentaci]: http://click.pocoo.org/5/
 
