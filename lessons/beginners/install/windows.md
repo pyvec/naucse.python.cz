@@ -71,7 +71,7 @@ Teď když je tenhle adresář vytvořený, otevři [příkazovou řádku]({{ le
 a příkazem `cd` se do něj přepni.
 Pak vytvoř virtuální prostředí:
 
-```console
+```dosvenv
 > py -3 -m venv venv
 ```
 

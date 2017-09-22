@@ -73,6 +73,23 @@ def style_space_after_prompt(html):
                   html)
 
 
+class MSDOSSessionVenvLexer(pygments.lexers.MSDOSSessionLexer):
+    """Lexer for simplistic MSDOS sessions with optional venvs."""
+    name = 'MSDOS Venv Session'
+    aliases = ['dosvenv']
+    _ps1rgx = r'^((?:\([_\w]+\))?\s?>\s?)(.*\n?)'
+
+
+def get_lexer_by_name(lang):
+    """
+    Workaround for our own lexer. Normally, new lexers have to be added trough
+    entrypoints to be locatable by get_lexer_by_name().
+    """
+    if lang == 'dosvenv':
+        return MSDOSSessionVenvLexer()
+    return pygments.lexers.get_lexer_by_name(lang)
+
+
 class Renderer(mistune.Renderer):
     code_tmpl = '<div class="highlight"><pre><code>{}</code></pre></div>'
 
@@ -92,7 +109,7 @@ class Renderer(mistune.Renderer):
         if lang == 'ansi':
             converted = ansi_convert(code)
             return self.code_tmpl.format(converted)
-        lexer = pygments.lexers.get_lexer_by_name(lang)
+        lexer = get_lexer_by_name(lang)
         html = pygments.highlight(code, lexer, pygments_formatter).strip()
         return style_space_after_prompt(html)
 

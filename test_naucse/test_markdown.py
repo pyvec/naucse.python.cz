@@ -231,3 +231,18 @@ def test_convert_with_prompt_spaces_console():
         </pre></div>
     """).strip().replace('\n', '')
     assert convert_markdown(src).replace('\n', '') == expected
+
+
+@pytest.mark.parametrize('pre_prompt', ('', '(__venv__) ', '(env)'))
+def test_convert_with_dosvenv_prompt(pre_prompt):
+    src = dedent("""
+        ```dosvenv
+        {}> python
+        ```
+    """).format(pre_prompt)
+    expected = dedent("""
+        <div class="highlight"><pre><span></span>
+        <span class="gp">{}&gt; </span>python
+        </pre></div>
+    """).strip().replace('\n', '').format(pre_prompt)
+    assert convert_markdown(src).replace('\n', '') == expected

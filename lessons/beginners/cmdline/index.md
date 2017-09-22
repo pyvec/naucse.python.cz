@@ -4,7 +4,7 @@
             <div class="col">
                 <h4>{{ title }}</h4>
 {%- filter markdown() -%}
-```console
+```{%- if title.lower().startswith('win') -%}dosvenv{%- else -%}console{%- endif -%}
 {{ caller() | extract_part(loop.index0, '---') | dedent }}
 ```
 {%- endfilter -%}

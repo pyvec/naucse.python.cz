@@ -48,7 +48,7 @@ $ . __venv__/bin/activate  # aktivace
 
 ## Windows
 
-```console
+```dosvenv
 > mkdir project
 > cd project
 > py -3 -m venv __venv__
