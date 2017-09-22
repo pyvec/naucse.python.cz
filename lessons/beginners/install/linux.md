@@ -66,13 +66,13 @@ Jestli ne, modul `tkinter` ještě nainstaluj:
 * Fedora:
   {% filter markdown(inline=True) %}
   ```console
-  $ sudo dnf install python3-tk
+  $ sudo dnf install python3-tkinter
   ```
   {% endfilter %}
 * **Ubuntu**:
   {% filter markdown(inline=True) %}
   ```console
-  $ sudo apt-get install python3-tkinter
+  $ sudo apt-get install python3-tk
   ```
   {% endfilter %}
 
