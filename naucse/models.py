@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import copy
 
 import jinja2
 
@@ -172,15 +173,15 @@ class Collection(Model):
     lessons = DirProperty(Lesson)
 
 
-def material(root, path, info, base_collection):
+def material(root, path, info):
     if "lesson" in info:
-        lesson = root.get_lesson(info['lesson'], base_collection)
+        lesson = root.get_lesson(info['lesson'])
         page = lesson.pages[info.get("page", "index")]
         return PageMaterial(root, path, page, info.get("type", "lesson"), info.get("title"))
     elif "url" in info:
         return UrlMaterial(root, path, info["url"], info["title"], info.get("type"))
     else:
-        raise ValueError("Unknown material type")
+        raise ValueError("Unknown material type: {}".format(info))
 
 
 class Material(Model):
@@ -240,12 +241,50 @@ class UrlMaterial(Material):
         self.title = title
 
 
+def merge_dict(base, patch):
+    """Recursively merge `patch` into `base`
+
+    If a key exists in both `base` and `patch`, then:
+    - if the values are dicts, they are merged recursively
+    - if the values are lists, the value from `patch` is used,
+      but if the string `'+merge'` occurs in the list, it is replaced
+      with the value from `base`.
+    """
+
+    result = dict(base)
+
+    for key, value in patch.items():
+        if key not in result:
+            result[key] = value
+            continue
+
+        previous = base[key]
+        if isinstance(value, dict):
+            result[key] = merge_dict(previous, value)
+        elif isinstance(value, list):
+            result[key] = new = []
+            for item in value:
+                if item == '+merge':
+                    new.extend(previous)
+                else:
+                    new.append(item)
+        else:
+            result[key] = value
+    return result
+
+    return _merge_dict(result, patch)
+
+
 class Session(Model):
     """An ordered collection of materials"""
-    def __init__(self, root, path, info, base_collection=None):
+    def __init__(self, root, path, base_course, info):
         super().__init__(root, path)
-        self.info = info
-        self.base_collection = base_collection
+        base_name = info.get('base')
+        if base_name is None:
+            self.info = info
+        else:
+            base = base_course.sessions[base_name].info
+            self.info = merge_dict(base, info)
         # self.prev and self.next are set later
 
     def __str__(self):
@@ -259,7 +298,7 @@ class Session(Model):
 
     @reify
     def materials(self):
-        materials = [material(self.root, self.path, s, self.base_collection)
+        materials = [material(self.root, self.path, s)
                      for s in self.info['materials']]
         materials_with_nav = [mat for mat in materials if mat.has_navigation]
         for prev, current, next in zip([None] + materials_with_nav,
@@ -291,12 +330,11 @@ class Session(Model):
         return html_content
 
 
-def _get_sessions(model, plan, base_collection):
-    result = OrderedDict(
-        (s['slug'],
-            Session(model.root, model.path, s, base_collection))
-        for s in plan
-    )
+def _get_sessions(course, plan):
+    result = OrderedDict()
+    for sess_info in plan:
+        session = Session(course.root, course.path, course.base_course, sess_info)
+        result[session.slug] = session
 
     sessions = list(result.values())
 
@@ -307,7 +345,9 @@ def _get_sessions(model, plan, base_collection):
         current.next = next
 
     if len(result) != len(set(result)):
-        raise ValueError('slugs not unique in {!r}'.format(model))
+        raise ValueError('slugs not unique in {!r}'.format(course))
+    if sessions != sorted(sessions, key=lambda d: d.date or 0):
+        raise ValueError('sessions not ordered by date in {!r}'.format(course))
     return result
 
 
@@ -325,9 +365,15 @@ class Course(Model):
     subtitle = DataProperty(info, default=None)
     time = DataProperty(info, default=None)
     place = DataProperty(info, default=None)
-    
+
     canonical = DataProperty(info, default=False)
-    derives = DataProperty(info, default=None)
+
+    @reify
+    def base_course(self):
+        name = self.info.get('derives')
+        if name is None:
+            return None
+        return self.root.courses[name]
 
     @reify
     def slug(self):
@@ -339,8 +385,7 @@ class Course(Model):
 
     @reify
     def sessions(self):
-        base_collection = self.info.get('base_collection')
-        return _get_sessions(self, self.info['plan'], base_collection)
+        return _get_sessions(self, self.info['plan'])
 
     @reify
     def edit_path(self):
@@ -385,12 +430,11 @@ class Root(Model):
             for slug, run in run_year.runs.items()
         }
 
-    def get_lesson(self, name, base_collection=None):
+    def get_lesson(self, name):
         if isinstance(name, Lesson):
             return name
-        if '/' in name:
-            base_collection, name = name.split('/', 2)
-        collection = self.collections[base_collection]
+        collection_name, name = name.split('/', 2)
+        collection = self.collections[collection_name]
         return collection.lessons[name]
 
     @reify
