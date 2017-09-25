@@ -19,9 +19,25 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 setup_jinja_env(app.jinja_env)
 
 
+_cached_model = None
+
 @LocalProxy
 def model():
-    return models.Root(os.path.join(app.root_path, '..'))
+    """Return the root of the naucse model
+
+    In debug mode (elsa serve), a new model is returned for each requests,
+    so changes are picked up.
+
+    In non-debug mode (elsa freeze), a single model is used (and stored in
+    _cached_model), so that metadata is only read once.
+    """
+    global _cached_model
+    if _cached_model:
+        return _cached_model
+    model = models.Root(os.path.join(app.root_path, '..'))
+    if not app.config['DEBUG']:
+        _cached_model = model
+    return model
 
 register_url_converters(app, model)
 
