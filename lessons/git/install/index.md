@@ -121,4 +121,16 @@ Dále si můžeš nastavit barevné výpisy – pokud si tedy
 $ git config --global color.ui true
 ```
 
+> [note]
+> Spuštění `git config` nevypíše žádnou hlášku, že se operace povedla.
+> To je normální; stejně se chová spousta dalších příkazů, např. `cd`.
+>
+> Aktuální konfiguraci gitu si můžeš zkontrolovat příkazem:
+>
+> ```console
+> $ git config --global --list
+> user.name=Adéla Novotná
+> user.email=adela.novotna@example.cz
+> ```
+
 A to je vše! Git máš nainstalovaný. Gratuluji!
