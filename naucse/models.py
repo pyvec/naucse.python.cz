@@ -391,6 +391,14 @@ class Course(Model):
     def edit_path(self):
         return self.path.relative_to(self.root.path) / "info.yml"
 
+    @reify
+    def start_date(self):
+        return min(s.date for s in self.sessions.values() if s.date is not None)
+
+    @reify
+    def end_date(self):
+        return max(s.date for s in self.sessions.values() if s.date is not None)
+
 
 class RunYear(Model):
     """A year of runs"""
