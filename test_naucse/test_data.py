@@ -2,17 +2,21 @@ import calendar
 
 from naucse import models
 
+import pytest
+
 
 root = models.Root('.')
 
 
-def test_2017_mipyt_zima_is_only_on_wednesdays():
-    run = models.Course(root, 'runs/2017/mipyt-zima')
+@pytest.mark.parametrize(('slug', 'weekday'), [
+                             ('runs/2017/mipyt-zima',
+                              calendar.WEDNESDAY),
+                             ('runs/2017/pyladies-praha-podzim-cznic',
+                              calendar.TUESDAY),
+                             ('runs/2017/pyladies-praha-podzim-ntk',
+                              calendar.MONDAY),
+                         ])
+def test_run_is_only_on_given_weekday(slug, weekday):
+    run = models.Course(root, slug)
     for session in run.sessions.values():
-        assert session.date.weekday() == calendar.WEDNESDAY
-
-
-def test_2017_pyladies_praha_podzim_cznic_is_only_on_tuesdays():
-    run = models.Course(root, 'runs/2017/pyladies-praha-podzim-cznic')
-    for session in run.sessions.values():
-        assert session.date.weekday() == calendar.TUESDAY
+        assert session.date.weekday() == weekday
