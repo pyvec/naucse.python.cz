@@ -1,4 +1,5 @@
 import os
+import datetime
 
 from flask import Flask, render_template, url_for, send_from_directory
 from flask import abort, redirect
@@ -68,6 +69,7 @@ def runs():
                            run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu",
                            page_wip=True,
+                           today=datetime.date.today(),
                            edit_path=model.runs_edit_path)
 
 

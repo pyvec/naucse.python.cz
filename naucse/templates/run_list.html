@@ -2,28 +2,42 @@
 
 {% block intro %}
 
-    <p>Zde se nachází seznam právě probíhajících či proběhlých kurzů s instruktorem.  Kurzy pro samouky se nachází <a href="{{ url_for('courses') }}">v seznamu materiálů</a>.</p>
+    <p>Zde se nachází seznam kurzů s instruktorem.  Kurzy pro samouky najdete <a href="{{ url_for('courses') }}">v seznamu materiálů</a>.</p>
 
 {% endblock %}
+
+{% macro show_run(run) %}
+    <div>
+        <h4>
+            <a href="{{ course_url(run) }}">{{ run.title }}</a>
+            {% if run.subtitle %}
+                <small>– {{ run.subtitle }}</small>
+            {% endif %}
+        </h4>
+        {% if run.start_date %}
+            {{ (run.start_date, run.end_date) | format_date_range }}
+        {% endif %}
+        <p>{{ run.description }}</p>
+    </div>
+{% endmacro %}
 
 
 {% block list %}
 
+    <h1>Aktuální kurzy</h1>
+    {% for year, run_year in run_years.items() %}
+        {% for run in run_year.runs.values() | sort(attribute='start_date', reverse=True)
+                if run.end_date > today %}
+            {{ show_run(run) }}
+        {% endfor %}
+    {% endfor %}
+
+    <h1>Proběhlé kurzy</h1>
     {% for year, run_year in run_years.items() %}
         <h2>{{ year }}</h2>
-        {% for run in run_year.runs.values() | sort(attribute='start_date', reverse=True) %}
-            <div class="section{{ loop.index }}">
-                <h4>
-                    <a href="{{ course_url(run) }}">{{ run.title }}</a>
-                    {% if run.subtitle %}
-                        <small>– {{ run.subtitle }}</small>
-                    {% endif %}
-                </h4>
-                {% if run.start_date %}
-                    {{ (run.start_date, run.end_date) | format_date_range }}
-                {% endif %}
-                <p>{{ run.description }}</p>
-            </div>
+        {% for run in run_year.runs.values() | sort(attribute='start_date', reverse=True)
+                if run.end_date <= today %}
+            {{ show_run(run) }}
         {% endfor %}
     {% endfor %}
 
