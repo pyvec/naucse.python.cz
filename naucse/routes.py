@@ -68,7 +68,6 @@ def runs():
     return render_template("run_list.html",
                            run_years=model.run_years,
                            title="Seznam offline kurzů Pythonu",
-                           page_wip=True,
                            today=datetime.date.today(),
                            edit_path=model.runs_edit_path)
 
