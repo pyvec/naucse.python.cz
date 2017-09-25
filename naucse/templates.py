@@ -168,3 +168,19 @@ def vars_functions(vars):
         'gnd': gnd,
         'a': A(),
     }
+
+
+@template_filter()
+def format_date_range(start_and_end):
+    start, end = start_and_end
+    parts = []
+    if start != end:
+        if start.year != end.year:
+            parts += ['{start.day}. {start.month}. {start.year}']
+        elif start.month != end.month:
+            parts += ['{start.day}. {start.month}.']
+        else:
+            parts += ['{start.day}.']
+        parts += [' – ']
+    parts += ['{end.day}. {end.month}. {end.year}']
+    return ''.join(parts).format(start=start, end=end)
