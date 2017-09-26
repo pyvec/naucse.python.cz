@@ -3,6 +3,7 @@ import datetime
 
 from flask import Flask, render_template, url_for, send_from_directory
 from flask import abort, redirect
+from functools import lru_cache
 from jinja2 import StrictUndefined
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
@@ -19,8 +20,6 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 setup_jinja_env(app.jinja_env)
 
 
-_cached_model = None
-
 @LocalProxy
 def model():
     """Return the root of the naucse model
@@ -31,13 +30,14 @@ def model():
     In non-debug mode (elsa freeze), a single model is used (and stored in
     _cached_model), so that metadata is only read once.
     """
-    global _cached_model
-    if _cached_model:
-        return _cached_model
-    model = models.Root(os.path.join(app.root_path, '..'))
-    if not app.config['DEBUG']:
-        _cached_model = model
-    return model
+    return get_model() if app.config['DEBUG'] else get_model_cached()
+
+
+def get_model():
+    return models.Root(os.path.join(app.root_path, '..'))
+
+get_model_cached = lru_cache()(get_model)
+
 
 register_url_converters(app, model)
 
