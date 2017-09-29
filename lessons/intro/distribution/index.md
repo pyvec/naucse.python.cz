@@ -188,8 +188,8 @@ pořád ještě v Pythonu a můžeme si ušetřit duplikaci nějakých informac�
 malého kousku kódu. Dalším zajímavým argumentem je `classifiers`. Jsou to
 v podstatě takové tagy nebo strukturované informace o balíčku.
 Zásadně si je nevymýšlíme sami, ale hledáme je v
-[seznamu](https://pypi.python.org/pypi?%3Aaction=list_classifiers).
-Tyto informace budou později vidět na [PyPI](https://pypi.python.org/pypi) a
+[seznamu](https://pypi.org/pypi?%3Aaction=list_classifiers).
+Tyto informace budou později vidět na [PyPI](https://pypi.org) a
 půjde podle nich hledat.
 
 Argument `zip_safe=False` zajistí, že se modul nainstaluje do adresáře.
@@ -398,23 +398,22 @@ bezpečné. Prototo je lepší použít program `twine` (instalovatelný přes p
 který používá HTTPS.
 
 Budete si potřebovat zařídit
-[účet na PyPI](https://pypi.python.org/pypi?%3Aaction=register_form),
-[účet na testovací PyPI](https://testpypi.python.org/pypi?%3Aaction=register_form)
+[účet na PyPI](https://pypi.org/account/register/),
+[účet na testovací PyPI](https://test.pypi.org/account/register/)
 a vytvořit konfigurační soubor `~/.pypirc`:
 
 ```ini
 [distutils]
 index-servers=
     pypi
-    pypitest
+    testpypi
 
 [pypi]
-repository = https://pypi.python.org/pypi
 username = <your user name goes here>
 password = <your password goes here>
 
-[pypitest]
-repository = https://testpypi.python.org/pypi
+[testpypi]
+repository = https://test.pypi.org/legacy/
 username = <your user name goes here>
 password = <your password goes here>
 ```
@@ -428,24 +427,25 @@ se souborem `.pypirc`, např:
 > set HOME=C:\cesta\k\nastaveni
 ```
 
-Registrace projektu a nahrání na testovací PyPI se provádí pomocí dvou příkazů:
-`register` zaregistruje nový projekt a `upload` nahraje samotný balíček:
+Registrace projektu a nahrání na testovací PyPI se provádí pomocí příkazu
+`upload`: ten projekt zaregistrueje (pokud to jde) a nahraje samotný balíček:
 
 ```console
-(env)$ twine register -r pypitest dist/isholiday-0.1.tar.gz
-Registering package to https://testpypi.python.org/pypi
-Registering isholiday-0.1.tar.gz
-(env)$ twine upload -r pypitest dist/isholiday-0.1.tar.gz
-Uploading distributions to https://testpypi.python.org/pypi
+(env)$ twine upload -r testpypi dist/isholiday-0.1.tar.gz
+Uploading distributions to https://test.pypi.org/legacy/
 Uploading isholiday-0.1.tar.gz
 [================================] 8379/8379 - 00:00:02
 ```
 
-Registrace se zdaří, jen pokud jméno projektu již není zabrané.
+První nahrání se zdaří, jen pokud jméno projektu již není zabrané.
+Další nahrávání je povoleno jen vám, případně uživatelům,
+kterým to povlíte přes webové rozhraní.
 Po úspěšném nahrání lze nahrávat další verze modulu, ale musí být novější
 než ta, co už na PyPI je. Nejde tedy jednou nahraný modul přepsat.
 
-Pro nahrání na opravdovou PyPI stačí vynechat `-r pypitest`.
+Svůj balíček najdete na `https://test.pypi.org/project/<název_balíčku>/`.
+
+Pro nahrání na opravdovou PyPI stačí vynechat `-r testpypi`.
 Zabírat jména na opravdové PyPI jen tak není hezké vůči ostatním Pythonistům;
 registrujte tedy prosím jen moduly, které budou nějak pro ostatní užitečné.
 
@@ -469,7 +469,7 @@ Lepší by bylo, kdyby pip nainstaloval závislosti z ostré PyPI a na testovac�
 hledal jen náš projekt. Toho se dá docílit přepínačem `--extra-index-url`.
 
 ```console
-(env)$ python -m pip install --extra-index-url https://testpypi.python.org/pypi <název_balíčku>
+(env)$ python -m pip install --extra-index-url https://test.pypi.org/pypi <název_balíčku>
 ```
 
 V tomto případě pip nejdřív prohledá ostrou PyPI, a pokud nenajde požadovaný
@@ -482,7 +482,7 @@ V případě, že tento problém nastane, je možné ho částečně obejít spe
 verze instalovaného balíčku:
 
 ```console
-(env)$ python -m pip install --extra-index-url https://testpypi.python.org/pypi <název_balíčku>==0.3
+(env)$ python -m pip install --extra-index-url https://test.pypi.org/pypi <název_balíčku>==0.3
 ```
 
 Pokud u duplicitního projektu na ostré PyPI neexistuje požadovaná verze,
@@ -492,7 +492,7 @@ Jiná možnost je zadat přímo cestu k archivu s balíčkem místo jeho názvu.
 Zde pak na umístění balíčku ani verzi nezáleží:
 
 ```bash
-(env)$ python -m pip install https://testpypi.python.org/packages/.../<název_balíčku>-0.3.tar.gz
+(env)$ python -m pip install https://test-files.pythonhosted.org/packages/.../<název_balíčku>-0.3.tar.gz
 ```
 
 Archiv se dá najít na informační stránce o našem projektu na PyPI.
