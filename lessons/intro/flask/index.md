@@ -24,8 +24,8 @@ z minulého cvičení:
 
 ```console
 $ cd project
-$ . env/bin/activate 
-(env)$ python -m pip install Flask
+$ . __venv__/bin/activate 
+(__venv__) $ python -m pip install Flask
 ```
 
 Základní použití Flasku je poměrně primitivní.
@@ -45,9 +45,9 @@ Pak aplikaci spusťte pomocí následujících příkazů.
 (Na Windows použijte místo `export` příkaz `set`.)
 
 ```console
-(env)$ export FLASK_APP=hello.py
-(env)$ export FLASK_DEBUG=1
-(env)$ flask run
+(__venv__) $ export FLASK_APP=hello.py
+(__venv__) $ export FLASK_DEBUG=1
+(__venv__) $ flask run
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
  * Restarting with stat
  * Debugger is active!
@@ -329,8 +329,8 @@ na vytvoření virtuální prostředí, než jste z toho kurzu zvyklí.
 Napište příkazy takto (bez úvodního `$`):
 
 ```console
-$ virtualenv --python=python3.6 env
-$ . env/bin/activate
+$ virtualenv --python=python3.6 __venv__
+$ . __venv__/bin/activate
 $ python -m pip install flask
 ```
 
@@ -359,7 +359,7 @@ a vytvořte novou aplikaci.
 V nastavení zvolte Manual Configuration a Python 3.5.
 
 V konfiguraci vzniklé webové aplikace je potřeba nastavit "Virtualenv"
-na cestu k virtuálnímu prostředí (`/home/<jméno>/env`),
+na cestu k virtuálnímu prostředí (`/home/<jméno>/__venv__`),
 a obsah "WSGI Configuration File" přepsat.
 To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor)
 nebo zpět v bashové konzoli pomocí editoru jako `vi` nebo `nano`.

@@ -34,8 +34,8 @@ Test uložíme někam do projektu, třeba do souboru `tests/test_holidays.py` a
 nainstalujeme a spustíme `pytest`:
 
 ```ansi
-␛[36m(env)$␛[0m python -m pip install pytest
-␛[36m(env)$␛[0m python -m pytest tests/test_holidays.py
+␛[36m(__venv__) $␛[0m python -m pip install pytest
+␛[36m(__venv__) $␛[0m python -m pytest tests/test_holidays.py
 ␛[1m============================= test session starts ==============================␛[0m
 platform linux -- Python 3.6.0, pytest-3.0.7, py-1.4.33, pluggy-0.4.0
 rootdir: /tmp/tmp.wGP3zD7HeD, inifile:
@@ -68,7 +68,7 @@ Pytest upravuje chování assertu, což oceníte především, pokud test selže
 ```
 
 ```ansi
-␛[36m(env)$␛[0m python -m pytest tests/test_holidays.py
+␛[36m(__venv__) $␛[0m python -m pytest tests/test_holidays.py
 ␛[1m============================= test session starts ==============================␛[0m
 platform linux -- Python 3.6.0, pytest-3.0.6, py-1.4.32, pluggy-0.4.0
 rootdir: /tmp/tmp.NsIa3sXVQA, inifile: 
@@ -138,7 +138,7 @@ iterovat, tedy i např. volání `range()`.)
 Pro více podrobný výpis výsledku testů můžete použít přepínač `-v`:
 
 ```ansi
-␛[36m(env)$␛[0m python -m pytest -v
+␛[36m(__venv__) $␛[0m python -m pytest -v
 ...
 tests/test_holidays.py::test_xmas[2015] ␛[32mPASSED␛[0m
 tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m
@@ -181,7 +181,7 @@ Přidáme tedy dočasně na konec funkce `getholidays()` tento pesimistický kus
 ```
 
 ```ansi
-␛[36m(env)$␛[0m python -m pytest -v
+␛[36m(__venv__) $␛[0m python -m pytest -v
 ...
 tests/test_holidays.py::test_xmas[2015] ␛[32mPASSED␛[0m
 tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m
