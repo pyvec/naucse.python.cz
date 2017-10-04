@@ -28,9 +28,14 @@ Modul `venv` je součást [standardní knihovny](https://docs.python.org/3/libra
 Zkontroluj, že máš modul `ensurepip`:
 
 ```console
-$ python -m ensurepip --version
+$ python3.6 -m ensurepip --version
 pip 9.0.1 (nebo i jiná verze)
 ```
+
+{% if var('mi-pyt') %}
+V tomto kurzu lze případně využít i Python 3.5. Pokud máš 3.4 nebo ještě nižší,
+doporučujeme aktualizovat.
+{% endif %}
 
 Jestli ne, postupuj podle [lekce pro začátečníky]({{ lesson_url('beginners/install') }}) –
 jsou tam podrobnější instrukce.
