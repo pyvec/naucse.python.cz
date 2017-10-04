@@ -23,9 +23,9 @@ potvrdit (<kbd>Enter</kbd>).
 K modulům `autodoc` a `doctest` se dostaneme později.
 
 ```ansi
-␛[36m$␛[0m . env/bin/activate
-␛[36m(env)$␛[0m python -m pip install sphinx
-␛[36m(env)$␛[0m python -m sphinx.quickstart
+␛[36m$␛[0m . __venv__/bin/activate
+␛[36m(__venv__) $␛[0m python -m pip install sphinx
+␛[36m(__venv__) $␛[0m python -m sphinx.quickstart
 ␛[01mWelcome to the Sphinx 1.5.5 quickstart utility.␛[39;49;00m
 
 Please enter values for the following settings (just press Enter to
@@ -80,8 +80,8 @@ dokumentace sestavit do HTML.
 > manuálové stránky atd.), pro nás bude podstatné především HTML.
 
 ```console
-(env)$ cd docs
-(env)$ make html
+(__venv__) $ cd docs
+(__venv__) $ make html
 ...
 Build finished. The HTML pages are in _build/html.
 ```
@@ -319,7 +319,7 @@ Testy se také dají zařazovat do skupin, více
 v [dokumentaci](http://www.sphinx-doc.org/en/1.4.8/ext/doctest.html).
 
 ```console
-(env)$ make doctest
+(__venv__) $ make doctest
 ...
 Document: intro
 ---------------
@@ -420,7 +420,7 @@ můžete použít i
 Pro vygenerování hezké struktury si můžete pomoci příkazem `apidoc`:
 
 ```console
-(env)$ python -m sphinx.apidoc -o docs mymodule
+(__venv__) $ python -m sphinx.apidoc -o docs mymodule
 ```
 
 V dokumentačních řetězcích samozřejmě můžete použít [reStructuredText] a je to

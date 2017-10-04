@@ -21,9 +21,9 @@ def test_xmas_2016():
     assert (24, 12) in holidays
 END
 
-python3 -m venv env
-. env/bin/activate
-PS4='————————————————————————————\n\e[36m(env)$\e[0m '
+python3 -m venv __venv__
+. __venv__/bin/activate
+PS4='————————————————————————————\n\e[36m(__venv__) $\e[0m '
 
 python -m pip install pytest
 
