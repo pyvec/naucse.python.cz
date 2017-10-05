@@ -119,7 +119,7 @@ aby ti s ním mohli zkušenější programátoři snadněji pomáhat.
 
 ## GitHub
 
-Na Internetu existuje spousta stránek, kam se dají nahrávat Gitové repozitáře
+Na Internetu existuje spousta stránek, kam se dají nahrávat gitové repozitáře
 s kódem – např. [GitLab](https://gitlab.com/),
 [BitBucket](https://bitbucket.org),
 [Pagure](https://pagure.io/) nebo

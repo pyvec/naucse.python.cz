@@ -87,4 +87,4 @@ které budou obsahovat více souvisejících souborů.
 Je dobré pro každý takový projekt udělat
 zvláštní adresář.
 
-(A to samozřejmě znamená i zvláštní Gitový repozitář.)
+(A to samozřejmě znamená i zvláštní gitový repozitář.)
