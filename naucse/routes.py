@@ -75,7 +75,6 @@ def session_url(course, session, coverpage='front'):
 @app.route('/')
 def index():
     return render_template("index.html",
-                           page_wip=True,
                            edit_path=Path("."))
 
 
