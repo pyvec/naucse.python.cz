@@ -83,8 +83,6 @@ class Page(Model):
 
     @reify
     def license(self):
-        if self.info.get('license') is None:
-            return None
         return self.root.licenses[self.info['license']]
 
     @reify

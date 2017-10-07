@@ -75,7 +75,6 @@ def session_url(course, session, coverpage='front'):
 @app.route('/')
 def index():
     return render_template("index.html",
-                           page_wip=True,
                            edit_path=Path("."))
 
 
@@ -93,7 +92,6 @@ def courses():
     return render_template("course_list.html",
                            courses=model.courses,
                            title="Seznam online kurzů Pythonu",
-                           page_wip=True,
                            edit_path=model.courses_edit_path)
 
 
@@ -203,7 +201,6 @@ def course_page(course, lesson, page, solution=None):
                        subpage_url=subpage_url,
                        canonical_url=canonical_url,
                        course=course,
-                       page_wip=not page.license,
                        solution=solution,
                        vars=course.vars,
                        nxt=nxt, prv=prv,
