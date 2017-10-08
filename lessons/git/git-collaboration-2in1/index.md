@@ -18,67 +18,14 @@ Tohle přepoužívání se postupně vyvinulo do fenoménu *open-source* a *svob
 
 Dnes si vyzkoušíme, jak spolupracovat s mnoha programátory na jednom projektu pomocí verzovacího nástroje *Git* a služby *GitHub*.
 
-## Open-source a Free software
-
-Nejde mluvit o Gitu a spolupráci a nezastavit se chvíli u otevřeného zdrojového kódu.
-První kód vznikal v akademické sféře, kde byl zcela přirozeně sdílen, jako je to s poznatky mezi vědci běžné.
-50\. a 60. léta byla obdobím velké kreativity, kdy vzniklo mnoho z konceptů a technologií, které dnes používáme.
-Pak se začalo programování postupně komercializovat a firmy začaly zdrojový kód skrývat jako konkurenční výhodu.
-Do té doby víceméně jednolitá komunita programátorů byla nucena se rozdělit.
-
-Některým programátorům tohle skrývání kódu hluboce vadilo až roku 1985 publikoval 
-[Richard Stallman](https://en.wikipedia.org/wiki/Richard_Stallman) GNU Manifesto,
-kde vysvětlil, proč hodlá vytvořit operační systém s otevřeným kódem a odstartoval tak hnutí svobodného softwaru.
-To prosazuje 4 následujících svobody (převzato z [Wikipedie](https://cs.wikipedia.org/wiki/Svobodn%C3%BD_software)):
-
-1. svoboda používat program za jakýmkoliv účelem,
-2. svoboda studovat, jak program pracuje a možnost přizpůsobit ho svým potřebám,
-3. svoboda redistribuovat kopie programu,
-4. svoboda vylepšovat program a zveřejňovat zlepšení, aby z nich mohla mít prospěch celá komunita.
- 
-Dnes je spousta projektů s otevřeným zdrojovým kódem dostupných na Internetu a každý je používáme. 
-Jejich další sdílení je upraveno jednou z licencí, které tyto základní svobody zaručují. 
-
-> [note] Pozor
-> Termíny **open-source** a **free software** nejsou zcela zaměnitelné, ale pro naše účely je zatím můžeme chápat jako synonyma.
-
-Spoustu open-source projektů najdete právě na GitHubu. Ne všechny jsou v Pythonu. Ne všechny jsou kvalitní - 
-protože si každý může zveřejnit co chce, na GitHubu se válí spousta nedodělků, opuštěných nápadů a nepodařených experimentů. 
-A bohužel, ne všechny projekty mají přátelské autory.
-
-Na druhou stranu ale open-source programy mají svoje výhody: nejenom se z nich může kdokoli učit, 
-ale každý může i zkontrolovat, jestli dělají to, co dělat mají.
-Populární open-source programy nás například pravděpodobně nebudou špehovat (tj. hlásit autorovi, co na počítači děláme), 
-ani většinou neobsahují reklamy: kdyby to dělaly, najde se někdo kdo tyhle „funkce” odstraní 
-a lidé časem začnou používat opravenou verzi. 
-
-Některé příklady populárních open-source projektů:
-
-* Mozilla Firefox, Chromium (prohlížeče)
-* Atom, gedit (textové editory)
-* CPython (jazyk Python)
-* Linux, Android (jádra operačních systémů)
-* Pytest (pythonní knihovna na testování)
-* Django, Flask, Requests (webové knihovny pro Python)
-* NumPy, Jupyter, Matplotlib (pythonní knihovny pro vědce a analytiky)
-* Materiály k tomuto kurzu     
-
-A jak vidno z posledního příkladu, nejen softwarové projekty se dají vést takhle veřejně. Tento kurz vychází z principů open source: 
-všechno know-how je sdílené a budeme rádi, když se zapojíte.
-
-Pokud vás tato problematika zajímá, doporučujeme krátkou knihu [Katedrála a tržiště](https://www.root.cz/knihy/katedrala-a-trziste/), která nabízí srovnání open-source s tradičním vývojem softwaru za zavřenými dveřmi.
-
-Pokud budete někdy začínat nový projekt a budete chtít, aby z něj měl prospěch někdo další,
-stojí za to uvolnit ho pod svobodnou licencí a dát třeba právě na GitHub.
-Licence projektu většinou najdete v souboru `LICENCE`. 
-Na kód neuvolněný pod svobodnou licencí se automaticky vztahuje copyright a ostatní ho nemohou volně sdílet.
-
-Informace o open-source licencích najdete např. na [choosealicence.com](https://choosealicense.com), případně [creativecommons.org](https://creativecommons.org) a [opensource.org](https://opensource.org).
-
 ## Git a GitHub
 
-Open-source znamená sdílení kódu mezi mnoha lidmi. K tomu se dá použít verzovací nástroj Git ‒ někde na Internetu existuje sdílený gitový repozitář s kódem, se kterým se všichni synchronizují.
+Představte si, že jste už napsali větší Python program, který je už kvůli složitosti a velikosti rozdělen do více souborů.
+Takové složce s kódem říkáme repozitář.
+Git je program, který se stará o to, abyste ve složce mohli dělat různé experimenty a vrátit se třeba ke starým verzím.
+Každá verze má ale popis, který jste jí sami dali, takže slouží i jako dobrá dokumentace projektu.
 
+A co víc - Git vám dovoluje sdílet kód s ostatními programátory. 
 Spousta míst na Internetu funguje tak, že vybraná skupina lidí má „přístup”: můžou dělat změny, jak se jim líbí.
 S Gitem se používá jiný model: změny nahrajeme do vlastního sdíleného repozitáře 
 a majiteli původního projektu napíšeme žádost o začlenění těch změn (angl. pull request). 
@@ -217,6 +164,68 @@ na které navazujeme.
 
 V logu se pohybujeme šipkami a když z něj chceme vyskočit zpět, stiskneme `q` jako quit.
 Příkaz `git log` má mnoho přepínačů, přehlednější historii změn můžeme získat pomocí `git log --oneline --graph --decorate`.
+
+## Open-source a Free software
+
+Dejme si menší pauzu na zažití základní práce s lokálním repozitářem.
+Nejde mluvit o Gitu a spolupráci a nezastavit se chvíli u otevřeného zdrojového kódu.
+První kód vznikal v akademické sféře, kde byl zcela přirozeně sdílen, jako je to s poznatky mezi vědci běžné.
+50\. a 60. léta byla obdobím velké kreativity, kdy vzniklo mnoho z konceptů a technologií, které dnes používáme.
+Pak se začalo programování postupně komercializovat a firmy začaly zdrojový kód skrývat jako konkurenční výhodu.
+Do té doby víceméně jednolitá komunita programátorů byla nucena se rozdělit.
+
+Některým programátorům tohle skrývání kódu hluboce vadilo až roku 1985 publikoval 
+[Richard Stallman](https://en.wikipedia.org/wiki/Richard_Stallman) GNU Manifesto,
+kde vysvětlil, proč hodlá vytvořit operační systém s otevřeným kódem a odstartoval tak hnutí svobodného softwaru.
+To prosazuje 4 následujících svobody (převzato z [Wikipedie](https://cs.wikipedia.org/wiki/Svobodn%C3%BD_software)):
+
+1. svoboda používat program za jakýmkoliv účelem,
+2. svoboda studovat, jak program pracuje a možnost přizpůsobit ho svým potřebám,
+3. svoboda redistribuovat kopie programu,
+4. svoboda vylepšovat program a zveřejňovat zlepšení, aby z nich mohla mít prospěch celá komunita.
+ 
+Dnes je spousta projektů s otevřeným zdrojovým kódem dostupných na Internetu a každý je používáme. 
+Jejich další sdílení je upraveno jednou z licencí, které tyto základní svobody zaručují. 
+
+> [note] Pozor
+> Termíny **open-source** a **free software** nejsou zcela zaměnitelné, ale pro naše účely je zatím můžeme chápat jako synonyma.
+
+Spoustu open-source projektů najdete právě na GitHubu. Ne všechny jsou v Pythonu. Ne všechny jsou kvalitní - 
+protože si každý může zveřejnit co chce, na GitHubu se válí spousta nedodělků, opuštěných nápadů a nepodařených experimentů. 
+A bohužel, ne všechny projekty mají přátelské autory.
+
+Na druhou stranu ale open-source programy mají svoje výhody: nejenom se z nich může kdokoli učit, 
+ale každý může i zkontrolovat, jestli dělají to, co dělat mají.
+Populární open-source programy nás například pravděpodobně nebudou špehovat (tj. hlásit autorovi, co na počítači děláme), 
+ani většinou neobsahují reklamy: kdyby to dělaly, najde se někdo kdo tyhle „funkce” odstraní 
+a lidé časem začnou používat opravenou verzi. 
+
+Některé příklady populárních open-source projektů:
+
+* Mozilla Firefox, Chromium (prohlížeče)
+* Atom, gedit (textové editory)
+* CPython (jazyk Python)
+* Linux, Android (jádra operačních systémů)
+* Pytest (pythonní knihovna na testování)
+* Django, Flask, Requests (webové knihovny pro Python)
+* NumPy, Jupyter, Matplotlib (pythonní knihovny pro vědce a analytiky)
+* Materiály k tomuto kurzu     
+
+A jak vidno z posledního příkladu, nejen softwarové projekty se dají vést takhle veřejně. Tento kurz vychází z principů open source: 
+všechno know-how je sdílené a budeme rádi, když se zapojíte.
+
+Pokud vás tato problematika zajímá, doporučujeme krátkou knihu [Katedrála a tržiště](https://www.root.cz/knihy/katedrala-a-trziste/), která nabízí srovnání open-source s tradičním vývojem softwaru za zavřenými dveřmi.
+
+Pokud budete někdy začínat nový projekt a budete chtít, aby z něj měl prospěch někdo další,
+stojí za to uvolnit ho pod svobodnou licencí a dát třeba právě na GitHub.
+Licence projektu většinou najdete v souboru `LICENCE`. 
+Na kód neuvolněný pod svobodnou licencí se automaticky vztahuje copyright a ostatní ho nemohou volně sdílet.
+
+Informace o open-source licencích najdete např. na [choosealicence.com](https://choosealicense.com), případně [creativecommons.org](https://creativecommons.org) a [opensource.org](https://opensource.org).
+
+## Spolupráce na projektu
+
+Nyní se posuneme ke sdílení revize, kterou jsme vytvořili, a ke stažení revizí od ostatních přispěvatelů.
 
 ### Posílání změn (`git push`)
 
