@@ -6,6 +6,8 @@ import mistune
 from jinja2 import Markup
 import pygments
 import pygments.lexers
+from pygments.lexer import RegexLexer, bygroups
+from pygments.token import Generic, Text, Comment
 import pygments.formatters.html
 
 
@@ -73,6 +75,33 @@ def style_space_after_prompt(html):
                   html)
 
 
+class MSDOSSessionVenvLexer(RegexLexer):
+    """Lexer for simplistic MSDOS sessions with optional venvs.
+
+    Note that this doesn't use ``Name.Builtin`` (class="nb"), which naucse
+    styles the same as the rest of the command.
+    """
+    name = 'MSDOS Venv Session'
+    aliases = ['dosvenv']
+    tokens = {
+        'root': [
+            (r'((?:\([_\w]+\))?\s?>\s?)([^#\n]*)(#.*)?',
+             bygroups(Generic.Prompt, Text, Comment)),
+            (r'(.+)', Generic.Output),
+        ]
+    }
+
+
+def get_lexer_by_name(lang):
+    """
+    Workaround for our own lexer. Normally, new lexers have to be added trough
+    entrypoints to be locatable by get_lexer_by_name().
+    """
+    if lang == 'dosvenv':
+        return MSDOSSessionVenvLexer()
+    return pygments.lexers.get_lexer_by_name(lang)
+
+
 class Renderer(mistune.Renderer):
     code_tmpl = '<div class="highlight"><pre><code>{}</code></pre></div>'
 
@@ -92,7 +121,7 @@ class Renderer(mistune.Renderer):
         if lang == 'ansi':
             converted = ansi_convert(code)
             return self.code_tmpl.format(converted)
-        lexer = pygments.lexers.get_lexer_by_name(lang)
+        lexer = get_lexer_by_name(lang)
         html = pygments.highlight(code, lexer, pygments_formatter).strip()
         return style_space_after_prompt(html)
 

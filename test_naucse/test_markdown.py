@@ -1,4 +1,5 @@
 from textwrap import dedent
+import html
 
 import pytest
 
@@ -231,3 +232,43 @@ def test_convert_with_prompt_spaces_console():
         </pre></div>
     """).strip().replace('\n', '')
     assert convert_markdown(src).replace('\n', '') == expected
+
+
+@pytest.mark.parametrize('pre_prompt', ('', '(__venv__) ', '(env)'))
+@pytest.mark.parametrize('space', ('', ' '))
+@pytest.mark.parametrize('command', ('python', '07:28 PM <DIR> Desktop'))
+def test_convert_with_dosvenv_prompt(pre_prompt, space, command):
+    src = dedent("""
+        ```dosvenv
+        {}>{}{}
+        ```
+    """).format(pre_prompt, space, command)
+    expected = dedent("""
+        <div class="highlight"><pre><span></span>
+        <span class="gp">{}&gt;{}</span>{}
+        </pre></div>
+    """).strip().replace('\n', '').format(pre_prompt, space, html.escape(command))
+    assert convert_markdown(src).replace('\n', '') == expected
+
+def test_convert_full_dosvenv_prompt():
+    src = dedent(r"""
+        ```dosvenv
+        > whoami
+        helena
+        > venv\Scripts\activate  # activate virtualenv
+        (venv)> dir
+         Directory of C:\Users\helena
+        05/08/2014 07:28 PM <DIR>  Desktop
+        ```
+    """)
+    expected = dedent(r"""
+        <div class="highlight"><pre><span></span><span class="gp">&gt; </span>whoami
+        <span class="go">helena</span><span class="gp"></span>
+        <span class="gp">&gt; </span>venv\Scripts\activate  <span class="c"># activate virtualenv</span>
+        <span class="gp">(venv)&gt; </span>dir
+        <span class="go"> Directory of C:\Users\helena</span>
+        <span class="go">05/08/2014 07:28 PM &lt;DIR&gt;  Desktop</span>
+        </pre></div>
+    """).strip()
+    print(expected)
+    assert convert_markdown(src) == expected
