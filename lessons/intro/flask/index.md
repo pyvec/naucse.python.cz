@@ -298,6 +298,47 @@ V šabloně pak například:
 ```
 {% endraw %}
 
+### Vlastní podtřída Flask
+
+Třída `Flask` je uzpůsobena k tomu, aby bylo možné snadno rozšiřovat a přepisovat 
+výchozí chování. Mimo přidávání vlastních metod lze například měnit třídy, které 
+budou použity pro HTTP požadavky a odpovědi, měnit výchozí konfiguraci `flask` a
+spoustu dalšího. Nezapomeňte volat konstruktor nadtřídy.
+
+```python
+from flask import current_app, Flask, Response
+
+class MIPYTResponse(Response):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.set_cookie('MI-PYT', 'best')
+
+
+class GreeterApp(Flask):
+    response_class = MIPYTResponse
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.greetings = 0
+    
+    def greet(self):
+        self.greetings += 1
+        return 'Hello!'
+
+
+app = GreeterApp(__name__)
+
+
+@app.route('/')
+def greet():
+    return current_app.greet()
+
+
+@app.route('/number')
+def greetings_number():
+    return str(current_app.greetings)
+```
+
 ### A další
 
 Flask umí i další věci – například zpracování formulářů, chybové stránky nebo
