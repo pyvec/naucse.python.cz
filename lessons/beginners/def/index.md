@@ -132,10 +132,10 @@ možnost vrácenou hodnotu použít i jinak jež jen v `print`.
 Funkci, která výsledek vrací, můžeš použít v dalších výpočtech:
 
 ```python
-def obsah_eliptickeho_valce(a, b, vyska):
+def objem_eliptickeho_valce(a, b, vyska):
     return obsah_elipsy(a, b) * vyska
 
-print(obsah_eliptickeho_valce(3, 5, 3))
+print(objem_eliptickeho_valce(3, 5, 3))
 ```
 
 ... ale kdyby výsledek přímo vypsala, nešlo by to.
