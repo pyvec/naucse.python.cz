@@ -397,7 +397,7 @@ Zbývá nastavit, aby PythonAnywhere tento kód spustil jako webovou aplikaci.
 
 Přejděte na stránkách PythonAnywhere do Dashboard do záložky *Web*,
 a vytvořte novou aplikaci.
-V nastavení zvolte Manual Configuration a Python 3.5.
+V nastavení zvolte Manual Configuration a Python 3.6.
 
 V konfiguraci vzniklé webové aplikace je potřeba nastavit "Virtualenv"
 na cestu k virtuálnímu prostředí (`/home/<jméno>/__venv__`),
