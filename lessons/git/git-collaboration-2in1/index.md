@@ -25,7 +25,7 @@ Takové složce s kódem říkáme repozitář.
 Git je program, který se stará o to, abyste ve složce mohli dělat různé experimenty a vrátit se třeba ke starým verzím.
 Každá verze má ale popis, který jste jí sami dali, takže slouží i jako dobrá dokumentace projektu.
 
-A co víc - Git vám dovoluje sdílet kód s ostatními programátory. 
+A co víc – Git vám dovoluje sdílet kód s ostatními programátory.
 Spousta míst na Internetu funguje tak, že vybraná skupina lidí má „přístup”: můžou dělat změny, jak se jim líbí.
 S Gitem se používá jiný model: změny nahrajeme do vlastního sdíleného repozitáře 
 a majiteli původního projektu napíšeme žádost o začlenění těch změn (angl. pull request). 
@@ -44,10 +44,10 @@ Služba [GitHub](https://github.com) umožňuje vytvořit si vlastní sdílený 
 Podobných služeb existuje víc (např. bitbucket.org, gitlab.com). Všechny fungují podobně; GitHub je momentálně nejpopulárnější.
 
 Kdybyste měli v různých kopiích repozitáře zmatek, přijde vhod malé vysvětlení: jedna kopie je původní projekt na GitHubu, 
-kam správce projektu dává aktuální "oficiální verzi". 
-Další kopie na GitHubu je "vaše" a můžete si do ní nahrát cokoliv 
-(nejčastěji se v ní ale zveřejňují změny, které můžou být užitečné pro ostatní). 
-A třetí kopii repozitáře máte u sebe na počítači. 
+kam správce projektu dává aktuální „oficiální verzi”.
+Další kopie na GitHubu je „vaše” a můžete si do ní nahrát cokoliv
+(nejčastěji se v ní ale zveřejňují změny, které můžou být užitečné pro ostatní).
+A třetí kopii repozitáře máte u sebe na počítači.
 
 ![Git workflow](static/gh-workflow-diagram.svg)
 
@@ -63,7 +63,7 @@ jen Gitu řekneme, že z něj chceme ten repozitář udělat. To má za následe
 
 > [note] Pozor
 > Budeme hodně pracovat s příkazovou řádkou. Jestli se s ní ještě nekamarádíš, koukni se na [úvod](../../beginners/cmdline/).
-> Nezapomeň: $ na začátku se nepíše; je tu proto, aby šlo poznat že jde o příkaz.
+> Nezapomeň: $ na začátku se nepíše; je tu proto, aby šlo poznat, že jde o příkaz.
 
 Naším dnešním cílem je ale přispět do projektu, který založil někdo jiný. Proto použijeme příkaz `git clone` ke stažení vzdáleného repozitáře.
 
@@ -87,7 +87,7 @@ nothing to commit, working tree clean
 
 Git nám v tuto chvíli poskytl 3 informace:
 
-1. Že jsme na větvi `master`. Git umožňuje pracovat na více věcích současně pomocí tzv. *větví* mezi kterými můžeme přepínat. Pak se na na disku "objeví" verze souborů v dané větvi. My si dnes vystačíme s jednou hlavní větví, která se tradičně jmenuje `master`.
+1. Že jsme na větvi `master`. Git umožňuje pracovat na více věcích současně pomocí tzv. *větví* mezi kterými můžeme přepínat. Pak se na na disku „objeví” verze souborů v dané větvi. My si dnes vystačíme s jednou hlavní větví, která se tradičně jmenuje `master`.
 2. Že naše větev `master` je aktuální vůči větvi na vzdáleném repozitáři (origin) na GitHubu.
 3. Že jsme neudělali žádné změny oproti poslední verzi souborů, což je pravda.
 
@@ -97,7 +97,7 @@ Už jsme několikrát zmínili, že Git je verzovací systém. Jak že to ale so
 V podstatě mu musíme dát příkaz, aby zmrazil současný stav repozitáře, tzv. vytvořit *revizi*.
 Pak můžeme dělat další změny, ale už vždy budeme schopni se k této revizi vrátit.
 
-Přidejte do adresáře `prezenčka` soubor `vase_jmeno.txt`, např. tedy `magdalena_rettigova.txt`
+Přidejte do adresáře `prezencka` soubor `vase_jmeno.txt`, např. tedy `magdalena_rettigova.txt`
 a do něj napište svoje současné povolání nebo cokoliv jiného.
 Zkontrolujte současný stav repozitáře pomocí `git status`: Git oznámí, že v adresáři je soubor, o kterém ještě „neví“. 
 
@@ -206,7 +206,7 @@ Jejich další sdílení je upraveno jednou z licencí, které tyto základní s
 > [note] Pozor
 > Termíny **open-source** a **free software** nejsou zcela zaměnitelné, ale pro naše účely je zatím můžeme chápat jako synonyma.
 
-Spoustu open-source projektů najdete právě na GitHubu. Ne všechny jsou v Pythonu. Ne všechny jsou kvalitní - 
+Spoustu open-source projektů najdete právě na GitHubu. Ne všechny jsou v Pythonu. Ne všechny jsou kvalitní –
 protože si každý může zveřejnit co chce, na GitHubu se válí spousta nedodělků, opuštěných nápadů a nepodařených experimentů. 
 A bohužel, ne všechny projekty mají přátelské autory.
 
@@ -225,7 +225,7 @@ Některé příklady populárních open-source projektů:
 * Pytest (pythonní knihovna na testování)
 * Django, Flask, Requests (webové knihovny pro Python)
 * NumPy, Jupyter, Matplotlib (pythonní knihovny pro vědce a analytiky)
-* Materiály k tomuto kurzu     
+* Materiály k tomuto kurzu
 
 A jak vidno z posledního příkladu, nejen softwarové projekty se dají vést takhle veřejně. Tento kurz vychází z principů open source: 
 všechno know-how je sdílené a budeme rádi, když se zapojíte.
@@ -252,8 +252,8 @@ vizte obrázek na začátku.
 
 Udělejte si účet na GitHubu (jestli ho ještě nemáte) a pak jděte na adresu [prezencky](https://github.com/asgeirrr/prezencka/),
 kterou jste použili pro `git clone`. 
-Vlevo nahoře je tlačítko „Fork”, klikněte na něj. Tím se na GitHubu vytvoří vaše kopie repozitáře: 
-adresa by měla být něco jako `https://github.com/tvojejmeno/prezencka.git`.
+Vpravo nahoře je tlačítko „Fork”, klikněte na něj. Tím se na GitHubu vytvoří vaše kopie repozitáře:
+adresa by měla být něco jako `https://github.com/tvojejmeno/prezencka`.
 
 A teď, jak nahrát změny z našeho počítače na GitHub? Git si u každého repozitáře na našem počítači pamatuje adresy, 
 odkud se dají stahovat a kam se dají posílat změny. 
@@ -261,8 +261,8 @@ Seznam těchto adres nám ukáže příkaz `git remote -v`. Třeba:
 
 ```console
 $ git remote -v
-origin  https://github.com/asgeirrr/prezencka.git (fetch)
-origin  https://github.com/asgeirrr/prezencka.git (push)
+origin  https://github.com/asgeirrr/prezencka (fetch)
+origin  https://github.com/asgeirrr/prezencka (push)
 ```
 
 Tenhle výstup znamená, že pod zkratkou *origin* se schovává adresa, ze které jsme repozitář naklonovali.
@@ -271,15 +271,15 @@ Přidejme si podobnou zkratku pro vlastní repozitář na GitHubu. Můžeme ho p
 aby nám bylo jasné, že do tohoto repozitáře můžeme nahrávat změny.
 
 ```console
-$ git remote add public https://github.com/tvojejmeno/prezencka.git 
+$ git remote add public https://github.com/tvojejmeno/prezencka
 ```
 
 Zkontrolujme, že se nám to povedlo:
 
 ```console
 $ git remote -v
-origin  git@github.com:asgeirrr/prezencka.git (fetch)
-origin  git@github.com:asgeirrr/prezencka.git (push)
+origin  https://github.com/asgeirrr/prezencka (fetch)
+origin  https://github.com/asgeirrr/prezencka (push)
 public  https://github.com/tvojejmeno/prezencka (fetch)
 public  https://github.com/tvojejmeno/prezencka (push)
 ```
