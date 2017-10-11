@@ -198,13 +198,6 @@ navíc můžete automaticky použít např. funkci `url_for()`.
 
 [Jinja2]: http://jinja.pocoo.org/latest/templates/
 
-Pro debugování je vhodné nastavit automatické načítání změn šablon:
-
-```python
-if app.config.get('DEBUG'):
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
-```
-
 #### Filtry
 
 Není úplně elegantní vzít nějaká data (např. tweety z Twitter API) a ještě před
