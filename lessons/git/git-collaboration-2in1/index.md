@@ -67,7 +67,9 @@ jen Gitu řekneme, že z něj chceme ten repozitář udělat. To má za následe
 
 Naším dnešním cílem je ale přispět do projektu, který založil někdo jiný. Proto použijeme příkaz `git clone` ke stažení vzdáleného repozitáře.
 
-    $ git clone https://github.com/asgeirrr/prezencka
+```console
+$ git clone https://github.com/asgeirrr/prezencka
+```
 
 V aktuálním adresáři se nám vytvořil podadresář `prezencka`, který obsahuje všechny soubory, které vidíme ve webovém rozhraní na [GitHubu](https://github.com/asgeirrr/prezencka).
 
@@ -76,10 +78,12 @@ V aktuálním adresáři se nám vytvořil podadresář `prezencka`, který obsa
 
 Velmi často potřebujeme zjistit současný stav repozitáře. Navigujte v příkazové řádce do adresáře `prezencka` a zadejte `git status`. Git nám odpoví:
 
-    $ git status
-    On branch master
-    Your branch is up-to-date with 'origin/master'.
-    nothing to commit, working tree clean
+```console
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit, working tree clean
+```
 
 Git nám v tuto chvíli poskytl 3 informace:
 
@@ -97,45 +101,55 @@ Přidejte do adresáře `prezenčka` soubor `vase_jmeno.txt`, např. tedy `magda
 a do něj napište svoje současné povolání nebo cokoliv jiného.
 Zkontrolujte současný stav repozitáře pomocí `git status`: Git oznámí, že v adresáři je soubor, o kterém ještě „neví“. 
 
-    $ git status
-    On branch master
-    Your branch is up-to-date with 'origin/master'.
-    Untracked files:
-      (use "git add <file>..." to include in what will be committed)
+```console
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
 
-          magdalena_rettigova.txt
+      magdalena_rettigova.txt
 
-    nothing added to commit but untracked files present (use "git add" to track)
+nothing added to commit but untracked files present (use "git add" to track)
+```
 
 U každého nového souboru musíme Gitu říct, že chceme jeho obsah sledovat. Proveďte to se svým souborem:
 
-    $ git add magdalena_rettigova.txt
+```console
+$ git add magdalena_rettigova.txt
+```
 
 a znovu zkontrolujte stav repozitáře:
 
-    $ git status
-    On branch master
-    Your branch is up-to-date with 'origin/master'.
-    Changes to be committed:
-      (use "git reset HEAD <file>..." to unstage)
+```console
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
 
-            new file:   magdalena_rettigova.txt
+        new file:   magdalena_rettigova.txt
+```
 
 To, co je zelené („changes to be committed“), se přidá do další revize (angl. commit), kterou vytvoříme. Pojďme tedy vytvořit revizi: 
 
-    $ git commit
+```console
+$ git commit
+```
 
 Po zadání tohoto příkazu se otevře editor, do kterého je nutné napsat výstižný popis změn, 
 abyste vy i ostatní programátoři věděli, co tahle revize obsahuje za změny.
 Např. tedy `Přidáno mé jméno a povolání`. Předvyplněné řádky začínající # můžeme nechat být
 (nebo vymazat, podle chuti – Git je ignoruje).
 Pak soubor uložíme a zavřeme editor. 
-    
-    $ git status
-    On branch master
-    Your branch is ahead of 'origin/master' by 1 commit.
-      (use "git push" to publish your local commits)
-    nothing to commit, working tree clean
+
+```console
+$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+nothing to commit, working tree clean
+```
 
 Pro lepší pochopení, co dělají jednotlivé příkazy a v jakém stavu můžou být soubory/změny, přikládáme tento diagram:
 
@@ -146,21 +160,23 @@ Teď, když za sebou máme první revizi, podívejme se, jak vypadá historie re
 K tomu můžeme použít příkaz `git log`, jako první uvidíme naši poslední změnu a další jsou změny od jiných autorů,
 na které navazujeme.
 
-    $ git log
-    commit 0bdfbb2a2398fea179395a8dd303e9f672ef4dca
-    Author: Magdalena Dobromila <magdalena@rettigova.cz>
-    Date:   Tue Mar 28 19:27:08 2017 +0200
+```console
+$ git log
+commit 0bdfbb2a2398fea179395a8dd303e9f672ef4dca
+Author: Magdalena Dobromila <magdalena@rettigova.cz>
+Date:   Tue Mar 28 19:27:08 2017 +0200
 
-        Přidáno mé jméno a povolání
+    Přidáno mé jméno a povolání
 
-    commit 0f305972803131cb6c8637359fee8ede3005bba6
-    Merge: effa89b 175f4cc
-    Author: Oskar Hollmann <oskar@hollmann.me>
-    Date:   Tue Nov 8 20:17:00 2016 +0100
+commit 0f305972803131cb6c8637359fee8ede3005bba6
+Merge: effa89b 175f4cc
+Author: Oskar Hollmann <oskar@hollmann.me>
+Date:   Tue Nov 8 20:17:00 2016 +0100
 
-        Merge pull request #1 from muzikovam/master
-        
-        Tady mas jmeno
+    Merge pull request #1 from muzikovam/master
+
+    Tady mas jmeno
+```
 
 V logu se pohybujeme šipkami a když z něj chceme vyskočit zpět, stiskneme `q` jako quit.
 Příkaz `git log` má mnoho přepínačů, přehlednější historii změn můžeme získat pomocí `git log --oneline --graph --decorate`.
@@ -243,28 +259,36 @@ A teď, jak nahrát změny z našeho počítače na GitHub? Git si u každého r
 odkud se dají stahovat a kam se dají posílat změny. 
 Seznam těchto adres nám ukáže příkaz `git remote -v`. Třeba:
 
-    $ git remote -v
-    origin  https://github.com/asgeirrr/prezencka.git (fetch)
-    origin  https://github.com/asgeirrr/prezencka.git (push)
+```console
+$ git remote -v
+origin  https://github.com/asgeirrr/prezencka.git (fetch)
+origin  https://github.com/asgeirrr/prezencka.git (push)
+```
 
 Tenhle výstup znamená, že pod zkratkou *origin* se schovává adresa, ze které jsme repozitář naklonovali.
 
 Přidejme si podobnou zkratku pro vlastní repozitář na GitHubu. Můžeme ho pojmenovat např. *public*,
 aby nám bylo jasné, že do tohoto repozitáře můžeme nahrávat změny.
 
-    $ git remote add public https://github.com/tvojejmeno/prezencka.git 
+```console
+$ git remote add public https://github.com/tvojejmeno/prezencka.git 
+```
 
 Zkontrolujme, že se nám to povedlo:
 
-    $ git remote -v
-    origin  git@github.com:asgeirrr/prezencka.git (fetch)
-    origin  git@github.com:asgeirrr/prezencka.git (push)
-    public  https://github.com/tvojejmeno/prezencka (fetch)
-    public  https://github.com/tvojejmeno/prezencka (push)
+```console
+$ git remote -v
+origin  git@github.com:asgeirrr/prezencka.git (fetch)
+origin  git@github.com:asgeirrr/prezencka.git (push)
+public  https://github.com/tvojejmeno/prezencka (fetch)
+public  https://github.com/tvojejmeno/prezencka (push)
+```
 
 Tolik k nastavení ‒ `git remote add` stačí udělat jednou pro každý repozitář. Pak už můžeme změny nahrávat pomocí: 
 
-    $ git push public master
+```console
+$ git push public master
+```
 
 což znamená: pošli na adresu uloženou pod zkratkou `public` větev `master`.
 
@@ -292,7 +316,9 @@ Hotovo; teď je na autorech projektu, aby se na změny podívali a přijali ‒ 
 
 Když budou změny od všech účastníků začleněné, můžeme si aktualizovat repozitář, který máme u sebe na počítači. Příkaz
 
-    $ git pull origin master
+```console
+$ git pull origin master
+```
 
 stáhne změny z větve „master” z adresy pod zkratkou „origin”.
 Pomocí `git log` se můžeme podívat, jak se projekt mezitím vyvinul.
