@@ -267,11 +267,12 @@ origin  https://github.com/asgeirrr/prezencka (push)
 
 Tenhle výstup znamená, že pod zkratkou *origin* se schovává adresa, ze které jsme repozitář naklonovali.
 
-Přidejme si podobnou zkratku pro vlastní repozitář na GitHubu. Můžeme ho pojmenovat např. *public*,
-aby nám bylo jasné, že do tohoto repozitáře můžeme nahrávat změny.
+Přidejme si podobnou zkratku pro vlastní repozitář na GitHubu. Můžeme ho pojmenovat např. *moje*
+nebo svým uživatelským jménem na GitHubu,
+aby nám bylo jasné, že je to ten náš, do kterého můžeme nahrávat změny.
 
 ```console
-$ git remote add public https://github.com/tvojejmeno/prezencka
+$ git remote add tvojejmeno https://github.com/tvojejmeno/prezencka
 ```
 
 Zkontrolujme, že se nám to povedlo:
@@ -280,17 +281,17 @@ Zkontrolujme, že se nám to povedlo:
 $ git remote -v
 origin  https://github.com/asgeirrr/prezencka (fetch)
 origin  https://github.com/asgeirrr/prezencka (push)
-public  https://github.com/tvojejmeno/prezencka (fetch)
-public  https://github.com/tvojejmeno/prezencka (push)
+tvojejmeno  https://github.com/tvojejmeno/prezencka (fetch)
+tvojejmeno  https://github.com/tvojejmeno/prezencka (push)
 ```
 
 Tolik k nastavení ‒ `git remote add` stačí udělat jednou pro každý repozitář. Pak už můžeme změny nahrávat pomocí: 
 
 ```console
-$ git push public master
+$ git push tvojejmeno master
 ```
 
-což znamená: pošli na adresu uloženou pod zkratkou `public` větev `master`.
+což znamená: pošli na adresu uloženou pod zkratkou `tvojejmeno` větev `master`.
 
 Funguje? Můžeme se podívat na `https://github.com/tvojejmeno/prezencka` v prohlížeči a ujistit se, že tam změny jsou.
 
