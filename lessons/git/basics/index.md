@@ -291,8 +291,8 @@ v jedné ze změn musí být chyba!
 > [note]
 > Řádek začínající <tt class="blue">@@</tt> říká,
 > kde v souboru změna je (u mě začínal vypsaný kousek
-> souboru řádkem 3 a měl 8 řádků; v nové verzi je
-> opět od 3. řádku, ale má už jen 7 řádků).
+> souboru řádkem 1 a měl 6 řádků; v nové verzi je
+> opět od 1. řádku, ale narostl na 9).
 
 Jsi-li se změnami spokojen{{a}}, řekni Gitu, ať je
 použije v další revizi:
