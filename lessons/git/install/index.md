@@ -58,6 +58,7 @@ V nové příkazové řádce zadej:
 ```console
 > git config --global core.editor notepad
 > git config --global format.commitMessageColumns 80
+> git config --global gui.encoding utf-8
 ```
 
 A teď pokračuj v sekci [Nastavením](#config) níže – macOS přeskoč.
