@@ -230,6 +230,16 @@ s nějakým <span class="green">obsahem</span>.
 > (<kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>PgUp</kbd>, <kbd>PgDn</kbd>)
 > a zpět se dostaneš klávesou <kbd>Q</kbd> jako *Quit*.
 
+> [note] Kódování ve Windows
+> Pokud výpis nezvládá znaky s diakritikou, zadej před  `git show` příkaz
+>
+> ```dosvenv
+> > set LC_ALL=C.UTF-8
+> ```
+>
+> Tento příkaz nastaví aktuální terminál: když si ovevřeš nové okno
+> s příkazovou řádkou, bude ho potřeba zadat znovu.
+
 
 ## Druhá revize
 
