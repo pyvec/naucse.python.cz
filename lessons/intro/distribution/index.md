@@ -517,6 +517,36 @@ setup(...,
 Další informace jsou odkázané v [dokumentaci](https://packaging.python.org/distributing/#package-data).
 
 
+Wheel
+-----
+
+Zatím jsme se zabývali jen zdrojovými balíčky `sdist` (_source distribution_).
+Existují ale i balíčky (distribuce) „binární“.
+Když se instaluje zdrojový balíček, vykonává se kód ze souboru `setup.py`.
+Pokud tento kód selže, instalace se nezdaří.
+Binární balíček se místo toho jen rozbalí na patřičné místo.
+Z historických důvodů existuje několik různých binárních distribucí,
+v současné době je ale důležitá pouze možnost `bdist_wheel`.
+
+```console
+(env)$ python setup.py bdist_wheel
+```
+
+Výsledek je v souboru `dist/...whl`.
+
+> [note]
+> Pokud vám příkaz nefunguje, nainstalujte balík `wheel`.
+
+Obsah wheelu můžete prozkoumat, je to obyčejný ZIP.
+
+> [note]
+> Naše programy jsou zatím platformně nezávislé a ve wheelu,
+> i když se jmenuje binární, žádné binární soubory nejsou.
+> Tento wheel půjde použít na různých operačních systémech i procesorových architekturách.
+> To se ale změní, až se budeme zabývat tvorbou modulů v jazyce C:
+> `sdist` pak obsahuje zdrojové soubory a `bdist_wheel` zkompilované moduly.
+
+
 Další
 -----
 
