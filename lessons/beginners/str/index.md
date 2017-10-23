@@ -35,7 +35,7 @@ exotické znaky, které nemáš na klávesnici.
 Ty se dají zapsat jako `\N` a jméno znaku
 v složených („kudrnatých“) závorkách.
 Třeba následující znaky.
-(Do konzoli na Windows bohužel nemusí jít všechny
+(Do konzole na Windows bohužel nemusí jít všechny
 vypsat, ale aspoň první by jít měl):
 
 ```python
@@ -83,7 +83,7 @@ def vynasob(a, b):
 Jen pozor na to, že pokud je tenhle řetězec
 v odsazeném kódu, každý jeho řádek bude začínat
 několika mezerami.
-V dokumentačních řetězcích to nevadí.
+(V dokumentačních řetězcích to nevadí, tam se s odsazením počítá.)
 
 Tolik k zápisu řetězců.
 Teď se podíváme, jak se zadanými řetězci pracovat.
@@ -253,7 +253,7 @@ prijmeni = input('Zadej příjmení ')
 print('Iniciály:', (jmeno[0] + prijmeni[0]).upper())
 ```
 
-Doporučuji ale spíš první způsob, ten se smysluplnými názvy proměnných.
+Doporučuji spíš první způsob, ten se smysluplnými názvy proměnných.
 Je sice delší, ale mnohem přehlednější.
 {% endfilter %}
 
@@ -323,7 +323,8 @@ print(retezec[-4:])
 Určování vhodných čísel, *indexů*, občas vyžaduje trochu zamyšlení.
 
 U podobného „sekání“ (angl. *string slicing*)
-je lepší číslovat „hranice“ mezi znaky. Takhle:
+je lepší si číslovat „hranice“ mezi znaky.
+Člověk tomu pak lépe rozumí:
 
 {{ anchor('slicing-diagram') }}
 ```plain
