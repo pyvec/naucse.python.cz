@@ -273,7 +273,21 @@ která v rámci řetězce nahradí čísla v „kudrnatých“ závorkách
 za to, co dostane v argumentech:
 
 ```python
-vypis = '{0}×{1} je {2}'.format(3, 4, 3 * 4)
+vypis = '{}×{} je {}'.format(3, 4, 3 * 4)
+print(vypis)
+```
+
+Pokud chceš nahradit hodnoty v jiném pořadí, můžeš „kudrnaté“ závorky očíslovat:
+
+```python
+vypis = '{1}×{2} je {0}'.format(3 * 4, 3, 4)
+print(vypis)
+```
+
+V takovém případě je můžeš použít i vícekrát:
+
+```python
+vypis = '{0}×{0}, neboli {0}^2 je {1}'.format(3, 3 ** 2)
 print(vypis)
 ```
 
