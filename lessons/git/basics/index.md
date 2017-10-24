@@ -250,11 +250,13 @@ Pak se opět zeptej Gitu na stav repozitáře.
 ```ansi
 ␛[36m$␛[0m git status
 On branch master
-Changes to be committed:
-  (use "git reset HEAD <file>..." to unstage)
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
 
-        ␛[32mmodified:   basnicka.txt␛[m
+        ␛[31mmodified:   basnicka.txt␛[m
 
+no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
 Soubor je opět červený! Něco se v něm změnilo!
