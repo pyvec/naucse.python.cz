@@ -171,6 +171,11 @@ def vars_functions(vars):
 
 
 @template_filter()
+def format_date(date, relative_to=None):
+    return '{d.day}. {d.month}. {d.year}'.format(d=date)
+
+
+@template_filter()
 def format_date_range(start_and_end):
     start, end = start_and_end
     parts = []
@@ -182,5 +187,5 @@ def format_date_range(start_and_end):
         else:
             parts += ['{start.day}.']
         parts += [' – ']
-    parts += ['{end.day}. {end.month}. {end.year}']
+        parts += [format_date(end)]
     return ''.join(parts).format(start=start, end=end)
