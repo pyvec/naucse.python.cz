@@ -521,30 +521,47 @@ Wheel
 -----
 
 Zatím jsme se zabývali jen zdrojovými balíčky `sdist` (_source distribution_).
-Existují ale i balíčky (distribuce) „binární“.
+Existují ale i balíčky „zkompilované” – `bdist` (_binary distribution_).
 Když se instaluje zdrojový balíček, vykonává se kód ze souboru `setup.py`.
-Pokud tento kód selže, instalace se nezdaří.
 Binární balíček se místo toho jen rozbalí na patřičné místo.
-Z historických důvodů existuje několik různých binárních distribucí,
-v současné době je ale důležitá pouze možnost `bdist_wheel`.
+
+Z historických důvodů existuje několik různých druhú binárních distribucí,
+v současné době je ale důležitá pouze možnost `bdist_wheel`:
 
 ```console
 (env)$ python setup.py bdist_wheel
 ```
 
-Výsledek je v souboru `dist/...whl`.
+Výsledek je v souboru `dist/*.whl`.
 
 > [note]
 > Pokud vám příkaz nefunguje, nainstalujte balík `wheel`.
 
 Obsah wheelu můžete prozkoumat, je to obyčejný ZIP.
 
-> [note]
-> Naše programy jsou zatím platformně nezávislé a ve wheelu,
-> i když se jmenuje binární, žádné binární soubory nejsou.
-> Tento wheel půjde použít na různých operačních systémech i procesorových architekturách.
-> To se ale změní, až se budeme zabývat tvorbou modulů v jazyce C:
-> `sdist` pak obsahuje zdrojové soubory a `bdist_wheel` zkompilované moduly.
+Naše programy jsou zatím platformně nezávislé a ve wheelu,
+i když se jmenuje binární, žádné binární soubory nejsou.
+To se ale změní, až se budeme zabývat tvorbou modulů v jazyce C:
+`sdist` pak obsahuje zdrojové soubory a `bdist_wheel` zkompilované moduly.
+
+Potom je dobré distribuovat oba dva – každý má své výhody:
+
+- *sdist* jde nainstalovat na různých operačních systémech i procesorových
+  architekturách,
+- *sdist* tradičně obsahuje soubory jako LICENSE a README, ale
+- *wheel* při instalaci nepotřebuje např. překladače C (všechno už je přeložené
+  pro konkrétní OS a architekturu), a
+- *wheel* se rychleji instaluje.
+
+Proces vydání složitějšího softwaru pak může vypadat takto:
+
+```console
+(env)$ rm dist/*
+(env)$ python setup.py sdist bdist_wheel
+[... kontrola vytvořených balíčků v „čistém“ virtualenvu ...]
+(env)$ python -m twine upload dist/*
+```
+
 
 
 Další
