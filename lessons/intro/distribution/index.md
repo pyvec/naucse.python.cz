@@ -205,6 +205,15 @@ Doteď jsme vytvářeli balíček jen z jednoho zdrojového souboru `isholiday.p
 Co ale dělat, pokud je náš projekt větší a obsahuje souborů více?
 Teoreticky je možné je přidat všechny do `py_modules`, ale není to dobrý nápad.
 
+> [note]
+> Proč to vlastně není dobrý nápad? Jednotlivé moduly by byly rozesety ve
+> složce `site-packages` bez ladu a skladu mezi ostatními, byl by v tom
+> pěkný nepořádek. Navíc by mohlo nastat více konfliktů v názvech, například
+> pokud by více balíčků mělo modul `utils`.
+> Slušně vychovaný Pythonista vždy pojmenuje svůj balíček stejně, jako jediný
+> modul, který se bude instalovat. Ten může být buď jeden (jako v příkladu
+> doteď), nebo v sobě obsahovat další (jako v příkladu dále).
+
 Raději uděláme modul ve formě složky. V našem případě soubor
 `isholiday.py` zatím přesuneme do `isholiday/__init__.py`:
 
@@ -254,26 +263,37 @@ setup(
 )
 ```
 
+> [note]
+> A jaký je tedy vlastně rozdíl mezi `py_modules` a `packages`?
+> [Ten první není hierarchicky nořen][so].
+
+[so]: https://stackoverflow.com/questions/7948494/whats-the-difference-between-a-python-module-and-a-python-package
+
 Momentálně máme všechen kód přímo v `__init__.py`, což sice funguje,
 ale ideální to není. Dobré je mít kód v samostatných souborech a v `__init__.py`
 pouze importovat veřejné rozhraní, tedy to, co budou z vašeho modulu importovat
 jeho uživatelé.
 
-Přesuňte tedy obsah `__init__.py` do `holidays.py` a do `__init__.py`
-místo toho napište:
+V souboru `__init__.py` by tak prakticky žádný kód kromě importů být neměl.
+Přesuňte tedy obsah `__init__.py` do `holidays.py` a
+do `__init__.py` místo toho napište:
 
 ```python
 from .holidays import getholidays, isholiday
 
 __all__ = ['getholidays', 'isholiday']
-
 ```
-
-Do `__init__.py` ideálně nepatří žádný kód kromě tohoto.
 
 Tečka v příkazu `import` není chyba: je to zkratka pro aktuální modul.
 Můžeme psát i `from isholiday.holidays import ...`,
 což ale trochu ztěžuje případné přejmenování modulu.
+
+> [note]
+> K čemu že tam je to `__all__`? Definuje, které proměnné se naimportují při
+> použití `from isholiday import *`. Tento způsob importu nevidíme rádi,
+> protože znepřehledňuje kód, to ale neznamená, že to musíme uživatelům
+> naší knihovny znepříjemňovat. Zároveň tím zamezíte různým varováním o
+> importovaném ale nevyužitém modulu, které může hlásit vaše IDE nebo linter.
 
 
 Spouštění balíčku
