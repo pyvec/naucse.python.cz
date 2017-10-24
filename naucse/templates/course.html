@@ -13,24 +13,31 @@
 
         > {{ course.title }}
         <hr>
-
-        {% if not course.canonical %}
-            <div class="alert alert-info">
-                Toto je kurz, který probíhá nebo proběhl naživo s instruktorem.
-                {% if course.base_course %}
-                    <a href="{{ course_url(course.base_course) }}">Přejít na ekvivalentní kurz pro samouky</a>.
-                {% endif %}
-            </div>
-        {% endif %}
     </header>
 
     {% if course.start_date %}
-        <div class="course-dates card">
+        <div class="course-dates card w-lg-25 float-lg-right text-center">
+            <div class="card-header">
+                {% if course.vars['coach-present'] %}
+                    Kurz s instruktorem
+                {% else %}
+                    Termín kurzu
+                {% endif %}
+            </div>
             <div class="card-body">
                 <div class="calendar-dates">
                     {{ (course.start_date, course.end_date) | format_date_range }}
                 </div>
-                <div class="calendar-link">Kalendář</div>
+            </div>
+            <div class="card-footer small text-left">
+                <ul class="list-unstyled" style="margin-bottom:0;">
+                    <li><a href="#">→ Kalendář</a></li>
+                    {% if course.base_course %}
+                    <li>
+                        <a href="{{ course_url(course.base_course) }}">→ Ekvivalentní kurz pro samouky</a>
+                    </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     {% endif %}
