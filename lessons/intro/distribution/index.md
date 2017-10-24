@@ -56,21 +56,21 @@ Je to dobrá konvence, ale není to technicky nutné.
 Balíček můžeme zkusit nainstalovat do virtualenvu:
 
 ```console
-$ python3.6 -m venv env     # (nebo jinak -- podle vašeho OS)
-$ . env/bin/activate        # (nebo jinak -- podle vašeho OS)
-(env)$ python setup.py install
+$ python3.6 -m venv __venv__     # (nebo jinak -- podle vašeho OS)
+$ . __venv__/bin/activate        # (nebo jinak -- podle vašeho OS)
+(__venv__)$ python setup.py install
 ...
-(env)$ python
+(__venv__)$ python
 >>> import isholiday
 >>> 
-(env)$ python -m pip freeze
+(__venv__)$ python -m pip freeze
 isholiday==0.1
 ```
 
 Přes `setup.py` můžeme dělat další věci, například vytvořit archiv s balíčkem:
 
 ```console
-(env)$ python setup.py sdist
+(__venv__)$ python setup.py sdist
 ...
 warning: sdist: standard file not found: should have one of README, README.rst, README.txt
 ...
@@ -91,7 +91,7 @@ Czech public holiday checker...
 Poté spustíme `setup.py sdist` znovu:
 
 ```console
-(env)$ python setup.py sdist
+(__venv__)$ python setup.py sdist
 ```
 
 V adresáři `dist` najdete archiv, jeho obsah můžete zkontrolovat. Měl by tam
@@ -119,7 +119,7 @@ Při dalším spuštění už `setup.py` přidá i soubor `LICENSE`.
 To můžete zkontrolovat i ve výsledném archivu.
 
 ```console
-(env)$ python setup.py sdist
+(__venv__)$ python setup.py sdist
 ...
 hard linking LICENSE -> isholiday-0.1
 hard linking MANIFEST.in -> isholiday-0.1
@@ -132,10 +132,10 @@ Doporučuji to dělat v jiném virtuálním prostředí – v aktuálním už ho
 nainstalovaný.
 
 ```console
-(v jiné konzoli, v jiném adresáři)
-$ python3 -m venv other_env     # (nebo jinak -- podle vašeho OS)
-$ . other_env/bin/activate      # (nebo jinak -- podle vašeho OS)
-(other_env)$ python -m pip install cesta/k/projektu/dist/isholiday-0.1.tar.gz
+# v jiné konzoli, v jiném adresáři
+$ python3 -m venv __venv2__
+$ . __venv2__/bin/activate
+(__venv2__)$ python -m pip install cesta/k/projektu/dist/isholiday-0.1.tar.gz
 Processing cesta/k/projektu/dist/isholiday-0.1.tar.gz
 Installing collected packages: isholiday
   Running setup.py install for isholiday ... done
@@ -209,7 +209,7 @@ Raději uděláme modul ve formě složky. V našem případě soubor
 `isholiday.py` zatím přesuneme do `isholiday/__init__.py`:
 
 ```console
-(env)$ tree
+(__venv__)$ tree
 .
 ├── isholiday
 │   └── __init__.py
@@ -335,13 +335,13 @@ Skript bude možné použít, je-li aktivní prostředí, kde je nainstalován, 
 zadáním jména *entrypointu*:
 
 ```console
-(env)$ python setup.py sdist
+(__venv__)$ python setup.py sdist
 ```
 
 ```console
-(v jiné konzoli, v jiném virtuálním prostředí)
-(other_env)$ python -m pip install --upgrade cesta/k/projektu/dist/isholiday-0.1.tar.gz
-(other_env)$ isholiday_demo
+# v jiné konzoli, v jiném virtuálním prostředí
+(__venv2__)$ python -m pip install --upgrade cesta/k/projektu/dist/isholiday-0.1.tar.gz
+(__venv2__)$ isholiday_demo
 ...
 Mon Mar 28 00:00:00 2016 True
 Tue Mar 28 00:00:00 2017 False
@@ -431,7 +431,7 @@ Registrace projektu a nahrání na testovací PyPI se provádí pomocí příkaz
 `upload`: ten projekt zaregistrueje (pokud to jde) a nahraje samotný balíček:
 
 ```console
-(env)$ twine upload -r testpypi dist/isholiday-0.1.tar.gz
+(__venv__)$ twine upload -r testpypi dist/isholiday-0.1.tar.gz
 Uploading distributions to https://test.pypi.org/legacy/
 Uploading isholiday-0.1.tar.gz
 [================================] 8379/8379 - 00:00:02
@@ -457,7 +457,7 @@ Projekt nahraný na PyPI by mělo jít nainstalovat pomocí pipu.
 V případě použití ostré verze PyPI stačí k instalaci zadat název balíčku:
 
 ```console
-(env)$ python -m pip install <název_balíčku>
+(__venv__)$ python -m pip install <název_balíčku>
 ```
 
 Pokud však použijeme testovací PyPI, je nutné pipu říct, aby balíček hledal tam.
@@ -469,7 +469,7 @@ Lepší by bylo, kdyby pip nainstaloval závislosti z ostré PyPI a na testovac�
 hledal jen náš projekt. Toho se dá docílit přepínačem `--extra-index-url`.
 
 ```console
-(env)$ python -m pip install --extra-index-url https://test.pypi.org/pypi <název_balíčku>
+(__venv__)$ python -m pip install --extra-index-url https://test.pypi.org/pypi <název_balíčku>
 ```
 
 V tomto případě pip nejdřív prohledá ostrou PyPI, a pokud nenajde požadovaný
@@ -482,7 +482,7 @@ V případě, že tento problém nastane, je možné ho částečně obejít spe
 verze instalovaného balíčku:
 
 ```console
-(env)$ python -m pip install --extra-index-url https://test.pypi.org/pypi <název_balíčku>==0.3
+(__venv__)$ python -m pip install --extra-index-url https://test.pypi.org/pypi <název_balíčku>==0.3
 ```
 
 Pokud u duplicitního projektu na ostré PyPI neexistuje požadovaná verze,
@@ -492,7 +492,7 @@ Jiná možnost je zadat přímo cestu k archivu s balíčkem místo jeho názvu.
 Zde pak na umístění balíčku ani verzi nezáleží:
 
 ```bash
-(env)$ python -m pip install https://test-files.pythonhosted.org/packages/.../<název_balíčku>-0.3.tar.gz
+(__venv__)$ python -m pip install https://test-files.pythonhosted.org/packages/.../<název_balíčku>-0.3.tar.gz
 ```
 
 Archiv se dá najít na informační stránce o našem projektu na PyPI.
@@ -529,7 +529,7 @@ Z historických důvodů existuje několik různých druhů binárních distribu
 v současné době je ale důležitá pouze možnost `bdist_wheel`:
 
 ```console
-(env)$ python setup.py bdist_wheel
+(__venv__)$ python setup.py bdist_wheel
 ```
 
 Výsledek je v souboru `dist/*.whl`.
@@ -556,10 +556,10 @@ Potom je dobré distribuovat oba dva – každý má své výhody:
 Proces vydání složitějšího softwaru pak může vypadat takto:
 
 ```console
-(env)$ rm dist/*
-(env)$ python setup.py sdist bdist_wheel
+(__venv__)$ rm dist/*
+(__venv__)$ python setup.py sdist bdist_wheel
 [... kontrola vytvořených balíčků v „čistém“ virtualenvu ...]
-(env)$ python -m twine upload dist/*
+(__venv__)$ python -m twine upload dist/*
 ```
 
 
