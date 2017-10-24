@@ -525,7 +525,7 @@ Existují ale i balíčky „zkompilované” – `bdist` (_binary distribution_
 Když se instaluje zdrojový balíček, vykonává se kód ze souboru `setup.py`.
 Binární balíček se místo toho jen rozbalí na patřičné místo.
 
-Z historických důvodů existuje několik různých druhú binárních distribucí,
+Z historických důvodů existuje několik různých druhů binárních distribucí,
 v současné době je ale důležitá pouze možnost `bdist_wheel`:
 
 ```console
