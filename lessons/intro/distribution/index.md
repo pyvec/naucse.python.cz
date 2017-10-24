@@ -423,7 +423,7 @@ Hesla můžete vynechat, pokud je budete chtít pokaždé zadávat.
 Používáte-li Windows, je potřeba nastavit proměnnou prostředí `HOME` na adresář
 se souborem `.pypirc`, např:
 
-```console
+```dosvenv
 > set HOME=C:\cesta\k\nastaveni
 ```
 
