@@ -206,13 +206,12 @@ Co ale dělat, pokud je náš projekt větší a obsahuje souborů více?
 Teoreticky je možné je přidat všechny do `packages`, ale není to dobrý nápad.
 
 > [note]
-> Proč to vlastně není dobrý nápad? Jednotlivé moduly by byly rozesety ve
-> složce `site-packages` bez ladu a skladu mezi ostatními, byl by v tom
-> pěkný nepořádek. Navíc by mohlo nastat více konfliktů v názvech, například
-> pokud by více balíčků mělo modul `utils`.
-> Slušně vychovaný Pythonista vždy pojmenuje svůj balíček stejně, jako jediný
-> modul, který se bude instalovat. Ten může být buď jeden (jako v příkladu
-> doteď), nebo v sobě obsahovat další (jako v příkladu dále).
+> Proč to vlastně není dobrý nápad? Jednotlivé moduly ze všech nainstalovaných
+> balíčků by byly rozesety bez ladu a skladu mezi ostatními.
+> Mohl by snadno nastat konflikt v názvech, například pokud by více balíčků
+> mělo modul `utils`.
+> Slušně vychovaný Pythonista dá do každého balíčku právě jeden modul,
+> pojmenovaný stejně jako balíček.
 
 Raději uděláme modul ve formě složky. V našem případě soubor
 `isholiday.py` zatím přesuneme do `isholiday/__init__.py`:
@@ -249,12 +248,18 @@ Tečka v příkazu `import` není chyba: je to zkratka pro aktuální modul.
 Můžeme psát i `from isholiday.holidays import ...`,
 což ale trochu ztěžuje případné přejmenování modulu.
 
+Ono `__all__` pak explicitně definuje rozhraní modulu. Například s původním
+modulem šlo provést `from isholiday import datetime`, ale asi by nikdo
+nečekal, že tahle možnost bude nutně zachována i v příštích verzích knihovny.
+Seznamem `__all__` dáte najevo, že tyhle funkce nejsou jen „náhodné importy“,
+a zároveň tím zamezíte různým varováním o
+importovaném ale nevyužitém modulu, které může hlásit vaše IDE nebo linter.
+
 > [note]
-> K čemu že tam je to `__all__`? Definuje, které proměnné se naimportují při
-> použití `from isholiday import *`. Tento způsob importu nevidíme rádi,
+> Python samotný pak `__all__` používá jako seznam proměnných importovaných
+> přes `from isholiday import *` Tento způsob importu nevidíme rádi,
 > protože znepřehledňuje kód, to ale neznamená, že to musíme uživatelům
-> naší knihovny znepříjemňovat. Zároveň tím zamezíte různým varováním o
-> importovaném ale nevyužitém modulu, které může hlásit vaše IDE nebo linter.
+> naší knihovny znepříjemňovat (např. pro interaktivní režim).
 
 
 Spouštění balíčku
