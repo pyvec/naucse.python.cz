@@ -511,7 +511,7 @@ nainstaluje se náš projekt z testovací PyPI.
 Jiná možnost je zadat přímo cestu k archivu s balíčkem místo jeho názvu.
 Zde pak na umístění balíčku ani verzi nezáleží:
 
-```bash
+```console
 (__venv__)$ python -m pip install https://test-files.pythonhosted.org/packages/.../<název_balíčku>-0.3.tar.gz
 ```
 
