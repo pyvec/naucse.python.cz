@@ -269,7 +269,7 @@ Proč tomu tak je, to za nějakou dobu poznáš.
 ## Formátování
 
 Obzvláště užitečná je metoda `format`,
-která v rámci řetězce nahradí čísla v „kudrnatých“ závorkách
+která v rámci řetězce nahradí dvojice „kudrnatých“ závorek
 za to, co dostane v argumentech:
 
 ```python
@@ -277,25 +277,16 @@ vypis = '{}×{} je {}'.format(3, 4, 3 * 4)
 print(vypis)
 ```
 
-Pokud chceš nahradit hodnoty v jiném pořadí, můžeš „kudrnaté“ závorky očíslovat:
+Řetězec `'{}×{} je {}'` tady funguje jako *šablona* (angl. *template*).
+Představ si to jako jako formulář, do kterého Python na vyznačená místa
+vpisuje hodnoty.
+
+Pokud chceš nahradit hodnoty v jiném pořadí, nebo když chceš aby šablona
+byla čitelnější, můžeš do „kudrnatých“ závorek napsat jména:
 
 ```python
-vypis = '{1}×{2} je {0}'.format(3 * 4, 3, 4)
+vypis = 'Ahoj {jmeno}! Výsledek je {cislo}.'.format(cislo=7, jmeno='Elvíro')
 print(vypis)
-```
-
-V takovém případě je můžeš použít i vícekrát:
-
-```python
-vypis = '{0}×{0}, neboli {0}^2 je {1}'.format(3, 3 ** 2)
-print(vypis)
-```
-
-Pokud použiješ pojmenované argumenty,
-můžeš místo čísel psát i příslušná jména:
-
-```python
-print('Ahoj, {jmeno}!'.format(jmeno='Elvíro'))
 ```
 
 Formátování se používá skoro všude, kde je
