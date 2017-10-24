@@ -1,5 +1,6 @@
 import os
 import datetime
+import calendar
 
 from flask import Flask, render_template, url_for, send_from_directory
 from flask import abort, redirect
@@ -265,3 +266,24 @@ def session_coverpage(course, session, coverpage):
                            homework_section=homework_section,
                            link_section=link_section,
                            cheatsheet_section=cheatsheet_section)
+
+@app.route('/<course:course>/calendar/')
+def course_calendar(course):
+    if not course.start_date:
+        abort(404)
+    months = []
+    year = course.start_date.year
+    month = course.start_date.month
+    while (year, month) <= (course.end_date.year, course.end_date.month):
+        months.append((year, month))
+        month += 1
+        if month > 12:
+            month = 1
+            year += 1
+    sessions_by_date = {s.date: s for s in course.sessions.values()}
+    return render_template('course_calendar.html',
+                           edit_path=course.edit_path,
+                           course=course,
+                           sessions_by_date=sessions_by_date,
+                           months=months,
+                           calendar=calendar.Calendar())

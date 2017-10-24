@@ -281,9 +281,10 @@ def merge_dict(base, patch):
 
 class Session(Model):
     """An ordered collection of materials"""
-    def __init__(self, root, path, base_course, info):
+    def __init__(self, root, path, base_course, info, index):
         super().__init__(root, path)
         base_name = info.get('base')
+        self.index = index
         if base_name is None:
             self.info = info
         else:
@@ -336,8 +337,9 @@ class Session(Model):
 
 def _get_sessions(course, plan):
     result = OrderedDict()
-    for sess_info in plan:
-        session = Session(course.root, course.path, course.base_course, sess_info)
+    for index, sess_info in enumerate(plan):
+        session = Session(course.root, course.path, course.base_course,
+                          sess_info, index=index)
         result[session.slug] = session
 
     sessions = list(result.values())
