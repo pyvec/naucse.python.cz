@@ -46,7 +46,7 @@ setup(
     author_email='ondrej@caletka.cz',
     license='Public Domain',
     url='https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e',
-    packages=['isholiday'],
+    py_modules=['isholiday'],
 )
 ```
 
@@ -168,7 +168,7 @@ setup(
     keywords='holiday,dates',
     license='Public Domain',
     url='https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e',
-    packages=['isholiday'],
+    py_modules=['isholiday'],
     classifiers=[
         'Intended Audience :: Developers',
         'License :: Public Domain',
@@ -203,7 +203,7 @@ Více souborů s Python kódem
 
 Doteď jsme vytvářeli balíček jen z jednoho zdrojového souboru `isholiday.py`.
 Co ale dělat, pokud je náš projekt větší a obsahuje souborů více?
-Teoreticky je možné je přidat všechny do `packages`, ale není to dobrý nápad.
+Teoreticky je možné je přidat všechny do `py_modules`, ale není to dobrý nápad.
 
 > [note]
 > Proč to vlastně není dobrý nápad? Jednotlivé moduly ze všech nainstalovaných
@@ -228,6 +228,43 @@ Raději uděláme modul ve formě složky. V našem případě soubor
 
 1 directory, 5 files
 ```
+
+Soubor `__init__.py` jednak značí, že adresář `isholiday` je pythonní modul,
+a také obsahuje kód, který se spustí při importu modulu `isholiday`.
+
+Musíme ještě mírně upravit `setup.py` – místo `py_modules` použijeme `packages`:
+
+```diff
+diff --git a/setup.py b/setup.py
+index 3a69792..6b453ab 100644
+--- a/setup.py
++++ b/setup.py
+@@ -11,7 +11,7 @@ setup(
+     keywords='holiday,dates',
+     license='Public Domain',
+     url='https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e',
+-    py_modules=['isholiday'],
++    packages=['isholiday'],
+     classifiers=[
+         'Intended Audience :: Developers',
+         'License :: Public Domain',
+```
+
+Případně, což je ještě lepší, můžeme použít `find_packages()`:
+
+```python
+from setuptools import setup, find_packages
+
+setup(
+    ...
+    packages=find_packages(),
+    ...
+)
+```
+
+> [note]
+> A jaký je tedy vlastně rozdíl mezi `py_modules` a `packages`?
+> Zjednodušeně: Ten první je na soubory, ten druhý na adresáře.
 
 Momentálně máme všechen kód přímo v `__init__.py`, což sice funguje,
 ale ideální to není. Dobré je mít kód v samostatných souborech a v `__init__.py`
