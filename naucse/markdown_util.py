@@ -75,6 +75,11 @@ def style_space_after_prompt(html):
                   html)
 
 
+def matrix_multiplication_operator(html):
+    return html.replace('<span class="err">@</span>',
+                        '<span class="o">@</span>')
+
+
 class MSDOSSessionVenvLexer(RegexLexer):
     """Lexer for simplistic MSDOS sessions with optional venvs.
 
@@ -123,7 +128,10 @@ class Renderer(mistune.Renderer):
             return self.code_tmpl.format(converted)
         lexer = get_lexer_by_name(lang)
         html = pygments.highlight(code, lexer, pygments_formatter).strip()
-        return style_space_after_prompt(html)
+        html = style_space_after_prompt(html)
+        if lang in ('python', 'pycon'):
+            html = matrix_multiplication_operator(html)
+        return html
 
     def deflist(self, items):
         tags = {'term': 'dt', 'def': 'dd'}

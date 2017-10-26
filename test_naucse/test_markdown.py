@@ -234,6 +234,20 @@ def test_convert_with_prompt_spaces_console():
     assert convert_markdown(src).replace('\n', '') == expected
 
 
+@pytest.mark.parametrize('lexer', ('python', 'pycon'))
+def test_convert_with_matrix_multiplication(lexer):
+    src = dedent("""
+        ```{}
+        {}a @ a
+        ```
+    """.format(lexer, '>>> ' if lexer == 'pycon' else ''))
+    expected = dedent("""
+        <span class="n">a</span> <span class="o">@</span>
+         <span class="n">a</span>
+    """).strip().replace('\n', '')
+    assert expected in convert_markdown(src).replace('\n', '')
+
+
 @pytest.mark.parametrize('pre_prompt', ('', '(__venv__) ', '(env)'))
 @pytest.mark.parametrize('space', ('', ' '))
 @pytest.mark.parametrize('command', ('python', '07:28 PM <DIR> Desktop'))
