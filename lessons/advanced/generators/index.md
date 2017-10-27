@@ -10,11 +10,12 @@ vysvětlit od úplného začátku: od toho, jak se v Pythonu iteruje.
 Iterace
 -------
 
-Když je v Pythonu potřeba iterovat přes nějakou kolekci, použije se *iterační protokol*,
+Když je v Pythonu potřeba iterovat (např. příkazem `for`) přes nějakou kolekci
+(seznam, řetězec, soubor, …), použije se *iterační protokol*,
 který pracuje se dvěma druhy objektů: s *iterovatelnými objekty* a s *iterátory*.
 
 Iterovatelné objekty (*iterables*) se vyznačují tím, že je na ně možné zavolat
-funkci `iter()`, která vrátí příslušný iterátor:
+funkci `iter()`. Ta vrátí příslušný iterátor:
 
 ```pycon
 >>> iter([1, 2, 3])
@@ -43,16 +44,31 @@ Traceback (most recent call last):
 StopIteration
 ```
 
-Zároveň platí, že každý iterátor je iterovatelný: zavoláním `iter()` na iterátor
+Cyklus `for x in collection: ...` tedy dělá něco jako:
+
+```python
+iterator = iter(collection)
+while True:
+    try:
+        x = next(iterator)
+    except StopIteration:
+        break
+
+    ...  # tělo původního cyklu
+```
+
+Platí, že každý iterátor je iterovatelný: zavoláním `iter()` na iterátor
 dostaneme ten stejný iterátor (nikoli jeho kopii) zpět.
-Naopak to ale obecně neplatí: seznamy jsou iterovatelné, ale nejsou samy o sobě
-iterátory.
+Naopak to ale obecně neplatí: např. seznamy jsou iterovatelné, ale nejsou samy
+o sobě iterátory.
+Každé zavolání `iter(seznam)` vrací nový iterátor, který má svou vlastní
+„aktuální pozici“ a iteruje od začátku.
 
 Iterátor je ve většině případů „malý“ objekt, který si „pamatuje“ jen původní iterovatelný
-objekt a aktuální pozici. Příklady jsou iterátor seznamů (`iter([])`), slovníků (`iter({})`),
-n-tic nebo množin, iterátor pro `range` a podobně.
+objekt a aktuální pozici. Příklady jsou iterátory seznamů (`iter([])`), slovníků (`iter({})`),
+*n*-tic nebo množin, iterátor pro `range` a podobně.
 
-Iterátory ale můžou být i „větší“: třeba otevřený soubor je iterátor, z něhož `next()`
+Iterátory ale můžou být i „větší“: třeba otevřený soubor je iterátor, z něhož `next()`
 načítá jednotlivé řádky.
 
 
@@ -101,7 +117,11 @@ Traceback (most recent call last):
 StopIteration
 ```
 
-Tahle vlastnost přerušit provádění funkce je velice užitečná nejen pro vytváření
+
+Další použití generátorů
+------------------------
+
+Vlastnost přerušit provádění funkce je velice užitečná nejen pro vytváření
 sekvencí, ale má celou řadu dalších užití.
 Existuje třeba dekorátor, který generátorovou funkci s jedním `yield` převede na *context manager*,
 tedy objekt použitelný s příkazem `with`:
@@ -122,8 +142,8 @@ with ctx_manager() as obj:
 
 Vše před `yield` se provede při vstupu do kontextu, hodnota `yield` se předá
 dál a vše po `yield` se provede na konci.
-Můžeme si představit, že místo `yield` se „doplní“ obsah bloku `with` –
-funkce se tam na chvíli zastaví a může se tedy provádět něco jiného.
+Můžeme si představit, že místo `yield` se „doplní“ obsah bloku `with`.
+Funkce se tam na chvíli zastaví a může se tedy provádět něco jiného.
 
 
 Vracení hodnot z generátorů
@@ -224,8 +244,8 @@ RuntimeError: generator ignored GeneratorExit
 ```
 
 
-Kombinace generátorů
---------------------
+Delegace na podgenerátor – `yield from`
+---------------------------------------
 
 Máme následující generátor:
 
@@ -263,59 +283,55 @@ for action in dance():
     print(action)
 ```
 
-Tohle počtu řádků příliš nepomohlo. Existuje lepší způsob – místo:
+Tohle počtu řádků příliš nepomohlo. Existuje lepší způsob – místo cyklu
+můžeme použít `yield from`:
 
-```python
-    for action in dance_hands():
-        yield action
-```
-
-můžeme delegovat vytváření podsekvence na jiný generátor pomocí:
-
-```python
-    yield from dance_hands()
-```
-
-Příkaz `yield from` deleguje nejen hodnoty, které jdou z generátoru „ven“ pomocí
-`yield`, ale i ty, které jdou „dovnitř“ pomocí `send()` či `throw()`.
-A dokonce funguje jako výraz, jehož hodnota odpovídá tomu, co
-daný generátor vrátil:
 
 ```python
 def dance_hands():
-    value = (yield 'putting hands forward')
+    yield 'putting hands forward'
     yield 'putting hands down'
-    if value:
-        yield 'putting {},- in pocket'.format(value)
-        return value
-    return 0
 
 def dance():
-    profit = 0
-    profit += (yield from dance_hands())
+    yield from dance_hands()
     yield 'turning around'
     yield 'jumping'
-    profit += (yield from dance_hands())
-    if profit:
-        yield 'spending {},- on sweets'.format(profit)
+    yield from dance_hands()
 
-def performance():
-    it = dance()
-    print(next(it))
-    print(it.send(100))
-    for action in it:  # pokračujeme v načaté iteraci – implicitní "iter(it)" vrací zase "it"
-        print(action)
+for action in dance():
+    print(action)
 ```
 
-```pycon
->>> performance()
-putting hands forward
-putting hands down
-putting 100,- in pocket
-turning around
-jumping
-putting hands forward
-putting hands down
-spending 100,- on sweets
+Navíc lze `yield from` použít jako výraz, který nabývá hodnoty
+kterou podgenerátor vrátil (t.j. hodnota výjimky `StopIteration`).
+
+```python
+def fibonacci(limit):
+    a = 0
+    b = 1
+    count = 0
+    while b < limit:
+        yield b
+        count += 1
+        a, b = b, a + b
+    return count
+
+def fib_annotated():
+    count = (yield from fibonacci(10))
+    print('LOG: Generated {} numbers'.format(count))
+
+for value in fib_annotated():
+    print('Got', value)
 ```
 
+```
+Got 1
+Got 1
+Got 2
+Got 3
+Got 5
+Got 8
+LOG: Generated 6 numbers
+```
+
+Kromě toho `yield from` deleguje hodnoty poslané pomocí `send()` či `throw()`.
