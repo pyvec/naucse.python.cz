@@ -189,11 +189,8 @@ def course_page(course, lesson, page, solution=None):
     def subpage_url(page_slug):
         return url_for('course_page', course=course, lesson=lesson, page=page_slug)
 
-    if course.base_course:
-        canonical_url = url_for('course_page', course=course.base_course, lesson=lesson, _external=True)
-    else:
-        canonical_url = url_for('lesson', lesson=lesson, _external=True)
-    
+    canonical_url = url_for('lesson', lesson=lesson, _external=True)
+
     title = '{}: {}'.format(course.title, page.title)
 
     return render_page(page=page, title=title,
