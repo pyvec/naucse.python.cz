@@ -86,6 +86,12 @@ class Page(Model):
         return self.root.licenses[self.info['license']]
 
     @reify
+    def license_code(self):
+        if 'license_code' in self.info:
+            return self.root.licenses[self.info['license_code']]
+        return None
+
+    @reify
     def vars(self):
         return self.info.get('vars', {})
 

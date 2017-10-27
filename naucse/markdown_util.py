@@ -195,7 +195,7 @@ def convert_markdown(text, convert_url=None, *, inline=False):
         block=BlockLexer(),
         renderer=Renderer(convert_url),
     )
-    result = Markup(markdown(text))
+    result = Markup(markdown(text)).strip()
 
     if inline and result.startswith('<p>') and result.endswith('</p>'):
         result = result[len('<p>'):-len('</p>')]
