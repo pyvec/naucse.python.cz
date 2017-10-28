@@ -647,9 +647,10 @@ class GridWidget(QtWidgets.QWidget):
             self.update(*logical_to_pixels(row, column), CELL_SIZE, CELL_SIZE)
 ```
 
-Poznámka: Zde víme, že kliknutí může změnit vykreslenou mapu pouze v místě kliknutí.
-V úkolu ale bude možné, že kliknutí někam změní obsah mapy někde jinde,
-proto bude lepší zavolat `self.update()` bez argumentů a říct tak systému, že se má překreslit celý widget.
+> [note]
+> Zde víme, že kliknutí může změnit vykreslenou mapu pouze v místě kliknutí.
+> Pokud by ale kliknutí na určité políčko mohlo změnit obsah mapy někde jinde,
+> je lepší zavolat `self.update()` bez argumentů a říct tak systému, že se má překreslit celý widget.
 
 Protože po spuštění aplikace není zvolena žádná položka a `self.selected` není definován, je rozumné prostě nějakou položku zvolit:
 
