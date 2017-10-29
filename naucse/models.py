@@ -397,11 +397,17 @@ class Course(Model):
 
     @reify
     def start_date(self):
-        return min(s.date for s in self.sessions.values() if s.date is not None)
+        dates = [s.date for s in self.sessions.values() if s.date is not None]
+        if not dates:
+            return None
+        return min(dates)
 
     @reify
     def end_date(self):
-        return max(s.date for s in self.sessions.values() if s.date is not None)
+        dates = [s.date for s in self.sessions.values() if s.date is not None]
+        if not dates:
+            return None
+        return max(dates)
 
 
 class RunYear(Model):
