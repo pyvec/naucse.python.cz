@@ -1,55 +1,93 @@
-{% extends '_lessons_list.html' %}
+{% extends "_base.html" %}
 
-{% block headline %}
+{% macro session_heading(session, index, plan) %}
+    {% if plan|length > 1 %}
+        Lekce {{ index }} -
+    {% endif %}
+    {{ session.title }}
+    {% if session.date %}
+        ({{ session.date | format_date }})
+    {% endif %}
+{% endmacro %}
 
-    <header class="lesson-header">
-        <a href="{{ url_for('index') }}">Nauč se Python </a>
+{% block content %}
 
-        {% if course.vars['coach-present'] %}
-        > <a href="{{ url_for('runs') }}">Kurzy</a>
-        {% else %}
-        > <a href="{{ url_for('courses') }}">Materiály</a>
-        {% endif%}
+<div class="page">
+    <section class="container">
 
-        > {{ course.title }}
-        <hr>
-    </header>
+        <header class="lesson-header">
+            <a href="{{ url_for('index') }}">Nauč se Python </a>
 
-    {% if course.start_date %}
-        <div class="course-dates card w-lg-25 float-lg-right text-center">
-            <div class="card-header">
-                {% if course.vars['coach-present'] %}
-                    Kurz s instruktorem
-                {% else %}
-                    Termín kurzu
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="calendar-dates">
-                    {{ (course.start_date, course.end_date) | format_date_range }}
+            {% if course.vars['coach-present'] %}
+            > <a href="{{ url_for('runs') }}">Kurzy</a>
+            {% else %}
+            > <a href="{{ url_for('courses') }}">Materiály</a>
+            {% endif%}
+
+            > {{ course.title }}
+            <hr>
+        </header>
+
+        {% if course.start_date %}
+            <div class="course-dates card w-lg-25 float-lg-right text-center">
+                <div class="card-header">
+                    {% if course.vars['coach-present'] %}
+                        Kurz s instruktorem
+                    {% else %}
+                        Termín kurzu
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="calendar-dates">
+                        {{ (course.start_date, course.end_date) | format_date_range }}
+                    </div>
+                </div>
+                <div class="card-footer small text-left">
+                    <ul class="list-unstyled" style="margin-bottom:0;">
+                        <li>
+                            <a href="{{ url_for('course_calendar', course=course) }}">→ Kalendář</a>
+                        </li>
+                        {% if course.base_course %}
+                        <li>
+                            <a href="{{ course_url(course.base_course) }}">→ Ekvivalentní kurz pro samouky</a>
+                        </li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
-            <div class="card-footer small text-left">
-                <ul class="list-unstyled" style="margin-bottom:0;">
-                    <li>
-                        <a href="{{ url_for('course_calendar', course=course) }}">→ Kalendář</a>
-                    </li>
-                    {% if course.base_course %}
-                    <li>
-                        <a href="{{ course_url(course.base_course) }}">→ Ekvivalentní kurz pro samouky</a>
-                    </li>
-                    {% endif %}
-                </ul>
+        {% endif %}
+
+        <h1>{{ course.title }}</h1>
+
+        {% if course.subtitle is defined and course.subtitle != None %}
+            <h2>{{ course.subtitle }}</h2>
+        {% endif%}
+
+        {{ course.long_description | markdown }}
+
+        <div class="row">
+            <div class="sections col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                {% for session in plan.values() %}
+                <div class="section{{ loop.index }}">
+                    <h4>
+                        <a href="{{ session_url(course.slug, session.slug) }}">
+                        {{ session_heading(session, loop.index, plan) }}
+                        </a>
+                    </h4>
+                    {% for mat in session.materials %}
+                        <div>
+                            {% if mat.type == "page" %}
+                                <a href="{{ lesson_url(lesson=mat.page.lesson, page=mat.page.slug) }}">{{ mat.title }}</a>
+                            {% else %}
+                                <a href="{{ mat.url }}">{{ mat.title }}</a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
             </div>
         </div>
-    {% endif %}
+    </section>
+</div>
 
-    <h1>{{ course.title }}</h1>
-
-    {% if course.subtitle is defined and course.subtitle != None %}
-        <h2>{{ course.subtitle }}</h2>
-    {% endif%}
-
-    {{ course.long_description | markdown }}
-
-{% endblock headline %}
+{% endblock content %}
