@@ -28,45 +28,16 @@
             <hr>
         </header>
 
-        {% if course.start_date %}
-            <div class="course-dates card w-lg-25 float-lg-right text-center">
-                <div class="card-header">
-                    {% if course.vars['coach-present'] %}
-                        Kurz s instruktorem
-                    {% else %}
-                        Termín kurzu
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    <div class="calendar-dates">
-                        {{ (course.start_date, course.end_date) | format_date_range }}
-                    </div>
-                </div>
-                <div class="card-footer small text-left">
-                    <ul class="list-unstyled" style="margin-bottom:0;">
-                        <li>
-                            <a href="{{ url_for('course_calendar', course=course) }}">→ Kalendář</a>
-                        </li>
-                        {% if course.base_course %}
-                        <li>
-                            <a href="{{ course_url(course.base_course) }}">→ Ekvivalentní kurz pro samouky</a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        {% endif %}
-
-        <h1>{{ course.title }}</h1>
-
-        {% if course.subtitle is defined and course.subtitle != None %}
-            <h2>{{ course.subtitle }}</h2>
-        {% endif%}
-
-        {{ course.long_description | markdown }}
-
         <div class="row">
-            <div class="sections col-xs-12 col-sm-12 col-md-8 col-lg-8">
+            <div class="col-md-8">
+                <h1>{{ course.title }}</h1>
+
+                {% if course.subtitle is defined and course.subtitle != None %}
+                    <h2>{{ course.subtitle }}</h2>
+                {% endif%}
+
+                {{ course.long_description | markdown }}
+
                 {% for session in plan.values() %}
                 <div class="section{{ loop.index }}">
                     <h4>
@@ -85,8 +56,88 @@
                     {% endfor %}
                 </div>
                 {% endfor %}
+
+            </div>
+            <div class="col-md-4">
+                {% if course.start_date %}
+                    <div class="card course-card text-center">
+                        <div class="card-header">
+                            Toto jsou podklady pro kurz s instruktorem
+                        </div>
+                        <div class="card-body">
+                            <div class="calendar-dates">
+                                {{ (course.start_date, course.end_date) | format_date_range }}
+                            </div>
+                        </div>
+                        <div class="card-footer small text-left">
+                            <ul class="list-unstyled" style="margin-bottom:0;">
+                                <li>
+                                    <a href="{{ url_for('course_calendar', course=course) }}">→ Kalendář</a>
+                                </li>
+                                {% if course.base_course %}
+                                <li>
+                                    <a href="{{ course_url(course.base_course) }}">→ Ekvivalentní kurz pro samouky</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card course-card">
+                        <div class="card-header text-center">
+                            Toto jsou materiály pro samouky
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                Doufáme, že naše materiály jsou srozumitelné a přínosné.
+                                Pokud ne, ozvěte se prosím:
+                            </p>
+                            <ul>
+                                <li>
+                                    na <a href="https://www.facebook.com/groups/pyonieri/">Facebooku</a>,
+                                </li>
+                                <li>
+                                    založením <a href="https://github.com/pyvec/naucse.python.cz/issues/new"><i>issue</i> na Githubu</a>,
+                                </li>
+                                <li>
+                                    osobně na <a href="https://pyvo.cz/">srazu</a>, nebo
+                                </li>
+                                <li>
+                                    <a href="mailto:django-cs@googlegroups.com">mailem</a> do
+                                    <a href="https://groups.google.com/forum/#!forum/django-cs">diskusní skupiny</a>.
+                                </li>
+                            </ul>
+                            <p>
+                                Případné nejasnosti rádi vysvětlíme,
+                                ale musíme o nich vědět!
+                            </p>
+                        </div>
+                        {% if recent_runs %}
+                            <div class="card-footer recent-runs">
+                                Na těchto materiálech jshou založeny
+                                i kurzy s instruktorem:
+                                <ul class="list-unstyled">
+                                {% for run in recent_runs %}
+                                    <li>
+                                        <a href="{{ url_for('course', course=run) }}">
+                                            {{ run.title }}
+                                            {% if run.subtitle %}
+                                                – {{ run.subtitle }}
+                                            {% endif %}
+                                        </a>
+                                        <div>
+                                            {{ (run.start_date, run.end_date) | format_date_range }}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
         </div>
+
     </section>
 </div>
 

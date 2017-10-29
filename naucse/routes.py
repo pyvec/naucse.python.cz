@@ -117,6 +117,27 @@ def course(course):
     def lesson_url(lesson, *args, **kwargs):
         return url_for('course_page', course=course, lesson=lesson, *args, **kwargs)
 
+    recent_runs = []
+    if not course.start_date:
+        # Build a list of "recent" runs based on this course.
+        # By recent we mean: haven't ended yet, or ended up to ~2 months ago
+        # (Note: even if naucse is hosted dynamically,
+        # it's still beneficial to show recently ended runs.)
+        today = datetime.date.today()
+        cutoff = today - datetime.timedelta(days=2*30)
+        this_year = today.year
+        for year, run_year in reversed(course.root.run_years.items()):
+            for run in run_year.runs.values():
+                if run.base_course is course and run.end_date > cutoff:
+                    recent_runs.append(run)
+            if year < this_year:
+                # Assume no run lasts for more than a year,
+                # e.g. if it's Jan 2018, some run that started in 2017 may
+                # be included, but don't even look through runs from 2016
+                # or earlier.
+                break
+            recent_runs.sort(key=lambda r: r.start_date, reverse=True)
+
     try:
         return render_template(
             'course.html',
@@ -124,6 +145,7 @@ def course(course):
             plan=course.sessions,
             title=course.title,
             lesson_url=lesson_url,
+            recent_runs=recent_runs,
             **vars_functions(course.vars),
             edit_path=course.edit_path)
     except TemplateNotFound:
