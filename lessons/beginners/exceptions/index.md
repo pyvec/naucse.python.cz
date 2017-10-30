@@ -3,7 +3,6 @@
 O [chybových výpisech]({{ lesson_url('beginners/print') }}) už v tomto
 kurzu byla zmínka: Python si postěžuje, řekne, kde je chyba, a ukončí program.
 O chybách se toho ale dá říct mnohem víc.
-Pojďme si o nich ukázat něco víc.
 
 
 ## Výpisy chyb

@@ -25,29 +25,26 @@ fungovalo.
 
 ## Instalace knihovny pytest
 
+Zatím jsme v kurzu pracoval{{ gnd('i', 'y') }} s tím, co se instaluje
+se samotným Pythonem – s moduly jako `math` a `turtle`.
+Kromě takových modulů ale existuje ale velká spousta
+dalších *knihoven*, které nejsou přímo v Pythonu, ale dají se doinstalovat
+a používat.
+
 Na testy je v samotném Pythonu zabudovaná knihovna `unittest`.
-My ji však používat nebudeme: nainstalujeme si
-knihovnu <code>pytest</code>, která se používá
+Ta je ale celkem složitá na použití, proto ji my používat nebudeme.
+Nainstalujeme si knihovnu <code>pytest</code>, která se používá
 mnohem jednodušeji a je velice populární.
 
-Je ji ale potřeba nainstalovat.
-
-> [note]
-> Zatím jsme v kurzu pracovaly s tím, co se instaluje
-> se samotným Pythonem.
-> Kromě věcí jako `math` nebo `turtle` ale existuje ale spousta
-> dalších užitečných *knihoven*, které se dají jednoduše doinstalovat
-> a používat.
-
-Následující příkaz nainstaluje do aktivního virtuálního prostředí knihovnu
-`pytest`.
-Je to příkaz příkazové řádky, podobně jako
-`cd` nebo `mkdir`; nezadávej ho do Pythonu.
-
-(Jak se dělá a spouští virtuální prostředí
+Knihovny se instalují do aktivního virtuálního prostředí.
+Jak se dělá a spouští virtuální prostředí
 ses naučil{{a}} při [instalaci Pythonu]({{ lesson_url('beginners/install') }}),
-ale teprve teď to začíná být důležité. Ujisti se, že máš virtuální prostředí
-aktivované.)
+ale teprve teď to začíná být opravdu důležité.
+Ujisti se, že máš virtuální prostředí aktivované.
+
+Potom zadej následující příkaz.
+(Je to příkaz příkazové řádky, podobně jako
+`cd` nebo `mkdir`; nezadávej ho do Pythonu.)
 
 ```console
 (venv)$ python -m pip install pytest
@@ -57,26 +54,26 @@ aktivované.)
 > `python -m pip` zavolá Python s tím, že má pustit modul
 > `pip`. Tento modul umí instalovat nebo
 > odinstalovávat knihovny.
-> Jestli si pamatuješ vytváření virtuálního prostředí, použil{{a}} jsi tam
-> příkaz `python -m venv`.
-> Modul `venv` umí vytvářet virtuální prostředí.
+> (Jestli si pamatuješ vytváření virtuálního prostředí, použil{{a}} jsi tam
+> příkaz `python -m venv` – modul `venv` umí vytvářet virtuální prostředí.)
 > No a slova `install pytest` říkají Pipu, že má nainstalovat `pytest`.
 >
 > Nápověda k použití Pipu se dá vypsat pomocí příkazu
 > `python -m pip --help`.
 
 > [warning] Pro Windows
-> Jsi-li na Windows, od této lekce bude důležité
+> Jsi-li na Windows, od této lekce začné být důležité
 > spouštět pythonní programy pomocí `python program.py`, ne jen
 > `program.py`.
 > Ačkoli se v těchto materiálech všude používá `python` na začátku, zatím
 > mohlo všechno fungovat i bez toho.
-> Program se ale bez příkazu `python` spouští v jiném Pythonu,
-> než v tom z virtuálního prostředí.
+> Program se ale bez příkazu `python` může spustit v jiném Pythonu,
+> než v tom z virtuálního prostředí – a tam `pytest` nebude k dispozici.
 
 
 ## Psaní testů
 
+Nejdříve si testování ukážeme na jednoduchém příkladu.
 Tady je funkce `secti`, která umí sečíst
 dvě čísla, a další funkce která testuje, jestli se
 `secti` pro určité hodnoty
@@ -109,9 +106,10 @@ if not (a == b):
     raise AssertionError('Test selhal!')
 ```
 
-Zatím `assert` nepoužívej jinde než v testovacích funkcích.
-V „normálním” kódu má `assert` vlastnosti,
-do kterých teď nebudeme zabředávat.
+> [note]
+> Zatím `assert` nepoužívej jinde než v testovacích funkcích.
+> V „normálním” kódu má `assert` vlastnosti,
+> do kterých teď nebudeme zabředávat.
 
 
 ## Spouštění testů
@@ -137,73 +135,101 @@ test_secteni.py::test_secti ␛[32mPASSED␛[0m
 
 Tento příkaz projde všechny soubory v aktuálním
 adresáři, jejichž jméno začíná na `test_`, zavolá v nich všechny funkce,
-jejichž jméno začíná na `test_`, a ověří, že nevyvolají žádnou výjimku.
-Pokud výjimka nastane, dá to velice červeně
+jejichž jméno začíná na `test_`, a ověří, že nevyvolají žádnou
+výjimku — typicky výjimku z příkazu `assert`.
+Pokud výjimka nastane, dá to `pytest` velice červeně
 najevo a přidá několik informací, které můžou
 usnadnit nalezení a opravu chyby.
+
+Zkus si změnit funkci `secti` (nebo její test) a podívat se,
+jak to vypadá když test „neprojde“.
 
 
 ## Testovací moduly
 
 Testy se většinou nepíšou přímo ke kódu,
 ale do souboru vedle.
-Je to tak přehlednější a taky to zjednodušuje
+Je to tak přehlednější a taky to pak zjednodušuje
 distribuci – předávání kódu někomu, kdo ho chce
 jen spustit a testy nepotřebuje.
 
-> [note]
-> Máš-li hotové 1D piškvorky, zkus si následující
-> příklad.
-> Jinak si rozděl soubor s testem sečítání: do
-> `secteni.py` dej funkci `secti`
-> a do `test_secteni.py` test.
-> Do `test_secteni.py` pak přidej
-> `from secteni import secti`, aby byla
-> funkce testu k dispozici.
+Rozděl soubor s testem sečítání: funkci `secti` přesuň do modulu `secteni.py`,
+a v `test_secteni.py` nech jenom test.
+Do `test_secteni.py` pak na začátek přidej `from secteni import secti`,
+aby byla funkce testu k dispozici.
 
-Vytvoř si modul `test_piskvorky` (tedy soubor
-`test_piskvorky.py`) a do něj napiš:
-
-```python
-import piskvorky
-
-def test_tah_na_prazdne_pole():
-    pole = piskvorky.tah_pocitace('--------------------')
-    assert len(pole) == 20
-    assert pole.count('x') == 1
-    assert pole.count('-') == 19
-```
-
-Pak vedle něj (t.j. do stejného adresáře)
-zkopíruj svůj program
-`piskvorky.py`, ze kterého vyndej
-kód, který není ve funkcích
-(t.j. samotné volání funkce `piskvorky1d`).
-Příkazem `python -m pytest` teď můžeš
-kdykoli otestovat, že funkce `tah_pocitace`
-funguje s prázdným hracím polem!
+Test by měl opět projít.
 
 
 ## Spouštěcí moduly
 
-Jsi-li na sraze a nemáš-li hotové 1D piškvorky,
-následující sekce budou jen teorietické.
-Učíš-li se z domu, dodělej si Piškvorky před němi!
+Automatické testy musí projít „bez dozoru“.
+V praxi se často automaticky spouští, případné chyby se automaticky
+oznamují (např. e-mailem) a fungující kód se automaticky
+začne používat dál (nebo se rovnou vydá zákazníkům).
 
-Příkaz `import` provede všechny příkazy,
-které jsou v importovaném modulu: nejen definice
-funkcí, ale i všelijaké volání `print`, `input` nebo jiné příkazy mimo funkce.
-Má-li být modul použitelný na `import`, chceme se
-většinou podobných efektů vyvarovat.
+Co to znamená pro nás?
+Funkce `input` v testech nefunguje. Nemá koho by se zeptala; „za klávesnicí“
+nemusí nikdo sedět.
 
-Konkrétně v Piškvorkách: Definice funkcí
-(příkazy `def` a všechno v nich)
-jen definují funkce, nemají žádný další účinek,
-ale *volání* funkce `piskvorky1d` spustí hru: zavolá se `tah_hrace`
-a z ní i `input`.
-Testy ale nemají jak se ptát uživatele na vstup, takže v nich `input` nefunguje.
-Volání funkce `piskvorky1d` je proto potřeba odstranit.
+To může někdy „ztěžovat práci“. Ukážeme si to na složitějším projektu:
+na 1D piškvorkách.
 
+> [note]
+{% if var('coach-present') -%}
+> Nemáš-li hotové 1D piškvorky, následující sekce budou jen teorietické.
+{% endif -%}
+> Učíš-li se z domu, dodělej si Piškvorky než budeš pokračovat dál!
+> Zadání najdeš (prozatím)
+> v [projektech pro PyLadies](http://pyladies.cz/v1/s004-strings/handout/handout4.pdf)
+> na straně 2.
+
+Kód pro 1D Piškvorky může rámcově vypadat zhruba takto:
+
+```python
+import random  # (příp. import jiných věci, které budou potřeba)
+
+def tah(pole, cislo_policka, symbol):
+    """Vrátí pole s daným symbolem umístěným na danou pozici"""
+    ...
+
+def tah_hrace(pole):
+    """Zeptá se hráče kam chce hrát a vrátí pole se zaznamenaným tahem"""
+    ...
+    input('Kam chceš hrát? ')
+    ...
+
+def piskvorky1d():
+    """Spustí hru
+
+    Vytvoří hrací pole a střídavě volá tah_hrace a tah_pocitace
+    dokud někdo nevyhraje"""
+    while ...:
+        ...
+        tah_hrace(...)
+        ...
+
+# Puštění hry!
+piskvorky1d()
+```
+
+Když tenhle modul naimportuješ, Python v něm postupně, odshora dolů,
+provede všechny příkazy.
+
+První příkaz, `import`, jen zpřístupní nějaké proměnné a funkce;
+je-li importovaný modul správně napsaný, nemá vedlejší účinek.
+Definice funkcí (příkazy `def` a všechno v nich) podobně jen definují funkce.
+Ale zavoláním funkce `piskvorky1d` se spustí hra:
+funkce `piskvorky1d` zavolá funkci `tah_hrace()` a ta zavolá `input()`.
+
+Importuješ-li tenhle modul z testů, `input` selže a import se nepovede.
+
+> [note]
+> A kdybys modul importoval{{a}} odjinud – například bys chtěl{{a}} funkci
+> `tah` použít v nějaké jiné hře – uživatel si bude muset v rámci importu
+> zahrát Piškvorky!
+
+Volání funkce `piskvorky1d` je vedlejší efekt, a je potřeba ho odstranit.
 No jo, ale po takovém odstranění
 už nejde jednoduše spustit hra! Co s tím?
 
@@ -216,23 +242,50 @@ import piskvorky
 piskvorky.piskvorky1d()
 ```
 
-Tenhle modul nebudeš moci testovat (protože nepřímo volá funkci `input()`),
-ale můžeš ho spustit, když si budeš
-chtít zahrát.
+Tenhle modul nebudeš moci testovat (protože nepřímo volá funkci `input`),
+ale můžeš ho spustit, když si budeš chtít zahrát.
 Protože k němu nemáš napsané testy, nepoznáš
-z nich, když se takový spouštěcí modul rozbije.
-Měl by být proto nejjednodušší.
+z nich, když se takový spouštěcí modul rozbije.
+Měl by být proto nejjednodušší – jeden import a jedno volání.
 
+Původní modul teď můžeš importovat bez obav – ať už z testů nebo z jiných
+modulů.
+Test může vypadat třeba takhle:
+
+```python
+import piskvorky
+
+def test_tah_na_prazdne_pole():
+    pole = piskvorky.tah_pocitace('--------------------')
+    assert len(pole) == 20
+    assert pole.count('x') == 1
+    assert pole.count('-') == 19
+```
 
 ## Pozitivní a negativní testy
 
-Můžeš testovat i reakci programu na
-neočekávaný vstup, například funkce
-`tah_pocitace` by měla způsobit
-chybu (třeba `ValueError`),
-když je herní pole už plné.
+Testům, které kontrolují že se program za správných podmínek chová správně,
+se říká *pozitivní testy*.
+Můžeš ale testovat i reakci programu na špatné nebo neočekávané podmínky.
 
-Na to použij příkaz `with` a funkci `raises` naimportovanou
+Testy, které kontrolují reakci na „špatný“ vstup,
+se jmenují *negativní testy*.
+Můžou kontrolovat nějaký negativní výsledek (např.
+že volání jako <code>cislo_je_sude(7)</code> vrátí `False`),
+a nebo to, že nastane „rozumná“ výjimka.
+
+Například funkce `tah_pocitace` by měla způsobit
+chybu (třeba `ValueError`), když je herní pole už plné.
+
+> [note]
+> Vyvolat výjimku je mnohem lepší než alternativy, např. kdyby takové volání
+> „tiše“ – bez oznámení – zablokovalo celý program.
+> Když kód pak použiješ ve větším programu,
+> můžeš si být jistá, že při špatném volání
+> dostaneš srozumitelnou chybu – tedy takovou,
+> která se co nejsnadněji opravuje.
+
+Na otestování výjimky to použij příkaz `with` a funkci `raises` naimportovanou
 z modulu `pytest`.
 Jak příkaz `with` přesně funguje se dozvíme později;
 teď stačí říct, že ověří, že odsazený blok kódu
@@ -248,12 +301,3 @@ def test_tah_chyba():
         piskvorky.tah_pocitace('oxoxoxoxoxoxoxoxoxox')
 ```
 
-Testy, které kontrolují reakci na „špatný“ vstup,
-se jmenují *negativní testy*.
-Většinou kontrolují že nastane (správná) chyba
-nebo nějaký negativní výsledek (např.
-že volání jako <code>cislo_je_sude(7)</code> vrátí `False`).
-Když kód pak použiješ ve větším programu,
-můžeš si být jistá, že při špatném volání
-dostaneš srozumitelnou chybu – tedy takovou,
-která se co nejsnadněji opravuje.

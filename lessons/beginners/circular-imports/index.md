@@ -6,25 +6,25 @@ Výsledek bude vypadat třeba nějak takhle:
 
 ```plain
 ┌──────────────────╮  ┌───────────────╮  ┌──────────────────╮ 
-│      ai.py       │◀-│ piskvorky.py  │◀-│    hra.py        │
+│      ai.py       │  │ piskvorky.py  │  │    hra.py        │
 ├──────────────────┤  ├───────────────┤  ├──────────────────┤
-│                  │  │ import ai     │  │ import piskvorky │
+│                  │◀-│ import ai     │◀-│ import piskvorky │
 ├──────────────────┤  ├───────────────┤  ├──────────────────┤
 │ def tah_pocitace │  │ def vyhodnot  │  │                  │
 │                  │  │ def tah       │  │                  │
 └──────────────────┘  │ def tah_hrace │  └──────────────────┘
                       │               │
-                      └───────────────┘  
+                      └───────────────┘
                           ▲
                           │
-                    ┌───────────────────╮
-                    │ test_piskvorky.py │
-                    ├───────────────────┤
-                    │ import piskvorky  │
-                    ├───────────────────┤
-                    │ def test_...      │
-                    │                   │
-                    └───────────────────┘
+                          │ ┌───────────────────╮
+                          │ │ test_piskvorky.py │
+                          │ ├───────────────────┤
+                          └─│ import piskvorky  │
+                            ├───────────────────┤
+                            │ def test_...      │
+                            │                   │
+                            └───────────────────┘
 ```
 
 Jenže funkce `tah_pocitace`
@@ -35,10 +35,11 @@ Můžeš importovat `ai` z `piskvorky` a zároveň
 
 ```plain
 ┌──────────────────╮  ┌───────────────╮
-│      ai.py       │◀-│ piskvorky.py  │
-├──────────────────┤-▶├───────────────┤
-│ import piskvorky │  │ import ai     │
+│      ai.py       │  │ piskvorky.py  │
 ├──────────────────┤  ├───────────────┤
+│                  │◀-│ import ai     │
+│ import piskvorky │-▶│               │
+│                  │  │               │
 │ def tah_pocitace │  │ def vyhodnot  │
 │                  │  │ def tah       │
 └──────────────────┘  │ def tah_hrace │
@@ -48,11 +49,9 @@ Můžeš importovat `ai` z `piskvorky` a zároveň
 
 Můžeme se na to podívat z hlediska Pythonu,
 který příkazy v souborech vykonává.
-Když má spustit (nebo importovat) soubor
-`piskvorky.py`, začne ho
+Když má importovat soubor `piskvorky.py`, začne ho
 zpracovávat řádek po řádku,
-když tu (docela brzo) narazí na příkaz
-`import ai`.
+když tu (docela brzo) narazí na příkaz `import ai`.
 Otevře tedy soubor `ai.py`
 a začne ho zpracovávat řádek po řádku.
 Brzy narazí na příkaz `import piskvorky`. Co teď?
@@ -92,10 +91,10 @@ můžou být potřeba i jinde.
 
 ```plain
 ┌──────────────────╮  ┌───────────────╮
-│      ai.py       │◀-│ piskvorky.py  │
+│      ai.py       │  │ piskvorky.py  │
 ├──────────────────┤  ├───────────────┤
-│                  │  │ import ai     │
-├──────────────────┤  ├───────────────┤
+│                  │◀-│ import ai     │
+│                  │  │               │
 │ def tah_pocitace │  │ def vyhodnot  │
 │ def tah          │  │ def tah_hrace │
 │                  │  │               │
@@ -111,24 +110,23 @@ Takový modul se často se pojmenovává
 `util.py` (z angl. *utility*, pomůcka, nástroj).
 
 ```plain
-            ┌──────────────────╮
-            │ util.py          │
-            ├──────────────────┤
-            ├──────────────────┤
-            │ def tah          │
-            └──────────────────┘
-                ▲        ▲
-                │        │
-┌──────────────────╮  ┌───────────────╮
-│      ai.py       │◀-│ piskvorky.py  │
-├──────────────────┤  ├───────────────┤
-│ import util      │  │ import ai     │
-│                  │  │ import util   │
-├──────────────────┤  ├───────────────┤
-│ def tah_pocitace │  │ def vyhodnot  │
-│                  │  │ def tah_hrace │
-│                  │  │               │
-└──────────────────┘  └───────────────┘
+              ┌──────────────────╮
+              │ util.py          │
+              ├──────────────────┤
+              │ def tah          │
+              └──────────────────┘
+                      ▲  ▲
+                      │  │
+┌──────────────────╮  │  │  ┌───────────────╮
+│      ai.py       │  │  │  │ piskvorky.py  │
+├──────────────────┤  │  │  ├───────────────┤
+│ import util      │──┘  └──│ import util   │
+│                  │◀───────│ import ai     │
+│                  │        │               │
+│ def tah_pocitace │        │ def vyhodnot  │
+│                  │        │ def tah_hrace │
+│                  │        │               │
+└──────────────────┘        └───────────────┘
 ```
 
 Nevýhoda pomocného modulu je ta,

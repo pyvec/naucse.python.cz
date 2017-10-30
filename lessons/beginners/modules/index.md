@@ -12,8 +12,10 @@ print(sqrt(2))
 Kromě importování jednotlivých proměnných z modulu
 můžeš importovat i celý modul najednou.
 K tomu, co modul nabízí, se pak dostaneš pomocí
-tečky – podobně jako třeba k metodám, které nabízí
-řetězce (či jiné objekty).
+tečky – podobně jako se pomocí `'Ahoj'.upper` dostaneš k metodě, kterou nabízí
+řetězec.
+
+Například:
 
 ```python
 import turtle
@@ -79,6 +81,48 @@ Příkaz `import` hledá soubory (mimo jiné) v adresáři,
 ve kterém je „hlavní modul” programu – tedy soubor,
 který spouštíš (u nás `vypis.py`).
 Oba soubory by proto měly být ve stejném adresáři.
+
+
+## Vedlejší efekty
+
+Co přesně dělá příkaz `import louka`?
+
+Python najde příslušný soubor (`louka.py`) a provede v něm všechny příkazy,
+odshora dolů, jako v normálním Pythonním programu.
+Všechny globální proměnné (včetně nadefinovaných funkcí) pak dá k dispozici
+kódu, který „louku“ importoval.
+
+Když pak stejný modul importuješ podruhé, už se neprovádí všechno
+znovu – stejná sada proměnných se použije znovu.
+
+Zkus si to – na konci `louka.py` dopiš:
+
+```python
+print('Louka je zelená!')
+```
+
+A pak spusť `python` (máš-li ho už spuštěný, ukonči a spusť znovu), a zadej:
+
+```pycon
+>>> print('První import:')
+>>> import louka
+>>> print('Druhý import:')
+>>> import louka
+```
+
+Výpis se objeví jen poprvé.
+
+Když takhle modul při importu „něco dělá“ (něco vypíše na obrazovku,
+zapíše do souboru, na něco se zeptá uživatele atp.), říká se,
+že má *vedlejší efekt* (angl. *side effect*).
+V modulech připravených na importování se vedlejším efektům vyhýbáme:
+úloha takového modulu je dát k dispozici *funkce*, které něco dělají,
+ne to udělat za nás.
+Všimni si například, že `import turtle` neukáže okýnko – to se objeví až po
+zavolání `turtle.forward()`.
+
+Příkaz `print` proto radši z modulu zase smaž.
+
 
 ## Adresář pro každý projekt
 
