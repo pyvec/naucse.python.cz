@@ -276,8 +276,6 @@ def merge_dict(base, patch):
             result[key] = value
     return result
 
-    return _merge_dict(result, patch)
-
 
 class Session(Model):
     """An ordered collection of materials"""
