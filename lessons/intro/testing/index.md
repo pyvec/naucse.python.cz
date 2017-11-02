@@ -555,7 +555,8 @@ v [dokumentaci](http://betamax.readthedocs.io/en/latest/matchers.html).
 Testování aplikací ve Flasku
 ----------------------------
 
-Pro testování aplikací ve Flasku se používá `app.test_client()`:
+Pro testování aplikací ve Flasku se
+[používá](http://flask.pocoo.org/docs/0.12/testing/) `app.test_client()`:
 
 ```python
 import pytest
@@ -576,6 +577,24 @@ Proto nelze použít přímo `response.text`; text dostaneme pomocí
 `response.data.decode('utf-8')`.
 
 [Response]: http://flask.pocoo.org/docs/0.11/api/#flask.Response
+
+
+Testování aplikací v clicku
+---------------------------
+
+Podobně funguje [testování aplikací v clikcu](http://click.pocoo.org/6/testing/).
+Click obsahuje třídu `CliRunner`, která pomáhá s testováním:
+
+```python
+from click.testing import CliRunner
+
+def test_push_force():
+    runner = CliRunner()
+    result = runner.invoke(git_cli_made_in_click, ['push', '--force'])
+    assert result.exit_code == 0
+    assert 'forced update' in result.output
+```
+
 
 Kam dát testy?
 --------------
