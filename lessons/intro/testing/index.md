@@ -405,6 +405,14 @@ možností.
 Často jde trochu změnit kód, aby byl testovatelnější – například napsat funkci,
 která čte soubor formátu `/etc/passwd`, ale jméno souboru jí předat argumentem.
 
+> [note]
+> Mohl by vás zajímat záznam z přednášky [Should I mock or should I not?]
+> z konference [PyCon CZ] 2017. V přednášce se věnuji různým způsobům podvádění
+> při psaní testů.
+
+[PyCon CZ]: https://cz.pycon.org/
+[Should I mock or should I not?]: https://www.youtube.com/watch?v=-nJ-ZW_LP7s
+
 Testování HTTP komunikace: betamax
 ----------------------------------
 
@@ -551,6 +559,12 @@ různých *matcherů*. Těch je v betamaxu celá řada a je jednoduché napsat s
 vlastní. Více informací najdete
 v [dokumentaci](http://betamax.readthedocs.io/en/latest/matchers.html).
 
+> [note]
+> Mohl by vás zajímat záznam z přednášky [If it Moves, Test it Anyway]
+> z konference [PyCon CZ] 2016. V přednášce se věnuji různým způsobům, jak
+> testovat webové API klienty v Pythonu.
+
+[If it Moves, Test it Anyway]: https://www.youtube.com/watch?v=iFqF5IaWfy0
 
 Testování aplikací ve Flasku
 ----------------------------
