@@ -18,12 +18,12 @@ Naprostá většina webových frameworků v Pythonu toto rozhraní implementuje 
 případně k tomuto účelu obsahuje wrapper.
 
 Je tedy jedno, jestli používáte Flask, Pyramid, Django, Bottle nebo Falcon,
-vždy vaší aplikaci představuje `appliaction` objekt, který se navenek chová
+vždy vaší aplikaci představuje `application` objekt, který se navenek chová
 stejně. Webové frameworky implementují aplikační část WSGI.
 
 Stejně tak existují webové servery, které implementují serverovou část WSGI,
 například [Gunicorn] nebo `mod_wsgi` pro `httpd` (Apache). Tyto servery umí
-pracovat s `appliaction` objektem a nezajímá je, v jakém frameworku je aplikace
+pracovat s `application` objektem a nezajímá je, v jakém frameworku je aplikace
 napsaná.
 
 [PEP333]: https://www.python.org/dev/peps/pep-0333/
