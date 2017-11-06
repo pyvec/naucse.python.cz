@@ -1,6 +1,6 @@
 
 Ve cvičení použijeme ukázku z PyQt5.
-Máte-li eště virtualenv s nainstalovaným PyQt, použijte ho, případně ho
+Máte-li ještě virtualenv s nainstalovaným PyQt, použijte ho, případně ho
 podle [lekce o PyQt] nainstalujte znovu.
 
 K PyQt si přiinstalujte knihovnu `quamash`:
@@ -85,7 +85,7 @@ Další knihovna, kterou lze z PyPI nainstalovat, je [greenlet].
 Ta nám dává k dispozici tzv. *mikro-vlákna*,
 která se mezi sebou přepínají v rámci jednoho procesu.
 Na rozdíl od systémových vláken nepotřebují tolik paměti navíc, ale
-stále jde (alespoň z pohledu progreamátora) o *preemptivní* strategii:
+stále jde (alespoň z pohledu programátora) o *preemptivní* strategii:
 k přepnutí může dojít kdykoli,
 je tedy potřeba zamykat a složitě hledat málo časté chyby.
 
@@ -187,7 +187,7 @@ Pojďme se podívat co všechno se skrývá v posledních pěti příkazech.
 [PEP 249]: https://www.python.org/dev/peps/pep-0249/
 [PEP 3333]: https://www.python.org/dev/peps/pep-3333/
 [PEP 3156]: https://www.python.org/dev/peps/pep-3156/
-[pypi-asyncio]: https://pypi.python.org/pypi/asyncio
+[pypi-asyncio]: https://pypi.org/project/asyncio/
 
 
 Event Loop
@@ -262,13 +262,13 @@ To se využíá v případě že úloha, která má `Future` naplnit, selže.
 Metoda `result()` potom tuto výjimku způsobí v kódu, který by výsledek
 zpracovával.
 
-Na `Future` se navíc dají navázat funkce, které se zavolají jakmile je
+Na `Future` se navíc dají navázat funkce, které se zavolají, jakmile je
 výsledek k dispozici.
 Dá se tak implementovat *callback* styl programování (který možná znáte
 např. z Node.js). Pomocí *futures & callbacks* se před nástupem
 generátorů programovalo pro knihovny jako `Twisted`.
 
-Podobně jako `yield` se `await` dá použít je výraz, jehož
+Podobně jako `yield` se `await` dá použít jako výraz, jehož
 hodnota je výsledek dané `Future`.
 Funkci `get_future` z příkladu výše tak lze napsat stručněji:
 
@@ -431,8 +431,8 @@ jako hlavní smyčku událostí, a poté ji, místo Qt-ovského `app.exec()`, sp
 Jednotlivé asynchronní funkce se pak používají jako v čistém `asyncio`:
 pomocí `asyncio.ensure_future`, `await`, atd.
 
-[uvloop]: https://pypi.python.org/pypi/uvloop/
-[Quamash]: https://pypi.python.org/pypi/Quamash
+[uvloop]: https://pypi.org/project/uvloop/
+[Quamash]: https://pypi.org/project/Quamash/
 
 Ukázka:
 
