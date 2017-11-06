@@ -146,9 +146,9 @@ Zápis je určitým způsobem podobný knihovně [click](../click/): funkce
 s testem přijímá parametr vytvořený v dekorátoru.
 Test se spustí pro každou uvedenou hodnotu, k jejich definici lze použít
 jakýkoliv objekt, přes který jde iterovat, tedy kromě v ukázce použité
-<var>n</var>-tice např. seznam, množinu, range, vlastní generátor...
+<var>n</var>-tice např. seznam, množinu, `range`, vlastní generátor...
 
-Pro více podrobný výpis výsledku testů můžete použít přepínač `-v`:
+Pro podrobnější výpis výsledku testů můžete použít přepínač `-v`:
 
 ```ansi
 ␛[36m(__venv__) $␛[0m python -m pytest -v
@@ -427,7 +427,7 @@ V zásadě můžete omockovat knihovnu requests tak, aby
 jednotlivá volání jako `get()` apod. vracela předem definovanou odpověď.
 Při ponoření do hloubky ale zjistíte, že komplexita takového mockování může
 velmi přesáhnout komplexitu samotného kódu, který testujete.
-Jednodušší je tak použít již hotové řešení, jedno z nich je [betamax].
+Jednodušší je tak použít již hotové řešení. Jedno z nich je [betamax].
 
 [betamax]: https://betamax.readthedocs.io/
 
