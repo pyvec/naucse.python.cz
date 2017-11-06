@@ -18,8 +18,15 @@ Soubor ulož.
 > Používáš-li jiný editor než Atom, dej si při ukládání pozor na kódování:
 > * Nabízí-li ti editor při ukládání výběr kódování, vyber UTF-8.
 > * Je-li k dispozici kódování „UTF-8 bez BOM”, použij to.
-> * Pokud musíš použít Notepad, pak v kódu níže použij místo
->   `'utf-8'` nestandardní `'utf-8-sig'`.
+> * Pokud musíš použít Notepad, který výše uvedené možnosti nemá, pak v kódu
+>   níže použij místo `'utf-8'` nestandardní `'utf-8-sig'`.
+>
+> Ono [`utf-8`] je název standardního kódování.
+> Zajišťuje, že se případné emoji nebo znaky s diakritikou do souboru uloží
+> tak, aby se daly přečíst i na jiném počítači či operačním systému.
+> 🎉
+
+[`utf-8`]: https://en.wikipedia.org/wiki/UTF-8
 
 Potom napiš tento program:
 
@@ -43,6 +50,7 @@ Tahle hodnota má vlastní metody.
 Tady používáme metodu `read()`, která
 najednou přečte celý obsah souboru a vrátí ho jako řetězec.
 Na metodu `close()`, která otevřený soubor zavírá, se podíváme později.
+
 
 ## Iterace nad soubory
 
@@ -79,6 +87,8 @@ výpisu vždycky odřádkovává – pokud nedostane argument `end=''`.
 To je jeden způsob jak řádkování „spravit“; další je použít na každý řádek
 metodu `rstrip`, která odstraní mezery a nové řádky z konce řetězce.
 
+---
+
 ¹ Proč to dělá? Kdyby `'\n'` na konci řádků nebylo,
 nedalo by se např. dobře rozlišit jestli poslední řádek
 končí na `'\n'`
@@ -98,7 +108,7 @@ otevřený, otevřít znovu.
 
 Soubory se dají přirovnat k ledničce: abychom něco
 mohly z ledničky vzít, nebo dát dovnitř, musíme
-ji napřed otevřít a nakonec zavřít.
+ji předtím otevřít a potom zavřít.
 Bez zavření to sice na první pohled funguje taky,
 ale pravděpodobně potom brzo něco zplesniví.
 
@@ -168,6 +178,11 @@ nejlepší použít `with`.
 
 ## Psaní souborů
 
+> [warning] Pozor!
+> Pro Python není problém smazat obsah jakéhokoli souboru.
+> Psaní do souborů si zkoušej v adresáři, ve kterém nemáš uložené
+> důležité informace!
+
 Soubory se v Pythonu dají i zapisovat.
 Pro zápis se soubor otevře pomocí pojmenovaného
 argumentu `mode='w'` (z angl.
@@ -175,28 +190,30 @@ argumentu `mode='w'` (z angl.
 Zapisovat jednotlivé řetězce se pak dá metodou
 `write`.
 
-Pozor na to, že pokud soubor už existuje, otevřením
-pro zápis ho bez milosti přepíšeš.
-
-A taky nezapomeň ukončovat řádky – metoda `write` to za
-tebe neudělá, `'\n'` je potřeba
-přidávat „ručně“.
+Pokud soubor už existuje, otevřením s `mode='w'` se veškerý jeho obsah smaže.
+Po zavření tak v souboru bude jen to, co do něj ve svém programu zapíšeš.
 
 ```python
-with open('basnicka.txt', mode='w', encoding='utf-8') as soubor:
+with open('druha-basnicka.txt', mode='w', encoding='utf-8') as soubor:
     soubor.write('Naše staré hodiny\n')
     soubor.write('Bijí čtyři hodiny\n')
 ```
 
+> [note] Proč to \n?
+> Metoda `write` neodřádkovává automaticky.
+> Chceš-li do souboru zapsat více řádků, je potřeba každý z nich ukončit
+> „ručně“, speciálním znakem `'\n'` který jsme si popsal{{ gnd('i', 'y', both='i')}}
+> v [sekci o řetězcích](../str/).
+
 Případně se dá použít funkce `print`,
-která kromě do terminálu umí, pomocí pojmenovaného argumentu `file`,
-vypisovat i do otevřeného souboru.
-Ostatní možnosti printu – automatické odřádkování,
+která kromě do terminálu umí vypisovat i do otevřeného souboru,
+a to pomocí pojmenovaného argumentu `file`.
+Ostatní možnosti funkce `print` – automatické odřádkování,
 převádnění na řetězce, možnost vypsat víc
 hodnot najednou apod. – samozřejmě zůstávají.
 
 ```python
-with open('basnicka.txt', mode='w', encoding='utf-8') as soubor:
+with open('druha-basnicka.txt', mode='w', encoding='utf-8') as soubor:
     print('Naše staré hodiny', file=soubor)
     print('Bijí', 2+2, 'hodiny', file=soubor)
 ```
