@@ -51,8 +51,9 @@ z [Wikipedie](https://cs.wikipedia.org/wiki/Svobodn%C3%BD_software)):
 <li>svoboda vylepšovat program a zveřejňovat zlepšení, aby z nich mohla mít prospěch celá komunita.</li>
 </ol>
 
-Dnes je spousta projektů s otevřeným zdrojovým kódem dostupná na Internetu
-a každý je používáme. Jejich další sdílení je upraveno jednou z licencí,
+Dnes je spousta projektů s otevřeným zdrojovým kódem (tzv. *open-source* projektů)
+dostupná na Internetu a každý je používáme.
+Jejich další sdílení je upraveno jednou z licencí,
 které tyto základní svobody zaručují.
 
 Ne všechny jsou v Pythonu (a těm co jsou zatím
@@ -84,7 +85,7 @@ Některé příklady populárních open-source projektů:
 * [CPython](https://github.com/python/cpython)
   (jazyk Python)
 * [Linux](https://github.com/torvalds/linux),
-  [Android](https://github.com/android)
+  [Android](https://github.com/aosp-mirror)
   (jádra operačních systémů)
 * [Pytest](https://github.com/pytest-dev/pytest/)
   (pythonní knihovna na testování)
@@ -98,22 +99,20 @@ Některé příklady populárních open-source projektů:
   (pythonní knihovny pro vědce a analytiky)
 * [Materiály](https://github.com/pyvec/naucse.python.cz) k tomuto kurzu
 
-A jak vidno z posledního příkladu, nejen softwarové
+Jak vidno z posledního příkladu, nejen softwarové
 projekty se dají vést takhle veřejně.
 Tento kurz vychází z principů open source:
 všechno know-how je sdílené a budeme rádi, když
 se zapojíš.
 
-Až příště uvidíš v materiálech chybu (nebo jestli
-o nějaké víž už teď), zkus si naklonovat
-[příslušný repozitář](https://github.com/pyvec/naucse.python.cz)
-a chybu opravit!
+Až příště uvidíš v materiálech chybu (nebo jestli o nějaké víž už teď),
+dnes se dozvíš, jak ji opravit!
 
 A co tvůj kód? Chceš ho taky dávat takhle veřejně k dispozici?
 Nutné to samozřejmě není – Git se dá používat i
 v uzavřeném týmu – ale na druhou stranu,
 máš důvod proč to nedělat?
-Zveřejňovat zdrojový kód se hodí už jen pto to,
+Zveřejňovat zdrojový kód se hodí už jen pro to,
 aby ti s ním mohli zkušenější programátoři snadněji pomáhat.
 
 
@@ -206,7 +205,7 @@ adresa by měla být něco jako
 > přijde vhod malé vysvětlení: jedna kopie je původní
 > projekt na GitHubu, kam správce projektu dává
 > aktuální "oficiální verzi". Další kopie na GitHubu
-> je "tvoje" a můžeš si s do ní nahrát co chceš
+> je "tvoje" a můžeš si do ní nahrát co chceš
 > (nejčastěji v ní ale zveřejňuješ změny, které můžou
 > být užitečné pro ostatní). A třetí kopii repozitáře
 > máš u sebe na počítači.
@@ -235,7 +234,7 @@ naklonoval{{a}}.
 
 Přidej si podobnou zkratku pro vlastní repozitář na GitHubu.
 Nezapomeň nahradit <i>tvojejmeno</i> za jméno účtu,
-který máš na GitHubu ty (v příkazu je <i>tvojejmeno</i> dvakrát):
+který máš na GitHubu ty. (Pozor, v příkazu je <i>tvojejmeno</i> dvakrát!)
 
 <div class="highlight codehilite">
 <pre><code><span class="gp">$</span> git remote add <i>tvojejmeno</i> https://github.com/<i>tvojejmeno</i>/prezencka
@@ -245,8 +244,8 @@ a zkontroluj si, že se to povedlo:
 
 <div class="highlight codehilite">
 <pre><code><span class="gp">$</span> git remote -v
-<span class="go">origin  git@github.com:encukou/prezencka.git (fetch)</span>
-<span class="go">origin  git@github.com:encukou/prezencka.git (push)</span>
+<span class="go">origin  git@github.com:{{coach_username}}/prezencka.git (fetch)</span>
+<span class="go">origin  git@github.com:{{coach_username}}/prezencka.git (push)</span>
 <span class="go"><i>tvojejmeno</i>      https://github.com/<i>tvojejmeno</i>/prezencka (fetch)</span>
 <span class="go"><i>tvojejmeno</i>      https://github.com/<i>tvojejmeno</i>/prezencka (push)</span>
 </code></pre></div>
@@ -295,11 +294,11 @@ se na změny podívali a přijali – nebo začali diskusi
 o tom, jak je ještě vylepšit.
 (Diskutovat se dá na stránce *pull requestu* nebo přes mail.)
 
-> [note]
+> [note] Pro samostudium
 > Procházíš-li materiály z domu, musíš teď počkat,
 > než si někdo tvé žádosti všimne a začlení ji.
 > To může trvat i pár dní; kdyby to bylo přes týden,
-> tak se zkus ozvat znovu.
+> tak se na stránce *pull requestu* zkus připomenout.
 
 
 ## Aktualizace <small>(<code>git pull</code>)</small>
@@ -311,7 +310,7 @@ který máš u sebe na počítači.)
 To se dělá příkazem
 `git pull origin master` (stáhni změny
 z větve „master” z adresy pod zkratkou „origin”).
-Pomocí `gitk` nebo `git log`
+Pomocí `gitk --all` nebo `git log`
 se můžeš podívat, jak se projekt mezitím vyvinul.
 
 Gratuluji! Právě jsi {{gnd('prošel', 'prošla')}} „kolečkem“,
