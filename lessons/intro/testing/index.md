@@ -6,7 +6,7 @@ Modul unittest ze standardní knihovny už byste měli znát,
 co to jsou jednotkové testy a k čemu slouží tedy rovnou přeskočím.
 
 > [note]
-> Pokud modul unittest neznáte, projděte si
+> Pokud základy testování neznáte, projděte si
 > [začátečnickou lekci o testování]({{ lesson_url('beginners/testing') }}).
 > Obsah se zčásti překrývá, ale základní principy jsou tam vysvětleny trošku
 > podrobněji.
@@ -50,15 +50,25 @@ Všimněte si několika věcí:
 
  * V testovacím souboru stačí mít funkci pojmenovanou `test_*` a `pytest` pozná,
    že se jedná o test.
- * Pokud balíček nemáme nainstalovaný, je třeba nastavit `PYTHONPATH`. Vždy je ale lepší testovat nainstalovaný balíček.
- * V ukázce je použit obyčejný `assert` a žádná metoda z `unittest`.
+ * V ukázce je použit obyčejný `assert`, nikoliv metoda z `unittest`.
 
-Co se má testovat se pytestu dá zadat argumenty příkazové řádky.
-Buď to můžou být jednotlivé soubory nebo adresáře, ve kterých pytest
+Co se má testovat, se pytestu dá zadat pomocí argumentů příkazové řádky.
+Můžou to být jednotlivé soubory nebo adresáře, ve kterých pytest
 rekurzivně hledá všechny soubory začínající na `test_`.
-Vynecháme-li argumenty úplně, projdou se testy z aktuálního adresáře.
+Vynecháme-li argumenty úplně, hledá rekurzivně v aktuálním adresáři.
 (To se často hodí, ale obsahuje-li aktuální adresář i vaše virtuální prostředí,
 pytest prohledá i to a často v něm najde neprocházející testy.)
+
+> [note]
+> Pokud pytest nemůže naimportovat váš modul, můžete udělat několik věcí:
+> 
+>  * Nainstalovat svůj balíček (například v režimu `develop`).
+>  * Nastavit proměnnou prostředí `PYTHONPATH` na `.`.
+> 
+> Testovat nainstalovaný balíček je výhodnější – ověříte zároveň, že
+> nainstalovaný modul se chová dle očekávání. Je dobré testy psát tak, aby
+> šly spouštět z jakéhokoliv adresáře, a pro jistotu je spouštět odjinud,
+> než z adresáře s kódem. Odhalíte tím často balíčkovací chyby.
 
 Pytest upravuje chování assertu, což oceníte především, pokud test selže:
 
@@ -111,11 +121,11 @@ Více o základním použití pytestu najdete v [dokumentaci].
 ### Parametrické testy
 
 Jednou z vlastností pytestu, která často přichází vhod, jsou [parametrické testy].
-Pokud bychom například chtěli otestovat, jestli je štědrý den svátkem nejen
-v roce 2016, ale v jiných letech, nemusíme psát testů více ani použít cyklus.
+Pokud bychom například chtěli otestovat, jestli je Štědrý den svátkem nejen
+v roce 2016, ale v jiných letech, nemusíme psát testů více, ani použít cyklus.
 
 Nevýhoda více téměř stejných testů je patrná sama o sobě, nevýhoda cyklu je
-v tom, že celý test selže i pokud selže jen jeden průběh cyklem. Zároveň se
+v tom, že celý test selže, i pokud selže jen jeden průběh cyklem. Zároveň se
 průběh testu při selhání ukončí.
 
 Místo toho tedy použijeme parametrický test:
@@ -132,10 +142,13 @@ def test_xmas(year):
 
 ```
 
-(Místo výpisu hodnot v `tuple` lze použít jakýkoliv objekt, přes který jde
-iterovat, tedy i např. volání `range()`.)
+Zápis je určitým způsobem podobný knihovně [click](../click/): funkce
+s testem přijímá parametr vytvořený v dekorátoru.
+Test se spustí pro každou uvedenou hodnotu, k jejich definici lze použít
+jakýkoliv objekt, přes který jde iterovat, tedy kromě v ukázce použité
+<var>n</var>-tice např. seznam, množinu, `range`, vlastní generátor...
 
-Pro více podrobný výpis výsledku testů můžete použít přepínač `-v`:
+Pro podrobnější výpis výsledku testů můžete použít přepínač `-v`:
 
 ```ansi
 ␛[36m(__venv__) $␛[0m python -m pytest -v
@@ -148,6 +161,12 @@ tests/test_holidays.py::test_xmas[2048] ␛[32mPASSED␛[0m
 
 ␛[32m␛[1m=========================== 5 passed in 0.26 seconds ===========================␛[0m
 ```
+
+Jednoduchým způsobem tak lze vyrobit z jednoho testu testů více.
+Výhodou je, že každý se testuje zvlášť, což má vliv na čitelnost
+výstupu, pokud nějaký test selže, a umožňuje to například testy pouštět
+paralelně nebo distribuovaně. (Což s jedním testem, který více podmínek ověřuje
+v cyklu, nejde, tedy alespoň ne jednoduše.)
 
 Potřebujeme-li parametrizovat více argumentů, můžeme předat seznam jmen
 argumentů a seznam jejich hodnot:
@@ -263,12 +282,13 @@ def test_with_fixture(connection, arg):
     assert arg == connection.select(arg)
 ```
 
-Standardní výstup z testů se normálně zobrazuje jen když test selže.
-Chceme-li výstup vidět u všech testů, je třeba použít `pytest -s`.
+Standardní výstup (`stderr` a `stdout`) z testů se normálně zobrazuje,
+jen když test selže.
+Chceme-li výstup vidět u všech testů, je třeba použít přepínač `-s`.
 
 I fixtury jdou parametrizovat, jen trochu jiným způsobem než testovací funkce:
-parametry předané dekorátoru `pytest.fixture` získáme ze zabudované
-fixtury `request`:
+parametry předané dekorátoru `pytest.fixture` získáme ze speciálního parametru
+`request`, který obsahuje informace o probíhajícím testu:
 
 ```python
 @pytest.fixture(params=('sqlite', 'postgres'))
@@ -280,13 +300,15 @@ def connection(request):
 
 Hromadu dalších příkladů použití pytestu najdete dokumentaci v
 [sekci s příklady](http://doc.pytest.org/en/latest/example/index.html).
+Hledáte-li příklady krok za krokem, zkuste [příspěvek ze sborníku konference
+PyCon PL](https://github.com/PyConPL/Book/blob/master/2017/workshops/pytest_parametric_tests/text.md).
 
-flexmock
---------
+„Podvádění“
+-----------
 
 Při psaní testů se občas hodí trochu podvádět. Například když nechceme,
 aby testy měly nějaký vedlejší účinek, když chceme testovat něco, co závisí na
-náhodě a podobně. Obecně se tomuto říká *mocking* \* a existuje více různých
+náhodě a podobně. Obecně se tomuto říká *mocking* \* či *test doubles* a existuje více různých
 knihoven, které to umožňují. Jednou z nich je [flexmock].
 
 [flexmock]: https://flexmock.readthedocs.io/
@@ -297,8 +319,7 @@ pro funkcionalitu knihoven, které mají v názvu *mock* :)
 ### Falešné objekty (fakes)
 
 Při testování často potřebujeme nějaký objekt, který má určité atributy a
-metody. Vytvářet si pro každý takový objekt třídu (jako v příkladě výše)
-může být ubíjející.
+metody. Vytvářet si pro každý takový objekt třídu může být ubíjející:
 
 ```python
 class FakePlane:
@@ -358,6 +379,15 @@ nebo jen sledujete, jestli se zavolala (spies).
 
 [kontrolovat]: http://flexmock.readthedocs.io/en/latest/start/#creating-and-checking-expectations
 
+### Integrace s pytestem
+
+Dobrá mockovací knihovna se stará o to, aby platnost vašich změn byla omezená
+kontextem jedné funkce a tedy jednoho testu. Implementovat vlastní *test double*
+ale není nic těžkého a můžete to udělat sami (bez knihovny).
+Pro přepsání nějaké metody, funkce apod. na omezenou dobu
+můžete využít zabudovanou pytest fixturu
+[monkeypatch](https://docs.pytest.org/en/latest/monkeypatch.html).
+
 ### Varování
 
 Podvádění při testech občas vypadá nevyhnutelně. Pokud například vaše funkce
@@ -375,10 +405,18 @@ možností.
 Často jde trochu změnit kód, aby byl testovatelnější – například napsat funkci,
 která čte soubor formátu `/etc/passwd`, ale jméno souboru jí předat argumentem.
 
-betamax
--------
+> [note]
+> Mohl by vás zajímat záznam z přednášky [Should I mock or should I not?]
+> z konference [PyCon CZ] 2017. V přednášce se věnuji různým způsobům podvádění
+> při psaní testů.
 
-Vaše úlohy používají webová API. Při testování funkcionality API klientů
+[PyCon CZ]: https://cz.pycon.org/
+[Should I mock or should I not?]: https://www.youtube.com/watch?v=-nJ-ZW_LP7s
+
+Testování HTTP komunikace: betamax
+----------------------------------
+
+Vaše programy často používají webová API. Při testování funkcionality API klientů
 se vynoří řada problémů:
 
  * výsledky volání API mohou být pokaždé různé,
@@ -389,7 +427,7 @@ V zásadě můžete omockovat knihovnu requests tak, aby
 jednotlivá volání jako `get()` apod. vracela předem definovanou odpověď.
 Při ponoření do hloubky ale zjistíte, že komplexita takového mockování může
 velmi přesáhnout komplexitu samotného kódu, který testujete.
-Jednodušší je tak použít již hotové řešení, [betamax].
+Jednodušší je tak použít již hotové řešení. Jedno z nich je [betamax].
 
 [betamax]: https://betamax.readthedocs.io/
 
@@ -399,7 +437,7 @@ použijí při testech. V zásadě to funguje takto:
  * Pokud daný HTTP požadavek ještě neproběhl, provede se a nahraje na kazetu.
  * Pokud již proběhl, použije se daná kazeta pro simulaci.
 
-Betamax funguje pouze s modulem requests při použití session.
+Betamax funguje pouze s knihovnou [requests](../requests/) při použití session.
 
 V kombinaci s pytestem můžete použít předpřipravenou fixture:
 
@@ -442,14 +480,15 @@ Pokud budete používat parametrizované testy, použijte
 `betamax_parametrized_session`, aby kazety měly odlišné jméno při odlišných
 parametrech.
 
-Pro tip: Abyste nevytvářeli novou instanci třídy ve všech testech, můžete si
-vytvořit vlastní fixture, která použije fixture `betamax_session`:
-
-```python
-@pytest.fixture
-def client(betamax_session):
-    return Client(session=betamax_session)
-```
+> [note]
+> Pro tip: Abyste nevytvářeli novou instanci třídy ve všech testech, můžete si
+> vytvořit vlastní fixture, která použije fixture `betamax_session`:
+> 
+> ```python
+> @pytest.fixture
+> def client(betamax_session):
+>     return Client(session=betamax_session)
+> ```
 
 ### Citlivé údaje
 
@@ -505,14 +544,33 @@ hlavičku `Accept-Encoding` v `betamax_session` tak, aby neobsahovala `*`, `gzip
 betamax_session.headers.update({'Accept-Encoding': 'identity'})
 ```
 
-(_Poznámka_: `'identity'` má shodné chování jako `''` a to, že data ve zprávě nejsou 
-nijak transformována, více viz [wikipedia](https://en.wikipedia.org/wiki/HTTP_compression#Content-Encoding_tokens) 
-a [specifikace HTTP](https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3))
+> [note]
+> Kódování `'identity'` má shodné chování jako `''` a to, že data ve zprávě nejsou 
+> nijak transformována, více viz [Wikipedia](https://en.wikipedia.org/wiki/HTTP_compression#Content-Encoding_tokens) 
+> a [specifikace HTTP](https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3))
+
+### Které HTTP požadavky jsou stejné?
+
+Podle čeho se vyhodnotí, že HTTP požadavek odpovídá nahrané interakci a má se
+pouze přehrát? Ve výchozím stavu podle HTTP metody a URL.
+Pokud tedy na jedno URL provedete dva POST požadavky s jiným tělem, betamax
+je bude považovat za stejné. Toto chování lze měnit zapnutím (nebo vypnutím)
+různých *matcherů*. Těch je v betamaxu celá řada a je jednoduché napsat si
+vlastní. Více informací najdete
+v [dokumentaci](http://betamax.readthedocs.io/en/latest/matchers.html).
+
+> [note]
+> Mohl by vás zajímat záznam z přednášky [If it Moves, Test it Anyway]
+> z konference [PyCon CZ] 2016. V přednášce se věnuji různým způsobům, jak
+> testovat webové API klienty v Pythonu.
+
+[If it Moves, Test it Anyway]: https://www.youtube.com/watch?v=iFqF5IaWfy0
 
 Testování aplikací ve Flasku
 ----------------------------
 
-Pro testování aplikací ve Flasku se používá `app.test_client()`:
+Pro testování aplikací ve Flasku se
+[používá](http://flask.pocoo.org/docs/0.12/testing/) `app.test_client()`:
 
 ```python
 import pytest
@@ -533,6 +591,24 @@ Proto nelze použít přímo `response.text`; text dostaneme pomocí
 `response.data.decode('utf-8')`.
 
 [Response]: http://flask.pocoo.org/docs/0.11/api/#flask.Response
+
+
+Testování aplikací v clicku
+---------------------------
+
+Podobně funguje [testování aplikací v clikcu](http://click.pocoo.org/6/testing/).
+Click obsahuje třídu `CliRunner`, která pomáhá s testováním:
+
+```python
+from click.testing import CliRunner
+
+def test_push_force():
+    runner = CliRunner()
+    result = runner.invoke(git_cli_made_in_click, ['push', '--force'])
+    assert result.exit_code == 0
+    assert 'forced update' in result.output
+```
+
 
 Kam dát testy?
 --------------
@@ -636,7 +712,7 @@ python:
 install:
 - python setup.py install
 script:
-- python setup.py test --addopts -v
+- python setup.py test
 ```
 
 Po pushnutí by se na Travisu měl automaticky spustit test.
