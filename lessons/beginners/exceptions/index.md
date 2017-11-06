@@ -134,7 +134,7 @@ je ještě horší: může způsobit, že program nepůjde
 ukončit, když bude potřeba.
 
 Příkaz `try/except` proto používej
-jen v situacích, kdy výjimku očekáváš – víš přesně která chyba může
+jen v situacích, kdy výjimku očekáváš – víš přesně, která chyba může
 nastat a proč, a máš možnost ji opravit.
 Pro nás to typicky bude načítání vstupu od uživatele.
 Po špatném pokusu o zadání je dobré se ptát znovu, dokud uživatel nezadá
