@@ -112,17 +112,15 @@ def lesson_static(lesson, path):
     return send_from_directory(directory, filename)
 
 
-@app.route('/<course:course>/')
-def course(course):
-    def lesson_url(lesson, *args, **kwargs):
-        return url_for('course_page', course=course, lesson=lesson, *args, **kwargs)
+def get_recent_runs(course):
+    """Build a list of "recent" runs based on a course.
 
+    By recent we mean: haven't ended yet, or ended up to ~2 months ago
+    (Note: even if naucse is hosted dynamically,
+    it's still beneficial to show recently ended runs.)
+    """
     recent_runs = []
     if not course.start_date:
-        # Build a list of "recent" runs based on this course.
-        # By recent we mean: haven't ended yet, or ended up to ~2 months ago
-        # (Note: even if naucse is hosted dynamically,
-        # it's still beneficial to show recently ended runs.)
         today = datetime.date.today()
         cutoff = today - datetime.timedelta(days=2*30)
         this_year = today.year
@@ -136,7 +134,14 @@ def course(course):
                 # be included, but don't even look through runs from 2016
                 # or earlier.
                 break
-            recent_runs.sort(key=lambda r: r.start_date, reverse=True)
+    recent_runs.sort(key=lambda r: r.start_date, reverse=True)
+    return recent_runs
+
+
+@app.route('/<course:course>/')
+def course(course):
+    def lesson_url(lesson, *args, **kwargs):
+        return url_for('course_page', course=course, lesson=lesson, *args, **kwargs)
 
     try:
         return render_template(
@@ -145,7 +150,7 @@ def course(course):
             plan=course.sessions,
             title=course.title,
             lesson_url=lesson_url,
-            recent_runs=recent_runs,
+            recent_runs=get_recent_runs(course),
             **vars_functions(course.vars),
             edit_path=course.edit_path)
     except TemplateNotFound:
