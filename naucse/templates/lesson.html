@@ -20,7 +20,9 @@
                 <a href="{{ url_for('index') }}">Nauč se Python </a>
                 > <a href="{{ url_for('courses') }}">Kurzy</a>
                 > <a href="{{ course_url(course) }}">{{ course.title }}</a>
+                {% if session %}
                 > <a href="{{ session_url(course.slug, session.slug) }}">{{ session.title }}</a>
+                {% endif %}
                 > {{ page.title }}
                 <hr>
             </header>
@@ -50,7 +52,7 @@
             </div>
 
             <div class="col text-center">
-            {% if session is defined and session != None and course is defined %}
+            {% if session and course is defined %}
                 <a href="{{ session_url(course.slug, session.slug) }}">↑ <span class="hidden-xs-down">Lekce: {{ session.title }}</span></a>
             {% endif %}
             </div>
@@ -58,7 +60,7 @@
             <div class="col text-right">
             {% if nxt is defined and nxt != None %}
                 <a href="{{ lesson_url(lesson=nxt.page.lesson, page=nxt.page.slug) }}"><span class="hidden-xs-down">{{ nxt.title }}</span> →</a>
-            {% elif session is defined and session != None and course is defined %}
+            {% elif session and course is defined %}
                 <a href="{{ session_url(course.slug, session.slug, 'back') }}"><span class="hidden-xs-down">Závěr lekce</span> →</a>
             {% endif %}
             </div>

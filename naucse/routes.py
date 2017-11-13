@@ -181,6 +181,7 @@ def course_page(course, lesson, page, solution=None):
         break
     else:
         page = lesson.pages[page]
+        session = None
         prv = nxt = None
 
     def lesson_url(lesson, *args, **kwargs):
