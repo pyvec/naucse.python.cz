@@ -289,23 +289,33 @@ def session_coverpage(course, session, coverpage):
                            link_section=link_section,
                            cheatsheet_section=cheatsheet_section)
 
-@app.route('/<course:course>/calendar/')
-def course_calendar(course):
-    if not course.start_date:
-        abort(404)
+
+def list_months(start_date, end_date):
+    """Return a span of months as a list of (year, month) tuples
+
+    The months of start_date and end_date are both included.
+    """
     months = []
-    year = course.start_date.year
-    month = course.start_date.month
-    while (year, month) <= (course.end_date.year, course.end_date.month):
+    year = start_date.year
+    month = start_date.month
+    while (year, month) <= (end_date.year, end_date.month):
         months.append((year, month))
         month += 1
         if month > 12:
             month = 1
             year += 1
+    return months
+
+
+@app.route('/<course:course>/calendar/')
+def course_calendar(course):
+    if not course.start_date:
+        abort(404)
     sessions_by_date = {s.date: s for s in course.sessions.values()}
     return render_template('course_calendar.html',
                            edit_path=course.edit_path,
                            course=course,
                            sessions_by_date=sessions_by_date,
-                           months=months,
+                           months=list_months(course.start_date,
+                                              course.end_date),
                            calendar=calendar.Calendar())
