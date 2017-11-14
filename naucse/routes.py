@@ -1,5 +1,6 @@
 import os
 import datetime
+import calendar
 
 from flask import Flask, render_template, url_for, send_from_directory
 from flask import abort, redirect
@@ -111,6 +112,32 @@ def lesson_static(lesson, path):
     return send_from_directory(directory, filename)
 
 
+def get_recent_runs(course):
+    """Build a list of "recent" runs based on a course.
+
+    By recent we mean: haven't ended yet, or ended up to ~2 months ago
+    (Note: even if naucse is hosted dynamically,
+    it's still beneficial to show recently ended runs.)
+    """
+    recent_runs = []
+    if not course.start_date:
+        today = datetime.date.today()
+        cutoff = today - datetime.timedelta(days=2*30)
+        this_year = today.year
+        for year, run_year in reversed(course.root.run_years.items()):
+            for run in run_year.runs.values():
+                if run.base_course is course and run.end_date > cutoff:
+                    recent_runs.append(run)
+            if year < this_year:
+                # Assume no run lasts for more than a year,
+                # e.g. if it's Jan 2018, some run that started in 2017 may
+                # be included, but don't even look through runs from 2016
+                # or earlier.
+                break
+    recent_runs.sort(key=lambda r: r.start_date, reverse=True)
+    return recent_runs
+
+
 @app.route('/<course:course>/')
 def course(course):
     def lesson_url(lesson, *args, **kwargs):
@@ -123,6 +150,7 @@ def course(course):
             plan=course.sessions,
             title=course.title,
             lesson_url=lesson_url,
+            recent_runs=get_recent_runs(course),
             **vars_functions(course.vars),
             edit_path=course.edit_path)
     except TemplateNotFound:
@@ -266,3 +294,34 @@ def session_coverpage(course, session, coverpage):
                            homework_section=homework_section,
                            link_section=link_section,
                            cheatsheet_section=cheatsheet_section)
+
+
+def list_months(start_date, end_date):
+    """Return a span of months as a list of (year, month) tuples
+
+    The months of start_date and end_date are both included.
+    """
+    months = []
+    year = start_date.year
+    month = start_date.month
+    while (year, month) <= (end_date.year, end_date.month):
+        months.append((year, month))
+        month += 1
+        if month > 12:
+            month = 1
+            year += 1
+    return months
+
+
+@app.route('/<course:course>/calendar/')
+def course_calendar(course):
+    if not course.start_date:
+        abort(404)
+    sessions_by_date = {s.date: s for s in course.sessions.values()}
+    return render_template('course_calendar.html',
+                           edit_path=course.edit_path,
+                           course=course,
+                           sessions_by_date=sessions_by_date,
+                           months=list_months(course.start_date,
+                                              course.end_date),
+                           calendar=calendar.Calendar())
