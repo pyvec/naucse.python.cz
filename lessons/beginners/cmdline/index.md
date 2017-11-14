@@ -38,7 +38,7 @@ se na různých systémech otevírá různě:
 * Windows (anglické): Start → napsat na klávesnici „cmd“ → Command Prompt
 * macOS (anglický): Applications → Utilities → Terminal
 * Linux (KDE): Hlavní Menu → hledat Konsole
-* Linux (Gnome): Super → hledat Terminál
+* Linux (GNOME): Super → hledat Terminál
 
 Nevíš-li si rady, zkus buď googlit,
 {% if var('coach-present') -%}
