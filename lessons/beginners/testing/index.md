@@ -135,7 +135,7 @@ test_secteni.py::test_secti ␛[32mPASSED␛[0m
 
 Tento příkaz projde zadaný soubor, zavolá v něm všechny funkce,
 jejichž jméno začíná na `test_`, a ověří, že nevyvolají žádnou
-výjimku – typicky výjimku z příkazu `assert`.
+výjimku — typicky výjimku z příkazu `assert`.
 Pokud výjimka nastane, dá to `pytest` velice červeně
 najevo a přidá několik informací, které můžou
 usnadnit nalezení a opravu chyby.
