@@ -142,9 +142,9 @@ usnadnit nalezení a opravu chyby.
 
 > [note]
 > Argument s názvem souboru můžeme vynechat: `python -m pytest -v`
-> V takovém případě Pytest projde aktuální adresář a spustí testy
+> V takovém případě `pytest` projde aktuální adresář a spustí testy
 > ze všech souborů, jejichž jméno začíná na `test_`. Místo souboru
-> lze též uvést adresář a Pytest vyhledá testy v něm.
+> lze též uvést adresář a `pytest` vyhledá testy v něm.
 
 Zkus si změnit funkci `secti` (nebo její test) a podívat se,
 jak to vypadá když test „neprojde“.
