@@ -121,7 +121,7 @@ tedy v překladu: <strong>Python</strong>e, pusť
 v „ukecaném” režimu (angl. <strong>v</strong>erbose).
 
 ```ansi
-$ python -m pytest -v test_secteni.py 
+$ python -m pytest -v
 ␛[1m============= test session starts =============␛[0m
 platform linux -- Python 3.6.0, pytest-3.0.6, py-1.4.32, pluggy-0.4.0 -- env/bin/python
 cachedir: .cache
