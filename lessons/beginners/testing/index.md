@@ -141,6 +141,11 @@ Pokud výjimka nastane, dá to `pytest` velice červeně
 najevo a přidá několik informací, které můžou
 usnadnit nalezení a opravu chyby.
 
+> [note]
+> Pokud bychom chtěli spustit testy jen z jednoho souboru nebo složky,
+> můžeme ji tomuto příkazu přidat jako další argument.
+> Např. v našem případě: `python -m pytest -v test_secteni.py`
+
 Zkus si změnit funkci `secti` (nebo její test) a podívat se,
 jak to vypadá když test „neprojde“.
 
