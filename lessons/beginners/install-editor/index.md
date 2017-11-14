@@ -85,7 +85,7 @@ spusť z příkazové řádky jako `gedit`, resp. `kate`).
 Pokud ano, klikni na odkaz níže a editor si nastav.
 Nemáš-li ani jeden, vyber třeba Gedit.
 
-* [Gedit]({{ subpage_url('gedit') }}) – bývá na systémech s prostředím Gnome.
+* [Gedit]({{ subpage_url('gedit') }}) – bývá na systémech s prostředím GNOME.
 * [Kate]({{ subpage_url('kate') }}) – bývá na systémech s prostředím KDE.
 
 Existují i jiné editory, na které máme návody:

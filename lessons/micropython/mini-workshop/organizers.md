@@ -107,7 +107,7 @@ Pár věcí je potřeba nastavit:
   `python3 -m pip install --user adafruit-ampy`.)
 
 * Aplikace Terminal (`gnome-terminal`) a Textový editor (`gedit`)
-  jsme dali do oblíbených položek v Gnome.
+  jsme dali do oblíbených položek v GNOME.
   (Klávesa Super – na klávesnici napsat Terminal – přetáhnout ikonku do levého
   proužku. Zopakovat pro Gedit.)
 
