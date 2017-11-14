@@ -24,7 +24,7 @@ $ python -m pip install aiohttp
 ---
 
 > [note]
-> V minulosti byly na této stránce popsány i [generátory](../../advanced/generators).
+> V minulosti byly na této stránce popsány i [generátory](../../advanced/generators/).
 > Neovládáte-li je ještě, přečtěte si o nich.
 {% endif %}
 
