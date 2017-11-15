@@ -233,6 +233,22 @@ Aby uživatelé překladač mít nemuseli, můžeme nainstalovat knihovnu `wheel
 např. `dist/demo-0.1-cp35-cp35m-linux_x86_64.whl`. Tento archiv jde nahrát na PyPI a následně
 nainstalovat, ovšem jen na architektuře a verzi Pythonu, pro které byl vytvořen.
 
+Existuje způsob, jak vytvořit co nejvíce platformě nezávislý linuxový wheel.
+Jedná se o platformu nazvanou `manulinux1`, což je ve zkratce velmi stará verze
+Linuxu (CentOS 5), na které se wheely vytvoří, aby šly použít na různých
+novějších i relativně starých distribucích. Pro tvorbu wheelů se používá
+[Docker obraz manylinux](https://github.com/pypa/manylinux),
+vývojáři samozřejmě nepoužívají pro vývoj CentOS 5 (tedy většina ne).
+
+> [note]
+> Zajímavým nástrojem, který stojí za zmínku, je [cibuildwheel].
+> Zjednodušuje tvorbu wheelů pro Linux, macOS i Windows pomocí
+> CI služeb [Travis CI] a [AppVeyor].
+
+[cibuildwheel]: https://github.com/joerick/cibuildwheel#cibuildwheel
+[Travis CI]: https://travis-ci.org/
+[AppVeyor]: https://www.appveyor.com/
+
 Wheels jdou vytvářet i pro moduly tvořené jen pythonním kódem.
 Nejsou pak vázané na verzi a architekturu.
 Jejich výhoda oproti `sdist` archivům spočívá v tom, že se rychleji instalují.
