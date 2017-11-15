@@ -441,7 +441,7 @@ import numpy
 
 setup(
     name='matmul',
-    ext_modules=cythonize('matmul.pyx', language_level=3, include_dirs=[numpy.get_include()]),
+    ext_modules=cythonize('matmul.pyx', language_level=3),
     include_dirs=[numpy.get_include()],
     install_requires=[
         'Cython',
@@ -450,12 +450,16 @@ setup(
 )
 ```
 
-Poznámka:
-`include_dirs` je tady dvakrát. Na některých platformách (Mac OS X)
-se jako parametr funkce `setup()` z nějakého důvodu neaplikuje a musí se
-použít jako parametr funkce `cythonize`.
-To ale samo někdy nefunguje na některých Linuxech,
-proto jako workaround je to zde uvedeno dvakrát, aby to fungovalo všude.
+> [note]
+> V případě problémech s nefungujícím `include_dirs` na systému macOS
+> použijte komplikovanější variantu:
+> ```python
+> from distutils.extension import Extension
+> ...
+> ext_modules = cythonize([Extension('matmul', ['matmul.pyx'],
+>                                    include_dirs=[numpy.get_include()])],
+>                         language_level=3)
+> ```
 
 Po zadání `python setup.py develop` nebo `python setup.py build_ext --inplace` atp.
 se modul `matmul.pyx` zkompiluje s použitím nainstalovaného NumPy a bude připraven na použití.
