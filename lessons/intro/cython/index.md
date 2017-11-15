@@ -100,7 +100,7 @@ jako [gdb] nebo [Valgrind], prozkoumat potíže na nižší úrovni
 a zjistit, kde přesně se chyba nachází.
 
 [gdb]: https://en.wikipedia.org/wiki/GNU_Debugger]
-[valgrind]: http://valgrind.org/
+[Valgrind]: http://valgrind.org/
 
 
 Modul v C
