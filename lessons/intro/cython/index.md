@@ -71,7 +71,7 @@ $ python -m pytest --profile
 Když máme představu o tom, co nás brzdí, můžeme začít přepisovat do C způsoby
 popsanými níže.
 
-Jiná možnost, jak program zrychlit, je ho pustit tak jak je pod interpretem
+Jiná možnost, jak program zrychlit, je ho pustit, tak jak je, pod interpretem
 PyPy, který obsahuje optimalizovaný překladač. To je ale jiná kapitola.
 
 
