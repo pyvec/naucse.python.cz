@@ -71,7 +71,7 @@ $ python -m pytest --profile
 Když máme představu o tom, co nás brzdí, můžeme začít přepisovat do C způsoby
 popsanými níže.
 
-Jiná možnost, jak program zrychlit, je ho pustit tak jak je pod interpretem
+Jiná možnost, jak program zrychlit, je ho pustit, tak jak je, pod interpretem
 PyPy, který obsahuje optimalizovaný překladač. To je ale jiná kapitola.
 
 
@@ -100,7 +100,7 @@ jako [gdb] nebo [Valgrind], prozkoumat potíže na nižší úrovni
 a zjistit, kde přesně se chyba nachází.
 
 [gdb]: https://en.wikipedia.org/wiki/GNU_Debugger]
-[valgrind]: http://valgrind.org/
+[Valgrind]: http://valgrind.org/
 
 
 Modul v C
@@ -232,6 +232,22 @@ jen je na instalaci potřeba překladač jazyka C.
 Aby uživatelé překladač mít nemuseli, můžeme nainstalovat knihovnu `wheel` (`python -m pip install wheel`) a pak příkazem `python setup.py bdist_wheel` vygenerovat tzv. *wheel* archiv,
 např. `dist/demo-0.1-cp35-cp35m-linux_x86_64.whl`. Tento archiv jde nahrát na PyPI a následně
 nainstalovat, ovšem jen na architektuře a verzi Pythonu, pro které byl vytvořen.
+
+Existuje způsob, jak vytvořit co nejvíce platformě nezávislý linuxový wheel.
+Jedná se o platformu nazvanou `manulinux1`, což je ve zkratce velmi stará verze
+Linuxu (CentOS 5), na které se wheely vytvoří, aby šly použít na různých
+novějších i relativně starých distribucích. Pro tvorbu wheelů se používá
+[Docker obraz manylinux](https://github.com/pypa/manylinux),
+vývojáři samozřejmě nepoužívají pro vývoj CentOS 5 (tedy většina ne).
+
+> [note]
+> Zajímavým nástrojem, který stojí za zmínku, je [cibuildwheel].
+> Zjednodušuje tvorbu wheelů pro Linux, macOS i Windows pomocí
+> CI služeb [Travis CI] a [AppVeyor].
+
+[cibuildwheel]: https://github.com/joerick/cibuildwheel#cibuildwheel
+[Travis CI]: https://travis-ci.org/
+[AppVeyor]: https://www.appveyor.com/
 
 Wheels jdou vytvářet i pro moduly tvořené jen pythonním kódem.
 Nejsou pak vázané na verzi a architekturu.
@@ -441,7 +457,7 @@ import numpy
 
 setup(
     name='matmul',
-    ext_modules=cythonize('matmul.pyx', language_level=3, include_dirs=[numpy.get_include()]),
+    ext_modules=cythonize('matmul.pyx', language_level=3),
     include_dirs=[numpy.get_include()],
     install_requires=[
         'Cython',
@@ -450,12 +466,16 @@ setup(
 )
 ```
 
-Poznámka:
-`include_dirs` je tady dvakrát. Na některých platformách (Mac OS X)
-se jako parametr funkce `setup()` z nějakého důvodu neaplikuje a musí se
-použít jako parametr funkce `cythonize`.
-To ale samo někdy nefunguje na některých Linuxech,
-proto jako workaround je to zde uvedeno dvakrát, aby to fungovalo všude.
+> [note]
+> V případě problémech s nefungujícím `include_dirs` na systému macOS
+> použijte komplikovanější variantu:
+> ```python
+> from distutils.extension import Extension
+> ...
+> ext_modules = cythonize([Extension('matmul', ['matmul.pyx'],
+>                                    include_dirs=[numpy.get_include()])],
+>                         language_level=3)
+> ```
 
 Po zadání `python setup.py develop` nebo `python setup.py build_ext --inplace` atp.
 se modul `matmul.pyx` zkompiluje s použitím nainstalovaného NumPy a bude připraven na použití.
