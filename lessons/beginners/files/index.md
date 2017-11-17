@@ -90,7 +90,7 @@ metodu `rstrip`, která odstraní mezery a nové řádky z konce řetězce.
 ---
 
 ¹ Proč to dělá? Kdyby `'\n'` na konci řádků nebylo,
-nedalo by se např. dobře rozlišit jestli poslední řádek
+nedalo by se např. dobře rozlišit, jestli poslední řádek
 končí na `'\n'`
 
 {% endfilter %}
