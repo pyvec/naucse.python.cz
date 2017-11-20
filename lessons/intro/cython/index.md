@@ -459,8 +459,11 @@ setup(
     name='matmul',
     ext_modules=cythonize('matmul.pyx', language_level=3),
     include_dirs=[numpy.get_include()],
-    install_requires=[
+    setup_requires=[
         'Cython',
+        'NumPy',
+    ],
+    install_requires=[
         'NumPy',
     ],
 )
