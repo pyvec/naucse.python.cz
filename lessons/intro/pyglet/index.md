@@ -249,7 +249,7 @@ pyglet.app.run()
 ```
 
 
-Co to dělá? `pyglet.clock.schedule_interval(tik, 30)`
+Co to dělá? `pyglet.clock.schedule_interval(tik, 1/30)`
 řekne Pygletu, že má zavolat funkci `tik` každou
 třicetinu (`1/30`) vteřiny.
 
