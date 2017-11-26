@@ -261,6 +261,11 @@ nepoužijete flag `:hide:`.
 
 ### Kompletní příklad
 
+Zde můžete vidět výše zmíněné direktivy použité dohromady.
+Jedná se o umělý příklad, kdy použitou třídu připravíme v direktivě `testsetup`.
+V praxi pak doctestem testujeme, jestli naše dokumentace odpovídá chování
+naší implementace, třídu `Parrot` bychom tedy odněkud naimportovali.
+
 ```rst
 The parrot module
 =================
