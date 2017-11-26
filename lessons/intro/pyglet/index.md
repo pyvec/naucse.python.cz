@@ -282,6 +282,8 @@ Najdi si na Internetu nějaký obrázek. Ne moc velký,
 tak 3cm, ať je kolem něj v našem černém okýnku dost
 místa, a nejlépe ve formátu PNG. Začni třeba na
 [téhle stránce](https://www.google.cz/search?tbs=ift:png&tbm=isch&q=snake+icon).
+Ale nevybírej obrázek, který je celý černý, protože by v našem černém okně
+nebyl vidět.
 Ulož si ho do adresáře, odkud spouštíš svůj pythonní
 program. Já mám třeba obrázek hada v souboru `had.png`.
 
