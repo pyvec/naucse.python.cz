@@ -521,11 +521,7 @@ pyglet.app.run()
 Se vstupem z klávesnice a myši, časováním a vykreslováním
 Spritu si vystačíš u leckteré hry nebo grafické aplikace.
 
-To, co jsme tu probral{{gnd('i', 'y', both='i')}} a pár věcí navíc,
-je shrnuto v [taháku na Pyglet](https://github.com/pyvec/cheatsheets/raw/master/pyglet/pyglet-basics-cs.pdf),
-který si můžeš stáhnout a vytisknout.
-
-Až budeš nějakou dělat, zkus udržovat
+Až budeš nějakou hru dělat, zkus udržovat
 stav aplikace v seznamech a <var>n</var>-ticích (případně
 slovnících a třídách, které se naučíme později).
 Jedna funkce by měla umět takový stav vykreslit a
@@ -542,6 +538,10 @@ Na první pohled může její kód vypadat složitě,
 ale zkus si k němu sednout a s pomocí komentářů ho pochopit.
 Kdyby komentáře nestačily, jsou k Pongu připravené
 i [podrobné materiály]({{ lesson_url('projects/pong') }}).
+
+To, co jsme tu probral{{gnd('i', 'y', both='i')}} a pár věcí navíc,
+je shrnuto v [taháku na Pyglet](https://github.com/pyvec/cheatsheets/raw/master/pyglet/pyglet-basics-cs.pdf),
+který si můžeš stáhnout a vytisknout.
 
 A chceš-li se do Pygletu ponořit hlouběji,
 existuje pro něj [dokumentace](http://pyglet.readthedocs.org/en/latest/index.html).
