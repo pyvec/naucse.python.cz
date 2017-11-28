@@ -263,7 +263,7 @@ for zviratko in zviratka:
 ```
 
 Jak tenhle příklad naznačuje, psát nadtřídy, ze kterých se dobře dědí,
-není jednoduché. Zvlášť to platí kdyby se z nich mělo dědit v jiném
+není jednoduché. Zvlášť to platí, kdyby se z nich mělo dědit v jiném
 programu, než kde je nadtřída.
 I z toho důvodu je dobré dědičnost používat hlavně v rámci svého kódu:
 nedoporučuji dědit od tříd, které napsali ostatní (jako `bool` nebo
