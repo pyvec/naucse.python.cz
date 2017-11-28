@@ -621,7 +621,7 @@ Nakonec si číslo místo vypisování uložíme do gridu, abychom ho mohli pozd
 ```python
     def item_activated():
         for item in palette.selectedItems():
-            grid.selected = item.data(QtCore.Qt.UserRole)
+            grid.selected = item.data(VALUE_ROLE)
 ```
 
 Klikání do gridu
