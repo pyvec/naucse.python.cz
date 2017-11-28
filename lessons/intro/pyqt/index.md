@@ -16,11 +16,11 @@ Pokud budete používat svůj počítač, prosíme vás o instalaci již předem
 
 ### PyQt5
 
-Pokud máte Python 3.5 a jednu z platforem, pro které je připraven [wheel na PyPI](https://pypi.python.org/pypi/PyQt5), stačí udělat:
+Pokud máte Python 3.5 a jednu z platforem, pro které je připraven [wheel na PyPI](https://pypi.org/project/PyQt5/), stačí udělat:
 
 ```console
-$ python -m pip install --upgrade pip
-$ python -m pip install PyQt5
+(__venv__) $ python -m pip install --upgrade pip
+(__venv__) $ python -m pip install PyQt5
 ```
 
 Pro starší verzi Pythonu nebo 32bitový Linux to ale nebude fungovat.
@@ -28,7 +28,7 @@ V takovém případě můžete PyQt5 zkusit najít v balíčkovacím systému va
 Virtualenv pak může vytvořit s přepínačem `--system-site-packages`, který zajistí, že i z virtualenvu uvidíte PyQt5 nainstalované z distribučního balíčku.
 
 ```console
-$ python3 -m venv --system-site-packages env
+$ python3 -m venv --system-site-packages __venv__
 ```
 
 Pokud nic z toho nepomůže, můžete zkusit přeložit PyQt5 ze [zdrojových souborů](https://www.riverbankcomputing.com/software/pyqt/download5)
@@ -692,7 +692,7 @@ jen jednu poslední.
 Jednotlivé body můžete spojit čárou pomocí knihovny [bresenham].)
 
 [události]: http://doc.qt.io/qt-5/qwidget.html
-[bresenham]: https://pypi.python.org/pypi/bresenham
+[bresenham]: https://pypi.org/project/bresenham/
 
 Menu a modální dialog
 ---------------------
