@@ -267,7 +267,7 @@ Pro složitější programy jsou pak možnosti, jak si widgety přizpůsobit.
 
 [QWidget]: http://doc.qt.io/qt-5/qwidget.html
 [layout-gallery]: http://doc.qt.io/qt-5/layout.html#horizontal-vertical-grid-and-form-layouts
-[widget-gallery]: http://doc.qt.io/qt-5/gallery-fusion.html
+[widget-gallery]: https://doc.qt.io/qt-5/gallery.html
 
 
 Qt Designer
