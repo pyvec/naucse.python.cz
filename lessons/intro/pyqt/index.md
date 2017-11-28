@@ -16,7 +16,7 @@ Pokud budete používat svůj počítač, prosíme vás o instalaci již předem
 
 ### PyQt5
 
-Pokud máte Python 3.5 a jednu z platforem, pro které je připraven [wheel na PyPI](https://pypi.python.org/pypi/PyQt5), stačí udělat:
+Pokud máte Python 3.5 a jednu z platforem, pro které je připraven [wheel na PyPI](https://pypi.org/project/PyQt5/), stačí udělat:
 
 ```console
 $ python -m pip install --upgrade pip
@@ -692,7 +692,7 @@ jen jednu poslední.
 Jednotlivé body můžete spojit čárou pomocí knihovny [bresenham].)
 
 [události]: http://doc.qt.io/qt-5/qwidget.html
-[bresenham]: https://pypi.python.org/pypi/bresenham
+[bresenham]: https://pypi.org/project/bresenham/
 
 Menu a modální dialog
 ---------------------
