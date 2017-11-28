@@ -19,8 +19,8 @@ Pokud budete používat svůj počítač, prosíme vás o instalaci již předem
 Pokud máte Python 3.5 a jednu z platforem, pro které je připraven [wheel na PyPI](https://pypi.org/project/PyQt5/), stačí udělat:
 
 ```console
-$ python -m pip install --upgrade pip
-$ python -m pip install PyQt5
+(__venv__) $ python -m pip install --upgrade pip
+(__venv__) $ python -m pip install PyQt5
 ```
 
 Pro starší verzi Pythonu nebo 32bitový Linux to ale nebude fungovat.
@@ -28,7 +28,7 @@ V takovém případě můžete PyQt5 zkusit najít v balíčkovacím systému va
 Virtualenv pak může vytvořit s přepínačem `--system-site-packages`, který zajistí, že i z virtualenvu uvidíte PyQt5 nainstalované z distribučního balíčku.
 
 ```console
-$ python3 -m venv --system-site-packages env
+$ python3 -m venv --system-site-packages __venv__
 ```
 
 Pokud nic z toho nepomůže, můžete zkusit přeložit PyQt5 ze [zdrojových souborů](https://www.riverbankcomputing.com/software/pyqt/download5)
