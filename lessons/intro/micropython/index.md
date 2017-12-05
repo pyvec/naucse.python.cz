@@ -67,7 +67,7 @@ Několik funkcí je na nestandardních místech se změněným rozhraním, např
 ## Vstup a výstup
 
 Co má MicroPython navíc je přístup k hardwaru.
-Zkusme zjistit hodnotu pinu 0, který je na NodeMCU normálně HIGH (3,3 V) spojen se zemí přes tlačítko FLASH.
+Zkusme zjistit hodnotu pinu 0, který je na NodeMCU normálně HIGH (3,3 V) a je spojen se zemí přes tlačítko FLASH.
 
 ```python
 from machine import Pin
@@ -99,17 +99,36 @@ Zkuste zajistit, aby dioda svítila, právě pokud je stisknuté tlačítko FLAS
 
 Pravděpodobně jste si všimli, že konzole MicroPythonu automaticky odsazuje.
 To je pro malé programy pohodlné, ale umí to i znepříjemnit život – hlavně když chceme kód do konzole vložit.
+
 Proto má konzole MicroPythonu speciální vkládací mód, který automatické odsazování vypíná.
 Aktivuje se pomocí <kbd>Ctrl+E</kbd> a ukončuje se pomocí <kbd>Ctrl+D</kbd>.
 
-Od teď doporučuji psát kód vedle do editoru a vždy jej do konzole zkopírovat.
+Existuje ale i nástroj jménem `ampy`, který umožňuje pustit předpřipravený skript.
+Instaluje se jako `adafruit-ampy`:
+
+```console
+$ python -m pip install adafruit-ampy
+```
+
+Po nainstalování vypněte existující připojení k desce (picocom/screen/PuTTY),
+napište skript a spusťte ho pomocí příkazu `run`:
+
+```console
+$ ampy -p PORT run script.py
+```
+
+Kde `PORT` je stejný port jako výše – např. `/dev/ttyUSB0` na Linuxu, `COM3` na Windows.
+Pro více informací můžete nepřekvapivě použít příkaz `ampy --help`.
+
+Od teď doporučuji psát kód vedle do editoru a spouštět jej pomocí `ampy run`.
 
 Zkuste pomocí funkce `time.sleep` (která v MicroPythonu k dispozici je) diodou blikat v pravidelných intervalech.
 
 
 ## Blikání
 
-Na pravidelné blikání má MicroPython třídu `PWM`, které se dá nastavit frekvence (`freq`) v Hz a střída (`duty`) od 0 do 1024:
+Na pravidelné blikání, technicky řečeno *pulzně-šířkovou modulaci* (angl. *Pulse Width Modulation*)
+má MicroPython třídu `PWM`, které se dá nastavit frekvence (`freq`) v Hz a střída (`duty`) od 0 do 1024:
 
 ```python
 from machine import Pin, PWM
@@ -119,13 +138,24 @@ led_pin = Pin(14, Pin.OUT)
 pwm = PWM(led_pin, freq=50, duty=512)
 ```
 
+Výsledný signál – čtvercová vlna – lze použít pro ovládání
+LED (střída určuje intenzitu světla), bzučáků (frekvence určuje výšku tónu),
+servomotorků (délka signálu určuje úhel otočení), atd.
+
 
 ## LED pásek WS2812
 
 Na destičku se dá připojit spousta různých komponent. Jen je vždy potřeba ověřit v [dokumentaci], že existuje knihovna pro daný protokol na MicroPython *pro ESP8266*.
-My připojíme pásek s moduly WS2812. Každý modul obsahuje tři LED a čip, který umožňuje celý pásek ovládat jedním datovým pinem.
+Časté protokoly jsou [I2C], [OneWire], či [SPI].
+
+My připojíme pásek s moduly WS2812.
+Každý modul obsahuje tři LED a čip, který umožňuje celý pásek ovládat jedním datovým pinem.
+Používá vlastní protokol, který je v MicroPythonu pro ESP8266 implementován pod jménem `NeoPixel`.
 
 [dokumentaci]:http://docs.micropython.org/en/latest/esp8266/
+[I2C]: http://docs.micropython.org/en/latest/esp8266/library/machine.I2C.html#machine-i2c
+[OneWire]: http://docs.micropython.org/en/latest/esp8266/esp8266/quickref.html#onewire-driver
+[SPI]: http://docs.micropython.org/en/latest/esp8266/esp8266/quickref.html#software-spi-bus
 
 Zapojení:
 
@@ -165,7 +195,7 @@ Po instalaci esptool si stáhněte nejnovější stabilní firmware pro ESP8266 
 $ esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash 0 esp8266-20161110-v1.8.6.bin
 ```
 
-Hodnotu pro `--port` doplňte podle svého systému – např. `/dev/tty.wchusbserial1420` na Macu, `COM3` na Windows.
+Hodnotu pro `--port` opět doplňte podle svého systému – např. `/dev/tty.wchusbserial1420` na Macu, `COM3` na Windows.
 
 Je-li na desce nahraný MicroPython, tento příkaz by měl fungovat. U jiného firmware, (případně u poškozeného MicroPythonu), je potřeba při zapojování destičky do USB držet tlačítko FLASH.
 
@@ -179,21 +209,12 @@ Existuje-li soubor `main.py`, naimportuje se automaticky po zapnutí (či resetu
 zařízení.
 Není ho pak potřeba připojovat k počítači – stačí powerbanka nebo 3,3V zdroj.
 
-Pro nahrání souborů do zařízení můžete použít nástroj `ampy`,
-který se instaluje jako `adafruit-ampy`:
-
-```console
-$ python -m pip install adafruit-ampy
-```
-
-Pro nahrání souboru se používá příkaz `put`:
+Pro nahrání souborů do zařízení můžete použít příkaz `ampy put`:
 
 ```console
 $ ampy -p PORT put main.py
 ```
 
-Kde `PORT` je stejný port jako výše – např. `/dev/ttyUSB0` na Linuxu.
-Pro více informací můžete nepřekvapivě použít příkaz `ampy --help`.
 
 ## WebREPL
 
