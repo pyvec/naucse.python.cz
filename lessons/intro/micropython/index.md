@@ -128,7 +128,7 @@ My připojíme pásek s moduly WS2812. Každý modul obsahuje tři LED a čip, k
 [dokumentaci]:http://docs.micropython.org/en/latest/esp8266/
 
 Zapojení:
-    
+
   * `GND` - `G`
   * `DI` (data in) - `D4`
   * `+5V` - `VU`
