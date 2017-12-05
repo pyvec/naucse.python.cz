@@ -165,6 +165,27 @@ Hodnotu pro `--port` doplňte podle svého systému – např. `/dev/tty.wchusbs
 
 Je-li na desce nahraný MicroPython, tento příkaz by měl fungovat. U jiného firmware, (případně u poškozeného MicroPythonu), je potřeba při zapojování destičky do USB držet tlačítko FLASH.
 
+## Souborový systém
+
+MicroPython pro ESP8266 obsahuje souborový systém nad flash pamětí,
+se kterým pracují standardní pythonní funkce jako `open` a `os.listdir`.
+Nahrajete-li soubor s příponou `.py`, lze jej pak v kódu importovat.
+
+Existuje-li soubor `main.py`, naimportuje se automaticky po zapnutí (či resetu)
+zařízení.
+Není ho pak potřeba připojovat k počítači – stačí powerbanka nebo 3,3V zdroj.
+
+Pro nahrání souborů do zařízení můžete použít nástroj `ampy`,
+který se instaluje jako `adafruit-ampy`:
+
+    python -m pip install adafruit-ampy
+
+Pro nahrání souboru se používá příkaz `put`:
+
+    ampy -p PORT put main.py
+
+Kde `PORT` je stejný port jako výše – např. `/dev/ttyUSB0` na Linuxu.
+Pro více informací můžete nepřekvapivě použít příkaz `ampy --help`.
 
 ## WebREPL
 
@@ -211,18 +232,7 @@ import webrepl_setup
 
 S počítačem se připojte na stejnou síť a na stránce webrepl otevřené výše se připojte k IP vypsané z `ifconfig()`.
 Měli byste dostat konzoli, jako přes USB.
-
-
-## Souborový systém
-
 Pomocí WebREPL lze nejen zadávat interaktivní příkazy, ale i nahrávat soubory.
-MicroPython pro ESP8266 obsahuje souborový systém nad flash pamětí,
-se kterým pracují standardní pythonní funkce jako `open` a `os.listdir`.
-Nahrajete-li soubor s příponou `.py`, lze jej pak v kódu importovat.
-
-Existuje-li soubor `main.py`, naimportuje se automaticky po zapnutí (či resetu)
-zařízení.
-Není ho pak potřeba připojovat k počítači – stačí powerbanka nebo 3,3V zdroj.
 
 
 ## Komunikace
