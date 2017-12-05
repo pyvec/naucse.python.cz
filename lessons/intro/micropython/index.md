@@ -155,11 +155,15 @@ Na našich destičkách je MicroPython už nahraný, ale kdybyste si koupili vla
 
 K tomu je potřeba nástroj `esptool`, který se dá nainstalovat pomocí:
 
-    python -m pip install esptool
+```console
+$ python -m pip install esptool
+```
 
 Po instalaci esptool si stáhněte nejnovější stabilní firmware pro ESP8266 z [micropython.org/download](http://micropython.org/download#esp8266) a zadejte:
 
-    esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash 0 esp8266-20161110-v1.8.6.bin
+```console
+$ esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash 0 esp8266-20161110-v1.8.6.bin
+```
 
 Hodnotu pro `--port` doplňte podle svého systému – např. `/dev/tty.wchusbserial1420` na Macu, `COM3` na Windows.
 
@@ -178,11 +182,15 @@ Není ho pak potřeba připojovat k počítači – stačí powerbanka nebo 3,3V
 Pro nahrání souborů do zařízení můžete použít nástroj `ampy`,
 který se instaluje jako `adafruit-ampy`:
 
-    python -m pip install adafruit-ampy
+```console
+$ python -m pip install adafruit-ampy
+```
 
 Pro nahrání souboru se používá příkaz `put`:
 
-    ampy -p PORT put main.py
+```console
+$ ampy -p PORT put main.py
+```
 
 Kde `PORT` je stejný port jako výše – např. `/dev/ttyUSB0` na Linuxu.
 Pro více informací můžete nepřekvapivě použít příkaz `ampy --help`.
