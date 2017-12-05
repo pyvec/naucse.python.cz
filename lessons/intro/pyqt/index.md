@@ -53,6 +53,12 @@ $ brew install qt5
 $ brew linkapps qt5
 ```
 
+Existují i Python wheely [pyqt5-tools] pro Windows obsahující Qt5 Designer.
+Ten je pak potřeba pro spuštění dohledat v nainstalované lokaci.
+
+[pyqt5-tools]: https://pypi.python.org/pypi/pyqt5-tools
+
+
 ### NumPy
 
 Do virtuálního prostředí s PyQt5 si nainstalujte i NumPy:
