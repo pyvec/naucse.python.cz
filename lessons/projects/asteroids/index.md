@@ -235,7 +235,7 @@ Naše asteroidy jsou zatím docela neškodné. Pojďme to změnit.
 
   ```python
   def distance(a, b, wrap_size):
-     """Distance in one direction (x or y)"""
+      """Distance in one direction (x or y)"""
       result = abs(a - b)
       if result > wrap_size / 2:
           result = wrap_size - result
