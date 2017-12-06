@@ -266,44 +266,27 @@ Pomocí WebREPL lze nejen zadávat interaktivní příkazy, ale i nahrávat soub
 
 ## Komunikace
 
-MicroPython pro ESP8266 nemá (z důvodu šetření místem) knihovnu pro HTTP.
-Dá se buď nějaká stáhnout a nainstalovat nebo použít nízkoúrovňový `socket`.
-Následující kód (převzatý z velké míry z [oficiální dokumentace]) stáhne data
-ze stránky [api.thingspeak.com/channels/1417/field/2/last.txt](http://api.thingspeak.com/channels/1417/field/2/last.txt), kde se objevuje poslední barva tweetnutá s hashtagem `#cheerlights`.
+Pro komunikaci po síti můžete použít nízkoúrovňovou knihovnu `socket`,
+nebo protokol pro „internet of things“ (jako MQTT), ale
+MicroPython pro ESP8266 má zabudouvanou i knihovnu pro HTTP:
+ořezanou verzi známých Requests.
+Následující kód stáhne data ze stránky
+[api.thingspeak.com/channels/1417/field/2/last.txt](http://api.thingspeak.com/channels/1417/field/2/last.txt),
+kde se objevuje poslední barva tweetnutá s hashtagem `#cheerlights`.
 
-[oficiální dokumentace]: http://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/network_tcp.html#http-get-request
+Výslednou hodnotu lze použít jako barvu modul v LED pásku.
 
 ```python
-import socket
+import urequests
 
-host = 'api.thingspeak.com'
-path = 'channels/1417/field/2/last.txt'
-
-url = 'http://{}/{}'.format(host, path)
-ai = socket.getaddrinfo(host, 80)
-print('Address infos:', ai)
-addr = ai[0][-1]
-
-print('Connect address:', addr)
+url = 'http://api.thingspeak.com/channels/1417/field/2/last.txt'
 
 def download_color():
-    s = socket.socket()
-    s.connect(addr)
-    s.send(bytes('GET /%s HTTP/1.0\r\nHost: %s\r\n\r\n' % (path, host), 'utf8'))
-    color = ''
-    data = ''
-    while True:
-        chunk = s.recv(100)
-        if chunk:
-            data += chunk.decode('utf-8')
-        else:
-            break
-    s.close()
+    response = urequests.get(url)
+    text = response.text
 
-    head, body = data.split('\r\n\r\n', 2)
-
-    if body and body[0] == '#':
-        color = body[1:7]
+    if text and text[0] == '#':
+        color = text[1:7]
 
         red = int(color[0:2], 16)
         green = int(color[2:4], 16)
