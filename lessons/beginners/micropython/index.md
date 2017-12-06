@@ -156,17 +156,9 @@ oprav ji podle následujícího návodu a zkus to znova.
   přístup k souboru zařízení.
   To znamená přidat se do příslušné skupiny:
 
-  * Fedora:
-
-    ```console
-    $ sudo usermod -a -G dialout $(whoami)
-    ```
-
-  * Debian/Ubuntu:
-
-    ```console
-    $ sudo usermod -a -G dialout $(whoami)
-    ```
+  ```console
+  $ sudo usermod -a -G dialout $(whoami)
+  ```
 
   Poté je potřeba se znovu přihlásit, třeba příkazem:
 
