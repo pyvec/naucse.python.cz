@@ -36,7 +36,7 @@ První krok bude naprogramovat vesmírnou loď, která půjde ovládat klávesni
 * Vesmírnou loď bude reprezentovat objekt třídy `Spaceship`.
 * Každá loď má vlastní atributy `x` a `y` (pozice),
   `x_speed` a `y_speed` (rychlost), `rotation` (úhel natočení) a
-  `sprite` (obrázek pro Pyglet).
+  `sprite` (2D objekt v Pygletu s polohou, rotací a obrázkem).
 * Loď má metodu `tick`, která obstarává
   mechaniku týkající se lodi – posouvání, natáčení a ovládání.
 * Všechny objekty ve hře si budeme dávat do globálního seznamu `objects`.
