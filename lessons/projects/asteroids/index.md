@@ -96,28 +96,43 @@ První krok bude naprogramovat vesmírnou loď, která půjde ovládat klávesni
 
       Rychlost otáčení závisí na stisknutých šipkách (doleva nebo doprava).
       V jednom případě je záporná, v druhém kladná. Vhodnou hodnotu zvol
-      experimentováním. Všechny podobné „magické hodnoty“ je vhodné definovat
+      experimentováním – začni třeba u 4 radiánů za sekundu.
+      Všechny podobné „magické hodnoty“ je vhodné definovat
       jako konstanty – tedy proměnné, které na začátku nastavíš a nikdy
       je neměníš. Bývá zvykem je označovat velkými písmeny a dávat je na
-      začátek souboru, hned za importy.
-  * Zrychlení je trochu složitější: k  <var>x</var>-ové rychlosti
-    se přičte sinus úhlu otočení krát uplynulý čas.
-    U  <var>y</var>-ové osy se použije kosinus.
-    Je ale potřeba převést úhel na radiány, protože
-    Pyglet (a naše hra) používá stupně:
+      začátek souboru, hned za importy:
 
       ```python
-      rotation_radians = math.radians(self.rotation)
-      self.x_speed += dt * ACCELERATION * math.sin(rotation_radians)
-      self.y_speed += dt * ACCELERATION * math.cos(rotation_radians)
+      ROTATION_SPEED = 4  # radians per second
+      ```
+  * Zrychlení je trochu složitější: k  <var>x</var>-ové rychlosti
+    se přičte kosinus úhlu otočení krát uplynulý čas.
+    U <var>y</var>-ové osy se použije sinus.
+
+      ```python
+      self.x_speed += dt * ACCELERATION * math.cos(self.rotation)
+      self.y_speed += dt * ACCELERATION * math.sin(self.rotation)
       ```
 
       Všimni si v příkladu konstanty `ACCELERATION`. Tu opět zvol podle uvážení.
   * Když máš hodnoty `self.x`, `self.y` a `self.rotation` spočítané, nezapomeň
     je promítnout do `self.sprite`, jinak se nic zajímavého nestane.
+
+    Pozor na to, že funkce `math.sin` a `math.cos` používají radiány,
+    kdežto `pyglet` používá pro `Sprite.rotation` stupně.
+    (A k tomu je navíc 0° jinde, a otáčí se na opačnou stranu.)
+    Pro sprite je tedy potřeba úhel převést:
+
+      ```python
+      self.sprite.rotation = 90 - math.degrees(self.rotation)
+      self.sprite.x = self.x
+      self.sprite.y = self.y
+      ```
   * Když raketka vyletí z okýnka ven, vrať
     ji zpátky do hry na druhé straně okýnka.
     (Zkontroluj si, že to funguje na všech čtyřech stranách.)
+
+
 * **Bonus 1**: Zkus si přidat několik raketek,
   každou trochu jinak natočenou.
 
@@ -156,7 +171,6 @@ První krok bude naprogramovat vesmírnou loď, která půjde ovládat klávesni
               gl.glPopMatrix()
   ```
   Pro přehled, dokumentace k použitým funkcím je tady:
-
   [glPushMatrix, glPopMatrix](https://www.opengl.org/sdk/docs/man2/xhtml/glPushMatrix.xml),
   [glTranslatef](https://www.opengl.org/sdk/docs/man2/xhtml/glTranslate.xml).
 
