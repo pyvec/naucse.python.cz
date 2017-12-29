@@ -486,7 +486,7 @@ Funguje podobně jako `@property`, jen se výsledek vypočítá pouze jednou a u
 Při dalším přístupu k atributu už se použije uložená hodnota.
 
 ```python
-class reify(object):
+class reify:
     def __init__(self, func):
         self.func = func
 
