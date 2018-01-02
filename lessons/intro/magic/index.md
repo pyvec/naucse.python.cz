@@ -703,7 +703,7 @@ existuje, zavolá pro vytvoření jmenného prostoru:
 from collections import OrderedDict
 
 class OrderRememberingMeta(type):
-    def __prepare__(self, name):
+    def __prepare__(cls, name):
         return OrderedDict()
 
     def __init__(cls, name, bases, namespace):
