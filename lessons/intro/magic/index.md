@@ -655,6 +655,7 @@ class IterableMeta(type):
     def __init__(cls, name, bases, namespace):
         cls.items = sorted(n for n in namespace
                            if not n.startswith('__'))
+        super().__init__(name, bases, namespace)
 
     def __iter__(cls):
         return iter(cls.items)
@@ -708,6 +709,7 @@ class OrderRememberingMeta(type):
 
     def __init__(cls, name, bases, namespace):
         cls.items = list(namespace)
+        super().__init__(name, bases, namespace)
 
     def __iter__(cls):
         return iter(cls.items)
