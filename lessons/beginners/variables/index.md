@@ -82,6 +82,9 @@ jehož hodnota se do proměnné *přiřadí*.
 Když potom napíšeš jméno proměnné ve výrazu,
 použije se zapamatovaná hodnota.
 
+> [style-note]
+> Je zvykem dát před i za rovnítko po jedné mezeře.
+
 To nás vede k jedné ze základních programátorských
 zásad: „neopakuj se“ (anglicky *Don't repeat yourself*, <abbr class="initialism">DRY</abbr>).
 Když se někde opakuje stejná hodnota, stejný výraz
@@ -142,6 +145,11 @@ strana = 123  # v centimetrech
 print('Obvod čtverce se stranou', strana, 'je', 4 * strana, 'cm')
 print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 ```
+
+> [style-note]
+> Píšeš-li komentáš na stejný řádek jako kód, je zvykem před `#` dát dvě
+> mezery (nebo i víc).
+> Za `#` pak patří právě jedna.
 
 ## Načítání vstupu
 
