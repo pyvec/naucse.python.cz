@@ -96,7 +96,8 @@ zkušenějšího programátora. <!-- XXX: where to direct people? -->
 >
 > V Pythonu je většinou jedno, kde napíšeš mezeru. Stejně jako náš příkaz
 > `print("Ahoj světe!")` by fungovalo třeba:
-> ```
+>
+> ```python
 > print      (   "Ahoj světe!"     )
 > ```
 >
@@ -105,7 +106,8 @@ zkušenějšího programátora. <!-- XXX: where to direct people? -->
 > ozavírací závorkou nepíše mezera.
 > Na rozdíl od češtiny ale mezeru nepiš ani mezi `print` a závorkou.
 > „Správně“ je tedy:
-> ```
+>
+> ```python
 > print("Ahoj světe!")
 > ```
 >
