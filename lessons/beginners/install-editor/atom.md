@@ -17,14 +17,18 @@ měl{{a}} bys ho co nejdřív uložit pod správným jménem.
 
 ## Kontrola stylu zdrojového kódu
 
-Jedna věc nám v Atomu přeci jen chybí a to plugin pro kontrolu správného
+Jedna věc nám v Atomu přeci jen chybí: plugin pro kontrolu správného
 stylu zdrojového kódu.
 
-Python má pravidla pro psaní zdrojového kódu popsána v dokumentu
-[PEP8](https://www.python.org/dev/peps/pep-0008/). Nejsou závazná a program
-bude fungovat i při jejich nedodržení, ale jejich dodržování přinejmenším
-přispívá k lepší čitelnosti napsaného kódu. Abychom si je nemuseli všechny
-pamatovat, nainstalujeme si plugin, který nás na jejich porušení upozorní.
+Tak jako čeština má Python typografická providla.
+Například za čárkou se píše mezera, ale před ní ne.
+Jsou nepovinná, program bude fungovat i při jejich nedodržení,
+ale pomáhají psát přehledný kód, tak je dobré je dodržovat už od začátku.
+Pravidla pro Python jsou popsána v dokumentu
+[PEP8](https://www.python.org/dev/peps/pep-0008/).
+
+Aby sis je nemusel{{a}} všechny pamatovat, nainstaluj si plugin,
+který tě na jejich porušení upozorní.
 
 Nejprve je potřeba si nainstalovat speciální knihovnu, která se o kontrolu
 dokáže postarat. Do příkazové řádky zadej následující:
@@ -33,7 +37,7 @@ dokáže postarat. Do příkazové řádky zadej následující:
 $ python -m pip install flake8
 ```
 
-A nyní si nainstalujeme plugin do samotného editoru. V hlavní nabídce vyber
+A nyní si nainstaluj plugin do samotného editoru. V hlavní nabídce vyber
 „Soubor > Nastavení<span class="en">/File > Settings</span>“ a v nabídce
 uprostřed okna vyber poslední položku
 „Instalovat<span class="en">/Install</span>“. Do vyhledávacího pole zadej
