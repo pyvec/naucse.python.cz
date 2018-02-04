@@ -103,3 +103,23 @@ Třeba výraz `3 + 8` sečítá výrazy `3` a `8`.
 
 V sekci o [proměnných]({{ lesson_url('beginners/variables') }}) se
 na výrazy a jejich hodnoty podíváme podrobněji.
+
+> [style-note] Typografická vsuvka
+> Všimni si stylu zápisu: jako v češtině se po otvírací závorce a za
+> ozavírací závorkou nepíše mezera; na rozdíl od češtiny ale mezera není
+> mezi `print` a závorkou.
+> ```python
+> print("Ahoj!")
+> ```
+>
+> S čárkou je to jako v češtině: mezeru píšeme po čárce, ale ne před ní:
+> ```python
+> print(1, 2, 3)
+> ```
+>
+> Kolem operátorů jako `+` a `*` se obyčejně píše jedna mezera zleva a
+> jedna zprava. Někdy je ale přehlednější obě vynechat:
+> ```python
+> print(2 + 8)
+> print("Jedna a půl je", 1 + 1/2)
+> ```

@@ -91,3 +91,25 @@ kouče.
 zkušenějšího programátora. <!-- XXX: where to direct people? -->
 {% endif %}
 
+
+> [style-note] Typografická vsuvka
+>
+> V Pythonu je většinou jedno, kde napíšeš mezeru. Stejně jako náš příkaz
+> `print("Ahoj světe!")` by fungovalo třeba:
+>
+> ```python
+> print      (   "Ahoj světe!"     )
+> ```
+>
+> Je ale zvykem dodržovat určitá pravidla.
+> Jako v češtině se po otvírací závorce a za
+> ozavírací závorkou nepíše mezera.
+> Na rozdíl od češtiny ale mezeru nepiš ani mezi `print` a závorkou.
+> „Správně“ je tedy:
+>
+> ```python
+> print("Ahoj světe!")
+> ```
+>
+> V rámci uvozovek má pak každá mezera význam: když napíšeš
+> `"    Ahoj      světe!"`, mezery navíc se objeví ve výsledné hlášce.
