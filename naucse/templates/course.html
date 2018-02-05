@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% from "_macros.html" import icon_for_material %}
 
 {% macro session_heading(session, index, plan) %}
     {% if plan|length > 1 %}
@@ -48,9 +49,15 @@
                     {% for mat in session.materials %}
                         <div>
                             {% if mat.type == "page" %}
-                                <a href="{{ lesson_url(lesson=mat.page.lesson, page=mat.page.slug) }}">{{ mat.title }}</a>
+                                <a href="{{ lesson_url(lesson=mat.page.lesson, page=mat.page.slug) }}">
+                                    {{ icon_for_material(mat) }}
+                                    {{ mat.title }}
+                                </a>
                             {% else %}
-                                <a href="{{ mat.url }}">{{ mat.title }}</a>
+                                <a href="{{ mat.url }}">
+                                    {{ icon_for_material(mat) }}
+                                    {{ mat.title }}
+                                </a>
                             {% endif %}
                         </div>
                     {% endfor %}
