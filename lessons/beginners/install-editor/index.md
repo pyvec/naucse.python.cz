@@ -36,7 +36,7 @@ Podpora více souborů
 
 Číslování řádků
 :   Před každým řádkem se ukazuje číslo.
-    To se bude velice hodit, až Python bude nadávat že chyba je na řádku 183. 
+    To se bude velice hodit, až Python bude nadávat, že chyba je na řádku 183. 
 
 Odsazování
 :   V Pythonu je důležité, kolika mezerami řádek začíná.
