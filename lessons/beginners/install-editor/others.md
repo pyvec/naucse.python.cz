@@ -46,4 +46,20 @@ Nejde-li vybírat po jednotlivých mezerách, nebo pokud se jich po stisknutí
 <kbd>Tab</kbd> vloží jiný počet než 4, podívej se do nastavení po možnostech
 jako „velikost odsazení“ nebo „nahrazovat tabulátory za mezery”.
 
+
+## Kontrola stylu zdrojového kódu
+
+Editory často podporují instalaci pluginů, které mohou psaní kódu usnadnit
+a pomoci s jeho kontrolou.
+Jeden z neužitečnějších je plugin pro kontrolu správného stylu zdrojového kódu.
+
+Tak jako čeština má Python typografická providla.
+Například za čárkou se píše mezera, ale před ní ne.
+Jsou nepovinná, program bude fungovat i při jejich nedodržení,
+ale pomáhají psát přehledný kód, tak je dobré je dodržovat už od začátku.
+Tato pravidla jsou popsána
+v dokumentu [PEP8](https://www.python.org/dev/peps/pep-0008/).
+
+Zkus takový plugin pro svůj editor najít a nainstalovat.
+
 {% endblock %}
