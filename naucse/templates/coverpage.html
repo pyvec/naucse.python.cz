@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-{% from "_macros.html" import material_li %}
+{% from "_macros.html" import material_list with context %}
 
 {% block content %}
 
@@ -29,24 +29,11 @@
         {% endif %}
 
         <h2>Materiály</h2>
-        <ul>
-        {% for mat in session.materials %}
-            {% if mat.url_type == "lesson" %}
-                {{ material_li(mat) }}
-            {% endif %}
-        {% endfor %}
-        </ul>
+        {{ material_list(session.materials, filter_type='lesson') }}
 
         {% if cheatsheet_section %}
             <h2>Taháky</h2>
-
-            <ul>
-            {% for mat in session.materials %}
-                {% if mat.url_type == "cheatsheet" %}
-                    {{ material_li(mat) }}
-                {% endif %}
-            {% endfor %}
-            </ul>
+            {{ material_list(session.materials, filter_type='cheatsheet') }}
         {% endif %}
 
         {% block coverpage_content %}
