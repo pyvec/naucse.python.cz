@@ -1,5 +1,6 @@
 {% extends "_base.html" %}
 {% from "_material_macros.html" import material_list with context %}
+{% import "_navigation_macros.html" as nav %}
 
 {% block content %}
 
@@ -35,21 +36,14 @@
         {% endblock %}
 
         <hr class="lesson-end">
-        <div class="row prev-next">
-            <div class="col text-left">
-                <a href="{{ session_url(course.slug, session.slug) }}">← <span class="d-none d-sm-block">Lekce: {{ session.title }}</span></a>
-            </div>
 
-            <div class="col text-left">
-                <a href="{{ course_url(course) }}">↑ <span class="d-none d-sm-block">{{ course.title }}</span></a>
-            </div>
-
-            <div class="col text-right">
+        {% call nav.prevnext() %}
+            {{ nav.prev(session_url(course.slug, session.slug), session.title) }}
+            {{ nav.up(course_url(course), course.title) }}
             {% if session.next is defined and session.next != None %}
-                <a href="{{ session_url(course.slug, session.next.slug) }}"><span class="d-none d-sm-block">Lekce: {{ session.next.title }}</span> →</a>
+                {{ nav.next(session_url(course.slug, session.next.slug), session.next.title) }}
             {% endif %}
-            </div>
-        </div>
+        {% endcall %}
 
     </div>
 </div>
