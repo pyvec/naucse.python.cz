@@ -1,0 +1,37 @@
+{% from "_bytesize_icons.html" import bytesize_icon %}
+
+{%- macro icon_for_material(material) -%}
+    {%- if material.type == 'page' -%}
+        {{- bytesize_icon('chevron-right') -}}
+    {%- elif material.url_type == 'cheatsheet' -%}
+        {{- bytesize_icon('eye') -}}
+    {%- elif material.url_type == 'homework' -%}
+        {{- bytesize_icon('edit') -}}
+    {%- else %}
+        {{- bytesize_icon('link') -}}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro material_li(material) %}
+    <li>
+        {% if material.type == "page" %}
+            {% set url=lesson_url(lesson=material.page.lesson, page=material.page.slug) %}
+        {% else %}
+            {% set url=material.url %}
+        {% endif %}
+        <a href="{{ url }}">
+            {{- icon_for_material(material) -}}
+            {{- material.title -}}
+        </a>
+    </li>
+{%- endmacro -%}
+
+{%- macro material_list(materials, filter_type=None) %}
+    <ul class="material-list">
+        {% for mat in materials %}
+            {% if filter_type == None or mat.url_type == filter_type %}
+                {{ material_li(mat) }}
+            {% endif %}
+        {% endfor %}
+    </ul>
+{%- endmacro -%}

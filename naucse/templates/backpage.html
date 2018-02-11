@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% from "_material_macros.html" import material_list with context %}
 
 {% block content %}
 
@@ -21,33 +22,12 @@
 
         {% if homework_section %}
             <h2>Domácí projekty</h2>
-            <ul>
-            {% for mat in session.materials %}
-                {% if mat.url_type == "homework" %}
-                <li>
-                    <div>
-                        <a href="{{ mat.url }}">{{ mat.title }}</a>
-                    </div>
-                </li>
-                {% endif %}
-            {% endfor %}
-            </ul>
+            {{ material_list(session.materials, filter_type='homework') }}
         {% endif %}
 
         {% if link_section %}
             <h2>Zajímavé odkazy</h2>
-
-            <ul>
-            {% for mat in session.materials %}
-                {% if mat.url_type == "link" %}
-                <li>
-                    <div>
-                        <a href="{{ mat.url }}">{{ mat.title }}</a>
-                    </div>
-                </li>
-                {% endif %}
-            {% endfor %}
-            </ul>
+            {{ material_list(session.materials, filter_type='link') }}
         {% endif %}
 
         {% block coverpage_content %}

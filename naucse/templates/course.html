@@ -1,14 +1,5 @@
 {% extends "_base.html" %}
-
-{% macro session_heading(session, index, plan) %}
-    {% if plan|length > 1 %}
-        Lekce {{ index }} –
-    {% endif %}
-    {{ session.title }}
-    {% if session.date %}
-        ({{ session.date | format_date }})
-    {% endif %}
-{% endmacro %}
+{% from "_material_macros.html" import material_list with context %}
 
 {% block content %}
 
@@ -41,19 +32,17 @@
                 {% for session in plan.values() %}
                 <div class="section{{ loop.index }}">
                     <h4>
+                        {% if plan|length > 1 %}
+                            Lekce {{ loop.index }} –
+                        {% endif %}
                         <a href="{{ session_url(course.slug, session.slug) }}">
-                        {{ session_heading(session, loop.index, plan) }}
+                            {{ session.title }}
                         </a>
+                        {% if session.date %}
+                            <small>({{ session.date | format_date }})</small>
+                        {% endif %}
                     </h4>
-                    {% for mat in session.materials %}
-                        <div>
-                            {% if mat.type == "page" %}
-                                <a href="{{ lesson_url(lesson=mat.page.lesson, page=mat.page.slug) }}">{{ mat.title }}</a>
-                            {% else %}
-                                <a href="{{ mat.url }}">{{ mat.title }}</a>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
+                    {{ material_list(session.materials) }}
                 </div>
                 {% endfor %}
 
