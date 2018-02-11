@@ -3,11 +3,12 @@ import datetime
 import calendar
 
 from flask import Flask, render_template, url_for, send_from_directory
-from flask import abort, redirect
+from flask import abort, redirect, Response
 from jinja2 import StrictUndefined
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
 from pathlib import Path
+import ics
 
 from naucse import models
 from naucse.urlconverters import register_url_converters
@@ -325,3 +326,22 @@ def course_calendar(course):
                            months=list_months(course.start_date,
                                               course.end_date),
                            calendar=calendar.Calendar())
+
+
+@app.route('/<course:course>/calendar.ics')
+def course_calendar_ics(course):
+    if not course.start_date:
+        abort(404)
+    calendar = ics.Calendar()
+    for session in course.sessions.values():
+        combined = datetime.datetime.combine(session.date, datetime.time())
+        cal_event = ics.Event(
+            name = session.title,
+            begin = combined,
+            uid = url_for("session_coverpage",
+                           course=course,
+                           session=session),
+        )
+        cal_event.make_all_day()
+        calendar.events.append(cal_event)
+    return Response(str(calendar), mimetype="text/calendar")
