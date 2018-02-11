@@ -340,7 +340,8 @@ def course_calendar_ics(course):
             begin = combined,
             uid = url_for("session_coverpage",
                            course=course,
-                           session=session),
+                           session=session.slug,
+                           _external=True),
         )
         cal_event.make_all_day()
         calendar.events.append(cal_event)
