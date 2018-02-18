@@ -2,6 +2,7 @@ from collections import OrderedDict
 import copy
 import datetime
 
+import dateutil.tz
 import jinja2
 
 from naucse.modelutils import Model, YamlProperty, DataProperty, DirProperty
@@ -309,7 +310,7 @@ class Session(Model):
                 hour, minute = time.split(':')
                 hour = int(hour)
                 minute = int(minute)
-                course_time = datetime.time(hour, minute)
+                course_time = datetime.time(hour, minute, tzinfo=dateutil.tz.gettz('Europe/Prague'))
                 return datetime.datetime.combine(self.date, course_time)
         return None
 
