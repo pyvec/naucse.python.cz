@@ -301,32 +301,25 @@ class Session(Model):
     slug = DataProperty(info)
     date = DataProperty(info, default=None)
 
-    @reify
-    def start(self):
+    def _time(self, key):
         if self.date != None and self.course != None:
             default_time = self.course.info.get('default_time')
             if default_time != None:
-                start_time = default_time['start']
-                hour, minute = start_time.split(':')
+                time = default_time[key]
+                hour, minute = time.split(':')
                 hour = int(hour)
                 minute = int(minute)
-                start_time = datetime.time(hour, minute)
-                return datetime.datetime.combine(self.date, start_time)
+                course_time = datetime.time(hour, minute)
+                return datetime.datetime.combine(self.date, course_time)
         return None
+
+    @reify
+    def start(self):
+        return self._time('start')
 
     @reify
     def end(self):
-        if self.date != None and self.course != None:
-            default_time = self.course.info.get('default_time')
-            if default_time != None:
-                end_time = default_time['end']
-                hour, minute = end_time.split(':')
-                hour = int(hour)
-                minute = int(minute)
-                end_time = datetime.time(hour, minute)
-                return datetime.datetime.combine(self.date, end_time)
-        return None
-
+        return self._time('end')
 
     @reify
     def materials(self):
