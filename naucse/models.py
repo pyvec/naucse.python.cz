@@ -12,6 +12,8 @@ from naucse.markdown_util import convert_markdown
 from naucse.notebook_util import convert_notebook
 from pathlib import Path
 
+_TIMEZONE = 'Europe/Prague'
+
 
 class Lesson(Model):
     """An individual lesson stored on naucse"""
@@ -302,25 +304,22 @@ class Session(Model):
     slug = DataProperty(info)
     date = DataProperty(info, default=None)
 
-    def _time(self, key):
-        if self.date != None and self.course != None:
-            default_time = self.course.info.get('default_time')
-            if default_time != None:
-                time = default_time[key]
-                hour, minute = time.split(':')
-                hour = int(hour)
-                minute = int(minute)
-                course_time = datetime.time(hour, minute, tzinfo=dateutil.tz.gettz('Europe/Prague'))
-                return datetime.datetime.combine(self.date, course_time)
+    def _time(self, key, default_time):
+        if self.date != None and default_time != None:
+            return datetime.datetime.combine(self.date, default_time)
         return None
 
     @reify
     def start_time(self):
-        return self._time('start')
+        if self.course:
+            return self._time('start', self.course.default_start_time)
+        return None
 
     @reify
     def end_time(self):
-        return self._time('end')
+        if self.course:
+            return self._time('end', self.course.default_end_time)
+        return None
 
     @reify
     def materials(self):
@@ -431,6 +430,25 @@ class Course(Model):
         if not dates:
             return None
         return max(dates)
+
+    def _default_time(self, key):
+        default_time = self.info.get('default_time')
+        if default_time:
+            time_string = default_time[key]
+            hour, minute = time_string.split(':')
+            hour = int(hour)
+            minute = int(minute)
+            tzinfo = dateutil.tz.gettz(_TIMEZONE)
+            return datetime.time(hour, minute, tzinfo=tzinfo)
+        return None
+
+    @reify
+    def default_start_time(self):
+        return self._default_time('start')
+
+    @reify
+    def default_end_time(self):
+        return self._default_time('end')
 
 
 class RunYear(Model):
