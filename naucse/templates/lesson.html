@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% import "_navigation_macros.html" as nav %}
 
 {% block style %}
     {% if page.css %}
@@ -34,7 +35,7 @@
 
         {% if (prv is defined and prv != None) or (nxt is defined and nxt != None) %}
         <hr class="lesson-end">
-        
+
         {% if course is defined and not course.canonical %}
             <div class="alert alert-info">
                 Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
@@ -44,27 +45,20 @@
             </div>
         {% endif %}
 
-        <div class="row prev-next">
-            <div class="col text-left">
+        {% call nav.prevnext() %}
             {% if prv is defined and prv != None %}
-                <a href="{{ lesson_url(lesson=prv.page.lesson, page=prv.page.slug) }}">← <span class="d-none d-sm-block">{{ prv.title }}</span></a>
+                {{ nav.prev(lesson_url(lesson=prv.page.lesson, page=prv.page.slug), session.title) }}
             {% endif %}
-            </div>
-
-            <div class="col text-center">
             {% if session and course is defined %}
-                <a href="{{ session_url(course.slug, session.slug) }}">↑ <span class="d-none d-sm-block">Lekce: {{ session.title }}</span></a>
+                {{ nav.up(session_url(course.slug, session.slug), 'Lekce: ' + session.title ) }}
             {% endif %}
-            </div>
-
-            <div class="col text-right">
             {% if nxt is defined and nxt != None %}
-                <a href="{{ lesson_url(lesson=nxt.page.lesson, page=nxt.page.slug) }}"><span class="d-none d-sm-block">{{ nxt.title }}</span> →</a>
+                {{ nav.next(lesson_url(lesson=nxt.page.lesson, page=nxt.page.slug), nxt.title) }}
             {% elif session and course is defined %}
-                <a href="{{ session_url(course.slug, session.slug, 'back') }}"><span class="d-none d-sm-block">Závěr lekce</span> →</a>
+                {{ nav.next(session_url(course.slug, session.slug, 'back'), 'Závěr lekce') }}
             {% endif %}
-            </div>
-        </div>
+        {% endcall %}
+
         {% endif %}
 
     </div>
