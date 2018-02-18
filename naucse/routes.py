@@ -334,7 +334,11 @@ def course_calendar_ics(course):
         abort(404)
     calendar = ics.Calendar()
     for session in course.sessions.values():
-        combined = datetime.datetime.combine(session.date, datetime.time())
+        print(session, session.start)
+        if session.start == None:
+            combined = datetime.datetime.combine(session.date, datetime.time())
+        else:
+            combined = session.start
         cal_event = ics.Event(
             name = session.title,
             begin = combined,
@@ -342,6 +346,5 @@ def course_calendar_ics(course):
                            course=course,
                            session=session),
         )
-        cal_event.make_all_day()
         calendar.events.append(cal_event)
     return Response(str(calendar), mimetype="text/calendar")
