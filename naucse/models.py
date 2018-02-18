@@ -315,11 +315,11 @@ class Session(Model):
         return None
 
     @reify
-    def start(self):
+    def start_time(self):
         return self._time('start')
 
     @reify
-    def end(self):
+    def end_time(self):
         return self._time('end')
 
     @reify

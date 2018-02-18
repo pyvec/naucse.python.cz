@@ -333,15 +333,17 @@ def course_calendar_ics(course):
     if not course.start_date:
         abort(404)
     calendar = ics.Calendar()
-    for session in course.sessions.values():
-        print(session, session.start)
-        if session.start == None:
-            combined = datetime.datetime.combine(session.date, datetime.time())
+    for session in course.sessions.values():        
+        if session.start_time == None:
+            start_time = datetime.datetime.combine(session.date, datetime.time())
+            end_time = None
         else:
-            combined = session.start
+            start_time = session.start_time
+            end_time = session.end_time
         cal_event = ics.Event(
             name = session.title,
-            begin = combined,
+            begin = start_time,
+            end = end_time,
             uid = url_for("session_coverpage",
                            course=course,
                            session=session),
