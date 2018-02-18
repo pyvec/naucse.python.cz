@@ -334,12 +334,12 @@ def course_calendar_ics(course):
         abort(404)
     calendar = ics.Calendar()
     for session in course.sessions.values():        
-        if session.start_time == None:
-            start_time = datetime.datetime.combine(session.date, datetime.time())
-            end_time = None
-        else:
+        if session.start_time:
             start_time = session.start_time
             end_time = session.end_time
+        else:
+            start_time = datetime.datetime.combine(session.date, datetime.time())
+            end_time = None
         cal_event = ics.Event(
             name = session.title,
             begin = start_time,

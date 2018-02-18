@@ -305,7 +305,7 @@ class Session(Model):
     date = DataProperty(info, default=None)
 
     def _time(self, key, default_time):
-        if self.date != None and default_time != None:
+        if self.date and default_time:
             return datetime.datetime.combine(self.date, default_time)
         return None
 
