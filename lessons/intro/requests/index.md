@@ -47,7 +47,8 @@ Příklady použití pro další HTTP metody najdete v [dokumentaci].
 
 ## Použití session
 
-Hlavně v budoucnu se nám bude hodit použití tzv. *session*.
+Hlavně v budoucnu se nám bude hodit použití tzv.
+[*session*](http://docs.python-requests.org/en/master/user/advanced/#session-objects).
 
 Session má několik výhod.
 První je, že využívá na pozadí jedno otevřené HTTP spojení a poskytuje tak
@@ -75,7 +76,7 @@ k testování HTTP dotazů:
 ## Twitter API
 
 Pro reálné použití si ukážeme, jak se dá pomocí requests získat seznam tweetů.
-Z Twitteru nebudeme samozřejmě nic parsovat, ale použijeme jejich [API].
+Nebudeme samozřejmě nic parsovat z HTML stránek, ale použijeme [API Twitteru].
 
 ```pycon
 >>> r = session.get('https://api.twitter.com/1.1/search/tweets.json')
@@ -87,9 +88,11 @@ Jak můžete vidět v odpovědi, Twitter API neumožňuje data číst bez autent
 Jak se autentizovat byste při troše hledání našli v dokumentaci, ale protože
 tu nevyučujeme úvod do OAuthu, ale Python, rozhodli jsme se vám to zjednodušit.
 
-Po přihlášení na Twitter (pokud nemáte účet, můžete si vytvořit nějaký *dummy*
-účet, ale budete potřebovat ověřitelné telefonní číslo)
-jděte na [apps.twitter.com] a vytvořte aplikaci (URL si můžete vymyslet).
+Nemáte-li na Twitter účet, vytvořte si ho. Můžete vytvořit nějaký *dummy* účet,
+který dál nebudete používat. Budete ale potřebovat ověřitelné telefonní číslo.
+
+Po přihlášení na Twitter jděte na [apps.twitter.com] a vytvořte aplikaci
+(URL si můžete vymyslet, třeba `http://invalid`).
 Po vytvoření najdete na kartě *Keys and Access Tokens* **API Key** a **API Secret**.
 Pozor, jedná se prakticky o hesla k vašemu Twitter účtu,
 a proto by je nikdo kromě vás neměl vidět.
@@ -133,7 +136,8 @@ hlavičky.
 `requests.auth.HTTPBasicAuth` zde dle specifikace zakóduje jméno a heslo pomocí
 algoritmu base64 a přidá hlavičku `Authorization`.
 
-Ve skutečnosti je základní HTTP přihlášení tak běžné, že lze použít zkratku:
+Základní HTTP přihlášení je tak běžné, že pro něj Requests mají zkratku –
+místo `HTTPBasicAuth` se dá použít jen dvojice (jméno, heslo):
 
 ```pycon
 >>> r = session.post('https://api.twitter.com/oauth2/token',
@@ -153,7 +157,8 @@ ale je možné nastavit autentizační funkci pro celou session.
 >>> session.auth = bearer_auth
 ```
 
-Pak už by mělo API fungovat:
+Pak už by mělo API fungovat.
+Použijeme [API pro vyhledávání tweetů][Search API]:
 
 ```pycon
 >>> r = session.get(
@@ -167,7 +172,7 @@ Once a framework decides to abstract the HTML layer from you. Customizing your U
 ...
 ```
 
-Zde je pro zjednodušení k dispozici celá funkce pro vytvoření autentizované
+Zde je pro zjednodušení k dispozici celá funkce pro vytvoření autentizované
 *session*:
 
 ```python
@@ -190,12 +195,13 @@ def twitter_session(api_key, api_secret):
     return session
 ```
 
-[API]: https://dev.twitter.com/rest/public
+[API Twitteru]: https://dev.twitter.com/rest/public
 [apps.twitter.com]: https://apps.twitter.com/
+[Search API]: https://developer.twitter.com/en/docs/tweets/search/api-reference/get-search-tweets.html
 
 ### GitHub API
 
-Podíváme se i na GitHub API, které má jednodušší autentizaci (od GitHubu přímo
+Podíváme se i na [GitHub API], které má jednodušší autentizaci (od GitHubu přímo
 získáte token). Stačí jít do [nastavení] a vyrobit nový token
 (zatím není třeba zaškrtávat žádná oprávnění).
 Token je opět třeba patřičně chránit.
@@ -217,7 +223,7 @@ Tímto kódem lze například získat popis přihlášeného uživatele, tedy se
 ```
 
 > [note]
-> Všimněte si hlavičky `User-Agent`. Ta je potřeba při komunikaci s GitHub API
+> Všimněte si hlavičky `User-Agent`. Ta je potřeba při komunikaci s GitHub API
 > explicitně nastavit. Nastavení na objektu session zajistí, že tato hlavička
 > bude ve všech požadavcích.
 
@@ -256,6 +262,7 @@ My ale věříme, že ji odebrat nechcete :)
 
 [nastavení]: https://github.com/settings/tokens
 [Dokumentace]: https://developer.github.com/v3/
+[GitHub API]: https://developer.github.com/v3
 
 
 ### Chraňte své tokeny
@@ -279,7 +286,8 @@ A následně konfiguraci načtete pomocí modulu
 ```pycon
 >>> import configparser
 >>> config = configparser.ConfigParser()
->>> config.read('auth.cfg')
+>>> with open('auth.cfg') as f:
+...     config.read_file(f)
 >>> config['twitter']['key']
 D4HJp6PKmpon9eya1b2c3d4e5
 ```
@@ -287,6 +295,9 @@ D4HJp6PKmpon9eya1b2c3d4e5
 Do souboru `.gitignore` pak musíte přidat název ignorovaného souboru, např.:
 
     auth.cfg
+
+Ověřte si, že git soubor `auth.cfg` opravdu ignoruje, t.j. soubor se neukáže
+ve výstupu `git status`.
 
 Jelikož ostatní tento konfigurační soubor neuvidí,
 je vhodné jim vysvětlit, jak takový soubor (s jejich údaji) vytvořit.

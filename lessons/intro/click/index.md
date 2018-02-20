@@ -43,9 +43,10 @@ Takto jednoduše se dá vytvořit aplikace s přepínači:
 import click
 
 @click.command()
-@click.option('--count', default=1, help='Number of greetings.')
-@click.option('--name', prompt='Your name',
-                help='The person to greet.')
+@click.option('--count', default=1,  metavar='COUNT',
+              help='Number of greetings.')
+@click.option('--name', prompt='Your name', metavar='NAME',
+              help='The person to greet.')
 def hello(count, name):
     """Simple program that greets NAME for a total of COUNT times."""
     for x in range(count):
@@ -53,6 +54,15 @@ def hello(count, name):
 
 if __name__ == '__main__':
     hello()
+```
+
+Vyzkoušejte si ji! Máte-li ji uloženou jako `hello.py`, zkuste:
+
+```console
+$ python hello.py
+$ python hello.py --help
+$ python hello.py --name Pythonista
+$ python hello.py --count 5
 ```
 
 
@@ -63,7 +73,7 @@ click zpracuje argumenty příkazové řádky a zavolá původní funkci
 s příslušnými pythonními hodnotami.
 Proto se dává do bloku `if __name__ == '__main__':`, který se spustí, jen
 když se pythonní soubor spoustí „přímo“.
-Když je importován, tenhle blok se neprovede.
+Když je soubor importován, tenhle blok se neprovede.
 
 Dekorátory `@click.option` a `@click.argument` pak přidávají přepínače
 a argumenty.
@@ -123,7 +133,7 @@ Přepínač `--help` přidává click sám.
 
 Kromě přepínačů podporuje click i *argumenty*.
 Přepínače musí uživatel na řádce pojmenovat; argumenty se zadávají pozičně.
-Používají se ve dvou případech: pro povinné argumenty a pro argumenty, kterých
+Používají se ve dvou případech: pro povinné informace a pro argumenty, kterých
 může být libovolný počet.
 Na všechno ostatní radši použijte přepínače.
 
@@ -131,12 +141,14 @@ Na všechno ostatní radši použijte přepínače.
 @click.command()
 @click.argument('directory')
 def cd(directory):
+    """Change the current directory"""
     click.echo('Changing to directory {}'.format(directory))
 
 @click.command()
 @click.argument('source', nargs=-1)
 @click.argument('destination', nargs=1)
 def mv(source, destination):
+    """Move any number of files to one destination"""
     for filename in source:
         click.echo('Moving {} to {}'.format(filename, destination))
 ```
@@ -145,20 +157,26 @@ def mv(source, destination):
 ## Soubory
 
 Má-li uživatel zadat jméno souboru, nepoužívejte řetězce, ale speciální typ
-`click.File()`.
+[`click.File()`](http://click.pocoo.org/5/api/#click.File).
 Click za vás soubor automaticky otevře a zavře.
 Kromě toho podporuje unixovskou konvenci, že `-` znamená standardní
 vstup/výstup.
+
+Argument pro `File` je mód, ve kterém se soubor otevírá, podobně jako pro
+funkci [`open`](https://docs.python.org/3/library/functions.html#open):
+`'r'` pro čtení, `'w'` pro zápis.
 
 ```python
 @click.command()
 @click.argument('files', nargs=-1, type=click.File('r'))
 def cat(files):
+    """Print out the contents of the given files"""
     for file in files:
         print(file.read(), end='')
 ```
 
-Existuje i varianta `click.Path()`, která soubor neotvírá.
+Existuje i varianta [`click.Path()`](http://click.pocoo.org/5/api/#click.Path),
+která soubor neotvírá. Pomocí ní jde např. zadat jméno adresáře.
 
 
 ## Podpříkazy
