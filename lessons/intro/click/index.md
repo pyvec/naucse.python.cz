@@ -3,7 +3,7 @@ click
 
 {% if var('mi-pyt') %}
 Nechme internety na chvíli být a pojďme se podívat na úplně jinou knihovnu,
-[click](http://click.pocoo.org/5/).
+[click](http://click.pocoo.org/6/).
 {% endif %}
 
 Knihovna `click` slouží k vytváření rozhraní pro příkazovou řádku
@@ -157,7 +157,7 @@ def mv(source, destination):
 ## Soubory
 
 Má-li uživatel zadat jméno souboru, nepoužívejte řetězce, ale speciální typ
-[`click.File()`](http://click.pocoo.org/5/api/#click.File).
+[`click.File()`](http://click.pocoo.org/6/api/#click.File).
 Click za vás soubor automaticky otevře a zavře.
 Kromě toho podporuje unixovskou konvenci, že `-` znamená standardní
 vstup/výstup.
@@ -175,7 +175,7 @@ def cat(files):
         print(file.read(), end='')
 ```
 
-Existuje i varianta [`click.Path()`](http://click.pocoo.org/5/api/#click.Path),
+Existuje i varianta [`click.Path()`](http://click.pocoo.org/6/api/#click.Path),
 která soubor neotvírá. Pomocí ní jde např. zadat jméno adresáře.
 
 
@@ -214,5 +214,5 @@ abyste věděli, co od téhle knihovny očekávat.
 Click má velice dobrou [dokumentaci], ve které najdete detaily i všechny
 ostatní možnosti.
 
-[dokumentaci]: http://click.pocoo.org/5/
+[dokumentaci]: http://click.pocoo.org/6/
 
