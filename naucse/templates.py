@@ -171,6 +171,13 @@ def vars_functions(vars):
 
 
 @template_filter()
+def format_time(time):
+    if time.second:
+        return '{d.hour}:{d.minute:02}:{d.second:02}'.format(d=time)
+    return '{d.hour}:{d.minute:02}'.format(d=time)
+
+
+@template_filter()
 def format_date(date, relative_to=None):
     return '{d.day}. {d.month}. {d.year}'.format(d=date)
 
