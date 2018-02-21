@@ -59,7 +59,7 @@ když uděláš něco špatně.
 V průběhu kurzu jich uvidíš ještě spoustu,
 takže si ji dobře prohlédni, ať ji příště poznáš.
 
-Pokud ses dostala až sem, gratuluji!
+Pokud ses dostal{{a}} až sem, gratuluji!
 Python máš nejen nainstalovaný, ale taky ti funguje.
 Stačí ho už jen zavřít a pak opustit i samotnou příkazovou řádku.
 V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.

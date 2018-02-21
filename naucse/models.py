@@ -184,7 +184,11 @@ def material(root, path, info):
         page = lesson.pages[info.get("page", "index")]
         return PageMaterial(root, path, page, info.get("type", "lesson"), info.get("title"))
     elif "url" in info:
-        return UrlMaterial(root, path, info["url"], info["title"], info.get("type"))
+        url = info["url"]
+        if url:
+            return UrlMaterial(root, path, url, info["title"], info.get("type"))
+        else:
+            return SpecialMaterial(root, path, info["title"], info.get("type"))
     else:
         raise ValueError("Unknown material type: {}".format(info))
 
@@ -243,6 +247,17 @@ class UrlMaterial(Material):
     def __init__(self, root, path, url, title, url_type):
         super().__init__(root, path, url_type)
         self.url = url
+        self.title = title
+
+
+class SpecialMaterial(Material):
+    prev = None
+    next = None
+    type = "special"
+    has_navigation = False
+
+    def __init__(self, root, path, title, url_type):
+        super().__init__(root, path, url_type)
         self.title = title
 
 
