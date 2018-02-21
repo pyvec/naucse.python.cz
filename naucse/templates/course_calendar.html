@@ -28,10 +28,14 @@
     {% if course.subtitle is defined and course.subtitle != None %}
         <h2>{{ course.subtitle }}</h2>
     {% endif%}
-    <div>
-      Přidej si kurz do svého kalendáře:
-      <a href="{{ url_for('course_calendar_ics', course=course) }}">iCal</a>
-    </div>
+    {% if course.default_start_time %}
+        <div>
+            Přidej si kurz do svého kalendáře:
+            <a href="{{ url_for('course_calendar_ics', course=course) }}">iCal</a>
+        </div>
+    {% else %}
+        <!-- iCal link missing because course doesn't have info about start/end times. -->
+    {% endif%}
     {% if course.start_date %}
         {% for year, month in months %}
             <h3 class="calendar-heading">

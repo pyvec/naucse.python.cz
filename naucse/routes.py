@@ -334,15 +334,19 @@ def course_calendar_ics(course):
         abort(404)
     calendar = ics.Calendar()
     for session in course.sessions.values():
-        combined = datetime.datetime.combine(session.date, datetime.time())
+        if session.start_time:
+            start_time = session.start_time
+            end_time = session.end_time
+        else:
+            abort(404)
         cal_event = ics.Event(
             name = session.title,
-            begin = combined,
+            begin = start_time,
+            end = end_time,
             uid = url_for("session_coverpage",
                            course=course,
                            session=session.slug,
                            _external=True),
         )
-        cal_event.make_all_day()
         calendar.events.append(cal_event)
     return Response(str(calendar), mimetype="text/calendar")

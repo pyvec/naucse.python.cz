@@ -1,6 +1,8 @@
 from collections import OrderedDict
 import copy
+import datetime
 
+import dateutil.tz
 import jinja2
 
 from naucse.modelutils import Model, YamlProperty, DataProperty, DirProperty
@@ -9,6 +11,8 @@ from naucse.templates import setup_jinja_env, vars_functions
 from naucse.markdown_util import convert_markdown
 from naucse.notebook_util import convert_notebook
 from pathlib import Path
+
+_TIMEZONE = 'Europe/Prague'
 
 
 class Lesson(Model):
@@ -294,10 +298,11 @@ def merge_dict(base, patch):
 
 class Session(Model):
     """An ordered collection of materials"""
-    def __init__(self, root, path, base_course, info, index):
+    def __init__(self, root, path, base_course, info, index, course=None):
         super().__init__(root, path)
         base_name = info.get('base')
         self.index = index
+        self.course = course
         if base_name is None:
             self.info = info
         else:
@@ -313,6 +318,23 @@ class Session(Model):
     title = DataProperty(info)
     slug = DataProperty(info)
     date = DataProperty(info, default=None)
+
+    def _time(self, key, default_time):
+        if self.date and default_time:
+            return datetime.datetime.combine(self.date, default_time)
+        return None
+
+    @reify
+    def start_time(self):
+        if self.course:
+            return self._time('start', self.course.default_start_time)
+        return None
+
+    @reify
+    def end_time(self):
+        if self.course:
+            return self._time('end', self.course.default_end_time)
+        return None
 
     @reify
     def materials(self):
@@ -352,7 +374,7 @@ def _get_sessions(course, plan):
     result = OrderedDict()
     for index, sess_info in enumerate(plan):
         session = Session(course.root, course.path, course.base_course,
-                          sess_info, index=index)
+                          sess_info, index=index, course=course)
         result[session.slug] = session
 
     sessions = list(result.values())
@@ -423,6 +445,25 @@ class Course(Model):
         if not dates:
             return None
         return max(dates)
+
+    def _default_time(self, key):
+        default_time = self.info.get('default_time')
+        if default_time:
+            time_string = default_time[key]
+            hour, minute = time_string.split(':')
+            hour = int(hour)
+            minute = int(minute)
+            tzinfo = dateutil.tz.gettz(_TIMEZONE)
+            return datetime.time(hour, minute, tzinfo=tzinfo)
+        return None
+
+    @reify
+    def default_start_time(self):
+        return self._default_time('start')
+
+    @reify
+    def default_end_time(self):
+        return self._default_time('end')
 
 
 class RunYear(Model):
