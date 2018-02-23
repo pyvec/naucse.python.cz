@@ -540,7 +540,7 @@ Kdyby komentáře nestačily, jsou k Pongu připravené
 i [podrobné materiály]({{ lesson_url('projects/pong') }}).
 
 To, co jsme tu probral{{gnd('i', 'y', both='i')}} a pár věcí navíc,
-je shrnuto v [taháku na Pyglet](https://github.com/pyvec/cheatsheets/raw/master/pyglet/pyglet-basics-cs.pdf),
+je shrnuto v [taháku na Pyglet](https://pyvec.github.io/cheatsheets/pyglet/pyglet-basics-cs.pdf),
 který si můžeš stáhnout a vytisknout.
 
 A chceš-li se do Pygletu ponořit hlouběji,

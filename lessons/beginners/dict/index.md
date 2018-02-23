@@ -213,7 +213,7 @@ způsoby vytvoření `dict`.
 
 Chceš-li mít všechny triky, které  slovníky umí,
 pěkně pohromadě, můžeš si stáhnout
-[Slovníkový tahák](https://github.com/pyvec/cheatsheets/raw/master/dicts/dicts-cs.pdf).
+[Slovníkový tahák](https://pyvec.github.io/cheatsheets/dicts/dicts-cs.pdf).
 
 Kompletní popis slovníků najdeš
 v [dokumentaci](https://docs.python.org/3.0/library/stdtypes.html#mapping-types-dict)
