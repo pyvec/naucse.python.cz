@@ -38,6 +38,21 @@ Nainstalovanou aplikaci spustíš následovně:
 * Program vypíše adresu (např. `http://0.0.0.0:8003/`); tu navštiv v prohlížeči.
 
 
+## Testy
+
+Chceš-li pustit testy, nainstaluj si závislosti:
+
+```console
+$ python -m pip install -r test_requirements.txt
+```
+
+a testy pusť:
+
+```console
+$ python -m pytest test_naucse
+```
+
+
 ## Licence
 
 Kód je k dispozici pod licencí MIT, viz soubor [LICENSE.MIT].
