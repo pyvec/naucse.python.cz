@@ -90,7 +90,7 @@ pin.value(1)
 Pro zhasnutí zadejte `pin.value(0)`. (Opět jde o volání metody, není to `pin.value = 0`.)
 
 `Pin(14)` odpovídá pinu označenému `D5` – číslování, které používá procesor (a MicroPython), se bohužel liší od toho, které používá deska.
-Odpovídající si označení lze zjistit z [taháku](https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf).
+Odpovídající si označení lze zjistit z [taháku](https://pyvec.github.io/cheatsheets/micropython/nodemcu-cs.pdf).
 
 Zkuste zajistit, aby dioda svítila, právě pokud je stisknuté tlačítko FLASH.
 
