@@ -25,7 +25,7 @@ A k naplánování celé téhle cesty stačí napsat na obálku krátkou adresu
 
 Podobně cestují informace v internetu: z laptopu přes Wi-Fi do *routeru*,
 odtud kabelem k poskytovateli připojení, tlustším kabelem do české
-„páteřní sítě“, podmořským kabelem třeba do Ameriky, … a nakonec k počítači,
+„páteřní sítě“, podmořským kabelem třeba do Ameriky… a nakonec k počítači,
 se kterým jsem chtěl komunikovat.
 
 Většinou můj laptop takhle komunikuje se *serverem*, počítačem, který
@@ -62,7 +62,7 @@ Jméno serveru je jako poštovní adresa – existuje počítač, který se jmen
 aby se k tomuto počítači nakonec dostala.
 
 > [note]
-> „Skutečná“ je adresa počítače, tzv. IP adresa, je číselná – například
+> „Skutečná“ adresa počítače, tzv. IP adresa, je číselná – například
 > `151.101.37.147`.
 > Existuje ale systém, jak jméno serveru na takovou *IP adresu* přeložit.
 > Tenhle systém se jmenuje DNS a – abychom zůstali u přirovnání k poště –
@@ -89,7 +89,7 @@ kde jsou nadpisy a kde odstavce, jak má stránka vypadat, a tak dále.
 Ale v odpovědi může být místo stránky i cokoli jiného – obrázek, video, nebo
 jiná data.
 
-Veškerá komunikace přes HTTP funguje právě takto: pošle se požadavek,
+Veškerá komunikace přes HTTP funguje právě takto: pošle se požadavek
 a přijde na něj odpověď.
 
 A jak tyhle zprávy vypadají?
@@ -168,7 +168,7 @@ Co přesně která metoda na jaké adrese dělá, to záleží na autorovi strá
 * `PUT` přidá novou stránku (nebo jiný objekt),
 * `DELETE` něco smaže.
 
-Seznam všech metod kdyžtak najdeš ve
+Seznam všech metod je ve
 [specifikaci](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html).
 
 U složitějších požadavků se dají na server poslat i informace:
