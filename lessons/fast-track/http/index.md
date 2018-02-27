@@ -63,7 +63,7 @@ aby se k tomuto počítači nakonec dostala.
 
 > [note]
 > „Skutečná“ adresa počítače, tzv. IP adresa, je číselná – například
-> `151.101.37.147`.
+> `151.101.37.147` nebo `2a04:4e42:9::403`.
 > Existuje ale systém, jak jméno serveru na takovou *IP adresu* přeložit.
 > Tenhle systém se jmenuje DNS a – abychom zůstali u přirovnání k poště –
 > funguje podobně jako seznamy poštovních směrovacích čísel.
