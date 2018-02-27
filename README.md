@@ -12,7 +12,7 @@ Chceš-li server spustit na svém počítači, např. proto, že se chceš zapoj
 nebo abys ho měl/a k dispozici i bez připojení k Intenetu, je potřeba ho
 nejdřív nainstalovat:
 
-* Vytvoř a aktivuj si [virtuální prostředí](http://naucse.python.cz/lessons/beginners/install/).
+* Vytvoř a aktivuj si [virtuální prostředí](http://naucse.python.cz/lessons/beginners/install/) v Pythonu 3.6. (Verze 3.5 by teoreticky měla taky fungovat, ale cokoli staršího fungovat nebude.)
 * Přepni se do adresáře s kódem projektu.
 * Nainstaluj závislosti:
    ```console
