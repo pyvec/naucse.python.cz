@@ -61,7 +61,7 @@ V nové příkazové řádce zadej:
 > git config --global gui.encoding utf-8
 ```
 
-A teď pokračuj v sekci [Nastavením](#config) níže – macOS přeskoč.
+A teď pokračuj v sekci [Nastavení](#config) níže – macOS přeskoč.
 
 
 ## macOS
