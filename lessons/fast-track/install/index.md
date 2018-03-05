@@ -17,7 +17,7 @@ Použití prostředí má dvě hlavní výhody:
 
 Následují zrychlené instrukce; předpokládám, že Python (3.4 a vyšší)
 už máš nainstalovaný a že znáš základy práce
-s [příkazovou řádkou]({{ lesson_url('beginners/cmdline') }})
+s [příkazovou řádkou]({{ lesson_url('beginners/cmdline') }}).
 
 Podrobný postup instalace Pythonu a vytvoření prostředí je je popsán
 v příslušné [lekci pro začátečníky]({{ lesson_url('beginners/install') }}).
