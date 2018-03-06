@@ -17,8 +17,8 @@ a vrhneme se rovnou na příklad.
 
 > [note]
 > Pokud základy neznáte, můžete se podívat na
-> [začátečnickou lekci]({{ lesson_url('projects/github-api') }}),
-> která vysvětluje o trošičku víc.
+> [shrnutí pro začátečníky](../../fast-track/http/),
+> která vysvětluje vše potřebné.
 
 ```pycon
 >>> import getpass
