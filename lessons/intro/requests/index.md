@@ -18,7 +18,7 @@ a vrhneme se rovnou na příklad.
 > [note]
 > Pokud základy neznáte, můžete se podívat na
 > [shrnutí pro začátečníky](../../fast-track/http/),
-> která vysvětluje vše potřebné.
+> které vysvětluje vše potřebné.
 
 ```pycon
 >>> import getpass

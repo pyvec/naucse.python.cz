@@ -103,7 +103,7 @@ Flask ukáže *traceback* podobný tomu z příkazové řádky a navíc vám na
 Bezpečnostní PIN k této konzoli najdete v terminálu, kde server běží.
 
 Ladící režim je užitečný, ale nebezpečný – návštěvníkům stránky může
-(po prolomení celkem jednoduchého „hesla“) umožnit spustit jakýkoli Pythonní kód.
+(po prolomení celkem jednoduchého „hesla“) umožnit spustit jakýkoli pythonní kód.
 Navíc aplikaci zpomaluje.
 Používejte ho proto *pouze* na svém počítači.
 
