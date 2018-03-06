@@ -17,7 +17,7 @@ a vrhneme se rovnou na příklad.
 
 > [note]
 > Pokud základy neznáte, můžete se podívat na
-> [shrnutí pro začátečníky](../../fast-track/http/),
+> [shrnutí pro začátečníky]({{ lesson_url('fast-track/http') }}),
 > které vysvětluje vše potřebné.
 
 ```pycon
