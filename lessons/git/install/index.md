@@ -75,7 +75,8 @@ Jinak ho nainstaluj pomocí Homebrew:
 $ brew install git
 ```
 
-Nainstalovanému Gitu je ještě potřeba nastavit editor (zadej nano, i když sis v rámci instalace editoru nainstalovala např. Atom).
+Nainstalovanému Gitu je ještě potřeba nastavit editor (zadej `nano`,
+i když sis v rámci instalace editoru nainstaloval{{a}} např. Atom).
 Dělá se to tímto příkazem:
 
 ```console
