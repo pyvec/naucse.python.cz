@@ -9,8 +9,8 @@ Nejprve proto uložte celý projekt do Gitu a nahrajte na GitHub.
 Potom se zaregistrujte na
 [www.pythonanywhere.com](https://www.pythonanywhere.com/) a vyberte
 Beginner Account.
-Po přihlášení se ukáže záložka *Consoles*, kde vytvoříme "Bash" konzoli.
-V té vytvořte a aktivujte virtuální prostředí a nainstalujte Flask (plus
+Po přihlášení se ukáže záložka *Consoles*, kde vytvořte "Bash" konzoli.
+V té vytvořte a aktivujte virtuální prostředí a nainstalujte Flask (plus
 případně další závislosti nebo jiný webový framework).
 
 PythonAnywhere používá specificky nastavený Linux,
@@ -36,7 +36,7 @@ $ cat ~/.ssh/id_rsa.pub
 
 Obsah souboru `~/.ssh/id_rsa.pub` je pak potřeba přidat na GitHub v osobním
 nastavení v sekci "SSH and GPG Keys".
-Pak můžeme klonovat přes SSH:
+Pak můžete klonovat přes SSH:
 
 ```console
 $ git clone git@github.com:<github-username>/<github-repo>.git
@@ -47,9 +47,11 @@ Zbývá nastavit, aby PythonAnywhere tento kód spustil jako webovou aplikaci.
 Přejděte na stránkách PythonAnywhere do *Dashboard* do záložky *Web*,
 a vytvořte novou aplikaci.
 V nastavení zvolte *Manual Configuration* a *Python 3.6*.
+(Volby jiné než *Manual Configuration* automaticky vytvoří kostru aplikace.
+Vy ale už aplikaci máte hotovou, takže je nepotřebujete.)
 
 V konfiguraci vzniklé webové aplikace je potřeba nastavit *Virtualenv*
-na cestu k virtuálnímu prostředí (`/home/<jméno>/__venv__`),
+na cestu k virtuálnímu prostředí (<code>/home/<var>&lt;uživatelské-jméno&gt;</var>/__venv__</code>),
 a obsah *WSGI Configuration File* přepsat.
 To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor)
 nebo zpět v bashové konzoli pomocí editoru jako `vi` nebo `nano`.
@@ -65,12 +67,15 @@ if path not in sys.path:
 from <jméno-souboru> import app as application
 ```
 
-(Za `<uživatelské-jméno>`, `<jméno-adresáře>` a `<jméno-souboru>` je samozřejmě potřeba doplnit
+(Za <code><var>&lt;uživatelské-jméno&gt;</var></code>,
+<code><var>&lt;jméno-adresáře&gt;</var></code> a
+<code><var>&lt;jméno-souboru&gt;</var></code>
+je samozřejmě potřeba doplnit
 vaše údaje. Jméno souboru je zde bez přípony `.py`.)
 
 Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce *Web*
-a na adrese `<uživatelské-jméno>.pythonanywhere.com` si ji můžete
-prohlédnout.
+a na adrese <code><var>&lt;uživatelské-jméno&gt;</var>.pythonanywhere.com</code>
+si ji můžete prohlédnout.
 
 [Python Anywhere]: https://www.pythonanywhere.com/
 
@@ -85,8 +90,8 @@ a editovat ve webové konzoli.
 > Doporučujeme pro tyto potřeby stejně raději nepoužívat API klíče
 > k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
 > Twitter vyžaduje před vydáním API klíčů zadání a potvrzení telefonního čísla.
-> GitHub povoluje všem vytvořit si jeden účet pro robota, ale musí to mít
-> napsané v popisu.
+> GitHub povoluje všem vytvořit si jeden účet pro automatické operace, ale
+> takový účet musí mít napsané v popisu, že je robot.
 
 
 ### Aktualizace
