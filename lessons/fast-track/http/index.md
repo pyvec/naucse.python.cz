@@ -32,6 +32,7 @@ Většinou můj laptop takhle komunikuje se *serverem*, počítačem, který
 se stará o sdělování informací.
 Každou webovou stránku spravuje takový server.
 
+{{ anchor('url-anatomy') }}
 ## Webové adresy
 
 Jak taková komunikace vypadá si ukážeme na příkladu –
@@ -45,6 +46,10 @@ Taková webová adresa – technicky zvaná URL (*Uniform Resource Locator*,
 „jednotná adresa zdroje“) přesně určuje, jak se má prohlížeč dostat
 k informacím, které má zobrazit.
 
+{{ figure(
+    img=static('url-anatomy.svg'),
+    alt='http://naucse.python.cz/lessons/fast-track/http/'
+) }}
 
 Začátek adresy, `http://`, je jméno *protokolu* (angl. *protocol name*).
 Protokol určuje způsob, *jak* se k daným informacím dostat.
