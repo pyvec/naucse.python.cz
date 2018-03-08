@@ -36,7 +36,7 @@ Tělo funkce může mít více příkazů, včetně podmínek, cyklů a podobně
 def napis_hlasku(nazev, skore):
     "Popíše skóre. Název má být přivlastňovací přídavné jméno."
 
-    print(nazev, 'skóre je', str(skore))
+    print(nazev, 'skóre je', skore)
     if skore > 1000:
         print('Světový rekord!')
     elif skore > 100:
@@ -61,7 +61,7 @@ můžeš si představit, že funkce dělá následující:
 nazev = 'Tvoje'
 skore = 256
 
-print(nazev, 'skóre je', str(skore))
+print(nazev, 'skóre je', skore)
 if skore > 1000:
     ... # atd.
 ```
@@ -221,7 +221,7 @@ print(obsah)
 print(a)
 ```
 
-A tady jsou f:
+Zkus odpovědět na tyto otázky:
 
 * Je proměnná `pi` lokální, nebo globální?
 * Je proměnná `obsah` lokální, nebo globální?
