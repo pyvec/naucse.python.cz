@@ -121,7 +121,7 @@ Předchozí program se dá napsat i takto:
 from math import pi
 
 def obsah_elipsy(a, b):
-    print('Obsah je', pi * a * b)
+    print('Obsah je', pi * a * b)  # Pozor, `print` místo `return`!
 
 obsah_elipsy(3, 5)
 ```
@@ -139,6 +139,37 @@ print(objem_eliptickeho_valce(3, 5, 3))
 ```
 
 ... ale kdyby výsledek přímo vypsala, nešlo by to.
+
+Další důvod, proč hodnoty spíš vracet než vypisovat, je ten, že jedna funkce se
+dá použít v různých situacích.
+Funkci s `print` by nešlo rozumně použít tehdy, když nás příkazová
+řádka vůbec nezajímá.
+Třeba v grafické hře, webové aplikaci, nebo pro ovládání robota.
+
+Podobně je to se vstupem: když použiju v rámci své funkce `input`, bude se
+moje funkce dát použít jen v situacích, kdy je u počítače klávesnice a za ní
+člověk.
+Proto je lepší funkcím potřebné informace předávat jako argumenty
+a `input` (nebo textové políčko či měření z čidla robota) nemít ve funkci,
+ale vně:
+
+```python
+from math import pi
+
+def obsah_elipsy(a, b):
+    """Vrátí obsah elipsy s poloosami daných délek"""
+    # Jen samotný výpočet:
+    return pi * a * b
+
+# print a input jsou "venku":
+x = input('Zadej délku poloosy 1: ')
+y = input('Zadej délku poloosy 2: ')
+print('Obsah je', obsah_elipsy(x, y))
+```
+
+Samozřejmě existují výjimky: funkce která přímo vytváří textový výpis,
+může používat `print`; funkce která načítá textové informace zase `input`.
+Když ale funkce něco počítá, je dobré v ní `print` ani `input` nemít.
 
 
 ## None
