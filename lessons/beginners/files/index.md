@@ -172,7 +172,7 @@ Podobně jako s `finally` se zavře vždycky
 – ať už blok `with` skončil normálně,
 výjimkou, nebo, jako tady, „vyskočením” ven.
 
-V naprosté většině příkazů je pro práci se soubory
+V naprosté většině případů je pro práci se soubory
 nejlepší použít `with`.
 
 
