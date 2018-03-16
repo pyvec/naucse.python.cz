@@ -3,7 +3,7 @@ import datetime
 import calendar
 
 from flask import Flask, render_template, url_for, send_from_directory
-from flask import abort, redirect, Response
+from flask import abort, Response
 from jinja2 import StrictUndefined
 from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy

@@ -6,7 +6,7 @@ import pygments
 
 import pytest
 
-from naucse.notebook_util import convert_notebook
+from naucse.utils.notebook import convert_notebook
 
 
 FIXTURES = 'test_naucse/fixtures'
