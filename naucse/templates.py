@@ -3,7 +3,7 @@ from pathlib import Path
 
 from jinja2 import Markup, contextfilter
 
-from naucse import markdown_util
+import naucse.utils.markdown
 
 
 template_filters = {}
@@ -36,7 +36,7 @@ def setup_jinja_env(jinja_env):
 
 @template_filter()
 def markdown(text, inline=False):
-    return markdown_util.convert_markdown(text, inline=inline)
+    return naucse.utils.markdown.convert_markdown(text, inline=inline)
 
 
 @template_filter()
@@ -83,7 +83,7 @@ def solution(ctx, text):
                                      page=ctx['page'].slug,
                                      solution=solution_index)
 
-    solution = markdown_util.convert_markdown(text)
+    solution = naucse.utils.markdown.convert_markdown(text)
     solutions.append(solution)
 
     t = Markup(textwrap.dedent("""

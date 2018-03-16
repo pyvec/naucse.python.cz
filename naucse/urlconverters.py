@@ -36,7 +36,7 @@ class CourseConverter(ModelConverter):
 
     def to_url(self, value):
         if isinstance(value, str):
-            if "/" not in value: # XXX
+            if "/" not in value:  # XXX
                 value = "course/"+value
             value = self.to_python(value)
         return value.slug

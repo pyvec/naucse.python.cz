@@ -1,15 +1,14 @@
 from collections import OrderedDict
-import copy
 import datetime
 
 import dateutil.tz
 import jinja2
 
-from naucse.modelutils import Model, YamlProperty, DataProperty, DirProperty
-from naucse.modelutils import reify
+from naucse.utils.models import Model, YamlProperty, DataProperty, DirProperty
+from naucse.utils.models import reify
 from naucse.templates import setup_jinja_env, vars_functions
-from naucse.markdown_util import convert_markdown
-from naucse.notebook_util import convert_notebook
+from naucse.utils.markdown import convert_markdown
+from naucse.utils.notebook import convert_notebook
 from pathlib import Path
 
 _TIMEZONE = 'Europe/Prague'
