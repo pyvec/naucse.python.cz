@@ -273,4 +273,4 @@ z ní dědit má.
 A to je zatím o třídách vše. Už toho víš dost na to,
 aby sis napsal{{a}} vlastní zoo :)
 
-Nebo [hru](../../projects/asteroids/)?
+Nebo [hru]({{ lesson_url('projects/asteroids') }})?

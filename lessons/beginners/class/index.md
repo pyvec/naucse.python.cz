@@ -93,7 +93,7 @@ to byly funkce, a vytvořit tak nový objekt dané třídy:
 Chová se to stejně jako funkce `str`! Není to podivné?
 
 Tady se musím omluvit:
-[materiály k funkcím](../functions/)
+[materiály k funkcím]({{ lesson_url('beginners/functions') }})
 tak trochu lhaly. Funkce `str`, `int`, `float` apod. totiž vůbec
 nejsou funkce – jsou to právě třídy.
 
@@ -376,5 +376,5 @@ class Kocka:
 {% endfilter %}
 
 A to je o samotných třídách zatím vše.
-[Příště](../inheritance/) si něco řekneme o dědičnosti.
+[Příště]({{ lesson_url('beginners/inheritance') }}) si něco řekneme o dědičnosti.
 A o štěňátkách.

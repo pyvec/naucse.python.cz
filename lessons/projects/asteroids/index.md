@@ -198,7 +198,7 @@ Přidej druhý typ vesmírného objektu: `Asteroid`.
   vesmírné objekty (např. věci kolem zrychlení);
   část bude specifická jen pro raketku (ovládání
   pomocí klávesnice).
-  Využij funkci `super()` z [lekce o dědičnosti](../../beginners/inheritance/).
+  Využij funkci `super()` z [lekce o dědičnosti]({{ lesson_url('beginners/inheritance') }}).
 * Napiš ještě třídu `Asteroid`,
   která taky dědí ze `SpaceObject`,
   ale má svoje vlastní chování:

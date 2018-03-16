@@ -203,7 +203,7 @@ with open('druha-basnicka.txt', mode='w', encoding='utf-8') as soubor:
 > Metoda `write` neodřádkovává automaticky.
 > Chceš-li do souboru zapsat více řádků, je potřeba každý z nich ukončit
 > „ručně“, speciálním znakem `'\n'` který jsme si popsal{{ gnd('i', 'y', both='i')}}
-> v [sekci o řetězcích](../str/).
+> v [sekci o řetězcích]({{ lesson_url('beginners/str') }}).
 
 Případně se dá použít funkce `print`,
 která kromě do terminálu umí vypisovat i do otevřeného souboru,

@@ -6,7 +6,7 @@ Existují různé možnosti, jednou z nich je nasadit ji do cloudu.
 
 > [note]
 > Nemáte ještě webovou aplikaci? Můžete vyzkoušet framework
-> [Flask](../../intro/flask/).
+> [Flask]({{ lesson_url('intro/flask') }}).
 
 ### WSGI
 

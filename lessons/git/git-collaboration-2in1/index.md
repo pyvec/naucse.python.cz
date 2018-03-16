@@ -62,7 +62,7 @@ jen Gitu řekneme, že z něj chceme ten repozitář udělat. To má za následe
 3. Můžeme nastavit vzdálené repozitáře, kam chceme změny nahrávat nebo naopak stahovat změny od jiných lidí. 
 
 > [note] Pozor
-> Budeme hodně pracovat s příkazovou řádkou. Jestli se s ní ještě nekamarádíš, koukni se na [úvod](../../beginners/cmdline/).
+> Budeme hodně pracovat s příkazovou řádkou. Jestli se s ní ještě nekamarádíš, koukni se na [úvod]({{ lesson_url('beginners/cmdline') }}).
 > Nezapomeň: $ na začátku se nepíše; je tu proto, aby šlo poznat, že jde o příkaz.
 
 Naším dnešním cílem je ale přispět do projektu, který založil někdo jiný. Proto použijeme příkaz `git clone` ke stažení vzdáleného repozitáře.

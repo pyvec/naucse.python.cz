@@ -163,7 +163,7 @@ ho „nevlastníte“ i ve smyslu C++/Qt.
 
 Občas se stane, že program spadne pro chybu jako nepovolený přístup do paměti.
 Bez hlubší znalosti Qt a PyQt se taková chyba odstraňuje poměrně těžko, ale vaše znalosti C++ (z jiných kurzů)
-a CPython C API (z [minula](../cython/)) vám v tom pomůžou.
+a CPython C API (z [minula]({{ lesson_url('intro/cython') }})) vám v tom pomůžou.
 Doporučujeme dělat malé commity a psát jednoduchý kód.
 
 ### Smyčka událostí, signály a sloty
@@ -357,7 +357,7 @@ Vlastní widget - Grid
 
 Qt neobsahuje předpřipravený widget na dlaždicové mapy. Musíme si tedy vyrobit vlastní.
 
-Mapu budeme reprezentovat jako NumPy matici (viz [lekce o NumPy](../numpy/)).
+Mapu budeme reprezentovat jako NumPy matici (viz [lekce o NumPy]({{ lesson_url('intro/numpy') }})).
 Zatím budeme používat dva druhy dlaždic: trávu (v matici reprezentovanou jako 0) a zeď (-1).
 
 Velikost widgetu se zadává v pixelech. Musíme ho udělat dostatečně velký, aby se do něj vešla všechna políčka mapy.

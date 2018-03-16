@@ -142,7 +142,7 @@ def test_xmas(year):
 
 ```
 
-Zápis je určitým způsobem podobný knihovně [click](../click/): funkce
+Zápis je určitým způsobem podobný knihovně [click]({{ lesson_url('intro/click') }}): funkce
 s testem přijímá parametr vytvořený v dekorátoru.
 Test se spustí pro každou uvedenou hodnotu, k jejich definici lze použít
 jakýkoliv objekt, přes který jde iterovat, tedy kromě v ukázce použité
@@ -437,7 +437,7 @@ použijí při testech. V zásadě to funguje takto:
  * Pokud daný HTTP požadavek ještě neproběhl, provede se a nahraje na kazetu.
  * Pokud již proběhl, použije se daná kazeta pro simulaci.
 
-Betamax funguje pouze s knihovnou [requests](../requests/) při použití session.
+Betamax funguje pouze s knihovnou [requests]({{ lesson_url('intro/requests')}}) při použití session.
 
 V kombinaci s pytestem můžete použít předpřipravenou fixture:
 

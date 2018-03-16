@@ -24,7 +24,7 @@ $ python -m pip install aiohttp
 ---
 
 > [note]
-> V minulosti byly na této stránce popsány i [generátory](../../advanced/generators/).
+> V minulosti byly na této stránce popsány i [generátory]({{ lesson_url('advanced/generators') }}).
 > Neovládáte-li je ještě, přečtěte si o nich.
 {% endif %}
 
@@ -37,7 +37,7 @@ AsyncIO
 Pojďme si povídat o souběžnosti – možnostech, jak nechat počítač dělat víc
 úloh věcí najednou.
 
-Jak jsme si řekli v [lekci o C API](../cython/), Python má globální zámek, takže pythonní kód
+Jak jsme si řekli v [lekci o C API]({{ lesson_url('intro/cython') }}), Python má globální zámek, takže pythonní kód
 může běžet jen v jednom vlákně najednou.
 Taky jsme si řekli, že to většinou příliš nevadí: typický síťový nebo GUI program
 stráví hodně času čekáním na události (odpověď z internetu, kliknutí myší atp.)
