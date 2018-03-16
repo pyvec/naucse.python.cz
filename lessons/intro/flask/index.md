@@ -71,7 +71,7 @@ Tomuto spojení cesty a pohledové funkce se říká *route* (nebo počeštěně
 My konkrétně říkáme, že na cestě `/` (tedy na „domovské stránce“) bude
 k dispozici obsah, který vrátí funkce `index`.
 
-[URL]: ../../fast-track/http/#url-anatomy
+[URL]: {{ lesson_url('fast-track/http') }}#url-anatomy
 
 Více různých adres lze obsloužit jednoduše přidáním dalších funkcí:
 

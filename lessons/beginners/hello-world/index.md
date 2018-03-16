@@ -29,7 +29,7 @@ print("Ahoj světe!")
 
 Pak soubor ulož pod jménem <code><span class="pythondir">~/{{ rootname }}</span>/02/ahoj.py</code>.
 Za <code class="pythondir">~/{{ rootname }}</code> musíš doplnit adresář,
-který jsi vytvořil{{a}} minule, při [instalaci Pythonu](../../beginners/install/).
+který jsi vytvořil{{a}} minule, při [instalaci Pythonu]({{ lesson_url('beginners/install') }}).
 Podadresář `02` musíš vytvořit.
 Do něj pak soubor ulož jako `ahoj.py`.
 
@@ -57,10 +57,10 @@ $ python ahoj.py
 
 > [note]
 > S příkazovou řádkou jsme se seznámil{{gnd('i', 'y', both='i')}}
-> v [minulé lekci](../../beginners/cmdline/), která popisuje i změnu aktuálního
+> v [minulé lekci]({{ lesson_url('beginners/cmdline') }}), která popisuje i změnu aktuálního
 > adresáře pomocí příkazu `cd`.
 > Aktivaci virtuálního prostředí jsme probral{{gnd('i', 'y', both='i')}} společně
-> s [instalací Pythonu](../../beginners/install/).
+> s [instalací Pythonu]({{ lesson_url('beginners/install') }}).
 
 > [note] Poznámka pro Windows a starší Python
 > V nečeských Windows s Pythonem 3.5 či nižším bude třeba před
