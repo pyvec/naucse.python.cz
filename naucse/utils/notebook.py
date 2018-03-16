@@ -3,7 +3,7 @@ from nbconvert.filters.highlight import Highlight2HTML
 import nbformat
 import traitlets
 
-from . markdown_util import convert_markdown
+from naucse.utils.markdown import convert_markdown
 
 
 class NaucseHTMLExporter(HTMLExporter):
