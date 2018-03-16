@@ -96,19 +96,26 @@ class DirProperty(LazyProperty):
         self.subdir = subdir
         self.keyfunc = keyfunc
 
-    def compute(self, instance):
-        base = instance.path.joinpath(*self.subdir)
-        
+    def get_ordered_dirs(self, base):
         model_paths = []
+
         info_path = base.joinpath("info.yml")
         if info_path.is_file():
             with info_path.open(encoding='utf-8') as f:
                 model_paths = [base.joinpath(p) for p in yaml.safe_load(f)['order']]
-        
-        subdirectories = [p for p in sorted(base.iterdir()) if p.is_dir()]
+
+        remaining_subdirectories = [p for p in sorted(base.iterdir()) if p.is_dir() and p not in model_paths]
+
+        return model_paths + remaining_subdirectories
+
+    def compute(self, instance):
+        base = instance.path.joinpath(*self.subdir)
+
+        dirs = self.get_ordered_dirs(base)
+
         return OrderedDict(
             (self.keyfunc(p.parts[-1]), self.cls(instance.root, p))
-            for p in model_paths + subdirectories
+            for p in dirs
         )
 
 
