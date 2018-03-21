@@ -197,6 +197,11 @@ $ esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash 0 esp8266-20161110-v1
 
 Hodnotu pro `--port` opět doplňte podle svého systému – např. `/dev/tty.wchusbserial1420` na Macu, `COM3` na Windows.
 
+> [note]
+> Destiček s čipem ESP8266 se vyrábí celá řada různých typů a některé mohou
+> potřebovat odlišné nastavení při flashování.
+> Popis všech možností nastavení je k nalezení v [dokumentaci k esptool](https://github.com/espressif/esptool#usage).
+
 Je-li na desce nahraný MicroPython, tento příkaz by měl fungovat. U jiného firmware, (případně u poškozeného MicroPythonu), je potřeba při zapojování destičky do USB držet tlačítko FLASH.
 
 ## Souborový systém
