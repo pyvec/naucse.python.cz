@@ -58,4 +58,4 @@ Python.
 Připraven{{a}}? do toho!
 
 * [Vykreslení hada](./drawing/)
-
+* [Logika hry](./logic/)

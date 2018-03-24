@@ -461,7 +461,7 @@ Jak na to?
 
 Podle čeho ho vybrat?
 
-Otevři si zase soubor pro experimenty, a napiš do něj:
+Vytvoř soubor `smery.py` a napiš do něj:
 
 ```python
 snake = [(1, 2), (2, 2), (3, 2), (3, 3), (3, 4), (3, 5), (4, 5)]
@@ -516,13 +516,13 @@ for a, b, c in zip([None] + snake, snake, snake[1:] + [None]):
 
 
 ```
-1 2 end right
+1 2 tail right
 2 2 left right
 3 2 left top
 3 3 bottom top
 3 4 bottom top
 3 5 bottom right
-4 5 left end
+4 5 left head
 ```
 
 Toto je **těžký úkol**.
@@ -549,8 +549,10 @@ To by už nemělo být příliš složité:
             x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
 ```
 
-Odměnou ti bude had místo housenky.
+Soubor `smery.py` po vyřešení nemaž, bude se ti pak hodit.
+
+Odměnou za vyřešení tohoto úkolu ti bude had místo housenky.
 
 Než na to přijdeš, zbytek programu ti neuteče.
 Housenka je úplně stejně hratelná jako had, jen jinak vypadá.
-Klidně přejdi na další část – logiku hry.
+Klidně přejdi na další část – logiku hry – s housenkou.
