@@ -116,7 +116,7 @@ class State:
 > Bude se ti to hodit.
 
 Všimni si, že metody berou argument `self`.
-To označuje konkrétní obbjekt, stav hry se kterým metoda pracuje nebo
+To označuje konkrétní objekt, stav hry se kterým metoda pracuje nebo
 který mění.
 Ke všem atributúm přistupují pomocí tečky –
 <code>self.<var>jméno_atributu</var></code>.
@@ -517,7 +517,7 @@ s jídlem, tak jídlo zmizelo.
 K tomu se dá použít operátor `in`, který zjišťuje jestli něco (třeba
 souřadnice) je v nějakém seznamu (třeba seznamu souřadnic jídla),
 a metoda `remove`, která ze seznamu odstraní daný prvek (podle hodnoty prvku,
-na rozdíl od `del` který maže podle pozice).
+na rozdíl od `del`, který maže podle pozice).
 
 Nebudu napínat, kód je následující.
 Rozumíš mu?
@@ -558,7 +558,7 @@ Neboli přeloženo do Pythonu:
             del self.snake[0]
 ```
 
-Pro ty co se začínají ztrácet dám k dispozici celou metodu `move`.
+Pro ty, co se začínají ztrácet, dám k dispozici celou metodu `move`.
 Běda ale těm, kdo opisují kód bez toho aby mu rozuměli!
 
 {% filter solution %}
@@ -620,7 +620,7 @@ print('Na kostce padlo:', random.randrange(6))
 Čím se liší `random.randrange` od klasické hrací kostky?
 Uměl{{a}} bys program upravit tak, aby padalo 1 až 6?
 
-Je tahle změna užitečná? Jaký rozsah čísel potřebujeme pro hadí jídlo?
+Je tahle změna užitečná pro naši hru? Jaký rozsah čísel potřebujeme pro hadí jídlo?
 
 Až na to přijdeš, zkus přidat náhodu do programu: jídlo by se mělo objevit
 na *úplně náhjodném* políčku na herní ploše.
@@ -693,11 +693,11 @@ Pak budou na začátku hry na hada čekat dvě náhodné jídla.
 ## Konec
 
 Had teď může narůst do obrovských rozměrů – a hru stále nelze prohrát.
-Zařídíme tedy, aby hra skončila když had narazí sám do sebe.
+Zařídíme tedy, aby hra skončila, když had narazí sám do sebe.
 
-Na rozdíl od `0/1`, které jsme použilki výše, buďme trochu opatrnější.
+Na rozdíl od `0/1`, které jsme použili výše, buďme trochu opatrnější.
 Není dobré ukončit celý program; to by se hráčům moc nelíbilo.
-Ostatně, zkus si jak to působí – následující kód dej na správné místo
+Ostatně, zkus si, jak to působí – následující kód dej na správné místo
 a zkus, jak se hra hraje, když skončí hned po nárazu:
 
 ```python
@@ -767,7 +767,7 @@ A možná není úplně jednoduché přijít na to, proč.
 
 Můžou za to (hlavně) dva důvody.
 
-První problém: když když zmáčkneš dvě šipky rychle za sebou, v dalším „tahu“
+První problém: když zmáčkneš dvě šipky rychle za sebou, v dalším „tahu“
 hada se projeví jen ta druhá.
 Z pohledu programu je to chování (snad) jasné – po stisknutí šipky se uloží
 její směr, a při „tahu“ hada se použije poslední uložený směr.
@@ -800,7 +800,7 @@ def on_key_press(symbol, mod):
     state.queued_directions.append(new_direction)
 ```
 
-A zpátky v logice, v `had.py`, pakv metodě `move` místo
+A zpátky k logice, v `had.py` v metodě `move` místo
 `dir_x, dir_y = self.snake_direction` z fronty vyber první nepoužitý prvek
 (a nezapomeň ho z fronty smazat, ať se dostane i na další!):
 
@@ -988,7 +988,7 @@ Zkus třeba následující rozšíření:
 
 * Hra se bude postupně zrychlovat.<br>
   *(Na to je nejlepší předělat funkci `move` v `ui.py`, aby *sama*
-  naplánovala kdy se má příště zavolat. Volání `schedule_interval` tak už
+  naplánovala, kdy se má příště zavolat. Volání `schedule_interval` tak už
   nebude potřeba.)*
 
 * Hadi budou dva; druhý se ovládá klávesami
