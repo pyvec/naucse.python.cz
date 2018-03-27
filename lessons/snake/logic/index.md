@@ -339,16 +339,13 @@ To je dobré udělat hned poté, co nové souřadnice hlavy získáš – konkr�
 hned před řádkem `new_head = new_x, new_y` v metodě `move`.
 
 A co při takovém nárazu udělat?
-Určitě sis už všiml{{a}}, že jakákoli chyba ukončí program.
-Nejjednodušší způsob ukončení programu je právě to – stačí tedy vyvolat chybu.
-Nejkratší způsob, jak v Pythonu vyvolat na určitém místě chybu, je dělení
-nulou: `1/0`.
+Nejjednodušší bude hru ukončit.
+Na to má Python funkci `exit()`, která funguje podobně jako když v programu
+nastane chyba.
+Jen místo chybového výpisu ukáže daný text.
 
-Vyvolání chyby není příliš hezký a čistý způsob jak hráči signalizovat
-*GAME OVER*.
-Ani `1/0` není příliš hezký a čistý způsob jak vyvolat chybu.
-Za chvíli ale tuhle část předěláme, tak prozatím postačí rychlý a škaredý kód.
-Jen se s ním moc nechlub.
+Ukončení programu není příliš příjemný způsob, jak říct hráčovi že prohrál.
+Za chvíli ale tuhle část předěláme, tak prozatím tenhle jednoduchý způsob postačí.
 
 ```python
     def move(self):
@@ -359,7 +356,7 @@ Jen se s ním moc nechlub.
 
         # Nový kód – kontrola vylezení z hrací plochy
         if new_x < 0:
-            1/0     # Vyvolání chyby -- GAME OVER
+            exit('GAME OVER')
 
         new_head = new_x, new_y
         self.snake.append(new_head)
@@ -396,13 +393,13 @@ Vyzkoušej všechny varianty – severní, jižní, východní i západní zeď.
 
         # Kontrola vylezení z hrací plochy
         if new_x < 0:
-            1/0     # Vyvolání chyby -- GAME OVER
+            exit('GAME OVER')
         if new_y < 0:
-            1/0     # Vyvolání chyby -- GAME OVER
+            exit('GAME OVER')
         if new_x >= self.width:
-            1/0     # Vyvolání chyby -- GAME OVER
+            exit('GAME OVER')
         if new_y >= self.height:
-            1/0     # Vyvolání chyby -- GAME OVER
+            exit('GAME OVER')
 
         new_head = new_x, new_y
         self.snake.append(new_head)
@@ -425,8 +422,8 @@ state.height = window.height // TILE_SIZE
 Teď místo konce hry při naražení necháme hada „projít“ a objevit se na druhé
 straně.
 
-Nemělo by to být tak složité udělat – stačí místo `1/0` vždy správně nastavit
-příslušnou hodnotu.
+Nemělo by to být tak složité udělat – stačí místo `exit()` vždy správně
+nastavit příslušnou hodnotu.
 Je ale potřeba si dát pozor kde použít `new_x` a kde `new_y`, kde `width` a kde
 `height`, a kde přičíst nebo odečíst jedničku, aby při číslování od nuly
 všechno sedělo.
@@ -703,7 +700,7 @@ a zkus, jak se hra hraje, když skončí hned po nárazu:
 ```python
         # Kontrola, jestli had narazil
         if new_head in self.snake:
-            1/0  # GAME OVER!
+            exit('GAME OVER')
 ```
 
 {% filter solution %}
@@ -748,7 +745,7 @@ kousky kódu, které prohru implementují:
 {% filter solution %}
 * „Prvotní nastavení atributu“ do metody `__init__`.
 * „Kontrola, jestli had narazil“ do `move` místo původní kontroly,
-  kdy se hra ukončila pomocí `1/0`.
+  kdy se hra ukončila pomocí `exit()`.
 * „Zabránění pohybu“ na úplný začátek metody `move` (příkaz `return`
   okamžitě ukončí provádění metody).
 * „Grafická indikace“ do `ui.py`, za sekci pro vybírání obrázku pro kousek
