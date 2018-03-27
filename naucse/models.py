@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import datetime
 
+import cssutils
 import dateutil.tz
 import jinja2
 
@@ -71,7 +72,28 @@ class Page(Model):
 
     @reify
     def css(self):
-        return self.info.get('css')
+        """ Returns lesson-specific extra CSS.
+
+        If the lesson defines extra css, the scope of the styles is limited to ``.lesson-content``,
+        a div which contains the actual lesson content.
+
+        This doesn't protect against malicious input.
+        """
+        css = self.info.get("css")
+
+        if css is None:
+            return None
+
+        parser = cssutils.CSSParser(raiseExceptions=True)
+        parsed = parser.parseString(css)
+
+        for rule in parsed.cssRules:
+            for selector in rule.selectorList:
+                # the space is important - there's a difference between for example
+                # ``.lesson-content:hover`` and ``.lesson-content :hover``
+                selector.selectorText = ".lesson-content " + selector.selectorText
+
+        return parsed.cssText.decode("utf-8")
 
     @reify
     def edit_path(self):
