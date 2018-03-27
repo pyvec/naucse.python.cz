@@ -56,7 +56,7 @@ Dvojice čísel je perfektní způsob, jak uložit souřdadnice kousku hada.
 Had má ale kousků víc, a jinak dlouzí hadi jich budou mít různý počet.
 Na to je dobré použít seznam. Seznam souřadnic.
 A protože souřadnice pro nás budou dvojice čísel,
-seznam souřadnic bude dvojice čísel.
+seznam souřadnic bude seznam dvojic čísel.
 
 Had z obrázku výše bude v Pythonu vypadat takto:
 
@@ -134,7 +134,7 @@ Potom zkus dovnitř do funkce `on_draw` přidat vykreslení obrázku na souřadn
 ```
 
 Program spusť (`cd` do nového adresáře; `python ui.py`). Funguje?
-(Je docela důležité aby fungoval – nevidíš-li zelený čtvereček,
+(Je docela důležité, aby fungoval – nevidíš-li zelený čtvereček,
 nečti dál a program radši oprav.)
 
 Jak vidíš, čtvereček je docela malý.
@@ -193,7 +193,7 @@ snake = [(1, 2), (2, 2), (3, 2), (3, 3), (3, 4), (3, 5), (4, 5)]
 ```
 
 A ve funkci `draw` vykresli všechny čtverečky hada.
-Vzpomeň si, že seznam dvojic můžeš „projít pomocí cyklu `for` a „rozbalení“
+Vzpomeň si, že seznam dvojic můžeš „projít“ pomocí cyklu `for` a „rozbalení“
 <var>n</var>-tice:
 
 ```python
@@ -281,7 +281,7 @@ pyglet.app.run()
 Používáš-li detailnější obrázek, možná si všimneš, že má trošičku „zubaté“ hrany.
 To je dáno způsobem, jakým v Pygletu obrázek vykreslujeme.
 Úplné vysvětlení by zabralo příliš času, proto ukážu jen řešení.
-Až naučíš grafiku víc do hloubky, pochopíš co se tu děje :)
+Až se naučíš grafiku víc do hloubky, pochopíš co se tu děje :)
 
 Do funkce `on_draw`, hned za `clear`, dej následující dva řádky:
 
@@ -294,7 +294,7 @@ Do funkce `on_draw`, hned za `clear`, dej následující dva řádky:
 
 ## Načítání kousků hada
 
-Teď, když umíš kreslit hada, zkusíme.
+Teď, když umíš kreslit hada ze čtverců, zkusíme ho udělat hezčího.
 Stáhni si archiv [snake-tiles.zip]({{ static('snake-tiles.zip') }})
 a rozbal si ho tak, aby adresář `snake-tiles` s obrázky byl na stejné úrovni
 jako program s hrou.
@@ -321,9 +321,9 @@ Obrázek se jmenuje <var>odkud</var>-<var>kam</var>.png.
 > Co jsou taková ta divná „hadí vajíčka”?
 > To je pro přímad, že by had byl jen jedno políčko dlouhý – a tedy měl hlavu
 > i ocas na stejném políčku.
-> V naší hře se do takového stavu nedostaneme (hada bude začínat s délkou 2),
+> V naší hře se do takového stavu nedostaneme (had bude začínat s délkou 2),
 > ale může se stát, že se do něj dostaneš omylem při vývoji hry.
-> Když jsou obrázky k dispozici, lépe pak zjišťuje co je špatně.
+> Když jsou obrázky k dispozici, lépe pak zjišťuješ, co je špatně.
 
 Pojďme si teď tyhle obrázky *načíst*.
 Šlo by to dělat postupně, třeba takhle:
@@ -363,18 +363,18 @@ Místo `print(path)` použij:
     print(path.stem)
 ```
 
-Funguje? Máš vypsané všechny možné kousků hada?
+Funguje? Máš vypsané všechny možné kousky hada?
 
 Teď budeme chtít načíst obrázky do *slovníku*.
-*Klíče* slovníku, podle kterých budeme vyhledávat, budou jména která jsi
+*Klíče* slovníku, podle kterých budeme vyhledávat, budou jména, která jsi
 právě vypsal{{a}}.
-*Hodnoty* pak budou Pygletí obrázky, které ve hře můžeš rovnou vykreslit.
+*Hodnoty* pak budou pygletí obrázky, které ve hře můžeš rovnou vykreslit.
 
 Začni s prázdným slovníkem, `{}`, a v cyklu `for` do něj postupně přidávej
 záznamy.
 Pak slovník vypiš.
 
-Až to bude mít, měl by výpis vypadat zhruba nějak takhle:
+Až to budeš mít, měl by výpis vypadat asi takhle:
 
 ```
 {'right-tongue': <ImageData 64x64>, 'top-tongue': <ImageData 64x64>,
