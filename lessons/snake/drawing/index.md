@@ -51,7 +51,7 @@ Tady je had, který začíná na souřadnicích (1, 2) a hlavu má na (4, 5):
 Možná si všimneš, že matematický zápis souřadnic – (1, 2) – odpovídá
 způsobu, jak se v Pythonu píšou <var>n</var>-tice.
 To není náhoda!
-Dvojice čísel je perfektní způsob, jak uložit souřdadnice kousku hada.
+Dvojice čísel je perfektní způsob, jak uložit souřadnice kousku hada.
 
 Had má ale kousků víc, a jinak dlouzí hadi jich budou mít různý počet.
 Na to je dobré použít seznam. Seznam souřadnic.
