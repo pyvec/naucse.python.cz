@@ -33,6 +33,26 @@ VIOLET = PURPLE = PINK = 10, 0, 10
 GRAY = 5, 5, 5
 
 
+if btn.value() == 0:
+    # Self-test
+    colors = [RED, GREEN, BLUE, ORANGE, YELLOW, CYAN, PINK, GRAY]
+    led.value(1)
+    servo.duty(120)
+    for i, color in enumerate(colors):
+        strip[i] = color
+    strip.write()
+    sleep(0.5)
+    servo.duty(40)
+    for i in range(8):
+        led.value(0)
+        sleep(0.1)
+        led.value(1)
+        sleep(0.1)
+        colors = colors[1:] + [colors[0]]
+        for i, color in enumerate(colors):
+            strip[i] = color
+        strip.write()
+    led.value(0)
 
 for i in range(8):
     strip[i] = 0, 0, 0
