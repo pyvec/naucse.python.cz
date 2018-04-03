@@ -5,10 +5,23 @@
 > Pokyny pro organizátory najdeš
 > na [podstránce]({{ subpage_url('organizers') }}).
 
-Jedna varianta Pythonu, MicroPython, běží na malých zařízeních.
-Taková zařízení si teď můžeš vyzkoušet.
+Vítej na workshopu MicroPythonu!
+Dnes si ukážeme, jak programovat – jak říkat počítači, co má dělat.
+Aktivita je určena lidem, kteří nikdy předtím neprogramovali.
 
-Jak na to?
+K programování použijeme *programovací jazyk*.
+To je způsob, jak počítačům zadávat příkazy – jazyk, kterému
+rozumí jak počítače, tak lidé (programátoři).
+
+Konkrétně dnes použijeme MicroPython – variantu jazyka Python přizpůsobenou na
+ovládání malých zařízení.
+
+Laptop použijeme vlastně jen kvůli klávesnici a monitoru; všechno zajímavé
+se bude dít na té malé destičce, kterou vidíš vedle sebe a ze které vede
+spousta drátů.
+(Pro úplnost: je to deska *NodeMCU* s mikroprocesorem *ESP8266*.)
+
+Dost povídání, pojďme na to!
 
 
 ## Otevření příkazové řádky
@@ -18,8 +31,8 @@ Jak na to?
 Klikni na *Activities*; potom vyber z levého panelu *Terminal* (ikonka
 černého okýnka).
 
-Objeví se černé okýnko s bílým textem, kam můžeš zadávat příkazy – příkazová
-řádka.
+Objeví se *příkazová řádka* – černé okýnko s bílým textem,
+kam můžeš zadávat příkazy.
 
 
 ## Otevření komunikačního kanálu
@@ -75,12 +88,21 @@ Zkus třeba tyhle (zobáčky nepiš, ty vypíše sám MicroPython:
 ```pycon
 >>> 1 + 1
 
+>>> 1 - 5
+
 >>> 3 * 3
 
 >>> 1 / 4
 
->>> (84 + 5) * 253
+>>> (84 + 5) * 100
 ```
+
+Poznáš co dělá hvězdička nebo lomítko?
+Tipneš si, proč programátoři používají tyhle symboly, a ne třeba
+`3 × 3` nebo `¼`?
+
+Věděl{{a}} jsi, že v Americe používají desetinnou tečku místo čárky?
+Většina programovacích jazyků ji používá taky.
 
 
 ## Světýlko
@@ -169,14 +191,17 @@ Před chvílí jsme si ukázali tento kód:
 ```
 
 Hodnota `btn.value()` může být buď 1, nebo 0.
-Pojďme ji použít pro motorek: chceme, aby se natočil buď na `40` nebo na
-`120`, podle toho, jestli je tlačítko zmáčknuté.
-Použij trochu matematiky:
+Pojďme ji použít pro motorek: chceme, aby se natočil buď na 40 nebo na
+120, podle toho, jestli je tlačítko zmáčknuté.
 
-    40 + 0 * 80 = 40
-    40 + 1 * 80 = 120
+Na to, abys z 0 nebo 1 udělal{{a}} 40 nebo 120, je potřeba znát
+trochu matematiky:
 
-a dostaneš následující kód:
+* <var>X</var> + `0` × <var>Y</var> = `40`
+* <var>X</var> + `1` × <var>Y</var> = `120`
+
+Jistě zvládneš vypočítat, že <var>X</var> = 40 a <var>Y</var> = 80.
+Tyhle hodnoty doplnit do kódu:
 
 ```pycon
 >>> servo.duty(40 + btn.value() * 80)
@@ -239,15 +264,15 @@ Za dolar napiš:
 ampy -p /dev/ttyUSB0 run main.py
 ```
 
-... a stiskni Enter.
+... a stiskni <kbd>Enter</kbd>.
 Tento příkaz soubor s programem do zařízení nahraje a rovnou spustí.
 
 Zkus v editoru nastavit jiné barvy a program znovu uložit
 (<kbd>Ctrl</kbd>+<kbd>S</kbd>).
 
-Potom v příkazové řádce zmáčkni *šipku nahoru*.
-Tím se vrátíš k předchozímu příkazu (`ampy`) a můžeš znovu stisknout Enter
-a program spustit.
+Potom v příkazové řádce zmáčkni *šipku nahoru* <kbd>↑</kbd>.
+Tím se vrátíš k předchozímu příkazu (`ampy`) a můžeš znovu stisknout
+<kbd>Enter</kbd> a program spustit.
 
 
 ## Blikání
