@@ -339,6 +339,7 @@ class Session(Model):
     title = DataProperty(info)
     slug = DataProperty(info)
     date = DataProperty(info, default=None)
+    description = DataProperty(info, default=None)
 
     def _time(self, key, default_time):
         if self.date and default_time:
