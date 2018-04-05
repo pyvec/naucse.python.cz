@@ -99,7 +99,7 @@ Když člověk zabředne do složitého problému, může na CPython pustit C de
 jako [gdb] nebo [Valgrind], prozkoumat potíže na nižší úrovni
 a zjistit, kde přesně se chyba nachází.
 
-[gdb]: https://en.wikipedia.org/wiki/GNU_Debugger]
+[gdb]: https://en.wikipedia.org/wiki/GNU_Debugger
 [Valgrind]: http://valgrind.org/
 
 
