@@ -341,21 +341,21 @@ class Session(Model):
     date = DataProperty(info, default=None)
     description = DataProperty(info, default=None)
 
-    def _time(self, key, default_time):
-        if self.date and default_time:
-            return datetime.datetime.combine(self.date, default_time)
+    def _time(self, time):
+        if self.date and time:
+            return datetime.datetime.combine(self.date, time)
         return None
 
     @reify
     def start_time(self):
         if self.course:
-            return self._time('start', self.course.default_start_time)
+            return self._time(self.course.default_start_time)
         return None
 
     @reify
     def end_time(self):
         if self.course:
-            return self._time('end', self.course.default_end_time)
+            return self._time(self.course.default_end_time)
         return None
 
     @reify
