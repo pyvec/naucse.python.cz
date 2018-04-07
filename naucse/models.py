@@ -354,14 +354,30 @@ class Session(Model):
             return datetime.datetime.combine(self.date, time)
         return None
 
+    def _session_time(self, key):
+        sesion_time = self.info.get('time')
+        if sesion_time:
+            return time_from_string(sesion_time[key])
+        return None
+
+    @reify
+    def has_custom_time(self):
+        return self._session_time('start') is not None
+
     @reify
     def start_time(self):
+        session_time = self._session_time('start')
+        if session_time:
+            return self._time(session_time)
         if self.course:
             return self._time(self.course.default_start_time)
         return None
 
     @reify
     def end_time(self):
+        session_time = self._session_time('end')
+        if session_time:
+            return self._time(session_time)
         if self.course:
             return self._time(self.course.default_end_time)
         return None

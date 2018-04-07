@@ -39,9 +39,16 @@
                             {{ session.title }}
                         </a>
                         {% if session.date %}
-                            <small>({{ session.date | format_date }})</small>
+                            <small>({{ session.date | format_date -}}
+                                {%- if session.has_custom_time -%}
+                                , {{ session.start_time | format_time }}–{{ session.end_time | format_time -}}
+                                {% endif -%}
+                                )</small>
                         {% endif %}
                     </h4>
+                    {% if session.has_custom_time %}
+                        <div>{{ bytesize_icon('alert') }} Pozor, změna času!</div>
+                    {% endif %}
                     {% if session.description %}{{ session.description | markdown }}{% endif %}
                     {{ material_list(session.materials) }}
                 </div>
