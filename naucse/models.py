@@ -317,6 +317,14 @@ def merge_dict(base, patch):
     return result
 
 
+def time_from_string(time_string):
+    hour, minute = time_string.split(':')
+    hour = int(hour)
+    minute = int(minute)
+    tzinfo = dateutil.tz.gettz(_TIMEZONE)
+    return datetime.time(hour, minute, tzinfo=tzinfo)
+
+
 class Session(Model):
     """An ordered collection of materials"""
     def __init__(self, root, path, base_course, info, index, course=None):
@@ -471,12 +479,7 @@ class Course(Model):
     def _default_time(self, key):
         default_time = self.info.get('default_time')
         if default_time:
-            time_string = default_time[key]
-            hour, minute = time_string.split(':')
-            hour = int(hour)
-            minute = int(minute)
-            tzinfo = dateutil.tz.gettz(_TIMEZONE)
-            return datetime.time(hour, minute, tzinfo=tzinfo)
+            return time_from_string(default_time[key])
         return None
 
     @reify
