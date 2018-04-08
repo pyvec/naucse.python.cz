@@ -361,17 +361,15 @@ class Session(Model):
         return None
 
     @reify
-    def has_custom_time(self):
-        session_start_time = self._session_time('start')
-        session_end_time = self._session_time('end')
+    def has_irregular_time(self):
+        """True iff the session has its own start or end time, the course has
+        a default start or end time, and either of those does not match."""
 
-        custom_start = session_start_time is not None \
-                and self.course.default_start_time is not None \
-                and session_start_time != self.course.default_start_time
-        custom_end = session_end_time is not None \
-                and self.course.default_end_time is not None \
-                and session_end_time != self.course.default_end_time
-        return custom_start or custom_end
+        irregular_start = self.course.default_start_time is not None \
+            and self._time(self.course.default_start_time) != self.start_time
+        irregular_end = self.course.default_end_time is not None \
+            and self._time(self.course.default_end_time) != self.end_time
+        return irregular_start or irregular_end
 
     @reify
     def start_time(self):
