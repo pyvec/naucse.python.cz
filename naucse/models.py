@@ -13,6 +13,7 @@ from naucse.utils.notebook import convert_notebook
 from pathlib import Path
 
 _TIMEZONE = 'Europe/Prague'
+_TODAY = datetime.date.today()
 
 
 class Lesson(Model):
@@ -467,6 +468,10 @@ class Course(Model):
         if not dates:
             return None
         return max(dates)
+
+    @reify
+    def is_ongoing(self):
+        return self.end_date >= _TODAY
 
     def _default_time(self, key):
         default_time = self.info.get('default_time')
