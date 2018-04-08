@@ -362,7 +362,16 @@ class Session(Model):
 
     @reify
     def has_custom_time(self):
-        return self._session_time('start') is not None
+        session_start_time = self._session_time('start')
+        session_end_time = self._session_time('end')
+
+        custom_start = session_start_time is not None \
+                and self.course.default_start_time is not None \
+                and session_start_time != self.course.default_start_time
+        custom_end = session_end_time is not None \
+                and self.course.default_end_time is not None \
+                and session_end_time != self.course.default_end_time
+        return custom_start or custom_end
 
     @reify
     def start_time(self):
