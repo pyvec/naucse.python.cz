@@ -317,6 +317,14 @@ def merge_dict(base, patch):
     return result
 
 
+def time_from_string(time_string):
+    hour, minute = time_string.split(':')
+    hour = int(hour)
+    minute = int(minute)
+    tzinfo = dateutil.tz.gettz(_TIMEZONE)
+    return datetime.time(hour, minute, tzinfo=tzinfo)
+
+
 class Session(Model):
     """An ordered collection of materials"""
     def __init__(self, root, path, base_course, info, index, course=None):
@@ -341,21 +349,44 @@ class Session(Model):
     date = DataProperty(info, default=None)
     description = DataProperty(info, default=None)
 
-    def _time(self, key, default_time):
-        if self.date and default_time:
-            return datetime.datetime.combine(self.date, default_time)
+    def _time(self, time):
+        if self.date and time:
+            return datetime.datetime.combine(self.date, time)
+        return None
+
+    def _session_time(self, key):
+        sesion_time = self.info.get('time')
+        if sesion_time:
+            return time_from_string(sesion_time[key])
         return None
 
     @reify
+    def has_irregular_time(self):
+        """True iff the session has its own start or end time, the course has
+        a default start or end time, and either of those does not match."""
+
+        irregular_start = self.course.default_start_time is not None \
+            and self._time(self.course.default_start_time) != self.start_time
+        irregular_end = self.course.default_end_time is not None \
+            and self._time(self.course.default_end_time) != self.end_time
+        return irregular_start or irregular_end
+
+    @reify
     def start_time(self):
+        session_time = self._session_time('start')
+        if session_time:
+            return self._time(session_time)
         if self.course:
-            return self._time('start', self.course.default_start_time)
+            return self._time(self.course.default_start_time)
         return None
 
     @reify
     def end_time(self):
+        session_time = self._session_time('end')
+        if session_time:
+            return self._time(session_time)
         if self.course:
-            return self._time('end', self.course.default_end_time)
+            return self._time(self.course.default_end_time)
         return None
 
     @reify
@@ -471,12 +502,7 @@ class Course(Model):
     def _default_time(self, key):
         default_time = self.info.get('default_time')
         if default_time:
-            time_string = default_time[key]
-            hour, minute = time_string.split(':')
-            hour = int(hour)
-            minute = int(minute)
-            tzinfo = dateutil.tz.gettz(_TIMEZONE)
-            return datetime.time(hour, minute, tzinfo=tzinfo)
+            return time_from_string(default_time[key])
         return None
 
     @reify
