@@ -21,24 +21,81 @@
     </div>
 {% endmacro %}
 
+{% macro pagination() %}
+    <div>
+        <ul class="paginate">
+            <li class="paginate-prev">
+                <a {% if year==None and all==None %}class="disabled"{% endif %}
+                   href="{{ url_for('runs', **paginate_prev) }}">&lt;</a>
+            </li>
+            <li class="paginate-link {% if year==None and all==None %}current{% endif %}">
+                 <a href="{{ url_for('runs', year=None) }}">Aktuální</a>
+            </li>
+            {% for page in all_years | reverse %}
+                <li class="paginate-link {% if page==year %}current{% endif %}">
+                     <a href="{{ url_for('runs', year=page) }}">{{ page }}</a>
+                </li>
+            {% endfor %}
+            <li class="paginate-link {% if all!=None %}current{% endif %}">
+                 <a href="{{ url_for('runs', year=None, all='all') }}">Vše</a>
+            </li>
+            <li class="paginate-next">
+                <a {% if all!=None %}class="disabled"{% endif %}
+                   href="{{ url_for('runs', **paginate_next) }}">&gt;</a>
+            </li>
+        </ul>
+    </div>
+{% endmacro %}
 
 {% block list %}
 
-    <h1>Aktuální kurzy</h1>
-    {% for year, run_year in run_years.items() %}
-        {% for run in run_year.runs.values() | sort(attribute='start_date', reverse=True)
-                if run.end_date >= today %}
-            {{ show_run(run) }}
-        {% endfor %}
-    {% endfor %}
+    {% if all is none %}
+        {% if year is none %}
+            <h1>Aktuální kurzy</h1>
+            {% if run_data["ongoing"] | length > 0 %}
+                {% for run in run_data["ongoing"] | sort(attribute='start_date', reverse=True) %}
+                    {{ show_run(run) }}
+                {% endfor %}
+            {% else %}
+                <div class="empty-run-list">
+                    Nemáme žádné aktuální kurzy.
+                </div>
+            {% endif %}
 
-    <h1>Proběhlé kurzy</h1>
-    {% for year, run_year in run_years.items() | sort(reverse=True) %}
-        <h2>{{ year }}</h2>
-        {% for run in run_year.runs.values() | sort(attribute='start_date', reverse=True)
-                if run.end_date < today %}
-            {{ show_run(run) }}
+            {% if run_data["recent"] | length > 0 %}
+                {{ pagination() }}
+
+                <h1>Nedávno proběhlé kurzy</h1>
+                {% for run in run_data["recent"] | sort(attribute='start_date', reverse=True) %}
+                    {{ show_run(run) }}
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            {{ pagination() }}
+
+            <h1>{{ year }}</h1>
+            {% if run_data | length > 0 %}
+                {% for run in run_data | sort(attribute='start_date', reverse=True) %}
+                    {{ show_run(run) }}
+                {% endfor %}
+            {% else %}
+                <div class="empty-run-list">
+                    V tomto roce neproběhly žádné kurzy.
+                </div>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        {{ pagination() }}
+
+        <h1>Všechny kurzy</h1>
+        {% for year, run_year in run_data.items() | sort(reverse=True) %}
+            <h2>{{ year }}</h2>
+            {% for run in run_year.runs.values() | sort(attribute='start_date', reverse=True) %}
+                {{ show_run(run) }}
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
+    {% endif %}
+
+    {{ pagination() }}
 
 {% endblock %}

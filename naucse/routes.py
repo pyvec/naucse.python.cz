@@ -81,11 +81,61 @@ def index():
 
 
 @app.route('/runs/')
-def runs():
+@app.route('/runs/<int:year>/')
+@app.route('/runs/<any(all):all>/')
+def runs(year=None, all=None):
+    today = datetime.date.today()
+
+    # List of years to show in the pagination
+    # If the current year is not there (no runs that start in the current year
+    # yet), add it manually
+    all_years = model.run_years.keys()
+    if today.year not in all_years:
+        all_years.append(today.year)
+    first_year, last_year = min(all_years), max(all_years)
+
+    if year is not None:
+        if year > last_year:
+            # Instead of showing a future year, redirect to the 'Current' page
+            return redirect(url_for('runs'))
+        if year not in all_years:
+            # Otherwise, if there are no runs in requested year, return 404.
+            abort(404)
+
+    if all is not None:
+        run_data = model.run_years
+
+        paginate_prev = {'year': first_year}
+        paginate_next = {'all': 'all'}
+    elif year is None:
+        run_data = model.ongoing_and_recent_runs
+
+        paginate_prev = {'year': None}
+        paginate_next = {'year': last_year}
+    else:
+        run_data = model.runs_from_year(year)
+
+        past_years = [y for y in all_years if y < year]
+        if past_years:
+            paginate_next = {'year': max(past_years)}
+        else:
+            paginate_next = {'all': 'all'}
+
+        future_years = [y for y in all_years if y > year]
+        if future_years:
+            paginate_prev = {'year': min(future_years)}
+        else:
+            paginate_prev = {'year': None}
+
     return render_template("run_list.html",
-                           run_years=model.run_years,
+                           run_data=run_data,
                            title="Seznam offline kurzů Pythonu",
                            today=datetime.date.today(),
+                           year=year,
+                           all=all,
+                           all_years=all_years,
+                           paginate_next=paginate_next,
+                           paginate_prev=paginate_prev,
                            edit_path=model.runs_edit_path)
 
 

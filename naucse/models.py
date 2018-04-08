@@ -13,6 +13,7 @@ from naucse.utils.notebook import convert_notebook
 from pathlib import Path
 
 _TIMEZONE = 'Europe/Prague'
+_TODAY = datetime.date.today()
 
 
 class Lesson(Model):
@@ -499,6 +500,10 @@ class Course(Model):
             return None
         return max(dates)
 
+    @reify
+    def is_ongoing(self):
+        return self.end_date >= _TODAY
+
     def _default_time(self, key):
         default_time = self.info.get('default_time')
         if default_time:
@@ -551,6 +556,21 @@ class Root(Model):
             for year, run_year in self.run_years.items()
             for slug, run in run_year.runs.items()
         }
+
+    @reify
+    def ongoing_and_recent_runs(self):
+        """Get runs that are either ongoing or ended in the last 3 months."""
+        ongoing = [run for run in self.runs.values()
+                       if run.is_ongoing]
+        cutoff = _TODAY - datetime.timedelta(days=3*31)
+        recent = [run for run in self.runs.values()
+                      if not run.is_ongoing and run.end_date > cutoff]
+        return {"ongoing": ongoing, "recent": recent}
+
+    def runs_from_year(self, year):
+        """Get all runs that either started or ended in a given year."""
+        return [run for run in self.runs.values()
+                    if run.start_date.year <= year and run.end_date.year >= year]
 
     def get_lesson(self, name):
         if isinstance(name, Lesson):
