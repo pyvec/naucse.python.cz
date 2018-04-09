@@ -106,9 +106,9 @@ Jak to vyřešit?
 Jeden standard
 --------------
 
-![xkcd 927](http://imgs.xkcd.com/comics/standards.png)
+![xkcd 927](https://imgs.xkcd.com/comics/standards.png)
 
-*Komiks [xkcd](https://xkcd.com/927/), © Randall Munroe, [CC-BY-NC](http://creativecommons.org/licenses/by-nc/2.5/)*
+*Komiks [xkcd](https://xkcd.com/927/), © Randall Munroe, [CC-BY-NC](https://creativecommons.org/licenses/by-nc/2.5/)*
 
 Podobně jako přístup k různým SQL databázím je v Pythonu standardizovaný
 (knihovny pro SQLite, Postgres, MySQL atd. všechny podporují API definované
