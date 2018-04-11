@@ -239,7 +239,7 @@ No jo, ale po takovém odstranění
 už nejde jednoduše spustit hra! Co s tím?
 
 Můžeš na to vytvořit nový modul.
-Pojmenuj ho `hra.py` a dej to něj jenom to odstraněné volání:
+Pojmenuj ho `hra.py` a dej do něj jenom to odstraněné volání:
 
 ```python
 import piskvorky
