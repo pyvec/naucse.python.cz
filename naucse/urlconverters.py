@@ -3,6 +3,8 @@ from functools import partial
 from flask import abort
 from werkzeug.routing import BaseConverter
 
+from naucse.models import Lesson
+
 
 class ModelConverter(BaseConverter):
     def __init__(self, model, *args, **kwargs):
@@ -39,12 +41,29 @@ class CourseConverter(ModelConverter):
             if "/" not in value:  # XXX
                 value = "course/"+value
             value = self.to_python(value)
+
+        if isinstance(value, dict):  # since the converter can be called with a dict mimicking a course
+            return value["slug"]
+
         return value.slug
 
 
-@_converter('lesson')
-class LessonConverter(ModelConverter):
+@_converter('lesson_slug')
+class LessonSlugConverter(ModelConverter):
     regex = r'[^/]+/[^/]+'
+
+    def to_url(self, value):
+        if isinstance(value, Lesson):
+            return value.slug
+
+        elif isinstance(value, dict):  # since the converter can be called with a dict mimicking a lesson
+            return value["slug"]
+
+        return value
+
+
+@_converter('lesson')
+class LessonConverter(LessonSlugConverter):
 
     def to_python(self, value):
         try:
@@ -53,6 +72,9 @@ class LessonConverter(ModelConverter):
             abort(404)
 
     def to_url(self, value):
+        if isinstance(value, dict):  # since the converter can be called with a dict mimicking a lesson
+            return value["slug"]
+
         if isinstance(value, str):
             value = self.to_python(value)
         return value.slug

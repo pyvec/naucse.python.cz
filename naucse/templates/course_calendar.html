@@ -1,82 +1,14 @@
-{% extends '_base.html' %}
+{% extends "_base_course.html" %}
 
 {% block extra_links %}
     <link rel="stylesheet" href="{{url_for('static', filename='css/calendar.css')}}">
 {% endblock extra_links%}
 
-{% block content %}
+{% block breadcrumbs %}
+> <a href="{{ course_url(course) }}">{{ course.title }}</a>
+> Kalendář
+{% endblock %}
 
-<div class="page">
-    <section class="container">
-
-
-    <header class="lesson-header">
-        <a href="{{ url_for('index') }}">Nauč se Python </a>
-
-        {% if course.vars['coach-present'] %}
-        > <a href="{{ url_for('runs') }}">Kurzy</a>
-        {% else %}
-        > <a href="{{ url_for('courses') }}">Materiály</a>
-        {% endif%}
-        > <a href="{{ course_url(course) }}">{{ course.title }}</a>
-        > Kalendář
-        <hr>
-    </header>
-
-    <h1>{{ course.title }}</h1>
-
-    {% if course.subtitle is defined and course.subtitle != None %}
-        <h2>{{ course.subtitle }}</h2>
-    {% endif%}
-    {% if course.default_start_time %}
-        <div>
-            Přidej si kurz do svého kalendáře:
-            <a href="{{ url_for('course_calendar_ics', course=course) }}">iCal</a>
-        </div>
-    {% else %}
-        <!-- iCal link missing because course doesn't have info about start/end times. -->
-    {% endif%}
-    {% if course.start_date %}
-        {% for year, month in months %}
-            <h3 class="calendar-heading">
-                {{ month | monthname }} <span class="year">{{ year }}</span>
-            </h3>
-            <table class="calendar">
-                {% for date in calendar.itermonthdates(year, month) %}
-                    {% if date.weekday() == 0 %}<tr>{% endif %}
-                    {% if date.month == month %}
-                        {% set session = sessions_by_date.get(date, None) %}
-                        {% if session %}
-                            <td class="event">
-                                <a href="{{ url_for('session_coverpage', course=course, session=session.slug) }}"
-                                 title="#{{ session.index+1 }} – {{ session.title }}">
-                                    <span class="session-number">
-                                        {{ date.day }}. {{ date.month }}.
-                                    </span>
-                                    <span class="session-title">
-                                        {{ session.title }}
-                                    </span>
-                                </a>
-                            </td>
-                        {% else %}
-                            <td class="no-event">
-                                {{ date.day }}
-                            </td>
-                        {% endif %}
-                    {% else %}
-                        <td class="foreign-month">
-                            &nbsp;
-                        </td>
-                    {% endif %}
-                    {% if date.weekday() == 6 %}</tr>{% endif %}
-                {% endfor %}
-            </table>
-        {% endfor %}
-    {% else %}
-        Tento kurz nemá kalendář.
-    {% endif %}
-
-    </section>
-</div>
-
-{% endblock content %}
+{% block course_content %}
+  {{ content|safe }}
+{% endblock %}

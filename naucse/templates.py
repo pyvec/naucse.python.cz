@@ -45,14 +45,6 @@ def dedent(text):
 
 
 @template_filter()
-def edit_link(path):
-    if path == Path("."):
-        return "https://github.com/pyvec/naucse.python.cz"
-    github_base = "https://github.com/pyvec/naucse.python.cz/blob/master/"
-    return github_base + str(path)
-
-
-@template_filter()
 def extract_part(text, part, delimiter):
     """Extract the given part of text. Parts are delimited by `delimiter`.
 

@@ -1,5 +1,4 @@
-{% extends "_base.html" %}
-{% import "_navigation_macros.html" as nav %}
+{% extends "_base_course.html" %}
 
 {% block style %}
     {% if page.css %}
@@ -8,62 +7,29 @@
 {% endblock style %}
 
 {% block extra_links %}
-    {% if canonical_url is defined %}<link rel="canonical" href="{{ canonical_url }}" />{% endif %}
+    {% if canonical_url is defined and canonical_url %}<link rel="canonical" href="{{ canonical_url }}" />{% endif %}
 {% endblock %}
 
-{% block content %}
+{% block breadcrumbs %}
+{# Only used if course is provided #}
+> <a href="{{ course_url(course) }}">{{ course.title }}</a>
+{% if session %}
+> <a href="{{ session_url(course.slug, session.slug) }}">{{ session.title }}</a>
+{% endif %}
+> {{ page.title }}
+{% endblock %}
 
-<div class="page">
-    <div class="container">
+{% block warning_msg %}
+  {% if error_in_fork|default(false) %}
+    {% include "_using_default_page.html" %}
+  {% endif %}
+{% endblock %}
 
-        {% if course is defined %}
-            <header class="lesson-header">
-                <a href="{{ url_for('index') }}">Nauč se Python </a>
-                > <a href="{{ url_for('courses') }}">Kurzy</a>
-                > <a href="{{ course_url(course) }}">{{ course.title }}</a>
-                {% if session %}
-                > <a href="{{ session_url(course.slug, session.slug) }}">{{ session.title }}</a>
-                {% endif %}
-                > {{ page.title }}
-                <hr>
-            </header>
-        {% endif %}
+{% block course_content %}
+    {% if solution_number|default(None) is not none %}
+        <h1>{{ page.title }} – Řešení [{{ solution_number }}]</h1>
+    {% endif %}
 
-        <div class="lesson-content">
-            {% block lesson_content %}
-                {{ content }}
-            {% endblock %}
-        </div>
+    {{ content|safe }}
 
-        {% if (prv is defined and prv != None) or (nxt is defined and nxt != None) %}
-        <hr class="lesson-end">
-
-        {% if course is defined and not course.canonical %}
-            <div class="alert alert-info">
-                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
-                {% if course.base_course %}
-                    <a href="{{ canonical_url }}">Přejít na stejnou lekci v kurzu pro samouky</a>.
-                {% endif %}
-            </div>
-        {% endif %}
-
-        {% call nav.prevnext() %}
-            {% if prv is defined and prv != None %}
-                {{ nav.prev(lesson_url(lesson=prv.page.lesson, page=prv.page.slug), session.title) }}
-            {% endif %}
-            {% if session and course is defined %}
-                {{ nav.up(session_url(course.slug, session.slug), 'Lekce: ' + session.title ) }}
-            {% endif %}
-            {% if nxt is defined and nxt != None %}
-                {{ nav.next(lesson_url(lesson=nxt.page.lesson, page=nxt.page.slug), nxt.title) }}
-            {% elif session and course is defined %}
-                {{ nav.next(session_url(course.slug, session.slug, 'back'), 'Závěr lekce') }}
-            {% endif %}
-        {% endcall %}
-
-        {% endif %}
-
-    </div>
-</div>
-
-{% endblock content %}
+{% endblock %}
