@@ -3,6 +3,7 @@ import datetime
 import pytest
 
 import naucse.routes
+import naucse.utils.routes
 
 
 @pytest.mark.parametrize(
@@ -22,4 +23,79 @@ import naucse.routes
           (2017, 12), (2018, 1)]),
     ])
 def test_list_months(start, end, expected):
-    assert naucse.routes.list_months(start, end) == expected
+    assert naucse.utils.routes.list_months(start, end) == expected
+
+
+def test_allowed_elements():
+    allowed_elements = naucse.utils.routes.AllowedElementsParser()
+
+    allowed_elements.reset_and_feed(
+        "<div><strong><u><a>Test</a></u></div>"
+    )
+
+    with pytest.raises(naucse.utils.routes.DisallowedElement):
+        allowed_elements.reset_and_feed(
+            "<div><script>alert('XSS')</script></div>"
+        )
+
+
+def test_allowed_styles():
+    allowed_elements = naucse.utils.routes.AllowedElementsParser()
+
+    allowed_elements.reset_and_feed(
+        """
+        <style>
+        .dataframe thead tr:only-child th {
+            text-align: right;
+        }
+
+        </style>
+        """
+    )
+
+    # valid styles, but wrong elements
+    with pytest.raises(naucse.utils.routes.DisallowedStyle):
+        allowed_elements.reset_and_feed(
+            """
+            <style>
+            .green {
+                color: green;
+            }
+            </style>
+            """
+        )
+
+    # can't parse
+    with pytest.raises(naucse.utils.routes.DisallowedStyle):
+        allowed_elements.reset_and_feed(
+            """
+            <style>
+            .green {
+                color: green
+            </style>
+            """
+        )
+
+    # multiple selectors in one rule
+    # valid:
+    allowed_elements.reset_and_feed(
+        """
+        <style>
+        .dataframe .green, .dataframe .also-green {
+            color: green;
+        }
+        </style>
+        """
+    )
+
+    # invalid:
+    with pytest.raises(naucse.utils.routes.DisallowedStyle):
+        allowed_elements.reset_and_feed(
+            """
+            <style>
+            .dataframe .green, .also-green {
+                color: green;
+            }
+            </style>
+            """
+        )

@@ -1,0 +1,43 @@
+{% extends "_base_course.html" %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block course_content %}
+  <div class="alert alert-danger">
+    <h1>Chyba při vykreslení obsahu</h1>
+    <p>
+      {% if faulty_page == "course" %}
+        Zde měl být kompletní přehled lekcí a materiálů pro kurz s označením <code>{{ malfunctioning_course.slug }}</code>.
+      {% elif faulty_page == "session_front" %}
+        Zde měla být úvodní stránka lekce s označením <code>{{ session }}</code> pro kurz s označením <code>{{ malfunctioning_course.slug }}</code>,
+      {% elif faulty_page == "session_back" %}
+        Zde měla být závěrečná stránka lekce s označením <code>{{ session }}</code> pro kurz s označením <code>{{ malfunctioning_course.slug }}</code>,
+      {% elif faulty_page == "lesson" %}
+        Zde měl být materiál s označením <code>{{ lesson }}</code>
+        {% if pg != "index" or solution is not none %}({% endif %}
+          {% if pg != "index" %}podstránka <code>{{ pg }}</code>{% endif %}
+          {% if solution is not none %}
+            {% if pg != "index" %},{% endif %}
+            řešení <code>{{ solution }}</code>
+          {% endif %}
+        {% if pg != "index" or solution is not none %}){% endif %}
+        pro kurz s označením <code>{{ malfunctioning_course.slug }}</code>,
+      {% elif faulty_page == "calendar" %}
+        Zde měl být kalendář pro kurz s označením <code>{{ malfunctioning_course.slug }}</code>,
+      {% endif %}
+      nicméně ať už jsme se snažili sebevíc, nepovedlo se nám stránku vykreslit.
+      Níže jsou informace o repozitáři ze kterého měl být obsah vykreslen. Jestli chceš pomoci, můžeš například
+      napsat správci daného repozitáře nebo v něm vytvořit ticket.
+      Všechny podrobnosti, proč se nepovedlo stránku vykreslit, by měly být na
+      <a href="https://travis-ci.org/{{ root_slug }}{% if travis_build_id|default(none) is not none %}/builds/{{ travis_build_id }}{% endif %}"
+         target="_blank">Travisu</a>.
+    </p>
+
+    <h2>Informace o forku:</h2>
+    <ul>
+      <li>Adresa na repozitář gitu: <a href="{{ malfunctioning_course.repo }}" target="_blank">{{ malfunctioning_course.repo }}</a></li>
+      <li>Větev: {{ malfunctioning_course.branch }}</li>
+    </ul>
+  </div>
+{% endblock %}

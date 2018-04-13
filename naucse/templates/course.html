@@ -1,169 +1,100 @@
-{% extends "_base.html" %}
-{% from "_material_macros.html" import material_list with context %}
+{% extends "_base_course.html" %}
 
-{% block content %}
+{% block breadcrumbs %}
+> {{ course.title }}
+{% endblock %}
 
-<div class="page">
-    <section class="container">
-
-        <header class="lesson-header">
-            <a href="{{ url_for('index') }}">Nauč se Python </a>
-
-            {% if course.vars['coach-present'] %}
-            > <a href="{{ url_for('runs') }}">Kurzy</a>
-            {% else %}
-            > <a href="{{ url_for('courses') }}">Materiály</a>
-            {% endif%}
-
-            > {{ course.title }}
-            <hr>
-        </header>
-
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{{ course.title }}</h1>
-                {% if course.place is not none and course.time is not none %}
-                    <div class="details">{{course.place}}, {{course.time}}</div>
-                {% endif %}
-
-                {% if course.subtitle is defined and course.subtitle != None %}
-                    <h2>{{ course.subtitle }}</h2>
-                {% endif%}
-
-                {{ course.long_description | markdown }}
-
-                {% for session in plan.values() %}
-                <div class="section{{ loop.index }}">
-                    <h4>
-                        {% if plan|length > 1 %}
-                            Lekce {{ loop.index }} –
-                        {% endif %}
-                        <a href="{{ session_url(course.slug, session.slug) }}">
-                            {{ session.title }}
-                        </a>
-                    </h4>
-                    {% if session.date %}
-                        <div class="session-time-place">
-                            <div>
-                                {{ session.date | format_date -}}
-                                {%- if session.start_time and session.end_time -%}
-                                    {%- macro _time() -%}
-                                        ,
-                                        {{ session.start_time | format_time -}}
-                                        –
-                                        {{- session.end_time | format_time -}}
-                                    {%- endmacro %}
-                                    {%- if session.has_irregular_time -%}
-                                        <span class="irregular-time">{{ _time() }}</span>
-                                    {%- elif course.default_start_time -%}
-                                        <small class="regular-time">{{ _time() }}</small>
-                                    {%- else -%}
-                                        <span class="regular-time">{{ _time() }}</span>
-                                    {%- endif -%}
-                                {% endif %}
-                            </div>
-                            {% if session.has_irregular_time %}
-                                <div class="irregular-time-alert">
-                                    {{ bytesize_icon('alert') }}
-                                    Pozor, změna času konání!
-                                </div>
-                            {% endif %}
+{% block course_content %}
+<div class="row">
+    <div class="col-lg-8">
+        {% block course_overview %}
+              {{ course_content|safe }}
+        {% endblock %}
+    </div>
+    <div class="col-lg-4">
+        {% if course.start_date %}
+            <div class="card course-card text-center">
+                <div class="card-header">
+                    Toto jsou podklady pro kurz s instruktorem
+                </div>
+                <div class="card-body">
+                    <div class="calendar-dates">
+                        {{ (course.start_date, course.end_date) | format_date_range }}
+                    </div>
+                    {% if course.default_start_time %}
+                        <div class="default-times">
+                            {{ course.default_start_time | format_time }}
+                            –
+                            {{ course.default_end_time | format_time }}
                         </div>
                     {% endif %}
-                    {% if session.description %}{{ session.description | markdown }}{% endif %}
-                    {{ material_list(session.materials) }}
                 </div>
-                {% endfor %}
-
-            </div>
-            <div class="col-lg-4">
-                {% if course.start_date %}
-                    <div class="card course-card text-center">
-                        <div class="card-header">
-                            Toto jsou podklady pro kurz s instruktorem
-                        </div>
-                        <div class="card-body">
-                            <div class="calendar-dates">
-                                {{ (course.start_date, course.end_date) | format_date_range }}
-                            </div>
-                            {% if course.default_start_time %}
-                                <div class="default-times">
-                                    {{ course.default_start_time | format_time }}
-                                    –
-                                    {{ course.default_end_time | format_time }}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="card-footer small text-left">
-                            <ul class="list-unstyled" style="margin-bottom:0;">
-                                <li>
-                                    <a href="{{ url_for('course_calendar', course=course) }}">→ Kalendář</a>
-                                </li>
-                                {% if course.base_course %}
-                                <li>
-                                    <a href="{{ course_url(course.base_course) }}">→ Ekvivalentní kurz pro samouky</a>
-                                </li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="card course-card">
-                        <div class="card-header text-center">
-                            Toto jsou materiály pro samouky
-                        </div>
-                        <div class="card-body">
-                            <p>
-                                Doufáme, že naše materiály jsou srozumitelné a přínosné.
-                                Pokud ne, ozvěte se prosím:
-                            </p>
-                            <ul>
-                                <li>
-                                    na <a href="https://www.facebook.com/groups/pyonieri/">Facebooku</a>,
-                                </li>
-                                <li>
-                                    založením <a href="https://github.com/pyvec/naucse.python.cz/issues/new"><i>issue</i> na Githubu</a>,
-                                </li>
-                                <li>
-                                    osobně na <a href="https://pyvo.cz/">srazu</a>, nebo
-                                </li>
-                                <li>
-                                    <a href="mailto:django-cs@googlegroups.com">mailem</a> do
-                                    <a href="https://groups.google.com/forum/#!forum/django-cs">diskusní skupiny</a>.
-                                </li>
-                            </ul>
-                            <p>
-                                Případné nejasnosti rádi vysvětlíme,
-                                ale musíme o nich vědět!
-                            </p>
-                        </div>
-                        {% if recent_runs %}
-                            <div class="card-footer recent-runs">
-                                Na těchto materiálech jsou založeny
-                                i kurzy s instruktorem:
-                                <ul class="list-unstyled">
-                                {% for run in recent_runs %}
-                                    <li>
-                                        <a href="{{ url_for('course', course=run) }}">
-                                            {{ run.title }}
-                                            {% if run.subtitle %}
-                                                – {{ run.subtitle }}
-                                            {% endif %}
-                                        </a>
-                                        <div>
-                                            {{ (run.start_date, run.end_date) | format_date_range }}
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                                </ul>
-                            </div>
+                <div class="card-footer small text-left">
+                    <ul class="list-unstyled" style="margin-bottom:0;">
+                        <li>
+                            <a href="{{ url_for('course_calendar', course=course) }}">→ Kalendář</a>
+                        </li>
+                        {% if course.base_course %}
+                        <li>
+                            <a href="{{ course_url(course.base_course) }}">→ Ekvivalentní kurz pro samouky</a>
+                        </li>
                         {% endif %}
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <div class="card course-card">
+                <div class="card-header text-center">
+                    Toto jsou materiály pro samouky
+                </div>
+                <div class="card-body">
+                    <p>
+                        Doufáme, že naše materiály jsou srozumitelné a přínosné.
+                        Pokud ne, ozvěte se prosím:
+                    </p>
+                    <ul>
+                        <li>
+                            na <a href="https://www.facebook.com/groups/pyonieri/">Facebooku</a>,
+                        </li>
+                        <li>
+                            založením <a href="https://github.com/pyvec/naucse.python.cz/issues/new"><i>issue</i> na Githubu</a>,
+                        </li>
+                        <li>
+                            osobně na <a href="https://pyvo.cz/">srazu</a>, nebo
+                        </li>
+                        <li>
+                            <a href="mailto:django-cs@googlegroups.com">mailem</a> do
+                            <a href="https://groups.google.com/forum/#!forum/django-cs">diskusní skupiny</a>.
+                        </li>
+                    </ul>
+                    <p>
+                        Případné nejasnosti rádi vysvětlíme,
+                        ale musíme o nich vědět!
+                    </p>
+                </div>
+                {% if recent_runs %}
+                    <div class="card-footer recent-runs">
+                        Na těchto materiálech jsou založeny
+                        i kurzy s instruktorem:
+                        <ul class="list-unstyled">
+                        {% for run in recent_runs %}
+                            <li>
+                                <a href="{{ url_for('course', course=run) }}">
+                                    {{ run.title }}
+                                    {% if run.subtitle %}
+                                        – {{ run.subtitle }}
+                                    {% endif %}
+                                </a>
+                                <div>
+                                    {{ (run.start_date, run.end_date) | format_date_range }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                        </ul>
                     </div>
                 {% endif %}
             </div>
-        </div>
-
-    </section>
+        {% endif %}
+    </div>
 </div>
-
-{% endblock content %}
+{% endblock %}

@@ -1,18 +1,27 @@
+import os
+import re
 from collections import OrderedDict
 import datetime
 
 import cssutils
 import dateutil.tz
+import giturlparse
 import jinja2
+from arca import Task
+from git import Repo
 
-from naucse.utils.models import Model, YamlProperty, DataProperty, DirProperty
-from naucse.utils.models import reify
+import naucse.utils.routes
+from naucse.utils.models import Model, YamlProperty, DataProperty, DirProperty, MultipleModelDirProperty, ForkProperty
+from naucse.utils.models import reify, arca
+from naucse.utils.routes import AllowedElementsParser, absolute_urls_to_freeze
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.utils.markdown import convert_markdown
 from naucse.utils.notebook import convert_notebook
 from pathlib import Path
 
+
 _TIMEZONE = 'Europe/Prague'
+allowed_elements_parser = AllowedElementsParser()
 
 
 class Lesson(Model):
@@ -76,24 +85,13 @@ class Page(Model):
 
         If the lesson defines extra css, the scope of the styles is limited to ``.lesson-content``,
         a div which contains the actual lesson content.
-
-        This doesn't protect against malicious input.
         """
         css = self.info.get("css")
 
         if css is None:
             return None
 
-        parser = cssutils.CSSParser(raiseExceptions=True)
-        parsed = parser.parseString(css)
-
-        for rule in parsed.cssRules:
-            for selector in rule.selectorList:
-                # the space is important - there's a difference between for example
-                # ``.lesson-content:hover`` and ``.lesson-content :hover``
-                selector.selectorText = ".lesson-content " + selector.selectorText
-
-        return parsed.cssText.decode("utf-8")
+        return self.limit_css_to_lesson_content(css)
 
     @reify
     def edit_path(self):
@@ -130,6 +128,7 @@ class Page(Model):
     def render_html(self, solution=None,
                     static_url=None,
                     lesson_url=None,
+                    subpage_url=None,
                     vars=None,
                     ):
         lesson = self.lesson
@@ -156,11 +155,15 @@ class Page(Model):
                     url += '{}/'.format(solution)
                 return url
 
+        if subpage_url is None:
+            def subpage_url(page):
+                return lesson_url(lesson=lesson, page=page)
+
         kwargs = {
             'static': lambda path: static_url(path),
             'lesson_url': lambda lesson, page='index', solution=None:
                 lesson_url(lesson=lesson, page=page, solution=solution),
-            'subpage_url': lambda page: lesson_url(lesson=lesson, page=page),
+            'subpage_url': subpage_url,
             'lesson': lesson,
             'page': self,
             '$solutions': solutions,
@@ -192,6 +195,23 @@ class Page(Model):
             return content
         else:
             return solutions[solution]
+
+    @staticmethod
+    def limit_css_to_lesson_content(css):
+        """ Returns ``css`` limited just to the ``.lesson-content`` element.
+   
+        This doesn't protect against malicious input.
+        """
+        parser = cssutils.CSSParser(raiseExceptions=True)
+        parsed = parser.parseString(css)
+
+        for rule in parsed.cssRules:
+            for selector in rule.selectorList:
+                # the space is important - there's a difference between for example
+                # ``.lesson-content:hover`` and ``.lesson-content :hover``
+                selector.selectorText = ".lesson-content " + selector.selectorText
+
+        return parsed.cssText.decode("utf-8")
 
 
 class Collection(Model):
@@ -445,7 +465,27 @@ def _get_sessions(course, plan):
     return result
 
 
-class Course(Model):
+class CourseMixin:
+    """ Couple of methods common for both :class:`Course` and :class:`CourseLink`.
+    """
+
+    @reify
+    def slug(self):
+        directory = self.path.parts[-1]
+        parent_directory = self.path.parts[-2]
+        if parent_directory == "courses":
+            parent_directory = "course" # legacy URL
+        return parent_directory + "/" + directory
+
+    def is_link(self):
+        return isinstance(self, CourseLink)
+
+    @reify
+    def is_derived(self):
+        return self.base_course is not None
+
+
+class Course(CourseMixin, Model):
     """A course – ordered collection of sessions"""
     def __str__(self):
         return '{} - {}'.format(self.slug, self.title)
@@ -462,20 +502,26 @@ class Course(Model):
 
     canonical = DataProperty(info, default=False)
 
+    data_filename = "info.yml"  # for MultipleModelDirProperty
+
+    # These two class attributes define what the function ``naucse.utils.forks:course_info`` returns from forks,
+    # meaning, the function in the fork looks at these lists that are in the fork and returns those.
+    # If you're adding an attribute to these lists, you have to make sure that you provide a default in
+    # the CourseLink attribute since the forks already forked will not be returning the value.
+    COURSE_INFO = ["title", "description", "vars", "canonical"]
+    RUN_INFO = ["title", "description", "start_date", "end_date", "canonical", "subtitle", "derives", "vars",
+                "default_start_time", "default_end_time"]
+
+    @property
+    def derives(self):
+        return self.info.get("derives")
+
     @reify
     def base_course(self):
         name = self.info.get('derives')
         if name is None:
             return None
         return self.root.courses[name]
-
-    @reify
-    def slug(self):
-        directory = self.path.parts[-1]
-        parent_directory = self.path.parts[-2]
-        if parent_directory == "courses":
-            parent_directory = "course" # legacy URL
-        return parent_directory + "/" + directory
 
     @reify
     def sessions(self):
@@ -514,12 +560,159 @@ class Course(Model):
         return self._default_time('end')
 
 
+def optional_convert_date(datestr):
+    if not datestr:
+        return None
+
+    try:
+        return datetime.datetime.strptime(datestr, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+def optional_convert_time(timestr):
+    if not timestr:
+        return None
+
+    try:
+        return datetime.datetime.strptime(timestr, "%H:%M:%S").time()
+    except ValueError:
+        return None
+
+
+class CourseLink(CourseMixin, Model):
+    """ A link to a course from a separate git repo.
+    """
+
+    link = YamlProperty()
+    repo: str = DataProperty(link)
+    branch: str = DataProperty(link, default="master")
+
+    info = ForkProperty(repo, branch, entry_point="naucse.utils.forks:course_info",
+                        args=lambda instance: [instance.slug])
+    title = DataProperty(info)
+    description = DataProperty(info)
+    start_date = DataProperty(info, default=None, convert=optional_convert_date)
+    end_date = DataProperty(info, default=None, convert=optional_convert_date)
+    subtitle = DataProperty(info, default=None)
+    derives = DataProperty(info, default=None)
+    vars = DataProperty(info, default=None)
+    canonical = DataProperty(info, default=False)
+    default_start_time = DataProperty(info, default=None, convert=optional_convert_time)
+    default_end_time = DataProperty(info, default=None, convert=optional_convert_time)
+
+    data_filename = "link.yml"  # for MultipleModelDirProperty
+
+    def __str__(self):
+        return 'CourseLink: {} ({})'.format(self.repo, self.branch)
+
+    @reify
+    def base_course(self):
+        name = self.derives
+        if name is None:
+            return None
+        try:
+            return self.root.courses[name]
+        except LookupError:
+            return None
+
+    def render(self, page_type, *args, **kwargs):
+        """ Renders a page in the fork, checks the content and registers urls to freeze.
+        """
+        naucse.utils.routes.forks_raise_if_disabled()
+
+        task = Task(
+            "naucse.utils.forks:render",
+            args=[page_type, self.slug] + list(args),
+            kwargs=kwargs,
+        )
+        result = arca.run(self.repo, self.branch, task,
+                          reference=Path("."), depth=None)
+
+        if page_type != "calendar_ics" and result.output["content"] is not None:
+            allowed_elements_parser.reset_and_feed(result.output["content"])
+
+        if "urls" in result.output:
+            # freeze urls generated by the code in fork, but only if they start with the slug of the course
+            absolute_urls_to_freeze.extend([url for url in result.output["urls"] if url.startswith(f"/{self.slug}/")])
+
+        return result.output
+
+    def render_course(self, **kwargs):
+        return self.render("course", **kwargs)
+
+    def render_calendar(self, **kwargs):
+        return self.render("calendar", **kwargs)
+
+    def render_calendar_ics(self, **kwargs):
+        return self.render("calendar_ics", **kwargs)
+
+    def render_page(self, lesson_slug, page, solution, content_key=None, **kwargs):
+        return self.render("course_page", lesson_slug, page, solution, content_key=content_key, **kwargs)
+
+    def render_session_coverpage(self, session, coverpage, **kwargs):
+        return self.render("session_coverpage", session, coverpage, **kwargs)
+
+    def lesson_static(self, lesson_slug, path):
+        filename = arca.static_filename(self.repo, self.branch, Path("lessons") / lesson_slug / "static" / path,
+                                        reference=Path("."), depth=None).resolve()
+
+        return filename.parent, filename.name
+
+    def get_footer_links(self, lesson_slug, page, **kwargs):
+        """ Returns links to previous page, to current session and to the next page. Each link
+            is either a dict with url and title keys or ``None``.
+
+            If :meth:`render_page` fails and a canonical versions is in the base repo, it's used instead
+            with a warning. This method provides the correct footer links for the page, since ``sessions``
+            is not included in the info provided by forks.
+        """
+        naucse.utils.routes.forks_raise_if_disabled()
+
+        task = Task(
+            "naucse.utils.forks:get_footer_links",
+            args=[self.slug, lesson_slug, page],
+            kwargs=kwargs
+        )
+
+        result = arca.run(self.repo, self.branch, task, reference=Path("."), depth=None)
+
+        to_return = []
+
+        from naucse.routes import logger
+        logger.debug(result.output)
+
+        if not isinstance(result.output, dict):
+            return None, None, None
+
+        def validate_link(link, key):
+            return key in link and isinstance(link[key], str)
+
+        for link_type in "prev_link", "session_link", "next_link":
+            link = result.output.get(link_type)
+
+            if isinstance(link, dict) and validate_link(link, "url") and validate_link(link, "title"):
+                if link["url"].startswith(f"/{self.slug}/"):
+                    absolute_urls_to_freeze.append(link["url"])
+                to_return.append(link)
+            else:
+                to_return.append(None)
+
+        logger.debug(to_return)
+
+        return to_return
+
+    @reify
+    def edit_path(self):
+        return self.path.relative_to(self.root.path) / "link.yml"
+
+
 class RunYear(Model):
     """A year of runs"""
     def __str__(self):
         return self.path.parts[-1]
 
-    runs = DirProperty(Course)
+    runs = MultipleModelDirProperty([Course, CourseLink])
 
 
 class License(Model):
@@ -532,13 +725,83 @@ class License(Model):
     url = DataProperty(info)
 
 
+class MetaInfo:
+    """ Info about the current repository. """
+
+    def __str__(self):
+        return "Meta Information"
+
+    _default_slug = "pyvec/naucse.python.cz"
+    _default_branch = "master"
+
+    @reify
+    def slug(self):
+        """ Returns the slug of the repository based on the current branch. Returns the default if not on a branch,
+            the branch doesn't have a remote or the remote url can't be parsed.
+        """
+        from naucse.routes import logger
+
+        # Travis CI checks out specific commit, so there isn't an active branch
+        if os.environ.get("TRAVIS") and os.environ.get("TRAVIS_REPO_SLUG"):
+            return os.environ.get("TRAVIS_REPO_SLUG")
+
+        repo = Repo(".")
+
+        try:
+            active_branch = repo.active_branch
+        except TypeError:  # thrown if not in a branch
+            logger.warning("MetaInfo.slug: There is not active branch")
+            return self._default_slug
+
+        try:
+            remote_name = active_branch.remote_name
+        except ValueError:
+            tracking_branch = active_branch.tracking_branch()
+
+            if tracking_branch is None:  # a branch without a remote
+                logger.warning("MetaInfo.slug: The branch doesn't have a remote")
+                return self._default_slug
+
+            remote_name = tracking_branch.remote_name
+
+        remote_url = repo.remotes[remote_name].url
+
+        parsed = giturlparse.parse(remote_url)
+
+        if hasattr(parsed, "owner") and hasattr(parsed, "repo"):
+            return f"{parsed.owner}/{parsed.repo}"
+
+        logger.warning("MetaInfo.slug: The url could not be parsed.")
+        logger.debug("MetaInfo.slug: Parsed %s", parsed.__dict__)
+
+        return self._default_slug
+
+    @reify
+    def branch(self):
+        """ Returns the active branch name or master if not on a branch.
+        """
+        from naucse.routes import logger
+
+        # Travis CI checks out specific commit, so there isn't an active branch
+        if os.environ.get("TRAVIS") and os.environ.get("TRAVIS_BRANCH"):
+            return os.environ.get("TRAVIS_BRANCH")
+
+        repo = Repo(".")
+
+        try:
+            return repo.active_branch.name
+        except TypeError:  # thrown if not in a branch
+            logger.warning("MetaInfo.branch: There is not active branch")
+            return self._default_slug
+
+
 class Root(Model):
     """The base of the model"""
     def __init__(self, path):
         super().__init__(self, path)
 
     collections = DirProperty(Collection, 'lessons')
-    courses = DirProperty(Course, 'courses')
+    courses = MultipleModelDirProperty([Course, CourseLink], 'courses')
     run_years = DirProperty(RunYear, 'runs', keyfunc=int)
     licenses = DirProperty(License, 'licenses')
     courses_edit_path = Path("courses")
@@ -552,9 +815,15 @@ class Root(Model):
             for slug, run in run_year.runs.items()
         }
 
+    @reify
+    def meta(self):
+        return MetaInfo()
+
     def get_lesson(self, name):
         if isinstance(name, Lesson):
             return name
+        if name[-1] == "/":
+            name = name[:-1]
         collection_name, name = name.split('/', 2)
         collection = self.collections[collection_name]
         return collection.lessons[name]
