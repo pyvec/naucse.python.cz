@@ -492,7 +492,7 @@ def course_page(course, lesson, page, solution=None):
             kwargs["edit_info"] = links.process_edit_info(data_from_fork.get("edit_info"))
             prev_link, session_link, next_link = process_footer_data(data_from_fork.get("footer"))
 
-            title = '{}: {}'.format(course["title"], page["title"]),
+            title = '{}: {}'.format(course["title"], page["title"])
         except POSSIBLE_FORK_EXCEPTIONS as e:
             if raise_errors_from_forks():
                 raise
@@ -510,7 +510,7 @@ def course_page(course, lesson, page, solution=None):
                         lesson, page, solution, course,
                         lesson_url=lesson_url, subpage_url=subpage_url, static_url=static_url
                     )["content"]
-                    title = '{}: {}'.format(course.title, page.title),
+                    title = '{}: {}'.format(course.title, page.title)
 
                     try:
                         prev_link, session_link, next_link = course.get_footer_links(lesson.slug, page_slug,
@@ -558,7 +558,7 @@ def course_page(course, lesson, page, solution=None):
         )
         content = content["content"]
         allowed_elements_parser.reset_and_feed(content)
-        title = '{}: {}'.format(course.title, page.title),
+        title = '{}: {}'.format(course.title, page.title)
 
         kwargs["edit_info"] = get_edit_info(page.edit_path)
 
