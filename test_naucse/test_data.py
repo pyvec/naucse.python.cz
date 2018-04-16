@@ -9,8 +9,6 @@ root = models.Root('.')
 
 
 @pytest.mark.parametrize(('slug', 'weekday'), [
-                             ('runs/2017/mipyt-zima',
-                              calendar.WEDNESDAY),
                              ('runs/2017/pyladies-praha-podzim-cznic',
                               calendar.TUESDAY),
                              ('runs/2017/pyladies-praha-podzim-ntk',
