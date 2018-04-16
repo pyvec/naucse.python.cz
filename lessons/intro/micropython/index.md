@@ -90,7 +90,7 @@ pin.value(1)
 Pro zhasnutí zadejte `pin.value(0)`. (Opět jde o volání metody, není to `pin.value = 0`.)
 
 `Pin(14)` odpovídá pinu označenému `D5` – číslování, které používá procesor (a MicroPython), se bohužel liší od toho, které používá deska.
-Odpovídající si označení lze zjistit z [taháku](https://pyvec.github.io/cheatsheets/micropython/nodemcu-cs.pdf).
+Odpovídající si označení lze zjistit z [taháku](https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf).
 
 Zkuste zajistit, aby dioda svítila, právě pokud je stisknuté tlačítko FLASH.
 
@@ -196,11 +196,6 @@ $ esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash 0 esp8266-20161110-v1
 ```
 
 Hodnotu pro `--port` opět doplňte podle svého systému – např. `/dev/tty.wchusbserial1420` na Macu, `COM3` na Windows.
-
-> [note]
-> Destiček s čipem ESP8266 se vyrábí celá řada různých typů a některé mohou
-> potřebovat odlišné nastavení při flashování.
-> Popis všech možností nastavení je k nalezení v [dokumentaci k esptool](https://github.com/espressif/esptool#usage).
 
 Je-li na desce nahraný MicroPython, tento příkaz by měl fungovat. U jiného firmware, (případně u poškozeného MicroPythonu), je potřeba při zapojování destičky do USB držet tlačítko FLASH.
 

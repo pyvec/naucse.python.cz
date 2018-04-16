@@ -131,16 +131,11 @@ Přepínač `--help` přidává click sám.
 
 ## Argumenty
 
-Kromě přepínačů podporuje click i [*argumenty*](http://click.pocoo.org/6/arguments/).
-Přepínače musí uživatel na řádce pojmenovat; argumenty se zadávají beze jména,
-ale záleží u nich na pořadí.
-Používají se ve dvou případech: pro povinné parametry a pro parametry, kterých
-může být zadán libovolný počet.
+Kromě přepínačů podporuje click i *argumenty*.
+Přepínače musí uživatel na řádce pojmenovat; argumenty se zadávají pozičně.
+Používají se ve dvou případech: pro povinné informace a pro argumenty, kterých
+může být libovolný počet.
 Na všechno ostatní radši použijte přepínače.
-
-Například příkaz `cd` potřebuje jeden argument: jméno adresáře,
-do kterého má přepnout.
-Jeho rozhraní by v Clicku vypadalo takto:
 
 ```python
 @click.command()
@@ -148,18 +143,10 @@ Jeho rozhraní by v Clicku vypadalo takto:
 def cd(directory):
     """Change the current directory"""
     click.echo('Changing to directory {}'.format(directory))
-```
 
-Proměnný počet argumentů se zadává pomocí `nargs=-1` (0 nebo víc argumentů)
-nebo `nargs=-1, required=True` (1 nebo víc).
-
-Například příkaz `mv` bere <var>N</var> souborů a adresář, kam je přesune.
-Takové rozhraní by v Clicku vypadalo následovně:
-
-```python
 @click.command()
-@click.argument('source', nargs=-1, required=True)
-@click.argument('destination')
+@click.argument('source', nargs=-1)
+@click.argument('destination', nargs=1)
 def mv(source, destination):
     """Move any number of files to one destination"""
     for filename in source:

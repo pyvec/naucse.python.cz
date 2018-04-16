@@ -99,7 +99,7 @@ Když člověk zabředne do složitého problému, může na CPython pustit C de
 jako [gdb] nebo [Valgrind], prozkoumat potíže na nižší úrovni
 a zjistit, kde přesně se chyba nachází.
 
-[gdb]: https://en.wikipedia.org/wiki/GNU_Debugger
+[gdb]: https://en.wikipedia.org/wiki/GNU_Debugger]
 [Valgrind]: http://valgrind.org/
 
 
@@ -307,7 +307,7 @@ typedef struct {
 [Seznamy][list] obsahují za hlavičkou např. velikost a (ukazatel na) pole ukazatelů na jednotlivé
 prvky.
 Podobně [objekty typu int][int] (které mají v Pythonu neomezený rozsah) mají délku a pole
-jednotlivých 30bitových „číslic“.
+jednotlivých 30bitových "číslic".
 NumPy matice mají metadata (velikost, typ, popis rozložení v paměti) a ukazatel na pole hodnot.
 
 [float]: https://github.com/python/cpython/blob/3.5/Include/floatobject.h#L15
@@ -612,14 +612,14 @@ z/do matic, a protože Cython nemá informace o tom, že jsou to NumPy matice, p
 protokol pro pythonní kontejnery, takže se každá hodnota převede na pythonní objekt.
 
 Je tedy potřeba říct Cythonu, že používáme NumPy matice.
-Naštěstí v NumPy existuje integrace s Cythonem, takže můžeme na úrovni C „naimportovat“
+Naštěstí v NumPy existuje integrace s Cythonem, takže můžeme na úrovni C "naimportovat"
 rozšíření pro NumPy:
 
 ```python
 cimport numpy
 ```
 
-... a potom použít typ „dvourozměrná matice celých čísel“, který se v Cythonu jmenuje
+... a potom použít typ "dvourozměrná matice celých čísel", který se v Cythonu jmenuje
 `numpy.ndarray[numpy.int64_t, ndim=2]`.
 Naše funkce tedy bude začínat takto:
 

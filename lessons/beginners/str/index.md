@@ -258,7 +258,7 @@ Je sice delší, ale mnohem přehlednější.
 {% endfilter %}
 
 Řetězcových metod je celá řada.
-Nejužitečnější z nich najdeš v [taháku](https://pyvec.github.io/cheatsheets/strings/strings-cs.pdf), který si můžeš stáhnout či vytisknout.
+Nejužitečnější z nich najdeš v [taháku](https://github.com/pyvec/cheatsheets/raw/master/strings/strings-cs.pdf), který si můžeš stáhnout či vytisknout.
 
 A úplně všechny řetězcové metody jsou popsány v [dokumentaci Pythonu](https://docs.python.org/3/library/stdtypes.html#string-methods) (anglicky; plné věcí, které ještě neznáš).
 

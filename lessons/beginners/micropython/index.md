@@ -311,7 +311,7 @@ Funkce `pin.value()` změří napětí na dané
 No a „nožička” číslo 0 je připojená k tlačítku `FLASH`,
 kterým se tak dá ono napětí ovládat.
 Informace o tom, která nožička je kam připojená,
-máš na [taháku](https://pyvec.github.io/cheatsheets/micropython/nodemcu-cs.pdf) –
+máš na [taháku](https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf) –
 můžeš si zkontrolovat, že Pin(0) u sebe má poznámku FLASH.
 
 
@@ -425,7 +425,7 @@ A tak se dá s diodou blikat.
 > Číslování nožiček je bohužel dvojí – nožička
 > označená jako `D5` má v procesoru přiřazené číslo 14.
 > Třída `Pin` v MicroPythonu používá číslování procesoru.
-> Naštěstí máš [tahák](https://pyvec.github.io/cheatsheets/micropython/nodemcu-cs.pdf),
+> Naštěstí máš [tahák](https://github.com/pyvec/cheatsheets/raw/master/micropython/nodemcu-cs.pdf),
 > kde snadno dohledáš že `D5` a `Pin(14)` jsou dvě jména stejné nožičky.
 
 Zvládneš napsat program, který zařídí, aby dioda

@@ -61,7 +61,7 @@ V nové příkazové řádce zadej:
 > git config --global gui.encoding utf-8
 ```
 
-A teď pokračuj v sekci [Nastavení](#config) níže – macOS přeskoč.
+A teď pokračuj v sekci [Nastavením](#config) níže – macOS přeskoč.
 
 
 ## macOS
@@ -75,8 +75,7 @@ Jinak ho nainstaluj pomocí Homebrew:
 $ brew install git
 ```
 
-Nainstalovanému Gitu je ještě potřeba nastavit editor (zadej `nano`,
-i když sis v rámci instalace editoru nainstaloval{{a}} např. Atom).
+Nainstalovanému Gitu je ještě potřeba nastavit editor.
 Dělá se to tímto příkazem:
 
 ```console
