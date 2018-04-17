@@ -154,11 +154,17 @@ Připojíme NodeMCU přes USB a pomocí `esptool` ho naflashujeme:
 dohledat, kam se NodeMCU připojilo. V takovém případě ale bude potřeba změnit
 instrukce k workshopu.)
 
-Nakonec na NodeMCU stiskneme tlačítko RST, a pak nahrajeme `boot.py`:
+Nakonec na NodeMCU stiskneme tlačítko RST, pustíme a pak nahrajeme `boot.py`:
 
 ```console
 (venv)$ ampy -p /dev/ttyUSB0 put boot.py
 ```
+
+Soubor `boot.py` obsahuje testovací režim pro kontrolu, že je vše nahráno
+správně.
+Podržíme-li tlačítko na modulu stisknuté, po resetu (tlačítkem RST nebo
+přpojením USB kabelu) se motorek otočí a modrá LED i LED pásek zablikají.
+
 
 [Fedora]: https://getfedora.org/
 [gedit-setup]: {{ lesson_url('beginners/install-editor', page='gedit') }}
