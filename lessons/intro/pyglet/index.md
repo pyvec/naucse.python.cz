@@ -522,8 +522,8 @@ Se vstupem z klávesnice a myši, časováním a vykreslováním
 Spritu si vystačíš u leckteré hry nebo grafické aplikace.
 
 Až budeš nějakou hru dělat, zkus udržovat
-stav aplikace v seznamech a <var>n</var>-ticích (případně
-slovnících a třídách, které se naučíme později).
+stav aplikace v seznamech, <var>n</var>-ticích a slovnících
+(případně třídách, které se naučíme později).
 Jedna funkce by měla umět takový stav vykreslit a
 jiné s ním pak budou manipulovat.
 Tyhle dvě sady funkcí můžeš mít i v jiných souborech,
