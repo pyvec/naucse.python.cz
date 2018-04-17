@@ -127,12 +127,22 @@ def runs(year=None, all=None):
         paginate_prev = {'year': first_year}
         paginate_next = {'all': 'all'}
     elif year is None:
-        run_data = model.ongoing_and_recent_runs
+        # Show runs that are either ongoing or ended in the last 3 months
+        runs = (model.runs_from_year(today.year) +
+                model.runs_from_year(today.year - 1) +
+                model.runs_from_year(today.year - 2))
+        ongoing = [run for run in runs if run.end_date >= today]
+        cutoff = today - datetime.timedelta(days=3*31)
+        recent = [run for run in runs if today > run.end_date > cutoff]
+        run_data = {"ongoing": ongoing, "recent": recent}
 
         paginate_prev = {'year': None}
         paginate_next = {'year': last_year}
     else:
-        run_data = model.runs_from_year(year)
+        run_data = {year: [run for run
+                           in model.runs_from_year(year) +
+                              model.runs_from_year(year - 1)
+                           if run.end_date.year >= year]}
 
         past_years = [y for y in all_years if y < year]
         if past_years:

@@ -1,6 +1,7 @@
 import os
 import re
 from collections import OrderedDict
+from operator import attrgetter
 import datetime
 
 import cssutils
@@ -21,7 +22,6 @@ from pathlib import Path
 
 
 _TIMEZONE = 'Europe/Prague'
-_TODAY = datetime.date.today()
 allowed_elements_parser = AllowedElementsParser()
 
 
@@ -485,10 +485,6 @@ class CourseMixin:
     def is_derived(self):
         return self.base_course is not None
 
-    @reify
-    def is_ongoing(self):
-        return self.end_date >= _TODAY
-
 
 class Course(CourseMixin, Model):
     """A course – ordered collection of sessions"""
@@ -852,20 +848,12 @@ class Root(Model):
 
         return safe_years
 
-    @reify
-    def ongoing_and_recent_runs(self):
-        """Get runs that are either ongoing or ended in the last 3 months."""
-        ongoing = [run for run in self.safe_runs.values()
-                       if run.is_ongoing]
-        cutoff = _TODAY - datetime.timedelta(days=3*31)
-        recent = [run for run in self.safe_runs.values()
-                      if not run.is_ongoing and run.end_date > cutoff]
-        return {"ongoing": ongoing, "recent": recent}
-
     def runs_from_year(self, year):
-        """Get all runs that either started or ended in a given year."""
-        return [run for run in self.safe_runs.values()
-                    if run.start_date.year <= year and run.end_date.year >= year]
+        """Get all runs started in a given year."""
+        run_year = self.safe_run_years.get(year)
+        if run_year:
+            return sorted(run_year, key=attrgetter('start_date'))
+        return []
 
     def get_lesson(self, name):
         if isinstance(name, Lesson):
