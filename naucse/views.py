@@ -100,7 +100,7 @@ def index():
 
 
 @app.route('/runs/')
-@app.route('/runs/<int:year>/')
+@app.route('/<int:year>/')
 @app.route('/runs/<any(all):all>/')
 def runs(year=None, all=None):
     today = datetime.date.today()
