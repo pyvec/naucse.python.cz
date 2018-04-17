@@ -419,8 +419,6 @@ def page_content(lesson, page, solution=None, course=None, lesson_url=None, subp
 
         return {"content": content, "urls": relative_urls}
 
-    content_key = page_content_cache_key(Repo("."), lesson.slug, page.slug, solution, variables)
-
     # only use the cache if there are no local changes and not rendering in fork
     if without_cache or is_dirty(Repo(".")):
         return content_creator()
@@ -429,6 +427,7 @@ def page_content(lesson, page, solution=None, course=None, lesson_url=None, subp
     # this is only dangerous if the fork sets absolute path to cache and
     # CurrentEnvironmentBackend or VenvBackend are used locally
     # FIXME? But I don't think there's a way to prevent writing to a file in those backends
+    content_key = page_content_cache_key(Repo("."), lesson.slug, page.slug, solution, variables)
     cached = arca.region.get_or_create(content_key, content_creator)
 
     # the urls are added twice to ``absolute_urls_to_freeze`` when the content is created
