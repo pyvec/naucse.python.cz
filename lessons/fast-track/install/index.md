@@ -67,7 +67,7 @@ doporučujeme aktualizovat.
 
 ## Poznámky
 
-Příkaz `__venv__/bin/activate` budeš muset zadat vždy než začneš na projektu
+Příkaz `__venv__/bin/activate` budeš muset zadat vždy, než začneš na projektu
 pracovat.
 
 Ono `__venv__` je jen jméno adresáře. Můžeš si ho pojmenovat jak chceš; dokonce
