@@ -8,7 +8,7 @@ from pathlib import Path
 import ics
 from arca.exceptions import PullError, BuildError, RequirementsMismatch
 from arca.utils import is_dirty
-from flask import Flask, render_template, url_for, send_from_directory, request
+from flask import Flask, render_template, url_for, send_from_directory, request, redirect
 from flask import abort, Response
 from git import Repo
 from jinja2 import StrictUndefined
@@ -100,27 +100,61 @@ def index():
 
 
 @app.route('/runs/')
-def runs():
-    # since even the basic info about the forked runs can be broken, we need to make sure the required info
-    # is provided. If ``RAISE_FORK_ERRORS`` is set, exceptions are raised here, otherwise the run is
-    # ignored completely.
-    safe_years = {}
-    for year, run_years in model.run_years.items():
-        safe_run_years = []
+@app.route('/runs/<int:year>/')
+@app.route('/runs/<any(all):all>/')
+def runs(year=None, all=None):
+    today = datetime.date.today()
 
-        for run in run_years.runs.values():
-            if not run.is_link():
-                safe_run_years.append(run)
-            elif naucse.utils.routes.forks_enabled() and does_course_return_info(run, extra_required=["start_date",
-                                                                                                      "end_date"]):
-                safe_run_years.append(run)
+    # List of years to show in the pagination
+    # If the current year is not there (no runs that start in the current year
+    # yet), add it manually
+    all_years = model.safe_run_years.keys()
+    if today.year not in all_years:
+        all_years.append(today.year)
+    first_year, last_year = min(all_years), max(all_years)
 
-        safe_years[year] = safe_run_years
+    if year is not None:
+        if year > last_year:
+            # Instead of showing a future year, redirect to the 'Current' page
+            return redirect(url_for('runs'))
+        if year not in all_years:
+            # Otherwise, if there are no runs in requested year, return 404.
+            abort(404)
+
+    if all is not None:
+        run_data = model.safe_run_years
+
+        paginate_prev = {'year': first_year}
+        paginate_next = {'all': 'all'}
+    elif year is None:
+        run_data = model.ongoing_and_recent_runs
+
+        paginate_prev = {'year': None}
+        paginate_next = {'year': last_year}
+    else:
+        run_data = model.runs_from_year(year)
+
+        past_years = [y for y in all_years if y < year]
+        if past_years:
+            paginate_next = {'year': max(past_years)}
+        else:
+            paginate_next = {'all': 'all'}
+
+        future_years = [y for y in all_years if y > year]
+        if future_years:
+            paginate_prev = {'year': min(future_years)}
+        else:
+            paginate_prev = {'year': None}
 
     return render_template("run_list.html",
-                           run_years=safe_years,
+                           run_data=run_data,
                            title="Seznam offline kurzů Pythonu",
                            today=datetime.date.today(),
+                           year=year,
+                           all=all,
+                           all_years=all_years,
+                           paginate_next=paginate_next,
+                           paginate_prev=paginate_prev,
                            edit_info=get_edit_info(model.runs_edit_path))
 
 

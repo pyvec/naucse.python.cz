@@ -21,6 +21,7 @@ from pathlib import Path
 
 
 _TIMEZONE = 'Europe/Prague'
+_TODAY = datetime.date.today()
 allowed_elements_parser = AllowedElementsParser()
 
 
@@ -484,6 +485,10 @@ class CourseMixin:
     def is_derived(self):
         return self.base_course is not None
 
+    @reify
+    def is_ongoing(self):
+        return self.end_date >= _TODAY
+
 
 class Course(CourseMixin, Model):
     """A course – ordered collection of sessions"""
@@ -816,8 +821,51 @@ class Root(Model):
         }
 
     @reify
+    def safe_runs(self):
+        return {
+            (year, run.slug): run
+            for year, run_year in self.safe_run_years.items()
+            for run in run_year
+        }
+
+    @reify
     def meta(self):
         return MetaInfo()
+
+    @reify
+    def safe_run_years(self):
+        # since even the basic info about the forked runs can be broken, we need to make sure the required info
+        # is provided. If ``RAISE_FORK_ERRORS`` is set, exceptions are raised here, otherwise the run is
+        # ignored completely.
+        safe_years = {}
+        for year, run_years in self.run_years.items():
+            safe_run_years = []
+
+            for run in run_years.runs.values():
+                if not run.is_link():
+                    safe_run_years.append(run)
+                elif (naucse.utils.routes.forks_enabled() and
+                      naucse.utils.routes.does_course_return_info(run, extra_required=["start_date", "end_date"])):
+                    safe_run_years.append(run)
+
+            safe_years[year] = safe_run_years
+
+        return safe_years
+
+    @reify
+    def ongoing_and_recent_runs(self):
+        """Get runs that are either ongoing or ended in the last 3 months."""
+        ongoing = [run for run in self.safe_runs.values()
+                       if run.is_ongoing]
+        cutoff = _TODAY - datetime.timedelta(days=3*31)
+        recent = [run for run in self.safe_runs.values()
+                      if not run.is_ongoing and run.end_date > cutoff]
+        return {"ongoing": ongoing, "recent": recent}
+
+    def runs_from_year(self, year):
+        """Get all runs that either started or ended in a given year."""
+        return [run for run in self.safe_runs.values()
+                    if run.start_date.year <= year and run.end_date.year >= year]
 
     def get_lesson(self, name):
         if isinstance(name, Lesson):
