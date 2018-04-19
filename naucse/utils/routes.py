@@ -28,7 +28,7 @@ def get_recent_runs(course):
         this_year = today.year
         for year, run_year in reversed(course.root.run_years.items()):
             for run in run_year.runs.values():
-                if not run.is_link() or does_course_return_info(run, ["start_date", "end_date"]):
+                if not run.is_link() or (forks_enabled() and does_course_return_info(run, ["start_date", "end_date"])):
                     if run.base_course is course and run.end_date > cutoff:
                         recent_runs.append(run)
 
