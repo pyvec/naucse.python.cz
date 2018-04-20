@@ -5,7 +5,7 @@
 > sehnat. Máš-li možnost se dostat na sraz, nebo
 > aspoň kontaktovat organizátory, doporučujeme shánět
 > spíš tímto způsobem.
-> Případně jde případný hardware objednat přes Internet,
+> Případně jde daný hardware objednat přes Internet,
 > typicky z čínských e-shopů.
 
 > [note]
@@ -22,7 +22,7 @@ Dnes budeme programovat malé zařízení –
 tak malé, že se ho pohodlně schováš v ruce.
 Konkrétně budeme používat „chytrou destičku”, modul zvaný
 *NodeMCU Devkit*, která by měla ležet před tebou.
-Než ji vyndáš z obalu, měla by ses *vybít*:
+Než ji vyndáš z obalu, měl/a by ses *vybít*:
 dotkni se něčeho kovového, co je spojeno se zemí,
 třeba radiátoru nebo kovové části schránky nějakého
 spotřebiče, který je zapojený do zásuvky.
@@ -37,7 +37,7 @@ hrany a příliš se nedotýkat elektroniky a kovových
 > na destičku před začátkem kurzu nainstalovali
 > MicroPython.
 
-> [note]
+> [warning]
 > Obal je vodivý a nesmí přijít do styku se zapojenou destičkou,
 > protože by mohl zkratovat její vývody a tím ji zničit.
 > Proto obal raději hned schovej a používej ho jen k transportu destičky.
@@ -69,7 +69,7 @@ nám jen ulehčí hraní a umožní se zařízením
 jednoduše komunikovat a krmit ho elektřinou.
 
 Komunikace a „krmení” se děje přes
-<span class="part-red">μUSB konektor</span>,
+<span class="part-red">mikro-USB konektor</span>,
 do kterého zapojíš kabel ze svého počítače.
 Když je modul naprogramovaný, stačí ho místo do
 počítače zapojit do nabíječky či externího zdroje
@@ -442,7 +442,7 @@ A tak se dá s diodou blikat.
 > kde snadno dohledáš že `D5` a `Pin(14)` jsou dvě jména stejné nožičky.
 
 Zvládneš napsat program, který zařídí, aby dioda
-svítila když je zmáčknuté tlačítko `FLASH`, jinak ne?
+svítila pouze když je zmáčknuté tlačítko `FLASH` a jinak ne?
 
 > [note]
 > Nápověda: Můžeš pořád dokola zjišťovat stav tlačítka
@@ -495,7 +495,7 @@ Ke spuštění budeš potřebovat znát port:
 `ampy` spusť následujícím příkazem, jen za `PORT` doplň svůj port:
 
 ```console
-(venv)$ ampy -p PORT run led_podle_tlacitka.py
+(venv)$ ampy -p PORT run blikajici_led.py
 ```
 
 Program by měl blikat diodou.
@@ -569,7 +569,6 @@ setinu vteřiny zhasne.
 
 ```python
 from machine import Pin, PWM
-from time import sleep
 
 pin_diody = Pin(14, Pin.OUT)
 pwm = PWM(pin_diody, freq=50, duty=512)
@@ -624,12 +623,12 @@ Teď si vezmi tlačítko a připoj ho k modulu:
 `GND` vždycky na `G`, `VCC` vždycky na `3V` a
 `OUT` na `D1`.
 
-Tlačítko funguje tak, že OUT spojí buď s VCC (3V)
-nebo GND, podle toho, jestli je tlačítko stisknuté.
+Tlačítko funguje tak, že `OUT` spojí buď s `VCC` (`3V`)
+nebo `GND`, podle toho, jestli je tlačítko stisknuté.
 (A navíc to taky teda svítí, ale to je teď vedlejší.)
 
 Zkus si, jestli se zvládneš MicroPythonu zeptat, jestli je tlačítko zapnuté.
-Mělo by to být podobné jako u příkladu s tlačítkem FLASH.
+Mělo by to být podobné jako u příkladu s tlačítkem `FLASH`.
 
 Zvládneš napsat program, který bude bzučet bzučítkem
 a přitom se bude dát tlačítkem změnit tón?
@@ -685,7 +684,7 @@ np.write()
 </pre>
 
 
-Co znamenají ta čísla (`0` a `255`), na to už jistě přijdeš sama.
+Co znamenají ta čísla (`0` a `255`), na to už jistě přijdeš sám/sama.
 Jen při experimentování nezapomeň zavolat
 `np.write()`, tím se informace pošlou do LED pásku.
 
@@ -747,7 +746,7 @@ Jak jsme zmínili na začátku, byl čip ESP8266 primárně určen pro práci s 
 a tato schopnost mu zůstala. Umí se buď připojit k existující síti, nebo
 ze sebe udělat hotspot a vytvořit si tak vlastní WiFi síť. Obě tyto možnosti
 nám umožní spojit se s destičkou bezdrátově a pracovat s ní skrze
-webový prohlížeč pomocí tzv. WebREPL nebo použít připojení k síti k odesílání
+webový prohlížeč pomocí tzv. WebREPL, nebo použít připojení k síti k odesílání
 dat z destičky pro další zpracování.
 
 Používání WiFi je ovšem mimo možnosti tohoto workshopu. Vše potřebné k jejímu
