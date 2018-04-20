@@ -142,7 +142,8 @@ oprav ji podle následujícího návodu a zkus to znova.
   je potřeba k zařízení přistupovat přes jiný soubor.
   Použij příkaz `dmesg | tail`, který vypíše něco jako:
 
-  {# XXX: ttyUSB0 should be highlighted #}
+  {#- XXX: ttyUSB0 should be highlighted #}
+
   ```console
   $ dmesg | tail
   [703169.886296] ch341 1-1.1:1.0: device disconnected
@@ -736,7 +737,7 @@ Nejdříve si opět připravíme nožičku (pin) pro komunikaci a následně si 
 připravíme komunikační protokol OneWire. Prvním krokem k teplotě je nalezení
 všech dostupných teploměrů na dané sběrnici, což nám zajistí metoda `ow.scan()`,
 která nám vrátí seznam identifikátorů nalezených teploměrů.
-Metoda `ow.convert_temp()` pak pošle všem teploměrům příkaz, aby změřili
+Metoda `ow.convert_temp()` pak pošle všem teploměrům příkaz, aby změřily
 teplotu. Po tomhle rozkazu musíme alespoň vteřinu počkat a následně můžeme
 teplotu z našeho čidla přečíst.
 
