@@ -24,12 +24,12 @@ from naucse.utils import links
 from naucse.utils.links import (process_course_data, process_session_data, process_page_data, process_footer_data,
                                 InvalidInfo)
 from naucse.utils.models import arca
-from naucse.utils.routes import (get_recent_runs, list_months, DisallowedStyle,
+from naucse.utils.views import (get_recent_runs, list_months, DisallowedStyle,
                                  DisallowedElement, does_course_return_info, absolute_urls_to_freeze,
                                  raise_errors_from_forks, page_content_cache_key, InvalidHTML, get_edit_info)
 
 # so it can be mocked
-import naucse.utils.routes
+import naucse.utils.views
 
 app = Flask('naucse')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -168,7 +168,7 @@ def courses():
     for course in model.courses.values():
         if not course.is_link():
             safe_courses.append(course)
-        elif naucse.utils.routes.forks_enabled() and does_course_return_info(course):
+        elif naucse.utils.views.forks_enabled() and does_course_return_info(course):
             safe_courses.append(course)
 
     return render_template("course_list.html",
@@ -197,7 +197,7 @@ def lesson_static(course, lesson, path):
         lesson = None
 
     if course is not None and course.is_link():  # is static file from a link?
-        naucse.utils.routes.forks_raise_if_disabled()
+        naucse.utils.views.forks_raise_if_disabled()
 
         try:
             return send_from_directory(*course.lesson_static(lesson_slug, path))
@@ -276,7 +276,7 @@ def course_content(course):
 @app.route('/<course:course>/')
 def course(course):
     if course.is_link():
-        naucse.utils.routes.forks_raise_if_disabled()
+        naucse.utils.views.forks_raise_if_disabled()
 
         try:
             data_from_fork = course.render_course(request_url=request.path)
@@ -489,7 +489,7 @@ def course_page(course, lesson, page, solution=None):
     prev_link = session_link = next_link = session = None
 
     if course.is_link():
-        naucse.utils.routes.forks_raise_if_disabled()
+        naucse.utils.views.forks_raise_if_disabled()
 
         fork_kwargs = {"request_url": request.path}
 
@@ -696,7 +696,7 @@ def session_coverpage(course, session, coverpage):
         rendered session coverpage
     """
     if course.is_link():
-        naucse.utils.routes.forks_raise_if_disabled()
+        naucse.utils.views.forks_raise_if_disabled()
 
         try:
             data_from_fork = course.render_session_coverpage(session, coverpage, request_url=request.path)
@@ -756,7 +756,7 @@ def course_calendar_content(course):
 @app.route('/<course:course>/calendar/')
 def course_calendar(course):
     if course.is_link():
-        naucse.utils.routes.forks_raise_if_disabled()
+        naucse.utils.views.forks_raise_if_disabled()
 
         try:
             data_from_fork = course.render_calendar(request_url=request.path)
@@ -828,7 +828,7 @@ def course_calendar_ics(course):
         abort(404)
 
     if course.is_link():
-        naucse.utils.routes.forks_raise_if_disabled()
+        naucse.utils.views.forks_raise_if_disabled()
 
         try:
             data_from_fork = course.render_calendar_ics(request_url=request.path)

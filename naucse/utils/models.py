@@ -5,7 +5,7 @@ import yaml
 from arca import Task, Arca
 from werkzeug.local import LocalProxy
 
-import naucse.utils.routes
+import naucse.utils.views
 
 _arca = None
 
@@ -112,7 +112,7 @@ class ForkProperty(LazyProperty):
         return x
 
     def compute(self, instance):
-        naucse.utils.routes.forks_raise_if_disabled()
+        naucse.utils.views.forks_raise_if_disabled()
 
         task = Task(**self.process_kwargs(instance))
 

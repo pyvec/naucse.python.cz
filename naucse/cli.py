@@ -1,7 +1,7 @@
 import click
 import elsa
 
-from naucse.utils.routes import forks_enabled, does_course_return_info
+from naucse.utils.views import forks_enabled, does_course_return_info
 
 
 def cli(app, *, base_url=None, freezer=None):
@@ -27,7 +27,7 @@ def cli(app, *, base_url=None, freezer=None):
         A practical benefit is that on Travis CI the docker images are pulled/built
         in this command and the freezing won't timeout after the 10 minute limit if things are taking particularly long.
         """
-        from naucse.routes import model
+        from naucse.views import model
 
         def canonical(course, suffix=""):
             click.echo(f"  {course.slug}: {course.title}{suffix}")

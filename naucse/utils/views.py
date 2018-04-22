@@ -65,7 +65,7 @@ _naucse_tree_hash = {}
 def get_naucse_tree_hash(repo):
     """ Returns the tree hash of the folder ``naucse``, which contains rendering mechanisms, in specified ``repo``.
     """
-    from naucse.routes import app
+    from naucse.views import app
     global _naucse_tree_hash
 
     if _naucse_tree_hash.get(repo.git_dir):
@@ -85,7 +85,7 @@ _lesson_tree_hash = defaultdict(dict)
 def get_lesson_tree_hash(repo, lesson_slug):
     """ Returns the tree hash of the folder containing the lesson in specified ``repo``.
     """
-    from naucse.routes import app
+    from naucse.views import app
 
     global _lesson_tree_hash
 
@@ -264,7 +264,7 @@ def does_course_return_info(course, extra_required=(), *, force_ignore=False):
 
     Raises exception if :func:`raise_errors_from_forks` returns it should. (But not if ``force_ignore`` is set.)
     """
-    from naucse.routes import logger
+    from naucse.views import logger
 
     required = ["title", "description"] + list(extra_required)
     try:
@@ -314,7 +314,7 @@ def page_content_cache_key(repo, lesson_slug, page, solution, course_vars=None) 
 
 
 def edit_link(path):
-    from naucse.routes import model
+    from naucse.views import model
 
     if path == Path("."):
         return f"https://github.com/{model.meta.slug}"
