@@ -2,7 +2,7 @@ import contextlib
 
 from flask_frozen import UrlForLogger, Freezer
 
-from naucse.utils.routes import absolute_urls_to_freeze
+from naucse.utils.views import absolute_urls_to_freeze
 
 
 class AllLinksLogger(UrlForLogger):

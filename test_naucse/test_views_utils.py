@@ -2,8 +2,8 @@ import datetime
 
 import pytest
 
-import naucse.routes
-import naucse.utils.routes
+import naucse.views
+import naucse.utils.views
 
 
 @pytest.mark.parametrize(
@@ -23,24 +23,24 @@ import naucse.utils.routes
           (2017, 12), (2018, 1)]),
     ])
 def test_list_months(start, end, expected):
-    assert naucse.utils.routes.list_months(start, end) == expected
+    assert naucse.utils.views.list_months(start, end) == expected
 
 
 def test_allowed_elements():
-    allowed_elements = naucse.utils.routes.AllowedElementsParser()
+    allowed_elements = naucse.utils.views.AllowedElementsParser()
 
     allowed_elements.reset_and_feed(
         "<div><strong><u><a>Test</a></u></div>"
     )
 
-    with pytest.raises(naucse.utils.routes.DisallowedElement):
+    with pytest.raises(naucse.utils.views.DisallowedElement):
         allowed_elements.reset_and_feed(
             "<div><script>alert('XSS')</script></div>"
         )
 
 
 def test_allowed_styles():
-    allowed_elements = naucse.utils.routes.AllowedElementsParser()
+    allowed_elements = naucse.utils.views.AllowedElementsParser()
 
     allowed_elements.reset_and_feed(
         """
@@ -54,7 +54,7 @@ def test_allowed_styles():
     )
 
     # valid styles, but wrong elements
-    with pytest.raises(naucse.utils.routes.DisallowedStyle):
+    with pytest.raises(naucse.utils.views.DisallowedStyle):
         allowed_elements.reset_and_feed(
             """
             <style>
@@ -66,7 +66,7 @@ def test_allowed_styles():
         )
 
     # can't parse
-    with pytest.raises(naucse.utils.routes.DisallowedStyle):
+    with pytest.raises(naucse.utils.views.DisallowedStyle):
         allowed_elements.reset_and_feed(
             """
             <style>
@@ -89,7 +89,7 @@ def test_allowed_styles():
     )
 
     # invalid:
-    with pytest.raises(naucse.utils.routes.DisallowedStyle):
+    with pytest.raises(naucse.utils.views.DisallowedStyle):
         allowed_elements.reset_and_feed(
             """
             <style>

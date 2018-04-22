@@ -5,9 +5,9 @@ from flask import url_for
 from flask_frozen import UrlForLogger
 from git import Repo
 
-from naucse import routes
+from naucse import views
 from naucse.models import Course
-from naucse.utils.routes import page_content_cache_key, get_edit_info
+from naucse.utils.views import page_content_cache_key, get_edit_info
 
 
 def get_course_from_slug(slug: str) -> Course:
@@ -16,9 +16,9 @@ def get_course_from_slug(slug: str) -> Course:
     parts = slug.split("/")
 
     if parts[0] == "course":
-        return routes.model.courses[parts[1]]
+        return views.model.courses[parts[1]]
     else:
-        return routes.model.runs[(int(parts[0]), parts[1])]
+        return views.model.runs[(int(parts[0]), parts[1])]
 
 
 def course_info(slug: str, *args, **kwargs) -> Dict[str, Any]:
@@ -71,14 +71,14 @@ def render(page_type: str, slug: str, *args, **kwargs) -> Dict[str, Any]:
     if kwargs.get("request_url"):
         path = [kwargs["request_url"]]
 
-    logger = UrlForLogger(routes.app)
-    with routes.app.test_request_context(*path):
+    logger = UrlForLogger(views.app)
+    with views.app.test_request_context(*path):
         with logger:
 
             info = {
                 "course": {
                     "title": course.title,
-                    "url": routes.course_url(course),
+                    "url": views.course_url(course),
                     "vars": course.vars,
                     "canonical": course.canonical,
                     "is_derived": course.is_derived,
@@ -86,20 +86,20 @@ def render(page_type: str, slug: str, *args, **kwargs) -> Dict[str, Any]:
             }
 
             if page_type == "course":
-                info["content"] = routes.course_content(course)
+                info["content"] = views.course_content(course)
                 info["edit_info"] = get_edit_info(course.edit_path)
 
             elif page_type == "calendar":
-                info["content"] = routes.course_calendar_content(course)
+                info["content"] = views.course_calendar_content(course)
                 info["edit_info"] = get_edit_info(course.edit_path)
 
             elif page_type == "calendar_ics":
-                info["calendar"] = str(routes.generate_calendar_ics(course))
+                info["calendar"] = str(views.generate_calendar_ics(course))
                 info["edit_info"] = get_edit_info(course.edit_path)
 
             elif page_type == "course_page":
                 lesson_slug, page, solution, *_ = args
-                lesson = routes.model.get_lesson(lesson_slug)
+                lesson = views.model.get_lesson(lesson_slug)
 
                 content_offer_key = kwargs.get("content_key")
 
@@ -119,13 +119,13 @@ def render(page_type: str, slug: str, *args, **kwargs) -> Dict[str, Any]:
                 if request_url is None:
                     request_url = url_for('course_page', course=course, lesson=lesson, page=page, solution=solution)
 
-                lesson_url, subpage_url, static_url = routes.relative_url_functions(request_url, course, lesson)
-                page, session, prv, nxt = routes.get_page(course, lesson, page)
+                lesson_url, subpage_url, static_url = views.relative_url_functions(request_url, course, lesson)
+                page, session, prv, nxt = views.get_page(course, lesson, page)
 
                 # if content isn't cached or the version was refused, let's render
                 # the content here (but just the content and not the whole page with headers, menus etc)
                 if content is not_processed:
-                    content = routes.page_content(lesson, page, solution, course,
+                    content = views.page_content(lesson, page, solution, course,
                                                   lesson_url=lesson_url, subpage_url=subpage_url, static_url=static_url,
                                                   without_cache=True)
 
@@ -155,7 +155,7 @@ def render(page_type: str, slug: str, *args, **kwargs) -> Dict[str, Any]:
                         "slug": session.slug,
                     }
 
-                prev_link, session_link, next_link = routes.get_footer_links(course, session, prv, nxt, lesson_url)
+                prev_link, session_link, next_link = views.get_footer_links(course, session, prv, nxt, lesson_url)
                 info["footer"] = {
                     "prev_link": prev_link,
                     "session_link": session_link,
@@ -172,7 +172,7 @@ def render(page_type: str, slug: str, *args, **kwargs) -> Dict[str, Any]:
                         "title": session.title,
                         "url": url_for("session_coverpage", course=course.slug, session=session.slug),
                     },
-                    "content": routes.session_coverpage_content(course, session, coverpage),
+                    "content": views.session_coverpage_content(course, session, coverpage),
                     "edit_info": get_edit_info(session.get_edit_path(course, coverpage)),
                 })
             else:
@@ -197,7 +197,7 @@ def get_footer_links(slug, lesson_slug, page, request_url=None):
         raise ValueError("Circular dependency.")
 
     try:
-        lesson = routes.model.get_lesson(lesson_slug)
+        lesson = views.model.get_lesson(lesson_slug)
     except LookupError:
         raise ValueError("Lesson not found")
 
@@ -205,13 +205,13 @@ def get_footer_links(slug, lesson_slug, page, request_url=None):
     if request_url is not None:
         path = [request_url]
 
-    with routes.app.test_request_context(*path):
+    with views.app.test_request_context(*path):
 
         def lesson_url(lesson, *args, **kwargs):
             return url_for("course_page", course=course, lesson=lesson, *args, **kwargs)
 
-        page, session, prv, nxt = routes.get_page(course, lesson, page)
-        prev_link, session_link, next_link = routes.get_footer_links(course, session, prv, nxt, lesson_url)
+        page, session, prv, nxt = views.get_page(course, lesson, page)
+        prev_link, session_link, next_link = views.get_footer_links(course, session, prv, nxt, lesson_url)
 
     return {
         "prev_link": prev_link,

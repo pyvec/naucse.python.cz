@@ -11,7 +11,7 @@ from flask.testing import FlaskClient
 from git import Repo
 
 from naucse import models
-from naucse.utils.routes import page_content_cache_key
+from naucse.utils.views import page_content_cache_key
 from naucse.utils.models import arca
 
 
@@ -170,13 +170,13 @@ def client(model, mocker):
     """ This fixture generates a client for testing endpoints, model will be used.
     """
     # these methods have the @reify decorator, however we need for them to be recalculated
-    # so ``naucse.utils.routes.forks_enabled`` can be tested
+    # so ``naucse.utils.views.forks_enabled`` can be tested
     if hasattr(model, "safe_runs"):
         delattr(model, "safe_runs")
     if hasattr(model, "safe_run_years"):
         delattr(model, "safe_run_years")
 
-    mocker.patch("naucse.routes._cached_model", model)
+    mocker.patch("naucse.views._cached_model", model)
     from naucse import app
     app.testing = True
     yield app.test_client()
@@ -292,14 +292,14 @@ def test_cache_offer(model):
 def test_courses_page(mocker, client: FlaskClient):
     """ Tests how the /courses/ page behaves when a fork isn't returning information about a course.
     """
-    mocker.patch("naucse.utils.routes.raise_errors_from_forks", lambda: True)
+    mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: True)
 
     # there's a problem in one of the branches, it should raise error if the conditions for raising are True
     with pytest.raises(BuildError):
         client.get("/courses/")
 
     # unless problems are silenced
-    mocker.patch("naucse.utils.routes.raise_errors_from_forks", lambda: False)
+    mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: False)
     response = client.get("/courses/")
     assert b"Broken course title" not in response.data
 
@@ -310,8 +310,8 @@ def test_courses_page(mocker, client: FlaskClient):
 def test_courses_page_ignore_forks(mocker, client: FlaskClient):
     """ Tests ignoring forks in courses page
     """
-    mocker.patch("naucse.utils.routes.forks_enabled", lambda: False)
-    mocker.patch("naucse.utils.routes.raise_errors_from_forks", lambda: True)
+    mocker.patch("naucse.utils.views.forks_enabled", lambda: False)
+    mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: True)
 
     response = client.get("/courses/")
     assert b"Broken course title" not in response.data
@@ -321,15 +321,15 @@ def test_courses_page_ignore_forks(mocker, client: FlaskClient):
 def test_runs_page(mocker, client: FlaskClient):
     """ Tests how the /runs/ page behaves when a fork isn't returning information about a course.
     """
-    mocker.patch("naucse.utils.routes.forks_enabled", lambda: True)
-    mocker.patch("naucse.utils.routes.raise_errors_from_forks", lambda: True)
+    mocker.patch("naucse.utils.views.forks_enabled", lambda: True)
+    mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: True)
 
     # there's a problem in one of the branches, it should raise error if the conditions for raising are True
     with pytest.raises(BuildError):
         client.get("/runs/all/")
 
     # unless problems are silenced
-    mocker.patch("naucse.utils.routes.raise_errors_from_forks", lambda: False)
+    mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: False)
     response = client.get("/runs/")
     assert b"Broken run title" not in response.data
 
@@ -340,8 +340,8 @@ def test_runs_page(mocker, client: FlaskClient):
 def test_runs_page_ignore_forks(mocker, client: FlaskClient):
     """ Tests ignoring forks in runs page
     """
-    mocker.patch("naucse.utils.routes.forks_enabled", lambda: False)
-    mocker.patch("naucse.utils.routes.raise_errors_from_forks", lambda: True)
+    mocker.patch("naucse.utils.views.forks_enabled", lambda: False)
+    mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: True)
 
     response = client.get("/runs/all/")
 

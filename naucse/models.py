@@ -10,10 +10,10 @@ import jinja2
 from arca import Task
 from git import Repo
 
-import naucse.utils.routes
+import naucse.utils.views
 from naucse.utils.models import Model, YamlProperty, DataProperty, DirProperty, MultipleModelDirProperty, ForkProperty
 from naucse.utils.models import reify, arca
-from naucse.utils.routes import AllowedElementsParser, absolute_urls_to_freeze
+from naucse.utils.views import AllowedElementsParser, absolute_urls_to_freeze
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.utils.markdown import convert_markdown
 from naucse.utils.notebook import convert_notebook
@@ -624,7 +624,7 @@ class CourseLink(CourseMixin, Model):
     def render(self, page_type, *args, **kwargs):
         """ Renders a page in the fork, checks the content and registers urls to freeze.
         """
-        naucse.utils.routes.forks_raise_if_disabled()
+        naucse.utils.views.forks_raise_if_disabled()
 
         task = Task(
             "naucse.utils.forks:render",
@@ -672,7 +672,7 @@ class CourseLink(CourseMixin, Model):
             with a warning. This method provides the correct footer links for the page, since ``sessions``
             is not included in the info provided by forks.
         """
-        naucse.utils.routes.forks_raise_if_disabled()
+        naucse.utils.views.forks_raise_if_disabled()
 
         task = Task(
             "naucse.utils.forks:get_footer_links",
@@ -684,7 +684,7 @@ class CourseLink(CourseMixin, Model):
 
         to_return = []
 
-        from naucse.routes import logger
+        from naucse.views import logger
         logger.debug(result.output)
 
         if not isinstance(result.output, dict):
@@ -744,7 +744,7 @@ class MetaInfo:
         """ Returns the slug of the repository based on the current branch. Returns the default if not on a branch,
             the branch doesn't have a remote or the remote url can't be parsed.
         """
-        from naucse.routes import logger
+        from naucse.views import logger
 
         # Travis CI checks out specific commit, so there isn't an active branch
         if os.environ.get("TRAVIS") and os.environ.get("TRAVIS_REPO_SLUG"):
@@ -785,7 +785,7 @@ class MetaInfo:
     def branch(self):
         """ Returns the active branch name or master if not on a branch.
         """
-        from naucse.routes import logger
+        from naucse.views import logger
 
         # Travis CI checks out specific commit, so there isn't an active branch
         if os.environ.get("TRAVIS") and os.environ.get("TRAVIS_BRANCH"):
@@ -844,8 +844,8 @@ class Root(Model):
             for run in run_years.runs.values():
                 if not run.is_link():
                     safe_run_years.append(run)
-                elif (naucse.utils.routes.forks_enabled() and
-                      naucse.utils.routes.does_course_return_info(run, extra_required=["start_date", "end_date"])):
+                elif (naucse.utils.views.forks_enabled() and
+                      naucse.utils.views.does_course_return_info(run, extra_required=["start_date", "end_date"])):
                     safe_run_years.append(run)
 
             safe_years[year] = safe_run_years
