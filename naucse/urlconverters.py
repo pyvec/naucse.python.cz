@@ -42,7 +42,8 @@ class CourseConverter(ModelConverter):
                 value = "course/"+value
             value = self.to_python(value)
 
-        if isinstance(value, dict):  # since the converter can be called with a dict mimicking a course
+        # the converter can be called with a dict mimicking a course
+        if isinstance(value, dict):
             return value["slug"]
 
         return value.slug
@@ -56,7 +57,8 @@ class LessonSlugConverter(ModelConverter):
         if isinstance(value, Lesson):
             return value.slug
 
-        elif isinstance(value, dict):  # since the converter can be called with a dict mimicking a lesson
+        # the converter can be called with a dict mimicking a lesson
+        elif isinstance(value, dict):
             return value["slug"]
 
         return value
@@ -72,7 +74,8 @@ class LessonConverter(LessonSlugConverter):
             abort(404)
 
     def to_url(self, value):
-        if isinstance(value, dict):  # since the converter can be called with a dict mimicking a lesson
+        # the converter can be called with a dict mimicking a lesson
+        if isinstance(value, dict):
             return value["slug"]
 
         if isinstance(value, str):

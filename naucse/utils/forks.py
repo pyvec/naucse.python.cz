@@ -22,7 +22,9 @@ def get_course_from_slug(slug: str) -> Course:
 
 
 def course_info(slug: str, *args, **kwargs) -> Dict[str, Any]:
-    """ Returns info about the course/run. Returns some extra info when it's a run (based on COURSE_INFO/RUN_INFO)
+    """Return info about the given course.
+
+    Return some extra info when it's a run (based on COURSE_INFO/RUN_INFO)
     """
     course = get_course_from_slug(slug)
 
@@ -48,7 +50,7 @@ def course_info(slug: str, *args, **kwargs) -> Dict[str, Any]:
 
 
 def serialize_license(license) -> Optional[Dict[str, str]]:
-    """ Serializes a License instance into a dict
+    """Serialize a License instance into a dict.
     """
     if license:
         return {
@@ -60,7 +62,7 @@ def serialize_license(license) -> Optional[Dict[str, str]]:
 
 
 def render(page_type: str, slug: str, *args, **kwargs) -> Dict[str, Any]:
-    """ Returns a rendered page for a course, based on page_type and slug.
+    """Return a rendered page for a course, based on page_type and slug.
     """
     course = get_course_from_slug(slug)
 

@@ -5,8 +5,7 @@ from naucse.utils.views import forks_enabled, does_course_return_info
 
 
 def cli(app, *, base_url=None, freezer=None):
-    """ Extends the elsa command line interface with a new command which prints all courses and runs
-        which are present with basic info about them.
+    """Return the elsa CLI extended with naucse-specific commands.
     """
     elsa_group = elsa.cli(app, base_url=base_url, freezer=freezer, invoke_cli=False)
 
@@ -18,14 +17,16 @@ def cli(app, *, base_url=None, freezer=None):
     @click.option("--forks-only", default=False, is_flag=True,
                   help="Only list courses and runs from forks")
     def list_courses(forks_only):
-        """ List all courses and runs and info about them.
+        """List all courses and runs and info about them.
 
-        Mainly useful for courses from forks, shows where do they sourced from and if
-        they return even the most basic information and will therefore be included in
+        Mainly useful for courses from forks.
+        Shows where they are sourced from and if they return even the
+        most basic information and will therefore be included in
         list of courses/runs.
 
-        A practical benefit is that on Travis CI the docker images are pulled/built
-        in this command and the freezing won't timeout after the 10 minute limit if things are taking particularly long.
+        A practical benefit is that on Travis CI, the docker images are
+        pulled/built by this command, so freezing won't timeout after
+        the 10 minute limit if things are taking particularly long.
         """
         from naucse.views import model
 

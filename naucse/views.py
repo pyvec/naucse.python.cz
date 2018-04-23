@@ -174,9 +174,10 @@ def runs(year=None, all=None):
 
 @app.route('/courses/')
 def courses():
-    # since even the basic info about the forked courses can be broken, we need to make sure the required info
-    # is provided. If ``RAISE_FORK_ERRORS`` is set, exceptions are raised here, otherwise the course is
-    # ignored completely.
+    # since even the basic info about the forked courses can be broken,
+    # we need to make sure the required info is provided.
+    # If ``RAISE_FORK_ERRORS`` is set, exceptions are raised here,
+    # otherwise the course is ignored completely.
     safe_courses = []
 
     for course in model.courses.values():
@@ -216,7 +217,7 @@ def lesson_static(course, lesson, path):
         try:
             return send_from_directory(*course.lesson_static(lesson_slug, path))
         except (PullError, FileNotFoundError):
-            # if the file cannot be retrieved, try to use the canonical file instead
+            # the file cannot be retrieved, try to use canonical file instead
             pass
 
     # continue only if the lesson is canonical
@@ -229,8 +230,10 @@ def lesson_static(course, lesson, path):
 
 
 def lesson_static_generator_dir(lesson_slug, static_dir, search_dir):
-    """ Generates all lesson_static calls from director ``search_dir``.
-        (yields path relative to ``static_dir`` for lesson with slug ``lesson_slug``)
+    """Generate all lesson_static calls from director ``search_dir``.
+
+    Yields paths relative to ``static_dir`` for lesson with
+    the slug ``lesson_slug``.
     """
     if not search_dir.exists():
         return
@@ -247,18 +250,20 @@ def lesson_static_generator_dir(lesson_slug, static_dir, search_dir):
 
 
 def lesson_static_generator():
-    """ Generates all static urls
+    """Generate all static URLs
 
-    When rendering naucse and nothing has been changed, almost everything comes out of cache, the URLs
-    are not registered via ``url_for`` but instead are registered as absolute urls.
-    Frozen-Flask however doesn't register the endpoints as visited when freezing absolute urls
-    and the following error is thrown.
+    When freezing naucse and nothing has been changed, almost everything
+    comes out of cache, and the URLs are not registered via ``url_for``
+    but instead are registered as absolute urls.
+    Frozen-Flask however doesn't register the endpoints as visited when
+    freezing absolute URLs, and the following error is thrown:
 
     ```
     flask_frozen.MissingURLGeneratorWarning: Nothing frozen for endpoints lesson_static. Did you forget a URL generator?
     ```
 
-    This generator shuts it up, generating all the urls for canonical lesson_static, including subdirectories.
+    This generator shuts it up, generating all the urls for canonical
+    lesson_static, including subdirectories.
     """
     for collection in model.collections.values():
         for lesson in collection.lessons.values():
@@ -357,7 +362,7 @@ def get_page(course, lesson, page):
 
 
 def get_footer_links(course, session, prv, nxt, lesson_url):
-    """ Reusable function that will return urls and info about prev/next page based on current session, page etc
+    """Return info about prev/next page based on current session, page, etc.
     """
     prev_link = None
     if prv is not None:
@@ -389,7 +394,7 @@ def get_footer_links(course, session, prv, nxt, lesson_url):
 
 
 def get_relative_url(current, target):
-    """ Returns an url to ``target`` relative to ``current``.
+    """Return an URL to ``target`` relative to ``current``.
     """
     rel = os.path.relpath(target, current)
 
@@ -404,13 +409,13 @@ def get_relative_url(current, target):
 
 
 def get_absolute_url(current, target):
-    """ Get's an absolute url from the relative ``target`` in relation to ``current``.
+    """Get absolute url from the ``target``, which is relative to ``current``.
     """
     return urllib.parse.urljoin(current, target)
 
 
 def relative_url_functions(current_url, course, lesson):
-    """ Returns relative urls generators based on current page.
+    """Return relative URL generators based on current page.
     """
     def lesson_url(lesson, *args, **kwargs):
         if not isinstance(lesson, str):
@@ -445,11 +450,11 @@ def page_content(lesson, page, solution=None, course=None, lesson_url=None, subp
         variables = course.vars
 
     def content_creator():
-        """ Returns the content and all relative urls used in it.
+        """Return the content and all relative URLs used in it.
 
-        Since the content is stored in cache and can be reused elsewhere, urls
-        must be stored as relative to the current page, so new absolute urls can be generated
-        where the content is reused.
+        Since the content is stored in cache and can be reused elsewhere, URLs
+        must be stored as relative to the current page, so new absolute urls
+        can be generated where the content is reused.
         """
         with temporary_url_for_logger(app) as logger:
             with logger:
@@ -467,19 +472,23 @@ def page_content(lesson, page, solution=None, course=None, lesson_url=None, subp
 
         return {"content": content, "urls": relative_urls}
 
-    # only use the cache if there are no local changes and not rendering in fork
+    # Only use the cache if there are no local changes
+    # and not rendering in fork
     if without_cache or is_dirty(Repo(".")):
         return content_creator()
 
-    # since ARCA_IGNORE_CACHE_ERRORS is used, this won't fail in forks even if the cache doesn't work
-    # this is only dangerous if the fork sets absolute path to cache and
-    # CurrentEnvironmentBackend or VenvBackend are used locally
-    # FIXME? But I don't think there's a way to prevent writing to a file in those backends
+    # Since ARCA_IGNORE_CACHE_ERRORS is used, this won't fail in forks
+    # even if the cache doesn't work.
+    # This is only dangerous if the fork sets absolute path to cache and
+    # CurrentEnvironmentBackend or VenvBackend are used locally.
+    # FIXME? But I don't think there's a way to prevent writing
+    # to a file in those backends
     content_key = page_content_cache_key(Repo("."), lesson.slug, page.slug, solution, variables)
     cached = arca.region.get_or_create(content_key, content_creator)
 
-    # the urls are added twice to ``absolute_urls_to_freeze`` when the content is created
-    # but it doesn't matter, duplicate urls are skipped
+    # The urls are added twice to ``absolute_urls_to_freeze``
+    # when the content is created.
+    # But it doesn't matter, duplicate URLs are skipped.
     absolute_urls = [get_absolute_url(request.path, x) for x in cached["urls"]]
     absolute_urls_to_freeze.extend(absolute_urls)
 
@@ -508,14 +517,17 @@ def course_page(course, lesson, page, solution=None):
         fork_kwargs = {"request_url": request.path}
 
         try:
-            # checks if the rendered page content is in cache locally to offer it to the fork
-            # ``course.vars`` calls ``course_info`` so it has to be in the try block
-            # the function can also raise FileNotFoundError if the lesson doesn't exist in repo
+            # Checks if the rendered page content is in cache locally
+            # to offer it to the fork.
+            # ``course.vars`` calls ``course_info`` so it has to be in
+            # the try block.
+            # The function can also raise FileNotFoundError if the
+            # lesson doesn't exist in repo.
             content_key = page_content_cache_key(arca.get_repo(course.repo, course.branch),
                                                  lesson_slug, page, solution, course.vars)
             content_offer = arca.region.get(content_key)
 
-            # we've got the fragment in cache, let's offer it to the fork;
+            # We've got the fragment in cache, let's offer it to the fork.
             if content_offer:
                 fork_kwargs["content_key"] = content_key
 
@@ -523,16 +535,18 @@ def course_page(course, lesson, page, solution=None):
 
             content = data_from_fork["content"]
 
-            if content is None:  # if a offer was accepted
+            if content is None:
+                # the offer was accepted
                 content = content_offer["content"]
                 absolute_urls_to_freeze.extend([get_absolute_url(request.path, x)
                                                 for x in content_offer["urls"]])
-            else:  # if the offer was rejected or the the fragment was not in cache
+            else:
+                # the offer was rejected or the the fragment was not in cache
                 arca.region.set(content_key, {"content": content, "urls": data_from_fork["content_urls"]})
                 absolute_urls_to_freeze.extend([get_absolute_url(request.path, x)
                                                 for x in data_from_fork["content_urls"]])
 
-            # compatability
+            # compatibility
             page = process_page_data(data_from_fork.get("page"))
             course = process_course_data(data_from_fork.get("course"), slug=course.slug)
             session = process_session_data(data_from_fork.get("session"))
@@ -566,7 +580,8 @@ def course_page(course, lesson, page, solution=None):
                         if raise_errors_from_forks():
                             raise
 
-                        # the fork is failing spectacularly, the footer links aren't that important
+                        # The fork is failing spectacularly, so the footer
+                        # links aren't that important
                         logger.error("Could not retrieve even footer links from the fork at page %s", request.path)
                         logger.exception(e)
 
