@@ -263,6 +263,7 @@ def test_convert_with_dosvenv_prompt(pre_prompt, space, command):
     """).strip().replace('\n', '').format(pre_prompt, space, html.escape(command))
     assert convert_markdown(src).replace('\n', '') == expected
 
+
 def test_convert_full_dosvenv_prompt():
     src = dedent(r"""
         ```dosvenv

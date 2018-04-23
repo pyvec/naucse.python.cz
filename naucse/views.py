@@ -44,6 +44,7 @@ POSSIBLE_FORK_EXCEPTIONS = (PullError, BuildError, DisallowedStyle, DisallowedEl
 
 _cached_model = None
 
+
 @LocalProxy
 def model():
     """Return the root of the naucse model
@@ -61,6 +62,7 @@ def model():
     if not app.config['DEBUG']:
         _cached_model = model
     return model
+
 
 register_url_converters(app, model)
 
@@ -659,13 +661,13 @@ def lesson(lesson, page, solution=None):
         **kwargs
     )
 
+
 def session_coverpage_content(course, session, coverpage):
     def lesson_url(lesson, *args, **kwargs):
         if kwargs.get("page") == "index":
             kwargs.pop("page")
 
         return url_for('course_page', course=course, lesson=lesson, *args, **kwargs)
-
 
     content = session.get_coverpage_content(course, coverpage, app)
 
@@ -691,7 +693,6 @@ def session_coverpage_content(course, session, coverpage):
         lesson_url=lesson_url,
         **vars_functions(course.vars),
     )
-
 
 
 @app.route('/<course:course>/sessions/<session>/', defaults={'coverpage': 'front'})
@@ -764,7 +765,6 @@ def course_calendar_content(course):
     )
 
 
-
 @app.route('/<course:course>/calendar/')
 def course_calendar(course):
     if course.is_link():
@@ -825,9 +825,9 @@ def generate_calendar_ics(course):
             begin=start_time,
             end=end_time,
             uid=url_for("session_coverpage",
-                      course=course,
-                      session=session.slug,
-                      _external=True),
+                        course=course,
+                        session=session.slug,
+                        _external=True),
         )
         calendar.events.append(cal_event)
 

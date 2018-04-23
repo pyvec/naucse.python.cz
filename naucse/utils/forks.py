@@ -125,9 +125,13 @@ def render(page_type: str, slug: str, *args, **kwargs) -> Dict[str, Any]:
                 # if content isn't cached or the version was refused, let's render
                 # the content here (but just the content and not the whole page with headers, menus etc)
                 if content is not_processed:
-                    content = views.page_content(lesson, page, solution, course,
-                                                  lesson_url=lesson_url, subpage_url=subpage_url, static_url=static_url,
-                                                  without_cache=True)
+                    content = views.page_content(
+                        lesson, page, solution, course,
+                        lesson_url=lesson_url,
+                        subpage_url=subpage_url,
+                        static_url=static_url,
+                        without_cache=True,
+                    )
 
                 if content is None:
                     info["content"] = None

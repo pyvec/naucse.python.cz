@@ -189,6 +189,7 @@ def format_date_range(start_and_end):
     parts += [format_date(end)]
     return ''.join(parts).format(start=start, end=end)
 
+
 @template_filter()
 def monthname(number):
     return ('Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec',

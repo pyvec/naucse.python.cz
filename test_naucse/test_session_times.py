@@ -9,6 +9,7 @@ from naucse import models
 
 TZINFO = dateutil.tz.gettz('Europe/Prague')
 
+
 @pytest.fixture
 def model():
     path = Path(__file__).parent / 'fixtures/test_content'

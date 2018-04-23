@@ -201,7 +201,7 @@ class Page(Model):
     @staticmethod
     def limit_css_to_lesson_content(css):
         """ Returns ``css`` limited just to the ``.lesson-content`` element.
-   
+
         This doesn't protect against malicious input.
         """
         parser = cssutils.CSSParser(raiseExceptions=True)
@@ -476,7 +476,7 @@ class CourseMixin:
         directory = self.path.parts[-1]
         parent_directory = self.path.parts[-2]
         if parent_directory == "courses":
-            parent_directory = "course" # legacy URL
+            parent_directory = "course"  # legacy URL
         return parent_directory + "/" + directory
 
     def is_link(self):
