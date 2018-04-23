@@ -36,7 +36,7 @@ class AllowedElementsParser(HTMLParser):
     """
 
     def __init__(self, **kwargs):
-        super(AllowedElementsParser, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.css_parser = cssutils.CSSParser(raiseExceptions=True)
 
         #: Set of allowed HTML elements

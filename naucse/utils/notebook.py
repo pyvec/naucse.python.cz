@@ -26,8 +26,7 @@ class NaucseHTMLExporter(HTMLExporter):
 
         self.register_filter('markdown2html', convert_markdown_contexted)
         self.register_filter('highlight_code', highlight)
-        return super(HTMLExporter,
-                     self).from_notebook_node(nb, resources, **kw)
+        return super().from_notebook_node(nb, resources, **kw)
 
 
 def convert_notebook(raw, convert_url=None):
