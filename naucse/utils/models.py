@@ -90,10 +90,13 @@ class YamlProperty(LazyProperty):
 
 
 class ForkProperty(LazyProperty):
-    """ Populated from the fork the model is pointing to.
+    """Populated from the fork the model is pointing to.
 
-    ``repo`` and ``branch`` indicate from which attribute of the instance the property should take info about the fork.
-    ``**kwargs`` are for `arca.Task` - the values can be callable (they get the instance as a parameter)
+    ``repo`` and ``branch`` indicate from which attribute of the instance
+    the property should take info about the fork.
+
+    ``**kwargs`` are for `arca.Task`. The values can be callable, in which
+    case they are called with the instance as a parameter.
     """
     def __init__(self, repo, branch, **kwargs):
         self.repo_prop = repo
@@ -158,8 +161,12 @@ class DataProperty:
 class DirProperty(LazyProperty):
     """Ordered dict of models from a subdirectory
 
-    If ``info.yml`` is present in the subdirectory, use it for the order
-    of the models.  The rest is appended alphabetically.
+    If ``info.yml`` is present in the subdirectory, it must contain a dict
+    with an "order" key, which is used to order the models.
+    The rest is appended in alphabetical order.
+
+    If ``keyfunc`` is given, it is used to create keys from directory names.
+    The default is ``str``, i.e. the directory name is used as dict key.
     """
     def __init__(self, cls, *subdir, keyfunc=str):
         self.cls = cls
@@ -190,16 +197,19 @@ class DirProperty(LazyProperty):
 
 
 class MultipleModelDirProperty(DirProperty):
-    """ Ordered dict of models from a subdirectory.
+    """Ordered dict of models from a subdirectory.
 
     For directories that have different models inside of them.
-    The models which are supposed to be used are defined by files they load their content out of
-    and the definition prioritizes them - first come first serve. If none of the models is present in the folders
-    a exception is raised.
-    Each of the models has to have an attribute ``data_filename`` with the filename used for defining them.
 
-    The prioritization is important in forks - if the base repo is merged to forks and the definitions
-    would exclusive, info.yml and link.yml would be in conflict and further actions would be needed.
+    The models which are supposed to be used are defined by files they
+    load their content out of and the definition prioritizes them - first
+    come first serve.
+    If none of the models is present in the folders, an exception is raised.
+    Each of the models must have an attribute ``data_filename`` with
+    the filename used for defining them.
+
+    The prioritization is important in forks, since many directories
+    contain both info.yml and link.yml.
 
     Possible to order by ``info.yml`` just like DirProperty.
     """

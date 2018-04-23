@@ -60,7 +60,9 @@ _naucse_tree_hash = {}
 
 
 def get_naucse_tree_hash(repo):
-    """ Returns the tree hash of the folder ``naucse``, which contains rendering mechanisms, in specified ``repo``.
+    """Return the hash of the folder ``naucse`` in specified ``repo``.
+
+    The ``naucse`` tree contains rendering mechanisms.
     """
     from naucse.views import app
     global _naucse_tree_hash
@@ -80,7 +82,7 @@ _lesson_tree_hash = defaultdict(dict)
 
 
 def get_lesson_tree_hash(repo, lesson_slug):
-    """ Returns the tree hash of the folder containing the lesson in specified ``repo``.
+    """Return the hash of the tree containing the lesson in specified repo.
     """
     from naucse.views import app
 
@@ -102,15 +104,18 @@ def get_lesson_tree_hash(repo, lesson_slug):
 
 
 def forks_enabled():
-    """ Returns if forks are enabled. By default they're not (for the purposes of local development).
+    """Return true if forks are enabled.
 
-    Forks can be enabled by setting FORKS_ENABLED environ variable to ``true``.
+    By default forks are not enabled (for the purposes of local development).
+
+    Forks can be enabled by setting the FORKS_ENABLED environment variable
+    to ``true`` (or, in tests, by overriding this function).
     """
     return os.environ.get("FORKS_ENABLED", "false") == "true"
 
 
 def forks_raise_if_disabled():
-    """ Raises ValueError if forks are not enabled.
+    """Raise ValueError if forks are not enabled.
     """
     if not forks_enabled():
         raise ValueError(
@@ -119,24 +124,31 @@ def forks_raise_if_disabled():
 
 
 def raise_errors_from_forks():
-    """ Returns if errors from forks should be raised or handled in the default way.
+    """Return true if errors from forks should be re-raised.
 
-    Only raising when a RAISE_FORK_ERRORS environ variable is set to ``true``.
-
-    Default handling:
+    If this returns false, errors from forks should be handled:
 
     * Not even basic course info is returned -> Left out of the list of courses
     * Error rendering a page
         * Lesson - if the lesson is canonical, canonical version is rendered with a warning
         * Everything else - templates/error_in_fork.html is rendered
+
+    Raising can be enabled by setting the RAISE_FORK_ERRORS environment
+    variable to ``true`` (or, in tests, by overriding this function).
     """
     return os.environ.get("RAISE_FORK_ERRORS", "false") == "true"
 
 
 def does_course_return_info(course, extra_required=(), *, force_ignore=False):
-    """ Returns if the the external course can be pulled and that it returns basic info about the course.
+    """Return true if basic info about the course is available.
 
-    Raises exception if :func:`raise_errors_from_forks` returns it should. (But not if ``force_ignore`` is set.)
+    This tests that the given external course can be pulled and it
+    returns required info (roughly, enough to be displayed in the
+    course list).
+
+    Exceptions are re-raised if :func:`raise_errors_from_forks` indicates
+    they should and ``force_ignore`` is not set.
+    Otherwise, they are only logged.
     """
     from naucse.views import logger
 
@@ -169,8 +181,10 @@ def does_course_return_info(course, extra_required=(), *, force_ignore=False):
 
 
 def page_content_cache_key(repo, lesson_slug, page, solution, course_vars=None) -> str:
-    """ Returns a key under which content fragments will be stored in cache, depending on the page
-        and the last commit which modified lesson rendering in ``repo``
+    """Return a key under which content fragments will be stored in cache
+
+    The cache key depends on the page and the last commit which modified
+    lesson rendering in ``repo``
     """
     return "commit:{}:content:{}".format(
         get_naucse_tree_hash(repo),
@@ -197,14 +211,19 @@ def edit_link(path):
 
 
 def get_edit_icon():
-    """ Should return None or some other icon from `templates/_bytesize_icons.html` if the fork is not on GitHub.
+    """Return name of the icon for the "edit this page" link, or None.
+
+    Icon names should come from Bytesize Icons (see
+    `templates/_bytesize_icons.html`).
     """
     return "github"
 
 
 def get_edit_page_name():
-    """ Should return the name of the page where editing is possible, in Czech in the 6th case.
-        Will be used to replace X in the sentence: `Uprav tuto stránku na X.`
+    """Return name of the page where editing is possible.
+
+    The returned value needs to be in Czech in the locative ("6th case");
+    it will be used to replace X in the sentence: `Uprav tuto stránku na X.`
     """
     return "GitHubu"
 

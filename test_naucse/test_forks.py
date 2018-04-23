@@ -59,7 +59,7 @@ def generate_run(title):
 
 @pytest.fixture(scope="module")
 def fork():
-    """ This fixture generates a local fork of the current state of naucse for testing.
+    """Generate a local fork of the current state of naucse for testing.
 
     1) Copies the entire local state of naucse
     2) Adds one working course and one working run
@@ -126,7 +126,7 @@ def fork():
 
 @pytest.fixture(scope="module")
 def model(fork):
-    """ This fixture generates a Root instance, with the courses and runs generated in fixture ``fork``
+    """Generate a Root instance with the courses and runs generated in ``fork``
     """
     path = Path(__file__).parent / 'fixtures/test_content'
     root = models.Root(path)
@@ -167,7 +167,7 @@ def model(fork):
 
 @pytest.fixture
 def client(model, mocker):
-    """ This fixture generates a client for testing endpoints, model will be used.
+    """Generate a client for testing endpoints, model will be used.
     """
     # these methods have the @reify decorator, however we need for them to be recalculated
     # so ``naucse.utils.views.forks_enabled`` can be tested
@@ -183,7 +183,7 @@ def client(model, mocker):
 
 
 def test_course_info(model):
-    """ This tests that all course meta data are generated properly from the fork info
+    """Test that all course metadata is generated properly from the fork info
     """
     assert model.courses["test-course"].title == "Course title"
     assert model.courses["test-course"].description == "Course description"
@@ -195,7 +195,7 @@ def test_course_info(model):
 
 
 def test_run_info(model):
-    """ This tests that all run meta data are generated properly from the fork info
+    """Test that all run meta data are generated properly from the fork info
     """
     assert model.runs[(2018, "test-run")].title == "Run title"
     assert model.runs[(2018, "test-run")].description == "Run description"
@@ -207,8 +207,10 @@ def test_run_info(model):
 
 
 def test_course_render(model):
-    """ This tests that course pages are rendered correctly (course, sessions, lessons)
-    Also tests that run pages (calendar) aren't rendered for courses.
+    """Test that non-run course pages are rendered correctly
+
+    Tested pages are course, sessions, lessons.
+    Also test that run pages (calendar) aren't rendered for non-run courses.
     """
     assert model.courses["test-course"].render_course()
     with pytest.raises(BuildError):
@@ -239,7 +241,9 @@ def test_course_render(model):
 
 
 def test_run_render(model):
-    """ This tests that run pages are rendered correctly (course, calendars, sessions, lessons)
+    """Test that run pages are rendered correctly
+
+    Tested pages are course, calendars, sessions, lessons.
     """
     assert model.runs[(2018, "test-run")].render_course()
 
@@ -268,7 +272,7 @@ def test_run_render(model):
 
 
 def test_cache_offer(model):
-    """ Tests that forks don't render content when content exists in cache.
+    """Test that forks don't render content when content exists in cache.
     """
     repo = arca.get_repo(model.courses["test-course"].repo, model.courses["test-course"].branch)
 
@@ -280,7 +284,8 @@ def test_cache_offer(model):
 
     assert result["content"] is None
 
-    # also test that if provided a key which is gonna be rejected, content is  rendered
+    # Also test that if provided a key which is gonna be rejected,
+    # content is rendered
 
     result = model.courses["test-course"].render_page("beginners/cmdline", "index", None,
                                                       content_key=content_key + "asdfasdf",
@@ -290,25 +295,26 @@ def test_cache_offer(model):
 
 
 def test_courses_page(mocker, client: FlaskClient):
-    """ Tests how the /courses/ page behaves when a fork isn't returning information about a course.
+    """Test how /courses/ page behaves when a fork isn't returning course info
     """
     mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: True)
 
-    # there's a problem in one of the branches, it should raise error if the conditions for raising are True
+    # There's a problem in one of the branches, so it should raise an error
+    # if the conditions for raising are True
     with pytest.raises(BuildError):
         client.get("/courses/")
 
-    # unless problems are silenced
+    # ... unless problems are silenced
     mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: False)
     response = client.get("/courses/")
     assert b"Broken course title" not in response.data
 
-    # but working forks are still present
+    # ... but working forks are still present
     assert b"Course title" in response.data
 
 
 def test_courses_page_ignore_forks(mocker, client: FlaskClient):
-    """ Tests ignoring forks in courses page
+    """Test ignoring forks in courses page
     """
     mocker.patch("naucse.utils.views.forks_enabled", lambda: False)
     mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: True)
@@ -319,12 +325,13 @@ def test_courses_page_ignore_forks(mocker, client: FlaskClient):
 
 
 def test_runs_page(mocker, client: FlaskClient):
-    """ Tests how the /runs/ page behaves when a fork isn't returning information about a course.
+    """Test how /runs/ page behaves when a fork isn't returning course info
     """
     mocker.patch("naucse.utils.views.forks_enabled", lambda: True)
     mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: True)
 
-    # there's a problem in one of the branches, it should raise error if the conditions for raising are True
+    # There's a problem in one of the branches, so it should raise an error
+    # if the conditions for raising are True
     with pytest.raises(BuildError):
         client.get("/runs/all/")
 
@@ -338,7 +345,7 @@ def test_runs_page(mocker, client: FlaskClient):
 
 
 def test_runs_page_ignore_forks(mocker, client: FlaskClient):
-    """ Tests ignoring forks in runs page
+    """Test ignoring forks in runs page
     """
     mocker.patch("naucse.utils.views.forks_enabled", lambda: False)
     mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: True)
@@ -360,7 +367,7 @@ def test_runs_page_ignore_forks(mocker, client: FlaskClient):
     "/2018/test-run/calendar/",
 ])
 def test_working_pages(url, client: FlaskClient):
-    """ Tests that the rendering of the pages is actually working and not returning a warning.
+    """Test the rendering of the pages is working and not returning a warning.
     """
     response = client.get(url)
     assert b"alert alert-danger" not in response.data
@@ -377,7 +384,7 @@ def test_working_pages(url, client: FlaskClient):
     "/2018/test-broken-run/calendar/",
 ])
 def test_failing_pages(url, client: FlaskClient):
-    """ Rendering of the pages shouldn't fail, it should return a page win an error message.
+    """Test that a failing page renders as a page with an error message.
     """
     response = client.get(url)
     assert b"alert alert-danger" in response.data
@@ -396,14 +403,16 @@ def test_get_footer_links(model):
     assert session_link["url"] == "/course/test-course/sessions/first-session/"
 
     assert isinstance(next_link, dict)
-    assert len(next_link["title"])  # titles are dependant on lessons content, lets just check they're there
+    # titles are dependent on lesson content, let's just check they're there
+    assert len(next_link["title"])
     assert next_link["url"] == "/course/test-course/beginners/install/"
 
     # test last lesson of a session
     prev_link, session_link, next_link = course.get_footer_links("beginners/install", "index")
 
     assert isinstance(prev_link, dict)
-    assert len(prev_link["title"])  # titles are dependant on lessons content, lets just check they're there
+    # titles are dependent on lesson content, let's just check they're there
+    assert len(prev_link["title"])
     assert prev_link["url"] == "/course/test-course/beginners/cmdline/"
 
     assert isinstance(session_link, dict)
@@ -424,7 +433,8 @@ def test_get_footer_links(model):
     assert session_link["url"] == "/course/test-course/sessions/second-session/"
 
     assert isinstance(next_link, dict)
-    assert len(next_link["title"])  # titles are dependant on lessons content, lets just check they're there
+    # titles are dependent on lesson content, let's just check they're there
+    assert len(next_link["title"])
     assert next_link["url"] == "/course/test-course/beginners/install-editor/"
 
     # test nonsense lesson

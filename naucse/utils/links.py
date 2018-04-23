@@ -1,4 +1,4 @@
-""" These functions serve as validation and further processing of metadata from forks.
+"""Functions for validation and further processing of metadata from forks.
 """
 from xml.dom import SyntaxErr
 
