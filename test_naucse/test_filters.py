@@ -20,6 +20,7 @@ import naucse.templates
 def test_format_date_range(start, end, result):
     assert naucse.templates.format_date_range((start, end)) == result
 
+
 @pytest.mark.parametrize(
     ('time', 'result'),
     (
@@ -33,4 +34,3 @@ def test_format_date_range(start, end, result):
 )
 def test_format_time(time, result):
     assert naucse.templates.format_time(time) == result
-

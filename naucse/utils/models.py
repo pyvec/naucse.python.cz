@@ -157,7 +157,7 @@ class DataProperty:
 
 class DirProperty(LazyProperty):
     """Ordered dict of models from a subdirectory
-    
+
     If ``info.yml`` is present in the subdirectory, use it for the order
     of the models.  The rest is appended alphabetically.
     """
