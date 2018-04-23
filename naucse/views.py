@@ -2,7 +2,7 @@ import calendar
 import datetime
 import logging
 import os
-import urllib.parse
+from urllib.parse import urljoin
 from pathlib import Path
 
 import ics
@@ -408,12 +408,6 @@ def get_relative_url(current, target):
     return rel
 
 
-def get_absolute_url(current, target):
-    """Get absolute url from the ``target``, which is relative to ``current``.
-    """
-    return urllib.parse.urljoin(current, target)
-
-
 def relative_url_functions(current_url, course, lesson):
     """Return relative URL generators based on current page.
     """
@@ -489,7 +483,7 @@ def page_content(lesson, page, solution=None, course=None, lesson_url=None, subp
     # The urls are added twice to ``absolute_urls_to_freeze``
     # when the content is created.
     # But it doesn't matter, duplicate URLs are skipped.
-    absolute_urls = [get_absolute_url(request.path, x) for x in cached["urls"]]
+    absolute_urls = [urljoin(request.path, x) for x in cached["urls"]]
     absolute_urls_to_freeze.extend(absolute_urls)
 
     return cached
@@ -538,12 +532,12 @@ def course_page(course, lesson, page, solution=None):
             if content is None:
                 # the offer was accepted
                 content = content_offer["content"]
-                absolute_urls_to_freeze.extend([get_absolute_url(request.path, x)
+                absolute_urls_to_freeze.extend([urljoin(request.path, x)
                                                 for x in content_offer["urls"]])
             else:
                 # the offer was rejected or the the fragment was not in cache
                 arca.region.set(content_key, {"content": content, "urls": data_from_fork["content_urls"]})
-                absolute_urls_to_freeze.extend([get_absolute_url(request.path, x)
+                absolute_urls_to_freeze.extend([urljoin(request.path, x)
                                                 for x in data_from_fork["content_urls"]])
 
             # compatibility
