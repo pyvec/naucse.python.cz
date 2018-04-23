@@ -113,7 +113,9 @@ def forks_raise_if_disabled():
     """ Raises ValueError if forks are not enabled.
     """
     if not forks_enabled():
-        raise ValueError("You must explicitly allow forks to be rendered.")
+        raise ValueError(
+            "You must explicitly allow forks to be rendered.\n"
+            "Set FORKS_ENABLED=true to enable them.")
 
 
 def raise_errors_from_forks():
