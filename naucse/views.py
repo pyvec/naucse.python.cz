@@ -24,9 +24,11 @@ from naucse.utils import links
 from naucse.utils.links import (process_course_data, process_session_data, process_page_data, process_footer_data,
                                 InvalidInfo)
 from naucse.utils.models import arca
-from naucse.utils.views import (get_recent_runs, list_months, DisallowedStyle,
-                                 DisallowedElement, does_course_return_info, absolute_urls_to_freeze,
-                                 raise_errors_from_forks, page_content_cache_key, InvalidHTML, get_edit_info)
+from naucse.utils.views import get_recent_runs, list_months
+from naucse.utils.views import does_course_return_info
+from naucse.utils.views import absolute_urls_to_freeze, raise_errors_from_forks
+from naucse.utils.views import page_content_cache_key, get_edit_info
+from naucse.validation import DisallowedStyle, DisallowedElement, InvalidHTML
 
 # so it can be mocked
 import naucse.utils.views

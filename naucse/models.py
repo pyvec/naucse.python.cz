@@ -14,7 +14,8 @@ from git import Repo
 import naucse.utils.views
 from naucse.utils.models import Model, YamlProperty, DataProperty, DirProperty, MultipleModelDirProperty, ForkProperty
 from naucse.utils.models import reify, arca
-from naucse.utils.views import AllowedElementsParser, absolute_urls_to_freeze
+from naucse.utils.views import absolute_urls_to_freeze
+from naucse.validation import AllowedElementsParser
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.utils.markdown import convert_markdown
 from naucse.utils.notebook import convert_notebook
