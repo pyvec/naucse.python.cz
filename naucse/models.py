@@ -797,7 +797,7 @@ class MetaInfo:
             return repo.active_branch.name
         except TypeError:  # thrown if not in a branch
             logger.warning("MetaInfo.branch: There is not active branch")
-            return self._default_slug
+            return self._default_branch
 
 
 class Root(Model):
