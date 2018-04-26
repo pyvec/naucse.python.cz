@@ -1,7 +1,14 @@
+import logging
+from pathlib import Path
+from logging.handlers import RotatingFileHandler
+
 import click
 import elsa
 
 from naucse.utils.views import forks_enabled, does_course_return_info
+from naucse.views import app, lesson_static_generator
+
+from naucse.freezer import NaucseFreezer
 
 
 def cli(app, *, base_url=None, freezer=None):
@@ -71,3 +78,34 @@ def cli(app, *, base_url=None, freezer=None):
     cli = click.CommandCollection(sources=[naucse, elsa_group])
 
     return cli()
+
+
+def main():
+    arca_log_path = Path(".arca/arca.log")
+    arca_log_path.parent.mkdir(exist_ok=True)
+    arca_log_path.touch()
+
+    naucse_log_path = Path(".arca/naucse.log")
+    naucse_log_path.touch()
+
+    def get_handler(path, **kwargs):
+        handler = RotatingFileHandler(path, **kwargs)
+        formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
+
+        handler.setLevel(logging.INFO)
+        handler.setFormatter(formatter)
+
+        return handler
+
+    logger = logging.getLogger("arca")
+    logger.addHandler(get_handler(arca_log_path, maxBytes=10000, backupCount=0))
+
+    logger = logging.getLogger("naucse")
+    logger.addHandler(get_handler(naucse_log_path))
+
+    freezer = NaucseFreezer(app)
+
+    # see the generator for details
+    freezer.register_generator(lesson_static_generator)
+
+    cli(app, base_url='https://naucse.python.cz', freezer=freezer)
