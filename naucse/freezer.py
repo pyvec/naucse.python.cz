@@ -1,8 +1,13 @@
 import contextlib
+from collections import deque
 
 from flask_frozen import UrlForLogger, Freezer
 
-from naucse.utils.views import absolute_urls_to_freeze
+absolute_urls_to_freeze = deque()
+
+def record_url(url):
+    """Logs that `url` should be included in the resulting static site"""
+    absolute_urls_to_freeze.append(url)
 
 
 class AllLinksLogger(UrlForLogger):

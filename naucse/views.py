@@ -16,7 +16,7 @@ from jinja2.exceptions import TemplateNotFound
 from werkzeug.local import LocalProxy
 
 from naucse import models
-from naucse.freezer import temporary_url_for_logger
+from naucse.freezer import temporary_url_for_logger, record_url
 from naucse.models import allowed_elements_parser
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.urlconverters import register_url_converters
@@ -26,7 +26,7 @@ from naucse.utils.links import (process_course_data, process_session_data, proce
 from naucse.utils.models import arca
 from naucse.utils.views import get_recent_runs, list_months
 from naucse.utils.views import does_course_return_info
-from naucse.utils.views import absolute_urls_to_freeze, raise_errors_from_forks
+from naucse.utils.views import raise_errors_from_forks
 from naucse.utils.views import page_content_cache_key, get_edit_info
 from naucse.validation import DisallowedStyle, DisallowedElement, InvalidHTML
 
@@ -485,11 +485,10 @@ def page_content(lesson, page, solution=None, course=None, lesson_url=None, subp
     content_key = page_content_cache_key(Repo("."), lesson.slug, page.slug, solution, variables)
     cached = arca.region.get_or_create(content_key, content_creator)
 
-    # The urls are added twice to ``absolute_urls_to_freeze``
-    # when the content is created.
+    # The urls are recorded twice when the content is created.
     # But it doesn't matter, duplicate URLs are skipped.
-    absolute_urls = [urljoin(request.path, x) for x in cached["urls"]]
-    absolute_urls_to_freeze.extend(absolute_urls)
+    for x in cached["urls"]:
+        record_url(urljoin(request.path, x))
 
     return cached
 
@@ -537,13 +536,13 @@ def course_page(course, lesson, page, solution=None):
             if content is None:
                 # the offer was accepted
                 content = content_offer["content"]
-                absolute_urls_to_freeze.extend([urljoin(request.path, x)
-                                                for x in content_offer["urls"]])
+                for x in content_offer["urls"]:
+                    record_url(urljoin(request.path, x))
             else:
                 # the offer was rejected or the the fragment was not in cache
                 arca.region.set(content_key, {"content": content, "urls": data_from_fork["content_urls"]})
-                absolute_urls_to_freeze.extend([urljoin(request.path, x)
-                                                for x in data_from_fork["content_urls"]])
+                for x in data_from_fork["content_urls"]:
+                    record_url(urljoin(request.path, x))
 
             # compatibility
             page = process_page_data(data_from_fork.get("page"))
