@@ -365,7 +365,7 @@ class Kocka:
 
     def snez(self, jidlo):
         if not self.je_ziva():
-            print("Je zbytecne krmit mrvou kocku!")
+            print("Je zbytecne krmit mrtvou kocku!")
             return
         if jidlo == "ryba" and self.pocet_zivotu < 9:
             self.pocet_zivotu += 1
