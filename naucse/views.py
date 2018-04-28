@@ -182,7 +182,8 @@ def courses():
 
     for course in model.courses.values():
         if not course.is_link():
-            safe_courses.append(course)
+            if not course.is_meta:
+                safe_courses.append(course)
         elif naucse.utils.views.forks_enabled() and does_course_return_info(course):
             safe_courses.append(course)
 

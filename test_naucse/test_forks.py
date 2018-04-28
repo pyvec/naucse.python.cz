@@ -133,23 +133,29 @@ def model(fork):
 
     course = models.CourseLink(root, path / 'courses/test-course')
     course.repo = fork
-    course.branch = "test_branch"
+    course.branch = 'test_branch'
 
     course_broken = models.CourseLink(root, path / 'courses/test-broken-course')
     course_broken.repo = fork
-    course_broken.branch = "test_broken_branch"
+    course_broken.branch = 'test_broken_branch'
 
     run = models.CourseLink(root, path / 'runs/2018/test-run')
     run.repo = fork
-    run.branch = "test_branch"
+    run.branch = 'test_branch'
 
     run_broken = models.CourseLink(root, path / 'runs/2018/test-broken-run')
     run_broken.repo = fork
-    run_broken.branch = "test_broken_branch"
+    run_broken.branch = 'test_broken_branch'
+
+    # so rendering still works
+    meta = models.Course(root, path / 'courses/normal-course')
+    meta.is_meta = True
 
     # so no file operations are needed, override list of courses and runs as well
 
-    root.courses = OrderedDict([("test-course", course), ('test-broken-course', course_broken)])
+    root.courses = OrderedDict([('test-course', course),
+                                ('test-broken-course', course_broken),
+                                ('meta', meta)])
 
     run_year = models.RunYear(root, path / 'runs/2018')
     run_year.runs = OrderedDict([
