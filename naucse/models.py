@@ -479,6 +479,10 @@ class CourseMixin:
             parent_directory = "course"  # legacy URL
         return parent_directory + "/" + directory
 
+    @reify
+    def is_meta(self):
+        return self.info.get("meta", False)
+
     def is_link(self):
         return isinstance(self, CourseLink)
 
@@ -497,7 +501,8 @@ class Course(CourseMixin, Model):
     description = DataProperty(info)
     long_description = DataProperty(info)
 
-    vars = DataProperty(info)
+    # none of the variables are required, so empty ``vars:`` should not be required either
+    vars = DataProperty(info, default=(), convert=dict)
     subtitle = DataProperty(info, default=None)
     time = DataProperty(info, default=None)
     place = DataProperty(info, default=None)
