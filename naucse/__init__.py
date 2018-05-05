@@ -40,4 +40,4 @@ def main():
     # see the generator for details
     freezer.register_generator(lesson_static_generator)
 
-    cli(app, base_url='http://naucse.python.cz', freezer=freezer)
+    cli(app, base_url='https://naucse.python.cz', freezer=freezer)
