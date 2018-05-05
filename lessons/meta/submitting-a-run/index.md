@@ -1,6 +1,6 @@
 # Přidání kurzu na Nauč se Python
 
-Když už máme nadefinováný vlastní kurz, zbývá nám jen ho dostat na [naucse.python.cz](http://naucse.python.cz/).
+Když už máme nadefinováný vlastní kurz, zbývá nám jen ho dostat na [naucse.python.cz](https://naucse.python.cz/).
 Budeme k tomu potřebovat jen pár příkazu v Gitu a trochu trpělivosti.
 
 ## Nahrání do vlastního forku
@@ -83,7 +83,7 @@ Teď už potřebuješ udělat _Pull Request_ (dále jen jako PR) se souborem `li
 Jak udělat PR je popsáno v [návodu na používání Gitu]({{lesson_url("git/git-collaboration-2in1")}}).
 Ideálně do popisku napiš, kdo jsi a co organizuješ za kurz, ať to správci nemusí zjišťovat například z popisku v `info.yml`.
 
-Po tom, co správci PR schválí a sloučí tvoje změny do základního repozitáře, stačí počkat pár minut a tvůj kurz se objeví na [naucse.python.cz](http://naucse.python.cz/).
+Po tom, co správci PR schválí a sloučí tvoje změny do základního repozitáře, stačí počkat pár minut a tvůj kurz se objeví na [naucse.python.cz](https://naucse.python.cz/).
 
 ## Upravování kurzu
 
@@ -99,7 +99,7 @@ S každou změnou pak musíš udělat commit a odeslat commit na GitHub.
 
 Už naprosto poslední věc, kterou je potřeba zařídit, je aby se změny ve tvém kurzu u tebe ve forku projevily na Nauč se.
 To se dělá pomocí tzv. webhooků, webových adres, které reagují na nějaké akce.
-Musíš tedy nastavit svůj fork, aby posílal akce na webhook, který vyvolá nové nasazení webové stránky [naucse.python.cz](http://naucse.python.cz/).
+Musíš tedy nastavit svůj fork, aby posílal akce na webhook, který vyvolá nové nasazení webové stránky [naucse.python.cz](https://naucse.python.cz/).
 
 Pro instalaci webhooků máme speciální aplikaci, která je umí sama nastavit.
 Běží na adrese [hooks.nauc.se](https://hooks.nauc.se).
