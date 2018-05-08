@@ -28,6 +28,15 @@ def test_allow_attributes():
             """<div class='test' onhover="alert('XSS')"><a href='/courses/'>Text</a></div>"""
         )
 
+    with pytest.raises(naucse.validation.DisallowedElement):
+        allowed_elements.reset_and_feed(
+            """<div class='test'><span style='color: red'><a href="javascript:alert('XSS')">Text</a></span></div>"""
+        )
+
+    with pytest.raises(naucse.validation.DisallowedElement):
+        allowed_elements.reset_and_feed(
+            """<div class='test' onhover="alert('XSS')"><img src="javascript:alert('XSS')" /></div>"""
+        )
 
 def test_allowed_styles():
     allowed_elements = naucse.validation.AllowedElementsParser()
