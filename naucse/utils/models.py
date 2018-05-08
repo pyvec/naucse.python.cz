@@ -19,10 +19,6 @@ def arca():
     _arca = Arca(settings={"ARCA_BACKEND": "arca.backend.CurrentEnvironmentBackend",
                            "ARCA_BACKEND_CURRENT_ENVIRONMENT_REQUIREMENTS": "requirements.txt",
                            "ARCA_BACKEND_VERBOSITY": 2,
-                           # required by PyNaCl which is required by Gabric3 which is required by Arca
-                           # only needed for Arcas Vagrant backend, can be removed once Arca
-                           # implements optional requirements
-                           "ARCA_BACKEND_APK_DEPENDENCIES": ["libffi-dev"],
                            "ARCA_BACKEND_KEEP_CONTAINER_RUNNING": True,
                            "ARCA_BACKEND_USE_REGISTRY_NAME": "docker.io/naucse/naucse.python.cz",
                            "ARCA_SINGLE_PULL": True,
