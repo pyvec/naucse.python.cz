@@ -300,6 +300,10 @@ def course(course):
 
         try:
             data_from_fork = course.render_course(request_url=request.path)
+            edit_info = links.process_edit_info(data_from_fork.get("edit_info"))
+            content = data_from_fork.get("content")
+            if content is None:
+                raise InvalidInfo("Content of the page can't be None.")
         except POSSIBLE_FORK_EXCEPTIONS as e:
             if raise_errors_from_forks():
                 raise
@@ -316,8 +320,8 @@ def course(course):
                 travis_build_id=os.environ.get("TRAVIS_BUILD_ID"),
             )
         kwargs = {
-            "course_content": data_from_fork.get("content"),
-            "edit_info": links.process_edit_info(data_from_fork.get("edit_info")),
+            "course_content": content,
+            "edit_info": edit_info,
         }
     else:
         content = course_content(course)
@@ -724,11 +728,15 @@ def session_coverpage(course, session, coverpage):
         try:
             data_from_fork = course.render_session_coverpage(session, coverpage, request_url=request.path)
 
+            content = data_from_fork.get("content")
+            if content is None:
+                raise InvalidInfo("Content of the page can't be None.")
+
             kwargs = {
                 "course": process_course_data(data_from_fork.get("course"), slug=course.slug),
                 "session": process_session_data(data_from_fork.get("session"), slug=session),
                 "edit_info": links.process_edit_info(data_from_fork.get("edit_info")),
-                "content": data_from_fork["content"]
+                "content": content
             }
         except POSSIBLE_FORK_EXCEPTIONS as e:
             if raise_errors_from_forks():
@@ -785,6 +793,10 @@ def course_calendar(course):
 
             course = process_course_data(data_from_fork.get("course"), slug=course.slug)
             edit_info = links.process_edit_info(data_from_fork.get("edit_info"))
+            content = data_from_fork.get("content")
+
+            if content is None:
+                raise InvalidInfo("Content of the page can't be None.")
         except POSSIBLE_FORK_EXCEPTIONS as e:
             if raise_errors_from_forks():
                 raise
@@ -803,7 +815,7 @@ def course_calendar(course):
         kwargs = {
             "course": course,
             "edit_info": edit_info,
-            "content": data_from_fork.get("content")
+            "content": content
         }
     else:
         if not course.start_date:
@@ -854,6 +866,11 @@ def course_calendar_ics(course):
 
         try:
             data_from_fork = course.render_calendar_ics(request_url=request.path)
+
+            calendar = data_from_fork.get("calendar")
+
+            if calendar is None:
+                raise InvalidInfo("The calendar can't be None.")
         except POSSIBLE_FORK_EXCEPTIONS as e:
             if raise_errors_from_forks():
                 raise
@@ -868,8 +885,6 @@ def course_calendar_ics(course):
                 root_slug=model.meta.slug,
                 travis_build_id=os.environ.get("TRAVIS_BUILD_ID"),
             )
-
-        calendar = data_from_fork["calendar"]
     else:
         try:
             calendar = generate_calendar_ics(course)
