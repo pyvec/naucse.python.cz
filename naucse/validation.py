@@ -87,7 +87,13 @@ class AllowedElementsParser(HTMLParser):
         attr_names = set([x[0] for x in attrs])
 
         if len(attr_names - self.allowed_attributes):
-            raise DisallowedAttribute("Attributes '{}' are not allowed".format(", ".join(attr_names)))
+            raise DisallowedAttribute("Attributes '{}' are not allowed".format(", ".join(attr_names - self.allowed_attributes)))
+
+        for link_attr in "href", "src":
+            if link_attr in attr_names:
+                for attr, val in attrs:
+                    if attr == link_attr and val.startswith("javascript:"):
+                        raise DisallowedAttribute("Attributes launching JavaScript are not allowed")
 
     def handle_starttag(self, tag, attrs):
         if tag not in self.allowed_elements:
