@@ -5,14 +5,14 @@ Důležité je si i ověřit, že opravdu funguje (a případně ho pak opravit)
 Ověřování, že program funguje, se říká *testování*.
 
 Zatím jsi asi svoje programy testoval{{a}} tak, že jsi
-je zkusil{{a}} spustit, něco zadal{{a}} a podíval{{a}} se
+je zkusil{{a}} spustit, něco zadal{{a}} a podíval{{a}} se,
 jestli jsou výsledky v pořádku.
 U větších programů, které budou mít více a více
 možností, ale bude těžší a těžší takhle zkontrolovat,
-jestli všechny ty možnosti fungují jak mají.
+jestli všechny ty možnosti fungují, jak mají.
 
 Proto si programátoři, místo aby program zkoušeli ručně, píšou jiné programy,
-které testují za ně.
+které testují jejich výtvory za ně.
 
 *Automatické testy* jsou funkce, které
 zkontrolují, že náš program funguje správně.
@@ -62,7 +62,7 @@ Potom zadej následující příkaz.
 > `python -m pip --help`.
 
 > [warning] Pro Windows
-> Jsi-li na Windows, od této lekce začné být důležité
+> Jsi-li na Windows, od této lekce začne být důležité
 > spouštět pythonní programy pomocí `python program.py`, ne jen
 > `program.py`.
 > Ačkoli se v těchto materiálech všude používá `python` na začátku, zatím
@@ -75,7 +75,7 @@ Potom zadej následující příkaz.
 
 Nejdříve si testování ukážeme na jednoduchém příkladu.
 Tady je funkce `secti`, která umí sečíst
-dvě čísla, a další funkce která testuje, jestli se
+dvě čísla, a další funkce, která testuje, jestli se
 `secti` pro určité hodnoty
 chová správně.
 
@@ -292,7 +292,7 @@ chybu (třeba `ValueError`), když je herní pole už plné.
 
 Na otestování výjimky to použij příkaz `with` a funkci `raises` naimportovanou
 z modulu `pytest`.
-Jak příkaz `with` přesně funguje se dozvíme později;
+Jak příkaz `with` přesně funguje, se dozvíme později;
 teď stačí říct, že ověří, že odsazený blok kódu
 pod ním vyvolá danou výjimku:
 
