@@ -1,4 +1,4 @@
-﻿# MicroPython na malém zařízení
+# MicroPython na malém zařízení
 
 > [note] Tahle sekce bohužel nejde jednoduše projít z domu.
 > Využíváme speciální vybavení, které je potřeba nejdřív
