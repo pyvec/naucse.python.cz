@@ -343,7 +343,7 @@ def test_runs_page(mocker, client: FlaskClient):
 
     # unless problems are silenced
     mocker.patch("naucse.utils.views.raise_errors_from_forks", lambda: False)
-    response = client.get("/runs/")
+    response = client.get("/runs/all/")
     assert b"Broken run title" not in response.data
 
     # but working forks are still present
