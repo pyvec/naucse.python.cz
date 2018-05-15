@@ -1,4 +1,4 @@
-# MicroPython na malém zařízení
+﻿# MicroPython na malém zařízení
 
 > [note] Tahle sekce bohužel nejde jednoduše projít z domu.
 > Využíváme speciální vybavení, které je potřeba nejdřív
@@ -19,7 +19,7 @@
 ) }}
 
 Dnes budeme programovat malé zařízení –
-tak malé, že se ho pohodlně schováš v ruce.
+tak malé, že ho pohodlně schováš v ruce.
 Konkrétně budeme používat „chytrou destičku”, modul zvaný
 *NodeMCU Devkit*, která by měla ležet před tebou.
 Než ji vyndáš z obalu, měla by ses *vybít*:
