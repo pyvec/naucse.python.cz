@@ -16,12 +16,15 @@ Z minulých lekcí bys měl{{a}} mít založený účet na github.com,
 tak se zkusme zeptat Githubu, co o nás ví.
 
 
-## Autorizace
+## Autentizace a autorizace
 
-První, a mnohdy nejsložitější, krok k použití API
-je přihlášení. Počítače se totiž přihlašují jinak
-než lidi a problematika bezpečnosti a oprávnění by vydala na samostatný kurz.
-My to uděláme co nejjednodušeji, ať se rychle dostaneme k jádru věci:
+První krok k použití API je autentizace. Musíš API poslat něco, pomocí
+čeho ověří tvoji identitu. Může to být kombinace jména a hesla, nebo níže
+zmiňovaný token. API pak ještě provádí autorizaci, tedy kontrolu práv
+autentizovaného uživatele k využití požadované části API. Počítače se
+přihlašují jinak než lidi a problematika bezpečnosti a oprávnění by vydala
+na samostatný kurz. My to uděláme co nejjednodušeji, ať se rychle dostaneme
+k jádru věci:
 
 * Přihlaš se na [github.com](https://github.com).
 * Jdi na [nastavení Personal Accesss Tokens](https://github.com/settings/tokens).
