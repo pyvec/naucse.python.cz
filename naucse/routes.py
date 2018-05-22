@@ -800,7 +800,7 @@ def course_calendar(course):
 
 
 def generate_calendar_ics(course):
-    calendar = ics.Calendar()
+    events = []
     for session in course.sessions.values():
         if session.start_time:
             start_time = session.start_time
@@ -817,9 +817,9 @@ def generate_calendar_ics(course):
                       session=session.slug,
                       _external=True),
         )
-        calendar.events.append(cal_event)
+        events.append(cal_event)
 
-    return calendar
+    return ics.Calendar(events=events)
 
 
 @app.route('/<course:course>/calendar.ics')
