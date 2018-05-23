@@ -6,15 +6,16 @@ cache:
   - $HOME/.cache/pip
   - .arca/cache
 install:
-- pip install -r test_requirements.txt
-- pip install 'arca[docker]>=0.2'
+- python -m pip install pipenv --upgrade
+- pipenv install --deploy --dev
 before_script:  # encrypted variables aren't accessible in PRs
 - 'if [ -n "$DOCKER_HUB_PASSWORD" ]; then docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD"; fi'
 - 'if [ -z "$DOCKER_HUB_PASSWORD" ]; then export ARCA_BACKEND_REGISTRY_PULL_ONLY=true; fi'
 script:
-- python -m pytest test_naucse
-- python -m naucse list_courses  # don't remove, there might be timeouts otherwise, see naucse/cli.py for details
-- python -m naucse freeze --verbose
+- pipenv graph
+- pipenv run test
+- pipenv run naucse list_courses  # don't remove, there might be timeouts otherwise, see naucse/cli.py for details
+- pipenv run naucse freeze --verbose
 after_script:
 - echo "Suplementary logs:"
 - cat .arca/naucse.log
@@ -23,7 +24,7 @@ after_script:
 deploy:
   provider: script
   skip_cleanup: true
-  script: python -m naucse deploy --push --no-freeze
+  script: pipenv run naucse deploy --push --no-freeze
   on:
     branch: master
     repo: pyvec/naucse.python.cz
