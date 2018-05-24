@@ -1,3 +1,3 @@
-from naucse import main
+from naucse.cli import main
 
 main()

@@ -183,7 +183,7 @@ def client(model, mocker):
         delattr(model, "safe_run_years")
 
     mocker.patch("naucse.views._cached_model", model)
-    from naucse import app
+    from naucse.views import app
     app.testing = True
     yield app.test_client()
 
