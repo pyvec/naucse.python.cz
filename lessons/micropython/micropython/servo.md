@@ -71,7 +71,7 @@ malou destičku s „mozkem” má dva hlavní úkoly:
 Když energie z USB přestane stačit, dá se koupit
 zařízení, které zvládne převádět komunikaci
 a napájení vyřešit z jiného zdroje 5 V.
-Kdybys to někdy zkoušela, příslušné zařízení
+Kdybys to někdy zkoušel{{a}}, příslušné zařízení
 koupíš pod názvem *USB-TTL adapter* a vypadá
 nejčastěji takhle:
 
