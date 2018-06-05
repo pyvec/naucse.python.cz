@@ -53,15 +53,15 @@ Podobně je možné na destičku soubory i nahrávat, jen je potřeba místo
 (venv)$ ampy -p PORT put blikajici_led.py
 ```
 
-Pokud navíc budeme chtít, aby se program na destičce automaticky spouštěl, musí
+Pokud navíc budeš chtít, aby se program na destičce automaticky spouštěl, musí
 se soubor s programem na destičce jmenovat `main.py`. `ampy` umí soubor při
-kopírování i přejmenovat, když mu při kopírování zadáme i druhé (nové) jméno.
+kopírování i přejmenovat, když mu při kopírování zadáš i druhé (nové) jméno.
 
 ```console
 (venv)$ ampy -p PORT put blikajici_led.py main.py
 ```
 
-Po úspěšném kopírování máme na destičce nahraný náš program ze souboru
+Po úspěšném kopírování máš na destičce nahraný náš program ze souboru
 `blikajici_led.py` do souboru `main.py`. Teď už bude tvůj program fungovat
 i bez počítače, takže stačí destičku připojit např. k powerbance
 a dioda se rozbliká.

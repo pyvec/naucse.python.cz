@@ -3,11 +3,11 @@
 ESP8266 byl původně navržen i jako čip pro WiFi a i s MicroPythonem se umí připojit k síti.
 Dokonce se přes WiFi dá i ovládat.
 
-Otevřete si stránku [micropython.org/webrepl](http://micropython.org/webrepl/),
-přes kterou budete po připojení s destičkou komunikovat.
+Otevři si stránku [micropython.org/webrepl](http://micropython.org/webrepl/),
+přes kterou budeš po připojení s destičkou komunikovat.
 
-Poté se buď připojte k existující WiFi síti (Eduroam fungovat nebude) nebo
-použijte destičku jako samostatný *access point*:
+Poté se buď připoj k existující WiFi síti (Eduroam fungovat nebude) nebo
+použij destičku jako samostatný *access point*:
 
 ```python
 
@@ -43,7 +43,7 @@ print('network config:', ap_if.ifconfig())
 import webrepl_setup
 ```
 
-S počítačem se připojte na stejnou síť a na stránce webrepl otevřené výše
-se připojte k IP vypsané z `ifconfig()`. Měli byste dostat konzoli, jako přes
+S počítačem se připoj na stejnou síť a na stránce webrepl otevřené výše
+se připoj k IP vypsané z `ifconfig()`. Měl{{a}} bys dostat konzoli, jako přes
 USB. Pomocí WebREPL lze nejen zadávat interaktivní příkazy, ale i nahrávat
 soubory.

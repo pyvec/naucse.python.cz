@@ -54,7 +54,8 @@ náhodné číslo od 0 do 255 se dá získat pomocí:
 ## Ovládání konzole
 
 Při psaní složitějšího kódu si všimneš, že konzole MicroPythonu automaticky odsazuje.
-To je pro malé programy pohodlné, ale umí to i znepříjemnit život – hlavně když chceme kód do konzole vložit.
+To je pro malé programy pohodlné, ale umí to i znepříjemnit život – hlavně když chceš
+kód do konzole zkopírovat odjinud.
 
 Proto má konzole MicroPythonu speciální vkládací mód, který automatické odsazování vypíná.
 Aktivuje se pomocí <kbd>Ctrl+E</kbd> a ukončuje se pomocí <kbd>Ctrl+D</kbd>.
