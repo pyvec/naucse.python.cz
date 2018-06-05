@@ -30,7 +30,7 @@ import onewire
 from ds18x20 import DS18X20
 
 
-pin = machine.Pin(4, Pin.IN)
+pin = Pin(4, Pin.IN)
 ow = DS18X20(onewire.OneWire(pin))
 
 sensory = ow.scan()
