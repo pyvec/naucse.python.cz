@@ -36,7 +36,6 @@ Nožička `D4` odpovídá `Pin(2)`, takže kód k otáčení motorku je:
 
 ```python
 from machine import Pin, PWM
-from time import sleep
 
 pin_motorku = Pin(2, Pin.OUT)
 pwm = PWM(pin_motorku, freq=50, duty=77)
