@@ -175,7 +175,7 @@ class Page(Model):
             template = self._get_template()
             content = template.render(**kwargs)
         else:
-            with self.path.open() as file:
+            with self.path.open(encoding="utf-8") as file:
                 content = file.read()
 
         def convert_url(url):
@@ -435,7 +435,7 @@ class Session(Model):
         q = self.path / 'sessions' / self.slug / coverpage
 
         try:
-            with q.open() as f:
+            with q.open(encoding="utf-8") as f:
                 md_content = f.read()
         except FileNotFoundError:
             return ""
