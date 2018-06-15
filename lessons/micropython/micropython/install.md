@@ -75,10 +75,6 @@ oprav ji podle následujícího návodu a zkus to znova.
   kristyna lp wheel dialout mock
   ```
 
-  Kdyby to nefungovalo, na srazu ti může pomoci nějaký kouč.
-  Jestli procházíš materiály z domu a nepovedlo
-  se ti přidat do skupiny, dá se to obejít tak,
-  že místo `picocom` použiješ `sudo picocom`.
 
 ### Windows
 
