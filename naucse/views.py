@@ -900,7 +900,7 @@ def course_calendar_ics(course):
 
             logger.error("There was an error rendering url %s for course '%s'", request.path, course.slug)
             logger.exception(e)
-            return render_template(
+            error_html = render_template(
                 "error_in_fork.html",
                 malfunctioning_course=course,
                 edit_info=get_edit_info(course.edit_path),
@@ -908,6 +908,11 @@ def course_calendar_ics(course):
                 root_slug=model.meta.slug,
                 travis_build_id=os.environ.get("TRAVIS_BUILD_ID"),
             )
+            # XXX: Hack for static site generation -- the .ics extension
+            # means the error page is served as text/calendar. There's
+            # no good way to make an actual calendar show an error.
+            # https://github.com/pyvec/naucse.python.cz/issues/424
+            return Response(error_html, mimetype="text/calendar")
     else:
         try:
             calendar = generate_calendar_ics(course)
