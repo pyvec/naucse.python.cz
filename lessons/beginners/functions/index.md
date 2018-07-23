@@ -134,6 +134,15 @@ x = sin(1)  # (v radiánech)
 print(x)
 ```
 
+> [note] Pozor, když něco importuješ a svůj program ukládáš do souboru, ten se
+> nesmí jmenovat stejně, jinak to Python zmate. Když třeba kód výše uložíš do
+> souboru `math.py`, nebude fungovat.
+> Je to proto, že při importování něčeho (`import math`) nebo z něčeho (`from
+> math import ...`) se hledá soubor pojmenovaný něco`.py` (zde `math.py`)
+> nejprve v adresáři, ze kterého program pouštíš, a až pak na speciálním místě,
+> kde se nacházejí další věci (říká se jim module nebo knihovny), ze kterých
+> se dají importovat funkce a jiné užitečnosti.
+
 ## Volání funkcí
 
 Funkci voláme *jménem*.
@@ -404,6 +413,9 @@ elif cislo == 1:
 else:  # 2
     print('Trojúhelníček')
 ```
+
+> [note] Pamatuj, když importuješ z modulu `random`, nesmí se tvůj soubor
+> jmenovat `random.py`.
 
 ### A další
 Python dává k dispozici obrovské množství dalších
