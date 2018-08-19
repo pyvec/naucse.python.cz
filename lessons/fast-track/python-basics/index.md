@@ -1,216 +1,422 @@
 # Úvod do Pythonu
 
-> Část této kapitoly je založena na kurzu Geek Girls Carrots (https://github.com/ggcarrots/django-carrots).
+> Tento text je založen na materiálech [Django Girls](https://tutorial.djangogirls.org/cs/python_introduction/) a [Geek Girls Carrots](https://github.com/ggcarrots/django-carrots).
 
-Pojďme napsat nějaký kód!
+Pojď napsat nějaký kód!
 
 ## Interaktivní režim Pythonu
 
-Chceš-li si začít hrát s Pythonem, musíme otevřít *příkazový řádek* v počítači. Již bys měla vědět jak na to – naučily jsme se to v kapitole [Úvod do příkazového řádku][1].
+Chceš-li si začít hrát s Pythonem, otevři *příkazový řádek* a aktivuj virtuální prostředí.  Zkontroluj si, že na začátku příkazové řádky ti svítí `(venv)`.
 
- [1]: ../intro_to_command_line/README.md
+Je-li tomu tak, nezbývá než – konečně – pustit Python. K tomu použij příkaz `python`:
 
-Jakmile budeš připravena, postupuj podle níže uvedených pokynů.
-
-Chceme otevřít Python konzoli, takže napiš `python` na Windows nebo `python3` na Mac a OS/Linuxu a zmáčkni `enter`.
-
-```
+``` console
 $ python3
-Python 3.4.3 (...)
+Python 3.6.6 (...)
 Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 
-## Tvůj první příkaz v Pythonu!
+Příkaz vypíše několik informací. Z prvního řádku se můžeš ujistit, že používáš Python 3. (Vidíš-li číslo jako `2.7.11`, něco je špatně – popros o radu kouče.)
 
-Po spuštění interaktivního režimu Python se výzva na řádku změní na `>>>`. Pro nás to znamená, že pro tuto chvíli můžeme používat pouze příkazy v jazyce Python. Není nutné zadávat `>>>` - Python to udělá za tebe.
+Třemi „zobáčky“ ``>>>` pak Python poprosí o instrukce. Je to jako v příkazové řádce, ale místo příkazů jako `cd` a `mkdir` sem budeš psát příkazy Pythonu.
 
-Pokud chceš ukončit Python konzoli, kdykoliv stačí zadat `exit()` nebo použít zkratku `Ctrl + Z` na Windows a `Ctrl + D` pro Mac/Linux. Pak již neuvidíš `>>>`.
+Jako první instrukci použijeme Pythonu jako kalkulačku.
+Za tři zobáčky napiš třeba `2 + 3` a zmáčkni <kbd>Enter</kbd>.
 
-Pro tuto chvíli nechceme Python konzoli opustit. Chceme se o ní naučit více. Začněme s něčím opravdu jednoduchým. Například zkusme napsat nějakou matematiku. Napiš třeba `2 + 3` a zmáčkni `enter`.
-
-```
+``` pycon
 >>> 2 + 3
 5
 ```
 
-Hezké! Vidíš, jak se zobrazila odpověď? Python umí matematiku! Můžeš zkusit jiné příkazy typu: `4 * 5` ; `5-1` ; `40 / 2`
+Zobrazila se ti správná odpověď?
+Pokud ano, gratuluji! První příkaz v Pythonu máš za sebou.
 
-Chvíli si s tím hraj a pak se sem vrať zpátky :).
+Zkusíš i odečítání?
 
-Jak vidíš, Python je skvělá kalkulačka. Pokud tě zajímá, co jiného můžeš dělat...
+A jak je to s násobením?
+{# XXX: Jak zapsat násobení? `4 x 5` `4 . 5` `4 × 5` `4 * 5` -#}
+Na kalkulačce bys zadala `4 × 5`, což se na klávesnici píše špatně.
+Python proto používá symbol `*` a pro dělení `/`.
+Tyhle symboly se odborně nazývají *operátory*.
+
+``` pycon
+>>> 4 * 5
+20
+>>> 40 / 2
+20.0
+```
+
+{# XXX:
+Kolik je
+<math mode="display" style="display:inline-box;" xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mrow><mn>123</mn> + <mn>456</mn></mrow><mrow><mn>789</mn></mrow></mfrac></math>?
+#}
+
+> [style-note]
+> Mezery mezi čísly a znamínkem nejsou nutné: `4*5` nebo `4    * 5` dělá
+> to samé.
+> Je ale zvykem používat jednu mezeru – tak jako to vidíš v materiálech.
+> Kód je tak čitelnější.
+
 
 ## Řetězce
 
-A co tvé jméno? Zadej své jméno do uvozovek, jak vidíš níže:
+Čísla jsou pro počítače dost užitečná (ostatně slovo *počítač* to naznačuje),
+ale Python umí pracovat i s jinými druhy informací.
+Třeba s textem.
 
-```
->>> "Ola"
-"Ola"
-```
+Zkus si to: zadej své jméno do uvozovek, jak vidíš níže:
 
-Nyní jsi vytvořila svůj první řetězec! Je to posloupnost znaků, které mohou být zpracovány počítačem. Řetězec musí vždy začínat a končit stejným znakem. To může být jednoduchá (`'`) nebo dvojitá (`"`) uvozovka (neexistuje žádný rozdíl!) Uvozovkami Pythonu říkáš, že co je uvnitř, je řetězec.
-
-Řetězce mohou být spojovány. Zkus toto:
-
-```
->>> "Ahoj " + "Ola"
-'Ahoj Ola'
+``` pycon
+>>> 'Ola'
+'Ola'
 ```
 
-Také můžeš násobit řetězce s číslem:
+Nyní jsi vytvořil{{a}} svůj první *řetězec*!
+Řetězec je programátorský termín pro *text* – posloupnost znaků (písmenek), které mohou být zpracovány počítačem.
 
+Když řetězec zadáváš, musíš ho vždy uzavřít do uvozovek (apostrofů).
+Jinak by Python nepoznal, co je text a co jsou instrukce.
+
+{# XXX: Assessment here: adding strings together #}
+
+Řetězce se dají spojovat – „sečítat“ – pomocí `+`. Zkus toto:
+
+``` pycon
+>>> 'Já jsem ' + 'Ola'
+'Já jsem Ola'
 ```
->>> "Ola" * 3
+
+> [note]
+> Pozor na mezeru! Když zadáš `'Já jsem'+'Ola'`, spojí se ti dvě slova
+> dohromady.
+> Počítač považuje mezeru za znak, a chová se k ní stejně jako k jakémukoli
+> písmenku.
+> Když nedáš mezeru do uvozovek, nebude součástí řetězce.
+> Zkus si:
+>
+> ``` pycon
+> >>> 'Já jsem' + ' ' + 'Ola'
+> 'Já jsem Ola'
+> ```
+
+Také můžeš řetězce opakovat – násobit číslem:
+
+``` pycon
+>>> 'Ola' * 3
 'OlaOlaOla'
 ```
 
-Pokud budeš chtít dát apostrof dovnitř svého řetězce, máš dvě možnosti, jak to udělat.
+### Uvozování
 
-Pomocí dvojité uvozovky:
+A co když budeš chtít dát dovnitř do svého řetězce apostrof?
+Můžeš kolem řetězce použít dvojité uvozovky:
 
-```
->>> "Runnin' down the hill"
-"Runnin' down the hill"
-```
-
-nebo použít escape sekvenci - před apostrof napsat zpětné lomítko (\`):
-
-```
->>> 'Runnin\' down the hill'
-"Runnin' down the hill"
+``` pycon
+>>> "To bych řek', že jsou pořádně praštěný!"
+"To bych řek', že jsou pořádně praštěný!"
 ```
 
-Pěkné, co? Chceš-li vidět své jméno velkými písmeny, jednoduše zadej:
+Pythonu je jedno, se kterým druhem uvozovek řetězec zadáš.
+Podstatná jsou jen písmenka uvnitř.
+Když Python řetězec vypisuje, může si vybrat jiný druh uvozovek
+než jsi použil{{a}} ty:
 
+``` pycon
+>>> "Ola"
+'Ola'
 ```
->>> "Ola".upper()
-'OLA'
-```
 
-Právě jsi použila `upper` **funkci** na svém řetězci! Funkce (jako `upper()`) je sled instrukcí, které Python provádí na daném objektu (`"Ola"`) poté, co ji zavoláš.
+### Funkce a metody
 
-Pokud chceš znát počet písmen ve svém jméně, tak pro to má Python také funkci!
+Už umíš řetězce „sčítat“ pomocí `+` (`'Ahoj ' + 'Olo!'`)
+a „násobit“ pomocí `*` (`'la' * 3`).
+Na všechny ostatní věci, které se s textem dají dělat,
+ale na klávesnici není dost symbolů.
+Proto jsou některé operace pojmenované slovně – třeba takzvané *funkce*.
 
-```
->>> len("Ola")
+Chceš-li znát počet písmen ve svém jméně, zavolej funkci `len`.
+Napiš `len` (bez uvozovek), pak kulaté závorky, a do těch závorek
+své jméno (jako řetězec – v uvozovkách):
+
+``` pycon
+>>> len('Ola')
 3
 ```
 
-Zajímá tě, proč někdy voláš funkce s `.` na konci řetězce (jako `"Ola".upper()`) a někdy nejprve zavoláš funkci a vložíš řetězec do závorek? V některých případech funkce patří do objektů, jako `upper()`, což lze provést pouze u řetězců. V tomto případě nazýváme funkci **metodou**. Jindy, funkce nepatří k ničemu konkrétnímu a lze ji použít na různé typy objektů, stejně jako `len()`. To je důvod, proč předáváme `"Ola"` jako parametr pro funkci `len`.
+{# XXX: Existuje funkce `type`. Jak bych ji zavolal? #}
+
+Kromě funkcí existují *metody*, které se zapisují trochu jinak.
+
+Chceš-li vidět své jméno velkými písmeny, zavolej metody `upper`.
+Napiš řetězec, pak tečku, jméno metody `upper` (bez uvozovek) a prázdné
+závorky:
+
+``` pycon
+>>> 'Ola'.upper()
+'OLA'
+```
+
+Zkus si zavolat metodu `lower`.
+
+{# XXX: Existuje funkce `type`. Jak bych ji zavolal? #}
+
+Co je metoda (které voláš s `.`, jako `'Ola'.upper()`) a co je funkce
+(kde vložíš informaci do závorek jako (`len('Ola')`)
 
 ### Shrnutí
 
-OK, dost bylo řetězců. Co ses zatím naučila:
+OK, dost bylo řetězců. Co ses zatím naučil{{a}}:
 
-*   **interaktivní režim Pythonu** - zadávání příkazů (kódu) do Pythonového interaktivního režimu a zobrazení výsledku/odpovědi v Pythonu
-*   **čísla a řetězce** - v Pythonu se čísla používají pro matematiku a řetězce pro textové objekty
-*   **operátor** - jako + a * kombinuje hodnoty a vytvoří nové
-*   **funkce** - jako upper() a len() provádí akce u objektů.
+*   **Interaktivní režim Pythonu** umožňuje zadávat příkazy (kód) pro
+    Python a zobrazuje výsledky/odpovědi.
+*   **Čísla a řetězce** se používají na matematiku a práci s textem.
+*   **Operátor** jako `+` a `*` kombinuje hodnoty a vytvoří výsledek.
+*   **Funkce** a **metody** jako `len()` a `upper()` provádí na hodnotách
+    nějaké akce.
 
-To jsou základy každého programovacího jazyka. Připravena na něco dalšího? Vsadíme se, že ano!
+Čísla, řetězce a operátory a funkce jsou základy většiny programovacích jazyků.
+
+Připraven{{a}} na něco dalšího? Vsadíme se, že ano!
+
+
+## Skládání
+
+Volání funkce nebo metody můžeš použít jako jinou hodnotu.
+
+Nech Python spočítat matematický výraz `(1 + 3) / 2`:
+
+```pycon
+>>> (1 + 3) / 2
+2.0
+```
+
+Python napřed sečte `1 + 3` a vyjde mu 4.
+Čtverku doplní místo `1 + 3` do původního příkladu, a dostane `4 / 2`.
+To vydělí a dostane `2`.
+
+Neboli: `(1 + 3) / 2` = `4 / 2` = `2`
+
+Zkus se zamyslet, jak Python zpracuje tyto výrazy:
+
+```pycon
+>>> len('Ola') + 1
+4
+```
+
+```pycon
+>>> 'Já jsem ' + 'Ola'.upper()
+'Já jsem OLA'
+```
+
+```pycon
+>>> len('Ola'.upper())
+4
+```
+
+```pycon
+>>> len('Ola' * 3)
+9
+```
+
+{% filter solution() %}
+`'Já jsem ' + 'Ola'.upper()` → `'Já jsem ' + 'OLA'` → `'Já jsem OLA'`
+
+`len('Ola') + 1` → `3 + 1` → `4`
+
+`len('Ola'.upper())` → `len('OLA')` → `3`
+
+`len('Ola' * 3)` → `len('OlaOlaOla')` → `9`
+{% endfilter %}
+
+
+Podobné skládání je v programování velice časté.
+Většinu základních stavebních bloků se začátečník naučí za pár
+týdnů – a pak je po celou svou progrmátorskou kariéru skládá do
+složitějších a složitějších konstrukcí.
+
 
 ## Chyby
 
-Pojďme zkusit něco nového. Můžeme zkusit zjistit délku čísla stejným způsobem, jakým jsme zjišťovali délku našeho jména? Zadej `len(304023)` a stiskni klávesu `Enter`:
+Pojď zkusit něco nového: zjistit délku čísla stejným způsobem,
+jakým jsme zjišťovali délku našeho jména.
+Zadej `len(304023)` a stiskni <kbd>Enter</kbd>:
 
-```
+``` pycon
 >>> len(304023)
 Traceback (most recent call last):
-File "<stdin>",
-line 1, in <module>
+  File "<stdin>", line 1, in <module>
 TypeError: object of type 'int' has no len()
 ```
 
-Zobrazila se ti naše první chyba! Ta říká, že objekty typu "int" (integers, celá čísla) nemají délku. Tak co můžeme udělat teď? Možná můžeme zkusit napsat naše číslo jako řetězec? Řetězce mají délky, že?
+{# XXX: tohle nebude první chyba... #}
+Zobrazila se ti naše první chyba!
+Ta říká, že objekty typu `int` (zkratka anglického *integer*, celé číslo)
+nemají délku.
+Tak co můžeme udělat teď?
+Možná můžeme zkusit napsat naše číslo jako řetězec?
+Řetězce mají délky, že?
 
+```pycon
+>>> len("304023")
+6
 ```
+
+Existuje i funkce, která *převede* číslo na řetězec. Jmenuje se `str`:
+
+```pycon
+>>> str(304023)
+"304023"
 >>> len(str(304023))
 6
 ```
 
-Funguje to! Použili jsme funkci `str` uvnitř funkce `len`. `str()` vše převádí na řetězec.
+Podobně funkce `int` převádí věci na celá čísla:
 
-*   Funkce `str`převede věci do **řetězců**
-*   Funkce `int` převede věci na **celá čísla**
+```pycon
+>>> int("304023")
+```
 
-> Důležité upozornění: můžeme převést čísla na text, ale nemůžeme jen tak převést text na čísla - co by se stalo, kdybychom se pokusily o toto: `int('hello')`?
+Můžeš převést čísla na text, ale nemůžeš jen tak převést text na čísla.
+Co by se stalo, kdyby ses pokusil{{a}} na číslo převést řetězec, ve kterém
+nejsou číslice?
+
+{% filter solution() %}
+``` pycon
+>>> int('hello')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: invalid literal for int() with base 10: 'ahoj'
+```
+{% endfilter %}
 
 ## Proměnné
 
-Důležitým konceptem v programování jsou proměnné. Proměnná není nic jiného než pojmenování něčeho, co budeme chtít použít později. Programátoři proměnné používají k ukládání dat, aby byl jejich kód čitelnější a nemuseli si pamatovat, co dané věci jsou.
+Důležitým konceptem v programování jsou *proměnné*.
+Proměnná není nic jiného než *pojmenování* něčeho,
+co budeme chtít použít později.
+Programátoři proměnné používají k ukládání dat,
+aby byl jejich kód čitelnější a nemuseli si pamatovat konkrétní hodnoty.
 
-Řekněme, že chceme vytvořit novou proměnnou s názvem `name`:
+Řekněme, že chceš vytvořit novou proměnnou s názvem `jmeno`.
+To se zapíše takto:
 
+``` pycon
+>>> jmeno = 'Ola'
 ```
->>> name = "Ola"
-```
 
-Vidíš? Je to snadné! Jednoduše napíšeš: name se rovná Ola.
+Proměnná `jmeno` teď bude mít hodnotu `'Ola'`.
 
-Jak sis jistě všimla, tvůj program nevrátil nic jako předtím. Jak tedy víme, že proměnná skutečně existuje? Jednoduše zadejte `name` a stiskni klávesu `Enter`:
+Jak sis mohl{{a}} všimnout, tenhle příkaz nic nevrátil – Python nevypsal
+žádný výslede.
+Jak tedy víme, že proměnná skutečně existuje?
 
-```
->>> name
+Zadej samotné jméno proměnné (tedy `jmeno`) a stiskni <kbd>Enter</kbd>:
+
+``` pycon
+>>> jmeno
 'Ola'
 ```
 
-Hurá! První proměnná :)! Kdykoli můžeš změnit to, na co daná proměnná ukazuje:
+Zkus si nastavit i jinou proměnnou – třeba svoji oblíbenou barvu:
 
+``` pycon
+>>> barva = 'modrá'
+>>> barva
+'modrá'
 ```
->>> name = "Sonja"
->>> name
-'Sonja'
+
+Kdykoli můžeš do proměnné přiřadit znovu, a změnit tak co se pod
+daným jménem skrývá:
+
+``` pycon
+>>> jmeno
+'Ola'
+>>> jmeno = "Soňa"
+>>> jmeno
+'Soňa'
 ```
 
 Můžeš ji také použít ve funkcích:
 
-```
->>> len(name)
-5
+``` pycon
+>>> len(jmeno)
+4
 ```
 
-Super, ne? Samozřejmě proměnná může obsahovat cokoliv, například také čísla! Zkus tohle:
+Super, ne?
+Proměnná může obsahovat cokoliv, například také čísla!
+Zkus tohle:
 
-```
->>> a = 4
->>> b = 6
->>> a * b
+``` pycon
+>>> sirka = 4
+>>> delka = 6
+>>> sirka * delka
 24
 ```
 
-Ale co když použijeme nesprávné jméno? Dokážeš odhadnout, co se stane? Pojďme to zkusit!
+Ale co když použiješ nesprávné jméno? Dokážeš odhadnout, co se stane?
 
+{% filter solution %}
+``` pycon
+>>> mesto = "Tokyo"
+>>> mmesto
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'mmesto' is not defined
 ```
->>> city = "Tokyo"
->>> ctiy
-Traceback (most recent call last):   File "<stdin>", line 1, in <module>
-NameError: name 'ctiy' is not defined
-```
+{% endfilter %}
 
-Chyba! Jak vidíš, Python má různé typy chyb a tato se nazývá **NameError**. Python ti vrátí tuto chybu, pokud se pokusíš použít proměnnou, která nebyla dosud definována. Pokud někdy dojde k této chybě, zkontroluj svůj kód, abys zjistila, jestli jsi nezadala nějaké jméno nesprávně.
+Chyba!
 
-Chvilku si s tím, ať vidíš, co se s tím dá dělat!
+Python má různé typy chyb. Tato se nazývá `NameError`.
+Python ti vrátí tuto chybu, pokud se pokusíš použít proměnnou,
+která dosud nebyla nastavena.
+Pokud někdy dojde k této chybě, zkontroluj svůj kód, abys zjistil{{a}},
+jestli jsi někde neudělal{{a}} překlep.
+
+> [note] Jména proměnných
+> Profesionální programátoři pojmenovávají proměnné anglicky,
+> aby jim rozuměli co nejvíc kolegů po celém světě.
+> Ze začátku ale doporučujeme češtinu – je tak jasnější, která jména
+> si můžeš zvolit {{gnd('sám', 'sama')}} (např. `barva`) a která jsou
+> z Pythonu (např. `upper`).
+>
+> Je ovšem dobré se nepoužívat diakritiku a vyhnout se velkým pímenům:
+> místo `Jméno` použij jen `jmeno`.
+
 
 ## Funkce print
 
 Zkus toto:
 
-```
->>> name = 'Maria'
->>> name
-'Maria'
->>> print(name)
-Maria
+``` pycon
+>>> jmeno = 'Marie'
+>>> jmeno
+'Marie'
+>>> print(jmeno)
+Marie
 ```
 
-Zadáš-li jen `name`, interpretr Pythonu reaguje na řetězcovou *reprezentaci* proměnné "name", což jsou písmena M-a-r-i-a, obklopená jednoduchými uvozovkami ''. Když napíšeš `print(name)`, Python vypíše obsah proměnné na obrazovku bez uvozovek, což vypadá lépe.
+Zadáš-li jen `name`, Python vypíše řetězec obklopený jednoduchými uvozovkami.
+To je *reprezentace* řetězce `'Marie'` – způsob, jak tuhle hodnotu
+zadat v Pythonu.
 
-Jak uvidíme později, funkce `print()` je také užitečná, když chceme vypsat věci uvnitř funkce nebo na více řádcích.
+Funkce `print`, místo toho vypíše hodnotu bez uvozovek, což vypadá lépe
+(i když pro progrmátora to může být méně užitečné).
+
+Jak uvidíme později, vypisování pomocí funkce `print()` je také užitečná,
+když chceme vypsat věci uvnitř funkce nebo na více řádcích.
+
+{# XXX: why is print here??? #}
 
 ## Seznamy
 
-Vedle řetězců a celých čísel má Python další druhy různých typů objektů. Teď se podíváme na jeden, který se nazývá **list**. Seznamy jsou přesně to, co si myslíš, že jsou: jsou to objekty, které obsahují seznam ostatních objektů :)
+Vedle řetězců a celých čísel má Python další druhy různých typů hodnot.
+Teď se podíváme na jeden, který se nazývá *seznam* (anglicky *list*).
+Seznamy jsou přesně to, co si myslíš, že jsou: jsou to objekty, které obsahují seznam ostatních objektů :)
+
+{# Anglické termíny všude! #}
 
 Nestyď se a vytvoř seznam:
 
@@ -497,6 +703,13 @@ Chceš-li opustit interaktivní režim Pythonu, který jsme dosud používaly, j
 >>> exit()
 $
 ```
+
+{# (((((((( XXX )))))))) #}
+> [Note]
+> Pokud budeš chtít Python konzoli ukončit, zadej `exit()` nebo použíj
+> zkratku `Ctrl + D` (pro Mac/Linux) nebo `Ctrl + Z` (na Windows).
+> Pak již neuvidíš `>>>`.
+
 
 Tak se dostaneš zpět do příkazové řádky.
 
