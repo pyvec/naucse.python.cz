@@ -43,9 +43,20 @@ Tyhle symboly se odborně nazývají *operátory*.
 ``` pycon
 >>> 4 * 5
 20
->>> 40 / 2
-20.0
+>>> 5 / 2
+2.5
 ```
+
+> [note]
+> V tomto úvodu budeme zadávat jen celá čísla.
+> Dělením ale může vzniknout třeba dva a půl
+> (tedy `2.5` – Python používá desetinnou *tečku*).
+> Z důvodů, do kterých teď nebudeme zabíhat, se desetinné pozice po dělení
+> objeví i když vyjde celé číslo:
+> ``` pycon
+> >>> 4 / 2
+> 2.0
+> ```
 
 {# XXX:
 Kolik je
@@ -53,10 +64,11 @@ Kolik je
 #}
 
 > [style-note]
-> Mezery mezi čísly a znamínkem nejsou nutné: `4*5` nebo `4    * 5` dělá
-> to samé.
-> Je ale zvykem používat jednu mezeru – tak jako to vidíš v materiálech.
-> Kód je tak čitelnější.
+> Mezery mezi čísly a znamínkem nejsou nutné: `4*5` i `4       * 5` dělá
+> to samé co `4 * 5`.
+> Je ale zvykem psát kolem operátoru jednu mezeru z každé strany – tak jako
+> v těchto materiálech.
+> Kód je pak čitelnější.
 
 
 ## Řetězce
@@ -90,9 +102,10 @@ Jinak by Python nepoznal, co je text a co jsou instrukce.
 > [note]
 > Pozor na mezeru! Když zadáš `'Já jsem'+'Ola'`, spojí se ti dvě slova
 > dohromady.
-> Počítač považuje mezeru za znak, a chová se k ní stejně jako k jakémukoli
+> Počítač považuje i mezeru za *znak*; chová se k ní stejně jako k jakémukoli
 > písmenku.
 > Když nedáš mezeru do uvozovek, nebude součástí řetězce.
+>
 > Zkus si:
 >
 > ``` pycon
@@ -412,91 +425,229 @@ když chceme vypsat věci uvnitř funkce nebo na více řádcích.
 
 ## Seznamy
 
-Vedle řetězců a celých čísel má Python další druhy různých typů hodnot.
+Vedle řetězců a celých čísel má Python další druhy hodnot.
+
 Teď se podíváme na jeden, který se nazývá *seznam* (anglicky *list*).
-Seznamy jsou přesně to, co si myslíš, že jsou: jsou to objekty, které obsahují seznam ostatních objektů :)
+To je hodnota, která v sobě obsahuje jiné hodnoty.
 
 {# Anglické termíny všude! #}
 
-Nestyď se a vytvoř seznam:
+Seznamy se zadávají tak, že dáš několik hodnot, oddělených čárkami,
+do hranatých závorek.
+Zkus si vytvořit třeba seznam čísel z loterie:
 
-```
->>> []
-[]
-```
-
-Ano, tento seznam je prázdný. Není moc užitečný, že? Pojďme vytvořit seznam čísel z loterie. Nechceme se stále opakovat, takže seznam uložíme také do proměnné:
-
-```
->>> lottery = [3, 42, 12, 19, 30, 59]
+``` pycon
+>>> [3, 42, 12, 19, 30, 59]
+[3, 42, 12, 19, 30, 59]
 ```
 
-Dobrá máme seznam! Co s ním můžeme dělat? Uvidíme, kolik čísel loterie je v seznamu. Máš nějakou představu, jakou funkci bys měla použít? Už to přeci víš!
+Abys s takovým seznamem mohl{{a}} pracovat,
+ulož si ho do proměnné:
 
+``` pycon
+>>> loterie = [3, 42, 12, 19, 30, 59]
 ```
->>> len(lottery)
+
+Dobrá, máme seznam! Co s ním můžeme dělat?
+Podíváme se, kolik čísel v seznamu je.
+Dá se na to použít funkce, kterou už znáš.
+Tipneš si, která to je?
+
+{% filter solution %}
+``` pycon
+>>> len(loterie)
 6
 ```
 
-Ano! Funkce `len()` ti zjistí počet objektů v seznamu. Šikovné, že? Možná bychom je teď měli zkusit seřadit:
+Funkce `len()` umí zjistit nejen délku řetězce, ale i délku seznamu – tedy
+počet jeho prvků.
+{% endfilter %}
 
-```
->>> lottery.sort()
+Teď si zkus seznam seřadit. Na to existuje metoda `sort`:
+
+``` pycon
+>>> loterie.sort()
 ```
 
-Tato funkce nic nevrátí, jen změní pořadí čísel v seznamu. Pojďme ho znovu vypsat a uvidíme co se stalo:
+Tato funkce nic nevrátí, jen změní pořadí čísel v seznamu.
+Znovu si ho vypiš, ať vidíš co se stalo:
 
-```
->>> print(lottery)
+``` pycon
+>>> print(loterie)
 [3, 12, 19, 30, 42, 59]
 ```
 
-Jak můžeš vidět, čísla v seznamu jsou nyní seřazena od nejnižší k nejvyšší hodnotě. Gratulujeme!
+Čísla v seznamu jsou nyní seřazena od nejnižší k nejvyšší hodnotě.
 
-Můžeme také zkusit obrátit pořadí? Udělejme to!
+Podobně funguje metoda `reverse`, která obrátí pořadí prvků.
+Vyzkoušej si ji!
 
-```
->>> lottery.reverse()
->>> print(lottery)
+``` pycon
+>>> loterie.reverse()
+>>> print(loterie)
 [59, 42, 30, 19, 12, 3]
 ```
 
-Snadné, že? Pokud chceš něco přidat do svého seznamu, můžeš to provést zadáním tohoto příkazu:
+Pokud chceš do svého něco přidat seznamu, můžeš to provést pomocí metody
+`append`.
+Ale pozor! Tahle metoda potřebuje vědět co má do seznamu přidat
+Nová hodnota se zadává do závorek:
 
+``` pycon
+>>> loterie.append(199)
 ```
->>> lottery.append(199)
->>> print(lottery)
+
+Metoda opět nic nevrací, takže je potřeba seznam pro kontrolu vypsat:
+
+``` pycon
+>>> print(loterie)
 [59, 42, 30, 19, 12, 3, 199]
 ```
 
-Pokud chceš zobrazit pouze první číslo, můžeš to udělat pomocí **indexů**. Index je číslo, které říká, kde se v seznamu položka najde. Programátoři preferují počítání od 0, takže první objekt v seznamu je v indexu 0, druhý je v indexu 1 a tak dále. Zkus toto:
+### Vybírání prvků
 
+Když se budeš chtít na jednu věc ze seznamu podívat podrobněji,
+přijde vhod možnost vybrat si konkrétní prvek.
+Na to se v Pythonu používají hranaté závorky.
+
+{# XXX: MCQ #}
+
+Chceš-li vybrat prvek, zadej jméno seznamu a hned za ním hranaté závorky
+s pořadovým číslem prvku, který chceš:
+
+``` pycon
+>>> loterie[1]
 ```
->>> print(lottery[0])
-59
->>> print(lottery[1])
+
+Dostaneš první prvek?
+
+{% filter solution %}
+``` pycon
+>>> loterie
+[59, 42, 30, 19, 12, 3, 199]
+>>> loterie[1]
 42
 ```
 
-Jak vidíš, pro přístup k různým objektům ve tvém seznamu použiješ jméno seznamu a index objektu uvnitř hranatých závorek.
+Ne, dostaneš druhý prvek.
 
-Chceš-li odstranit něco ze svého seznamu, budeš muset použít **indexy**, jak jsme se dozvěděli výše, a příkaz `pop()`. Zkusme to, co jsme se naučily dříve; budeme odstraňovat první číslo našeho seznamu.
+Programátoři počítají od nuly.
+Chceš li tedy první prvek, popros Python o prvek číslo nula:
+
+``` pycon
+>>> loterie[0]
+42
+```
+
+Je to zpočátku divné, ale dá se na to zvyknout.
+{% endfilter %}
+
+Číslu prvku se také říká *index* a procesu vybírání prvků *indexování*.
+
+Zkus si indexování s dalšími indexy: 3, 100, 7, -1, -2, -6 nebo -100.
+Pokus se předpovědět výsledek před zadáním příkazu.
+Jak ti to půjde?
+
+{% filter solution %}
+``` pycon
+>>> loterie
+[59, 42, 30, 19, 12, 3, 199]
+
+>>> loterie[3]
+19
+```
+Index 3 označuje čtvrtý prvek.
+
+``` pycon
+>>> loterie[7]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
 
 ```
->>> print(lottery)
-[59, 42, 30, 19, 12, 3, 199]
->>> print(lottery[0])
-59
->>> lottery.pop(0)
->>> print(lottery)
+Prvek s indexem 100 v seznamu není – nastane chyba.
+
+``` pycon
+>>> loterie[1000]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+```
+Prvek s indexem 7 v seznamu taky není.
+
+``` pycon
+>>> loterie[-1]
+199
+```
+Index -1 označuje *poslední* prvek.
+
+``` pycon
+>>> loterie[-2]
+3
+```
+Index -2 označuje předposlední prvek.
+
+``` pycon
+>>> loterie[-6]
+42
+```
+Index -6 označuje šestý prvek od konce.
+
+``` pycon
+>>> loterie[-100]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+```
+Stý prvek od konce v seznamu není. Nastane chyba.
+{% endfilter %}
+
+### Řezání
+
+XXX Slicing
+
+### Odstraňování
+
+Chceš-li ze seznamu něco odstranit, můžeš opět použít indexy.
+Tentokrát s příkazem `del`.
+Následující kód odstraní počáteční číslo seznamu, tedy prvek číslo 0:
+
+``` pycon
+>>> del loterie[0]
+```
+
+Pak si seznam opět vypiš. Kousek chybí!
+
+``` pycon
+>>> loterie
 [42, 30, 19, 12, 3, 199]
 ```
 
-Funguje to všechno skvěle!
+Zkusíš odstranit poslední prvek?
 
-Pro další zábavu zkus nějaké jiné indexy: 6, 7, 1000, -1, -6 nebo -1000. Pokus se předpovědět výsledek před zadáním příkazu. Jsou výsledky správné?
+{% filter solution %}
+``` pycon
+>>> del loterie[-1]
+>>> loterie
+[42, 30, 19, 12, 3]
+```
+{% endfilter %}
 
-Seznam všech dostupných metod pro seznam nalezneš v této kapitole Python dokumentace: https://docs.python.org/3/tutorial/datastructures.html
+A co prostřední tři?
+Zkus si nejdřív vypsat, které to jsou, a pak teprve použít `del`.
+
+{% filter solution %}
+``` pycon
+>>> loterie
+[42, 30, 19, 12, 3]
+>>> loterie[1:-1]
+[30, 19, 12]
+>>> del loterie[1:-1]
+>>> loterie
+[42, 3]
+```
+{% endfilter %}
+
 
 ## Slovníky
 
