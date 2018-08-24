@@ -27,6 +27,57 @@ Hello, world!
 >>>
 ```
 
-Pokud jste zvyklí z jiných prograamovacícj jazyků, že řádka musí být ukončena středníkem, pak v Pythonu to není zapotřebí.
+Pokud jste zvyklí z jiných programovacícj jazyků, že řádka musí být ukončena středníkem, pak v Pythonu to není zapotřebí.
+
+Toto značí příkazový řádek:
+
+```
+>>>
+```
+
+Pokud do něj napíšeš řetězec v uvozovkách:
+
+```
+>>> "Hello world!"
+```
+
+dostaneš následující výstup:
+
+```
+'Hello world!'
+>>>
+```
+
+Pokud ale zkusíš napsat podobný příkaz:
+
+```
+>>> Have fun!
+  File "<stdin>", line 1
+    Have fun!
+           ^
+SyntaxError: invalid syntax
+>>>
+```
+
+Obdržíš chybové hlášení, že Python interpret nerozumí příkazu.
+
+### Čísla a výrazy
+
+Zkus následující příkazy:
+
+```
+>>> 2 + 2
+4
+```
+
+Výsledkem sčítání je celé číslo. Pokud budeme dělit, výsledkem bude číslo s pohyblivou čárkou (floating-point number).
+
+
+```
+>>> 1 / 2
+0.5
+>>> 1 / 1
+1.0
+```
 
 
