@@ -20,4 +20,13 @@ Zkus napsat do příkazového řádku příkaz:
 >>> print("Hello, world!")
 ```
 
+Když stiskneš Enter, měl by se ti objevit nýsledující výstup:
+
+```
+Hello, world!
+>>>
+```
+
+Pokud jste zvyklí z jiných prograamovacícj jazyků, že řádka musí být ukončena středníkem, pak v Pythonu to není zapotřebí.
+
 
