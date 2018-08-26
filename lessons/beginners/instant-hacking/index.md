@@ -309,3 +309,4 @@ Znak hash (mřížka) je speciální znak v Pythonu. Kdekoliv jej použiješ, v�
 name = input("What is your name?") # This is also comment
 ```
 
+
