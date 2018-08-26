@@ -8,8 +8,8 @@ from pathlib import Path
 import ics
 from arca.exceptions import PullError, BuildError, RequirementsMismatch
 from arca.utils import is_dirty
-from flask import Flask, render_template, url_for, send_from_directory, request, redirect
-from flask import abort, Response
+from flask import Flask, render_template, url_for, send_from_directory, request
+from flask import abort, Response, redirect, jsonify
 from git import Repo
 from jinja2 import StrictUndefined
 from jinja2.exceptions import TemplateNotFound
@@ -920,3 +920,38 @@ def course_calendar_ics(course):
             abort(404)
 
     return Response(str(calendar), mimetype="text/calendar")
+
+
+@app.route('/v1/courses.json')
+def courses_api():
+    result = {}
+    result['courses'] = {
+        slug: url_for('course_api', course=course, _external=True)
+        for slug, course in model.courses.items()
+    }
+    result['runs'] = {
+        year: url_for('run_year_api', year=year, _external=True)
+        for year in model.run_years
+    }
+    return jsonify(result)
+
+
+@app.route('/v1/<int:year>.json')
+def run_year_api(year):
+    try:
+        run_year = model.run_years[year]
+    except KeyError:
+        abort(404)
+
+    result = {
+        slug: url_for('course_api', course=course, _external=True)
+        for slug, course in run_year.runs.items()
+    }
+    return jsonify(result)
+
+
+@app.route('/v1/<course:course>.json')
+def course_api(course):
+    from naucse_render import get_course
+    result = get_course(course.slug, version=1)
+    return jsonify(result)
