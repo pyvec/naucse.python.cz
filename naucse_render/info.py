@@ -9,6 +9,7 @@ from pathlib import Path
 import datetime
 
 import yaml
+import jsonschema
 
 
 API_VERSION = 1
@@ -66,19 +67,20 @@ def get_course(course_slug: str, *, version: int) -> dict:
 
     base_slug = info.pop('derives')
     if base_slug:
-        base = read_yaml('courses', base_slug, 'info.yml')
+        base_course = read_yaml('courses', base_slug, 'info.yml')
     else:
-        base = {}
+        base_course = {}
 
     # Rename "plan" to "sessions"
-    for d in info, base:
+    for d in info, base_course:
         if 'plan' in d:
             d['sessions'] = d.pop('plan')
 
     for session in info['sessions']:
-        if 'base' in session:
-            for base_session in base['sessions']:
-                if base_session['slug'] == session['base']:
+        base = session.pop('base', None)
+        if base:
+            for base_session in base_course['sessions']:
+                if base_session['slug'] == base:
                     break
             else:
                 raise ValueError(f'Session {session} not found in base course')
@@ -88,7 +90,10 @@ def get_course(course_slug: str, *, version: int) -> dict:
             if lesson_slug:
                 update_lesson(material, lesson_slug, vars=info['vars'])
 
-    return encode_dates(info)
+    result = encode_dates(info)
+    schema = read_yaml('schema/fork-schema.yml')
+    jsonschema.validate(result, schema)
+    return result
 
 
 def update_lesson(material, lesson_slug, vars):
@@ -96,6 +101,8 @@ def update_lesson(material, lesson_slug, vars):
 
     pages = lesson_info.pop('pages', {})
     pages.setdefault('index', {})
+
+    material_vars = material.pop('vars', None)
 
     for slug, page_info in pages.items():
         info = {**lesson_info, **page_info}
@@ -105,14 +112,15 @@ def update_lesson(material, lesson_slug, vars):
             'license': info['license'],
             'lesson': lesson_slug,
             'slug': slug,
-            'render_info': {
+            'render_call': {
                 'entrypoint': 'naucse_render:render_page',
                 'args': [lesson_slug, slug],
-                'kwargs': {'vars': vars}
             }
         }
         if 'license_code' in info:
             page['license_code'] = info['license_code']
+        if material_vars:
+            page['vars'] = {**page.get('vars', {}), **material_vars}
         pages[page['slug']] = page
 
     material['pages'] = pages
