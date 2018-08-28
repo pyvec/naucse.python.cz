@@ -1,22 +1,8 @@
-## Seznamy (Lists)
+## Sekvence (Sequence)
 
 Jednou ze základních *datových struktur* v Pythonu je posloupnost (sekvence). Každému elementu v sekvenci je přiřazeno číslo, jeho index (pozice). První číslo je nula, druhé je jednička atd.
 
 Dnes si povíme něco o sekvencích a také, jaké operace s nimi můžeme dělat. Popíšeme si některé operace, které můžeme dělat nad všemi sekvencemi, včetně seznamů a n-tic. Tyto operace fungují také s řetězci, o těch bude ale až příští lekce.
-
-#### Vytvoření seznamu
-
-Prázdný seznam se vytvoří takto:
-
-```
->>> x = []
-```
-
-Seznam s dvěmi prvky se vytvoří takto:
-
-```
->>> list = [1, 2]
-```
 
 ### Přehled sekvencí
 
@@ -72,7 +58,8 @@ Year: 2005
 '5'
 ```
 
-#### Řez (Slicing)
+#### Řez (Slicing)
+
 
 Kromě toho, že můžete přistupovat k jednotlivým prvkům sekvence, můžete použít řez seznamem (slicing) a získat podmnožinu prvků. Abyste toho docílili, musíte použít místo jednoho dva indexy oddělené dvojtečkou.
 
