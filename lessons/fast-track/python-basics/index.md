@@ -398,31 +398,6 @@ jestli jsi někde neudělal{{a}} překlep.
 > Je ovšem dobré se nepoužívat diakritiku a vyhnout se velkým pímenům:
 > místo `Jméno` použij jen `jmeno`.
 
-
-## Funkce print
-
-Zkus toto:
-
-``` pycon
->>> jmeno = 'Marie'
->>> jmeno
-'Marie'
->>> print(jmeno)
-Marie
-```
-
-Zadáš-li jen `name`, Python vypíše řetězec obklopený jednoduchými uvozovkami.
-To je *reprezentace* řetězce `'Marie'` – způsob, jak tuhle hodnotu
-zadat v Pythonu.
-
-Funkce `print`, místo toho vypíše hodnotu bez uvozovek, což vypadá lépe
-(i když pro progrmátora to může být méně užitečné).
-
-Jak uvidíme později, vypisování pomocí funkce `print()` je také užitečná,
-když chceme vypsat věci uvnitř funkce nebo na více řádcích.
-
-{# XXX: why is print here??? #}
-
 ## Seznamy
 
 Vedle řetězců a celých čísel má Python další druhy hodnot.
@@ -473,7 +448,7 @@ Tato funkce nic nevrátí, jen změní pořadí čísel v seznamu.
 Znovu si ho vypiš, ať vidíš co se stalo:
 
 ``` pycon
->>> print(loterie)
+>>> loterie
 [3, 12, 19, 30, 42, 59]
 ```
 
@@ -484,7 +459,7 @@ Vyzkoušej si ji!
 
 ``` pycon
 >>> loterie.reverse()
->>> print(loterie)
+>>> loterie
 [59, 42, 30, 19, 12, 3]
 ```
 
@@ -500,7 +475,7 @@ Nová hodnota se zadává do závorek:
 Metoda opět nic nevrací, takže je potřeba seznam pro kontrolu vypsat:
 
 ``` pycon
->>> print(loterie)
+>>> loterie
 [59, 42, 30, 19, 12, 3, 199]
 ```
 
@@ -752,6 +727,10 @@ Použiješ funkci `len()`.
 
 {# XXX
 
+* Kontakty
+* Když číslo není číslo
+* Více čísel
+
 ### K zamyšlení
 
 Ke každému klíči může patřit jen jedna hodnota.
@@ -793,43 +772,56 @@ Jsi připraven{{a}} na další část?
 
 ## Porovnávání věcí
 
-Velká část programování zahrnuje porovnání věci. Co je nejjednodušší věc k porovnání? Čísla, samozřejmě. Podívejme se, jak to funguje:
+Programátoři často porovnávají různé hodnoty. Pojďme se podívat, jak na to.
 
-```
+``` pycon
 >>> 5 > 2
 True
->>> 3 < 1
-False >>> 5 > 2 * 2
+>>> 5 > 8
+False
+>>> 5 < 8
 True
+```
+
+Když se Pythonu zeptáš, jestli je jedno číslo větší než druhé, odpoví ti
+`True` (pravda) nebo `False` (nepravda).
+
+Funguje to i se složitějšími výrazy:
+
+``` pycon
+>>> 5 > 2 * 2
+True
+```
+
+„Větší než“ a „menší než“ používají značky známé z matematiky.
+Chceš-li se ale zeptat, jestli jsou dvě čísla stejná, je to trochu jiné:
+
+``` pycon
 >>> 1 == 1
 True
+```
+
+Jedno rovnítko `=` používáme pro přiřazení hodnoty do proměnné.
+Když chceš zkontrolovat, jestli se věci navzájem rovnají, vždy, **vždy** musíš dát dvě rovnítka `==`.
+
+Další možnosti porovnávání jsou nerovnost (≠), větší než (≤) a meší než (≥).
+Většina lidí tyhle symboly nemá na klávesnici, a tak se používá `!=`, `<=`
+a `>=`.
+
+``` pycon
 >>> 5 != 2
-True
-```
-
-Dali jsme Pythonu nějaká čísla na porovnání. Jak vidíš, Python může porovnávat nejen čísla, ale může také porovnat výsledky metod. Pěkný, co?
-
-Zajímá tě, proč jsme daly dva symboly rovná se `==` vedle sebe pro porovnání, zda jsou čísla stejná? Jedno rovnítko `=` používáme pro přiřazení hodnoty do proměnné. Vždy, **vždy** musíte dát dvě rovnítka `==`, pokud chcete zkontrolovat, jestli se věci navzájem rovnají. Můžeme také zjišťovat, že se věci navzájem nerovnají. Pro takové porovnání můžeme použít symbol `!=`, jak je uvedeno v příkladu výše.
-
-Dejme Pythonu dva další úkoly:
-
-```
->>> 6 >= 12 / 2
 True
 >>> 3 <= 2
 False
+>>> 6 >= 12 / 2
+True
 ```
 
-`>` a `<` jsou pro použití snadné, ale co `> =` a `< =` - víš, co se tím myslí? Podívejme se na to:
+### Logika
 
-*   x `>` y znamená: x je větší než y
-*   x `<` y znamená: x je menší než y
-*   x `<=` y znamená: x je menší nebo rovno y
-*   x `>=` y znamená: x je větší nebo rovno y
+Chceš zkusit ještě něco? Zkus tohle:
 
-Úžasné! Chceš zkusit ještě něco? Zkuste tohle:
-
-```
+``` pycon
 >>> 6 > 2 and 2 < 3
 True
 >>> 3 > 2 and 2 < 1
@@ -838,39 +830,45 @@ False
 True
 ```
 
-Pythonu můžeš dát porovnat tolik čísel kolik chceš a na vše ti dá odpověď! Je docela chytrý, že?
+V Pythonu můžeš zkombinovat několik porovnání do jednoho!
 
-*   **and** - Pokud použiješ operátor `and`, obě strany musí být pravdivé, aby celý příkaz byl pravdivý
-*   **or** - Pokud použiješ operátor `or`, stačí, aby jen jedna strana z porovnání byla pravdivá, aby celý příkaz byl pravdivý
+*   Pokud použiješ operátor `and`, obě strany musí být pravdivé, aby byl celý výraz pravdivý.
+*   Pokud použiješ operátor `or`, stačí aby jen jedna strana z porovnání byla pravdivá.
 
-Už jsi někdy slyšela výraz "srovnávat jablka a hrušky"? Zkusme v Pythonu ekvivalent:
+Už jsi někdy slyšel{{a}} výraz „srovnávat jablka a hrušky“? Zkusme v Pythonu ekvivalent:
 
-```
->>> 1 > 'django'
+``` pycon
+>>> 1 > 'krajta'
 Traceback (most recent call last):
-File "<stdin>", line 1, in <module>
+  File "<stdin>", line 1, in <module>
 TypeError: '>' not supported between instances of 'int' and 'str'
 ```
 
-Zde vidíš, že stejně jako nelze srovnávat "jablka a hrušky", Python není schopen porovnávat řetězce (`str`) a čísla (`int`). Místo toho zobrazí **TypeError** a říká nám, že tyto dva typy nelze srovnávat společně.
+Stejně jako nelze srovnávat „jablka a hrušky“,
+Python není schopen porovnávat řetězce (`str`) a čísla (`int`).
+Místo toho zobrazí `TypeError` a říká nám, že tyto dva typy nelze porovnat.
 
-## Logic hodnoty/Booleany
 
-Mimochodem právě jste se dozvěděly o novém typu objektu v Pythonu. Říká se mu **boolean** a je to asi nejjednodušší typ.
+### Logické hodnoty
 
-Existují pouze dva logické objekty: - True - False
+Mimochodem právě ses dozvěděl{{a}} o novém typu objektu v Pythonu.
+Říká se mu *pravdivostní hodnota*, nebo častěji anglicky *boolean*.
 
-Aby Python pochopil, že se jedná o tento typ, je potřeba vždy psát jako True (první písmeno velké, zbytek malý). **true, TRUE, tRUE nebude fungovat – jedině True je správně.** (Totéž samozřejmě platí pro False.)
+Může mít jednu z dvou hodnot: `True` a `False`.
 
-Pravdivostní hodnoty mohou být také v proměnné! Viz zde:
+Aby Python pochopil, že se jedná o tento typ,
+je potřeba dávat pozor na velikost písmen.
+`true`, `TRUE`, `tRUE` nebude fungovat – jedině `True` je správně.
 
-```
+Jako kažtou hodnotu, i pravdivostní hodnotu můžeš uložit do proměnné:
+
+``` pycon
 >>> a = True
 >>> a
 True
 ```
 
-Rovněž to můžete provést takto:
+Stejně tak můžeš uložit i výsledek porovnání:
 
 ```
 >>> a = 2 > 5
@@ -878,30 +876,35 @@ Rovněž to můžete provést takto:
 False
 ```
 
-Zkoušej a bav se s logickými hodnotami. Zkus spustit následující příkazy:
-
-*   `True and True`
-*   `False and True`
-*   `True or 1 == 1`
-*   `1 != 2`
-
-Gratulujeme! Logické hodnoty jsou jedny z nejbezvadnějších vlastností v programování a vy jste se je právě naučily používat!
-
 # Ulož to!
 
-Zatím jsme psaly všechny naše programy v konzoli v interaktivním režimu Pythonu, který nás omezuje na jeden řádek kódu v jednu chvíli. Normální programy jsou uloženy v souborech a spouští je **konzole** nebo **překladač** programovacího jazyku. Zatím jsme spouštěly naše programy po jednom řádku v **konzoli, v interaktivním režimu** Python. Pro příštích několik úkolů budeme potřebovat více než jeden řádek kódu, takže rychle musíme:
+Zatím jsi psal{{a}} všechny programy v konzoli v interaktivním režimu Pythonu,
+který nás omezuje na jeden řádek kódu.
+Když Python opustíš (nebo vypneš počítač),
+všechno co jsi zatím naprogramoval{{a}}, se ztratí.
+
+Větší programy jsou trvanlivější: ukládají se do souborů a dají se kdykoli
+spustit znovu.
+
+Vyzkoušejme si to. Budeme potřebovat:
 
 *   Ukončit interaktivní režim Pythonu
-*   Otevřít náš zvolený editor kódu
-*   Uložit nějaký kód do nového pythonovského souboru
+*   Otevřít editor kódu
+*   Uložit kód do nového souboru
 *   Spustit ho!
+
+Zkus vypnout Python. Existuje na to funkce `exit()`:
+
+``` pycon
+>>> exit()
+```
+
+Tak se dostaneš zpět do příkazové řádky.
+Budou tu fungovat příkazy jako `cd` a `mkdir`,
+ale ne příkazy Pythonu, jako `1 + 1`.
 
 Chceš-li opustit interaktivní režim Pythonu, který jsme dosud používaly, jednoduše zadejte ~ ~ ~ exit() ~ ~ ~ funkci:
 
-```
->>> exit()
-$
-```
 
 {# (((((((( XXX )))))))) #}
 > [Note]
@@ -912,162 +915,245 @@ $
 
 Tak se dostaneš zpět do příkazové řádky.
 
-Dříve sis vybrala editor kódu v části [editor kódu][2]. Nyní potřebujeme editor otevřít a napsat vlastní kód do nového souboru:
-
- [2]: ../code_editor/README.md
+Doufám, že máš nainstalovaný textový editor.
+Ten teď otevři a napiš do nového souboru tento příkaz:
 
 ```python
-print('Hello, Django girls!')
+print('Hello, PyLadies!')
 ```
 
-> **Poznámka:** Měla bys objevit jednu z nejúžasnější věcí na editorech kódu: barvy! V interaktivním režimu Pythonu mělo vše stejnou barvu, ale nyní bys měla vidět, že funkce `print` je jinou barvou než řetězec uvnitř. To se nazývá "zvýrazňování syntaxe" a je to opravdu užitečná funkce při kódování. Barvy ti napoví, že máš neuzavřený řetězce nebo překlep v názvu slova (jako `def` ve funkci, kterou uvidíš níže). To je jeden z důvodů, proč používáme editory kódu :)
+Teď vytvořený soubor ulož pod nějakým popisným názvem.
+Pojďme ho nazvat `python_intro.py` a ulož si jej na plochu.
+Soubor můžeš pojmenovat jakkoliv chceš, ale jméno musí končit na `.py`
+Tahle přípona říká editoru nebo i operačnímu systému,
+že jde o program v Pythonu a Python ho může spustit.
 
-Samozřejmě teď jsi již pěkně ostřílená python programátorka, tak neváhej napsat nějaký kód, který ses dnes naučila.
+> [note] Obarvování
+> Po uložení by se text měl obarvit.
+> V interaktivním režimu Pythonu mělo vše stejnou barvu,
+> ale nyní bys měla vidět, že jméno funkce `print` je jinou barvou než
+> řetězec v závorkách.
+> Barvy nevolíš {{gnd('sám', 'sama')}}, vybírá je editor na základě toho,
+> jak potom Python kódu porozumí.
+>
+> Nazývá se to "zvýrazňování syntaxe" a je to užitečná funkce.
+> Chce to trochu praxe, ale barvy můžou napovědět
+> že ti chybí uvozovka za řetězcem
+> nebo máš překlep v klíčovém slovu jako `del`.
+> To je jeden z důvodů, proč používáme editory kódu :)
 
-Teď potřebujeme uložit vytvořený soubor a dát mu popisný název. Pojďme ho nazvat **python_intro.py** a uložit jej na plochu. Soubor můžeš pojmenovat jakkoliv chceš, ale důležitá věc je, aby ses ujistila, že soubor končí na **.py**. Přípona **.py** říká našemu operačnímu systému, že jde o **spustitelný soubor Pythonu** a Python ho může spustit.
-
-Pokud máš soubor uložen, je čas jej spustit! Pomocí dovedností, které jsi se naučila v sekci příkazová řádka, **změň adresář**  pomocí terminálu na plochu.
+Pokud máš soubor uložen, je čas jej spustit!
+Pomocí dovedností, které jsi se naučil{{a}} v sekci příkazová řádka,
+*změň adresář* terminálu na plochu.
 
 Na Macu bude příkaz vypadat přibližně takto:
 
-```
-$ cd ~/Desktop
+``` console
+(venv) $ cd ~/Desktop
 ```
 
-Na Linuxu to bude vypadat takto (slovo "Desktop" (Plocha) může být přeloženo do tvého jazyka):
+Na Linuxu to bude vypadat takto (slovo "Desktop" (Plocha) může být
+přeloženo třeba do češtiny):
 
-```
-$ cd ~/Desktop
+``` console
+(venv) $ cd ~/Desktop
 ```
 
 A na Windows to bude vypadat takto:
 
-```
-> cd %HomePath%\Desktop
-```
-
-Pokud nevíš jak dál, stačí požádat o pomoc kouče.
-
-Nyní pomocí Pythonu spustíš kód v souboru takto:
-
-```
-$ python3 python_intro.py
-Hello, Django girls!
+``` doscon
+(venv) > cd Desktop
 ```
 
-V pořádku! Právě jsi spustila svůj první program v Pythonu, který byl uložen do souboru. Cítíš se úžasně?
+Pokud nevíš jak dál, požádej o pomoc kouče.
 
-Nyní můžeme přejít k základním nástrojům pro programování:
+Nyní pomocí Pythonu spusť kód v souboru:
 
-## If...elif...else
+``` console
+(venv) $ python python_intro.py
+Hello, PyLadies!
+```
 
-Spousty věcí v kódu chceme provádět, jen pokud jsou splněny určité podmínky. To je důvod, proč Python má něco, čemu se říká **if statements**.
+Funguje? Vidíš text?
+Jesli ano, právě jsi spustil{{a}} svůj první opravdový program v Pythonu!
+Cítíš se úžasně?
 
-Nahraďte kód v souboru **python_intro.py** tímto:
+### Vstup a výstup
+
+Funkce `print()`, kterou jsi použila, umí něco *vypsat* na obrazovku.
+V konzoli se hodnoty výrazů vypisovaly automaticky, abys je mohl{{a}}
+průběžně kontrolovat, ale programy v souborech bývají složitější a výpis
+každého kroku by byl nepřehledný.
+Proto na vypsání potřebuješ `print()`.
+Zkus si to:
+
+``` python
+jmeno = 'Ola'
+
+'Já jsem ' + jmeno  # Tohle Python nevypíše
+
+print(jmeno * 8)    # Tohle jo!
+```
+
+Do závorek funkce `print()` můěš dát i víc hodnot oddělených čárkami.
+
+``` python
+jmeno = 'Amálka'
+vek = 5
+print('Já jsem', jmeno, 'a je mi', vek)
+
+print('Za rok mi bude', vek + 1)
+```
+
+Další užitečná funkce je `input()`, která se umí zeptat na otázku.
+Odpověď pak vrátí jako řetězec, který si můžeš uložit do proměnné:
+
+``` python
+jmeno = input('Jak se jmenuješ? ')
+print(jmeno, 'umí programovat!')
+```
+
+A co když budeš chtít spíš číslo než text?
+Pamatuješ si na funkci, která umí převést řetězec na číslo?
+
+``` python
+letopocet = int(input('Jaký je letos rok? '))
+print('Loni byl rok', letopocet - 1)
+```
+
+
+## Když – tak
+
+Spoustu věcí v kódu chceme provádět, jen pokud jsou splněny určité podmínky.
+Proto má Python *podmíněné příkazy*.
+
+Zkusíme napsat program, který ověřuje tajné heslo.
+Tenhle program napíše `True`, když zadáš slovo `čokoláda`:
 
 ```python
-if 3 > 2:
+heslo = input('Zadej heslo: ')
+print(heslo == 'čokoláda')
 ```
 
-Pokud jsi soubor uložila a spustila, pravděpodobně uvidíš následující chybu:
+Vypsání `True` ale není moc zajímavé.
+Lepší program by dělal tohle:
 
-```
-$ python3 python_intro.py
-File "python_intro.py", line 2
-          ^
-SyntaxError: unexpected EOF while parsing
-```
+* Zeptá se na tajné heslo
+* Když je heslo správné:
+    * Pustí uživatele dovnitř
 
-Python očekává, že mu dáš další pokyny, které mají být provedeny, pokud bude podmínka `3 > 2` splněna (`True`). Řekněme tedy Pythonu, ať vypíše "Funguje to!". Změň svůj kód v souboru **python_intro.py** na tento:
+V Pythonu se „když“ řekne `if`. Používá se takhle:
 
 ```python
-if 3 > 2:
-     print('It works!')
+heslo = input('Zadej heslo: ')
+if heslo == 'čokoláda':
+    print('Správně! Račte vstoupit.')
 ```
 
-Všimla sis, jak jsme odsadily poslední řádek kódu o 4 mezery? Musíme to udělat, podle toho Python pozná, jakou část kódu má spustit, pokud vyhodnotí předchozí výraz jako pravdivý. Můžete udělat jen jednu mezeru, ale téměř všichni programátoři v Pythonu dělají 4, aby kód vypadal upraveně a čitelně. Jeden `Tab` bude také počítán jako 4 mezery.
+Podmíněný příkaz začíná `if`, pokračuje podmínkou (třeba porovnáním)
+a končí dvojtečkou.
+
+Po řádkem s `if` je příkaz *odsazený* – na začátku řádku jsou 4 mezery.
+
+Podle toho Python pozná, že tuhle část programu má provést,
+jen když je podmínka pravdivá.
 
 Ulož a spusť:
 
-```
-$ python3 python_intro.py
-It works!
+``` console
+(venv) $ python python_intro.py
+Zadej heslo: čokoláda
+Správně! Můžeš vstoupit.
 ```
 
-### Co když podmínka není pravdivá?
+``` console
+(venv) $ python python_intro.py
+Zadej heslo: sezam
+```
 
-V předchozích příkladech byl kód proveden pouze v případě, že podmínky byly splněny. Python má také příkazy `elif` a `else`:
+### Jinak
+
+V předchozím příkladu byl kód proveden pouze v případě, že podmínka byla splněna.
+Ještě lepší program by ale:
+
+* Zeptá se na tajné heslo
+* Když je heslo správné:
+    * Pustí uživatele dovnitř
+* Jinak:
+    * Spustí alarm
+
+Python má také příkazy `elif` a `else`:
 
 ```python
-if 5 > 2:
-     print('5 is indeed greater than 2')
+heslo = input('Zadej heslo: ')
+if heslo == 'čokoláda':
+    print('Správně! Račte vstoupit.')
 else:
-     print('5 is not greater than 2')
+    print('POZOR! POZOR! NEOPRÁVNĚNÝ VSTUP!')
 ```
 
-Pokud je výraz pravdivý, po spuštění se vytiskne:
+Funuje to?
 
-```
-$ python3 python_intro.py
-5 is not greater than 2
-```
+### Více možností
 
-Kdyby 2 bylo větší než 5, spustil by se první příkaz. Jak snadné! Podívejme se, jak funguje `elif`:
+Občas se stane, že se program musí rozhodnout mezi více možnostmi.
+K tomu slouží příkaz `elif`, zkratka znglického *else if* – „jinak, pokud“.
+
+Napišme program, který okomentuje hlasitost hudby:
+
+* Zeptá se na hlasitost, a odpověď uloží jako číslo.
+* Když je hlasitost do 20:
+    * vypíše „Je to dost potichu.“
+* Jinak, když je hlasitost do 40:
+    * vypíše „Jako hudba v pozadí dobré.“
+* Jinak, když je hlasitost do 60:
+    * vypíše „Skvělé, slyším všechny detaily.“
+* Jinak, když je hlasitost do 80:
+    * vypíše „Dobré na párty.“
+* Jinak, když je hlasitost do 100:
+    * vypíše „Trochu moc nahlas!“
+* Jinak:
+    * vypíše „Krvácí mi uši!“
+
+V Pythonu:
 
 ```python
-name = 'Sonja'
-if name == 'Ola':
-     print('Hey Ola!')
-elif name == 'Sonja':
-     print('Hey Sonja!')
-else:
-     print('Hey anonymous!')
-```
-
-a spusť:
-
-```
-$ python3 python_intro.py
-Hey Sonja!
-```
-
-Viděla jsi co se tam stalo? `elif` umožňuje přidat další podmínky, které se spustí, pokud se předchozí podmínky nezdaří.
-
-Můžeš po počátečním `if` přidat tolik `elif` příkazů, kolik se ti zlíbí. Například:
-
-```python
-volume = 57
-if volume < 20:
+hlasitost = int(input('Jaká je nastavená hlasitost rádia? '))
+if hlasitost < 20:
      print("Je to dost potichu.")
-elif 20 <= volume < 40:
+elif hlasitost < 40:
      print("Jako hudba v pozadí dobré.")
-elif 40 <= volume < 60:
+elif hlasitost < 60:
      print("Skvělé, slyším všechny detaily.")
-elif 60 <= volume < 80:
+elif hlasitost < 80:
      print("Dobré na party.")
-elif 80 <= volume < 100:
+elif hlasitost < 100:
      print("Trochu moc nahlas!")
 else:
     print("Krvácí mi uši!")
 ```
 
-Python prochází a testuje každou položku v posloupnosti a vypíše:
+``` console
+(venv) $ python python_intro.py
+Jaká je nastavená hlasitost rádia? 28
+Jako hudba v pozadí dobré.
+```
 
-```
-$ python3 python_intro.py
-  Skvělé, slyším všechny detaily.
-```
+Všimni si, že se vybere vždycky jedna alternativa.
+Když zadáš `28`, Python se dostane k `hlasitost < 40`, vypíše
+příslušnou hlášku a další možnosti přeskočí.
+
 
 ### Shrnutí
 
 V posledních třech cvičeních ses dozvěděla o:
 
-*   **Porovnání věcí** - v Pythonu můžeš porovnat věci pomocí operátorů `>`, `> =`, `==` `< =`, `<` a `and`, `or`
-*   **Logické hodnoty / Booleany** - typy, které mohou mít pouze jednu ze dvou hodnot: `True` nebo `False`
-*   **Ukládání do souborů** - pokud uložíme kód do souboru, můžeme spouštět velké programy
-*   **if...elif...else** - příkazy, které umožňují spouštět kód pouze v případě, kdy jsou splněny určité podmínky.
+*   **Porovnání věcí** - v Pythonu můžeš porovnávat věci pomocí operátorů `>`, `>=`, `==` `<=`, `<`, `!=` a `and`, `or`
+*   **Pravdivostní hodnoty / Boolean** - typ, který může mít pouze jednu ze dvou hodnot: `True` nebo `False`
+*   **Ukládání do souborů** - pokud uložíš kód do souboru, můžeš spouštět větší programy
+*   **if – elif – else** - příkazy, které umožňují spouštět kód pouze v případě, kdy jsou splněny určité podmínky.
 
-Čas na poslední část této kapitoly!
+Čas na předposlední část této kapitoly!
 
 ## Vlastní funkce!
 
