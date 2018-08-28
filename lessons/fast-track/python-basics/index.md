@@ -1042,7 +1042,8 @@ Lepší program by dělal tohle:
 * Když je heslo správné:
     * Pustí uživatele dovnitř
 
-V Pythonu se „když“ řekne `if`. Používá se takhle:
+Anglicky se „když“ řekne *if*. A to je i jméno Pythoního příkazu.
+Používá se takhle:
 
 ```python
 heslo = input('Zadej heslo: ')
@@ -1082,14 +1083,15 @@ Ještě lepší program by ale:
 * Jinak:
     * Spustí alarm
 
-Python má také příkazy `elif` a `else`:
+K tomu má Python příkaz `else` – „jinak“:
 
 ```python
 heslo = input('Zadej heslo: ')
 if heslo == 'čokoláda':
     print('Správně! Račte vstoupit.')
 else:
-    print('POZOR! POZOR! NEOPRÁVNĚNÝ VSTUP!')
+    print('POZOR! POZOR!')
+    print('NEOPRÁVNĚNÝ VSTUP!')
 ```
 
 Funuje to?
@@ -1155,113 +1157,146 @@ V posledních třech cvičeních ses dozvěděla o:
 
 Čas na předposlední část této kapitoly!
 
-## Vlastní funkce!
 
-Pamatuješ na funkci `len()`, kterou jsi spouštěla v Pythonu? Máme pro tebe dobrou zprávu. Nyní se dozvíš, jak napsat své vlastní funkce!
+## Vlastní funkce
 
-Funkce je sled instrukcí, které by měl Python provést. Každá funkce v Pythonu začíná klíčovým slovem `def`, dále je uveden název a funkce může mít také nějaké parametry. Začněme u té nejlehčí. Nahraď kód v **python_intro.py** následujícím:
+Pamatuješ na funkce `len()` a `print()`?
+Jsou jako kouzelná zaříkadla z knihy vázané v kůži: když víš jak se jmenují
+a umíš je správně {# XXX: <s>vyslovit</s> #}napsat, něco pro tebe udělají.
+
+Teď postoupíme na další úroveň: vymyslíme si vlastní zaříkadla!
+Jak? Budeme kombinovat příkazy, které už známe.
+
+Třeba funkce, která tě pozdraví, by měla:
+
+* Vypsat „ahoj!“
+* Vypsat „jak se máš?“
+
+Definice funkce v Pythonu začíná klíčovým slovem `def`,
+dále je uveden název a závorky (zatím prázdné).
+Pak jako po `if` dvojtečka, a odsazené příkazy,
+které má funkce provést.
 
 ```python
-def hi():
-     print('Hi there!')
-     print('How are you?')
-
-hi()
+def pozdrav():
+    print('Ahoj!')
+    print('Jak se máš?')
 ```
 
 Naše první funkce je připravena!
 
-Asi se divíš, proč jsme napsaly název funkce v dolní části souboru. To je proto, že Python přečte soubor a spustí ho od shora dolů. Pokud chceš využívat svou funkci, musíš její název znovu napsat dole (tím ji zavoláš/spustíš).
+Když ale tenhle program spustíš, nic neudělá.
+To proto, že tohle je jen *definice* funkce.
+Python teď ví jak pozdravit – ale neřeklo se, že to má udělat!
 
-Tak to teď zkus a uvidíš, co se stane:
-
-```
-$ python3 python_intro.py
-Hi there!
-How are you?
-```
-
-To bylo snadné! Napišme naši první funkci s parametry. Použijeme předchozí příklad - napíšeme funkci, která nás pozdraví podle toho, jaké zadáme jméno při jejím spuštění:
+Na konec programu přidej volání.
+To už není součást funkce, ale pokračování samotného programu.
+Proto nesmí být odsazené:
 
 ```python
-def hi(name):
+def pozdrav():
+    print('Ahoj!')
+    print('Jak se máš?')
+
+pozdrav()
 ```
 
-Jak vidíš, nyní jsme přidaly naší funkci parametr, `name`:
+Co se stane, když funkci zavoláš několikrát po sobě?
 
 ```python
-def hi(name):
-     if name == 'Ola':
-         print('Hi Ola!')
-     elif name == 'Sonja':
-         print('Hi Sonja!')
-     else:
-         print('Hi anonymous!')
+def pozdrav():
+    print('Ahoj!')
+    print('Jak se máš?')
 
-hi()
+pozdrav()
+pozdrav()
+pozdrav()
 ```
 
-Pamatuj si: Funkce `print` je odsazená čtyři mezery v příkazu `if`. To je proto, aby se funkce spustila, pokud je splněna podmínka. Podívej se, jak to funguje nyní:
+Co se stane, když volání dáš *nad* definici funkce, místo na konec programu?
 
+```python
+pozdrav()
+
+def pozdrav():
+    print('Ahoj!')
+    print('Jak se máš?')
 ```
-$ python3 python_intro.py
+
+{% filter solution %}
+``` pycon
 Traceback (most recent call last):
-File "python_intro.py", line 10, in <module>
-   hi()
-TypeError: hi() missing 1 required positional argument: 'name'
+  File "<stdin>", line 1, in <module>
+NameError: name 'pozdrav' is not defined
 ```
 
-Jejda, chyba. Naštěstí nám Python vypsal docela užitečnou chybovou zprávu. Jak vidíš, funkce `hi()` (kterou jsme definovaly) má jeden povinný parametr `(s názvem name)`, který jsme zapomněly při volání funkce předat. Pojďme to opravit v následující části:
+Python si stěžuje na `NameError` – nezná nic jménem `pozdrav`.
+
+Python totiž program čte odzhora dolů.
+Až příkazem `def` se „naučí" jak zdravit –
+Předtím, než se k příkazu `def` dostane, funkce neexistuje.
+{% endfilter %}
+
+# Parametry
+
+Funkce jako `len('slovo')` a `print(1 + 2)` umí navíc pracovat s hodnotou.
+
+Pojďme napisať funkciu, ktorá ťa pozdraví menom.
+(Uľahčíme si to použitím jazyka, ktorý nepoužíva piaty pád.)
 
 ```python
-hi("Ola")
+def pozdrav(meno):
+    print('Vitam ťa,', meno)
+
+pozdrav('Ola')
+pozdrav('Soňa')
+pozdrav('Hubert')
+pozdrav('Anička')
 ```
 
-A znovu jej spusť:
+Jak to funguje?
+V definici funkce uvedeš závorkách *parametr* – jméno proměnné se kterou bude
+funkce pracovat.
+Hodnotu pro tenhle parametr pak zadáš při volání funkce.
 
+Zvládneš napsat program, který se zeptá na jméno a pak tě pozdraví?
+
+{% filter solution %}
+```python
+def pozdrav(meno):
+    print('Vitam ťa,', meno)
+
+pozdrav(input('Jak se jmenuješ? '))
 ```
-$ python3 python_intro.py
-Hi Ola!
+{% endfilter %}
+
+Co se stane, když funkci zavoláš bez hodnoty pro parametr?
+
+{% filter solution %}
+``` pycon
+Traceback (most recent call last):
+  File "<stdin>", line 9, in <module>
+TypeError: pozdrav() missing 1 required positional argument: 'meno'
 ```
 
-A co když změníme jméno?
+Python si stěžuje na `TypeError` – funkce `pozdrav` nedostala povinný
+argument `meno`.
+{% endfilter %}
+
+Funkce může obsahovat jakýkoli kód.
+Třeba podmíněný příkaz, `if`.
+Příkazy po `if` je pak potřeba odsatit o *další* čtyři mezery:
 
 ```python
-hi("Sonja")
+def pozdrav(meno):
+    print('Vitam ťa,', meno)
+    if meno == 'Ola':
+        print('Ty umíš programovať!')
+
+pozdrav('Hubert')
+pozdrav('Ola')
+pozdrav('Soňa')
 ```
-
-Spustíme:
-
-```
-$ python3 python_intro.py
-Hi Sonja!
-```
-
-C myslíš, že se stane, když tam napíšeš jiné jméno než Ola nebo Sonja? Zkus to a uvidíme, jestli máš pravdu. Mělo by to vypsat toto:
-
-```
-Hi anonymous!
-```
-
-To je paráda, co? Nemusíš se opakovat a měnit takto jméno pokaždé, když chceš, aby funkce pozdravila jinou osobu. To je přesně důvod, proč potřebujeme funkce: abychom nikdy neopakovaly náš kód!
-
-Udělejme to ještě chytřeji – existuje více jmen než dvě a psaní podmínky pro každé jméno by bylo těžké, že?
-
-```python
-def hi(name):
-     print('Hi ' + name + '!')
-
-hi("Rachel")
-```
-
-Pojďme zavolat náš nový kód:
-
-```
-$ python3 python_intro.py
-Hi Rachel!
-```
-
-Blahopřejeme! Právě ses naučila, jak psát funkce :)
 
 ## Smyčky/Loops
 
