@@ -651,97 +651,145 @@ Zkus si nejdřív vypsat, které to jsou, a pak teprve použít `del`.
 
 ## Slovníky
 
-Slovník je podobný seznamu, ale pro přístup k hodnotám se používá klíč místo indexu. Klíč může být jakýkoli řetězec nebo číslo. Syntaxe pro definování prázdného slovníku je:
+Jiný typ hodnot, které v sobě mohou obsahovat další hodnoty, je *slovník*.
+Pro příklad si představ překladový slovník, třeba česko-anglický:
 
-```
->>> {}
-{}
-```
+* **Jablko**: Apple
+* **Knoflík**: Button
+* **Myš**: Mouse
 
-Vidíš, že jsi právě vytvořila prázdný slovník. Hurá!
+Slovník v Pythonu obsahuje záznamy, a každý záznam přiřazuje
+nějakému *klíči* nějakou *hodnotu*.
+V našem příkladu je klíči *Jablko* přiřazena hodnota *Apple*,
+klíči *Knoflík* náleží hodnota *Button*
+a klič *Myš* ukazuje na *Mouse*.
 
-A teď zkus napsat následující příkaz (zkus nahradit vlastními informacemi):
+V Pythonu by se takový slovník napsal následovně:
 
-```
->>> participant = {'name': 'Ola', 'country': 'Poland', 'favorite_numbers': [7, 42, 92]}
-```
-
-Tímto příkazem jsi právě vytvořila proměnnou s názvem `participant` s třemi dvojicemi klíčů hodnot:
-
-*   Klíč `name` odkazuje na hodnotu `"Ola"` (`string/řetězcový` objekt),
-*   klíč`country`, ukazuje na `"Polsko"` (další `řetězec`)),
-*   a `favorite_numbers` ukazuje `[7, 42, 92]` (`list/seznam` obsahující 3 čísla).
-
-Můžeš zkontrolovat obsah jednotlivých klíčů následující syntaxí:
-
-```
->>> print(participant['name'])
-Ola
+``` pycon
+>>> slovnik = {'Jablko': 'Apple', 'Knoflík': 'Button', 'Myš': 'Mouse'}
 ```
 
-Je to podobné seznamu. Ale není nutné si pamatovat index - jen jméno.
+Naše klíče a hodnoty jsou slova – krátké texty, tedy řetězce,
+které je potřeba dát do uvozovek.
+Klíč a hodnota jsou oddělené dvojtečkou,
+jednotlivé dvojice se od sebe oddělují čárkou,
+a celý slovník je uzavřený ve složených závorkách.
 
-Co se stane, když se zeptáme Pythonu na hodnotu klíče, který neexistuje? Zkus hádat! Pojďme to vyzkoušet a uvidíš!
+Když budeš chtít v takovém slovníku něco najít, potřebuješ vědět, co hledat.
+Konkrétně *klíč*.
+Pomocí hranatých závorek můžeš zjistit hodnotu, která odpovídá danému klíči:
 
+
+``` pycon
+>>> slovnik['Jablko']
+'Apple'
 ```
->>> participant['age']
+
+Je to podobné jako u seznamů, jen v hranatých závorkách není pořadí prvku,
+ale klíč.
+{# XXX: Slicing taky nejde #}
+
+> [note]
+> Naopak to nejde – slovník neumožňuje podle hodnoty přímo zjistit klíč.
+> Na překlad z angličtiny do češtiny bys potřeboval{{a}} druhý slovník.
+
+### Měnění slovníků
+
+Co se stane, když klíč ve slovníku není?
+
+``` pycon
+>>> slovnik['Pes']
 Traceback (most recent call last):
-File "<stdin>", line 1, in <module>
-KeyError: 'age'
+  File "<stdin>", line 1, in <module>
+KeyError: 'Pes'
 ```
 
-Podívej, další chyba! Toto je **KeyError**. Python ti napomáhá a řekne ti, že klíč `"věk"` v tomto slovníku neexistuje.
+Python si postěžuje na `KeyError` – chybu klíče.
 
-Kdy použít slovník a kdy seznam? To je dobrý postřeh k zamyšlení. Kdy použít jakou variantu pochopíš, až si přečteš následující řádky.
+Podobně jako seznamy se ale slovníky dají měnit.
+Nový záznam vytvoříš takhle:
 
-*   Potřebuješ jen seřazenou sekvenci položek? Použij seznam.
-*   Pokud potřebuješ přiřadit hodnotám klíče, abys je mohla později efektivně vyhledávat (klíčem)? Používej slovník.
-
-Slovníky stejně jako seznamy jsou *mutable/proměnlivé*, což znamená, že je lze změnit po jejich vytvoření. Do slovníku můžeš přidat nové páry klíč/hodnota po jeho vytvoření:
-
-```
->>> participant['favorite_language'] = 'Python'
+``` pycon
+>>> slovnik['Pes'] = 'Dog'
+>>> slovnik
+{'Jablko': 'Apple', 'Knoflík': 'Button', 'Myš': 'Mouse', 'Pes': 'Dog'}
 ```
 
-Stejně jako u seznamů můžeš použít metodu `len()` na slovníky, vrací počet párů klíč/hodnota ve slovníku. Nestyď se a zadej příkaz:
+> [note]
+> Na rozdíl od překladového slovníku nemusí být Pythonní slovník seřazený
+> podle abecedy.
+> Není to potřeba, počítač umí rychle vyhledávat i bez seřazení.
 
-```
->>> len(participant)
-4
-```
+Kdybys potřebovala{{a}} změnit už existující záznam, použij stejný příkaz.
+K jednomu klíči může patřit jen jedna hodnota.
 
-Doufám, že ti to nyní dává větší smysl. :) Připravena na více zábavy se slovníky? Pojďme na další řádek a další úžasné věci.
-
-Příkazem `pop()` odstraníš položky ve slovníku. Například pokud chceš odstranit záznam, kterému odpovídá klíč `"favorite_numbers"`, zadej následující příkaz:
-
-```
->>> participant.pop('favorite_numbers')
->>> participant
-{'country': 'Poland', 'favorite_language': 'Python', 'name': 'Ola'}
+``` pycon
+>>> slovnik['Pes'] = 'Extension cord'
+>>> slovnik
+{'Jablko': 'Apple', 'Knoflík': 'Button', 'Myš': 'Mouse', 'Pes': 'Extension cord'}
 ```
 
-Jak vidíš, z výstupu byla odstraněna odpovídající dvojice klíč hodnota 'favorite_numbers'.
+{# XXX: Zmínit se o nehomogenních slovnících? #}
 
-Kromě toho můžeš také změnit hodnotu přidruženou k již vytvořenému klíči ve slovníku. Napiš:
+Chceš-li ze zlovníku nějaký záznam smazat, dělá se to podobně jako
+u seznamů příkazem `del`:
 
+``` pycon
+>>> del slovnik['Pes']
+>>> slovnik
+{'Jablko': 'Apple', 'Knoflík': 'Button', 'Myš': 'Mouse'}
 ```
->>> participant['country'] = 'Germany'
->>> participant
-{'country': 'Germany', 'favorite_language': 'Python', 'name': 'Ola'}
+
+A když budeš chtít zjistit, kolik je ve slovníku záznamů,
+zeptáš se podobně jako na počet znaků řetězce nebo prvků seznamu.
+Použiješ funkci `len()`.
+
+``` pycon
+>>> len(slovnik)
+3
 ```
 
-Jak můžeš vidět, hodnota klíče `'country'` se změnila z `"Poland"` na `"Germany"`. :) Úžasné? Hurá! Právě jsi se naučila další úžasnou věc.
+{# XXX
+
+### K zamyšlení
+
+Ke každému klíči může patřit jen jedna hodnota.
+Jak bys zařídil{{a}}, aby hodnot víc?
+
+Zkus do Pythonní proměnné uložit tyto kontakty:
+
+* Katka:
+    * 4925219
+* Jirka:
+    * 7477058
+    * 3251156
+* Verča:
+    * 1019103
+
+{% filter solution %}
+Více hodnot se dá uložit do seznamu.
+Hodnoty budou seznamy čísel:
+
+```pycon
+>>> kontakty = {'Katka': ['4925219'], 'Jirka': ['7477058', '3251156'], 'Verča': ['1019103']}
+```
+{% endfilter %}
+
+Verča se přestěhovala do zahraničí a má nové číslo: `+897 3788509`.
+
+#}
 
 ### Shrnutí
 
-Skvělé! Nyní víš o programování hodně. V této poslední části jsi se naučila o:
+Skvělé! Nyní víš o programování hodně. V této poslední části jsi poznal{{a}}:
 
-*   **errors/chyby** - nyní víš jak číst a pochopit chyby, které ti Python zobrazí, pokud nerozumí příkazu, který jsi zadala
-*   **proměnné/variables** - názvy pro objekty, které umožňují psát kód snadněji tak, aby byl čitelnější
-*   **seznamy/lists** - seznamy objektů uložených v určitém pořadí
-*   **slovníky/dictionaries** - objekty, které jsou uloženy jako dvojice klíč–hodnota
+*   **chyby** - hlášky které Python zobrazí když nerozumí příkazu který jsi zadal{{a}} nebo ho neumí splnit
+*   **proměnné** - názvy pro objekty, které umožňují psát čitelnější kód
+*   **seznam** - sekvence objektů uložených v určitém pořadí
+*   **slovník** - sbírka záznamů klíč–hodnota
 
-Jsi připravena na další část?
+Jsi připraven{{a}} na další část?
 
 ## Porovnávání věcí
 
