@@ -60,7 +60,6 @@ Year: 2005
 
 #### Řez (Slicing)
 
-
 Kromě toho, že můžete přistupovat k jednotlivým prvkům sekvence, můžete použít řez seznamem (slicing) a získat podmnožinu prvků. Abyste toho docílili, musíte použít místo jednoho dva indexy oddělené dvojtečkou.
 
 
