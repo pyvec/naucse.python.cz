@@ -126,14 +126,10 @@ Používáš-li jinou distribuci, předpokládám, že instalovat programy už u
 
 Nakonec vytvoř virtuální prostředí.
 
-Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
+Zvol si adresář (složku), ve které budeš mít soubory ke kurzům Pythonu.
 Může to být třeba <code>/home/<i>jméno</i>/{{ rootname }}</code>,
-neboli <code class="pythondir">~/{{ rootname }}</code>.
+neboli ~/{{ rootname }}.
 Adresář vytvoř a poznamenej si, kde je.
-
-Vytváříš-li adresář jinde, nebo s jiným názvem, tak kdykoli ve zbytku
-materiálů uvidíš <code class="pythondir">~/{{ rootname }}</code>, doplň
-místo toho „svůj“ adresář.
 
 Zvolený adresář po vytvoření nesmíš přesouvat jinam – když to uděláš,
 přestane virtuální prostředí fungovat.
@@ -145,7 +141,7 @@ Proto ho nedoporučuji vytářet na Ploše.
 
 Teď když je tenhle adresář vytvořený, otevři příkazovou řádku
 a příkazem `cd` se do něj přepni:
-<!-- XXX: Special highlight in source code needed -->
+
 ```console
 $ cd ~/{{ rootname }}
 ```
@@ -163,22 +159,23 @@ jinak:
 $ virtualenv -p python3 venv
 ```
 
-Tím se ti vytvořil adresář <code><span class="pythondir">~/{{ rootname }}</span>/venv</code>,
+Tím se ti vytvořil adresář `~/{{ rootname }}/venv`,
 ve kterém jsou soubory s virtuálním prostředím.
 Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
 
 ## Aktivace virtuálního prostředí
 
-Nakonec virtuální prostředí aktivuj:
+Nakonec virtuální prostředí aktivuj.
+Přejdi do adresáře, kde máš soubory ke kurzům Pythonu (`~/{{ rootname}}`),
+a zadej:
 
-<div class="highlight">
-<pre><code><span class="gp">$</span> source <span class="pythondir">~/{{ rootname }}</span>/venv/bin/activate
-</code></pre>
-</div>
+``` console
+$ source venv/bin/activate
+```
 
-Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
-(před `$`) objevit slovo `(venv)`.
+Po spuštění tohoto příkazu by se měla na začátku příkazové řádky
+(před `$`) objevit poznámka `(venv)`.
 Tak poznáš, že je virtuální prostředí *aktivní*.
 
 Tenhle příkaz si zapiš. Budeš ho muset zadat vždycky, když pustíš příkazovou řádku,

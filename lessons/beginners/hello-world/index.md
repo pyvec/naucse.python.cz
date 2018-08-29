@@ -21,17 +21,12 @@ V něm vytvoř nový soubor, do kterého napiš následující text:
 print("Ahoj světe!")
 ```
 
-{% if var('pyladies') -%}
-{% set rootname = 'pyladies' %}
-{%- else -%}
-{% set rootname = 'naucse-python' %}
-{%- endif %}
+Pak soubor ulož pod jménem `ahoj.py`:
 
-Pak soubor ulož pod jménem <code><span class="pythondir">~/{{ rootname }}</span>/02/ahoj.py</code>.
-Za <code class="pythondir">~/{{ rootname }}</code> musíš doplnit adresář,
-který jsi vytvořil{{a}} minule, při [instalaci Pythonu](../../beginners/install/).
-Podadresář `02` musíš vytvořit.
-Do něj pak soubor ulož jako `ahoj.py`.
+* V adresáři, kde máš soubory ke kurzům Pythonu, si založ adresář pojmenovaný
+  podle čísla lekce (např. `02`).
+  Měl by být vedle tvého virtuálního prostředí.
+* Do něj pak soubor ulož pod jménem `ahoj.py`.
 
 Pokud máš v ukládacím okýnku možnost zvolit <em>kódování</em>, zvol <code>UTF-8</code>.
 Můžeš–li zvolit typ souboru, zvol <code>.py</code> nebo „všechny soubory“.
@@ -40,19 +35,23 @@ Můžeš–li zvolit typ souboru, zvol <code>.py</code> nebo „všechny soubory
 Některé systémy a editory se snaží přípony jako <code>.py</code> schovávat
 nebo si doplňovat přípony vlastní. V příkazové řádce se ale vždycky ukáže
 opravdové jméno.
-Proto ještě v příkazové řádce pomocí `cd` přejdi do adresáře <code><span class="pythondir">~/{{ rootname }}</span>/02</code>
+Proto ještě v příkazové řádce pomocí `cd` přejdi do adresáře,
+kde máš soubory pro kurz Pythonu, pak přejdi do  `cd 02`
 a pomocí `ls` (Unix) nebo `dir` (Windows) zkontroluj, že se soubor opravdu
 jmenuje `ahoj.py` a ne třeba `ahoj.py.txt`.
 
+{# XXX: this duplicates the instructions below! #}
 
 ## Spuštění
 
-Otevři si příkazovou řádku, aktivuj si v ní virtuální prostředí,
-vlez do adresáře <code><span class="pythondir">~/{{ rootname }}</span>/02</code>
-a zadej tento příkaz:
+Otevři si příkazovou řádku.
+Pomocí `cd` donaviguj do adresáře, kde máš soubory ke kurzům Pythonu.
+Aktivuj si virtuální prostředí.
+
+Potom vlez do adresáře s programem (`cd 02`) a zadej tento příkaz:
 
 ```console
-$ python ahoj.py
+(venv)$ python ahoj.py
 ```
 
 > [note]
@@ -76,11 +75,12 @@ Jestli to nefunguje, zkontroluj, že:
 * Máš zapnuté virtuální prostředí.
   (Na příkazové řádce se musí ukazovat <code>(venv)</code>;
   pokud tam není, použij příkaz „activate“ z [minula]({{ lesson_url('beginners/install') }}).)
-* Jsi ve správném adresáři, <code><span class="pythondir">~/{{ rootname }}</span>/02</code>.
-  (Za <span class="pythondir">~/{{ rootname }}</span> musíš doplnit adresář, který jsi vytvořila minule.)
+* Jsi ve správném adresáři. Zkus `pwd` (Unix) nebo `dir` (Windows).
+  Aktuální adresář musí být ten, do kterého jsi uložil{{a}}
+  soubor s programem.
 * Soubor `ahoj.py` obsahuje správný příkaz, včetně všech uvozovek a závorek.
-* Znak `$` nezadáváš – ten je tam proto, aby bylo poznat že jde o příkaz příkazové
-  řádky.
+* Znak `$` nezadáváš – ten je tam proto, aby bylo poznat že jde o příkaz
+  příkazové řádky.
   Na `$` (nebo, na Windows, `>`) končí dotaz, který vypíše počítač.
   Příkaz, který zadáváš ty, je jen `python ahoj.py`.
 

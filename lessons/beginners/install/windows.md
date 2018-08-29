@@ -63,11 +63,6 @@ Proto ho nedoporučuji vytářet na Ploše.
 > Kdybys někdy chtěl{{a}} adresář přece jen přesunout,
 > musel{{a}} bys smazat virtuální prostředí a vytvořit nové.
 
-Ve zbytku materiálů budeme tento adresář nazývat <code class="pythondir">~/{{ rootname }}</code>,
-i když se u tebe pravděpodobně jmenuje jinak.
-Takže kdykoli od teď uvidíš <code class="pythondir">~/{{ rootname }}</code>,
-doplň místo toho „svůj“ adresář.
-
 Teď když je tenhle adresář vytvořený, otevři [příkazovou řádku]({{ lesson_url('beginners/cmdline') }})
 a příkazem `cd` se do něj přepni.
 Pak vytvoř virtuální prostředí:
@@ -76,22 +71,20 @@ Pak vytvoř virtuální prostředí:
 > py -3 -m venv venv
 ```
 
-Tím se nám vytvořil adresář <code><span class="pythondir">~/{{ rootname }}</span>\venv</code>,
+Tím se nám vytvořil adresář `C:\{{ rootname }}\venv`,
 ve kterém jsou soubory s virtuálním prostředím.
 Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
 
 ## Aktivace virtuálního prostředí
 
-Nakonec virtuální prostředí aktivuj:
+Nakonec virtuální prostředí aktivuj.
+Přejdi do adresáře, kde máš soubory ke kurzům Pythonu (`C:\{{ rootname}}`),
+a zadej:
 
-<div class="highlight">
-<pre><code><span class="gp">&gt;</span> <span class="pythondir">~/{{ rootname }}</span>\venv\Scripts\activate
-</code></pre></div>
-
-> [note]
-> Nezapomeň místo <span class="pythondir">~/{{ rootname }}</span> zadat
-> „svůj“ adresář!
+``` console
+> venv\Scripts\activate
+```
 
 Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
 (před `>`) objevit slovo `(venv)`.

@@ -48,12 +48,8 @@ Nakonec vytvoř virtuální prostředí.
 
 Zvol si adresář (složku), ve které budeš mít soubory k PyLadies.
 Může to být třeba <code>/home/<i>jméno</i>/{{ rootname }}</code>,
-neboli <code class="pythondir">~/{{ rootname }}</code>.
+neboli `~/{{ rootname }}`.
 Vytvoř ho a poznamenej si, kde je.
-
-Vytváříš-li adresář jinde nebo s jiným názvem, tak kdykoli ve zbytku
-materiálů uvidíš <code class="pythondir">~/{{ rootname }}</code>, doplň
-místo toho „svůj“ adresář.
 
 Zvolený adresář po vytvoření nesmíš přesouvat jinam – když to uděláš,
 přestane virtuální prostředí fungovat.
@@ -76,7 +72,7 @@ Pak virtuální prostředí vytvoř:
 $ python3 -m venv venv
 ```
 
-Tím se ti vytvořil adresář <code><span class="pythondir">~/{{ rootname }}</span>/venv</code>,
+Tím se ti vytvořil adresář `~/{{ rootname }}/venv`,
 ve kterém jsou soubory s virtuálním prostředím.
 Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
@@ -85,10 +81,12 @@ Můžeš se podívat dovnitř, ale nikdy tam nic neměň.
 
 Nakonec virtuální prostředí aktivuj:
 
-<div class="highlight">
-<pre><code><span class="gp">$</span> source <span class="pythondir">~/{{ rootname }}</span>/venv/bin/activate
-</code></pre>
-</div>
+Přejdi do adresáře, kde máš soubory ke kurzům Pythonu (`~/{{ rootname}}`),
+a zadej:
+
+``` console
+$ source venv/bin/activate
+```
 
 Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
 (před `$`) objevit slovo `(venv)`.

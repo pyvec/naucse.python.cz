@@ -1,13 +1,7 @@
 # Print a chybové hlášky
 
-{% if var('pyladies') -%}
-{% set rootname = 'pyladies' %}
-{%- else -%}
-{% set rootname = 'naucse-python' %}
-{%- endif %}
-
-Teď vytvoř soubor <code><span class="pythondir">~/{{ rootname }}</span>/02/printing.py</code>
-a napiš do něj následující příkazy:
+Vytvoř v editoru nový soubor, ulož ho do adresáře pro dnešní lekci
+pod jménem `printing.py` a napiš do něj následující příkazy:
 
 ```python
 print(1)

@@ -16,14 +16,8 @@ a obsah jako <var>S</var> = <var>a</var>².
 Řekněme, že náš čtverec má stranu <var>a</var> = 356 cm.
 
 
-{% if var('pyladies') -%}
-{% set rootname = 'pyladies' %}
-{%- else -%}
-{% set rootname = 'naucse-python' %}
-{%- endif %}
-
 Výsledky vypiš pomocí `print()`.
-Program ulož do <code><span class="pythondir">~/{{ rootname }}</span>/02/ctverec.py</code>
+Program ulož do do adresáře pro dnešní lekci `ctverec.py`
 a spusť; mělo by se vypsat něco jako:
 
 ```
