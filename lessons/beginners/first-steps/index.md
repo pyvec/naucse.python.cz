@@ -8,17 +8,17 @@ Zkontroluj si, že máš aktivované virtuální prostředí (na začátku pří
 Je-li tomu tak, nezbývá než – konečně – pustit Python.
 K tomu použij příkaz `python`:
 
-``` plain
+``` console
 (venv)$ python
-Python 3.4.0 (default, Jan 26 2014, 18:15:05)
+Python 3.6.0 (default, Jan 26 2014, 18:15:05)
 [GCC 4.8.2 20131212 (Red Hat 4.8.2-7)] on linux
 Type "help", "copyright", "credits" or "license" for more information.
->>>
 ```
 
 Příkaz vypíše několik informací.
 Z prvního řádku se můžeš ujistit, že používáš Python 3.
-Třemi „zobáčky“ `>>>` pak Python poprosí o instrukce.
+
+Python pak třemi „zobáčky“ `>>>` poprosí o instrukce.
 Je to jako v příkazové řádce, ale místo příkazů jako
 `cd` a `mkdir` sem budeš psát příkazy Pythonu.
 

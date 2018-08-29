@@ -3,33 +3,28 @@
 Teď se vrátíme do základní školy a zkusíme si napsat program,
 který vypočítá obsah a obvod čtverce, u kterého známe délku strany.
 
+Vytvoř si v editoru nový soubor a ulož ho do adresáře pro dnešní lekci
+pod jménem `ctverec.py`.
+Zkus do něj napsat program, který spočítá a vypíše obvod a obsah čtverce
+se stranou 356 cm.
+
+Po spuštění by se mělo vypsat něco jako:
+
+```
+Obvod čtverce se stranou 356 cm je 1424 cm
+Obsah čtverce se stranou 356 cm je 126736 cm2
+```
+
+Pro připomenutí, obvod čtverce se stranou <var>a</var>
+se dá vypočítat jako <var>O</var> = 4<var>a</var>
+a obsah jako <var>S</var> = <var>a</var>².
+
 > [note] Matematika!
 > Doufám, že tenhle příklad nikoho neodradí,
 > ale „počítač“ je holt od slova *počítat*.
 > Není třeba se děsit;
 > na základy programování si vystačíme s matematickými
 > znalostmi ze základní školy.
-
-Pro připomenutí, obvod čtverce se stranou <var>a</var>
-se dá vypočítat jako <var>O</var> = 4<var>a</var>
-a obsah jako <var>S</var> = <var>a</var>².
-Řekněme, že náš čtverec má stranu <var>a</var> = 356 cm.
-
-
-{% if var('pyladies') -%}
-{% set rootname = 'pyladies' %}
-{%- else -%}
-{% set rootname = 'naucse-python' %}
-{%- endif %}
-
-Výsledky vypiš pomocí `print()`.
-Program ulož do <code><span class="pythondir">~/{{ rootname }}</span>/02/ctverec.py</code>
-a spusť; mělo by se vypsat něco jako:
-
-```
-Obvod čtverce se stranou 356 cm je 1424 cm
-Obsah čtverce se stranou 356 cm je 126736 cm2
-```
 
 Výsledky by měl samozřejmě spočítat Python; číslo 1424 nebo 126736 do programu nepiš.<br>
 Jestli si nevíš rady, podívej se na program <code>printing.py</code>
@@ -161,7 +156,7 @@ i tady jen řeknu, že na to použijeme *funkce*.
 Detaily si vysvětlíme později;
 pro teď to budou kouzelná zaříkadla:
 
-* Chceš-li načíst **řetězec**, použij:
+* Chceš-li načíst **řetězec** (text), použij:
 
   ```python
   promenna = input('Zadej řetězec: ')
