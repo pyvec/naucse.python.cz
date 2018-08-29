@@ -1,8 +1,9 @@
 # Instalace Pythonu pro Windows
 
 Běž na [stahovací stránku Pythonu](https://www.python.org/downloads/)
-a stáhni si instalátor nejnovější stabilní verze Pythonu. Od verze 3.6.0 má Python ve Windows jistá
-vylepšení, která se nám budou hodit, a proto stahuj jen verzi **3.6.0 nebo novější**.
+a stáhni si instalátor nejnovější stabilní verze Pythonu.
+Python verze 3.6.0 má jistá vylepšení, která budeme v tomto kurzu používat.
+Proto stahuj jen verzi **3.6.0 nebo novější**.
 
 Jak poznat, který instalátor je ten pravý?
 Pokud má tvůj počítač 64bitovou verzi Windows, stáhni si *Windows x86-64 executable installer*.
