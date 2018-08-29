@@ -96,9 +96,9 @@ print(False)
 Teď oprášíme program na výpočet obvodu a obsahu.
 
 Otevři si v editoru nový soubor.
-V adresáři, kde máš soubory ke kurzům Pythonu, udělej adresář s číslem lekce
-(třeba `02`).
-Nový soubor ulož do tohoto adresáře, pod jménem `if.py`.
+Jestli ještě v adresáři, kde máš soubory ke kurzům Pythonu,
+nemáš adresář pro tuto lekci (třeba `02`), vytvoř si ho.
+Nový soubor ulož do něj pod jménem `if.py`.
 
 Do souboru pak napiš následující program:
 
@@ -111,7 +111,7 @@ print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 Co se stane, když jako stranu zadáš záporné číslo?
 Dává výstup smysl?
 
-Tady je vidět, jak počítač dělá přesně, co se mu řekne, a nepřemýšlí o významu.
+Tady je vidět, jak počítač dělá přesně, co se mu řekne. Nepřemýšlí o významu.
 Bylo by dobré uživateli, který zadá záporné číslo,
 přímo říct, že zadal blbost. Jak na to?
 
