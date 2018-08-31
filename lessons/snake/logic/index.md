@@ -75,7 +75,7 @@ Jestli ano, gratuluji!
 Zvývá směr hada ovládat šipkami na klávesnici, a většina hry bude hotová!
 
 
-## Ven se stavem
+## Třída pro stav
 
 Než uděláme interaktivního hada, zkusíme trošku uklidit.
 Program se nám rozrůstá a za chvíli bude složité se v něm vyznat.
