@@ -14,7 +14,7 @@ musí o hře „pamatovat“, aby mohl aktuální stav zobrazit?
 
 Bude potřebovat například aktuální polohu všech částí hada: kde má začátek?
 Kroutí se doprava nebo doleva? Jak je dlouhý?
-Naopak barvu hada se stavu ukložit nepotřebuješ – každý had v téhle hře bude
+Naopak barvu hada ve stavu uložit nepotřebuješ – každý had v téhle hře bude
 stejný.
 
 Napadne tě, jak polohu hada zapsat pomocí čísel, seznamů a dalších základních
@@ -35,7 +35,7 @@ Každý bod v rovině (třeba na obrazovce!)
 je možné popsat dvěmi čísly: <var>x</var>-ovou a <var>y</var>-ovou souřadnicí.
 Ta <var>x</var>-ová říká, jak moc vlevo je bod od nějakého počátku,
 ta <var>y</var>-ová udává jak moc je nahoře.
-My za onen „počátek“ zvolíme roh okýnka, ve kterém se bude plazit náš had.
+My za onen „počátek“ zvolíme roh okýnka, ve kterém se bude náš had plazit.
 
 Na rozdíl od školní geometrie se had bude plazit po čtverečkové mřížce.
 Je to jako na šachovnici – když jde pěšec na D5, D značí, jak moc je to
@@ -100,10 +100,6 @@ se souřadnicemi (10, 20).
 Na to, abychom hada vykreslili, použijeme okýnko z Pygletu.
 Tady je základní kostra programu Pyglet, které už bys měl{{a}} rozumět.
 
-Udělej si nový, prázdný adresář na hadí hru, a kostru si
-zkopíruj do souboru `ui.py`.
-Budeme ji dál rozvíjet.
-
 ```python
 import pyglet
 
@@ -115,6 +111,10 @@ def on_draw():
 
 pyglet.app.run()
 ```
+
+Udělej si nový, prázdný adresář na hadí hru, a kostru si
+zkopíruj do souboru `had.py`.
+Budeme ji dál rozvíjet.
 
 <img src="{{ static('green.png') }}" alt="" style="display:block; float:right; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
 Stáhni si soubor [green.png]({{ static('green.png') }}) – zelený čtvereček –
@@ -133,7 +133,7 @@ Potom zkus dovnitř do funkce `on_draw` přidat vykreslení obrázku na souřadn
     green_image.blit(40, 50, width=10, height=10)
 ```
 
-Program spusť (`cd` do nového adresáře; `python ui.py`). Funguje?
+Program spusť (`cd` do nového adresáře; `python had.py`). Funguje?
 (Je docela důležité, aby fungoval – nevidíš-li zelený čtvereček,
 nečti dál a program radši oprav.)
 
@@ -201,8 +201,7 @@ for x, y in snake:
     ...
 ```
 
-Funguje to? Vidíš v tom – aspoň zhruba – hada
-(i když je poskládaný ze čtverečků)?
+Funguje to? Vidíš v tom – aspoň zhruba – hada poskládaného ze čtverečků?
 
 {{ figure(
     img=static('coords-blocks.svg'),
@@ -210,8 +209,8 @@ Funguje to? Vidíš v tom – aspoň zhruba – hada
 ) }}
 
 Jestli ne, nezoufej, zkontroluj si to znovu, poptej se na radu.
-Řešení využij až jako krajní možnost, jak pokračovat dál – nebo na kontrolu
-správného řešení.
+Ukázkové řešení využij až jako krajní možnost, jak pokračovat dál.
+Nebo pro kontrolu.
 
 {% filter solution %}
 ```python
@@ -239,12 +238,11 @@ pyglet.app.run()
 
 ## Krmení
 
-<img src="{{ static('red.png') }}" alt="" style="display:block; float:right; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
 <img src="{{ static('apple.png') }}" alt="" style="display:block; float:right; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
 Aby bylo ve hře co dělat, budeme potřebovat pro hada krmení.
-Stáhni si do adresáře s projektem obrázek `apple.png` (ať už jednoduchý
-čtvereček nebo detailnější obrázek), a zkus vykreslit jídlo třeba
-na následující souřadnice:
+Stáhni si do adresáře s projektem obrázek
+[apple.png](({{ static('apple.png') }}) a zkus vykreslit
+jablíčka na následující souřadnice:
 
 ```python
 food = [(2, 0), (5, 1), (1, 4)]
@@ -278,12 +276,13 @@ pyglet.app.run()
 ```
 {% endfilter %}
 
-Používáš-li detailnější obrázek, možná si všimneš, že má trošičku „zubaté“ hrany.
-To je dáno způsobem, jakým v Pygletu obrázek vykreslujeme.
-Úplné vysvětlení by zabralo příliš času, proto ukážu jen řešení.
-Až se naučíš grafiku víc do hloubky, pochopíš co se tu děje :)
+Možná si všimneš, že obrázek má ve hře trošičku „zubaté“ hrany.
+To je dáno způsobem, jakým v Pygletu vykreslujeme.
+Úplné vysvětlení by se do tohoto návodu nevešlo, potřebuje trochu hlubší
+znalosti počítačové grafiky.
+Proto uvedu jen řešení.
 
-Do funkce `on_draw`, hned za `clear`, dej následující dva řádky:
+Do funkce `on_draw`, hned za `clear`, dej následující tři řádky:
 
 ```python
     # Lepší vykreslování (pro nás zatím kouzelné zaříkadlo)
@@ -319,7 +318,8 @@ Obrázek se jmenuje <var>odkud</var>-<var>kam</var>.png.
 
 > [note]
 > Co jsou taková ta divná „hadí vajíčka”?
-> To je pro přímad, že by had byl jen jedno políčko dlouhý – a tedy měl hlavu
+> <img src="{{ static('snake-tiles/tail-head.png') }}" alt="" style="display:block; float:left; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
+> To je pro případ, že by had byl jen jedno políčko dlouhý – a tedy měl hlavu
 > i ocas na stejném políčku.
 > V naší hře se do takového stavu nedostaneme (had bude začínat s délkou 2),
 > ale může se stát, že se do něj dostaneš omylem při vývoji hry.
@@ -372,7 +372,7 @@ právě vypsal{{a}}.
 
 Začni s prázdným slovníkem, `{}`, a v cyklu `for` do něj postupně přidávej
 záznamy.
-Pak slovník vypiš.
+Pak celý slovník vypiš.
 
 Až to budeš mít, měl by výpis vypadat asi takhle:
 
@@ -458,9 +458,9 @@ Místo toho, aby byl všude stejný kousek hada,
 ale budeme chtít vybrat vždycky ten správný.
 
 Jak na to?
-
 Podle čeho ho vybrat?
 
+Pojďme si to vyzkoušet vedle.
 Vytvoř soubor `smery.py` a napiš do něj:
 
 ```python
@@ -533,16 +533,15 @@ vrať se k materiálům k předchozím lekcím (hlavně k úvodu do Pythonu),
 zkoušej a objevuj… A časem na to přijdeš.
 
 Až se to stane, zkus své řešení co nejvíc *zjednodušit* a pak ho zakomponovat
-do vykreslovací funkce.
-To by už nemělo být příliš složité:
+do vykreslovací funkce místo existujícího cyklu `for x, y in snake`.
 
 ```python
-    for ??? in ???snake???:
+    for ... in ...:
         ...
-        x = ???
-        y = ???
-        odkud = ???
-        kam = ???
+        x = ...
+        y = ...
+        odkud = ...
+        kam = ...
         ...
 
         snake_tiles[odkud + '-' + kam].blit(
