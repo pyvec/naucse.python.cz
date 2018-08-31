@@ -30,8 +30,8 @@ for jmeno in jmena:
 Celý program bude tedy vypadat takto:
 
 ```python
-def pozdrav(meno):
-    print('Vitam ťa,', meno)
+def pozdrav(jmeno):
+    print('Vítam tě,', jmeno)
 
 jmena = ['Rachel', 'Monica', 'Phoebe', 'Ola', 'Ty']
 for jmeno in jmena:

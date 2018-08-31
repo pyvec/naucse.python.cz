@@ -141,6 +141,66 @@ pozdrav('Soňa')
 ```
 
 
+## Vracení
+
+Další věc, kterou funkce jako `len` umí, je *vrátit* výsledek:
+
+``` python
+delka = len('Ola')
+print(delka)        # napíše: 3
+```
+
+Jak na to?
+Ve funkci můžeš použít příkaz `return`, který funkci okamžitě ukončí
+a vrátí danou hodnotu:
+
+```python
+def dvojnasobek(x):
+    return x * 2
+
+print(dvojnasobek(42))
+```
+
+Zkus napsat funkci, která pátý pád nějakého jména, třeba:
+
+* `paty_pad('Ola')` → 'Olo'
+* `paty_pad('Soňa')` → 'Soňo'
+* `paty_pad('Hubert')` → 'Huberte'
+
+Tohle je velice složitý úkol, tak si ho trochu zjednodušíme.
+Funkce by měla dělat tohle:
+
+* Pokud jméno je „Hubert“:
+    * vrátí `Huberte`
+* Pokud jméno končí na `a`:
+    * vrátí jméno s `o` místo posledního písmenka
+* Jinak:
+    * Vrátí původní jméno. (Uživatel si toho snad nevšimne.)
+
+``` python
+def paty_pad(jmeno):
+    if jmeno == 'Hubert':
+        return 'Huberte'
+    elif jmeno[-1] == 'a':
+        return jmeno[:-1] + 'o'
+    else:
+        return jmeno
+```
+
+Dokážeš změnit funkci `pozdrav`, aby zdravila v češtině?
+
+{% filter solution %}
+``` python
+def pozdrav(jmeno):
+    print('Vítam tě,', paty_pad(jmeno))
+
+pozdrav('Hubert')
+pozdrav('Ola')
+pozdrav('Soňa')
+```
+{% endfilter %}
+
+
 ## Shrnutí
 
 Co bylo nového tentokrát?
@@ -148,3 +208,4 @@ Co bylo nového tentokrát?
 * **Funkce** umožňuje pojmenovat nějkolik příkazů, a pak je zavolat najednou.
 * **Parametry** funkce, hodnoty se kterými funkce pracuje,
   se zadávají v závorkách.
+* `return` ukončí funkci a vrátí hodnotu

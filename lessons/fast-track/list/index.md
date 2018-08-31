@@ -317,6 +317,33 @@ Začátek a konec se dá kombinovat – číslo můžeš dát před i za dvojte�
 ['Druhý', 'Třetí']
 ```
 
+
+## Řezání řetězců
+
+Hranaté závorky fungují i u řetězců:
+
+``` pycon
+>>> jidlo = 'čokoláda'
+>>> jidlo[3]
+'o'
+>>> jidlo[1:4]
+'oko'
+```
+
+Představ si, že máš v proměnné `jmeno` jméno jako `'Ola'`,
+`'Krystýna'` nebo `'Růžena'`.
+Jak z něj vytvoříš druhý pád (např. bez `'Růženy'`)?
+
+{% filter solution %}
+Vezmi jméno až po poslední písmeno a přidáš `'y'`. Například:
+``` python
+>>> jmeno = 'Růžena'
+>>> jmeno[:-1] + 'y'
+'Růženy'
+```
+{% endfilter %}
+
+
 ## Shrnutí
 
 Uf! O seznamech toho bylo k naučení celkem hodně. Shrňme si, co už umíš:
@@ -327,5 +354,6 @@ Uf! O seznamech toho bylo k naučení celkem hodně. Shrňme si, co už umíš:
 * Prvky se dají **vybrat** nebo **odstranit** (`del`) podle indexu.
 * Číslování začíná **od nuly**, záporná čísla berou prvky od konce.
 * **Podseznam** je určitá část seznamu.
+* U **řetězců** funguje vybírání prvků a podřetězců podobně
 
 Jsi připraven{{a}} na další část?
