@@ -12,12 +12,20 @@ Zkus si to: zadej své jméno do uvozovek, jak vidíš níže:
 ```
 
 Nyní jsi vytvořil{{a}} svůj první *řetězec*!
-Řetězec je programátorský termín pro *text* – posloupnost znaků (písmenek), které mohou být zpracovány počítačem.
+Řetězec (angl. *string*) je programátorský termín pro *text* – posloupnost
+znaků (písmenek),
+které mohou být zpracovány počítačem.
 
 Když řetězec zadáváš, musíš ho vždy uzavřít do uvozovek (apostrofů).
-Jinak by Python nepoznal, co je text a co jsou instrukce.
+Jinak by Python nepoznal, co je text se kterým má pracovat a co jsou instrukce
+které má provést.
+To je pro počítač docela důležité – lidem podobné věci dojdou z kontextu,
+ale počítač je hloupé zařízení.
 
-{# XXX: Assessment here: adding strings together #}
+{{ figure(
+    img=static('quote-comic.svg'),
+    alt='(Ilustrační komiks. Člověk říká robotovi: "Řekni Pavlovi, ať mi zavolá!". Robot odpoví: "PAVLOVI AŤ MI ZAVOLÁ!")',
+) }}
 
 Řetězce se dají spojovat – „sečítat“ – pomocí `+`. Zkus toto:
 
@@ -26,21 +34,19 @@ Jinak by Python nepoznal, co je text a co jsou instrukce.
 'Já jsem Ola'
 ```
 
-> [note]
-> Pozor na mezeru! Když zadáš `'Já jsem'+'Ola'`, spojí se ti dvě slova
-> dohromady.
-> Počítač považuje i mezeru za *znak*; chová se k ní stejně jako k jakémukoli
-> písmenku.
-> Když nedáš mezeru do uvozovek, nebude součástí řetězce.
->
-> Zkus si:
->
-> ``` pycon
-> >>> 'Já jsem' + ' ' + 'Ola'
-> 'Já jsem Ola'
-> ```
+Pozor na mezeru! Když zadáš `'Já jsem'+'Ola'`, spojí se ti dvě slova dohromady.
+Počítač považuje i mezeru za *znak*; chová se k ní stejně jako k jakémukoli
+písmenku.
+Když nedáš mezeru do uvozovek, nebude součástí řetězce.
 
-Také můžeš řetězce opakovat – násobit číslem:
+Zkus si dát do uvozovek i mezeru samotnou:
+
+``` pycon
+>>> 'Já jsem' + ' ' + 'Ola'
+'Já jsem Ola'
+```
+
+Kromě „sečítání“ můžeš řetězce i opakovat – násobit číslem:
 
 ``` pycon
 >>> 'Ola' * 3
@@ -69,26 +75,36 @@ než jsi použil{{a}} ty:
 
 ## Funkce a metody
 
-Už umíš řetězce „sčítat“ pomocí `+` (`'Ahoj ' + 'Olo!'`)
-a „násobit“ pomocí `*` (`'la' * 3`).
+Už umíš řetězce „sčítat“ (`'Ahoj ' + 'Olo!'`)
+a „násobit“ (`'la' * 3`).
 Na všechny ostatní věci, které se s textem dají dělat,
 ale na klávesnici není dost symbolů.
 Proto jsou některé operace pojmenované slovně – třeba takzvané *funkce*.
 
 Chceš-li znát počet písmen ve svém jméně, zavolej funkci `len`.
 Napiš `len` (bez uvozovek), pak kulaté závorky, a do těch závorek
-své jméno (jako řetězec – v uvozovkách):
+své jméno jako řetězec (v uvozovkách):
 
 ``` pycon
 >>> len('Ola')
 3
 ```
 
-{# XXX: Existuje funkce `type`. Jak bych ji zavolal? #}
+Existuje funkce `type`, která zjistí jestli je něco číslo nebo řetězec.
+Jak bych ji zavolal?
+
+{% filter solution %}
+``` pycon
+>>> type(123)
+<class 'int'>
+>>> type('123')
+<class 'str'>
+```
+{% endfilter %}
 
 Kromě funkcí existují *metody*, které se zapisují trochu jinak.
 
-Chceš-li vidět své jméno velkými písmeny, zavolej metody `upper`.
+Chceš-li vidět své jméno velkými písmeny, zavolej metodu `upper`.
 Napiš řetězec, pak tečku, jméno metody `upper` (bez uvozovek) a prázdné
 závorky:
 
@@ -97,16 +113,22 @@ závorky:
 'OLA'
 ```
 
-Zkus si zavolat metodu `lower`.
+Řetězce mají i metodu `lower`. Zkus ji zavolat na své jméno.
 
-{# XXX: Existuje funkce `type`. Jak bych ji zavolal? #}
+{% filter solution %}
+``` pycon
+>>> 'Ola'.lower()
+'ola'
+```
+{% endfilter %}
 
-Co je metoda (které voláš s `.`, jako `'Ola'.upper()`) a co je funkce
-(kde vložíš informaci do závorek jako (`len('Ola')`)
+Co je metoda (které voláš s tečkou, jako `'Ola'.upper()`) a co je funkce
+(kde vložíš informaci do závorek jako `len('Ola')`),
+to se budeš muset vždycky zapamatovat nebo vyhledat.
 
 
 {# XXX: Move elsewhere? #}
-## Skládání
+## Skládání výrazů
 
 Volání funkce nebo metody můžeš použít jako jinou hodnotu.
 
@@ -119,9 +141,9 @@ Nech Python spočítat matematický výraz `(1 + 3) / 2`:
 
 Python napřed sečte `1 + 3` a vyjde mu 4.
 Čtverku doplní místo `1 + 3` do původního příkladu, a dostane `4 / 2`.
-To vydělí a dostane `2`.
+To vydělí a dostane `2.0`.
 
-Neboli: `(1 + 3) / 2` = `4 / 2` = `2`
+Neboli: `(1 + 3) / 2` = `4 / 2` = `2.0`
 
 Zkus se zamyslet, jak Python zpracuje tyto výrazy:
 
@@ -158,19 +180,18 @@ Zkus se zamyslet, jak Python zpracuje tyto výrazy:
 
 Podobné skládání je v programování velice časté.
 Většinu základních stavebních bloků se začátečník naučí za pár
-týdnů – a pak je po celou svou progrmátorskou kariéru skládá do
-složitějších a složitějších konstrukcí.
+týdnů – a pak po celou svou progrmátorskou kariéru objevuje nové způsoby,
+jak je poskládat do složitějších a složitějších konstrukcí.
 
 ### Shrnutí
 
 OK, dost bylo řetězců. Co ses zatím naučil{{a}}:
 
-*   **Interaktivní režim Pythonu** umožňuje zadávat příkazy (kód) pro
-    Python a zobrazuje výsledky/odpovědi.
-*   **Čísla a řetězce** se používají na matematiku a práci s textem.
-*   **Operátor** jako `+` a `*` kombinuje hodnoty a vytvoří výsledek.
-*   **Funkce** a **metody** jako `len()` a `upper()` provádí na hodnotách
+*   **Řetězce** se používají na práci s textem.
+*   **Operátory** `+` a `*` se používají na spojování a opakování řetězců.
+*   **Funkce** a **metody** jako `len()` a `upper()` provádí na řetězcích
     nějaké akce.
+*   **Výrazy** se dají skládat dohromady.
 
 Čísla, řetězce a operátory a funkce jsou základy většiny programovacích jazyků.
 

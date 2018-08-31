@@ -241,7 +241,7 @@ pyglet.app.run()
 <img src="{{ static('apple.png') }}" alt="" style="display:block; float:right; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
 Aby bylo ve hře co dělat, budeme potřebovat pro hada krmení.
 Stáhni si do adresáře s projektem obrázek
-[apple.png](({{ static('apple.png') }}) a zkus vykreslit
+[apple.png]({{ static('apple.png') }}) a zkus vykreslit
 jablíčka na následující souřadnice:
 
 ```python

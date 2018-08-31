@@ -83,12 +83,40 @@ která dosud nebyla nastavena.
 Pokud někdy dojde k této chybě, zkontroluj svůj kód, abys zjistil{{a}},
 jestli jsi někde neudělal{{a}} překlep.
 
-> [note] Jména proměnných
-> Profesionální programátoři pojmenovávají proměnné anglicky,
-> aby jim rozuměli co nejvíc kolegů po celém světě.
-> Ze začátku ale doporučujeme češtinu – je tak jasnější, která jména
-> si můžeš zvolit {{gnd('sám', 'sama')}} (např. `barva`) a která jsou
-> z Pythonu (např. `upper`).
->
-> Je ovšem dobré se nepoužívat diakritiku a vyhnout se velkým pímenům:
-> místo `Jméno` použij jen `jmeno`.
+## Jména proměnných
+Profesionální programátoři pojmenovávají proměnné anglicky,
+aby jim rozuměli co nejvíc kolegů po celém světě.
+Ze začátku ale doporučujeme češtinu – je tak jasnější, která jména
+si můžeš zvolit {{gnd('sám', 'sama')}} (např. `barva`) a která jsou
+z Pythonu (např. `upper`).
+Nevýhoda je, že si časem budeš muset odvyknout.
+
+
+Každopádně je dobré nepoužívat diakritiku a vyhnout se velkým pímenům:
+místo `Jméno` použij jen `jmeno`.
+
+
+Která z těchto jmen ti Python dovolí použít jako proměnnou?
+
+* `tlacitko5`
+* `5tlacitko`
+* `oblibena barva`
+* `oblibena-barva`
+
+{% filter solution %}
+
+* `tlacitko5` ano
+* `5tlacitko` ne: jména musí začínat písmenkem
+* `oblibena barva` ne: to není jedno jméno, ale dvě!
+* `oblibena-barva` taky ne: je to výraz `oblibena` mínus `barva`
+
+Kdybys potřeboval{{a}} ve jménu více slov, použij podtržítko: např.
+`oblibena_barva`.
+{% endfilter %}
+
+## Shrnutí
+
+* **Proměnné** jsou jména pro hodnoty.
+* Přiřazením (`=`) můžeš proměnnou nastavit na jakoukoli hodnotu.
+* Proměnné pojmenováváme **malými písmenky** bez diakritiky.
+* Na oddělení slov v rámci jména můžeme použít **podtržítko**.

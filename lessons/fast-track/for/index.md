@@ -4,7 +4,7 @@ Programátoři se neradi opakují.
 Programování je o automatizaci: nebudeme zdravit každého člověka zvlášť,
 vezměme seznam padesáti lidí a pozdravíme je všechny najednou!
 
-(Hm, někteří programátoři nejsou moc sociálně nadaní.
+(No, někteří programátoři asi nejsou moc sociálně nadaní.
 Ale jinde se ta automatizace fakt hodí!)
 
 Ještě si vzpomínáš na seznamy?
@@ -63,14 +63,15 @@ Když chceš něco 200-krát zopakovat, napiš:
 
 ```python
 for i in range(200):
-     print("Nebudu házet igelit do táboráku!")
+     print("Nebudu nikdy házet igelit do táboráku!")
 ```
 
 Jak to funguje?
 `for i in range(X)` se dá přeložit jako „pro každé číslo
 od nuly do <var>X</var>“.
-Do proměnné `i` Python uloží, pokolikáté cyklem prochází – počínaje,
-v programátorském stylu, od nuly:
+Funkce `range` onu posloupnost čísel od nuly do <var>X</var> vytvoří.
+Do proměnné `i` Python postupně uloží každé číslo, podle toho po kolikáté
+cyklem prochází.
 
 ```python
 for i in range(5):
@@ -84,25 +85,24 @@ for i in range(5):
 4
 ```
 
-`range` je funkce, která vytvoří seznam s posloupností čísel (tato čísla zadáváš jako parametry funkce).
+Všimni si, že samotné `5` není zahrnuto ve výsledku:
+`range(5)` počítá od 0 do 4.
+Když počítáš od nuly a chceš pět čísel, skončíš u čtyřky.
 
-Všimni si, že druhé z těchto dvou čísel není zahrnuto v seznamu, který je výstupem Pythonu (`range (1, 6)` počítá od 1 do 5, ale nezahrnuje číslo 6). To je proto, že "range" je z poloviny otevřený, čímž myslíme, že obsahuje první hodnotu, ale ne poslední.
 
 ## Shrnutí
 
 A je to.
 *Jsi naprosto skvěl{{gnd('ý', 'á')}}!*
-Tohle byla složitá kapitola, takže bys na sebe měl{{a}} být hrd{{gnd('ý', 'á')}}.
+Tohle byla složitá lekce, takže bys na sebe měl{{a}} být hrd{{gnd('ý', 'á')}}.
 My jsme na tebe velmi hrdí za to, že ses dostal{{a}} tak daleko!
 
 Naučil{{a}} ses:
 
-*   **Definice funkcí** – jak pojmenovat pár příkazů
-*   **Cykly** – jak opakovat nějaký postup několikrát po sobě
+*   **Cyklus** je způsob, jak opakovat nějaký postup několikrát po sobě
+*   `range` pomáhá když potřebuješ určitý konkrétní počet opakování.
 
 Můžeš si jít krátce odpočinout – protáhnout se, projít se,
 zavřít oči – než se pustíme do další kapitoly. :)
 
 🧁
-
- {# XXX: range #}

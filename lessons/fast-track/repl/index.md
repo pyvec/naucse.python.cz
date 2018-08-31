@@ -5,7 +5,7 @@ Chceš-li si začít hrát s Pythonem, otevři *příkazový řádek* a aktivuj
 Je-li tomu tak, nezbývá než – konečně – pustit Python. K tomu použij příkaz `python`:
 
 ``` console
-$ python3
+$ python
 Python 3.6.6 (...)
 Type "help", "copyright", "credits" or "license" for more information.
 >>>
@@ -31,26 +31,43 @@ Zkusíš i odečítání?
 A jak je to s násobením?
 {# XXX: Jak zapsat násobení? `4 x 5` `4 . 5` `4 × 5` `4 * 5` -#}
 Na kalkulačce bys zadala `4 × 5`, což se na klávesnici píše špatně.
-Python proto používá symbol `*` a pro dělení `/`.
-Tyhle symboly se odborně nazývají *operátory*.
+Python proto používá symbol `*`.
 
 ``` pycon
 >>> 4 * 5
 20
+```
+
+Symboly jako `+` a `*` se odborně nazývají *operátory*.
+
+Operátor pro dělení je `/`.
+
+Při dělení může vzniknout necelé číslo, třeba dva a půl.
+Python používá desetinnou *tečku*, ukáže se tedy `2.5`:
+
+``` python
 >>> 5 / 2
 2.5
 ```
 
-> [note]
-> V tomto úvodu budeme zadávat jen celá čísla.
-> Dělením ale může vzniknout třeba dva a půl
-> (tedy `2.5` – Python používá desetinnou *tečku*).
-> Z důvodů, do kterých teď nebudeme zabíhat, se desetinné pozice po dělení
-> objeví i když vyjde celé číslo:
-> ``` pycon
-> >>> 4 / 2
-> 2.0
-> ```
+Z důvodů, do kterých teď nebudeme zabíhat, se při dělení desetinná tečka
+objeví i když vyjde číslo celé:
+``` pycon
+>>> 4 / 2
+2.0
+```
+
+Občas se hodí použít dělení se zbytkem.
+Výsledek tak zůstane jako celé číslo.
+Na to má Python operátory `//` (podíl) a `%` (zbytek):
+
+``` pycon
+>>> 5 // 2
+2
+>>> 5 % 2
+1
+```
+
 
 {# XXX:
 Kolik je
@@ -63,3 +80,13 @@ Kolik je
 > Je ale zvykem psát kolem operátoru jednu mezeru z každé strany – tak jako
 > v těchto materiálech.
 > Kód je pak čitelnější.
+
+
+### Shrnutí
+
+Co ses zatím naučil{{a}}?
+
+*   **Interaktivní režim Pythonu** umožňuje zadávat příkazy (kód) pro
+    Python a zobrazuje výsledky/odpovědi.
+*   **Čísla** se používají na matematiku a práci s textem.
+*   **Operátor** jako `+` a `*` kombinuje hodnoty a vytvoří výsledek.

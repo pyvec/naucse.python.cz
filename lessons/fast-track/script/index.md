@@ -3,7 +3,7 @@
 Zatím jsi psal{{a}} všechny programy v konzoli v interaktivním režimu Pythonu,
 který nás omezuje na jeden řádek kódu.
 Když Python opustíš (nebo vypneš počítač),
-všechno co jsi zatím naprogramoval{{a}}, se ztratí.
+všechno co jsi zatím naprogramoval{{a}} se ztratí.
 
 Větší programy jsou trvanlivější: ukládají se do souborů a dají se kdykoli
 spustit znovu.
@@ -21,34 +21,23 @@ Zkus vypnout Python. Existuje na to funkce `exit()`:
 >>> exit()
 ```
 
-Tak se dostaneš zpět do příkazové řádky.
+Tak se dostaneš zpět do příkazové řádky. Pamatuješ na ni?
+Už neuvidíš `>>>`, ale řádek končící `$` nebo `>`.
 Budou tu fungovat příkazy jako `cd` a `mkdir`,
 ale ne příkazy Pythonu, jako `1 + 1`.
 
-Chceš-li opustit interaktivní režim Pythonu, který jsme dosud používaly, jednoduše zadejte ~ ~ ~ exit() ~ ~ ~ funkci:
 
-
-{# (((((((( XXX )))))))) #}
-> [Note]
-> Pokud budeš chtít Python konzoli ukončit, zadej `exit()` nebo použíj
-> zkratku `Ctrl + D` (pro Mac/Linux) nebo `Ctrl + Z` (na Windows).
-> Pak již neuvidíš `>>>`.
-
-
-Tak se dostaneš zpět do příkazové řádky.
-
-Doufám, že máš nainstalovaný textový editor.
-Ten teď otevři a napiš do nového souboru tento příkaz:
+Doufám, že máš nainstalovaný [textový editor](../../beginners/install-editor/).
+Ten teď otevři, udělej si nový soubor a napiš něj tento příkaz:
 
 ```python
 print('Hello, PyLadies!')
 ```
 
-Teď vytvořený soubor ulož pod nějakým popisným názvem.
-Pojďme ho nazvat `python_intro.py` a ulož si jej na plochu.
-Soubor můžeš pojmenovat jakkoliv chceš, ale jméno musí končit na `.py`
-Tahle přípona říká editoru nebo i operačnímu systému,
-že jde o program v Pythonu a Python ho může spustit.
+Nový soubor ulož pod nějakým popisným názvem: `python_intro.py`.
+Ulož si jej do adresáře, kam si budeš dávat soubory k tomuto workshopu.
+Jméno musí končit na `.py`: tahle přípona říká editoru nebo i
+operačnímu systému, že jde o program v Pythonu a Python ho může spustit.
 
 > [note] Obarvování
 > Po uložení by se text měl obarvit.
@@ -65,29 +54,13 @@ Tahle přípona říká editoru nebo i operačnímu systému,
 > To je jeden z důvodů, proč používáme editory kódu :)
 
 Pokud máš soubor uložen, je čas jej spustit!
-Pomocí dovedností, které jsi se naučil{{a}} v sekci příkazová řádka,
+Pomocí dovedností, které jsi se naučil{{a}} v sekci
+o [příkazové řádce](../../beginners/cmdline/),
 *změň adresář* terminálu na plochu.
 
-Na Macu bude příkaz vypadat přibližně takto:
-
-``` console
-(venv) $ cd ~/Desktop
-```
-
-Na Linuxu to bude vypadat takto (slovo "Desktop" (Plocha) může být
-přeloženo třeba do češtiny):
-
-``` console
-(venv) $ cd ~/Desktop
-```
-
-A na Windows to bude vypadat takto:
-
-``` doscon
-(venv) > cd Desktop
-```
-
+{% if var('coach-present') %}
 Pokud nevíš jak dál, požádej o pomoc kouče.
+{% endif %}
 
 Nyní pomocí Pythonu spusť kód v souboru:
 
@@ -100,12 +73,13 @@ Funguje? Vidíš text?
 Jesli ano, právě jsi spustil{{a}} svůj první opravdový program v Pythonu!
 Cítíš se úžasně?
 
+
 ## Vstup a výstup
 
 Funkce `print()`, kterou jsi použila, umí něco *vypsat* na obrazovku.
 V konzoli se hodnoty výrazů vypisovaly automaticky, abys je mohl{{a}}
-průběžně kontrolovat, ale programy v souborech bývají složitější a výpis
-každého kroku by byl nepřehledný.
+průběžně kontrolovat, ale programy v souborech bývají složitější a výpisy
+z každého kroku by byly nepřehledné.
 Proto na vypsání potřebuješ `print()`.
 Zkus si to:
 
@@ -142,3 +116,33 @@ Pamatuješ si na funkci, která umí převést řetězec na číslo?
 letopocet = int(input('Jaký je letos rok? '))
 print('Loni byl rok', letopocet - 1)
 ```
+
+
+## Komentáře
+
+Všiml{{a}} sis u předchozího programu poznámek za „mřížkou“ (`#`)?
+
+``` python
+jmeno = 'Ola'
+
+'Já jsem ' + jmeno  # Tohle Python nevypíše
+
+print(jmeno * 8)    # Tohle jo!
+```
+
+To jsou takzvané *komentáře*.
+Jsou určené jen pro lidi: Python je úplně ignoruje.
+
+Teď, když své programy ukládáš na disk a můžeš se k nim vracet,
+je důležité aby byly *čitelné*: aby z nich nejen počítače, ale i lidi
+poznali, co mají dělat.
+Vždycky když napíšeš nějaký složitější kus kódu k němu zkus přidat komentář
+s vysvětlivkou.
+Až se k programu za pár dní nebo měsíců vrátíš, poděkuješ si!
+
+
+## Shrnutí
+
+* Příkaz **python** spustí uložený soubor jako program v Pythonu.
+* Funkce **print** vypisuje hodnoty.
+* **Komentáře** můžou zpřehlednit složitější kód. Python je ignoruje.
