@@ -80,7 +80,7 @@ Starší ekvivalent stejného kódu je:
 Formátování řetězců (funkce format) používá templatovací jazyk. Každá hodnota, která má být nahrazena je uložená ve složených uvozovkách *{}*, tzv *replacement fields*. Poud chceme vypsat ve výpisu složené uvozovky, musíme to udělat takto:
 
 ```
->>> "{{ double braces }}".format()
+>>> "double braces ".format()
 '{ double braces }'
 ```
 
