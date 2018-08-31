@@ -317,7 +317,7 @@ Obrázek se jmenuje <var>odkud</var>-<var>kam</var>.png.
 
 > [note]
 > Co jsou taková ta divná „hadí vajíčka”?
-> <img src="{{ static('snake-tiles/tail-head.png') }}" alt="" style="display:block; float:left; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
+> <img src="{{ static('snake-tiles/end-end.png') }}" alt="" style="display:block; float:left; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
 > To je pro případ, že by had byl jen jedno políčko dlouhý – a tedy měl hlavu
 > i ocas na stejném políčku.
 > V dodělané hře se do takového stavu nedostaneme (had bude začínat s délkou 2),
@@ -353,7 +353,7 @@ for path in TILES_DIRECTORY.glob('*.png'):
 ```
 
 My z každého souboru potřebujeme nejlépe jméno, tedy místo
-`snake-tiles/right-head.png` jenom `right-head`.
+`snake-tiles/right-end.png` jenom `right-end`.
 Na to naštěstí existuje atribut `stem` (*kořen*, t.j. jméno bez přípony).
 Místo `print(path)` použij:
 
@@ -377,7 +377,7 @@ Až to budeš mít, měl by výpis vypadat asi takhle:
 ```
 {'right-tongue': <ImageData 64x64>, 'top-tongue': <ImageData 64x64>,
  'right-top': <ImageData 64x64>, 'left-bottom': <ImageData 64x64>,
- 'tail-left': <ImageData 64x64>, 'bottom-tongue': <ImageData 64x64>,
+ 'end-left': <ImageData 64x64>, 'bottom-tongue': <ImageData 64x64>,
  'left-top': <ImageData 64x64>, 'bottom-bottom': <ImageData 64x64>,
  ...
 ```
@@ -406,7 +406,7 @@ A teď zkus načtení obrázků začlenit do programu s hadem!
 Všechny importy patří nahoru, konstanty pod ně, a dál pak zbytek kódu.
 Vypisovat načtený slovník ve hře nemusíš.
 Zato ve vykreslovací funkci použij místo `green_image`
-třeba `snake_tiles['tail-head']`.
+třeba `snake_tiles['end-end']`.
 
 Místo čtverečků se teď objeví kuličky – místo hada budeš mít „housenku“.
 
@@ -440,7 +440,7 @@ def on_draw():
     pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
     pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
     for x, y in snake:
-        snake_tiles['tail-head'].blit(
+        snake_tiles['end-end'].blit(
             x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
     for x, y in food:
         red_image.blit(
@@ -515,13 +515,13 @@ for a, b, c in zip([None] + snake, snake, snake[1:] + [None]):
 
 
 ```
-1 2 tail right
+1 2 end right
 2 2 left right
 3 2 left top
 3 3 bottom top
 3 4 bottom top
 3 5 bottom right
-4 5 left head
+4 5 left end
 ```
 
 Toto je **těžký úkol**.
