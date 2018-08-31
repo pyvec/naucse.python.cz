@@ -79,10 +79,12 @@ Starší ekvivalent stejného kódu je:
 
 Formátování řetězců (funkce format) používá templatovací jazyk. Každá hodnota, která má být nahrazena je uložená ve složených uvozovkách *{}*, tzv *replacement fields*. Poud chceme vypsat ve výpisu složené uvozovky, musíme to udělat takto:
 
+{% raw %}
 ```
->>> "double braces ".format()
+>>> "{{ double braces }}".format()
 '{ double braces }'
 ```
+{% endraw %}
 
 ###  Replacement Fields
 
@@ -217,6 +219,8 @@ Jak formátovat čísla se znaménky?
 
 Praktický příklad:
 
+{% raw %}
+
 ```
 # Print a formatted price list with a given width
 
@@ -225,6 +229,8 @@ width = int(input('Please enter width: '))
 price_width = 10
 item_width  = width - price_width
 
+header_fmt = '{{:{}}}{{:>{}}}'.format(item_width, price_width)
+fmt        = '{{:{}}}{{:>{}.2f}}'.format(item_width, price_width)
 
 print('=' * width)
 
@@ -240,6 +246,9 @@ print(fmt.format('Prunes (4 lbs.)', 12))
 
 print('=' * width)
 ```
+
+{% endraw %}
+
 
 Výstup:
 
@@ -270,6 +279,7 @@ Prunes (4 lbs.)               12.00
 ### find()
 
 Vrací levý index, na kterém našel výskyt řetězce.
+
 ```
 >>> 'With a moo-moo here, and a moo-moo there'.find('moo')
 7
