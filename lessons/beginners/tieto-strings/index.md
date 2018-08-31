@@ -62,7 +62,7 @@ Hodnoty můžeme také pojmenovávat:
 
 *.2f* znamená, že číslo bude vytištěno s přesností na dvě desetinná místa.
 
-V Pythonu 2.6 můžeme formátovat řetězec i takto:
+Od Pythonu 3.6 můžeme formátovat řetězec i takto:
 
 ```
 >>> from math import e
