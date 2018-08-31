@@ -51,7 +51,7 @@ pyglet.app.run()
 ```
 
 Zkus těsně nad řádek `pyglet.app.run` doplnit funkci,
-která se bude volat každou šestinu vteřiny,
+která se bude volat každou šestinu vteřiny
 a přidá hadovi políčko navíc:
 
 ``` python
@@ -78,27 +78,33 @@ Zvývá směr hada ovládat šipkami na klávesnici, a většina hry bude hotov�
 ## Ven se stavem
 
 Než uděláme interaktivního hada, zkusíme trošku uklidit.
-Program se nám rozrůstá, a za chvíli bude složité se v něm vyznat.
+Program se nám rozrůstá a za chvíli bude složité se v něm vyznat.
 
 Stav hry máme zatím ve dvou seznamech: `snake` a `food`.
 Časem ale bude podobných proměnných víc.
 
-Abychom je měli všechny pohromadě, vytvoříme pro stav *třídu* – typ objektu,
-který obsahuje celý stav hry.
-
-Všechno, co je potřeba o hře vědět – v našem případně zatím souřadnice hada
-a jídla – bude tato třída obsahovat jako *atributy*.
+Abychom je měli všechny pohromadě, vytvoříme pro stav *třídu*.
 
 {# XXX: More about classes #}
 
-Třída bude obsahovat dvě *metody* – funkce, které se dají zavolat na objekty
-této třídy.
-Speciální metoda `__init__` (která se automaticky volá při vytvoření objektu
-této třídy) bude tyto atributy nastavovat.
-Metoda `move`, kterou budeme volat při každém „tahu“ hry, je pak bude
-měnit.
+Na všechno, co se ve hře může stát, nadefinujeme *metody*.
+Zatím budou dvě: začátek hry a pohyb hada.
 
-Pro funkčnost, kterou zatím náš had umí, bude `had.py` vypadat takto:
+Na začátku hry se zavolá metoda `__init__`.
+Má trochu divné jméno se dvěma podtržítkama na každé straně.
+Podle toho Python ví, že tahle metoda je speciální a se má volat
+při vytvoření objektu.
+
+Metoda `__init__` nastaví celý stav hry jako *atributy*.
+Stav hry je všechno, co potřebujeme o hře vědět a může se to časem měnit.
+V našem případě to zatím budou souřadnice hada a jídla.
+
+Metoda `move`, kterou budeme volat při každém „tahu“ hry, je bude tyhle
+atributy měnit.
+
+Pro funkčnost, kterou zatím náš had umí, bude třída se stavem vypadat
+následovně.
+Přidej ji do programu hned za nastavení konstant.
 
 ```python
 class State:
@@ -115,17 +121,15 @@ class State:
         del self.snake[0]
 ```
 
-Definici třídy dej hned za nastavení konstant.
-
 > [note]
 > Použij prosím pro třídu jméno `State` a i atributy pojmenuj podle
-> materiálů – `snake`, `food`, a později i další, které budeme přidávat.
+> materiálů (`snake`, `food`, a později i další).
 > Bude se ti to hodit.
 
 Všimni si, že metody berou argument `self`.
 To označuje konkrétní objekt, stav hry se kterým metoda pracuje nebo
 který mění.
-Ke všem atributúm přistupují pomocí tečky –
+Ke všem atributům přistupují pomocí tečky –
 <code>self.<var>jméno_atributu</var></code>.
 
 Tak, máme třídu se stavem.
@@ -143,8 +147,9 @@ Na to potřebuješ ještě několik změn:
 * Místo `snake` a `food` ve funkci `on_draw` použij `state.snake`
   a `state.food` – atributy našeho stavu.
 
-  Všimni si že tady nepoužíváme `self` – tohle jméno je pro *metody* v rámci
-  třídy. Jinde musíme pojmenovat konkrétní objekt, se kterým pracujeme.
+  Všimni si že tady nepoužíváme `self`, což je jméno které používají jen
+  *metody* v rámci třídy.
+  Jinde musíme pojmenovat konkrétní objekt, se kterým pracujeme.
 
 * Funkci `move` přepiš tak, aby jen volala metodu `state.move`:
 
@@ -154,7 +159,6 @@ Na to potřebuješ ještě několik změn:
   ```
 
   Všimni si že ani tady nepoužíváme `self`.
-  Ten se doplní automaticky – jde o objekt, jehož metodu voláme.
 
 Povedlo se? Funguje to jako předtím?
 Pro kontrolu můžeš svůj program porovnat s mým (ale nejde o jediné správné
@@ -221,7 +225,7 @@ Nyní k onomu slíbenému ovládání. Respektive nejdřív k změnám směru.
 
 Had ze hry se plazí stále stejným směrem, dokud hráč nezmáckne klávesu.
 Had z naší ukázky se plazí doprava.
-Jestli jsi to ještě udělala{{a}}, zkus zařídit, aby se místo toho
+Jestli jsi to ještě neudělal{{a}}, zkus zařídit, aby se místo toho
 plazil nahoru.
 
 {% filter solution %}
@@ -286,18 +290,17 @@ To už je doména Pygletu.
 
 Je potřeba přidat funkci, která reaguje na stisk klávesy.
 Aby Pyglet tuhle funkci našel a uměl zavolat, musí se jmenovat `on_key_press`,
-musí mít dekorátor `@window.event`, a musí brát dva argumenty:
+musí mít dekorátor `@window.event`, a musí brát dva parametry:
 číslo klávesy, která byla zmáčknutá a informace o modifikátorech
 jako <kbd>Shift</kbd> nebo <kbd>Ctrl</kbd>:
 
 ```python
 @window.event
-def on_key_press(key_number, modifier):
+def on_key_press(key_code, modifier):
     ...
 ```
 
-Druhý argument nebude potřeba, ale musí v hlavičce funkce být: Pyglet použije
-dva argumenty.
+Druhý parametr nebude potřeba, ale musí v hlavičce funkce být.
 
 Podle prvního ale nastav aktuální směr hada.
 Čísla kláves jsou definována v modulu `pyglet.window.key` jako konstanty se
@@ -306,14 +309,14 @@ My použijeme šipky – `LEFT`, `RIGHT`, `UP ` a `DOWN`:
 
 ```python
 @window.event
-def on_key_press(key_number, modifier):
-    if key_number == pyglet.window.key.LEFT:
+def on_key_press(key_code, modifier):
+    if key_code == pyglet.window.key.LEFT:
         state.snake_direction = -1, 0
-    if key_number == pyglet.window.key.RIGHT:
+    if key_code == pyglet.window.key.RIGHT:
         state.snake_direction = 1, 0
-    if key_number == pyglet.window.key.DOWN:
+    if key_code == pyglet.window.key.DOWN:
         state.snake_direction = 0, -1
-    if key_number == pyglet.window.key.UP:
+    if key_code == pyglet.window.key.UP:
         state.snake_direction = 0, 1
 ```
 
@@ -340,10 +343,7 @@ Pojďme je vyřešit, jednu po druhé.
 „Hadí“ hry jako ta naše mají dvě varianty: buď je kolem hřiště „zeď“
 a hráč při nárazu do okraje prohraje, nebo je hřiště „nekonečné“ – had okrajem
 proleze a objeví se na druhé straně.
-
 My naprogramujeme tu první variantu – zeď.
-
-Budeme pracovat na chování, na logice hry; ne na vykreslování a ovládání.
 
 Abys zjistil{{a}}, jestli had „vylezl“ z levého okraje okna ven,
 je potřeba zkontrolovat, jestli <var>x</var>-ová souřadnice hlavy
@@ -380,7 +380,7 @@ Věřím, že zvládneš udělat stejnou kontrolu pro vylezení ze spodního okr
 
 Jak ale ošetřit ty zbylé okraje – pravý a horní?
 Na to je potřeba znát velikost okýnka.
-A tu zná Pyglet; třída se stavem k okýnku nemá přístup!
+A tu zná Pyglet; třída se stavem by k okýnku neměla mít přístup!
 
 Na velikosti herní plochy závisí chování hry.
 Tahle informace tedy bude tedy muset být součást stavu.
@@ -420,10 +420,9 @@ Had je virtuální, nemusíš se bát že mu z toho vyroste boule.
 ```
 {% endfilter %}
 
-A pak nastav *opravdovou* velikost herní plochy. Jak?
-V souboru se hrou (`ui.py`), hned po tom co vytvoříš stav (`state`)
-a okýnko (`window`) velikost nastav.
-Použij celočíselné dělení (se zbytkem), aby velikost byla v celých číslech:
+A pak v souboru se hrou hned po tom co vytvoříš stav (`state = State()`)
+a okýnko (`window`) nastav *opravdovou* velikost.
+Použij celočíselné dělení, aby počet políček byl v celých číslech:
 
 ```python
 state.width = window.width // TILE_SIZE
@@ -638,7 +637,7 @@ Zaříďme teď, aby hra skončila i když narazí sám do sebe.
 
 Jak na to?
 Do metody `move`, vedle kontrola vylezení z hrací plochy,
-dej kód který zařídí následující:
+dej kód který udělá následující:
 
 * Pokud jsou souřadnice nové hlavy už součást hada:
   * Ukonči hru (podobně jako po nárazu do stěny).
@@ -698,7 +697,7 @@ kousky kódu, které prohru implementují:
 * „Zastaveni hada“ místo všech výskytů `raise("Game Over")`.
 * „Zabránění pohybu“ na úplný začátek metody `move` (příkaz `return`
   okamžitě ukončí provádění metody).
-* „Grafická indikace“ do `ui.py`, za sekci pro vybírání obrázku pro kousek
+* „Grafická indikace“ za sekci pro vybírání obrázku pro kousek
   hada.
 {% endfilter %}
 
@@ -730,7 +729,7 @@ Přidej si na to do stavu hry seznam (v metodě `__init__`):
         self.queued_directions = []
 ```
 
-Tuhle frontu plň v `ui.py` po každém stisku klávesy, metodou `append`.
+Tuhle frontu plň po každém stisku klávesy, metodou `append`.
 Je potřeba změnit většinu funkce `on_key_press` – místo změny
 atributu se nový směr přidá do seznamu.
 Abys nemusel{{a}} psát čtyřikrát `append`,
@@ -738,14 +737,14 @@ můžeš uložit nový směr do pomocné proměnné:
 
 ```python
 @window.event
-def on_key_press(key_number, modifier):
-    if key_number == pyglet.window.key.LEFT:
+def on_key_press(key_code, modifier):
+    if key_code == pyglet.window.key.LEFT:
         new_direction = -1, 0
-    if key_number == pyglet.window.key.RIGHT:
+    if key_code == pyglet.window.key.RIGHT:
         new_direction = 1, 0
-    if key_number == pyglet.window.key.DOWN:
+    if key_code == pyglet.window.key.DOWN:
         new_direction = 0, -1
-    if key_number == pyglet.window.key.UP:
+    if key_code == pyglet.window.key.UP:
         new_direction = 0, 1
     state.queued_directions.append(new_direction)
 ```
@@ -908,14 +907,14 @@ def on_draw():
 
 
 @window.event
-def on_key_press(key_number, modifier):
-    if key_number == pyglet.window.key.LEFT:
+def on_key_press(key_code, modifier):
+    if key_code == pyglet.window.key.LEFT:
         new_direction = -1, 0
-    if key_number == pyglet.window.key.RIGHT:
+    if key_code == pyglet.window.key.RIGHT:
         new_direction = 1, 0
-    if key_number == pyglet.window.key.DOWN:
+    if key_code == pyglet.window.key.DOWN:
         new_direction = 0, -1
-    if key_number == pyglet.window.key.UP:
+    if key_code == pyglet.window.key.UP:
         new_direction = 0, 1
     state.queued_directions.append(new_direction)
 
@@ -939,7 +938,7 @@ Zkus třeba následující rozšíření:
   takže jich pak bude na hrací ploše víc.
 
 * Hra se bude postupně zrychlovat.<br>
-  *(Na to je nejlepší předělat funkci `move` v `ui.py`, aby *sama*
+  *(Na to je nejlepší předělat funkci `move`, aby *sama*
   naplánovala, kdy se má příště zavolat. Volání `schedule_interval` tak už
   nebude potřeba.)*
 

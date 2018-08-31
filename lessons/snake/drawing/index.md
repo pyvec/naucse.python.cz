@@ -1,7 +1,7 @@
 # Nakresli mi hada
 
-Většina videoher má vlastní svět – spoustu čísel, textů, seznamů a jiných
-datových objektů, které popisují všechno, co ve hře je – celý *stav* hry.
+Většina videoher má celý herní svět uložený jako spoustu čísel, textů, seznamů
+a jiných datových objektů, které popisují všechno, co ve hře je.
 Tenhle stav se časem mění, ať už automaticky nebo podle akcí hráče.
 A docela často – většinou zhruba šedesátkrát za vteřinu – se stav hry převede
 na obrázek, který se hráčovi ukáže.
@@ -98,7 +98,7 @@ se souřadnicemi (10, 20).
 ## Sázení čtverečku
 
 Na to, abychom hada vykreslili, použijeme okýnko z Pygletu.
-Tady je základní kostra programu Pyglet, které už bys měl{{a}} rozumět.
+Tady je základní kostra Pygletí aplikace, které už bys měl{{a}} rozumět:
 
 ```python
 import pyglet
@@ -112,8 +112,8 @@ def on_draw():
 pyglet.app.run()
 ```
 
-Udělej si nový, prázdný adresář na hadí hru, a kostru si
-zkopíruj do souboru `had.py`.
+V editoru si otevři nový soubor, ulož ho jako `had.py` a kostru programu
+do něj zkopíruj.
 Budeme ji dál rozvíjet.
 
 <img src="{{ static('green.png') }}" alt="" style="display:block; float:right; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
@@ -142,8 +142,8 @@ Budeme radši používat čtverečky větší, řekněme 64 pixelů.
 
 To číslo je „střelené od boku“.
 V programu ho použijeme několikrát, a možná ho později budeš chtít upravit.
-Uložíme si ho proto do *konstanty* – proměnné, kterou nebudeme měnit.
-Konstanty se tradičně pojmenovávají velkými písmeny, a píšou se hned za řádek
+Uložíme si ho proto do *konstanty* (proměnné, kterou nebudeme měnit).
+Konstanty se tradičně pojmenovávají velkými písmeny a píšou se hned za řádek
 `import` (i když to není technicky nutné).
 Přidej tedy za `import` řádek:
 
@@ -281,7 +281,6 @@ To je dáno způsobem, jakým v Pygletu vykreslujeme.
 Úplné vysvětlení by se do tohoto návodu nevešlo, potřebuje trochu hlubší
 znalosti počítačové grafiky.
 Proto uvedu jen řešení.
-
 Do funkce `on_draw`, hned za `clear`, dej následující tři řádky:
 
 ```python
@@ -321,9 +320,8 @@ Obrázek se jmenuje <var>odkud</var>-<var>kam</var>.png.
 > <img src="{{ static('snake-tiles/tail-head.png') }}" alt="" style="display:block; float:left; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
 > To je pro případ, že by had byl jen jedno políčko dlouhý – a tedy měl hlavu
 > i ocas na stejném políčku.
-> V naší hře se do takového stavu nedostaneme (had bude začínat s délkou 2),
-> ale může se stát, že se do něj dostaneš omylem při vývoji hry.
-> Když jsou obrázky k dispozici, lépe pak zjišťuješ, co je špatně.
+> V dodělané hře se do takového stavu nedostaneme (had bude začínat s délkou 2),
+> ale než hru dokončíme, budou tyhle obrázky užitečné.
 
 Pojďme si teď tyhle obrázky *načíst*.
 Šlo by to dělat postupně, třeba takhle:
@@ -341,7 +339,7 @@ na některý zapomněl{{a}}.
 Proto Pythonu řekneme, aby nám dal všechny soubory s koncovkou `.png` v daném
 adresáři.
 Na to se dá použít třída `Path` z modulu [`pathlib`](https://docs.python.org/3/library/pathlib.html).
-Zkus si napsat (do nového souboru, třeba `experiment.py`) tento kód
+Zkus si do nového souboru, třeba `experiment.py`, napsat následující kód
 a spustit ho.
 Dokážeš vysvětlit, co dělá?
 
@@ -406,8 +404,9 @@ print(snake_tiles)
 A teď zkus načtení obrázků začlenit do programu s hadem!
 
 Všechny importy patří nahoru, konstanty pod ně, a dál pak zbytek kódu.
-Vypisovat načtený slovník ve hře nemusíš, zato místo `green_image`
-pak ve vykreslovací funkci použij třeba `snake_tiles['tail-head']`.
+Vypisovat načtený slovník ve hře nemusíš.
+Zato ve vykreslovací funkci použij místo `green_image`
+třeba `snake_tiles['tail-head']`.
 
 Místo čtverečků se teď objeví kuličky – místo hada budeš mít „housenku“.
 
