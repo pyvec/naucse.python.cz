@@ -58,7 +58,7 @@ Ještě lepší program by ale:
 * Zeptá se na tajné heslo
 * Když je heslo správné:
     * Pustí uživatele dovnitř
-* Jinak:
+* Jinak <small>(tedy pokud heslo nebylo správné)</small>:
     * Spustí alarm
 
 K tomu má Python příkaz `else` – „jinak“:
@@ -126,11 +126,9 @@ příslušnou hlášku a další možnosti přeskočí.
 
 ## Shrnutí
 
-V posledních třech cvičeních ses dozvěděl{{a}} o:
+Co jsi viděl{{a}} v této lekci?
 
-*   **Porovnání věcí** - v Pythonu můžeš porovnávat věci pomocí operátorů `>`, `>=`, `==` `<=`, `<`, `!=` a `and`, `or`
-*   **Pravdivostní hodnoty / Boolean** - typ, který může mít pouze jednu ze dvou hodnot: `True` nebo `False`
-*   **Ukládání do souborů** - pokud uložíš kód do souboru, můžeš spouštět větší programy
-*   **if – elif – else** - příkazy, které umožňují spouštět kód pouze v případě, kdy jsou splněny určité podmínky.
-
-Čas na předposlední část této kapitoly!
+*   Příkazy **if** (pokud), **elif** (jinak, pokud) a **else** (jinak)
+    podmiňují jiné příkazy.
+*   **Odsazení** se používá pro podmíněné příkazy, které následují po
+    `if` apod..

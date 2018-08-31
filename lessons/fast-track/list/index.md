@@ -63,7 +63,23 @@ Vyzkoušej si ji!
 [59, 42, 30, 19, 12, 3]
 ```
 
-Pokud chceš do svého něco přidat seznamu, můžeš to provést pomocí metody
+## Přidávání do seznamu
+
+Podobně jako u řetězců se seznamu dají spojovat pomocí `+`:
+
+``` pycon
+>>> loterie + [5, 6, 7, 8]
+[59, 42, 30, 19, 12, 3, 5, 6, 7, 8]
+```
+
+Tím se vytvoří nový seznam, ten původní zůstává nezměněný:
+
+``` pycon
+>>> loterie
+[59, 42, 30, 19, 12, 3]
+```
+
+Pokud chceš něco přidat do původního seznamu, můžeš to provést pomocí metody
 `append`.
 Ale pozor! Tahle metoda potřebuje vědět co má do seznamu přidat
 Nová hodnota se zadává do závorek:
@@ -177,9 +193,6 @@ IndexError: list index out of range
 Stý prvek od konce v seznamu není. Nastane chyba.
 {% endfilter %}
 
-## Řezání
-
-XXX Slicing
 
 ## Odstraňování
 
@@ -222,3 +235,97 @@ Zkus si nejdřív vypsat, které to jsou, a pak teprve použít `del`.
 [42, 3]
 ```
 {% endfilter %}
+
+Občase se stane, že nechceš smazat prvek podle pozice, ale podle toho,
+co v seznamu je.
+K tomu slouží hodnota `remove`, která najde a odstraní danou hodnotu:
+
+```pycon
+>>> loterie
+[42, 3]
+>>> loterie.remove(3)
+>>> loterie
+[42]
+```
+
+
+## Řezání
+
+Ze seznamu se dá kromě jednoho prvku vybrat i prvků několik – část seznamu,
+takzvaný *podseznam*.
+
+Pojďme si opět udělat delší seznam čísel:
+
+``` pycon
+>>> cisla = ["První", "Druhý", "Třetí", "Čtvrtý"]
+```
+
+Budeš-li chtít vybrat prvky od druhého dál, dej do hranatých závorek číslo
+tohohle prvku, a za něj dvojtečku.
+
+``` pycon
+>>> cisla[1]
+'Druhý'
+>>> cisla[1:]
+['Druhý', 'Třetí"', 'Čtvrtý']
+```
+
+Vybráním podseznamu se seznam nemění, tak můžeš vybírat dál:
+
+```pycon
+>>> cisla
+['První', 'Druhý', 'Třetí', 'Čtvrtý']
+>>> cisla[1:]
+['Druhý', 'Třetí"', 'Čtvrtý']
+>>> cisla[2:]
+['Třetí', 'Čtvrtý']
+>>> cisla[3:]
+['Čtvrtý']
+>>> cisla[4:]
+[]
+```
+
+Budeš-li chtít vybrat prvky od začátku *do* některého prvku, dej dvojtečku
+*před* číslo prvku, který už ve výsledku nechceš
+
+
+``` pycon
+>>> cisla[2]
+'Třetí'
+>>> cisla[:2]
+['První', 'Druhý']
+```
+
+Úkol: máš-li nějaký seznam, jak z něj vybereš všechny prvky kromě posledního?
+
+{% filter solution %}
+Poslední číslo má index -1, vyberu tedy prvky do -1:
+
+``` pycon
+>>> cisla[:-1]
+['První', 'Druhý', 'Třetí']
+```
+
+{% endfilter %}
+
+Začátek a konec se dá kombinovat – číslo můžeš dát před i za dvojtečku:
+
+```pycon
+>>> cisla
+['První', 'Druhý', 'Třetí', 'Čtvrtý']
+>>> cisla[1:-1]
+['Druhý', 'Třetí']
+```
+
+## Shrnutí
+
+Uf! O seznamech toho bylo k naučení celkem hodně. Shrňme si, co už umíš:
+
+* **Seznam** je seřazená sekvence hodnot.
+* Pomocí **metod** se seznam dá řadit (`sort`) a obrátit (`reverse`),
+  nebo se do něj dá přidat (`append`) či odebrat (`remove`) prvek.
+* Prvky se dají **vybrat** nebo **odstranit** (`del`) podle indexu.
+* Číslování začíná **od nuly**, záporná čísla berou prvky od konce.
+* **Podseznam** je určitá část seznamu.
+
+Jsi připraven{{a}} na další část?

@@ -25,9 +25,9 @@ Klíč a hodnota jsou oddělené dvojtečkou,
 jednotlivé dvojice se od sebe oddělují čárkou,
 a celý slovník je uzavřený ve složených závorkách.
 
-Když budeš chtít v takovém slovníku něco najít, potřebuješ vědět, co hledat.
-Konkrétně *klíč*.
-Pomocí hranatých závorek můžeš zjistit hodnotu, která odpovídá danému klíči:
+Když budeš chtít v takovém slovníku něco najít, potřebuješ vědět co hledat.
+Potřebuješ *klíč*.
+Pomocí hranatých závorek můžeš zjistit hodnotu, která danému klíči odpovídá:
 
 
 ``` pycon
@@ -35,9 +35,8 @@ Pomocí hranatých závorek můžeš zjistit hodnotu, která odpovídá danému 
 'Apple'
 ```
 
-Je to podobné jako u seznamů, jen v hranatých závorkách není pořadí prvku,
-ale klíč.
-{# XXX: Slicing taky nejde #}
+Je to podobné jako u seznamů, jen v hranatých závorkách není index
+(pořadí prvku) nebo rozmezí s dvojtečkou, ale klíč.
 
 > [note]
 > Naopak to nejde – slovník neumožňuje podle hodnoty přímo zjistit klíč.
@@ -135,11 +134,10 @@ Verča se přestěhovala do zahraničí a má nové číslo: `+897 3788509`.
 
 ## Shrnutí
 
-Skvělé! Nyní víš o programování hodně. V této poslední části jsi poznal{{a}}:
+Skvělé! Co víš o slovnících:
 
-*   **chyby** - hlášky které Python zobrazí když nerozumí příkazu který jsi zadal{{a}} nebo ho neumí splnit
-*   **proměnné** - názvy pro objekty, které umožňují psát čitelnější kód
-*   **seznam** - sekvence objektů uložených v určitém pořadí
-*   **slovník** - sbírka záznamů klíč–hodnota
+* **Záznam** se skládá z **klíče** a **hodnoty**.
+* Ve slovníku se hledá pomocí **klíče**.
+* Záznamy se dají přepsat, přidat, nebo pomocí `del` smazat.
 
 Jsi připraven{{a}} na další část?

@@ -13,8 +13,8 @@ Třeba funkce, která tě pozdraví, by měla:
 * Vypsat „jak se máš?“
 
 Definice funkce v Pythonu začíná klíčovým slovem `def`,
-dále je uveden název a závorky (zatím prázdné).
-Pak jako po `if` dvojtečka, a odsazené příkazy,
+dále je uveden název a následují závorky (zatím prázdné).
+Pak je jako po `if` dvojtečka – a odsazené příkazy,
 které má funkce provést.
 
 ```python
@@ -73,16 +73,18 @@ NameError: name 'pozdrav' is not defined
 Python si stěžuje na `NameError` – nezná nic jménem `pozdrav`.
 
 Python totiž program čte odzhora dolů.
-Až příkazem `def` se „naučí" jak zdravit –
+Až příkazem `def` se „naučí" jak zdravit.
 Předtím, než se k příkazu `def` dostane, funkce neexistuje.
 {% endfilter %}
 
 ## Parametry
 
+Tvoje funkce se dá volat jen jako `pozdrav()`.
 Funkce jako `len('slovo')` a `print(1 + 2)` umí navíc pracovat s hodnotou.
 
-Pojďme napisať funkciu, ktorá ťa pozdraví menom.
+Poďme napisať funkciu, ktorá ťa pozdraví menom.
 (Uľahčíme si to použitím jazyka, ktorý nepoužíva piaty pád.)
+{# XXX: Je to správně slovensky? #}
 
 ```python
 def pozdrav(meno):
@@ -138,3 +140,11 @@ pozdrav('Ola')
 pozdrav('Soňa')
 ```
 
+
+## Shrnutí
+
+Co bylo nového tentokrát?
+
+* **Funkce** umožňuje pojmenovat nějkolik příkazů, a pak je zavolat najednou.
+* **Parametry** funkce, hodnoty se kterými funkce pracuje,
+  se zadávají v závorkách.
