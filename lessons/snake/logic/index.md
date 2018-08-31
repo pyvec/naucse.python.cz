@@ -39,8 +39,8 @@ def on_draw():
     pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
     pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
     for x, y in snake:
-        source = 'tail'     # (Tady případně je nějaké
-        dest = 'head'       #  složitější vybírání políčka)
+        source = 'end'     # (Tady případně je nějaké
+        dest = 'end'       #  složitější vybírání políčka)
         snake_tiles[source + '-' + dest].blit(
             x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
     for x, y in food:
@@ -201,8 +201,8 @@ def on_draw():
     pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
     pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
     for x, y in state.snake:
-        source = 'tail'     # (Tady případně je nějaké
-        dest = 'head'       #  složitější vybírání políčka)
+        source = 'end'     # (Tady případně je nějaké
+        dest = 'end'       #  složitější vybírání políčka)
         snake_tiles[source + '-' + dest].blit(
             x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
     for x, y in state.food:
@@ -688,7 +688,7 @@ kousky kódu, které prohru implementují:
 
 ```python
         # Grafická indikace
-        if dest == 'head' and not state.snake_alive:
+        if dest == 'end' and not state.snake_alive:
             dest = 'dead'
 ```
 
@@ -895,9 +895,9 @@ def on_draw():
     pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
     pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
     for x, y in state.snake:
-        source = 'tail'     # (Tady případně je nějaké
-        dest = 'head'       #  složitější vybírání políčka)
-        if dest == 'head' and not state.snake_alive:
+        source = 'end'     # (Tady případně je nějaké
+        dest = 'end'       #  složitější vybírání políčka)
+        if dest == 'end' and not state.snake_alive:
             dest = 'dead'
         snake_tiles[source + '-' + dest].blit(
             x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
