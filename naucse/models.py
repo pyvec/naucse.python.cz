@@ -31,12 +31,13 @@ class Model:
         self.data = data
 
 
-class Lesson(Model):
-    """An individual lesson stored on naucse"""
+class Lesson(YamlModel):
+    # XXX: Remove this?
     def __str__(self):
         return '{} - {}'.format(self.slug, self.title)
 
-    title = DataProperty()
+    info = YamlProperty()
+    title = DataProperty(info)
 
     @reify
     def slug(self):
@@ -66,22 +67,24 @@ class Page(Model):
 
     @reify
     def style(self):
-        return self.info['style']
+        return self.data['style']
 
     @reify
     def title(self):
-        return self.info['title']
+        return self.data['title']
 
     @reify
     def jinja(self):
-        return self.info.get('jinja', True)
+        return self.data.get('jinja', True)
 
     @reify
     def latex(self):
-        return self.info.get('latex', False)
+        return self.data.get('latex', False)
 
     @reify
     def css(self):
+        # XXX
+        return None
         """Return lesson-specific extra CSS.
 
         If the lesson defines extra CSS, the scope of the styles is limited
@@ -96,28 +99,29 @@ class Page(Model):
 
     @reify
     def edit_path(self):
-        return self.path.relative_to(self.root.path)
+        # XXX
+        return None
 
     @reify
     def attributions(self):
-        attr = self.info.get('attribution', ())
+        attr = self.data.get('attribution', ())
         if isinstance(attr, str):
             attr = [attr]
         return tuple(attr)
 
     @reify
     def license(self):
-        return self.root.licenses[self.info['license']]
+        return self.lesson.session.course.root.licenses[self.data['license']]
 
     @reify
     def license_code(self):
-        if 'license_code' in self.info:
-            return self.root.licenses[self.info['license_code']]
+        if 'license_code' in self.data:
+            return self.lesson.session.course.root.licenses[self.data['license_code']]
         return None
 
     @reify
     def vars(self):
-        return self.info.get('vars', {})
+        return self.data.get('vars', {})
 
     def _get_template(self):
         name = '{}/{}.{}'.format(self.lesson.slug, self.slug, self.style)
@@ -132,6 +136,7 @@ class Page(Model):
                     subpage_url=None,
                     vars=None,
                     ):
+        return ""
         lesson = self.lesson
 
         if not vars:
@@ -215,7 +220,7 @@ class Page(Model):
         return parsed.cssText.decode("utf-8")
 
 
-class Collection(Model):
+class Collection(YamlModel):
     """A collection of lessons"""
     def __str__(self):
         return self.path.parts[-1]
@@ -255,8 +260,9 @@ class LessonMaterial(Material):
     has_navigation = True
     default_url_type = 'lesson'
 
-    def __init__(self, data, url_type):
+    def __init__(self, data, session):
         super().__init__(data)
+        self.session = session
         self.title = data['title']
 
         self.pages = {s: Page(s, p, self) for s, p in data['pages'].items()}
@@ -374,6 +380,8 @@ class Session(Model):
         return None
 
     def get_edit_path(self, run, coverpage):
+        # XXX
+        return None
         coverpage_path = self.path / "sessions" / self.slug / (coverpage + ".md")
         if coverpage_path.exists():
             return coverpage_path.relative_to(self.root.path)
@@ -381,6 +389,8 @@ class Session(Model):
         return run.edit_path
 
     def get_coverpage_content(self, run, coverpage, app):
+        # XXX
+        return ""
         coverpage += ".md"
         q = self.path / 'sessions' / self.slug / coverpage
 
@@ -435,9 +445,10 @@ class CourseMixin:
 
 class Course(CourseMixin, Model):
     """A course – ordered collection of sessions"""
-    def __init__(self, slug):
+    def __init__(self, slug, root):
         self.data = naucse_render.get_course(slug, version=1)
         self.data['slug'] = slug
+        self.root = root
         self.sessions = _get_sessions(self, self.data['sessions'])
 
     def __str__(self):
@@ -668,7 +679,7 @@ class RunYear:
         return str(self.year)
 
 
-class License(Model):
+class License(YamlModel):
     def __str__(self):
         return self.path.parts[-1]
 
@@ -760,7 +771,7 @@ class Root(YamlModel):
             for course_path in path.iterdir():
                 yaml_path = course_path / 'info.yml'
                 if yaml_path.is_file():
-                    yield Course(f'{base}/{course_path.stem}')
+                    yield Course(f'{base}/{course_path.stem}', self)
 
         self.courses = {
             c.slug: c for c in _get_courses('courses', self.path / 'courses')

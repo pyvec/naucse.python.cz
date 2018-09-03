@@ -6,7 +6,7 @@ import click
 import elsa
 
 from naucse.utils.views import forks_enabled, does_course_return_info
-from naucse.views import app, lesson_static_generator
+from naucse.views import app
 
 from naucse.freezer import NaucseFreezer
 
@@ -104,8 +104,5 @@ def main():
     logger.addHandler(get_handler(naucse_log_path))
 
     freezer = NaucseFreezer(app)
-
-    # see the generator for details
-    freezer.register_generator(lesson_static_generator)
 
     cli(app, base_url='https://naucse.python.cz', freezer=freezer)

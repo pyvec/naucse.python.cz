@@ -16,12 +16,13 @@ def get_recent_runs(course):
     (Note: even if naucse is hosted dynamically,
     it's still beneficial to show recently ended runs.)
     """
+    from naucse.views import model
     recent_runs = []
     if not course.start_date:
         today = datetime.date.today()
         cutoff = today - datetime.timedelta(days=2*30)
         this_year = today.year
-        for year, run_year in reversed(course.root.run_years.items()):
+        for year, run_year in reversed(list(model.run_years.items())):
             for run in run_year.runs.values():
                 if not run.is_link() or (forks_enabled() and does_course_return_info(run, ["start_date", "end_date"])):
                     if run.base_course is course and run.end_date > cutoff:

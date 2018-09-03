@@ -28,8 +28,8 @@ class CourseConverter(ModelConverter):
 
     def to_python(self, value):
         year, slug = value.split('/')
-        if year == "course":
-            return self.model.courses[slug]
+        if year in ('course', 'courses'):
+            return self.model.courses['courses/' + slug]
         else:
             runs = self.model.runs
             try:
@@ -38,15 +38,17 @@ class CourseConverter(ModelConverter):
                 abort(404)
 
     def to_url(self, value):
-        if isinstance(value, str):
-            if "/" not in value:  # XXX
-                value = "course/"+value
-            value = self.to_python(value)
-
         # the converter can be called with a dict mimicking a course
         if isinstance(value, dict):
-            return value["slug"]
+            value = value["slug"]
 
+        if isinstance(value, str):
+            if "/" not in value:  # XXX
+                value = "course/" + value
+            value = self.to_python(value)
+
+        if value.slug.startswith('courses/'):
+            return value.slug.replace('courses/', 'course/', 1)
         return value.slug
 
 
