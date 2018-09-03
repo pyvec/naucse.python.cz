@@ -31,8 +31,9 @@ class CourseConverter(ModelConverter):
         if year == "course":
             return self.model.courses[slug]
         else:
+            runs = self.model.runs
             try:
-                return self.model.runs[int(year), slug]
+                return runs[int(year), slug]
             except KeyError:
                 abort(404)
 

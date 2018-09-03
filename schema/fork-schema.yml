@@ -124,7 +124,7 @@ definitions:
         properties:
             title: {$ref: '#/definitions/title'}
             type: {$ref: '#/definitions/material_type'}
-            lesson:
+            slug:
                 type: string
                 description: |
                     Slug of a lesson on naucse
@@ -142,10 +142,9 @@ definitions:
 
         anyOf:
           - description: A lesson on Naucse
-            required: [lesson, pages]
+            required: [slug, pages]
           - description: Non-Naucse material
             allOf:
-              - not: {required: ['lesson']}
               - not: {required: ['pages']}
 
     Page:
@@ -156,7 +155,6 @@ definitions:
             Page of content hosted on naucse
         properties:
             title: {$ref: '#/definitions/title'}
-            lesson: {$ref: '#/definitions/lesson_slug'}
             slug: {$ref: '#/definitions/slug'}
             render_call: {$ref: '#/definitions/RenderCall'}
             attribution:
@@ -173,7 +171,7 @@ definitions:
                     URL of the rendered content
                 format: uri
                 readOnly: true
-        required: [title, lesson, slug, render_call, license]
+        required: [title, slug, render_call, license]
 
     License:
         type: string

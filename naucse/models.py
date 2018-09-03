@@ -3,6 +3,7 @@ import re
 from collections import OrderedDict
 from operator import attrgetter
 import datetime
+from pathlib import Path
 
 import cssutils
 import dateutil.tz
@@ -12,17 +13,22 @@ from arca import Task
 from git import Repo
 
 import naucse.utils.views
-from naucse.utils.models import Model, YamlProperty, DataProperty, DirProperty, MultipleModelDirProperty, ForkProperty
+from naucse.utils.models import YamlModel, YamlProperty, DataProperty, DirProperty, MultipleModelDirProperty, ForkProperty
 from naucse.utils.models import reify, arca
 from naucse.validation import AllowedElementsParser
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.utils.markdown import convert_markdown
 from naucse.utils.notebook import convert_notebook
-from pathlib import Path
+import naucse_render
 
 
 _TIMEZONE = 'Europe/Prague'
 allowed_elements_parser = AllowedElementsParser()
+
+
+class Model:
+    def __init__(self, *, data):
+        self.data = data
 
 
 class Lesson(Model):
@@ -30,9 +36,7 @@ class Lesson(Model):
     def __str__(self):
         return '{} - {}'.format(self.slug, self.title)
 
-    info = YamlProperty()
-
-    title = DataProperty(info)
+    title = DataProperty()
 
     @reify
     def slug(self):
@@ -52,14 +56,10 @@ class Lesson(Model):
 
 class Page(Model):
     """A (sub-) page of a lesson"""
-    def __init__(self, lesson, slug, *infos):
+    def __init__(self, slug, data, lesson):
+        super().__init__(data=data)
         self.slug = slug
-        self.info = {}
-        for i in infos:
-            self.info.update(i)
         self.lesson = lesson
-        path = lesson.path.joinpath('{}.{}'.format(slug, self.info['style']))
-        super().__init__(lesson.root, path)
 
     def __str__(self):
         return '{}/{}'.format(self.lesson.slug, self.slug)
@@ -223,26 +223,25 @@ class Collection(Model):
     lessons = DirProperty(Lesson)
 
 
-def material(root, path, info):
-    if "lesson" in info:
-        lesson = root.get_lesson(info['lesson'])
-        page = lesson.pages[info.get("page", "index")]
-        return PageMaterial(root, path, page, info.get("type", "lesson"), info.get("title"))
-    elif "url" in info:
-        url = info["url"]
+def material(data, session):
+    if "pages" in data:
+        data.setdefault('type', 'lesson')
+        return LessonMaterial(data, session)
+    elif "url" in data:
+        url = data["url"]
         if url:
-            return UrlMaterial(root, path, url, info["title"], info.get("type"))
+            return UrlMaterial(data, session)
         else:
-            return SpecialMaterial(root, path, info["title"], info.get("type"))
+            return SpecialMaterial(data, session)
     else:
-        raise ValueError("Unknown material type: {}".format(info))
+        raise ValueError("Unknown material type: {}".format(data))
 
 
 class Material(Model):
     """A link – either to a lesson, or an external URL"""
-    def __init__(self, root, path, url_type):
-        super().__init__(root, path)
-        self.url_type = url_type
+    def __init__(self, data):
+        super().__init__(data=data)
+        self.url_type = data['type']
         self.prev = None
         self.next = None
         # prev and next is set later
@@ -251,27 +250,17 @@ class Material(Model):
         return self.title
 
 
-class PageMaterial(Material):
+class LessonMaterial(Material):
     type = "page"
     has_navigation = True
+    default_url_type = 'lesson'
 
-    def __init__(self, root, path, page, url_type, title=None, subpages=None):
-        super().__init__(root, path, url_type)
-        self.page = page
-        self.title = title or page.title
+    def __init__(self, data, url_type):
+        super().__init__(data)
+        self.title = data['title']
 
-        if subpages is None:
-            self.subpages = {}
-
-            for slug, subpage in page.lesson.pages.items():
-                if slug == self.page.slug:
-                    item = self
-                else:
-                    item = PageMaterial(root, path, subpage, url_type,
-                                        subpages=self.subpages)
-                self.subpages[slug] = item
-        else:
-            self.subpages = subpages
+        self.pages = {s: Page(s, p, self) for s, p in data['pages'].items()}
+        self.slug = data['slug']
 
     def set_prev_next(self, prev, next):
         for slug, subpage in self.subpages.items():
@@ -282,6 +271,11 @@ class PageMaterial(Material):
                 subpage.prev = self
                 subpage.next = next
 
+    @property
+    def page(self):
+        # XXX: unneeded
+        return self.pages['index']
+
 
 class UrlMaterial(Material):
     prev = None
@@ -289,10 +283,10 @@ class UrlMaterial(Material):
     type = "url"
     has_navigation = False
 
-    def __init__(self, root, path, url, title, url_type):
-        super().__init__(root, path, url_type)
-        self.url = url
-        self.title = title
+    def __init__(self, data, session):
+        super().__init__(data)
+        self.url = data['url']
+        self.title = data['title']
 
 
 class SpecialMaterial(Material):
@@ -301,41 +295,9 @@ class SpecialMaterial(Material):
     type = "special"
     has_navigation = False
 
-    def __init__(self, root, path, title, url_type):
-        super().__init__(root, path, url_type)
-        self.title = title
-
-
-def merge_dict(base, patch):
-    """Recursively merge `patch` into `base`
-
-    If a key exists in both `base` and `patch`, then:
-    - if the values are dicts, they are merged recursively
-    - if the values are lists, the value from `patch` is used,
-      but if the string `'+merge'` occurs in the list, it is replaced
-      with the value from `base`.
-    """
-
-    result = dict(base)
-
-    for key, value in patch.items():
-        if key not in result:
-            result[key] = value
-            continue
-
-        previous = base[key]
-        if isinstance(value, dict):
-            result[key] = merge_dict(previous, value)
-        elif isinstance(value, list):
-            result[key] = new = []
-            for item in value:
-                if item == '+merge':
-                    new.extend(previous)
-                else:
-                    new.append(item)
-        else:
-            result[key] = value
-    return result
+    def __init__(self, data, session):
+        super().__init__(data)
+        self.title = data['title']
 
 
 def time_from_string(time_string):
@@ -348,27 +310,28 @@ def time_from_string(time_string):
 
 class Session(Model):
     """An ordered collection of materials"""
-    def __init__(self, root, path, base_course, info, index, course=None):
-        super().__init__(root, path)
-        base_name = info.get('base')
+    def __init__(self, data, index, course=None):
+        date = data.get('date')
+        if date:
+            data['date'] = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+
+        super().__init__(data=data)
         self.index = index
         self.course = course
-        if base_name is None:
-            self.info = info
-        else:
-            base = base_course.sessions[base_name].info
-            self.info = merge_dict(base, info)
+
+        self.materials = [material(s, self)
+                          for s in data['materials']]
+        # XXX: Add prev/next
+
         # self.prev and self.next are set later
 
     def __str__(self):
         return self.title
 
-    info = YamlProperty()
-
-    title = DataProperty(info)
-    slug = DataProperty(info)
-    date = DataProperty(info, default=None)
-    description = DataProperty(info, default=None)
+    title = DataProperty()
+    slug = DataProperty()
+    date = DataProperty(default=None)
+    description = DataProperty(default=None)
 
     def _time(self, time):
         if self.date and time:
@@ -410,19 +373,6 @@ class Session(Model):
             return self._time(self.course.default_end_time)
         return None
 
-    @reify
-    def materials(self):
-        materials = [material(self.root, self.path, s)
-                     for s in self.info['materials']]
-        materials_with_nav = [mat for mat in materials if mat.has_navigation]
-        for prev, current, next in zip([None] + materials_with_nav,
-                                       materials_with_nav,
-                                       materials_with_nav[1:] + [None]
-                                       ):
-            current.set_prev_next(prev, next)
-
-        return materials
-
     def get_edit_path(self, run, coverpage):
         coverpage_path = self.path / "sessions" / self.slug / (coverpage + ".md")
         if coverpage_path.exists():
@@ -444,11 +394,10 @@ class Session(Model):
         return html_content
 
 
-def _get_sessions(course, plan):
+def _get_sessions(course, sessions):
     result = OrderedDict()
-    for index, sess_info in enumerate(plan):
-        session = Session(course.root, course.path, course.base_course,
-                          sess_info, index=index, course=course)
+    for index, sess_info in enumerate(sessions):
+        session = Session(sess_info, index=index, course=course)
         result[session.slug] = session
 
     sessions = list(result.values())
@@ -470,13 +419,7 @@ class CourseMixin:
     """Methods common for both :class:`Course` and :class:`CourseLink`.
     """
 
-    @reify
-    def slug(self):
-        directory = self.path.parts[-1]
-        parent_directory = self.path.parts[-2]
-        if parent_directory == "courses":
-            parent_directory = "course"  # legacy URL
-        return parent_directory + "/" + directory
+    slug = DataProperty()
 
     @reify
     def is_meta(self):
@@ -492,21 +435,30 @@ class CourseMixin:
 
 class Course(CourseMixin, Model):
     """A course – ordered collection of sessions"""
+    def __init__(self, slug):
+        self.data = naucse_render.get_course(slug, version=1)
+        self.data['slug'] = slug
+        self.sessions = _get_sessions(self, self.data['sessions'])
+
     def __str__(self):
         return '{} - {}'.format(self.slug, self.title)
 
-    info = YamlProperty()
-    title = DataProperty(info)
-    description = DataProperty(info)
-    long_description = DataProperty(info)
+    # XXX
+    is_meta = False
+    base_course = None
+
+    #info = YamlProperty()
+    title = DataProperty()
+    description = DataProperty()
+    long_description = DataProperty()
 
     # none of the variables are required, so empty ``vars:`` should not be required either
-    vars = DataProperty(info, default=(), convert=dict)
-    subtitle = DataProperty(info, default=None)
-    time = DataProperty(info, default=None)
-    place = DataProperty(info, default=None)
+    vars = DataProperty(default=(), convert=dict)
+    subtitle = DataProperty(default=None)
+    time = DataProperty(default=None)
+    place = DataProperty(default=None)
 
-    canonical = DataProperty(info, default=False)
+    canonical = DataProperty(default=False)
 
     data_filename = "info.yml"  # for MultipleModelDirProperty
 
@@ -526,19 +478,9 @@ class Course(CourseMixin, Model):
         return self.info.get("derives")
 
     @reify
-    def base_course(self):
-        name = self.info.get('derives')
-        if name is None:
-            return None
-        return self.root.courses[name]
-
-    @reify
-    def sessions(self):
-        return _get_sessions(self, self.info['plan'])
-
-    @reify
     def edit_path(self):
-        return self.path.relative_to(self.root.path) / "info.yml"
+        # XXX
+        return None
 
     @reify
     def start_date(self):
@@ -555,7 +497,7 @@ class Course(CourseMixin, Model):
         return max(dates)
 
     def _default_time(self, key):
-        default_time = self.info.get('default_time')
+        default_time = self.data.get('default_time')
         if default_time:
             return time_from_string(default_time[key])
         return None
@@ -589,7 +531,7 @@ def optional_convert_time(timestr):
         return None
 
 
-class CourseLink(CourseMixin, Model):
+class CourseLink(CourseMixin, YamlModel):
     """A link to a course from a separate git repo.
     """
 
@@ -716,12 +658,14 @@ class CourseLink(CourseMixin, Model):
         return self.path.relative_to(self.root.path) / "link.yml"
 
 
-class RunYear(Model):
+class RunYear:
     """A year of runs"""
-    def __str__(self):
-        return self.path.parts[-1]
+    def __init__(self, year, runs):
+        self.year = year
+        self.runs = runs
 
-    runs = MultipleModelDirProperty([Course, CourseLink])
+    def __str__(self):
+        return str(self.year)
 
 
 class License(Model):
@@ -807,14 +751,31 @@ class MetaInfo:
             return self._default_branch
 
 
-class Root(Model):
+class Root(YamlModel):
     """The base of the model"""
     def __init__(self, path):
         super().__init__(self, path)
 
+        def _get_courses(base, path):
+            for course_path in path.iterdir():
+                yaml_path = course_path / 'info.yml'
+                if yaml_path.is_file():
+                    yield Course(f'{base}/{course_path.stem}')
+
+        self.courses = {
+            c.slug: c for c in _get_courses('courses', self.path / 'courses')
+        }
+        self.run_years = {
+            int(p.stem): RunYear(
+                int(p.stem),
+                {c.slug.split('/')[-1]: c for c in _get_courses(int(p.stem), p)}
+            )
+            for p in sorted((self.path / 'runs').iterdir())
+        }
+
     collections = DirProperty(Collection, 'lessons')
-    courses = MultipleModelDirProperty([Course, CourseLink], 'courses')
-    run_years = DirProperty(RunYear, 'runs', keyfunc=int)
+    #courses = MultipleModelDirProperty([Course, CourseLink], 'courses')
+    #run_years = DirProperty(RunYear, 'runs', keyfunc=int)
     licenses = DirProperty(License, 'licenses')
     courses_edit_path = Path("courses")
     runs_edit_path = Path("runs")

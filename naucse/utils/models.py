@@ -34,7 +34,7 @@ def arca():
 NOTHING = object()
 
 
-class Model:
+class YamlModel:
     def __init__(self, root, path):
         self.root = root
         self.path = Path(path)
@@ -127,7 +127,7 @@ class DataProperty:
     If ``key`` is not given, this property's name is used.
     ``convert`` can be used to convert the value to something else.
     """
-    def __init__(self, dict_prop, *, key=NOTHING, default=NOTHING, convert=NOTHING):
+    def __init__(self, dict_prop='data', *, key=NOTHING, default=NOTHING, convert=NOTHING):
         self.dict_prop = dict_prop
         self.key = key
         self.default = default
@@ -136,13 +136,20 @@ class DataProperty:
     def __set_name__(self, cls, name):
         self.name = name
 
+    @property
+    def dict_attr(self):
+        if isinstance(self.dict_prop, str):
+            return self.dict_prop
+        else:
+            return self.dict_prop.name
+
     def __get__(self, instance, cls):
         if instance is None:
             return self
         key = self.key
         if key is NOTHING:
             key = self.name
-        info = getattr(instance, self.dict_prop.name)
+        info = getattr(instance, self.dict_attr)
         if self.default is NOTHING:
             val = info[key]
         else:

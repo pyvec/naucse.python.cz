@@ -56,7 +56,7 @@ def get_course(course_slug: str, *, version: int) -> dict:
 
     parts = course_slug.split('/')
     if len(parts) == 2:
-        if parts[0] == "course":
+        if parts[0] == "courses":
             info = read_yaml('courses', parts[1], 'info.yml')
         else:
             info = read_yaml('runs', *parts, 'info.yml')
@@ -65,7 +65,11 @@ def get_course(course_slug: str, *, version: int) -> dict:
 
     info['version'] = 1, 1
 
-    base_slug = info.pop('derives')
+    # XXX: Do we need these?
+    info.pop('meta', None)
+    info.pop('canonical', None)
+
+    base_slug = info.pop('derives', None)
     if base_slug:
         base_course = read_yaml('courses', base_slug, 'info.yml')
     else:
@@ -86,9 +90,14 @@ def get_course(course_slug: str, *, version: int) -> dict:
                 raise ValueError(f'Session {session} not found in base course')
             session.update(merge_dict(base_session, session))
         for material in session['materials']:
-            lesson_slug = material.get('lesson')
+            lesson_slug = material.pop('lesson', None)
             if lesson_slug:
-                update_lesson(material, lesson_slug, vars=info['vars'])
+                update_lesson(material, lesson_slug, vars=info.get('vars', {}))
+            else:
+                if material.get('url'):
+                    material.setdefault('type', 'link')
+                else:
+                    material.setdefault('type', 'special')
 
     result = encode_dates(info)
     schema = read_yaml('schema/fork-schema.yml')
@@ -110,7 +119,6 @@ def update_lesson(material, lesson_slug, vars):
             'title': info['title'],
             'attribution': to_list(info['attribution']),
             'license': info['license'],
-            'lesson': lesson_slug,
             'slug': slug,
             'render_call': {
                 'entrypoint': 'naucse_render:render_page',
@@ -124,6 +132,7 @@ def update_lesson(material, lesson_slug, vars):
         pages[page['slug']] = page
 
     material['pages'] = pages
+    material['slug'] = lesson_slug
     material.setdefault('title', lesson_info['title'])
 
     # XXX: File edit path
