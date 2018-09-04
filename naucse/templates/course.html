@@ -1,4 +1,5 @@
 {% extends "_base_course.html" %}
+{% from "_material_macros.html" import material_list with context %}
 
 {% block breadcrumbs %}
 > {{ course.title }}
@@ -6,12 +7,38 @@
 
 {% block course_content %}
 <div class="row">
-    <div class="col-lg-8 {% if course.is_meta %}col-lg-12{% endif %}">
+    <div class="col-lg-8 {-% if course.is_meta %-}col-lg-12{-% endif %-}">
         {% block course_overview %}
-              {{ course_content|safe }}
+            <h1>{{ course.title }}</h1>
+            {% if course.place is not none and course.time is not none %}
+                <div class="details">{{course.place}}, {{course.time}}</div>
+            {% endif %}
+
+            {% if course.subtitle is defined and course.subtitle != None %}
+                <h2>{{ course.subtitle }}</h2>
+            {% endif%}
+
+            {{ course.long_description | markdown }}
+
+            {% for session in course.sessions.values() %}
+            <div class="section{{ loop.index }}">
+                <h4>
+                    {% if course.sessions|length > 1 %}
+                        Lekce {{ loop.index }} –
+                    {% endif %}
+                    <a href="{{ url_for('session', course=course, session_slug=session.slug) }}">
+                        {{ session.title }}
+                    </a>
+                    {% if session.date %}
+                        <small>({{ session.date | format_date }})</small>
+                    {% endif %}
+                </h4>
+                {{ material_list(session.materials) }}
+            </div>
+            {% endfor %}
         {% endblock %}
     </div>
-    <div class="{% if not course.is_meta %}col-lg-4{% endif %}">
+    <div class="{-% if not course.is_meta %-}col-lg-4{-% endif %-}">
         {% if course.start_date %}
             <div class="card course-card text-center">
                 <div class="card-header">
@@ -21,11 +48,11 @@
                     <div class="calendar-dates">
                         {{ (course.start_date, course.end_date) | format_date_range }}
                     </div>
-                    {% if course.default_start_time %}
+                    {% if course.default_time %}
                         <div class="default-times">
-                            {{ course.default_start_time | format_time }}
+                            {{ course.default_time['start'] | format_time }}
                             –
-                            {{ course.default_end_time | format_time }}
+                            {{ course.default_time['end'] | format_time }}
                         </div>
                     {% endif %}
                 </div>
@@ -34,7 +61,7 @@
                         <li>
                             <a href="{{ url_for('course_calendar', course=course) }}">→ Kalendář</a>
                         </li>
-                        {% if course.base_course %}
+                        {% if False %} {#course.base_course %#}
                         <li>
                             <a href="{{ course_url(course.base_course) }}">→ Ekvivalentní kurz pro samouky</a>
                         </li>
@@ -42,7 +69,7 @@
                     </ul>
                 </div>
             </div>
-        {% elif not course.is_meta %}
+        {% else %} if not course.is_meta %-}
             <div class="card course-card">
                 <div class="card-header text-center">
                     Toto jsou materiály pro samouky

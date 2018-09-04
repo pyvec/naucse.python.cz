@@ -7,12 +7,20 @@ render info for items.
 
 from pathlib import Path
 import datetime
+import functools
 
 import yaml
 import jsonschema
 
 
 API_VERSION = 1
+
+
+@functools.lru_cache()
+def _read_yaml(path):
+    print('Loading', path, 'really')
+    with path.open(encoding='utf-8') as f:
+        return yaml.safe_load(f)
 
 
 def read_yaml(*path_parts):
@@ -24,8 +32,8 @@ def read_yaml(*path_parts):
     if base_path not in yaml_path.parents:
         raise ValueError(f'Invalid course path')
 
-    with yaml_path.open(encoding='utf-8') as f:
-        return yaml.safe_load(f)
+    print('Loading', yaml_path)
+    return _read_yaml(yaml_path)
 
 
 def to_list(value):
@@ -55,11 +63,10 @@ def get_course(course_slug: str, *, version: int) -> dict:
         raise ValueError(f'Version {version} is not supported')
 
     parts = course_slug.split('/')
-    if len(parts) == 2:
-        if parts[0] == "courses":
-            info = read_yaml('courses', parts[1], 'info.yml')
-        else:
-            info = read_yaml('runs', *parts, 'info.yml')
+    if len(parts) == 1 or (len(parts) == 2 and parts[0] == 'courses'):
+        info = read_yaml('courses', parts[-1], 'info.yml')
+    elif len(parts) == 2:
+        info = read_yaml('runs', *parts, 'info.yml')
     else:
         raise ValueError(f'Invalid course slug')
 

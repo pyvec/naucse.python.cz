@@ -3,11 +3,11 @@
 {%- macro icon_for_material(material) -%}
     {%- if material.type == 'page' -%}
         {{- bytesize_icon('chevron-right') -}}
-    {%- elif material.url_type == 'cheatsheet' -%}
+    {%- elif material.type == 'cheatsheet' -%}
         {{- bytesize_icon('eye') -}}
-    {%- elif material.url_type == 'homework' -%}
+    {%- elif material.type == 'homework' -%}
         {{- bytesize_icon('edit') -}}
-    {%- elif material.url_type == 'special' -%}
+    {%- elif material.type == 'special' -%}
         {{- bytesize_icon('flag') -}}
     {%- else %}
         {{- bytesize_icon('link') -}}
@@ -17,16 +17,18 @@
 {%- macro material_li(material) %}
     <li>
         {% if material.type == "page" %}
-            {% set url=lesson_url(lesson=material.slug, page=material.page.slug) %}
+            {% set url=None%}{#page(course=course,
+                            lesson_slug=material.lesson.slug,
+                            page='index') #}
         {% else %}
             {% set url=material.url %}
         {% endif %}
-        {% if url is defined %}
+        {% if url %}
         <a href="{{ url }}">
         {% endif %}
             {{- icon_for_material(material) -}}
             {{- material.title -}}
-        {% if url is defined %}
+        {% if url %}
         </a>
         {% endif %}
     </li>
@@ -35,7 +37,7 @@
 {%- macro material_list(materials, filter_type=None) %}
     <ul class="material-list">
         {% for mat in materials %}
-            {% if filter_type == None or mat.url_type == filter_type %}
+            {% if filter_type == None or mat.type == filter_type %}
                 {{ material_li(mat) }}
             {% endif %}
         {% endfor %}
