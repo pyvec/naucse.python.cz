@@ -44,7 +44,7 @@ Odsazování
 
 Obarvování
 :   Ačkoli nemůžeme u jednotlivých písmenek nastavovat barvu přímo, editor nám
-    obarvením může napovědět, jak našim instrukcím bude počítač rozumnět.
+    obarvením může napovědět, jak našim instrukcím bude počítač rozumět.
     Ale je to jenom nápověda:
     programátor s jinak nastaveným editorem může mít stejný soubor obarvený
     docela jinak.
