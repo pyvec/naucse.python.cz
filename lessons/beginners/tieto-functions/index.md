@@ -56,7 +56,7 @@ You can then access the documentation of the function like this:
 'Multiplication of the number x.'
 ```
 
-> [note] \_\_doc\_\_ is a function attribute.
+> [note] __doc__ is a function attribute.
 
 ### The return statement
 
@@ -150,16 +150,52 @@ def plus(a, b):
 If you want to make sure that you call all the parameters in the right order, you can use the keyword arguments in your function call. You use these to identify the arguments by their parameter name.
 
 ```
-def plus(a, b):
-  return a + b
-  
-# Call `plus()` function with parameters 
-plus(2, 3)
-
-# Call `plus()` function with keyword arguments
-plus(a=1, b=2)
+def  hello_1(greeting, name):
+     print('{}, {}!'.format(greeting, name))
 ```
 
+```
+>>> hello_1(greeting='Hello', name='world')
+Hello, world!
+>>> hello_1(name='world', greeting="Hello")
+Hello, world!
+```
+
+### Variable Number of Arguments
+
+In cases where you don’t know the exact number of arguments that you want to pass to a function, you can use the following syntax with *args:
+
+```
+# Define `plus()` function to accept a variable number of arguments
+def plus(*args):
+  return sum(args)
+
+# Calculate the sum
+>>> plus(1,4,5)
+10
+```
+
+### Global vs Local Variables
+In general, variables that are defined inside a function body have a local scope, and those defined outside have a global scope. That means that local variables are defined within a function block and can only be accessed inside that function, while global variables can be accessed by all functions that might be in your script:
+
+```
+# Global variable `init`
+init = 1
+
+# Define `plus()` function to accept a variable number of arguments
+def plus(*args):
+  # Local variable `sum()`
+  total = 0
+  for i in args:
+    total += i
+  return total
+  
+# Access the global variable
+print("this is the initialized value " + str(init))
+
+# (Try to) access the local variable
+print("this is the sum " + str(total))
+```
 
 ### Anonymous Functions
 
