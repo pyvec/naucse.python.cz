@@ -175,6 +175,43 @@ def plus(*args):
 10
 ```
 
+### Usage of *args
+
+
+*args and **kwargs are mostly used in function definitions. *args and **kwargs allow you to pass a variable number of arguments to a function. What does variable mean here is that you do not know before hand that how many arguments can be passed to your function by the user so in this case you use these two keywords. *args is used to send a non-keyworded variable length argument list to the function.
+
+```
+def test_var_args(f_arg, *argv):
+    print "first normal arg:", f_arg
+    for arg in argv:
+        print "another arg through *argv :", arg
+
+test_var_args('yasoob','python','eggs','test')
+```
+
+```
+first normal arg: yasoob
+another arg through *argv : python
+another arg through *argv : eggs
+another arg through *argv : test
+```
+
+### Usage of **kwargs
+
+\**kwargs allows you to pass keyworded variable length of arguments to a function. You should use \**kwargs if you want to handle named arguments in a function. 
+
+```
+def greet_me(**kwargs):
+    if kwargs is not None:
+        for key, value in kwargs.iteritems():
+            print "%s == %s" %(key,value)
+```
+
+```
+>>> greet_me(name="yasoob")
+name == yasoob
+```
+
 ### Global vs Local Variables
 In general, variables that are defined inside a function body have a local scope, and those defined outside have a global scope. That means that local variables are defined within a function block and can only be accessed inside that function, while global variables can be accessed by all functions that might be in your script:
 
