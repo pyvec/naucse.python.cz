@@ -73,6 +73,7 @@ return [expression_list]
 **Build-in**
 
 chr()	-	Returns a Character (a string) from an Integer
+
 dict()	-	Creates a Dictionary
 ...
 
@@ -204,7 +205,7 @@ another arg through *argv : test
 def greet_me(**kwargs):
     if kwargs is not None:
         for key, value in kwargs.iteritems():
-            print "%s == %s" %(key,value)
+            print("%s == %s" %(key,value))
 ```
 
 ```
