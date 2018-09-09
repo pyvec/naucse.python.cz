@@ -17,7 +17,12 @@ Vše potřebné si můžeš připomenout v [návodu na používání terminálu]
 
 ## Instalace
 
-Nejprve musíš naklonovat repozitář, ze kterého se Nauč se Python vykresluje.
+Nauč se Python používá k definici závislostí Pipenv, který si nejspíš budeš muset doinstalovat. 
+Postupovat můžeš podle [návodu na instalaci Pipenvu][pipenv-install].
+
+[pipenv-install]: https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv
+
+Po instalaci si musíš naklonovat repozitář, ze kterého se Nauč se Python vykresluje.
 To uděláš tímto příkazem:
 
 ```console
@@ -30,38 +35,21 @@ Poté přepni adresář do naklonovaného repozitáře:
 $ cd naucse.python.cz
 ```
 
-A vytvoř si v něm virtuální prostředí – pokud nevíš jak na to, můžeš se podívat do výše zmíněného [návodu na instalaci Pythonu][beginners-install].
-Virtuální prostředí si rovnou aktivuj.
-
-Poslední krok instalace je nainstalování závislostí, tedy potřebných knihoven uvedených v souboru `requirements.txt`:
+Zbývá už jen nainstalovat závislosti, to uděláš pomocí následujícího příkazu, který za tebe zároveň i vytvoří virtualenv.
 
 ```console
-(__venv__)$ python -m pip install -r requirements.txt
+$ pipenv install
 ```
 
 {{ anchor('launch') }}
 ## Spuštění
-
-Teď, když máš webovou aplikaci Nauč se Python nainstalovanou, stačí už ji jen pustit.
-Nejdříve si musíš nastavit proměnou prostředí.
-Na Unixu (Linux, macOS):
-
-```console
-(__venv__)$ export PYTHONPATH=.
-```
-
-Na Windows:
-
-```dosvenv
-(__venv__)> set PYTHONPATH=.
-```
 
 Nauč se Python jde pustit ve dvou režimech.
 První režim vykresluje každou stránku pokaždé znova – hodí se na vývoj, aby byly všechny změny okamžitě vidět.
 Pustí se následovně:
 
 ```console
-(__venv__)$ python -m naucse serve
+$ pipenv run serve
  * Running on http://0.0.0.0:8003/ (Press CTRL+C to quit)
  * Restarting with stat
  * Debugger is active!
@@ -75,7 +63,7 @@ Druhý režim nejdříve vykreslí všechny stránky a až poté ti je zobrazí 
 Pustí se následovně (pozor, nějakou chvíli to trvá):
 
 ```console
-(__venv__)$ python -m naucse freeze --serve
+$ pipenv run naucse freeze --serve
 Generating HTML...
  * Running on http://127.0.0.1:8003/ (Press CTRL+C to quit)
 ```
