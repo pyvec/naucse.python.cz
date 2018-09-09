@@ -35,7 +35,7 @@ Poté přepni adresář do naklonovaného repozitáře:
 $ cd naucse.python.cz
 ```
 
-Zbývá už jen nainstalovat závislosti, to uděláš pomocí následujícího příkazu, který za tebe zároveň i vytvoří virtualenv.
+Zbývá už jen nainstalovat závislosti, to uděláš pomocí následujícího příkazu, který za tebe zároveň i vytvoří virtuální prostředí.
 
 ```console
 $ pipenv install
