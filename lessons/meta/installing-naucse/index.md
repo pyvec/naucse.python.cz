@@ -49,7 +49,7 @@ První režim vykresluje každou stránku pokaždé znova – hodí se na vývoj
 Pustí se následovně:
 
 ```console
-$ pipenv run serve
+$ pipenv run naucse serve
  * Running on http://0.0.0.0:8003/ (Press CTRL+C to quit)
  * Restarting with stat
  * Debugger is active!
