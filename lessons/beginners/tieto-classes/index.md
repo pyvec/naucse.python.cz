@@ -8,8 +8,10 @@ Sometimes an object comes in many types or forms. If we have a button, there are
 
 Polymorphism is based on the greek words Poly (many) and morphism (forms).
 
-
-![Polymorphism](polymorphism.png)
+{{ figure(
+     img=static('polymorphism.png'),
+     alt='Polymorphism',)
+}}
 
 ### Encapsulation
 
@@ -17,7 +19,10 @@ Encapsulation is the principle of hiding unnecessary details from the rest of th
 
 In an object oriented python program, you can restrict access to methods and variables. This can prevent the data from being modified by accident and is known as encapsulation. 
 
-![Encapsulation](encapsulation.png)
+{{ figure(
+     img=static('encapsulation.png'),
+     alt='Encapsulation',)
+}}
 
 ```
 #!/usr/bin/env python
@@ -84,7 +89,10 @@ Programming Python
 
 All objects belong to a class and are said to be instances of that class.
 
-![Python Class](python-class.png)
+{{ figure(
+     img=static('python-class.png'),
+     alt='Python Class',)
+}}
 
 ```
 class Animal:
