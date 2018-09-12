@@ -1,4 +1,4 @@
-## Modules, packages and others
+## Modules and stuff
 
 Any Python program can be imported as a module. 
 
@@ -122,7 +122,7 @@ export PYTHONPATH=$PYTHONPATH:∼/python
 
 To structure your modules, you can group them into packages. A package is basically just another type of module. The interesting thing about them is that they can contain other modules.
 
-While a module is stored in a file (with the file name extension .py), a package is a directory. To make Python treat it as a package, it must contain a file named __init__.py.
+While a module is stored in a file (with the file name extension .py), a package is a directory. To make Python treat it as a package, it must contain a file named \_\_init__.py.
 
 Simple example:
 
@@ -131,7 +131,7 @@ Simple example:
 |---|---|
 | ∼/python/  |  Directory in PYTHONPATH |
 | ∼/python/drawing/  | Package directory (drawing package)  |
-| ∼/python/drawing/__init__.py  |  Package code (drawing module) |
+| ∼/python/drawing/\_\_init__.py  |  Package code (drawing module) |
 |  ∼/python/drawing/colors.py |  colors module |
 |  ∼/python/drawing/shapes.py |  shapes module |
 
