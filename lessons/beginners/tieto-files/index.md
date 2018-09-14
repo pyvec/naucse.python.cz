@@ -79,7 +79,7 @@ print('Wordcount:', wordcount)
 Command:
 
 ```
-cat somefile.txt | python somescript.py | sort
+cat somefile.txt | python somescript.py
 Wordcount: 12
 ```
 
