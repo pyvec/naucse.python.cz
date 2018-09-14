@@ -108,7 +108,7 @@ The method tell() returns the current file position.
 >>> f.read(2)
 '34'
 >>> f.tell()
-                    5      
+5      
 ```
 
 ### Closing files
