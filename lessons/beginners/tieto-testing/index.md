@@ -288,6 +288,12 @@ OK
 
 #### pytest
 
+First, you have to install pytest:
+
+```
+pip install pytest
+```
+
 Unit test counterpart code:
 
 ```
