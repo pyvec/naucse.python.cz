@@ -153,6 +153,12 @@ test_strings_a_3 (__main__.TestUM) ... ok
 Nose’s tagline is “nose extends unittest to make testing easier”.
 It’s is a fairly well known python unit test framework, and can run doctests, unittests, and “no boilerplate” tests.
 
+You have to install nose:
+
+```
+pip install nose
+```
+
 Example:
 
 **test_um_nose.py**
