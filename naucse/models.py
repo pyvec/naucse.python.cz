@@ -3,6 +3,7 @@ from functools import singledispatch
 import textwrap
 
 import attr
+from attr import NOTHING
 import dateutil.tz
 
 import naucse_render
@@ -11,21 +12,161 @@ import naucse_render
 _TIMEZONE = 'Europe/Prague'
 
 
-def load_dict(cls, data):
-    kwargs = {}
-    for attribute in attr.fields(cls):
-        construct = attribute.metadata.get('naucse.construct')
-        if construct:
-            kwargs[attribute.name] = construct(kwargs, data)
-        elif attribute.name not in data and attribute.default is not attr.NOTHING:
-            kwargs[attribute.name] = attribute.default
-        elif attribute.name not in data and attribute.metadata.get('naucse.default', attr.NOTHING) is not attr.NOTHING:
-            kwargs[attribute.name] = attribute.metadata['naucse.default']
+#def field(
+        #data_key=NOTHING,
+        #load=NOTHING,
+        #convert=NOTHING,
+        #default=NOTHING,
+        #factory=NOTHING,
+        #get_default=NOTHING,
+        #dump=NOTHING,
+        #unconvert=NOTHING,
+        #schema=NOTHING,
+        #doc=NOTHING,
+        #repr=True,
+    #):
+    #return attr.ib(
+        #repr=repr,
+        ##XXX: kw_only=True,
+        #metadata={k: v for k, v in {
+            #'naucse.data_key': data_key,
+            #'naucse.load': load,
+            #'naucse.default': default,
+            #'naucse.factory': factory,
+            #'naucse.get_default': get_default,
+            #'naucse.dump': dump,
+            #'naucse.unconvert': unconvert,
+            #'naucse.schema': schema,
+            #'naucse.doc': doc,
+        #}.items() if v is not NOTHING},
+    #)
+
+#def string_field(**kwargs):
+    #kwargs.setdefault('schema', {}).setdefault('type', 'string')
+    #return field(**kwargs)
+
+
+#def dict_field(item_type, **kwargs):
+    #schema = kwargs.setdefault('schema', {})
+    #schema.setdefault('type', 'object')
+    #schema.setdefault('properties',
+                      #{'$ref': f'#/definitions/{item_type.__name__}'})
+
+    #return field(**kwargs)
+
+
+models = {}
+
+
+class Model:
+    @classmethod
+    def load(cls, data, context):
+        instance = cls()
+        for name, field in cls._naucse__fields.items():
+            field.load(instance, data, None)
+        return instance
+
+    def dump(self, *args, **kwargs):  # XXX: context only?
+        return {}
+
+    def __init_subclass__(cls):
+        models[cls.__name__] = cls
+        cls._naucse__fields = {}
+        for attr_name, attr_value in list(vars(cls).items()):
+            if isinstance(attr_value, Field):
+                delattr(cls, attr_name)
+                cls._naucse__fields[attr_name] = attr_value
+        return cls
+
+
+class Field:
+    def __init__(self, optional=False, default=NOTHING, factory=None, doc=None):
+        if doc:
+            self.doc = doc
         else:
-            item = data[attribute.name]
-            loader = attribute.metadata.get('naucse.load', lambda i: i)
-            kwargs[attribute.name] = loader(item)
-    return cls(**kwargs)
+            self.doc = self.__doc__
+        self.optional = optional
+        self.default = default
+        self.factory = factory
+
+    def __set_name__(self, instance, name):
+        self.name = name
+
+    @property
+    def data_key(self):
+        return self.name
+
+    def load(self, instance, data, context):
+        value = self.construct(instance, data, context)
+        if value is not NOTHING:
+            setattr(instance, self.name, value)
+
+    def construct(self, instance, data, context):
+        try:
+            value = data[self.data_key]
+        except KeyError:
+            if self.optional:
+                return NOTHING
+            if self.factory:
+                return self.factory()
+            if self.default:
+                return self.default
+            raise
+        return value
+
+    def convert(self, instance, data, value, context):
+        return value
+
+    def dump(self, instance, data):
+        value = getattr(instance, self.name)
+        return self.unconvert(value)
+
+    def unconvert(self, value):
+        return value
+
+    @property
+    def schema(self):
+        return {}
+
+
+def field(**kwargs):
+    def _field_decorator(cls):
+        return cls(**kwargs)
+    return _field_decorator
+
+
+class StringField(Field):
+    @property
+    def schema(self):
+        return super().schema.update(type='string')
+
+
+class DictField(Field):
+    @property
+    def schema(self):
+        return super().schema.update(
+            type='object',
+            properties={'$ref': f'#/definitions/{item_type.__name__}'},
+        )
+
+
+def load_dict(cls, data):
+    return cls.load(data, None)
+#def load_dict(cls, data):
+#    kwargs = {}
+#    for attribute in attr.fields(cls):
+#        construct = attribute.metadata.get('naucse.construct')
+#        if construct:
+#            kwargs[attribute.name] = construct(kwargs, data)
+#        elif attribute.name not in data and attribute.default is not attr.NOTHING:
+#            kwargs[attribute.name] = attribute.default
+#        elif attribute.name not in data and attribute.metadata.get('naucse.default', attr.NOTHING) is not attr.NOTHING:
+#            kwargs[attribute.name] = attribute.metadata['naucse.default']
+#        else:
+#           item = data[attribute.name]
+#            loader = attribute.metadata.get('naucse.load', lambda i: i)
+#            kwargs[attribute.name] = loader(item)
+#    return cls(**kwargs)
 
 
 def load_list(cls, data, index_key=None):
@@ -35,31 +176,31 @@ def load_list(cls, data, index_key=None):
         return [load_dict(cls, item) for item in data]
 
 
-def field(default=attr.NOTHING, construct=None, doc=None):
-    schema = {}
-    if doc:
-        schema['description'] = textwrap.dedent(doc)
-    return attr.ib(
-        metadata={
-            'naucse.default': default,
-            'naucse.construct': construct,
-            'naucse.schema': schema,
-        }
-    )
+#def field(default=attr.NOTHING, construct=None, doc=None):
+#    schema = {}
+#    if doc:
+#        schema['description'] = textwrap.dedent(doc)
+#    return attr.ib(
+#        metadata={
+#            'naucse.default': default,
+#            'naucse.construct': construct,
+#            'naucse.schema': schema,
+#        }
+#    )
 
 
-def string_field(default=attr.NOTHING, construct=None, doc=None):
-    schema = {'type': 'string'}
-    if doc:
-        schema['description'] = textwrap.dedent(doc)
-    return attr.ib(
-        metadata={
-            'naucse.default': default,
-            'naucse.construct': construct,
-            'naucse.loader': str,
-            'naucse.schema': schema,
-        }
-    )
+#def string_field(default=attr.NOTHING, construct=None, doc=None):
+    #schema = {'type': 'string'}
+    #if doc:
+        #schema['description'] = textwrap.dedent(doc)
+    #return attr.ib(
+        #metadata={
+            #'naucse.default': default,
+            #'naucse.construct': construct,
+            #'naucse.loader': str,
+            #'naucse.schema': schema,
+        #}
+    #)
 
 
 def int_field(default=attr.NOTHING, doc=None):
@@ -118,20 +259,20 @@ def object_field(item_type=object, doc=None):
     )
 
 
-def dict_field(item_type=object, factory=None, doc=None):
-    schema = {
-        'type': 'object',
-        'properties': {'$ref': '#/definitions/{item_type.__name__}'},
-    }
-    if doc:
-        schema['description'] = textwrap.dedent(doc)
-    return attr.ib(
-        factory=factory,
-        metadata={
-            'naucse.default': {},
-            'naucse.schema': schema,
-        }
-    )
+#def dict_field(item_type=object, factory=None, doc=None):
+#    schema = {
+#        'type': 'object',
+#        'properties': {'$ref': '#/definitions/{item_type.__name__}'},
+#    }
+#    if doc:
+#        schema['description'] = textwrap.dedent(doc)
+#    return attr.ib(
+#        factory=factory,
+#        metadata={
+#            'naucse.default': {},
+#            'naucse.schema': schema,
+#        }
+#    )
 
 
 def list_field(item_type, doc=None):
@@ -177,6 +318,7 @@ def model(init=True):
 
 @singledispatch
 def to_dict(obj, urls=None):
+    raise TypeError(type(obj))
     if urls and type(obj) in urls:
         return {'$ref': urls[type(obj)](obj)}
     result = {}
@@ -184,6 +326,11 @@ def to_dict(obj, urls=None):
         dumper = attribute.metadata.get('naucse.dumper', to_dict)
         result[attribute.name] = dumper(getattr(obj, attribute.name), urls=urls)
     return result
+
+
+@to_dict.register(Model)
+def _(obj, **kwargs):
+    return obj.dump(**kwargs)
 
 
 @to_dict.register(dict)
@@ -222,18 +369,16 @@ def time_from_string(time_string):
     return datetime.time(hour, minute, tzinfo=tzinfo)
 
 
-@model()
-class Material:
-    title = string_field(doc='Human-readable title')
-    slug = string_field(default=None, doc='Machine-friendly identifier')
-    type = string_field(default='page')
-    url = string_field(default=None)
+class Material(Model):
+    title = StringField(doc='Human-readable title')
+    slug = StringField(optional=True, doc='Machine-friendly identifier')
+    type = StringField(default='page')
+    url = StringField(optional=True)
 
 
-@model()
-class Session:
-    title = string_field(doc='Human-readable title')
-    slug = string_field(doc='Machine-friendly identifier')
+class Session(Model):
+    title = StringField(doc='Human-readable title')
+    slug = StringField(doc='Machine-friendly identifier')
     index = int_field(doc='Number of the session')
     date = date_field(default=None,
                       doc='''
@@ -262,43 +407,47 @@ def _min_or_none(sequence):
     return min([m for m in sequence if m is not None], default=None)
 
 
-@model()
-class Course:
-    title = string_field(doc='Human-readable title')
-    slug = string_field(doc='Machine-friendly identifier')
-    subtitle = string_field(default=None, doc='Human-readable title')
+class Course(Model):
+    title = StringField(doc='Human-readable title')
+    slug = StringField(optional=True, doc='Machine-friendly identifier')
+    subtitle = StringField(optional=True, doc='Human-readable title')
     # XXX: index?
     sessions = list_dict_field(Session, key=lambda s: s.slug, index_key='index')
-    vars = dict_field()
+    vars = Field(factory=dict)
     start_date = date_field(
-        construct=lambda kw, data: _min_or_none(s.date for s in kw['sessions'].values()),
+        construct=lambda kw, data, ctx: _min_or_none(s.date for s in kw['sessions'].values()),
         doc='Date when this starts, or None')
     end_date = date_field(
-        construct=lambda kw, data: _max_or_none(s.date for s in kw['sessions'].values()),
+        construct=lambda kw, data, ctx: _max_or_none(s.date for s in kw['sessions'].values()),
         doc='Date when this starts, or None')
-    place = string_field(
-        default=None,
+    place = StringField(
+        optional=True,
         doc='Textual description of where the course takes place')
-    time = string_field(
-        default=None,
+    time = StringField(
+        optional=True,
         doc='Textual description of the time of day the course takes place')
-    description = string_field(
-        default=None,
+    description = StringField(
+        optional=True,
         doc='Short description of the course (about one line).')
-    long_description = string_field(
-        default=None,
+    long_description = StringField(
+        optional=True,
         doc='Long description of the course (up to several paragraphs)')
-    default_time = field(
-        default=None,
-        construct=lambda kw, data: {
-            k: time_from_string(data['default_time'][k])
-            for k in ('start', 'end')} if 'default_time' in data else None,
-        doc='Times of day when sessions notmally take place. May be null.')
+
+    @field(optional=True)
+    class default_time(Field):
+        '''Times of day when sessions notmally take place. May be null.'''
+        def convert(kw, data):
+            return {
+                'start': time_from_string(data['default_time']['start']),
+                'end': time_from_string(data['default_time']['end']),
+            }
 
     @classmethod
     def load_local(cls, root, slug):
         data = naucse_render.get_course(slug, version=1)
-        return load_dict(cls, {**data, 'slug': slug})
+        result = cls.load(data, None)
+        result.slug = slug
+        return result
 
     @property
     def default_start_time(self):
@@ -313,32 +462,35 @@ class Course:
         return self.default_time['end']
 
 
-@model()
-class RunYear:
+class RunYear(Model):
     year = int_field()
-    runs = dict_field(Course, factory=dict)
+    runs = DictField(Course, factory=dict)
+
+    def __init__(self, year):
+        self.year = year
+        self.runs = {}
 
     def __iter__(self):
         # XXX: Sort by ... start date?
         return iter(self.runs.values())
 
 
-@model(init=False)
-class Root:
-    courses = dict_field(Course)
-    run_years = dict_field(RunYear)
+class Root(Model):
+    courses = DictField(Course)
+    run_years = DictField(RunYear)
 
     def __init__(self, path):
         self.path = path
-
         self.courses = {}
+        self.run_years = {}
+
         for course_path in (path / 'courses').iterdir():
             if (course_path / 'info.yml').is_file():
                 slug = 'courses/' + course_path.name
                 course = Course.load_local(self, slug)
+                assert course, course
                 self.courses[slug] = course
 
-        self.run_years = {}
         for year_path in sorted((path / 'runs').iterdir()):
             if year_path.is_dir():
                 year = int(year_path.name)
