@@ -16,6 +16,9 @@ app.config['JSON_AS_ASCII'] = False
 
 _cached_model = None
 
+def external_url_for(*args, **kwargs):
+    return url_for(*args, **kwargs, _external=True)
+
 @LocalProxy
 def model():
     """Return the root of the naucse model
@@ -29,7 +32,20 @@ def model():
     global _cached_model
     if _cached_model:
         return _cached_model
-    model = models.Root(Path(app.root_path).parent)
+    model = models.Root(
+        Path(app.root_path).parent,
+        urls={
+            'api': {
+                models.Root: lambda r: external_url_for('api'),
+                models.Course: lambda c: external_url_for(
+                    'course_api', course=c),
+                models.RunYear: lambda ry: external_url_for(
+                    'run_year_api', year=ry.year),
+            },
+            'schema': lambda m: external_url_for(
+                'schema', model_name=m.__name__),
+        },
+    )
     if not app.config['DEBUG']:
         _cached_model = model
     return model
@@ -232,7 +248,6 @@ def course_calendar_ics(course):
     return Response(str(cal), mimetype="text/calendar")
 
 
-
 @app.route('/v1/schema.json', defaults={'model_name': 'Root'})
 @app.route('/v1/schema/<model_name>.json')
 def schema(model_name):
@@ -245,14 +260,14 @@ def schema(model_name):
 
 @app.route('/v1/naucse.json')
 def api():
-    return jsonify(model.dump())
+    return jsonify(model.dump(schema=True))
 
 
 @app.route('/v1/years/<int:year>.json')
 def run_year_api(year):
-    return model.run_years[year].dump()
+    return jsonify(model.run_years[year].dump(schema=True))
 
 
 @app.route('/v1/<course:course>.json')
 def course_api(course):
-    return course.dump()
+    return jsonify(course.dump(schema=True))

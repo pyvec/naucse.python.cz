@@ -12,6 +12,10 @@ import naucse_render
 _TIMEZONE = 'Europe/Prague'
 
 
+class NoURL(LookupError):
+    """An object's URL could not be found"""
+
+
 models = {}
 
 
@@ -26,17 +30,22 @@ def get_schema(cls):
 
 
 class Model:
+    def __init__(self, *, root):
+        self.root = root
+
     @classmethod
-    def load(cls, data, context):
-        instance = cls()
+    def load(cls, data, **kwargs):
+        instance = cls(**kwargs)
         for name, field in cls._naucse__fields.items():
-            field.load(instance, data, None)
+            field.load(instance, data)
         return instance
 
-    def dump(self, *args, **kwargs):  # XXX: context only?
+    def dump(self, schema=False):  # XXX: context only?
         result = {}
         for name, field in self._naucse__fields.items():
             field.dump(self, result)
+        if schema:
+            result['$schema'] = self.root.schema_url_for(type(self))
         return result
 
     @classmethod
@@ -91,12 +100,12 @@ class Field:
     def data_key(self):
         return self.name
 
-    def load(self, instance, data, context):
-        value = self.construct(instance, data, context)
+    def load(self, instance, data):
+        value = self.construct(instance, data)
         if value is not NOTHING:
             setattr(instance, self.name, value)
 
-    def construct(self, instance, data, context):
+    def construct(self, instance, data):
         try:
             value = data[self.data_key]
         except KeyError:
@@ -108,10 +117,10 @@ class Field:
                 return self.default
             raise
         else:
-            return self.convert(instance, data, value, context)
+            return self.convert(instance, data, value)
         return value
 
-    def convert(self, instance, data, value, context):
+    def convert(self, instance, data, value):
         return value
 
     def dump(self, instance, data):
@@ -157,7 +166,7 @@ class DateField(Field):
             'format': 'date',
         }
 
-    def convert(self, instance, data, value, context):
+    def convert(self, instance, data, value):
         return datetime.datetime.strptime(value, '%Y-%m-%d').date()
 
 
@@ -194,8 +203,8 @@ class ListField(Field):
             'items': {'$ref': f'#/definitions/{self.item_type.__name__}'},
         }
 
-    def convert(self, instance, data, value, context):
-        return [self.item_type.load(d, context) for d in value]
+    def convert(self, instance, data, value):
+        return [self.item_type.load(d, root=instance.root) for d in value]
 
 
 class ListDictField(Field):
@@ -213,11 +222,11 @@ class ListDictField(Field):
             'items': {'$ref': f'#/definitions/{self.item_type.__name__}'},
         }
 
-    def convert(self, instance, data, value, context):
+    def convert(self, instance, data, value):
         result = {}
         for idx, item_data in enumerate(value):
             item_data[self.index_key] = idx
-            item = self.item_type.load(item_data, context)
+            item = self.item_type.load(item_data, root=instance.root)
             result[getattr(item, self.key_attr)] = item
         return result
 
@@ -239,7 +248,12 @@ def to_jsondata(obj, urls=None):
 
 @to_jsondata.register(Model)
 def _(obj, **kwargs):
-    return obj.dump(**kwargs)
+    try:
+        url = obj.root.api_url_for(obj)
+    except NoURL:
+        return obj.dump(**kwargs)
+    else:
+        return {'$ref': url}
 
 
 @to_jsondata.register(dict)
@@ -324,10 +338,10 @@ class Course(Model):
     sessions = ListDictField(Session, key_attr='slug', index_key='index')
     vars = Field(factory=dict)
     start_date = DateField(
-        construct=lambda self, data, ctx: _min_or_none(s.date for s in self.sessions.values()),
+        construct=lambda instance, data: _min_or_none(s.date for s in instance.sessions.values()),
         doc='Date when this starts, or None')
     end_date = DateField(
-        construct=lambda self, data, ctx: _max_or_none(s.date for s in self.sessions.values()),
+        construct=lambda instance, data: _max_or_none(s.date for s in instance.sessions.values()),
         doc='Date when this starts, or None')
     place = StringField(
         optional=True,
@@ -346,7 +360,7 @@ class Course(Model):
     @field(optional=True)
     class default_time(Field):
         '''Times of day when sessions notmally take place. May be null.'''
-        def convert(self, instance, data, value, context):
+        def convert(self, instance, data, value):
             return {
                 'start': time_from_string(data['default_time']['start']),
                 'end': time_from_string(data['default_time']['end']),
@@ -355,7 +369,7 @@ class Course(Model):
     @classmethod
     def load_local(cls, root, slug):
         data = naucse_render.get_course(slug, version=1)
-        result = cls.load(data, None)
+        result = cls.load(data, root=root)
         result.slug = slug
         return result
 
@@ -376,7 +390,8 @@ class RunYear(Model):
     year = IntField()
     runs = DictField(Course, factory=dict)
 
-    def __init__(self, year):
+    def __init__(self, year, root):
+        self.root = root
         self.year = year
         self.runs = {}
 
@@ -389,8 +404,11 @@ class Root(Model):
     courses = DictField(Course)
     run_years = DictField(RunYear)
 
-    def __init__(self, path):
+    def __init__(self, path, urls):
+        self.root = self
         self.path = path
+        self.urls = urls
+
         self.courses = {}
         self.run_years = {}
 
@@ -404,7 +422,7 @@ class Root(Model):
         for year_path in sorted((path / 'runs').iterdir()):
             if year_path.is_dir():
                 year = int(year_path.name)
-                self.run_years[int(year_path.name)] = run_year = RunYear(year=year)
+                self.run_years[int(year_path.name)] = run_year = RunYear(year=year, root=self)
                 for course_path in year_path.iterdir():
                     if (course_path / 'info.yml').is_file():
                         slug = f'{year_path.name}/{course_path.name}'
@@ -424,3 +442,14 @@ class Root(Model):
         except KeyError:
             return []
         return list(runs.values())
+
+    def api_url_for(self, obj):
+        api_urls = self.urls['api']
+        try:
+            url_for = api_urls[type(obj)]
+        except KeyError:
+            raise NoURL(obj)
+        return url_for(obj)
+
+    def schema_url_for(self, model_type):
+        return self.urls['schema'](model_type)
