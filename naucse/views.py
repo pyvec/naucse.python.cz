@@ -233,30 +233,26 @@ def course_calendar_ics(course):
 
 
 
+@app.route('/v1/schema.json', defaults={'model_name': 'Root'})
+@app.route('/v1/schema/<model_name>.json')
+def schema(model_name):
+    try:
+        cls = models.models[model_name]
+    except KeyError:
+        abort(404)
+    return jsonify(models.get_schema(cls))
+
+
 @app.route('/v1/naucse.json')
 def api():
-    return jsonify(models.to_dict(
-        model._get_current_object(),
-        urls={
-            models.Course: lambda c: url_for('course_api', course=c, _external=True),
-            models.RunYear: lambda r: url_for('run_year_api', year=r.year, _external=True, _anchor='/runs')
-        },
-    ))
+    return jsonify(model.dump())
 
 
 @app.route('/v1/years/<int:year>.json')
 def run_year_api(year):
-    return jsonify(models.to_dict(
-        model.run_years[year],
-        urls={
-            models.Course: lambda c: url_for('course_api', course=c, _external=True),
-        },
-    ))
-
-
-# XXX: Give API URLs to the model?
+    return model.run_years[year].dump()
 
 
 @app.route('/v1/<course:course>.json')
 def course_api(course):
-    return jsonify(models.to_dict(course))
+    return course.dump()
