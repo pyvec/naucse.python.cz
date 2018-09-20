@@ -33,7 +33,6 @@ def model():
     if _cached_model:
         return _cached_model
     model = models.Root(
-        Path(app.root_path).parent,
         urls={
             'api': {
                 models.Root: lambda r: external_url_for('api'),
@@ -42,10 +41,17 @@ def model():
                 models.RunYear: lambda ry: external_url_for(
                     'run_year_api', year=ry.year),
             },
+            'web': {
+                 # XXX
+                models.Material: lambda m: None,
+                models.Course: lambda c: external_url_for('course', course=c),
+                #models.Session: lambda s: session(session.course, session.slug),           
+            },
             'schema': lambda m: external_url_for(
                 'schema', model_name=m.__name__),
         },
     )
+    model.load_local(Path(app.root_path).parent)
     if not app.config['DEBUG']:
         _cached_model = model
     return model

@@ -28,7 +28,6 @@ def get_schema(cls):
     }
 
 
-
 class Model:
     def __init__(self, *, root):
         self.root = root
@@ -42,6 +41,10 @@ class Model:
 
     def dump(self, schema=False):  # XXX: context only?
         result = {}
+        try:
+            result['url'] = self.root.url_for(self)
+        except NoURL:
+            pass
         for name, field in self._naucse__fields.items():
             field.dump(self, result)
         if schema:
@@ -234,6 +237,22 @@ class ListDictField(Field):
         return [to_jsondata(v) for v in value.values()]
 
 
+class UrlField(Field):
+    def construct(self, instance, data):
+        try:
+            return instance.root.url_for(instance)
+        except NoURL:
+            return NOTHING
+
+    @property
+    def schema(self):
+        return {
+            **super().schema,
+            'type': 'string',
+            'format': 'url',
+        }
+
+
 def model(init=True):
     def _model_decorator(cls):
         cls = attr.s(init=init)(cls)
@@ -296,7 +315,7 @@ class Material(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(optional=True, doc='Machine-friendly identifier')
     type = StringField(default='page')
-    url = StringField(optional=True)
+    url = UrlField(optional=True)
 
 
 class Session(Model):
@@ -314,6 +333,8 @@ class Session(Model):
     start_time = DateTimeField(
         default=None,
         doc='Times of day when the session ends.')
+
+    #XXX: url = UrlField()
 
     @property  # XXX: Reify? Load but not export?
     def _materials_by_slug(self):
@@ -404,14 +425,14 @@ class Root(Model):
     courses = DictField(Course)
     run_years = DictField(RunYear)
 
-    def __init__(self, path, urls):
+    def __init__(self, urls):
         self.root = self
-        self.path = path
         self.urls = urls
 
         self.courses = {}
         self.run_years = {}
 
+    def load_local(self, path):
         for course_path in (path / 'courses').iterdir():
             if (course_path / 'info.yml').is_file():
                 slug = 'courses/' + course_path.name
@@ -453,3 +474,11 @@ class Root(Model):
 
     def schema_url_for(self, model_type):
         return self.urls['schema'](model_type)
+
+    def url_for(self, obj):
+        urls = self.urls['web']
+        try:
+            url_for = urls[type(obj)]
+        except KeyError:
+            raise NoURL(obj)
+        return url_for(obj)
