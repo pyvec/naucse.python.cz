@@ -29,8 +29,9 @@ def get_schema(cls):
 
 
 class Model:
-    def __init__(self, *, root):
-        self.root = root
+    def __init__(self, *, parent):
+        self.root = parent.root
+        self._parent = parent
 
     @classmethod
     def load(cls, data, **kwargs):
@@ -207,7 +208,7 @@ class ListField(Field):
         }
 
     def convert(self, instance, data, value):
-        return [self.item_type.load(d, root=instance.root) for d in value]
+        return [self.item_type.load(d, parent=instance) for d in value]
 
 
 class ListDictField(Field):
@@ -229,7 +230,7 @@ class ListDictField(Field):
         result = {}
         for idx, item_data in enumerate(value):
             item_data[self.index_key] = idx
-            item = self.item_type.load(item_data, root=instance.root)
+            item = self.item_type.load(item_data, parent=instance)
             result[getattr(item, self.key_attr)] = item
         return result
 
@@ -251,6 +252,11 @@ class UrlField(Field):
             'type': 'string',
             'format': 'url',
         }
+
+
+@property
+def parent_property(self):
+    return self._parent
 
 
 def model(init=True):
@@ -317,6 +323,8 @@ class Material(Model):
     type = StringField(default='page')
     url = UrlField(optional=True)
 
+    session = parent_property
+
 
 class Session(Model):
     title = StringField(doc='Human-readable title')
@@ -333,6 +341,8 @@ class Session(Model):
     start_time = DateTimeField(
         default=None,
         doc='Times of day when the session ends.')
+
+    course = parent_property
 
     #XXX: url = UrlField()
 
@@ -388,9 +398,9 @@ class Course(Model):
             }
 
     @classmethod
-    def load_local(cls, root, slug):
+    def load_local(cls, parent, slug):
         data = naucse_render.get_course(slug, version=1)
-        result = cls.load(data, root=root)
+        result = cls.load(data, parent=parent)
         result.slug = slug
         return result
 
@@ -411,8 +421,8 @@ class RunYear(Model):
     year = IntField()
     runs = DictField(Course, factory=dict)
 
-    def __init__(self, year, root):
-        self.root = root
+    def __init__(self, year, parent):
+        super().__init__(parent=parent)
         self.year = year
         self.runs = {}
 
@@ -443,7 +453,7 @@ class Root(Model):
         for year_path in sorted((path / 'runs').iterdir()):
             if year_path.is_dir():
                 year = int(year_path.name)
-                self.run_years[int(year_path.name)] = run_year = RunYear(year=year, root=self)
+                self.run_years[int(year_path.name)] = run_year = RunYear(year=year, parent=self)
                 for course_path in year_path.iterdir():
                     if (course_path / 'info.yml').is_file():
                         slug = f'{year_path.name}/{course_path.name}'

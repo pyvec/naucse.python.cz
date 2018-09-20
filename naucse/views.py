@@ -45,7 +45,8 @@ def model():
                  # XXX
                 models.Material: lambda m: None,
                 models.Course: lambda c: external_url_for('course', course=c),
-                #models.Session: lambda s: session(session.course, session.slug),           
+                models.Session: lambda s: external_url_for(
+                    'session', course=s.course, session_slug=s.slug),
             },
             'schema': lambda m: external_url_for(
                 'schema', model_name=m.__name__),
