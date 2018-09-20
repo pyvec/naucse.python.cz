@@ -465,7 +465,7 @@ Apache Bench
 
 Boom: https://github.com/tarekziade/boom
 
-Molotov: ttps://github.com/tarekziade/molotov
+Molotov: https://github.com/tarekziade/molotov
 
 locust.io: http://docs.locust.io
 
@@ -473,6 +473,10 @@ locust.io: http://docs.locust.io
 
 Selenium: http://docs.seleniumhq.org/
 
+
+#### Tests coverage
+
+coverage: https://coverage.readthedocs.io
 
 ### Developer documentation
 
