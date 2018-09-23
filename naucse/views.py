@@ -42,8 +42,8 @@ def model():
                     'run_year_api', year=ry.year),
             },
             'web': {
-                models.Material: lambda m: external_url_for(
-                    'page', material=m),  # XXX - this should really be Page
+                models.Page: lambda p: external_url_for(
+                    'page', material=p.material, page_slug=p.slug),
                 models.Course: lambda c: external_url_for('course', course=c),
                 models.Session: lambda s: external_url_for(
                     'session', course=s.course, session_slug=s.slug),
@@ -185,11 +185,11 @@ def session(course, session_slug, coverpage):
     )
 
 
-@app.route('/<material:material>/', defaults={'page': 'index'})
-@app.route('/<material:material>/<page>/')
-@app.route('/<material:material>/<page>/solutions/<int:solution>/')
-def page(material, page='index', solution=None):
-    page_slug = page
+@app.route('/<material:material>/', defaults={'page_slug': 'index'})
+@app.route('/<material:material>/<page_slug>/')
+@app.route('/<material:material>/<page_slug>/solutions/<int:solution>/')
+def page(material, page_slug='index', solution=None):
+    page = material.pages[page_slug]
 
     kwargs = {}
 

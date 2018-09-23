@@ -102,6 +102,7 @@ def get_course(course_slug: str, *, version: int) -> dict:
                 update_lesson(material, lesson_slug, vars=info.get('vars', {}))
                 if material.pop('url', None):
                     raise ValueError(f'Material {material} has URL')
+                material.setdefault('type', 'lesson')
             else:
                 url = material.pop('url', None)
                 if url:
@@ -119,7 +120,7 @@ def get_course(course_slug: str, *, version: int) -> dict:
 def update_lesson(material, lesson_slug, vars):
     lesson_info = read_yaml('lessons', lesson_slug, 'info.yml')
 
-    pages = lesson_info.pop('pages', {})
+    pages = lesson_info.pop('subpages', {})
     pages.setdefault('index', {})
 
     material_vars = material.pop('vars', None)

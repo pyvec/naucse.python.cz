@@ -193,6 +193,10 @@ class DictField(Field):
         super().__init__(**kwargs)
         self.item_type = item_type
 
+    def convert(self, instance, data, value):
+        return {k: self.item_type.load(v, parent=instance)
+                for k, v in value.items()}
+
     @property
     def schema(self):
         return {
@@ -319,12 +323,20 @@ def time_from_string(time_string):
     return datetime.time(hour, minute, tzinfo=tzinfo)
 
 
+class Page(Model):
+    title = StringField(doc='Human-readable title')
+    slug = StringField(doc='Machine-friendly identifier')
+
+    material = parent_property
+
+
 class Material(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(
         optional=True, doc='Machine-friendly identifier')
     type = StringField(default='page')
     external_url = UrlField(optional=True)
+    pages = DictField(Page, optional=True)
 
     session = parent_property
 
@@ -333,9 +345,11 @@ class Material(Model):
         try:
             return self.external_url
         except AttributeError:
-            if hasattr(self, 'slug'):
-                return self.root.url_for(self)
-        return None
+            try:
+                pages = self.pages
+            except AttributeError:
+                return None
+            return pages['index'].url
 
     @property
     def course(self):
