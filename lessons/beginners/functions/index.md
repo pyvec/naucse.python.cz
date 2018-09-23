@@ -243,7 +243,7 @@ ale pomocí argumentu `end` se dá vypsat i něco jiného.
 
 > [note]
 > Tenhle příklad je potřeba napsat do souboru; v interaktivní konzoli
-> nebude výstup vypadat jak má.
+> nebude výstup vypadat, jak má.
 
 ```python
 print('1 + 2', end=' ')
@@ -277,9 +277,9 @@ print(1, end=" ")
 print(2, 3, 4, sep=", ")
 ```
 
-Základní funkce na výstup, `input`,
-vypíše otázku, načte vstup od uživatele
-a vrátí ho jako řetězec.
+Základní funkce na načtení vstupu, `input`,
+vypíše otázku, počká na text od uživatele
+a ten vrátí jako řetězec.
 
 ```python
 input('zadej vstup: ')
@@ -391,7 +391,7 @@ užitečné pro hry.
 from random import randrange, uniform
 
 randrange(a, b)   # náhodné celé číslo od a do b-1
-uniform(a, b)     # náhodné „desetinné“ číslo od a do b
+uniform(a, b)     # náhodné reálné číslo od a do b
 ```
 
 Pozor na to, že <code>randrange(a, b)</code>
