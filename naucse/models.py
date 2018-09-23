@@ -43,7 +43,7 @@ class Model:
     def dump(self, schema=False):  # XXX: context only?
         result = {}
         try:
-            result['url'] = self.root.url_for(self)
+            result['url'] = self.url
         except NoURL:
             pass
         for name, field in self._naucse__fields.items():
@@ -78,12 +78,20 @@ class Model:
                 cls._naucse__fields[attr_name] = attr_value
         return cls
 
+    @property
+    def url(self):
+        return self.root.url_for(self)
+
+    @property
+    def api_url(self):
+        return self.root.api_url_for(self)
+
 
 class Field:
     def __init__(
         self, *,
         optional=False, default=NOTHING, factory=None, doc=None,
-        convert=None, construct=None,
+        convert=None, construct=None, data_key=None,
     ):
         if doc:
             self.doc = doc
@@ -96,13 +104,13 @@ class Field:
             self.convert = convert
         if construct:
             self.construct = construct
+        if data_key:
+            self.data_key = data_key
 
     def __set_name__(self, instance, name):
         self.name = name
-
-    @property
-    def data_key(self):
-        return self.name
+        if not hasattr(self, 'data_key'):
+            self.data_key = name
 
     def load(self, instance, data):
         value = self.construct(instance, data)
@@ -239,12 +247,6 @@ class ListDictField(Field):
 
 
 class UrlField(Field):
-    def construct(self, instance, data):
-        try:
-            return instance.root.url_for(instance)
-        except NoURL:
-            return NOTHING
-
     @property
     def schema(self):
         return {
@@ -319,12 +321,25 @@ def time_from_string(time_string):
 
 class Material(Model):
     title = StringField(doc='Human-readable title')
-    slug = StringField(optional=True, doc='Machine-friendly identifier')
+    slug = StringField(
+        optional=True, doc='Machine-friendly identifier')
     type = StringField(default='page')
-    url = UrlField(optional=True)
+    external_url = UrlField(optional=True)
 
     session = parent_property
 
+    @property
+    def url(self):
+        try:
+            return self.external_url
+        except AttributeError:
+            if hasattr(self, 'slug'):
+                return self.root.url_for(self)
+        return None
+
+    @property
+    def course(self):
+        return self.session.course
 
 class Session(Model):
     title = StringField(doc='Human-readable title')
@@ -343,8 +358,6 @@ class Session(Model):
         doc='Times of day when the session ends.')
 
     course = parent_property
-
-    #XXX: url = UrlField()
 
     @property  # XXX: Reify? Load but not export?
     def _materials_by_slug(self):
@@ -365,7 +378,6 @@ class Course(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(optional=True, doc='Machine-friendly identifier')
     subtitle = StringField(optional=True, doc='Human-readable title')
-    # XXX: index?
     sessions = ListDictField(Session, key_attr='slug', index_key='index')
     vars = Field(factory=dict)
     start_date = DateField(
@@ -415,6 +427,18 @@ class Course(Model):
         if self.default_time is None:
             return None
         return self.default_time['end']
+
+    def get_material(self, slug):
+        # XXX: Check duplicates
+        for session in self.sessions.values():
+            for material in session.materials:
+                try:
+                    mat_slug = material.slug
+                except AttributeError:
+                    continue
+                if mat_slug == slug:
+                    return material
+        raise LookupError(slug)
 
 
 class RunYear(Model):

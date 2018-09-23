@@ -100,8 +100,12 @@ def get_course(course_slug: str, *, version: int) -> dict:
             lesson_slug = material.pop('lesson', None)
             if lesson_slug:
                 update_lesson(material, lesson_slug, vars=info.get('vars', {}))
+                if material.pop('url', None):
+                    raise ValueError(f'Material {material} has URL')
             else:
-                if material.get('url'):
+                url = material.pop('url', None)
+                if url:
+                    material['external_url'] = url
                     material.setdefault('type', 'link')
                 else:
                     material.setdefault('type', 'special')

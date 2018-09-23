@@ -42,8 +42,8 @@ def model():
                     'run_year_api', year=ry.year),
             },
             'web': {
-                 # XXX
-                models.Material: lambda m: None,
+                models.Material: lambda m: external_url_for(
+                    'page', material=m),  # XXX - this should really be Page
                 models.Course: lambda c: external_url_for('course', course=c),
                 models.Session: lambda s: external_url_for(
                     'session', course=s.course, session_slug=s.slug),
@@ -181,6 +181,40 @@ def session(course, session_slug, coverpage):
         session=session,
         title=course.title,
         content=None, # XXX
+        **kwargs
+    )
+
+
+@app.route('/<material:material>/', defaults={'page': 'index'})
+@app.route('/<material:material>/<page>/')
+@app.route('/<material:material>/<page>/solutions/<int:solution>/')
+def page(material, page='index', solution=None):
+    page_slug = page
+
+    kwargs = {}
+
+    #lesson_url, subpage_url, static_url = relative_url_functions(request.path, course, lesson)
+    #page, session, prv, nxt = get_page(course, lesson, page)
+
+    #content = page_content(
+    #    lesson, page, solution, course=course, lesson_url=lesson_url, subpage_url=subpage_url, static_url=static_url
+    #)
+    #content = content["content"]
+    # XXX allowed_elements_parser.reset_and_feed(content)
+    title = material.title
+
+    #kwargs["edit_info"] = get_edit_info(page.edit_path)
+
+    if solution is not None:
+        kwargs["solution_number"] = int(solution)
+
+    return render_template(
+        "lesson.html",
+        title=title,
+        content='', # XXX,
+        page=page,
+        solution=solution,
+        session=session,
         **kwargs
     )
 
