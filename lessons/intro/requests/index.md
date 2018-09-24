@@ -70,7 +70,7 @@ k testování HTTP dotazů:
 >>> session.headers.update({'x-test': 'true'})
 >>> r = session.get('http://httpbin.org/headers', headers={'x-test2': 'true'})
 >>> r.json()
-{'headers': {'Accept': '*/*', 'User-Agent': 'python-requests/2.10.0', 'X-Test2': 'true', 'Host': 'httpbin.org', 'Accept-Encoding': 'gzip, deflate', 'X-Test': 'true', 'Cookie': 'mipyt=best'}}
+{'headers': {'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'Connection': 'close', 'Cookie': 'mipyt=best', 'Host': 'httpbin.org', 'User-Agent': 'python-requests/2.19.1', 'X-Test': 'true', 'X-Test2': 'true'}}
 ```
 
 ## Twitter API

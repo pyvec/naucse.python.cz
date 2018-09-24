@@ -37,11 +37,11 @@ nainstalujeme a spustíme `pytest`:
 ␛[36m(__venv__) $␛[0m python -m pip install pytest
 ␛[36m(__venv__) $␛[0m python -m pytest tests/test_holidays.py
 ␛[1m============================= test session starts ==============================␛[0m
-platform linux -- Python 3.6.0, pytest-3.0.7, py-1.4.33, pluggy-0.4.0
-rootdir: /tmp/tmp.wGP3zD7HeD, inifile:
-collected 1 items
+platform linux -- Python 3.7.0, pytest-3.8.1, py-1.6.0, pluggy-0.7.1
+rootdir: /tmp/tmp.PIb8ITheja, inifile:
+collected 1 item
 
-tests/test_holidays.py .
+tests/test_holidays.py .␛[36m                                                 [100%]␛[0m
 
 ␛[32m␛[1m=========================== 1 passed in 0.01 seconds ===========================␛[0m
 ```
@@ -80,11 +80,11 @@ Pytest upravuje chování assertu, což oceníte především, pokud test selže
 ```ansi
 ␛[36m(__venv__) $␛[0m python -m pytest tests/test_holidays.py
 ␛[1m============================= test session starts ==============================␛[0m
-platform linux -- Python 3.6.0, pytest-3.0.6, py-1.4.32, pluggy-0.4.0
-rootdir: /tmp/tmp.NsIa3sXVQA, inifile: 
-collected 1 items
+platform linux -- Python 3.7.0, pytest-3.8.1, py-1.6.0, pluggy-0.7.1
+rootdir: /tmp/tmp.PIb8ITheja, inifile:
+collected 1 item
 
-tests/test_holidays.py F
+tests/test_holidays.py F␛[36m                                                 [100%]␛[0m
 
 =================================== FAILURES ===================================
 ␛[31m␛[1m________________________________ test_xmas_2016 ________________________________␛[0m
@@ -153,11 +153,11 @@ Pro podrobnější výpis výsledku testů můžete použít přepínač `-v`:
 ```ansi
 ␛[36m(__venv__) $␛[0m python -m pytest -v
 ...
-tests/test_holidays.py::test_xmas[2015] ␛[32mPASSED␛[0m
-tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m
-tests/test_holidays.py::test_xmas[2017] ␛[32mPASSED␛[0m
-tests/test_holidays.py::test_xmas[2033] ␛[32mPASSED␛[0m
-tests/test_holidays.py::test_xmas[2048] ␛[32mPASSED␛[0m
+tests/test_holidays.py::test_xmas[2015] ␛[32mPASSED␛[0m␛[36m                           [ 20%]␛[0m
+tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m␛[36m                           [ 40%]␛[0m
+tests/test_holidays.py::test_xmas[2017] ␛[32mPASSED␛[0m␛[36m                           [ 60%]␛[0m
+tests/test_holidays.py::test_xmas[2033] ␛[32mPASSED␛[0m␛[36m                           [ 80%]␛[0m
+tests/test_holidays.py::test_xmas[2048] ␛[32mPASSED␛[0m␛[36m                           [100%]␛[0m
 
 ␛[32m␛[1m=========================== 5 passed in 0.26 seconds ===========================␛[0m
 ```
@@ -202,11 +202,11 @@ Přidáme tedy dočasně na konec funkce `getholidays()` tento pesimistický kus
 ```ansi
 ␛[36m(__venv__) $␛[0m python -m pytest -v
 ...
-tests/test_holidays.py::test_xmas[2015] ␛[32mPASSED␛[0m
-tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m
-tests/test_holidays.py::test_xmas[2017] ␛[32mPASSED␛[0m
-tests/test_holidays.py::test_xmas[2033] ␛[31mFAILED␛[0m
-tests/test_holidays.py::test_xmas[2048] ␛[31mFAILED␛[0m
+tests/test_holidays.py::test_xmas[2015] ␛[32mPASSED␛[0m␛[36m                           [ 20%]␛[0m
+tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m␛[36m                           [ 40%]␛[0m
+tests/test_holidays.py::test_xmas[2017] ␛[32mPASSED␛[0m␛[36m                           [ 60%]␛[0m
+tests/test_holidays.py::test_xmas[2033] ␛[31mFAILED␛[0m␛[36m                           [ 80%]␛[0m
+tests/test_holidays.py::test_xmas[2048] ␛[31mFAILED␛[0m␛[36m                           [100%]␛[0m
 ...
 ␛[31m␛[1m====================== 2 failed, 3 passed in 0.23 seconds ======================␛[0m
 ```
@@ -570,7 +570,7 @@ Testování aplikací ve Flasku
 ----------------------------
 
 Pro testování aplikací ve Flasku se
-[používá](http://flask.pocoo.org/docs/0.12/testing/) `app.test_client()`:
+[používá](http://flask.pocoo.org/docs/1.0/testing/) `app.test_client()`:
 
 ```python
 import pytest
@@ -582,15 +582,15 @@ def testapp():
     return app.test_client()
 
 def test_hello(testapp):
-    assert 'Hello' in testapp.get('/').data.decode('utf-8')
+    assert 'Hello' in testapp.get('/').get_data(as_text=True)
 ```
 
 Pozor, metody na testovacím klientu vrací [Response], ale trochu jinou, než tu
 z requests.
 Proto nelze použít přímo `response.text`; text dostaneme pomocí
-`response.data.decode('utf-8')`.
+`response.get_data(as_text=True)`.
 
-[Response]: http://flask.pocoo.org/docs/0.11/api/#flask.Response
+[Response]: http://flask.pocoo.org/docs/1.0/api/#flask.Response
 
 
 Testování aplikací v clicku
@@ -708,7 +708,7 @@ Do repozitáře přidejte soubor `.travis.yml`:
 ```yaml
 language: python
 python:
-- '3.6'
+- '3.7'
 install:
 - python setup.py install
 script:

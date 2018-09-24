@@ -16,7 +16,7 @@ Pokud budete používat svůj počítač, prosíme vás o instalaci již předem
 
 ### PyQt5
 
-Pokud máte Python 3.5 a jednu z platforem, pro které je připraven [wheel na PyPI](https://pypi.org/project/PyQt5/), stačí udělat:
+Pokud máte Python alespoň 3.5 a jednu z platforem, pro které je připraven [wheel na PyPI](https://pypi.org/project/PyQt5/), stačí udělat:
 
 ```console
 (__venv__) $ python -m pip install --upgrade pip
@@ -36,7 +36,8 @@ Pokud nic z toho nepomůže, můžete zkusit přeložit PyQt5 ze [zdrojových so
 
 *První aplikace* níže by vám měla fungovat.
 
-Pokud narazíte na chybu `Could not find or load the Qt platform plugin "xcb"`, podívejte se do [naší issue](https://github.com/cvut/MI-PYT/issues/57).
+> [note]
+> Pokud narazíte na chybu `Could not find or load the Qt platform plugin "xcb"`, podívejte se do [naší issue](https://github.com/cvut/MI-PYT/issues/57).
 
 ### Qt5 Designer
 

@@ -203,7 +203,9 @@ Každé vlákno může mít vlastní smyčku událostí, kterou získáme pomoc�
   úlohy „vyčerpaly“), nebo
 * `loop.run_until_complete(task)` – tahle funkce skončí hned, jakmile je hotová
   daná úloha, a vrátí její výsledek.
-
+* Od Pythonu 3.7 můžete použít jednoduché `asyncio.run(task)`, aniž byste museli
+  explicitně pracovat s určitou smyčkou událostí. Jedná se ale o API, které se
+  v budoucnu může změnit.
 
 
 Futures

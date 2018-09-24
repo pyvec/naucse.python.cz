@@ -1,14 +1,14 @@
 Deployment webových aplikací na PythonAnywhere
 ==============================================
 
-[Python Anywhere] je pro limitované použití zdarma.
+[PythonAnywhere] je pro limitované použití zdarma.
 
 K posílání kódu na produkční prostředí budeme používat Git.
 Nejprve proto uložte celý projekt do Gitu a nahrajte na GitHub.
 
 Potom se zaregistrujte na
 [www.pythonanywhere.com](https://www.pythonanywhere.com/) a vyberte
-Beginner Account.
+*Beginner Account*.
 Po přihlášení se ukáže záložka *Consoles*, kde vytvořte "Bash" konzoli.
 V té vytvořte a aktivujte virtuální prostředí a nainstalujte Flask (plus
 případně další závislosti nebo jiný webový framework).
@@ -19,12 +19,20 @@ na vytvoření virtuální prostředí, než jste z toho kurzu zvyklí.
 Napište příkazy takto (bez úvodního `$`):
 
 ```console
-$ virtualenv --python=python3.6 __venv__
+$ virtualenv --python=python3.7 __venv__
 $ . __venv__/bin/activate
 $ python -m pip install flask
 ```
 
-Následně naklonujte na PythonAnywhere náš kód.
+> [note]
+> Pokud máte na PythonAnywhere starší účet, možná tam Python 3.7 nenajdete.
+> Můžete použít Python 3.6, nemělo by to vadit, protože tento návod je
+> koncipován tak, aby s touto verzí také fungoval.
+> Případně můžete [zažádat o aktualizaci systémové
+> image](https://www.pythonanywhere.com/forums/topic/12878/#id_post_52160).
+
+
+Následně naklonujte na PythonAnywhere váš kód.
 S veřejným repozitářem je to jednodušší – stačí ho naklonovat „anonymně”
 (`git clone https://github.com/<github-username>/<github-repo>`).
 Pokud ale používáme privátní repozitář, bude potřeba si vygenerovat SSH klíč:
@@ -77,7 +85,7 @@ Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce *Web*
 a na adrese <code><var>&lt;uživatelské-jméno&gt;</var>.pythonanywhere.com</code>
 si ji můžete prohlédnout.
 
-[Python Anywhere]: https://www.pythonanywhere.com/
+[PythonAnywhere]: https://www.pythonanywhere.com/
 
 ### Deployment soukromých údajů
 

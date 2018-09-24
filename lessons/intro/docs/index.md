@@ -25,28 +25,30 @@ K modulům `autodoc` a `doctest` se dostaneme později.
 ```ansi
 ␛[36m$␛[0m . __venv__/bin/activate
 ␛[36m(__venv__) $␛[0m python -m pip install sphinx
+␛[36m(__venv__) $␛[0m mkdir docs
+␛[36m(__venv__) $␛[0m cd docs
 ␛[36m(__venv__) $␛[0m python -m sphinx.quickstart
-␛[01mWelcome to the Sphinx 1.5.5 quickstart utility.␛[39;49;00m
+␛[01mWelcome to the Sphinx 1.8.1 quickstart utility.␛[39;49;00m
 
 Please enter values for the following settings (just press Enter to
 accept a default value, if one is given in brackets).
 
-Enter the root path for documentation.
-␛[35m> Root path for the documentation [.]: ␛[39;49;00mdocs
+␛[01mSelected root path: .␛[39;49;00m
 
-...
+You have two options for placing the build directory for Sphinx output.
+Either, you use a directory "_build" within the root path, or you separate
+"source" and "build" directories within the root path.
+␛[35m> Separate source and build directories (y/n) [n]: ␛[39;49;00m
+
+Inside the root directory, two more directories will be created; "_templates"
+for custom HTML templates and "_static" for custom stylesheets and other static
+files. You can enter another prefix (such as ".") to replace the underscore.
+␛[35m> Name prefix for templates and static dir [_]: ␛[39;49;00m
 
 The project name will occur in several places in the built documentation.
 ␛[35m> Project name: ␛[39;49;00mcoolthing
 ␛[35m> Author name(s): ␛[39;49;00mPythonista Dokumentarista
-
-Sphinx has the notion of a "version" and a "release" for the
-software. Each version can have multiple releases. For example, for
-Python the version is something like 2.5 or 3.0, while the release is
-something like 2.5.1 or 3.0a1.  If you don't need this dual structure,
-just set both to the same value.
-␛[35m> Project version []: ␛[39;49;00m0.1
-␛[35m> Project release [0.1]: ␛[39;49;00m
+␛[35m> Project release []: ␛[39;49;00m 0.1
 
 ...
 
@@ -60,7 +62,7 @@ Please indicate if you want to use one of the following Sphinx extensions:
 ␛[01mFinished: An initial directory structure has been created.␛[39;49;00m
 ```
 
-Průvodce vytvoří složku `docs` a v ní několik souborů:
+Průvodce vytvoří ve složce `docs` několik souborů:
 
 * `conf.py` – konfigurační soubor,
 * `index.rst` – vlastní text dokumantace,
@@ -80,10 +82,9 @@ dokumentace sestavit do HTML.
 > manuálové stránky atd.), pro nás bude podstatné především HTML.
 
 ```console
-(__venv__) $ cd docs
 (__venv__) $ make html
 ...
-Build finished. The HTML pages are in _build/html.
+The HTML pages are in _build/html.
 ```
 
 Ve zmíněné složce byste měli najít `index.html`, ten si můžete prohlédnout
@@ -149,7 +150,7 @@ It refers to the section itself, see :ref:`my-reference-label`.
 It could refer to a different section as well :)
 ```
 
-[konstrukce ref]: http://www.sphinx-doc.org/en/1.4.8/markup/inline.html#role-ref
+[konstrukce ref]: http://www.sphinx-doc.org/en/master/markup/inline.html#role-ref
 
 
 Co do dokumentace psát
@@ -321,7 +322,7 @@ You can use other values:
 ```
 
 Testy se také dají zařazovat do skupin, více
-v [dokumentaci](http://www.sphinx-doc.org/en/1.4.8/ext/doctest.html).
+v [dokumentaci](http://www.sphinx-doc.org/en/master/ext/doctest.html).
 
 ```console
 (__venv__) $ make doctest
@@ -358,6 +359,8 @@ Pokud jste postupovali podle návodu výše, máte dokumentaci v adresáři `doc
 je tedy potřeba přidat nadřazený adresář (`..`):
 
 ```python
+# -- Path setup --------------------------------------------------------------
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -382,7 +385,7 @@ Poté na Travisu můžete udělat něco jako:
 ```yaml
 language: python
 python:
-- '3.6'
+- '3.7'
 install:
 - python setup.py install
 - pip install -r docs/requirements.txt
@@ -420,7 +423,7 @@ Tento příklad na dané místo vygeneruje dokumentaci složenou z dokumentačn�
 
 Pokud chcete selektivně vybrat, dokumentaci čeho chcete generovat,
 můžete použít i
-[jiné direktivy](http://www.sphinx-doc.org/en/1.4.8/ext/autodoc.html#directive-automodule).
+[jiné direktivy](http://www.sphinx-doc.org/en/master/ext/autodoc.html#directive-automodule).
 
 Pro vygenerování hezké struktury si můžete pomoci příkazem `apidoc`:
 
@@ -476,7 +479,7 @@ class Betamax:
 Existují různé způsoby, jak dokumentovat argumenty, návratové hodnoty apod.
 Zvídavým studentům doporučujeme podívat se na rozšíření [Napoleon].
 
-[Napoleon]: http://www.sphinx-doc.org/en/1.4.8/ext/napoleon.html
+[Napoleon]: http://www.sphinx-doc.org/en/master/ext/napoleon.html
 
 
 Odkazy na třídy a moduly
@@ -496,8 +499,8 @@ bez použití `autodoc`.
 Všechny zdokumentované objekty se automaticky přidávají do rejstříku.
 Chcete-li do rejstříku přidat něco navíc, použijte direktivu [index].
 
-[domény Python]: http://www.sphinx-doc.org/en/1.4.8/domains.html#cross-referencing-python-objects
-[index]: http://www.sphinx-doc.org/en/1.4.8/markup/misc.html#index-generating-markup
+[domény Python]: http://www.sphinx-doc.org/en/master/domains.html#cross-referencing-python-objects
+[index]: http://www.sphinx-doc.org/en/master/markup/misc.html#index-generating-markup
 
 
 README.rst
