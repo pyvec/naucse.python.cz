@@ -70,7 +70,7 @@ for €12.74 (you can find just this e-book on Amazon for €19.49)
 * How to contact us: Marketa.Muzikova(at)ca.com, Vsevolod.Khanin(at)ca.com, Atul.Sharma(at)ca.com,
 Charalampos.Polychronakis(at)ca.com, Alexandru.Dumitru(at)ca.com 
 * Join our [Facebook group](https://www.facebook.com/groups/pyladies.prague.english/) so you can
-ask anything. 
+ask us anything. 
 
 ## Red and Green post-its
 
