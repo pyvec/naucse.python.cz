@@ -69,13 +69,15 @@ for €12.74 (you can find just this e-book on Amazon for €19.49)
 * We shouldn't touch your keyboard (so each time we will try to do it you should slap us :) )
 * How to contact us: Marketa.Muzikova(at)ca.com, Vsevolod.Khanin(at)ca.com, Atul.Sharma(at)ca.com,
 Charalampos.Polychronakis(at)ca.com, Alexandru.Dumitru(at)ca.com 
+* Join our [Facebook group](https://www.facebook.com/groups/pyladies.prague.english/) so you can
+ask anything. 
 
 ## Red and Green post-its
 
 During our lessons we will use red and green post-its. When there will be some exercise and
 you will finish it successfully - stick the green paper on the right upper corner of your screen 
-so everyone can see it. If you would have ANY problem stick there the red post-it and someone will
-help you.  
+so everyone can see it. If you would have ANY problem stick there the red (pink actually) 
+post-it and someone will help you.  
 * RED POST-IT: I have some problem, please help me!
 * GREEN POST-IT: I have successfully finished the exercise :)
 
