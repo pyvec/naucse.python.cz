@@ -39,6 +39,29 @@ attending this course.
 creating web pages.
 * PyLadies are also not course - PyLadies are preparing this course :)
 
+## What to do after this course?
+
+* You will need to practice a lot so you don't forget everything
+* At this time we can't promise anything, we want to do some workshops on advanced topics
+but as I said - we can't promise anything
+* You can also practice and learn some advanced stuff (e. g. algorithms, data structures) 
+at [Hackerrank](https://www.hackerrank.com/dashboard)
+* There are also a lot of games where you practice by "coding" a game (the beginnings are
+not really hard, they will give you some ground) - e. g. [Coding game](https://www.codingame.com/start),
+[Code combat](https://codecombat.com/), [Checkio](https://checkio.org/), [Cyber Dojo](http://www.cyber-dojo.org/),
+[Code Wars](https://www.codewars.com/)
+* Once a month there is [Pyvo](https://pyvo.cz/praha-pyvo/) where some lightning talks are in English
+* You can go to [PyWorking](https://pyworking.cz/) but it's mostly in Czech
+* If you have some project in mind you can go to [Meetups](https://pyworking.cz/)(right side
+of the page) where surely will be someone who speaks English
+* Or you can read some books - I recommend follow [Humble Bundle](https://www.humblebundle.com/) where
+were once bundle with books, videos and some software for Python development or books about how 
+to develop games with Python and currently (25.9. - 9.10.2018) there is [bundle](https://www.humblebundle.com/books/learn-you-some-code-books)
+where is great book "Automate the Boring Stuff with Python" for just €0.75 or you can have much more
+books about different programming languages "Python Crash Course: A Hands-On, Project-Based Introduction to Programming"
+for €12.74 (you can find just this e-book on Amazon for €19.49)
+
+
 ## Coaches
 
 * We are here in our free time - volunteering
