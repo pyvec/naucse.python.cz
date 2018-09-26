@@ -6,9 +6,9 @@ and how to write to them.
 You need three steps to read text from a file:
 * *open* the file,
 * *read* something from it,
-* and *close* it finally.
+* and finally *close* it.
 
-Create a `poem.txt` file in the editor and write any poem to it.
+Create a `poem.txt` file in the editor and write any poem into it.
 Save the file.
 
 > [note]
@@ -20,7 +20,7 @@ Save the file.
 > * If `UTF-8 without BOM` is available, use it.
 > * If you have to use Notepad then use the non-standard `utf-8-sig` instead.
 >
-> The [`utf-8`] is the name of the standard encoding.
+> [`utf-8`] is the name of the standard encoding.
 > You can store any emoji or accented characters to files with this encoding.
 > 🎉
 
@@ -45,16 +45,16 @@ The `open()` function returns the value that represents the *open file*.
 This value has its own methods.
 We are using the `read()` method that reads the entire contents 
 of the file at once and returns it as a string.
-We will cover `close()` that that closes the open file later.
+We will cover `close()`, the function that closes the open file, later.
 
 
 ## Iteration over files
 
 You can use open files with the `for` statement. 
-It similar as with strings or ranges.
+It's similar as with strings or ranges.
 `for i in range` provides consecutive numbers. 
 `for c in 'abcd'` provides single string characters. 
-`for line in poem_file` provides individual lines read from to the `line` variable.
+`for line in poem_file` provides individual lines read from the file into the `line` variable.
 
 For example, we can indent the poem to make it stand out of the text.
 
@@ -70,8 +70,8 @@ print('How do you like it?')
 ```
 
 
-When you try it, you will find that it the spacing is not how it should be. 
-Are you going to try to explain why this is so?
+When you try it, you will find that the spacing is not how it should be. 
+Would you like to try to explain why this is so?
 
 {% filter solution %}
 Each row ends with a newline character (`'\n'`).
@@ -87,34 +87,34 @@ that are the end of the string.
 
 ---
 
-¹  Why it is not removed? If the `'\n'` at the end of line was missing, 
-it would not be possible to know if the last line ends with `'\n'` or not.
+¹  Why does Python keep the newline character? If the `'\n'` at the end of line was removed, 
+it would not be possible to know if the last line ended with `'\n'` or not.
 
 {% endfilter %}
 
 
 ## Closing files
 
-It is quite important to close the file when the program stops to use it. 
-The `close()` method does it.
+It is quite important to close the file after the program stops using it. 
+The `close()` method does this for us.
 Operating systems have limits on open files.
 If you do not close them you can exceed this limit.
-Besides, on Windows, you can not open the file that is still open again.
+Besides, on Windows, you cannot re-open a file that is already open.
 
-You can compare files to a fridge: if you want to put something to the fridge, 
+You can compare files to a fridge: If you want to put something into the fridge, 
 you need to open it and then close it.
-It works without closing too but then something gets rotten. 
+The fridge works without closing, too, but then something goes rotten. 
 
 It is easy to forget to close a file.
 For example, an exception or `return` statement inside 
-the file processing skips the `close()`.
+the file processing may skip the `close()`.
 Then the file remains open.
 
 We can use the `try/finally` statement to make sure that the file is closed.
 
 The `finally` block (the statements(s) after `finally`) is always executed.
 It executes no matter if the `try` blocks ends with success, 
-or with an exception, or you jump out of it using `return` or `break`.
+or with an exception, or if you jump out of it using `return` or `break`.
 
 ```python
 def initial_character():
@@ -131,14 +131,14 @@ print(initial_character())
 ```
 
 You can use the `finally` block every time you need 
-o close or terminate something - not just a file but
-it can be a database connection.
+to close or terminate something -- not just a file,
+it can also be a database connection.
 
 
 ## The `with` statement
 
 Because the `try/finally` block is quite verbose, 
-there is a better way in Python. It is the `with` statement:
+there is a better way in Python. It's the `with` statement:
 
 ```python
 def initial_character():
@@ -152,14 +152,14 @@ print(initial_character())
 ```
 
 We used this statement for testing before. 
-It wrapped a block with an expected exception.
+It wraps a block with an expected exception.
 It checks if the correct exception has occurred 
 after the block ends.
 In our case, the file is closed when the block ends
 no matter what has happened.
-The file is closed in all cases - 
-when the `with` block ends with success, 
-or with an exception or jumping out of it.
+The file is closed in all cases --  
+if the `with` block ends with success, 
+or with an exception, or if we're jumping out of it.
 
 The `with` statement is the best option for working with files
 in the majority of cases.
@@ -168,33 +168,33 @@ in the majority of cases.
 ## Writing to files
 
 > [warning] Caution!
-> It is not a problem to delete or overwrite any file in Python.
-> Try following examples in a directory where you have nothing important!
+> It is easy to delete or overwrite any file in Python.
+> Try the following examples in a directory where you have nothing important!
 
-You can write to file in Python.
-You need to open a file for writing using a named argument
+You can write to a file in Python.
+You need to open the file for writing using a named argument
 `mode='w'` (`w` stands for *write*).
 You can write individual strings using the `write()` method.
 
-If the file already exists, the open with `mode='w'` overwrites 
+If the file already exists, opening it with `mode='w'` overwrites 
 its original content. There will be only the text that your program 
 writes into it.
 
 ```python
 with open('second-poem.txt', mode='w', encoding='utf-8') as poem_file:
     poem_file.write('Our old chiming clock\n')
-    poem_file.write("Are beating four o'clock\n")
+    poem_file.write("Is beating four o'clock\n")
 ```
 
-> [note] Why there is `\n`?
+> [note] Why is there a `\n`?
 > The `write()` method does not put a line ending after the string.
-> If you need to write multiple lines to the files, you need to need 
-> end each of them by newline character `'\n'`. We have described it
+> If you need to write multiple lines to files, you need to  
+> end each of them by a newline character `'\n'`. We have described it
 > in the [Strings section](../str/).
 
 Or, you can use the `print()` function.
-It writes to the terminal by default. 
-It can write into an open file if you use a named argument `file`.
+By default, it writes to the terminal. 
+It can also write into an open file if you use the named argument `file`.
 
 Other `print()` options remain unchanged. These options include
 line ending, conversion to strings, and printing multiple arguments at a time.
@@ -202,5 +202,5 @@ line ending, conversion to strings, and printing multiple arguments at a time.
 ```python
 with open('second-poem.txt', mode='w', encoding='utf-8') as poem_file:
     print('Our old chiming clock', file=poem_file)
-    print('Are beating', 2+2, "o'clock", file=poem_file)
+    print('Is beating', 2+2, "o'clock", file=poem_file)
 ```
