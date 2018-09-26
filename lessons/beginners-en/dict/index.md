@@ -74,7 +74,7 @@ There are values of same type.
 
 This is useful for example with phone book.
 For every name there is one phone number.
-Or other example is dictionary with words translations.
+Other examples are dictionaries with properties of food, or word translations.
 
 
 ```python
