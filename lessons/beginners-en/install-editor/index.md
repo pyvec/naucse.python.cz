@@ -1,30 +1,30 @@
 # Editor installation
 
-Editor is program for editing plain text. It is essential tool for 
+An editor is a program for editing plain text. It is an essential tool for 
 every programmer.
 
-It doesn't matter which editor you will use, just don't use
-Notepad, TextEdit, Word or Writer.
-If you already have some favourite it will just need set up.
+It doesn't matter which editor you use, just don't use
+Notepad, TextEdit, Word, or Writer.
+If you already have some favourite, it will just need to be set up.
 
 
-## What editors for programmers can do?
+## What can editors for programmers do?
 
-Editors for programmers allows us to edit *plain text*. Unlike programs such Word, 
-Writer or Pages, it does not allow *formatting* text.
+Editors for programmers let us edit *plain text*. Unlike programs such as Word, 
+Writer, or Pages, it does not let us *format* text.
 
-Using the editor, we will enter commands to the computer, so we do not need formatting, 
-but we will use some of their built-in tricks:
+Since we use the editor to enter commands for the computer, we do not need any formatting, 
+we just want to use some of their built-in tricks:
 * Multiple file support – useful for larger projects with multiple files
 * Line numbering – each line shows the number. Great for debugging
 * Offset – (indentation) Very important in Python.
-* Coloring – tailoring code highlight helps with readability. 
+* Coloring – custom code highlighting helps with readability. 
 
 
 
 > [note]
 >
-> That's how piece of code looks like in editor:
+> That's what a piece of code looks like in the editor:
 >
 > ```python
 >     1  @app.route('/courses/<course:course>/')
@@ -40,32 +40,31 @@ but we will use some of their built-in tricks:
 > ```
 
 
-## Choice and setting up an editor
+## Choosing and setting up an editor
 
 We recommend using *Atom* for now.
 
 * [Atom]({{ subpage_url('atom') }}) 
 
 You will already have some editor on Linux (but you can always download Atom).
-Just try to type into your command line `gedit` or `kate` and if some editor 
-will open that's your default Linux editor.
+Just try to type into your command line `gedit` or `kate`, and if an editor 
+opens, that's your default Linux editor.
 
 * [Gedit]({{ subpage_url('gedit') }}) – GNOME.
 * [Kate]({{ subpage_url('kate') }}) – KDE.
 
 
 
-
 ### IDE
 
-Most Python programmers use complex and extremely powerful programs, so called `IDEs` 
+Most Python programmers use complex and extremely powerful programs, so-called `IDEs` 
 (*Integrated Development Environments*),
 such as [PyCharm], [Eclipse] or [KDevelop].
-But they are not much suitable for beginners.
+But they are not very suitable for beginners.
 
-If you want to use some you should really know it. And also keep in mind
-that every coach knows only that one which they use often so they might not
-be able to help you.
+If you want to use an IDE, you should really know it well. And also keep in mind
+that every coach knows only that one IDE that they use most often, so they might not
+be able to help you with another.
 
 [PyCharm]: https://www.jetbrains.com/pycharm/
 [Eclipse]: https://eclipse.org/
