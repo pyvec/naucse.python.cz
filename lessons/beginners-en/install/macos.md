@@ -16,7 +16,18 @@ Pnd then you can just enter this command:
 $ brew install python3
 ```
 
-## [conda installation] 
+## conda installation
+
+For conda installation use [this link](https://conda.io/docs/user-guide/install/macos.html)
+
+Then you have to add path to conda/bin to your environment variable PATH - try to find out
+by yourself (but if you will have some troubles contact us). You will know that it's been added
+successfully by typing into your command line:
+
+```bash
+conda --help
+``` 
+
 After succesfull installation follow how to [create virtual environment](https://conda.io/docs/user-guide/tasks/manage-environments.html)
-[conda installation]: https://conda.io/docs/user-guide/install/macos.html
+
 

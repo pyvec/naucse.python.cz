@@ -73,7 +73,19 @@ If not you will have to install `tkinter`:
 If you have other distro check the package name on Google.
 
 {{ anchor('install-conda') }}
-## [conda installation]
-After succesfull installation follow how to [create virtual environment](https://conda.io/docs/user-guide/tasks/manage-environments.html)
+## conda installation
 
-[conda installation]: https://conda.io/docs/user-guide/install/linux.html
+For conda installation use [this link](https://conda.io/docs/user-guide/install/linux.html)
+
+Then you have to add path to conda/bin to your environment variable PATH - try to find out
+by yourself (but if you will have some troubles contact us). You will know that it's been added
+successfully by typing into your command line:
+
+```bash
+conda --help
+``` 
+
+
+After successful installation follow how to [create virtual environment](https://conda.io/docs/user-guide/tasks/manage-environments.html)
+
+
