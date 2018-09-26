@@ -2,7 +2,7 @@
 
 Let's try if we installed Python successfully!
 
-First check if you have your virtual environment active (there is `(venv)`
+First check if you have your virtual environment active (there is `(myenv)`
 in the beginning of your command line).
 
 If it's there we can now start Python (precisely Python console).
@@ -10,14 +10,14 @@ To do that just write `python`:
 
 
 ``` plain
-(venv)$ python
+(myenv)$ python
 Python 3.4.0 (default, Jan 26 2014, 18:15:05)
 [GCC 4.8.2 20131212 (Red Hat 4.8.2-7)] on linux
 Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 
-That commnd will write out some information.
+That command will write out some information.
 On the first line there is which version of Python you have (so 
 you should have there Python 3).
 Now the command line starts with three "greater than" signs.
@@ -70,20 +70,20 @@ To quit just type `quit()` with empty brackets.
 
 <div class="highlight"><pre>
 <span class="gp">&gt;&gt;&gt;</span> quit()
-<span class="gp">(venv)$</span>
+<span class="gp">(myenv)$</span>
 </pre></div>
 
-Greater than signs `>>>` changed back to `(venv)` with `$` or
+Greater than signs `>>>` changed back to `(myenv)` with `$` or
 `>` in the end.
 Now commands like `whoami` and `cd` are working but Python's
 commands like `1 + 2` don't until you enter Python console with 
 `python` again.
 
-To quit virtual environment type `deactivate` -
+To quit virtual environment type `deactivate` or `source deactivate` (for Linux and Mac)-
 now without brackets.
 
 ```console
-(venv)$ deactivate
+(myenv)$ deactivate
 ```
 
 Command prompt (terminal) can be closed by typing `exit`.
