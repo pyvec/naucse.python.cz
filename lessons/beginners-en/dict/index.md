@@ -71,9 +71,9 @@ A use of dictionaries other than data clustering is the
 so-called *lookup table*.
 It stores values of same type.
 
-You can use this, for example, for a phone book.
-For every name there's a phone number.
-Another example would be a dictionary with word translations.
+This is useful for example with phone book.
+For every name there is one phone number.
+Other examples are dictionaries with properties of food, or word translations.
 
 
 ```python
