@@ -78,9 +78,11 @@ If you have other distro check the package name on Google.
 For conda installation use [this link](https://conda.io/docs/user-guide/install/linux.html)
 and choose Anaconda.
 
-Then you have to add path to conda/bin to your environment variable PATH - try to find out
-by yourself (but if you will have some troubles contact us). You will know that it's been added
-successfully by typing into your command line:
+Then you have to add full path to /......./Continuum/anaconda3/Scripts (instead of
+dots there will be something different regarding where you installed it)
+to your environment variable PATH - try to find out by yourself (but if you will have
+some troubles contact us). You will know that it's been added successfully by typing into 
+your command line:
 
 ```bash
 conda --help
