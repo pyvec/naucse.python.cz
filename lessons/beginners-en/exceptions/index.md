@@ -1,13 +1,13 @@
 # Exceptions
 
-We were already talking about [error messages]({{ lesson_url('beginners/print') }}) : 
-Python complains, tells us where is the error (line) and terminates the program.
-But there are lot more what we can learn about error messages (a.k.a *exceptions*).
+We have already talked about [error messages]({{ lesson_url('beginners/print') }}): 
+Python complains, tells us where the error (line) is, and terminates the program.
+But there is much more that we can learn about error messages (a.k.a *exceptions*).
 
 
 ## Printing errors:
 
-In the beginning we will repeat how Python prints error which is in nested function.
+In the beginning we will repeat how Python prints an error which is in a nested function.
 
 
 ```python
@@ -33,22 +33,22 @@ Traceback (most recent call last):
 ZeroDivisionError: division by zero
 ```
 
-You can notice that every function calling that led to error is written there.
-The actuall error is probably somewhere around that function calling.
-In our case it's easy. We should't call `in_func` with argument `0`.
-Or this `in_function` should be prepared that the divisor can be `0`
+You notice that every function call that led to the error is listed here.
+The actuall error is probably somewhere near that function call.
+In our case it's easy. We shouldn't call `in_func` with argument `0`.
+Or, the `in_function` must be written to handle the case that the divisor can be `0`
 and it should do something else than try to devide by zero.
 
-Python can't know where is the error that should repaired so it shows
-you everything in error message.
-It will be very useful in more difficult programs.
+Python can't know where the error is that needs to be fixed, so it shows
+you everything in the error message.
+This will be very useful in more complex programs.
 
 
-## Raising error
+## Raising an error
 
-Error or more precisely *exception* could be also invoked by command `raise`.
-After that command there have to be the name of the exception and then you write some 
-information about what went wrong into brackets.
+An error, or more precisely an *exception*, can be also invoked by the command `raise`.
+After that command, write the name of the exception and some
+information about what went wrong in parentheses.
 
 
 ```python
@@ -62,14 +62,14 @@ def verify_number(number):
 ```
 
 All types of built-in exceptions are
-[here](https://docs.python.org/3/library/exceptions.html) including their hierarchy.
+[here](https://docs.python.org/3/library/exceptions.html), including their hierarchy.
 
-Those are important to us now:
+These exceptions are important to us now:
 
 ```plain
 BaseException
  ├── SystemExit                     raised by function exit()
- ├── KeyboardInterrupt              raised after pressind Ctrl+C
+ ├── KeyboardInterrupt              raised after pressing Ctrl+C
  ╰── Exception
       ├── ArithmeticError
       │    ╰── ZeroDivisionError    zero division
@@ -78,8 +78,8 @@ BaseException
       ├── ImportError               failed import
       ├── LookupError
       │    ╰── IndexError           non-existing index, e.g. 'abc'[999]
-      ├── NameError                 used non-existing name of variable
-      │    ╰── UnboundLocalError    used variable, which wasn't initiated
+      ├── NameError                 used a non-existing variable name
+      │    ╰── UnboundLocalError    used a variable that wasn't initiated
       ├── SyntaxError               wrong syntax – program is unreadable/unusable
       │    ╰── IndentationError     wrong indentation
       │         ╰── TabError        combination of tabs and spaces
@@ -92,11 +92,11 @@ BaseException
 
 And why are there so many?
 So you can catch them! :)
-In the following function the `int` function can 
-fail when there is something else than
-number given to it. So it needs to be prepared for
-that kind of situation with `try/except` block (you can also
-see this named `try/catch` block - mostly in different
+In the following function, the `int` function can 
+fail when something other than a
+number is given to it. It needs to be prepared for
+that kind of situation with a `try/except` block. (You also
+commonly hear this called a `try/catch` block -- mostly in other
 programming languages).
 
 ```python
@@ -110,38 +110,38 @@ def load_number():
     return number
 ```
 
-So how does that work?
-Commands within the block `try` will be run but when there is error
-which you named after `except` Python won't terminate the program it will
+So how does this work?
+Python runs the commands within the `try` block, but if the error occurs
+that you mentioned after `except`, Python won't terminate the program, instead, it will
 run all the commands in the exception block.
-When there won't be any error the except block will be skipped.
+If there's no error, the except block will be skipped.
 
-When you are catching a general exception there will be
-catched also exceptions that are related to it (in the diagram they are underneath) - 
-e.g. `except ArithmeticError:` will catch also `ZeroDivisionError`.
-And `except Exception:` will catch all ussual exceptions.
+When you catch a general exception, Python also catches
+exceptions that are related to it (in the diagram, they are listed as child entries) -- 
+e.g. `except ArithmeticError:` will also catch `ZeroDivisionError`.
+And `except Exception:` will catch all usual exceptions.
 
 
 ## Don't catch'em all!
 
 There is no need to catch most of the errors.
 
-If any error, that you don't expect, happens 
+If any unexpected error happens 
 it's always *much* better to terminate the program
-than continue with wrong values.
-In addition Python's standard error output will
-really easy you to find the error.
+than to continue with wrong values.
+In addition, Python's standard error output will make it
+really easy for you to find the error.
 
-For example catching exception `KeyboardInterrupt`
-could cause that program couldn't be terminated if we would need it
+For example, catching the exception `KeyboardInterrupt`
+could have the side effect that the program couldn't be terminated if we needed to
 (with shortcut <kbd>Ctrl</kbd>+<kbd>C</kbd>).
 
-Use command `try/except`only in situations when you
-expect some exception - you know exactly what could happen
-and why and you have the option to correct it - in
+Use the command `try/except` only in situations when you
+expect some exception -- when you know exactly what could happen
+and why, and you have the option to correct it -- in the
 except block.
-Typical example with input from user. When user will 
-enter some gibberish it is better to ask again until
+A typical example would be reading input from a user. If the user 
+enters gibberish, it's better to ask again until the
 user enters something meaningful:
 
 
@@ -163,14 +163,14 @@ Type a number: 20
 ```
 
 
-## Another clauses
+## Other clauses
 
-Apart from `except` there are two more clauses - blocks that can 
-be used with `try` and those are `else` and `finally`.
-The first one will be run if exception in `try` block won't happen.
-And `finally` will run every time.
+Additionally to `except`, there are two more clauses - blocks that can 
+be used with `try`, and these are `else` and `finally`.
+The first one will be run if exception in the `try` block didn't happen.
+And `finally` runs every time.
 
-You can also have more `except` block. There will be triggered only one - 
+You can also have several `except` blocks. Only one of them will be triggered -- 
 the first one that can handle the raised exception. 
 
 
@@ -178,26 +178,26 @@ the first one that can handle the raised exception.
 try:
     do_something()
 except ValueError:
-    print('This will be printed when there will be ValueError.')
+    print('This will be printed if there's a ValueError.')
 except NameError:
-    print('This will be printed when there will be NameError.')
+    print('This will be printed if there's a NameError.')
 except Exception:
-    print('This will be printed when there will be some other exception.')
+    print('This will be printed if there's some other exception.')
     # (apart from SystemExit a KeyboardInterrupt, we don't want to catch those)
 except TypeError:
     print('This will never be printed')
-    # ("except Exception" above already caught TypeError)
+    # ("except Exception" above already caught the TypeError)
 else:
-    print('This will be printed when there will not be any error in try block')
+    print('This will be printed if there's no error in try block')
 finally:
-    print('This will be printed always; even if there would be e.g. `return` in the `try` block.')
+    print('This will always be printed; even if there's e.g. a `return` in the `try` block.')
 ```
 
 
 ## Task
 
-Add to our calculator (or to 1-D ticktactoe if you have it) exception 
-handeling if user won't enter number in the input.
+Let's add exception handling to our calculator (or to 1-D ticktactoe, if you have it)  
+if the user doesn't enter a number in the input.
 
 
 {% filter solution %}
@@ -233,7 +233,7 @@ def load_number(field):
             print('This is not a number!')
         else:
             if position < 0 or position >= len(field):
-                print('You can not play out of field!')
+                print('You can not play outside the field!')
             elif field[position] != '-':
                 print('That position is not free!')
             else:
