@@ -18,12 +18,11 @@ There is a dictionary with 3 keys, and each one of them has a value:
 >>> me = {'name': 'Marketa', 'city': 'Prague', 'numbers': [20, 8]}
 ```
 
-{# XXX - Only visible in Python 3.5 and below. How to teach this?
 When you print the dictionary you may find that 
 your keys and values are in a different order.
 Dictionaries don't have a fixed order of elements. They just 
 assign values to keys.
-#}
+
 
 You can get values from the dictionary similar as
 from lists, but instead of an index, you have to use the key. 
