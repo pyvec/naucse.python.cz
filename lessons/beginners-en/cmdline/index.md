@@ -286,7 +286,7 @@ There is a table of basic commands:
         <td>
             <code>cp original.txt copy.txt</code>
             <br>
-            <code>copy cp original.txt copy.txt</code>
+            <code>copy original.txt copy.txt</code>
         </td>
     </tr>
     <tr>
