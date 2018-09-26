@@ -97,7 +97,6 @@ a editovat ve webové konzoli.
 > [note]
 > Doporučujeme pro tyto potřeby stejně raději nepoužívat API klíče
 > k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
-> Twitter vyžaduje před vydáním API klíčů zadání a potvrzení telefonního čísla.
 > GitHub povoluje všem vytvořit si jeden účet pro automatické operace, ale
 > takový účet musí mít napsané v popisu, že je robot.
 

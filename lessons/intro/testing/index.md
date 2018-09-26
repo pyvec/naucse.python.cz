@@ -524,7 +524,7 @@ def client(betamax_session):
 ```
 
 Co když ale nevíme, jak bude vypadat citlivá část požadavku, protože se teprve
-někde spočítá a získá, jako v případě Twitter API?
+někde spočítá a získá, jako například v případě Twitter API?
 Na tuto otázku podrobněji odpovídá
 [dokumentace](https://betamax.readthedocs.io/en/latest/configuring.html#filtering-sensitive-data).
 
