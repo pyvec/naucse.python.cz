@@ -77,8 +77,10 @@ not really hard, they will give you a foundation) - e.g. [Coding game](https://w
 of the page) where surely someone speaks English
 * Or you can read some books - I recommend to follow [Humble Bundle](https://www.humblebundle.com/) where
 they once offered a bundle with books, videos, and some software for Python development, or books about how 
-to develop games with Python. Currently (25.9. - 9.10.2018) there is a [bundle](https://www.humblebundle.com/books/learn-you-some-code-books) that includes the great book "Automate the Boring Stuff with Python" for just €0.75, or you can find many more
-books about different programming languages. You can find just the e-book "Python Crash Course: A Hands-On, Project-Based Introduction to Programming" for €12.74 (on Amazon for €19.49).
+to develop games with Python. Currently (25.9. - 9.10.2018) there is a [bundle](https://www.humblebundle.com/books/learn-you-some-code-books) 
+that includes the great book "Automate the Boring Stuff with Python" for just €0.75, or you buy many more
+books about different programming languages including "Python Crash Course: A Hands-On, Project-Based Introduction 
+to Programming" for €12.74 (this one is on Amazon for €19.49).
 
 <br>
 <hr>
