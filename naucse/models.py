@@ -6,6 +6,7 @@ import textwrap
 from attr import NOTHING
 import dateutil.tz
 
+from naucse.edit_info import get_local_edit_info
 import naucse_render
 
 # XXX: Different timezones?
@@ -497,6 +498,8 @@ class Root(Model):
                         slug = f'{year_path.name}/{course_path.name}'
                         course = Course.load_local(self, slug)
                         run_year.runs[slug] = course
+
+        self.edit_info = get_local_edit_info(path)
 
     def get_course(self, slug):
         year, identifier = slug.split('/')

@@ -64,7 +64,7 @@ setup_jinja_env(app.jinja_env, model=model)
 @app.route('/')
 def index():
     # XXX: Edit URL
-    return render_template("index.html")
+    return render_template("index.html", edit_info=model.edit_info)
 
 
 @app.route('/courses/')
