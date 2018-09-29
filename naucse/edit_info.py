@@ -13,11 +13,8 @@ class GithubEditInfo:
     icon='github'
 
     def __init__(self, org, repo, branch, path='/'):
-        if path.endswith('/'):
-            if branch == 'master' and path == '/':
-                self.url = (f"https://github.com/{org}/{repo}")
-            else:
-                self.url = (f"https://github.com/{org}/{repo}/tree/{branch}/{path}")
+        if branch == 'master' and path in ('', '/', '.'):
+            self.url = (f"https://github.com/{org}/{repo}")
         else:
             self.url = (f"https://github.com/{org}/{repo}/blob/{branch}/{path}")
 
@@ -66,7 +63,7 @@ def get_local_edit_info(path='.'):
             return None
         return GithubEditInfo(*repo_slug.split('/', 1), branch)
 
-    repo = Repo(str(path))
+    repo = Repo(str(path), search_parent_directories=True)
 
     logger.debug(f'in branch active_branch')
 
@@ -103,9 +100,5 @@ def get_local_edit_info(path='.'):
 
     remote_url = repo.remotes[remote_name].url
     relative_path = str(path.relative_to(repo.working_dir))
-    if relative_path == '.':
-        relative_path = ''
-    if path.is_dir():
-        relative_path += '/'
 
     return get_edit_info(remote_url, branch, path=relative_path)

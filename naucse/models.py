@@ -492,7 +492,9 @@ class Root(Model):
         for year_path in sorted((path / 'runs').iterdir()):
             if year_path.is_dir():
                 year = int(year_path.name)
-                self.run_years[int(year_path.name)] = run_year = RunYear(year=year, parent=self)
+                run_year = RunYear(year=year, parent=self)
+                run_year.edit_info = get_local_edit_info(year_path)
+                self.run_years[int(year_path.name)] = run_year
                 for course_path in year_path.iterdir():
                     if (course_path / 'info.yml').is_file():
                         slug = f'{year_path.name}/{course_path.name}'
@@ -500,6 +502,7 @@ class Root(Model):
                         run_year.runs[slug] = course
 
         self.edit_info = get_local_edit_info(path)
+        self.runs_edit_info = get_local_edit_info(path / 'runs')
 
     def get_course(self, slug):
         year, identifier = slug.split('/')

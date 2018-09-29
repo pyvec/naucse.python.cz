@@ -133,15 +133,18 @@ def runs(year=None, all=None):
         else:
             paginate_prev = {'year': None}
 
-    return render_template("run_list.html",
-                           run_data=run_data,
-                           title="Seznam offline kurzů Pythonu",
-                           today=datetime.date.today(),
-                           year=year,
-                           all=all,
-                           all_years=all_years,
-                           paginate_next=paginate_next,
-                           paginate_prev=paginate_prev)
+    return render_template(
+        "run_list.html",
+        run_data=run_data,
+        title="Seznam offline kurzů Pythonu",
+        today=datetime.date.today(),
+        year=year,
+        all=all,
+        all_years=all_years,
+        paginate_next=paginate_next,
+        paginate_prev=paginate_prev,
+        edit_info=model.runs_edit_info,
+    )
 
 
 @app.route('/<course:course>/')
