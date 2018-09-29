@@ -70,9 +70,10 @@ def index():
 @app.route('/courses/')
 def courses():
     # XXX: Edit URL
-    return render_template("course_list.html",
-                           courses=model.courses,
-                           title="Seznam online kurzů Pythonu")
+    return render_template(
+        "course_list.html",
+        courses=model.courses,
+    )
 
 
 @app.route('/runs/')
@@ -136,7 +137,6 @@ def runs(year=None, all=None):
     return render_template(
         "run_list.html",
         run_data=run_data,
-        title="Seznam offline kurzů Pythonu",
         today=datetime.date.today(),
         year=year,
         all=all,
@@ -161,7 +161,6 @@ def course(course, year=None):
     return render_template(
         "course.html",
         course=course,
-        title=course.title,
         recent_runs=[], # XXX
         **kwargs
     )
@@ -182,7 +181,6 @@ def session(course, session_slug, coverpage):
         "coverpage.html",
         course=course,
         session=session,
-        title=course.title,
         content=None, # XXX
         **kwargs
     )
@@ -213,11 +211,11 @@ def page(material, page_slug='index', solution=None):
 
     return render_template(
         "lesson.html",
-        title=title,
         content='', # XXX,
         page=page,
         solution=solution,
-        session=session,
+        session=page.material.session,
+        course=page.material.session.course,
         **kwargs
     )
 
