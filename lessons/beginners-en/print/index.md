@@ -24,100 +24,91 @@ Now run the program. Does it work?
 ## How to read error messages
 
 You will often find out that the code you wrote isn't working on its first run.
-It's because computer isn't that smart so you have to write commands in 
-Často zjistíš, že program, který napíšeš, nebude fungovat hned napoprvé.
-Počítač je hloupý stroj; pokud instrukce nenapíšeš přesně podle pravidel jazyka
-Python, neumí si domyslet, co po něm chceš.
-Ale nevěš hlavu, stává se to všem programátorům.
-Důležité je vědět, jak chybu najít.
-A k tomu ti pomůžou chybové výpisy.
-Třeba program výše vypíše po spuštění následující chybu:
+It's because computer isn't that smart so you have to write commands in exact way
+according to the Python rules. Don't worry it happens even to experienced programmers.
+Important is to know how to find what is wrong. The error messages will help you with
+that. For example after run our program will print this:
+
 
 <pre>
   File "<span class="plhome">~/pyladies</span>/02/printing.py", line <span class="err-lineno">11</span>
-    print(V míse je maso.)
+    print(How I wonder what you are.)
                ^
 <span class="err-exctype">SyntaxError</span>: invalid syntax
 </pre>
 
-Při chybě Python napřed vypíše
-jméno souboru a <span class="err-lineno">číslo řádku</span>,
-na kterém chyba je.
-Potom vypíše celý řádek s chybou
-a nakonec oznámí <span class="err-exctype">druh chyby</span>
-(v tomto případě je to „syntaktická chyba“)
-a případně nějaké bližší upřesnění.
+First Python prints name of the file and <span class="err-lineno">line number</span>,
+where the error is.
+Then it prints the whole line with the mistake.
+And finally <span class="err-exctype">error type</span>
+(in our case it's "syntax error") and eventually some more info.
 
-> [note] Pro zvídavé
-> Jak se od téhle chyby liší ta, která nastane, když zkusíš sečíst číslo a řetězec?
-> Nebo když zkusíš dělit nulou?
+> [note] How is this error different from the one that happens when you
+> try to add up number and text? Or when you try to divide by zero?
 
-Chybové hlášky můžou být ze začátku těžko pochopitelné,
-zvyknout se na ně dá asi jenom praxí.
-Pro tebe bude ze začátku důležité hlavně ono číslo řádku.
-Když víš, že chyba je na řádku <span class="err-lineno">11</span>,
-můžeš se podívat na tento řádek a zkusit chybu najít.
+Error messages can be hard to understand from the beginning, but 
+you will get used to them with practice.
+For now the important thing for you will be the line number.
+When you know that the mistake is on line <span class="err-lineno">11</span>,
+you can look on that line and try to find it.
 
-Když chyba není na daném řádku, může být ještě
-o pár řádků výš nebo níž:
-Python občas nesdílí lidské představy o tom, kde přesně chyba *je*,
-a ukáže jen, kde si jí sám *všimnul*.
+When you won't find it there, it can also be few lines above or bellow.
+Python sometimes doesn't share human views where the mistake actually *is*
+and it shows you where it *noticed* the mistake.
 
-V našem případě je chyba v tom, že kolem řetězce nejsou uvozovky.
-Přidej je a program znovu spusť.
-Jestli funguje, gratuluji!
-Jinak chybu opět oprav a opakuj, dokud to nebude fungovat :)
+In our case the mistake is that we don't have quotations around
+the string. So add them there and run the program again.
+If it works, congratulations!
+If not try to correct the program and repeat it until it will work :)
 
-## Jak funguje program
+## How program works
 
-Teď, když program běží, se můžeme podívat, co se při
-jeho spuštění vlastně děje.
-Je to zatím docela jednoduché: příkazy se provádějí jeden po druhém,
-odshora dolů.
-Program je jako recept na vaření: seznam instrukcí, které říkají co je potřeba
-udělat.
+Now when our program works we can look closely on what is happening
+when it's running.
+It's quite simple now: commands are performed one after anoter
+from the top to the bottom.
+Program is like cooking recipe: instructions what to do.
 
-Zanedlouho budou tvoje programy připomínat spíš recepty na
-čarodějné lektvary (*počkej do úplňku a pokud je Mars
-v konjunkci s Jupiterem, třikrát zamíchej*),
-ale základní myšlenka je stále stejná:
-počítač čte odshora dolů a provádí příkazy jeden po druhém.
+Soon your programs will more look like sorcerer potions 
+(*wait for the full moon and if Mars in in conjunction with
+Jupiter then stir up three times*) but the principle is still
+the same: computer reads commands from the top to the bottom
+and performs one after another.
 
-## Print a výrazy
+## Print and expressions
 
-A z jakých že instrukcí se náš „recept“ skládá?
+And from what instructions are in our "recipe"?
 
-Ten `print`, který tu celou dobu používáš, je *funkce*.
-O funkcích se ještě budeme bavit později,
-teď stačí vědět, že když napíšeš `print`
-a za to do závorky několik *výrazů* (angl. *expressions*)
-oddělených čárkou, hodnoty těchto výrazů se vypíšou.
+That `print` which we are using is *function*. We will talk
+about functions later, now all you need to know is that
+if you type `print` and after that into brackets some
+*expressions* separated by comma values of that
+expressions will be printed.
 
-A co že je ten výraz?
-V našem programu máš několik příkladů:
-výraz je číslo, řetězec nebo nějaká (třeba matematická) operace
-složená z více výrazů.
-Třeba výraz `3 + 8` sečítá výrazy `3` a `8`.
+And what are those expressions?
+You have some examples in our code:
+expression can be number, string or some (e.g. mathematical)
+operation composed of multiple expressions.
+For example expression `3 + 8` will add up `3` and `8`.
 
-V sekci o [proměnných]({{ lesson_url('beginners/variables') }}) se
-na výrazy a jejich hodnoty podíváme podrobněji.
+We will focus on expressions and theur values more in 
+lesson about [variables]({{ lesson_url('beginners/variables') }}).
 
-> [style-note] Typografická vsuvka
-> Všimni si stylu zápisu: jako v češtině se po otvírací závorce a za
-> ozavírací závorkou nepíše mezera; na rozdíl od češtiny ale mezera není
-> mezi `print` a závorkou.
+> [style-note] Typography
+>
+> Notice that there are no spaces around
+> the brackets:
 > ```python
-> print("Ahoj!")
+> print("Hello!")
 > ```
 >
-> S čárkou je to jako v češtině: mezeru píšeme po čárce, ale ne před ní:
+> But we can write space after comma but not before:
 > ```python
 > print(1, 2, 3)
 > ```
 >
-> Kolem operátorů jako `+` a `*` se obyčejně píše jedna mezera zleva a
-> jedna zprava. Někdy je ale přehlednější obě vynechat:
+> We can also write spaces around mathematics operators:
 > ```python
 > print(2 + 8)
-> print("Jedna a půl je", 1 + 1/2)
+> print("One and a half is ", 1 + 1/2)
 > ```
