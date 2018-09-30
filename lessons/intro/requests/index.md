@@ -102,7 +102,7 @@ Tímto kódem lze například získat popis přihlášeného uživatele, tedy se
 >>> session = requests.Session()
 >>> session.headers = {'User-Agent': 'Python'}
 >>> def token_auth(req):
-...     req.headers['Authorization'] = 'token ' + token
+...     req.headers['Authorization'] = f'token {token}'
 ...     return req
 ... 
 >>> session.auth = token_auth
