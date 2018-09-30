@@ -1,9 +1,9 @@
-# Comparison
+# Comparisons
 
 Do you still remember what an <em>operator</em> is?
 
 In our homework, we learned some basic arithmetic operators.
-When we add one more (`//`) they will look like that:
+When we add one more (`//`), our list will look like this:
 
 <table class="table">
     <tr>
@@ -24,7 +24,7 @@ When we add one more (`//`) they will look like that:
     <tr>
         <td><code>//</code>; <code>%</code></td>
         <td><code>7 // 2</code>; <code>7 % 2</code></td>
-        <td>Integer division, Remainderk</td>
+        <td>Integer division, remainder</td>
     </tr>
     <tr>
         <td><code>**</code></td>
@@ -33,10 +33,10 @@ When we add one more (`//`) they will look like that:
     </tr>
 </table>
 
-Python has other types of operators. *Comparison* (relational) 
+Python also has other types of operators. *Comparison* (relational) 
 operators are used to compare values.
-Try what they are doing!
-(You can do it by `print` in your code
+Try out what they do!
+(You can try them by using `print()` in your code,
 or you can try `python`'s command line.)
 
 <table class="table">
@@ -62,16 +62,15 @@ or you can try `python`'s command line.)
     </tr>
 </table>
 
-Comparison values are so called *boolean*
-(after [G. Boolea](http://en.wikipedia.org/wiki/George_Boole)).
-They are used everytime we want to know if somethong is `True` or `False`.
+Comparison values are called *boolean* values
+(after [G. Boole](http://en.wikipedia.org/wiki/George_Boole)).
+They are used every time we want to know if something is `True` or `False`.
 Boolean types are exactly those two - `True` and `False`.
 
-Like all values `True` and `False` can be assigned to variables:
-
+Like all values, `True` and `False` can be assigned to variables:
 
 ```python
-true = 1 < 3 #we have to type it in lowercase now cause True is reserved word in Python
+true = 1 < 3 #we have to type it in lowercase now cause True is a reserved word in Python
 print(true)
 
 false = 1 == 3
@@ -79,13 +78,13 @@ print(false)
 ```
 
 > [note]
-> Notice that you have to find equality by two equal signs: `3 == 3`
-> One equal assigns value to the variable and two equals
-> are comparing values (of variables).
+> Note that to test equality, you uave to use two equal signs: `3 == 3`.
+> One equal sign assigns a value to a variable, and two equal signs
+> compare two values (of variables).
 
 <code>True</code> and <code>False</code> 
 can be used directly in a program.
-Just keep an eye on capitalization.
+Just keep an eye on capitalisation.
 
 ```python
 print(True)
@@ -100,27 +99,26 @@ print(False)
 {% set rootname = 'naucse-python' %}
 {%- endif %}
 
-Now write into new file (e. g. `if.py`) this:
+Write the following into a new file (e.g. `if.py`):
 
 ```python
 side = float(input('Enter the side of a square in centimeters: '))
-print("The Perimeter of a square with a side of", side,"cm is", side * 4,"cm")
-print("The Area of a square with a side of", side,"cm is", side * side, "cm2")
+print("The perimeter of a square with a side of", side,"cm is ", side * 4,"cm.")
+print("The area of a square with a side of", side,"cm is", side * side, "cm2.")
 ```
 
-what happens when you enter a negative number? Does the output make sense?
+What happens when you enter a negative number? Does the output make sense?
 
-As we can see computer is doing exactly what it is told and doesn't
-think about context. So you have to do that for it.
-It would be nice if the program tells the user whom enter
-negative number that they entered nonsense,
-How to do it?
+As we can see, the computer does exactly what it is told and doesn't
+think about context. You have to do that for it.
+It would be nice if the program could tell the user who enters
+a negative number that they entered nonsense.
+How do we do that?
 
 Let’s try to set a variable that will be `True` when a user enters a positive number.
 
-
 {% filter solution %}
-    That variable could be set like that:
+    You can set the variable like this:
 
     ```python
     side = float(input('Enter the side of a square in centimeters: '))
@@ -138,8 +136,8 @@ positive_number = side > 0
 
 
 if positive_number:
-    print("The Perimeter of a square with a side of", side,"cm is", side * 4,"cm")
-    print("The Area of a square with a side of", side,"cm is", side * side, "cm2")
+    print("The perimeter of a square with a side of", side,"cm is", side * 4,"cm.")
+    print("The area of a square with a side of", side,"cm is", side * side, "cm2.")
 else:
     print("The side must be a positive number!")
 
@@ -147,25 +145,25 @@ print("Thank you for using the geometric calculator.")
 
 ```
 
-So after `if` there is *condition* which is the
+So after `if`, there is a *condition* which is the
 expression we'll use for decision making.
-After the condition there has to be colon (`:`).
-Then follow the commands to be executed if condition is true.
-There has to be indentation 4 spaces after every colon we will use
-in Python.
-Then on the same level as `if` is we will write `else:` with colon in the end and next line
-line with commands that will be executed if condition is false and also indented.<br>
-Then you can write other code, not intended, that will be executed every time because
-the if statement already ended.
+After the condition you must write a colon (`:`).
+The colon is followed by the commands to be executed if the condition is true.
+Indent the lines 4 spaces after every colon you use in Python.
+
+Then on the same level as `if`, write `else:` followed by a colon. The next lines
+contain the commands that are executed if the condition is false, and they must also be indented.<br>
+Then you can write other code, not indended, that will be executed every time, because
+the if statement has already ended.
 
 > [note]
-> The indentation doesn't need to be 4 spaces, there can be only 
-> 2 or even 11 and you can also use tabulator. The point is that
-> within one block of code it has to be the same.
-> So if you are working on some project with someone else you
-> have to specify this to yourselves so the program 
-> will be able to run properly. And most of the people
-> from Python community agreed on 4 spaces (or tab).
+> The indentation doesn't need to be 4 spaces, you could use 
+> 2 or even 11, or you can use the tabulator. The point is that
+> within one block of code, the indentation has to be the same.
+> So if you are working on some project with someone else, you
+> have to agree on indentation for the program 
+> to be able to run properly. Most of the people
+> from the Python community agree on 4 spaces (or one tab).
 
 
 ## Other conditional statements
@@ -180,11 +178,10 @@ if number == 0:
 print(number, '+ 3 =', number + 3)
 ```
 
-Sometimes several conditions are needed, for which we have the `elif` statement
-(combimation of `else` and `if`).
-It's between `if` and `else`.
-Command `elif` may be present more times after one `if` but there
-will be run only one (to be precisely the first true one) "branch" 
+Sometimes several conditions are needed. For this situation, we have the `elif` statement
+(combimation of `else` and `if`). It's between `if` and `else`.
+You can repat the `elif` keyword after the first `if`, but 
+only one branch be executed, to be precise: the first true one
 where the conditions are met. 
 
 
@@ -196,18 +193,17 @@ elif age >= 18:
     # This branch will not be executed for "200", for example.
     print('We can offer: wine, cider, or vodka.')
 elif age >= 1:
-    print('We can offer: milk, tea or water')
+    print('We can offer: milk, tea, or water')
 elif age >= 0:
     print('Unfortunately, we are out of Sunar.')
 else :
-    # If no condition is met from above - age had to be a negative
-    print('Visitors from the future are not welcomed here!')
-
+    # If no condition is met from above, the age had to be negative.
+    print('Visitors from the future are not welcome here!')
 ```
 
 ## Rock paper scissors
 
-`If`s can be nested - after `if` and indentation there can be other `if`.
+`If`s can be nested - after an `if` and ist indentation, there can be other `if`.
 
 
 ```python
@@ -241,5 +237,5 @@ else:
 ```
 
 Yay, your first game!<br>
-Now we will need to overwrite the pc_choice so it would act 
-randomly. We will talk about how to do it next time.
+Now we need to overwrite the pc_choice so it will act
+randomly. We will talk about how to do this next time.
