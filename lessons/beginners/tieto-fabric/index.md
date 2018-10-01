@@ -14,29 +14,28 @@ pip install paramiko
 
 ```
 #!/usr/bin/env python
+import paramiko
+import sys
 
-import sys, paramiko
-
-if len(sys.argv) < 4:
-    print "args missing"
+if len(sys.argv) < 3:
+    print("args missing")
     sys.exit(1)
 
 hostname = sys.argv[1]
-password = sys.argv[2]
-command = sys.argv[3]
+command = sys.argv[2]
 
-username = "admin"
-port = 22
+username = "ubuntu"
+port = 2222
 
 try:
     client = paramiko.SSHClient()
     client.load_system_host_keys()
     client.set_missing_host_key_policy(paramiko.WarningPolicy)
-    client.connect(hostname, port=port, username=username, password=password)
+    client.connect(hostname, port=port, username=username, key_filename='/Users/jasiplum/Development/Projects/Tieto/Python/naucse/.vagrant/machines/default/virtualbox/private_key')
     stdin, stdout, stderr = client.exec_command(command)
-    print stdout.read(),
-finally:
-    client.close()
+    print(stdout.read())
+except Exception as e:
+    print("Error happened: %s" % (e,))
 ```
 
 You can specify SSH private key using option connect() method parameter **key_filename=**.
@@ -156,7 +155,7 @@ Use the .send_command() method to send the 'show ip int brief' command:
 
 ```
 >>> output = net_connect.send_command("show ip int brief")
->>> print output
+>>> print(output)
 Interface                  IP-Address      OK? Method Status                Protocol
 FastEthernet0              unassigned      YES unset  down                  down    
 FastEthernet1              unassigned      YES unset  down                  down    
