@@ -70,7 +70,7 @@ Boolean types are exactly those two - `True` and `False`.
 Like all values, `True` and `False` can be assigned to variables:
 
 ```python
-true = 1 < 3 #we have to type it in lowercase now cause True is a reserved word in Python
+true = 1 < 3  # we have to type it in lowercase now, because True is a reserved word in Python
 print(true)
 
 false = 1 == 3
@@ -78,7 +78,7 @@ print(false)
 ```
 
 > [note]
-> Note that to test equality, you uave to use two equal signs: `3 == 3`.
+> Note that to test equality, you have to use two equal signs: `3 == 3`.
 > One equal sign assigns a value to a variable, and two equal signs
 > compare two values (of variables).
 
@@ -146,13 +146,13 @@ print("Thank you for using the geometric calculator.")
 ```
 
 So after `if`, there is a *condition* which is the
-expression we'll use for decision making.
+expression we'll use for the decision making.
 After the condition you must write a colon (`:`).
-The colon is followed by the commands to be executed if the condition is true.
+The colon is followed by the commands to be executed, if the condition is True.
 Indent the lines 4 spaces after every colon you use in Python.
 
 Then on the same level as `if`, write `else:` followed by a colon. The next lines
-contain the commands that are executed if the condition is false, and they must also be indented.<br>
+contain the commands that are executed if the condition is False, and they must also be indented.<br>
 Then you can write other code, not indended, that will be executed every time, because
 the if statement has already ended.
 
@@ -180,8 +180,8 @@ print(number, '+ 3 =', number + 3)
 
 Sometimes several conditions are needed. For this situation, we have the `elif` statement
 (combimation of `else` and `if`). It's between `if` and `else`.
-You can repat the `elif` keyword after the first `if`, but 
-only one branch be executed, to be precise: the first true one
+You can repeat the `elif` keyword after the first `if`, but 
+only one branch will be executed, to be precise: the first true one
 where the conditions are met. 
 
 
@@ -198,12 +198,12 @@ elif age >= 0:
     print('Unfortunately, we are out of Sunar.')
 else :
     # If no condition is met from above, the age had to be negative.
-    print('Visitors from the future are not welcome here!')
+    print('Visitors from the future are not welcomed here!')
 ```
 
 ## Rock paper scissors
 
-`If`s can be nested - after an `if` and ist indentation, there can be other `if`.
+`If`s can be nested - after an `if` and its indentation, there can be other `if`.
 
 
 ```python
