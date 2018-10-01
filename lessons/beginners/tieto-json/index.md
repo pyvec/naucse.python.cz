@@ -174,8 +174,8 @@ Output:
 
 ```
 import json
-list1 = [5, 12, 13, 14];
-print(json.dumps(list1));
+list1 = '[ "Ford", "BMW", "Fiat" ]'
+print(json.loads(list1));
 ```
 
 ### JSON string to Python string
