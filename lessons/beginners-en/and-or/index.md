@@ -1,7 +1,7 @@
 
 # *Or* & *and*
 
-In addition to the operators we saw in the Comparison lesson, we will now add 3 more logical (Boolean) operators to the table:
+In addition to the operators that we saw in the Comparison lesson, we will now add 3 more logical (Boolean) operators to the table:
 
 <table class="table">
     <tr>
