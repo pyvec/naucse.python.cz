@@ -1,6 +1,6 @@
 # Square
 
-Now we'll go back to elementary school and try to write a program 
+Now we'll go back to elementary school and try to write a program
 that calculates the perimeter and the area of a square.
 
 > [note] Maths
@@ -28,7 +28,7 @@ The area of a square with a side of 356 cm is 126736 cm2
 The result should be computed by Python so don't write the
 numbers 1424 and  126736 into your code. <br>
 If you don't know what to do, look into your program <code>printing.py</code>
-from lesson about[`print`]({{ lesson_url('beginners/print') }}), 
+from lesson about [`print`]({{ lesson_url('beginners/print') }}),
 where one line  does a similar thing.
 
 {% filter solution %}
@@ -86,14 +86,14 @@ Python will use just its value.
 
 Which leads us to one of the core programmer's
 principle: *Don't repeat yourself*, <abbr class="initialism">DRY</abbr>.
-When there is some value, some expression or the same 
+When there is some value, some expression or the same
 piece of code is repeated, a good programmer will
-name that part and then they will only the name several times.
+name that part and then they will only use the name several times.
 It often happens that the program needs to be changed - either
 there is a mistake or the task has changed.
 And then, it is easier to make that change only on one place.
 
-On top of that, clear names makes reading the 
+On top of that, clear names makes reading the
 program much easier: `4 * side` (maybe `squareSide` would be clearer)
 doesn't need any comment, but `4 * 183` is not clear what
 the numbers mean.
@@ -118,7 +118,7 @@ the numbers mean.
 ## Comments
 
 We will make our code clearer now with *comments*.
-In Python, the comment begins with a Hash (Pound) sign #, 
+In Python, the comment begins with a Hash (Pound) sign #,
 after which you can write anything until the end of the line. Everything is ignored.
 
 Comments are important! Programs are not read only by computers, but also by other humans.
@@ -149,7 +149,7 @@ print("The area of a square with a side of", side,"cm is", side * side, "cm2.")
 Finally we will learn how to do it so the number wouldn't have to
 be written in the program - how users can (in)put it there on their own.
 
-Just like you used `print`, we will now use a different *function* 
+Just like you used `print`, we will now use a different *function*
 to capture user input:
 We will explain the details later, for now just remember these:
 
@@ -170,7 +170,7 @@ We will explain the details later, for now just remember these:
   ```python
   variable = float(input('Enter some decimal: '))
   ```
-The text inside the parentheses can be tailored according to your needs. 
+The text inside the parentheses can be tailored according to your needs.
 It serves as the prompt for the user, so use it to ask for needed info.
 
 Final code can look like this:

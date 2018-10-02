@@ -46,7 +46,7 @@ And finally <span class="err-exctype">error type</span>
 > [note] How is this error different from the one that happens when you
 > try to add up a number and text? Or when you try to divide by zero?
 
-Error messages can be hard to understand from the beginning, but 
+Error messages can be hard to understand from the beginning, but
 you will get used to them with practice.
 For now, the important thing for you will be the line number.
 When you know that the mistake is on line <span class="err-lineno">11</span>,
@@ -65,10 +65,10 @@ If not, try to correct the program and repeat until it will work :)
 
 Now when our program works we can look closely on what is happening
 when it's running.
-It's quite simple now: commands are performed one after another from the top to the bottom.
-The program is like a cooking recipe: a list of instructions that tell you what to do.
+It's quite simple now: commands are performed one after another from top to bottom.
+The program is like a cooking recipe: a list of instructions that tells you what to do.
 
-Soon your programs will look more like a sorcerer's potion 
+Soon your programs will look more like a sorcerer's potion
 (*wait for the full moon and if Mars is in conjunction with
 Jupiter then stir up three times*) but the principle is still
 the same: the computer reads the commands from top to bottom
@@ -90,7 +90,7 @@ an expression can be a number, a string or some (e.g. mathematical)
 operations composed of multiple expressions.
 For example expression `3 + 8` will add up `3` and `8`.
 
-We will focus on expressions and their values more in 
+We will focus on expressions and their values more in
 the lesson about [variables]({{ lesson_url('beginners/variables') }}).
 
 > [style-note] Typography
