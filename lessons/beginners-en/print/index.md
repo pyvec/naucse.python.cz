@@ -71,7 +71,7 @@ The program is like a cooking recipe: a list of instructions that tells you what
 Soon your programs will look more like a sorcerer's potion
 (*wait for the full moon and if Mars is in conjunction with
 Jupiter then stir up three times*) but the principle is still
-the same: the computer reads the commands from top to bottom
+the same: the computer reads the commands from the top to the bottom
 and performs them one after another.
 
 ## Print and expressions

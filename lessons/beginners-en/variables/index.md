@@ -87,7 +87,7 @@ Python will use just its value.
 Which leads us to one of the core programmer's
 principle: *Don't repeat yourself*, <abbr class="initialism">DRY</abbr>.
 When there is some value, some expression or the same
-piece of code is repeated, a good programmer will
+piece of code repeatedly, a good programmer will
 name that part and then they will only use the name several times.
 It often happens that the program needs to be changed - either
 there is a mistake or the task has changed.

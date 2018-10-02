@@ -5,7 +5,7 @@
 7
 ```
 
-You can issue commands in the _Python interactive console_. 
+You can issue commands in the *Python interactive console*. 
 But it has a disadvantage:
 the program that you type is lost when the session ends.
 It is good for trying simple commands. 
@@ -27,27 +27,26 @@ print("Hello world!")
 {% set rootname = 'naucse-python' %}
 {%- endif %}
 
-Then save the file as <code><span class="pythondir">~/{{ rootname }}</span>/02/hello.py</code>.
-You need to replace <code class="pythondir">~/{{ rootname }}</code> with the name of the directory that you create in the past when you have 
-[installed Python](../../beginners-en/install/).
-You have to create the subdirectory named `02` in it.
-Then you can store the file as `hello.py` into it.
+Then save the file as `hello.py`.
+* You have to create the subdirectory named `02` in the `pyladies`
+(or whatever name of folder you've created last lecture) directory.
+* Then you can store the file as `hello.py` into it.
 
-If you can choose the _encoding_ in your editor, you should use `UTF-8`.
+If you can choose the *encoding* in your editor, you should use `UTF-8`.
 If you can choose the file type, use `.py` or `All Formats`.
 
 Some operating systems or editors hide extensions or add their own extensions.
 You can check the real name using the command line.
-
 Open your command line and change your current directory using the `cd` command to
-<code><span class="pythondir">~/{{ rootname }}</span>/02</code>.
-List what is in the directory using command `ls` (Mac or Linux) or `dir` (Windows) and check that the filename is really `hello.py` and not, for example, `hello.py.txt`.
+~/pyladies/02.
+List what is in the directory using command `ls` (Mac or Linux) or `dir` (Windows) 
+and check that the filename is really `hello.py` and not, for example, `hello.py.txt`.
 
 
 ## Executing Your Program
 
 Open the command line and activate the virtual environment.
-Change to the <code><span class="pythondir">~/{{ rootname }}</span>/02</code> directory and issue following command:
+Change to the `~/pyladies/02` directory and issue following command:
 
 ```console
 $ python hello.py
@@ -55,7 +54,8 @@ $ python hello.py
 
 > [note]
 > You have learned the command line in 
-> a [previous lesson](../../beginners-en/cmdline/) that shows how to change the current directory using the `cd` command.
+> a [previous lesson](../../beginners-en/cmdline/) which shows how to change the current directory 
+> using the `cd` command.
 > You know how to activate the virtual environment since the lesson about
 > [Python installation](../../beginners-en/install/).
 
@@ -64,18 +64,18 @@ Do you see the greeting? If you do you just wrote your first Python program!
 If it does not work, make sure that:
 
 * You have activated the virtual environment.
-  (You should the <code>(venv)</code> in your command line prompt. If you do not see it, 
-  use the `activate` command that you have used in a [previous lession]({{ lesson_url('beginners-en/install') }}).)
-* You are the correct directory: <code><span class="pythondir">~/{{ rootname }}</span>/02</code>
-  (you need to replace <span class="pythondir">~/{{ rootname }}</span> with the directory that you have created previously).
+  (You should the `(venv)` in your command line prompt. If you do not see it, 
+  use the `activate` or `source activate` command that you have used in a [previous lession]({{ lesson_url('beginners-en/install') }}).)
+* You are in the correct directory: `~/pyladies/02`
+  (you need to replace `~/pyladies` with the directory that you have created previously).
 * The `hello.py` file contains the correct command, including quotes and parentheses.
-* Do not type `$` characters – it just denotes that there is a command line prompt.
-  It is the end of the prompt that is printed by the operating system.
+* Do not type `$` or `>` characters in the command line – it is there for recognition that it is a command line.
+  It is is printed by the operating system after any program had finished.
   You type only: `python hello.py`.
 
 If it still does not work ask 
 {% if var('coach-present') -%}
-your teacher.
+your coach.
 {%- else -%}
 another developer. <!-- XXX: where to direct people? -->
 {% endif %}
