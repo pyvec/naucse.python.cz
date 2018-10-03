@@ -162,8 +162,8 @@ def obsah_elipsy(a, b):
     return pi * a * b
 
 # print a input jsou "venku":
-x = input('Zadej délku poloosy 1: ')
-y = input('Zadej délku poloosy 2: ')
+x = float(input('Zadej délku poloosy 1: '))
+y = float(input('Zadej délku poloosy 2: '))
 print('Obsah je', obsah_elipsy(x, y))
 ```
 
