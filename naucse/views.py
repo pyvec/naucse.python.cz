@@ -16,8 +16,6 @@ app.config['JSON_AS_ASCII'] = False
 
 _cached_model = None
 
-def external_url_for(*args, **kwargs):
-    return url_for(*args, **kwargs, _external=True)
 
 @LocalProxy
 def model():
@@ -33,24 +31,26 @@ def model():
     if _cached_model:
         return _cached_model
     model = models.Root(
-        urls={
+        url_factories={
             'api': {
-                models.Root: lambda r: external_url_for('api'),
-                models.Course: lambda c: external_url_for(
-                    'course_api', course=c),
-                models.RunYear: lambda ry: external_url_for(
-                    'run_year_api', year=ry.year),
+                models.Root: lambda r, **kw: url_for('api', **kw),
+                models.Course: lambda c, **kw: url_for(
+                    'course_api', course=c, **kw),
+                models.RunYear: lambda ry, **kw: url_for(
+                    'run_year_api', year=ry.year, **kw),
             },
             'web': {
-                models.Page: lambda p: external_url_for(
-                    'page', material=p.material, page_slug=p.slug),
-                models.Course: lambda c: external_url_for('course', course=c),
-                models.Session: lambda s: external_url_for(
-                    'session', course=s.course, session_slug=s.slug),
+                models.Page: lambda p, **kw: url_for(
+                    'page', material=p.material, page_slug=p.slug, **kw),
+                models.Course: lambda c, **kw: url_for(
+                    'course', course=c, **kw),
+                models.Session: lambda s, **kw: url_for(
+                    'session', course=s.course, session_slug=s.slug, **kw),
+                models.Root: lambda r, **kw: url_for('index', **kw)
             },
-            'schema': lambda m: external_url_for(
-                'schema', model_name=m.__name__),
         },
+        schema_url_factory=lambda m, is_input, **kw: url_for(
+                'schema', model_name=m.__name__, is_input=is_input, **kw),
     )
     model.load_local(Path(app.root_path).parent)
     if not app.config['DEBUG']:
@@ -200,7 +200,6 @@ def page(material, page_slug='index', solution=None):
     #content = page_content(
     #    lesson, page, solution, course=course, lesson_url=lesson_url, subpage_url=subpage_url, static_url=static_url
     #)
-    #content = content["content"]
     # XXX allowed_elements_parser.reset_and_feed(content)
     title = material.title
 
@@ -211,7 +210,7 @@ def page(material, page_slug='index', solution=None):
 
     return render_template(
         "lesson.html",
-        content='', # XXX,
+        content=page.get_content(),
         page=page,
         solution=solution,
         session=page.material.session,
@@ -290,26 +289,26 @@ def course_calendar_ics(course):
     return Response(str(cal), mimetype="text/calendar")
 
 
-@app.route('/v1/schema.json', defaults={'model_name': 'Root'})
-@app.route('/v1/schema/<model_name>.json')
-def schema(model_name):
+@app.route('/v1/schema/<is_input:is_input>.json', defaults={'model_name': 'Root'})
+@app.route('/v1/schema/<is_input:is_input>/<model_name>.json')
+def schema(model_name, is_input):
     try:
         cls = models.models[model_name]
     except KeyError:
         abort(404)
-    return jsonify(models.get_schema(cls))
+    return jsonify(models.get_schema(cls, is_input=is_input))
 
 
 @app.route('/v1/naucse.json')
 def api():
-    return jsonify(model.dump(schema=True))
+    return jsonify(model.dump())
 
 
 @app.route('/v1/years/<int:year>.json')
 def run_year_api(year):
-    return jsonify(model.run_years[year].dump(schema=True))
+    return jsonify(model.run_years[year].dump())
 
 
 @app.route('/v1/<course:course>.json')
 def course_api(course):
-    return jsonify(course.dump(schema=True))
+    return jsonify(course.dump())

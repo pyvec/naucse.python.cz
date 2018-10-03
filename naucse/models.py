@@ -2,9 +2,8 @@ import datetime
 from functools import singledispatch
 import textwrap
 
-#import attr
-from attr import NOTHING
 import dateutil.tz
+import jsonschema
 
 from naucse.edit_info import get_local_edit_info
 import naucse_render
@@ -16,17 +15,74 @@ _TIMEZONE = 'Europe/Prague'
 class NoURL(LookupError):
     """An object's URL could not be found"""
 
+class NoURLType(NoURL):
+    """The requested URL type is not available"""
+
+
+class _Nothing:
+    """Missing value"""
+    def __bool__(self):
+        return False
+
+NOTHING = _Nothing()
+
 
 models = {}
 
 
-def get_schema(cls):
-    definitions = {c.__name__: c.get_schema() for c in models.values()}
+def get_schema(cls, *, is_input):
+    definitions = {
+        c.__name__: c.get_schema(is_input=is_input) for c in models.values()
+    }
+    definitions.update({
+        'ref': {
+            'type': 'object',
+            'additionalProperties': False,
+            'properties': {
+                '$ref': {
+                    'type': 'string',
+                    'format': 'uri',
+                },
+            },
+        },
+        'api_version': {
+            'type': 'array',
+            'items': {'type': 'integer'},
+            'minItems': 2,
+            'maxItems': 2,
+            'description': textwrap.dedent("""
+                Version of the information, and of the schema,
+                as two integers – [major, minor].
+                The minor version is increased on every change to the
+                schema that keeps backwards compatibility for forks
+                (i.e. input data).
+                The major version is increased on incompatible changes.
+            """),
+        },
+    })
     return {
         '$ref': f'#/definitions/{cls.__name__}',
         '$schema': 'http://json-schema.org/draft-06/schema#',
         'definitions': definitions,
     }
+
+
+def schema_object(cls, *, allow_ref=True):
+    schema_object = {
+        '$ref': f'#/definitions/{cls.__name__}',
+    }
+    if allow_ref:
+        return {
+            'anyOf': [
+                schema_object,
+                {
+                    '$ref': f'#/definitions/ref',
+                }
+            ],
+        }
+    else:
+        return schema_object
+
 
 
 class Model:
@@ -41,33 +97,54 @@ class Model:
             field.load(instance, data)
         return instance
 
-    def dump(self, schema=False):  # XXX: context only?
+    def dump(self, expanded=True):
         result = {}
         try:
-            result['url'] = self.url
+            result['api_url'] = api_url = self.get_url('api', external=True)
+        except NoURL:
+            pass
+        else:
+            if not expanded:
+                return {'$ref': api_url}
+
+        try:
+            result['url'] = self.get_url(external=True)
         except NoURL:
             pass
         for name, field in self._naucse__fields.items():
             field.dump(self, result)
-        if schema:
-            result['$schema'] = self.root.schema_url_for(type(self))
+        if expanded:
+            jsonschema.validate(result, get_schema(type(self), is_input=False))
+            result['$schema'] = self.root._schema_url_for(
+                    type(self), external=True, is_input=False)
         return result
 
     @classmethod
-    def get_schema(cls):
+    def get_schema(cls, *, is_input):
         result = {
             'type': 'object',
             'title': cls.__name__,
-            'description': cls.__doc__,
             'additionalProperties': False,
             'required': [
                 name for name, field in cls._naucse__fields.items()
-                if not field.optional
+                if field.required_in_schema(is_input=is_input)
             ],
-            'properties': {},
+            'properties': {
+                'url': {
+                    'type': 'string',
+                    'format': 'uri',
+                },
+                'api_url': {
+                    'type': 'string',
+                    'format': 'uri',
+                },
+                'api_version': {'$ref': '#/definitions/api_version'},
+            },
         }
+        if cls.__doc__:
+            retult['description'] == cls.__doc__
         for name, field in cls._naucse__fields.items():
-            result['properties'][field.name] = field.schema
+            result['properties'][field.name] = field.get_schema(is_input=is_input)
         return result
 
     def __init_subclass__(cls):
@@ -79,20 +156,15 @@ class Model:
                 cls._naucse__fields[attr_name] = attr_value
         return cls
 
-    @property
-    def url(self):
-        return self.root.url_for(self)
-
-    @property
-    def api_url(self):
-        return self.root.api_url_for(self)
+    def get_url(self, url_type='web', *, external=False):
+        return self.root._url_for(self, url_type=url_type, external=external)
 
 
 class Field:
     def __init__(
         self, *,
         optional=False, default=NOTHING, factory=None, doc=None,
-        convert=None, construct=None, data_key=None,
+        convert=None, construct=None, data_key=None, choices=None,
     ):
         if doc:
             self.doc = doc
@@ -107,6 +179,7 @@ class Field:
             self.construct = construct
         if data_key:
             self.data_key = data_key
+        self.choices = choices
 
     def __set_name__(self, instance, name):
         self.name = name
@@ -147,9 +220,20 @@ class Field:
     def unconvert(self, value):
         return to_jsondata(value)
 
-    @property
-    def schema(self):
-        return {}
+    def get_schema(self, *, is_input):
+        schema = {}
+        if self.choices is not None:
+            schema['enum'] = list(self.choices)
+        return schema
+
+    def required_in_schema(self, *, is_input):
+        if self.optional:
+            return False
+        if is_input and self.default is not NOTHING:
+            return False
+        if is_input and self.factory is not None:
+            return False
+        return True
 
 
 def field(**kwargs):
@@ -159,22 +243,19 @@ def field(**kwargs):
 
 
 class StringField(Field):
-    @property
-    def schema(self):
-        return {**super().schema, 'type': 'string'}
+    def get_schema(self, *, is_input):
+        return {**super().get_schema(is_input=is_input), 'type': 'string'}
 
 
 class IntField(Field):
-    @property
-    def schema(self):
-        return {**super().schema, 'type': 'integer'}
+    def get_schema(self, *, is_input):
+        return {**super().get_schema(is_input=is_input), 'type': 'integer'}
 
 
 class DateField(Field):
-    @property
-    def schema(self):
+    def get_schema(self, *, is_input):
         return {
-            **super().schema,
+            **super().get_schema(is_input=is_input),
             'type': 'string',
             'format': 'date',
         }
@@ -184,9 +265,8 @@ class DateField(Field):
 
 
 class DateTimeField(Field):
-    @property
-    def schema(self):
-        return {**super().schema, 'type': 'string',}
+    def get_schema(self, *, is_input):
+        return {**super().get_schema(is_input=is_input), 'type': 'string',}
 
 
 class DictField(Field):
@@ -198,12 +278,11 @@ class DictField(Field):
         return {k: self.item_type.load(v, parent=instance)
                 for k, v in value.items()}
 
-    @property
-    def schema(self):
+    def get_schema(self, *, is_input):
         return {
-            **super().schema,
+            **super().get_schema(is_input=is_input),
             'type': 'object',
-            'properties': {'$ref': f'#/definitions/{self.item_type.__name__}'},
+            'additionalProperties': schema_object(self.item_type, allow_ref=not is_input)
         }
 
 
@@ -212,16 +291,26 @@ class ListField(Field):
         super().__init__(**kwargs)
         self.item_type = item_type
 
-    @property
-    def schema(self):
+    def get_schema(self, *, is_input):
         return {
-            **super().schema,
+            **super().get_schema(is_input=is_input),
             'type': 'array',
-            'items': {'$ref': f'#/definitions/{self.item_type.__name__}'},
+            'items': schema_object(self.item_type, allow_ref=not is_input),
         }
 
     def convert(self, instance, data, value):
         return [self.item_type.load(d, parent=instance) for d in value]
+
+
+class StringListField(Field):
+    def get_schema(self, *, is_input):
+        return {
+            **super().get_schema(is_input=is_input),
+            'type': 'array',
+            'items': {
+                'type': 'string',
+            },
+        }
 
 
 class ListDictField(Field):
@@ -231,12 +320,11 @@ class ListDictField(Field):
         self.key_attr = key_attr
         self.index_key = index_key
 
-    @property
-    def schema(self):
+    def get_schema(self, *, is_input):
         return {
-            **super().schema,
+            **super().get_schema(is_input=is_input),
             'type': 'array',
-            'items': {'$ref': f'#/definitions/{self.item_type.__name__}'},
+            'items': schema_object(self.item_type, allow_ref=not is_input),
         }
 
     def convert(self, instance, data, value):
@@ -252,13 +340,23 @@ class ListDictField(Field):
 
 
 class UrlField(Field):
-    @property
-    def schema(self):
+    def get_schema(self, *, is_input):
         return {
-            **super().schema,
+            **super().get_schema(is_input=is_input),
             'type': 'string',
             'format': 'url',
         }
+
+class ObjectField(Field):
+    def __init__(self, item_type, **kwargs):
+        super().__init__(**kwargs)
+        self.item_type = item_type
+
+    def convert(self, instance, data, value):
+        return self.item_type.load(value, parent=instance)
+
+    def get_schema(self, *, is_input):
+        return schema_object(self.item_type, allow_ref=not is_input)
 
 
 @property
@@ -281,9 +379,9 @@ def to_jsondata(obj, urls=None):
 @to_jsondata.register(Model)
 def _(obj, **kwargs):
     try:
-        url = obj.root.api_url_for(obj)
+        url = obj.get_url(url_type='api', external=True)
     except NoURL:
-        return obj.dump(**kwargs)
+        return obj.dump(expanded=False, **kwargs)
     else:
         return {'$ref': url}
 
@@ -324,9 +422,35 @@ def time_from_string(time_string):
     return datetime.time(hour, minute, tzinfo=tzinfo)
 
 
+class RenderCall(Model):
+    entrypoint = StringField(doc="Arca entrypoint")
+    args = Field(default=(), doc="Arguments for the Arca call")
+    kwargs = Field(factory=lambda: {}, doc="Arguments for the Arca call")
+
+
 class Page(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(doc='Machine-friendly identifier')
+
+    # XXX: License object?
+    license = StringField(
+        choices=("cc-by-sa-40", "cc0"),
+        doc=textwrap.dedent('''
+            Identifier of the licence under which content is available.
+            Note that Naucse supports only a limited set of licences.''')
+    )
+
+    attribution = StringListField(doc='Authorship information')
+
+    license_code = StringField(
+        optional=True,
+        choices=("cc-by-sa-40", "cc0"),
+        doc=textwrap.dedent('''
+            Identifier of the licence under which code is available.
+            Note that Naucse supports only a limited set of licences.''')
+    )
+
+    render_call = ObjectField(RenderCall)
 
     material = parent_property
 
@@ -341,8 +465,9 @@ class Material(Model):
 
     session = parent_property
 
-    @property
-    def url(self):
+    def get_url(self, url_type='web', **kwargs):
+        if url_type != 'web':
+            raise NoURLType(url_type)
         try:
             return self.external_url
         except AttributeError:
@@ -350,7 +475,7 @@ class Material(Model):
                 pages = self.pages
             except AttributeError:
                 return None
-            return pages['index'].url
+            return pages['index'].get_url(**kwargs)
 
     @property
     def course(self):
@@ -359,17 +484,17 @@ class Material(Model):
 class Session(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(doc='Machine-friendly identifier')
-    index = IntField(doc='Number of the session')
-    date = DateField(default=None,
+    index = IntField(default=None, doc='Number of the session')
+    date = DateField(optional=True,
                       doc='''
                         Date when this session is taught.
                         Missing for self-study materials.''')
     materials = ListField(Material)
     start_time = DateTimeField(
-        default=None,
+        optional=True,
         doc='Times of day when the session starts.')
     start_time = DateTimeField(
-        default=None,
+        optional=True,
         doc='Times of day when the session ends.')
 
     course = parent_property
@@ -383,10 +508,10 @@ class Session(Model):
 
 
 def _max_or_none(sequence):
-    return max([m for m in sequence if m is not None], default=None)
+    return max([m for m in sequence if m is not None], default=NOTHING)
 
 def _min_or_none(sequence):
-    return min([m for m in sequence if m is not None], default=None)
+    return min([m for m in sequence if m is not None], default=NOTHING)
 
 
 class Course(Model):
@@ -396,10 +521,12 @@ class Course(Model):
     sessions = ListDictField(Session, key_attr='slug', index_key='index')
     vars = Field(factory=dict)
     start_date = DateField(
-        construct=lambda instance, data: _min_or_none(s.date for s in instance.sessions.values()),
+        construct=lambda instance, data: _min_or_none(getattr(s, 'date', None) for s in instance.sessions.values()),
+        optional=True,
         doc='Date when this starts, or None')
     end_date = DateField(
-        construct=lambda instance, data: _max_or_none(s.date for s in instance.sessions.values()),
+        construct=lambda instance, data: _max_or_none(getattr(s, 'date', None) for s in instance.sessions.values()),
+        optional=True,
         doc='Date when this starts, or None')
     place = StringField(
         optional=True,
@@ -413,6 +540,9 @@ class Course(Model):
     long_description = StringField(
         optional=True,
         doc='Long description of the course (up to several paragraphs)')
+    vars = Field(
+        default={},
+        doc='Variables for rendering a page of content.')
 
     # XXX: is this subclassing necessary?
     @field(optional=True)
@@ -427,6 +557,7 @@ class Course(Model):
     @classmethod
     def load_local(cls, parent, slug):
         data = naucse_render.get_course(slug, version=1)
+        jsonschema.validate(data, get_schema(cls, is_input=True))
         result = cls.load(data, parent=parent)
         result.slug = slug
         return result
@@ -474,9 +605,10 @@ class Root(Model):
     courses = DictField(Course)
     run_years = DictField(RunYear)
 
-    def __init__(self, urls):
+    def __init__(self, *, url_factories, schema_url_factory):
         self.root = self
-        self.urls = urls
+        self.url_factories = url_factories
+        self.schema_url_factory = schema_url_factory
 
         self.courses = {}
         self.run_years = {}
@@ -518,21 +650,17 @@ class Root(Model):
             return []
         return list(runs.values())
 
-    def api_url_for(self, obj):
-        api_urls = self.urls['api']
+    def _schema_url_for(self, cls, is_input, external=False):
+        return self.schema_url_factory(
+            cls, _external=external, is_input=is_input)
+
+    def _url_for(self, obj, url_type='web', *, external=False):
         try:
-            url_for = api_urls[type(obj)]
+            urls = self.url_factories[url_type]
         except KeyError:
-            raise NoURL(obj)
-        return url_for(obj)
-
-    def schema_url_for(self, model_type):
-        return self.urls['schema'](model_type)
-
-    def url_for(self, obj):
-        urls = self.urls['web']
+            raise NoURLType(url_type)
         try:
             url_for = urls[type(obj)]
         except KeyError:
-            raise NoURL(obj)
-        return url_for(obj)
+            raise NoURL(type(obj))
+        return url_for(obj, _external=external)

@@ -67,3 +67,17 @@ class MaterialConverter(ModelConverter):
     def to_url(self, material):
         course_url = course_to_slug(self.model, material.course)
         return f'{course_url}/{material.slug}'
+
+
+@_converter('is_input')
+class IsInputConverter(ModelConverter):
+    regex = r'in|out'
+
+    def to_python(self, value):
+        return (value == 'in')
+
+    def to_url(self, is_input):
+        if is_input:
+            return 'in'
+        else:
+            return 'out'

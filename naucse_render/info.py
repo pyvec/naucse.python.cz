@@ -18,7 +18,7 @@ API_VERSION = 1
 
 @functools.lru_cache()
 def _read_yaml(path):
-    print('Loading', path, 'really')
+    print('Loading', path)
     with path.open(encoding='utf-8') as f:
         return yaml.safe_load(f)
 
@@ -32,7 +32,6 @@ def read_yaml(*path_parts):
     if base_path not in yaml_path.parents:
         raise ValueError(f'Invalid course path')
 
-    print('Loading', yaml_path)
     return _read_yaml(yaml_path)
 
 
@@ -70,7 +69,7 @@ def get_course(course_slug: str, *, version: int) -> dict:
     else:
         raise ValueError(f'Invalid course slug')
 
-    info['version'] = 1, 1
+    info['api_version'] = 1, 1
 
     # XXX: Do we need these?
     info.pop('meta', None)
