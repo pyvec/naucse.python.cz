@@ -39,7 +39,7 @@ Může to být třeba `{{ rootname }}` ve tvém domovském adresáři.
 (Můžeš ho pojmenovat i jinak, ale `{{ rootname }}` používají příklady níže.)
 
 Zvolený adresář po vytvoření nesmíš přesouvat jinam.
-Proto ho nedoporučuji vytářet na Ploše.
+Proto ho nedoporučuji vytvářet na Ploše.
 
 > [note]
 > Kdybys někdy adresář přece jen přesunul{{a}} jinam,
