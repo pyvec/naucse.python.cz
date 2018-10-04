@@ -100,9 +100,9 @@ C:\Users\Helena\{{rootname}}
 05/08/2014 07:28 PM <DIR>  01
 {% endcall %}
 
-{% if var('coach-present') -%}
+{# XXX: if var('coach-present') -%}
 Výsledek pro kontrolu ukaž koučovi.
-{%- endif %}
+{%- endif #}
 
 
 ## Virtuální prostředí
@@ -171,9 +171,9 @@ V grafickém prohlížeči souborů to vypadá např. takto:
     alt="(adresáře '01' a 'venv' vedle sebe)",
 ) }}
 
-{% if var('coach-present') -%}
+{# XXX: if var('coach-present') -%}
 Výsledek pro kontrolu ukaž koučovi.
-{%- endif %}
+{%- endif #}
 
 
 ### Aktivace virtuálního prostředí
