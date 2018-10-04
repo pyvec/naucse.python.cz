@@ -55,8 +55,7 @@ operačnímu systému, že jde o program v Pythonu a Python ho může spustit.
 
 Pokud máš soubor uložen, je čas jej spustit!
 Pomocí dovedností, které jsi se naučil{{a}} v sekci
-o [příkazové řádce](../../beginners/cmdline/),
-*změň adresář* terminálu na plochu.
+o příkazové řádce, *změň adresář* terminálu na plochu.
 
 {% if var('coach-present') %}
 Pokud nevíš jak dál, požádej o pomoc kouče.
