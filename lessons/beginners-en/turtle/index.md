@@ -17,9 +17,9 @@ $ python
 ```
 
 > [note]
-> (Characters `>` and `$` are written by compouter, not you.
+> Characters `>` and `$` are written by compouter, not you.
 > On Windows there will be `>` instead of `$` and
-> before`$`or `> ` there can be something else.)
+> before`$`or `> ` there can be something else.
 
 Then write:
 
