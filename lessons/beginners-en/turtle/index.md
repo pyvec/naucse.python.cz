@@ -1,10 +1,5 @@
-{%- if var('pyladies') -%}
-{% set rootname = 'pyladies' %}
-{%- else -%}
-{% set rootname = 'naucse-python' %}
-{%- endif -%}
 
-# 🐍 🐢
+# ![Python](static/python.png) ![Turtle](static/turtle.png)
 
 In this lesson we will be drawing with *turtle* module.
 
