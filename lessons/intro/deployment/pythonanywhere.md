@@ -94,6 +94,12 @@ aplikaci zvlášť.
 Konfigurační i jiné soubory jde nahrát v záložce *Files* nebo opět vytvořit
 a editovat ve webové konzoli.
 
+Pokud vaše aplikace vyžaduje nastavení nějakých proměnných prostředí
+(například s cestou ke konfiguračnímu souboru nebo přímo s nějakou konfigurací),
+můžete tak učinit přímo z *WSGI Configuration File*.
+Buďto „nízkoúrovňově“ (`os.environ`) nebo více sofistikovaně například pomocí modulu `dotenv`,
+což ostatně [doporučují i v dokumentaci](https://help.pythonanywhere.com/pages/environment-variables-for-web-apps/).
+
 > [note]
 > Doporučujeme pro tyto potřeby stejně raději nepoužívat API klíče
 > k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
