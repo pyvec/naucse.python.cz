@@ -5,19 +5,19 @@ that calculates the perimeter and the area of a square.
 
 > [note] Maths
 > I hope that this won't scare anyone off
-> but the word "computer" is derived of the
+> but the word "computer" is derived from the
 > word *computing*. So there's no need
 > to be scared, knowledge from elementary
 > school will be enough for basic programming.
 
-The perimeter of a square with side <var>a</var>
-can be computed by <var>P</var> = 4<var>a</var>
-formula and the area's formula is <var>S</var> = <var>a</var>².
-So let's say that our square has the side <var>a</var> = 356 cm.
+The perimeter of a square with a side length of <var>a</var>
+can be computed by the <var>P</var> = 4<var>a</var>
+formula, and the area formula is <var>S</var> = <var>a</var>².
+So let's say that our square has a side length of <var>a</var> = 356 cm.
 
 
 Print the result with `print()`.
-Save the program into file <code>~/pyladies/02/sqare.py</code>
+Save the program into the file <code>~/pyladies/02/sqare.py</code>
 and run it; this is what it should print:
 
 ```
@@ -26,13 +26,13 @@ The area of a square with a side of 356 cm is 126736 cm2
 ```
 
 The result should be computed by Python so don't write the
-numbers 1424 and  126736 into your code. <br>
+numbers 1424 and 126736 into your code. <br>
 If you don't know what to do, look into your program <code>printing.py</code>
-from lesson about [`print`]({{ lesson_url('beginners/print') }}),
-where one line  does a similar thing.
+from the lesson about [`print`]({{ lesson_url('beginners/print') }}),
+where one of the lines does a similar thing.
 
 {% filter solution %}
-    Program which will print the right result could look like this:
+    A program which prints the right result could look like this:
 
     ```python
     print('The perimeter of a square with a side of 356 cm is', 4 * 356, 'cm')
@@ -44,7 +44,7 @@ where one line  does a similar thing.
 ## Smaller square
 
 If everything works, try to change the program
-so it would compute the perimeter and the area
+so it computes the perimeter and the area
 of a square with a side of 123 cm.
 
 {% filter solution %}
@@ -59,14 +59,14 @@ of a square with a side of 123 cm.
 
 Could you make it even for a side of 3945 cm, 832 cm, 956 cm?
 Do you enjoy rewriting numbers?
-If the program would be longer (few pages)
-how would you make sure that you didn't forgot
+If the program were longer (few pages)
+how would you make sure that you didn't forget
 to rewrite one of the numbers?
 
 There is a way how to write a program without
 rewriting all the numbers every time:
-you will name the side of the square and then you are just
-using that name. In Python, *variables* are used to name values.
+You name the side of the square and then you just
+use that name. In Python, *variables* are used to name values.
 They are being used this way:
 
 ```python
@@ -78,24 +78,24 @@ print("The area of a square with a side of", side,"cm is", side * side, "cm2.")
 So you write the name, then `=` and after that
 the expression whose value will be *assigned*
 to that variable.
-When you will write the name of the variable
+When ever you write the name of the variable,
 Python will use just its value.
 
 > [style-note]
-> The convention here is to put a space before and after the equal.
+> The convention here is to put a space before and after the equals sign.
 
-Which leads us to one of the core programmer's
-principle: *Don't repeat yourself*, <abbr class="initialism">DRY</abbr>.
-When there is some value, some expression or the same
+Which leads us to one of the core principles of programming:
+*Don't repeat yourself*, <abbr class="initialism">DRY</abbr>.
+When there is a value, an expression or the same
 piece of code repeatedly, a good programmer will
-name that part and then they will only use the name several times.
+name that part, and then they use the name several times.
 It often happens that the program needs to be changed - either
 there is a mistake or the task has changed.
-And then, it is easier to make that change only on one place.
+And then, it is easier to make that change only in one place.
 
 On top of that, clear names makes reading the
 program much easier: `4 * side` (maybe `squareSide` would be clearer)
-doesn't need any comment, but `4 * 183` is not clear what
+doesn't need any comment, but with `4 * 183`, it's not clear what
 the numbers mean.
 
 
@@ -107,17 +107,17 @@ the numbers mean.
 >
 > Change of the task!
 > Try to expand the program so that it computes the perimeter and the area of
-> a circle where the radius will be the same value as the side from your code.
+> a circle where the radius will be the same value as the side length from your code.
 > The perimeter of a circle with radius <var>r</var>
 > is <var>o</var> = 2π<var>r</var>, the area is <var>S</var> = π<var>r</var>²
-> and π is approx. 3,1415926.
+> and π is approx. 3.1415926.
 >
-> Name approprietly all the variables.
+> Name all variables appropriately.
 
 
 ## Comments
 
-We will make our code clearer now with *comments*.
+Now we will make our code clearer with *comments*.
 In Python, the comment begins with a Hash (Pound) sign #,
 after which you can write anything until the end of the line. Everything is ignored.
 
@@ -139,19 +139,19 @@ print("The area of a square with a side of", side,"cm is", side * side, "cm2.")
 ```
 
 > [style-note]
-> The convention is that when you are writing a comment on the same line
+> The convention is that when you write a comment on the same line
 > as the code, there are two spaces or more before `#`,
 > then after `#` there is one more space.
 
 
 ## Input
 
-Finally we will learn how to do it so the number wouldn't have to
-be written in the program - how users can (in)put it there on their own.
+Finally, we learn how to improve the program so that we don't have to write the number 
+in the program - and users can (in)put their own number.
 
 Just like you used `print`, we will now use a different *function*
 to capture user input:
-We will explain the details later, for now just remember these:
+We will explain the details later, for now, just remember these:
 
 * If you want to retrieve **a text(string)**, use:
 
@@ -171,9 +171,9 @@ We will explain the details later, for now just remember these:
   variable = float(input('Enter some decimal: '))
   ```
 The text inside the parentheses can be tailored according to your needs.
-It serves as the prompt for the user, so use it to ask for needed info.
+It serves as the prompt for the user, so use it to ask for any needed info.
 
-Final code can look like this:
+The final code might look like this:
 
 ```python
 # This program computes the perimeter and the area of a sqare
