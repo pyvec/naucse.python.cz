@@ -54,7 +54,7 @@ Zbývá nastavit, aby PythonAnywhere tento kód spustil jako webovou aplikaci.
 
 Přejděte na stránkách PythonAnywhere do *Dashboard* do záložky *Web*,
 a vytvořte novou aplikaci.
-V nastavení zvolte *Manual Configuration* a *Python 3.6*.
+V nastavení zvolte *Manual Configuration* a *Python 3.7*.
 (Volby jiné než *Manual Configuration* automaticky vytvoří kostru aplikace.
 Vy ale už aplikaci máte hotovou, takže je nepotřebujete.)
 
