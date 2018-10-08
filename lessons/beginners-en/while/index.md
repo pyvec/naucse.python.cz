@@ -1,6 +1,6 @@
 # While
 
-In addition to the `for` loop, we have a second type of loop namely, the `while` loop
+In addition to the `for` loop, we have a second type of loop, namely, the `while` loop.
 Unlike `for`, where we *know the number of repetitions* in advance, `while` is used when the 
 loop depends on some condition. The loop body is repeated until the condition is met.
 
@@ -12,7 +12,7 @@ while response != 'aaa':
 ```
 
 But pay attention! It is very easy to write a loop with a condition that is always true.
-This kind of loop will be repeated indefinitely.
+This kind of loop will be repeated forever.
 
 ```python
 from random import randrange
@@ -27,9 +27,9 @@ The program can be interrupted with
 
 > [note]
 > This shortcut will raise an error
-> and program will end - like after each error.
+> and the program will end - like after every error.
 
-Finally, we have the `break` command, that will signal the process to ‘jump out’ of the loop
+Finally, we have the `break` command, that will signal the process to ‘jump out’ of the loop,
 and commands after the loop will be performed immediately.
 
 
@@ -46,7 +46,7 @@ print('Yay and it did not even hurt')
 ```
 
 The break command can only be used inside a loop (`while` or `for`), 
-and if we have nested loops, it will only jump out from the one where it is used. 
+and if we have nested loops, it will only jump out of the one where it is used. 
 
 ```python
 for i in range(10):  # Outer loop
@@ -56,16 +56,16 @@ for i in range(10):  # Outer loop
             break
     print()
 ```
-`Break` will jump out of the inner loop back to the outer loop 
+`Break` will jump out of the inner loop and back to the outer loop 
 when <var>i</var> is less or equal than <var>j</var>.
 
 Back to `while`!
-Can you write following program?
+Can you write the following program?
 
 ## 21
 
 * You start with 0 points
-* On each round, the computer shows how many points you have, and asks if you want to continue
+* In each round, the computer shows how many points you have, and asks if you want to continue
 * If you answer ‘No’, the game ends.
 * If you answer ‘Yes’, the computer ‘turns a card’ (randomly selects a number from 2 to 10)
  and adds its value to the current points.
