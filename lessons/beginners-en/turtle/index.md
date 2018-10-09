@@ -1,14 +1,9 @@
-{%- if var('pyladies') -%}
-{% set rootname = 'pyladies' %}
-{%- else -%}
-{% set rootname = 'naucse-python' %}
-{%- endif -%}
 
-# 🐍 🐢
+# ![Python](static/python.png) ![Turtle](static/turtle.png)
 
-In this lesson we will be drawing with *turtle* module.
+In this lesson, we will be drawing with the *turtle* module.
 
-Run Python in *interactive mode* (after you activate Conda write Python in command line).
+Run Python in *interactive mode* (after you activate Conda, write Python in the command line).
 
 ```pycon
 $ python
@@ -17,9 +12,9 @@ $ python
 ```
 
 > [note]
-> (Characters `>` and `$` are written by compouter, not you.
-> On Windows there will be `>` instead of `$` and
-> before`$`or `> ` there can be something else.)
+> The characters `>` and `$` are printed by the computer, not by you.
+> On Windows, it will be `>` instead of `$`. 
+> Before the `$` or `>`, there can be some other words.
 
 Then write:
 
@@ -35,7 +30,7 @@ your command line, too.
 
 ## Where is the turtle?
 
-Now the turtle is disguised as an arrow.
+Currently, the turtle is disguised as an arrow.
 There is a way how to unmask it:
 
 ```python
@@ -47,8 +42,8 @@ shape('turtle')
 
 ## Rotation
 
-Turtle can rotate and crawl on "paper".
-It has brush on its tail which is drawing a line.
+The turtle can rotate and crawl across the "paper".
+It has a brush on its tail which draws a line.
 
 ```python
 from turtle import left, right
@@ -60,34 +55,33 @@ right(60)
 forward(50)
 ```
 
-Now give turtle some commands.
-If you won't like the drawing you can close
-the window or import and use functionv`clear()`.
+Now give the turtle some commands.
+If you don't like the drawing you can close
+the window, or import and use the function `clear()`.
 
 
 ## Turtle program
 
 Interactive mode is good for trying new stuff
 but we will now go back to our editors
-and write some program in file.
+and write some program in a file.
 
 Create a file <code>~/pyladies/03/drawing.py</code>.
 
 > [note]
-> Directory <code>~/pyladies</code> can have a different name on your laptop
+> The directory <code>~/pyladies</code> can have a different name on your laptop
 > – see [Python installation]({{ lesson_url('beginners/install') }}).
 
-You can have a different name for your file
-but don't use `turtle.py`.
+You can have a different name for your file, just don't use `turtle.py`.
 
-Write commands for drawing into the
-file and in the end call function `exitonclick`
+Write drawing commands into the file
+and in the end call the function `exitonclick`
 (imported from module `turtle`).
 
 > [note] Question
-> What is doing function <code>exitonclick</code>?
+> What does the function <code>exitonclick</code> do?
 
-After you are done we can start with drawing pictures:
+After you are done, we can start with drawing pictures:
 
 ### Square
 
@@ -95,7 +89,7 @@ Draw a square.
 
 ![Turtle square](static/turtle-square.png)
 
-Square has 4 equal straight sides
+A square has 4 equal straight sides
 and 4 90° angles.
 
 {% filter solution %}
@@ -117,9 +111,9 @@ exitonclick()
 
 ### Rectangle
 
-Draw rectangle.
+Draw a rectangle.
 
-Try to make it that turtle will "look" to the right in the end (like it was in the beginning).
+Try to make it so that the turtle will "look" to the right in the end (like it was in the beginning).
 
 ![Turtle rectangle](static/turtle-rect.png)
 
@@ -187,16 +181,15 @@ exitonclick()
 
 ### Can we write it better?
 
-So much code! There have to be a way how to simplify it.
+So much code! There has to be a way how to simplify it.
 
 There is.
-Now we will learn command `for`.
+Now we will learn the command `for`.
 
 ## Repetition
 
-What is following code doing?
-Save it as
-<code>~/pyladies/03/loop.py</code>
+What does the following code do?
+Save it as <code>~/pyladies/03/loop.py</code>
 
 ```python
 for number in range(5):
@@ -206,25 +199,25 @@ for greeting in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN':
     print(greeting + '!')
 ```
 
-What is command `for` doing?
+What does the command `for` do?
 
 {% filter solution %}
-Command `for` is repeating part of a program.
-It repeats command that are intended after `for`.
-It's same as with `if` - it's applied only for
-commands that are intended below.
+The command `for` repeats part of a program.
+It repeats commands that are indented after `for`.
+It's the same as with `if` - it applies only to
+commands that are indented below.
 
-Command `for x in range(n):` repeats commands bellow <var>n</var> times
-and it sets variable `x` gradually from 0 to n-1.
+The command `for x in range(n):` repeats the commands below <var>n</var> times
+and it increments the variable `x` gradually from 0 to n-1.
 
-Command `for x in a, b, c, d, ...:` repeates commands bellow;
-it sets variable `x` gradually to <var>a</var>, <var>b</var>,
+The command `for x in a, b, c, d, ...:` repeats the commands below;
+it increments the variable `x` gradually to <var>a</var>, <var>b</var>,
 <var>c</var> <var>d</var>, ...
 {% endfilter %}
 
 ### Overwriting variables
 
-What is following program doing?
+What does the following program do?
 
 ```python
 sum = 0
@@ -236,12 +229,12 @@ print(sum)
 ```
 
 {% filter solution %}
-Command `sum = sum + number` calculates the value of
-`sum + cislo`, adds up current number to sum
-and stores the result into variable `sum`.
-New value of `sum` will be used in the next loop.
+The command `sum = sum + number` calculates the value of
+`sum + number`, adds the current number to the sum,
+and stores the result in the variable `sum`.
+The new value of `sum` will be used in the next loop.
 
-In the beginning the sum is 0 and in the end the sum of
+In the beginning the sum is 0, and in the end the sum of
 our numbers will be printed.
 {% endfilter %}
 
@@ -251,7 +244,7 @@ Back to drawing! This time we will use loops.
 
 Draw a square.
 
-Use `forward` only twice, once in import
+Use `forward` only twice, once in the import
 and once as function.
 
 ![Turtle square](static/turtle-square.png)
@@ -270,10 +263,10 @@ exitonclick()
 
 ### Discontinuous line
 
-Functions `penup` and `pendown` from `turtle`
-module tell the turtle to stop/start with drawing.
+The functions `penup` and `pendown` from the `turtle`
+module tell the turtle to stop/start drawing.
 
-Try to draw discontinuous line.
+Try to draw a discontinuous line.
 
 ![Turtle and discontinuous line](static/turtle-dashed.png)
 
@@ -291,15 +284,15 @@ exitonclick()
 ```
 {% endfilter %}
 
-Now try to make it that lines that are drawn were
+Now try to make it so that the lines that are drawn become
 gradually bigger.
 
 ![Turtle and discontinuous line]](static/turtle-dashed2.png)
 
 > [note] Help
 >
-> What exactly is command `for` doing?
-> Can we use variable that it sets up?
+> What exactly does the command `for` do?
+> Can we use the variable that it sets up?
 
 {% filter solution %}
 ```python
@@ -317,8 +310,8 @@ exitonclick()
 
 ### Three squares
 
-In the end draw 3 squares, each rotated by 20°.
-Now you know how to write it simple: repeat the code
+Finally, draw 3 squares, each rotated by 20°.
+Now you know how to write it in a simple way: repeat the code
 by using `for`, do not copy the code. 
 
 ![Three turtle squares](static/turtle-squares.png)
@@ -340,10 +333,10 @@ exitonclick()
 
 ## Extra tasks
 
-If you are done try to draw a stairs:
+When you are done, try to draw stairs:
 
 ![Turtle stairs](static/turtle-stairs.png)
 
-If you are also done with stairs try to draw 7 hexagons:
+When you are also done with the stairs, try to draw 7 hexagons:
 
-![Želví plástev](static/turtle-hexagons.png)
+![Turtle hexagons](static/turtle-hexagons.png)
