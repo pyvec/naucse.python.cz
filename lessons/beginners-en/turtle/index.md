@@ -79,7 +79,7 @@ and in the end call the function `exitonclick`
 (imported from module `turtle`).
 
 > [note] Question
-> What is does the function <code>exitonclick</code> do?
+> What does the function <code>exitonclick</code> do?
 
 After you are done, we can start with drawing pictures:
 
@@ -339,4 +339,4 @@ When you are done, try to draw stairs:
 
 When you are also done with the stairs, try to draw 7 hexagons:
 
-![Želví plástev](static/turtle-hexagons.png)
+![Turtle hexagons](static/turtle-hexagons.png)
