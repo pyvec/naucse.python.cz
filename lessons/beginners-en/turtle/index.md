@@ -1,5 +1,5 @@
 
-# ![Python](static/python.png) ![Turtle](static/turtle.png)
+# 🐍 🐢
 
 In this lesson, we will be drawing with the *turtle* module.
 
