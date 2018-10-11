@@ -159,7 +159,7 @@ Zkus se zamyslet, jak Python zpracuje tyto výrazy:
 
 ```pycon
 >>> len('Ola'.upper())
-4
+3
 ```
 
 ```pycon
