@@ -21,6 +21,18 @@ Osobní soubory
     Zbytek repozitáře plánuješ zveřejnit, ale tyto soubory by měly zůstat
     jen ve tvé kopii.
 
+Adresář s virtuálním prostředím
+:   Jistě už sis zvykl{{a}} na virtuální prostředí.
+    Adresář s ním se může jmenovat různě, v začátečnickém kurzu používáš název `venv`.
+    Není dobré tento adresář dávat do Gitu,
+    protože je jednoduché jej vždy vytvořit znovu
+    a pokud na projektu spolupracuje více lidí
+    (nebo ty z více počítačů), mohlo by dělat neplechu, kdyby virtuální
+    prostředí nebylo vždy na úplně stejném místě.
+    Virtuální prostředí z adresáře `/home/helena/projektABC/venv`
+    nebude fungovat z adresáře `C:\Users\Helena\projektABC\venv`,
+    ale ani z `/home/mirka/projektABC/venv`.
+
 My budeme chtít Git nastavit tak, aby tyto soubory ignoroval: aby
 `git status` neukazoval červeně, že ještě nejsou v repozitáři.
 
