@@ -20,7 +20,7 @@ def cli(app, *, base_url=None, freezer=None):
     def naucse():
         pass
 
-    @naucse.command()
+    @naucse.command(name='list-courses')
     @click.option("--forks-only", default=False, is_flag=True,
                   help="Only list courses and runs from forks")
     def list_courses(forks_only):
