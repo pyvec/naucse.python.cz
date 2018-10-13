@@ -204,8 +204,8 @@ adresa by měla být něco jako
 > Kdybys měl{{a}} v různých kopiích repozitáře zmatek,
 > přijde vhod malé vysvětlení: jedna kopie je původní
 > projekt na GitHubu, kam správce projektu dává
-> aktuální "oficiální verzi". Další kopie na GitHubu
-> je "tvoje" a můžeš si do ní nahrát co chceš
+> aktuální „oficiální verzi“. Další kopie na GitHubu
+> je „tvoje“ a můžeš si do ní nahrát co chceš
 > (nejčastěji v ní ale zveřejňuješ změny, které můžou
 > být užitečné pro ostatní). A třetí kopii repozitáře
 > máš u sebe na počítači.
@@ -395,7 +395,7 @@ licenci [MIT](https://choosealicense.com/licenses/mit/).
 
 > [note]
 > Pokud chceš navíc zabránit tomu, že si tvůj kód
-> někdo vezme a začne ho "vylepšovat" a vydělávat na
+> někdo vezme a začne ho „vylepšovat“ a vydělávat na
 > něm, aniž by se o vylepšení podělil s ostatními,
 > zkus licenci [AGPL](https://choosealicense.com/licenses/agpl-3.0/).
 
