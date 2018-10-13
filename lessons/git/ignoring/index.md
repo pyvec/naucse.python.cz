@@ -43,30 +43,30 @@ Založ si nový repozitář a vytvoř v něm tři soubory s tímto obsahem:
 
 * `obrazek.py`
 
-    ```python
-    from turtle import forward, left, right, getcanvas
+  ```python
+  from turtle import forward, left, right, getcanvas
 
-    forward(50)
-    left(60)
-    forward(50)
-    right(60)
-    forward(50)
+  forward(50)
+  left(60)
+  forward(50)
+  right(60)
+  forward(50)
 
-    getcanvas().postscript(file='obrazek.ps')
+  getcanvas().postscript(file='obrazek.ps')
     ```
 
 * `poznamky.txt`
 
-    ```plain
-    Tohle je tajné!
-    ```
+  ```plain
+  Tohle je tajné!
+  ```
 
 * `Autofile.tmp`
 
-    Do tohohle souboru napiš cokoliv.
-    Různé operační systémy a (jiné programy) vytváří různé soubory
-    podivných jmen; `Autofile.tmp` pro nás bude představovat takový
-    automaticky vzniklý soubor.
+  Do tohohle souboru napiš cokoliv.
+  Různé operační systémy a (jiné programy) vytváří různé soubory
+  podivných jmen; `Autofile.tmp` pro nás bude představovat takový
+  automaticky vzniklý soubor.
 
 Pythonní program spusť (pomocí `python obrazek.py`).
 Mělo by se na chvíli ukázat okno s želvou a měl by vzniknout nový soubor
