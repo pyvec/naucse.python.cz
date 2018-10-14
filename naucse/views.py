@@ -943,10 +943,33 @@ def active_runs():
 
     return len(ongoing)
 
+def all_runs():
+    all_years = list(model.safe_run_years.keys())
+
+    return sum([len(model.runs_from_year(year)) for year in all_years])
+
+def sessions_delivered():
+    today = datetime.date.today()
+    all_years = list(model.safe_run_years.keys())
+
+    all_runs = []
+    for year in all_years:
+        all_runs.extend(model.runs_from_year(year))
+
+    all_sessions = []
+    for run in all_runs:
+        all_sessions.extend(list(run.sessions.values()))
+
+    return len([session for session in all_sessions if session.date < today])
+
 
 def basic_stat(name):
     if name == 'active_runs':
         return active_runs()
+    elif name == 'all_runs':
+        return all_runs()
+    elif name == 'sessions_delivered':
+        return sessions_delivered()
     else:
         return 0
 
