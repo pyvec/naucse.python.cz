@@ -153,7 +153,7 @@ or if it contains some substring.
 
 <table class="table">
     <tr>
-        <th>Zápis</th>
+        <th>Code</th>
         <th>Description</th>
         <th>Example</th>
     </tr>
@@ -169,109 +169,108 @@ or if it contains some substring.
     </tr>
     <tr>
         <td><code>x&nbsp;not&nbsp;in&nbsp;r</code></td>
-        <td>Opposite <code>x in r</code></td>
+        <td>Opposite to <code>x in r</code></td>
         <td><code>'eye' not in 'PyLadies</code></td>
     </tr>
 </table>
 
-Řetězce vždy berou v potaz velikost písmen,
-takže např. `'ČOKO' in 'PyLadies'` je `False`.
-Kdybys chtěl{{a}} porovnávat bez ohledu na velikost písmen,
-musel{{a}} bys oba řetězce převést třeba na malá písmena
-a pak je porovnat.
+Python is case sensitive so `ladies in Pyladies`
+is `False`. If you would like do it case insensitive
+you would have to change case of both strings (lower or upper) and then
+do `x in y`.
 
-A jak se převádí na malá písmena?
-K tomu budeme potřebovat další novou vlastnost Pythonu: metody.
+And how to change case of our string?
+To do that we will need another Python feature: methods.
 
-## Metody
+## Methods
 
-*Metoda* (angl. *method*) je jako funkce – něco, co se dá zavolat.
-Na rozdíl od funkce je svázaná s nějakým *objektem* (hodnotou).
-Volá se tak, že se za objekt napíše tečka,
-za ní jméno metody a za to celé se, jako u funkcí, připojí závorky
-s případnými argumenty.
+*Methods* are like functions - we can call something with them.
+Unlike a function, method is tied to some *object* (value).
+It is called by writing colon and method's name just after the object.
+And then, of course, brackets, which may contain arguments.
 
-Řetězcové metody `upper()` a `lower()`
-převádí text na velká, respektive malá písmena.
+String methods `upper()` and `lower()` change the case.
 
 ```python
-retezec = 'Ahoj'
-print(retezec.upper())
-print(retezec.lower())
-print(retezec)
+string = 'Hello'
+print(string.upper())
+print(string.lower())
+print(string)
 ```
 
 > [note]
-> Všimni si, že původní řetězec se nemění; metoda vrátí nový řetězec, ten
-> starý zůstává.
+> Notice that the original string is not changing.
+> Methods return new string and the older string stays
+> like it was.
 >
-> To je obecná vlastnost řetězců v Pythonu: jednou existující řetězec se už
-> nedá změnit, dá se jen vytvořit nějaký odvozený.
+> That is Python's standard behavior: already existing string can't be changed,
+> we can only create new one - derived from the old one.
 
 
-### Iniciály
+### Initials
 
-Pro procvičení metod a vybírání znaků si zkus napsat program,
-který se zeptá na jméno, pak na příjmení
-a pak vypíše iniciály – první písmena zadaných jmen.
+For practicing methods and subscripting try to write a program,
+which will ask user about their name, then their surname
+and then it will print their initials - first letters of
+name and surname.
 
-Iniciály jsou vždycky velkými písmeny
-(i kdyby byl uživatel líný mačkat Shift).
+Initials are always upper case (even if the
+user won't write it that way).
 
 {% filter solution %}
 ```python
-jmeno = input('Zadej jméno: ')
-prijmeni = input('Zadej příjmení ')
-inicialy = jmeno[0] + prijmeni[0]
-print('Iniciály:', inicialy.upper())
+name = input('Enter your name: ')
+surname = input('Enter your surname: ')
+initials = name[0] + surname[0]
+print('Initials:', initials.upper())
 ```
 
-Způsobů, jak takový program napsat, je více.
-Lze například zavolat `upper()` dvakrát – zvlášť na jméno a zvlášť na příjmení.
+There are more ways how to write such program.
+You can call `upper()` twice - on name and surname separately.
 
-Nebo to jde zapsat i takto –
-metoda se dá volat na výsledku jakéhokoli výrazu:
+Or like this:
 
 ```python
-jmeno = input('Zadej jméno: ')
-prijmeni = input('Zadej příjmení ')
-print('Iniciály:', (jmeno[0] + prijmeni[0]).upper())
+name = input('Enter your name: ')
+surname = input('Enter your surname: ')
+print('Initials:', (name[0] + surname[0]).upper())
 ```
 
-Doporučuji spíš první způsob, ten se smysluplnými názvy proměnných.
-Je sice delší, ale mnohem přehlednější.
+I recommend the first option. It is longer but way more clear.
 {% endfilter %}
 
-Řetězcových metod je celá řada.
-Nejužitečnější z nich najdeš v [taháku](https://pyvec.github.io/cheatsheets/strings/strings-cs.pdf), který si můžeš stáhnout či vytisknout.
+There are many more string methods. You can find the most
+useful in our [cheatsheet](https://github.com/muzikovam/cheatsheets/blob/master/strings/strings-en.pdf).
 
-A úplně všechny řetězcové metody jsou popsány v [dokumentaci Pythonu](https://docs.python.org/3/library/stdtypes.html#string-methods) (anglicky; plné věcí, které ještě neznáš).
+All methods are in [Python documentation](https://docs.python.org/3/library/stdtypes.html#string-methods).
 
-Všimni si, že `len` není metoda, ale funkce; píše se `len(r)`, ne `r.len()`.
-Proč tomu tak je, to za nějakou dobu poznáš.
+Notice that `len` isn't method but function. It's
+written `len(s)` not `r.len()`.
+You will find out why it is like that in a minute.
 
 
-## Formátování
+## Formatting
 
-Obzvláště užitečná je metoda `format`,
-která v rámci řetězce nahradí dvojice „kudrnatých“ závorek
-za to, co dostane v argumentech:
+Especially useful is `format` method, which replaces
+pair of curly brackets in string for whatever it
+gets as an argument.
 
 ```python
-vypis = '{}×{} je {}'.format(3, 4, 3 * 4)
-print(vypis)
+write = '{}×{} je {}'.format(3, 4, 3 * 4)
+print(write)
 ```
 
-Řetězec `'{}×{} je {}'` tady funguje jako *šablona* (angl. *template*).
-Představ si to jako jako formulář, do kterého Python na vyznačená místa
-vpisuje hodnoty.
+String `'{}×{} je {}'` is something like *template*.
+Imagine it as form, where are highlighted fields where Python
+fills in values.
 
-Pokud chceš nahradit hodnoty v jiném pořadí, nebo když chceš aby šablona
-byla čitelnější, můžeš do „kudrnatých“ závorek napsat jména:
+If you want to fill values in different order or you want
+the template to be clearer, you can write variables into
+curly braces:
 
 ```python
-vypis = 'Ahoj {jmeno}! Výsledek je {cislo}.'.format(cislo=7, jmeno='Elvíro')
-print(vypis)
+write = 'Hi {name}! The result is {number}.'.format(number=7, name='Mary')
+print(write)
 ```
 
 Formátování se používá skoro všude, kde je
