@@ -975,8 +975,18 @@ def sessions_available():
 
     return len(uniq_sessions)
 
+def cheatsheets():
+    sheets = 0
+    for course in safe_courses():
+        for session in course.sessions.values():
+            for material in session.materials:
+                if (material.url_type == 'cheatsheet'):
+                    sheets += 1
+
+    return sheets
 
 
+# This could use some caching, but for now it's the simplest way
 def basic_stat(name):
     if name == 'active_runs':
         return active_runs()
@@ -986,7 +996,9 @@ def basic_stat(name):
         return sessions_delivered()
     elif name == 'sessions_available':
         return sessions_available()
-    else:
+    elif name == 'cheatsheets':
+        return cheatsheets()
+    else: # contributors, price
         return 0
 
 @app.template_filter('fill_label')
