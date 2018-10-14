@@ -952,7 +952,6 @@ def basic_stat(name):
 
 @app.template_filter('fill_label')
 def fill_label(label):
-    print(label)
     stat_number = basic_stat(label['label'])
 
     formatstr = czech_plural(label['text'], stat_number)
