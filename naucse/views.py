@@ -932,8 +932,23 @@ def course_calendar_ics(course):
 
     return Response(str(calendar), mimetype="text/calendar")
 
+def active_runs():
+    today = datetime.date.today()
+
+    runs = (model.runs_from_year(today.year) +
+            model.runs_from_year(today.year - 1) +
+            model.runs_from_year(today.year - 2))
+    ongoing = [run for run in runs if
+                run.start_date <= today and run.end_date >= today]
+
+    return len(ongoing)
+
+
 def basic_stat(name):
-    return 0
+    if name == 'active_runs':
+        return active_runs()
+    else:
+        return 0
 
 @app.template_filter('fill_label')
 def fill_label(label):
