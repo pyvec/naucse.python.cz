@@ -183,23 +183,28 @@ def runs(year=None, all=None):
                            edit_info=get_edit_info(model.runs_edit_path))
 
 
+def safe_courses():
+    courses = []
+
+    for course in model.courses.values():
+        if not course.is_link():
+            if not course.is_meta:
+                courses.append(course)
+        elif naucse.utils.views.forks_enabled() and does_course_return_info(course):
+            courses.append(course)
+
+    return courses
+
 @app.route('/courses/')
 def courses():
     # since even the basic info about the forked courses can be broken,
     # we need to make sure the required info is provided.
     # If ``RAISE_FORK_ERRORS`` is set, exceptions are raised here,
     # otherwise the course is ignored completely.
-    safe_courses = []
-
-    for course in model.courses.values():
-        if not course.is_link():
-            if not course.is_meta:
-                safe_courses.append(course)
-        elif naucse.utils.views.forks_enabled() and does_course_return_info(course):
-            safe_courses.append(course)
+    courses = safe_courses()
 
     return render_template("course_list.html",
-                           courses=safe_courses,
+                           courses=courses,
                            title="Seznam online kurzů Pythonu",
                            edit_info=get_edit_info(model.courses_edit_path))
 
