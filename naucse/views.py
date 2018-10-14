@@ -28,7 +28,10 @@ from naucse.utils.views import get_recent_runs, list_months
 from naucse.utils.views import does_course_return_info
 from naucse.utils.views import raise_errors_from_forks
 from naucse.utils.views import page_content_cache_key, get_edit_info
+from naucse.utils.views import czech_plural
 from naucse.validation import DisallowedStyle, DisallowedElement, InvalidHTML
+
+import yaml
 
 # so it can be mocked
 import naucse.utils.views
@@ -43,7 +46,6 @@ POSSIBLE_FORK_EXCEPTIONS = (PullError, BuildError, DisallowedStyle, DisallowedEl
                             RequirementsMismatch, InvalidHTML, InvalidInfo)
 
 _cached_model = None
-
 
 @LocalProxy
 def model():
@@ -97,10 +99,19 @@ def session_url(course, session, coverpage='front'):
                    coverpage=coverpage)
 
 
+def load_stat_labels():
+    datafile = os.path.join(os.path.dirname(__file__), 'data/stats.yml')
+    with open(datafile) as fstr:
+        stat_labels = yaml.load(fstr)
+
+    return stat_labels
+
+
 @app.route('/')
 def index():
     return render_template("index.html",
-                           edit_info=get_edit_info(Path(".")))
+                           edit_info=get_edit_info(Path(".")),
+                           stat_labels=load_stat_labels())
 
 
 @app.route('/runs/')
@@ -920,3 +931,15 @@ def course_calendar_ics(course):
             abort(404)
 
     return Response(str(calendar), mimetype="text/calendar")
+
+def basic_stat(name):
+    return 0
+
+@app.template_filter('fill_label')
+def fill_label(label):
+    print(label)
+    stat_number = basic_stat(label['label'])
+
+    formatstr = czech_plural(label['text'], stat_number)
+
+    return formatstr % stat_number
