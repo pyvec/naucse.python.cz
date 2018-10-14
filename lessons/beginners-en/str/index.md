@@ -89,7 +89,7 @@ long_string = 'o' * 100
 Now we will learn how we can get a part from a string.
 We will start with single characters.
 It is done by *subscripting*, which is written similarly
-as calling a functin but with square brackets.
+as calling a function but with square brackets.
 
 ```python
 fifth_character = 'PyLadies'[5]
@@ -272,93 +272,111 @@ curly braces:
 write = 'Hi {name}! The result is {number}.'.format(number=7, name='Mary')
 print(write)
 ```
-
-Formátování se používá skoro všude, kde je
-potřeba „hezky“ vypsat nějakou hodnotu.
-
-
-## Sekání řetězců
-
-Teď se vrátíme k vybírání kousků řetězců.
-Zkus, co dělá tenhle program:
+Formatting is used when you need to include variables value into
+the string.
 
 ```python
-retezec = 'PyLadies'
-kousek = retezec[5:]
-print(kousek)
+number = 3 + 4
+name = "Mary"
+write = 'Hi {}! The result is {}.'.format(name, number)
+print(write)
 ```
+
+It is almost the same with old fashioned `%s`, but instead of `.format`
+you write `%`. If you want are using just one variable you don't
+need brackets, just make sure that there is one space after `%`.
+
+```python
+number = 3 + 4
+name = "Mary"
+write = 'Hi %s! The result is %s.' % (name, number)
+print(write)
+```
+## Substrings
+
+Now we will go back to subscripting.
+Try to find out what the following program does:
+
+```python
+string = 'PyLadies'
+substring = string[5:]
+print(substring)
+```
+
+> [warning]
+> Keep in mind that we are still counting from 0!
 
 {% filter solution %}
-Zápis `retezec[5:]` vybere *podřetězec* od znaku číslo 5 dál.
+`string[5:]` will print *substring* from the fifth character to the end.
 {% endfilter %}
 
+We can also use `string[:5]`, which will select all to the
+fifth character, which is not included.
+So`string[:5] + string[5:] == string`.
 
-Dá se použít i `retezec[:5]`,
-který vybere všechno *až po* znak číslo 5.
-Ale ne znak 5 samotný, takže `retezec[:5] + retezec[5:] == retezec`.
 
+What is doing `string[2:5]`?
 
-Co asi udělá `retezec[2:5]`?
-
-A co `retezec[-4:]`?
+And what about `string[-4:]`?
 
 ```python
-retezec = 'PyLadies'
-print(retezec[:4])
-print(retezec[2:5])
-print(retezec[-4:])
+string = 'PyLadies'
+print(string[:4])
+print(string[2:5])
+print(string[-4:])
 ```
 
-Určování vhodných čísel, *indexů*, občas vyžaduje trochu zamyšlení.
+You have to think about what number, *index*, you want to use.
 
-U podobného „sekání“ (angl. *string slicing*)
-je lepší si číslovat „hranice“ mezi znaky.
-Člověk tomu pak lépe rozumí:
+It is better to put numbers on borderlines between
+every character, it is better to understand:
 
 {{ anchor('slicing-diagram') }}
 ```plain
   ╭───┬───┬───┬───┬───┬───┬───┬───╮
-  │ Č │ o │ k │ o │ l │ á │ d │ a │
+  │ P │ y │ L │ a │ d │ i │ e │ s │
   ├───┼───┼───┼───┼───┼───┼───┼───┤
   │   │   │   │   │   │   │   │   │
   0   1   2   3   4   5   6   7   8
  -8  -7  -6  -5  -4  -3  -2  -1
 
   ╰───────────────╯
-  'PyLadies'[:4] == 'čoko'
+  'PyLadies'[:4] == 'PyLa'
 
           ╰───────────────╯
-        'PyLadies'[2:6] == 'kolá'
+        'PyLadies'[2:6] == 'Ladi'
 
                       ╰───────────╯
-                      'PyLadies'[-3:] == 'áda'
+                      'PyLadies'[-3:] == 'ies'
 ```
 
 
-## Cvičení
+## Exercise 
 
-Zkus napsat funkci `zamen(retezec, pozice, znak)`.
+Try to write a function `change(string, position, character)`.
 
-Tato funkce vrátí řetězec, který má na dané pozici
-daný znak; jinak je stejný jako původní `retezec`. Např:
+This function returns string which has given character on given
+position. The rest is the same as the original `string`.
+For example:
 
 ```python
-zamen('palec', 0, 'v') == 'valec'
-zamen('valec', 2, 'j') == 'vajec'
+change('doctor', 2, 'g') == 'dogtor'
+change('slice', 1, 'p') == 'spice'
 ```
 
-Pozor na to, že řetězce v Pythonu nelze měnit.
-Musíš vytvořit nový řetězec poskládaný z částí toho starého.
+Keep in mind that you can't change a string.
+You can only create new one and put together
+some pieces from the old one.
 
 {% filter solution %}
 ```python
-def zamen(retezec, pozice, znak):
-    """Zamění znak na dané pozici
-
-    Vrátí řetězec, který má na dané pozici daný znak;
-    jinak je stejný jako vstupní retezec
+def change(string, position, character):
+    """This function changes given character on given position.
+    
+    Returns new string which has given character on given
+    position. The rest is the same as the original string.
     """
 
-    return retezec[:pozice] + znak + retezec[pozice + 1:]
+    return string[:position] + character + string[position + 1:]
 ```
 {% endfilter %}
