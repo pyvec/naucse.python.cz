@@ -153,7 +153,7 @@ Indent the lines 4 spaces after every colon you use in Python.
 
 Then on the same level as `if`, write `else:` followed by a colon. The next lines
 contain the commands that are executed if the condition is False, and they must also be indented.<br>
-Then you can write other code, not indended, that will be executed every time, because
+Then you can write other code, not indented, that will be executed every time, because
 the if statement has already ended.
 
 > [note]
@@ -179,7 +179,7 @@ print(number, '+ 3 =', number + 3)
 ```
 
 Sometimes several conditions are needed. For this situation, we have the `elif` statement
-(combimation of `else` and `if`). It's between `if` and `else`.
+(combination of `else` and `if`). It's between `if` and `else`.
 You can repeat the `elif` keyword after the first `if`, but 
 only one branch will be executed, to be precise: the first true one
 where the conditions are met. 
