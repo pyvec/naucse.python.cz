@@ -305,13 +305,13 @@ print(kousek)
 ```
 
 {% filter solution %}
-Zápis `retezec[5:]` vybere *podřetězec* od znaku číslo 5 dál.
+Zápis `retezec[5:]` vybere *podřetězec* od znaku číslo 5 dál, ale ne znak 5 samotný.
 {% endfilter %}
 
 
 Dá se použít i `retezec[:5]`,
-který vybere všechno *až po* znak číslo 5.
-Ale ne znak 5 samotný, takže `retezec[:5] + retezec[5:] == retezec`.
+který vybere všechno *až po* znak číslo 5, včetně.
+Takže `retezec[:5] + retezec[5:] == retezec`.
 
 
 Co asi udělá `retezec[2:5]`?
