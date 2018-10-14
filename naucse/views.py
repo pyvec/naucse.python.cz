@@ -967,6 +967,15 @@ def sessions_delivered():
 
     return len([session for session in all_sessions if session.date < today])
 
+def sessions_available():
+    uniq_sessions = {}
+    for course in safe_courses():
+        for session in course.sessions.values():
+            uniq_sessions[session.slug] = session
+
+    return len(uniq_sessions)
+
+
 
 def basic_stat(name):
     if name == 'active_runs':
@@ -975,6 +984,8 @@ def basic_stat(name):
         return all_runs()
     elif name == 'sessions_delivered':
         return sessions_delivered()
+    elif name == 'sessions_available':
+        return sessions_available()
     else:
         return 0
 
