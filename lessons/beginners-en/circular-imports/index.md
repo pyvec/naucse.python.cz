@@ -1,18 +1,18 @@
 ## Circular imports
 
-In your homework about 1D tic-tac-toe you will have them in few modules.
+In the 1D tic-tac-toe game for your homework, you will probably write several modules.
 It will look like this:
 (Arrows between modules are showing the imports.)
 
 ```plain
-┌──────────────────╮  ┌───────────────╮  ┌──────────────────╮ 
-│      ai.py       │  │ tictactoe.py  │  │    game.py       │
-├──────────────────┤  ├───────────────┤  ├──────────────────┤
-│                  │◀-│ import ai     │◀-│import ticktacktoe│
-├──────────────────┤  ├───────────────┤  ├──────────────────┤
-│ def ai_move      │  │ def evaluate  │  │                  │
-│                  │  │ def move      │  │                  │
-└──────────────────┘  │def player_move│  └──────────────────┘
+┌──────────────────╮ ┌───────────────╮  ┌──────────────────╮ 
+│      ai.py       │  │ tictactoe.py  │   │    game.py       │
+├──────────────────┤  ├───────────────┤   ├──────────────────┤
+│                  │◀-│ import ai     │◀-│import tictactoe  │
+├──────────────────┤  ├───────────────┤   ├──────────────────┤
+│ def ai_move      │  │ def evaluate  │   │                  │
+│                  │  │ def move      │   │                  │
+└──────────────────┘  │def player_move│   └──────────────────┘
                       │               │
                       └───────────────┘
                           ▲
@@ -20,7 +20,7 @@ It will look like this:
                           │ ┌───────────────────╮
                           │ │ test_ticktactoe.py│
                           │ ├───────────────────┤
-                          └─│ import ticktacktoe│
+                          └─│ import tictactoe  │
                             ├───────────────────┤
                             │ def test_...      │
                             │                   │
@@ -29,12 +29,12 @@ It will look like this:
 
 But function `ai_move` needs to call function `move`.<br>
 What can we do?<br>
-Could you import `ai` from `ticktacktoe` while you are importing `ticktacktoe` from `ai`?
+Could you import `ai` from `tictactoe` while you are importing `tictactoe` from `ai`?
 
 
 ```plain
-┌──────────────────╮  ┌───────────────╮
-│      ai.py       │  │ ticktacktoe.py│
+┌──────────────────╮ ┌───────────────╮
+│      ai.py       │  │ tictactoe.py  │
 ├──────────────────┤  ├───────────────┤
 │                  │◀-│ import ai     │
 │import ticktaktoe │-▶│               │
@@ -47,21 +47,21 @@ Could you import `ai` from `ticktacktoe` while you are importing `ticktacktoe` f
 ```
 We can look at it from the point of view of Python,
 which is executing the commands.
-When it has to import `ticktackto.py`, it process the file line by line.
+When it has to import `tictactoe.py`, it process the file line by line.
 And it almost at the begging see command `import ai`.
 So it opens file `ai.py` and it start to process it line by line.
-And of course it will soon get to `import ticktacktoe`. What next?
+And of course it will soon get to `import tictactoe`. What next?
 
 To avoid an infinite loop - one file would import another one and this one would import
 the first one over and over again - 
-Python will make some workaround when we run `ticktacktoe`:
-when it notices that `ticktacktoe` is already being imported in `ai.py`,
-it will import the part of `ticktacktoe` that it's just before `import ai` into `ai` module
-and this will replace line `import ticktacktoe` so it's no longer there. And then it can continue the
-import of `ai` in `ticktacktoe.py`.
-When it finishes this import it will continue in `ticktacktoe` and all its functions and commands.
+Python will make some workaround when we run `tictactoe`:
+when it notices that `tictactoe` is already being imported in `ai.py`,
+it will import the part of `tictactoe` that it's just before `import ai` into `ai` module
+and this will replace line `import tictactoe` so it's no longer there. And then it can continue the
+import of `ai` in `tictactoe.py`.
+When it finishes this import it will continue in `tictactoe` and all its functions and commands.
 
-This could be usefull but in most of the times it behaves very unpredictable therefore it's dangerous.
+This could be useful but in most of the times it behaves very unpredictable therefore it's dangerous.
 
 In other words: when two modules are trying to import the other one
 the program doesn't have to work as expected.
@@ -80,8 +80,8 @@ It definitely shouldn't contain other functions which might be useful somewhere 
 
 
 ```plain
-┌──────────────────╮  ┌───────────────╮
-│      ai.py       │  │ ticktacktoe.py│
+┌──────────────────╮ ┌───────────────╮
+│      ai.py       │  │ tictactoe.py  │
 ├──────────────────┤  ├───────────────┤
 │                  │◀-│ import ai     │
 │                  │  │               │
@@ -94,7 +94,7 @@ It definitely shouldn't contain other functions which might be useful somewhere 
 ## Support module
 
 Second option is to define new module which will be used in
-`ticktacktoe.py` and in `ai.py`.
+`tictactoe.py` and in `ai.py`.
 
 This module is usually as `util.py` (=utility).
 
@@ -107,8 +107,8 @@ This module is usually as `util.py` (=utility).
               └──────────────────┘
                       ▲  ▲
                       │  │
-┌──────────────────╮ │  │   ┌───────────────╮
-│      ai.py       │  │  │  │ ticktacktoe.py│
+┌──────────────────╮ │  │  ┌───────────────╮
+│      ai.py       │  │  │  │ tictactoe.py  │
 ├──────────────────┤  │  │  ├───────────────┤
 │ import util      │──┘  └──│ import util   │
 │                  │◀───────│ import ai     │
@@ -125,4 +125,3 @@ many places that you have no idea where exactly you used it and whether
 you can modify or delete it.
 
 What you should choose always depends on the current situation.
-
