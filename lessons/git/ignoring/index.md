@@ -119,7 +119,7 @@ Do něj napiš:
 obrazek.ps
 ```
 
-Pak se podívej na `git status.` Obrázek už by ve výpisu neměl být!
+Pak se podívej na `git status`. Obrázek už by ve výpisu neměl být!
 
 ```ansi
 ␛[36m$␛[0m git status
@@ -284,8 +284,8 @@ Další detaily je možné najít v [dokumentaci](https://git-scm.com/docs/giti
 Teď, když umíš ignorovat soubory, si můžeme ukázat zkratku. Místo
 
 ```console
-git add soubor1 soubor2
-git commit
+$ git add soubor1 soubor2
+$ git commit
 ```
 
 můžeš napsat jen `git commit` s tečkou na konci:
