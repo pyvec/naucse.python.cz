@@ -38,6 +38,14 @@ Nainstalovanou aplikaci spustíš následovně:
   ```
 * Program vypíše adresu (např. `http://0.0.0.0:8003/`); tu navštiv v prohlížeči.
 
+Pokud chceš místo vývojového spuštění vygenerovat statické HTML soubory (např. pro nahrání na statický hosting):
+
+* Spusť freeze. Parametr `--serve` provede spuštění webserveru, pomocí kterého si lze vygenerované soubory prohlédnout:
+  ```console
+  $ PYTHONPATH=. pipenv run freeze --serve
+  ```
+* HTML stránky jsou v adresáři `naucse/_build`.
+  Program vypíše adresu (např. `http://0.0.0.0:8000/`); tu navštiv v prohlížeči.
 
 ## Externí kurzy
 
