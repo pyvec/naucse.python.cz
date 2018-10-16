@@ -31,7 +31,7 @@ print("\"Don't do it\", said dad.")
 Backward slashes can also insert exotic characters 
 that you do not have on the keyboard.
 Fancy characters can be written as `\N` and a character 
-name in compound ("curly") brackets.
+name in compound ("curly") braces.
 Try for example the following characters
 (some might not work for your system):
 
@@ -251,7 +251,7 @@ You will find out why it is like that in a minute.
 ## Formatting
 
 Especially useful is the `format` method, which replaces
-a pair of curly brackets in string for whatever it
+a pair of curly braces in string for whatever it
 gets as an argument.
 
 ```python
@@ -283,7 +283,7 @@ print(write)
 
 It is almost the same as the old fashioned `%s`, but instead of `.format`
 you write `%`. If you want to use just one variable, you don't
-need braces, just make sure that there is one space after the `%`.
+need parenthesis, just make sure that there is one space after the `%`.
 
 ```python
 number = 3 + 4
