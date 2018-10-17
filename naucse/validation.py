@@ -72,7 +72,7 @@ class AllowedElementsParser(HTMLParser):
         #: Compiled out of currently used in canonical lesson
         self.allowed_attributes = {
             'alt', 'aria-hidden', 'border', 'class', 'color', 'colspan', 'controls', 'cx', 'cy', 'd', 'halign', 'href',
-            'id', 'r', 'rowspan', 'src', 'start', 'title', 'type', 'valign', 'viewbox',
+            'id', 'r', 'rowspan', 'scoped', 'src', 'start', 'title', 'type', 'valign', 'viewbox',
 
             # inline styles generated from notebook converter
             'style',
