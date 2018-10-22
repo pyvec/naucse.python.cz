@@ -1,6 +1,7 @@
 # Modules
 
-Module je v Pythonu něco, z čeho můžeme importovat.
+Module is something like package. We can import it to our code.
+Or we can import functions from module to our code.
 For example you can import function `sqrt` from module `math`:
 
 ```python
@@ -11,7 +12,7 @@ print(sqrt(2))
 
 You can also import whole module. You can get to module's
 functions through period - same as you get to strings methods
-(`'Hello'.upper*()`).
+(`'Hello'.upper()`).
 
 For example:
 
