@@ -1,8 +1,6 @@
-
-This chapter is full of new things.
-I hope you can hold on to the end. And if anything
-doesn't make sense now, don't lose your head:
-the things we will explain now will really teach you
+This chapter is full of new things. Hang in there! 
+If anything doesn't make sense now, don't worry:
+What we explain now will teach you important
 things we will use in another lesson.
 
 Try each example in this lesson;
@@ -11,7 +9,7 @@ what Python prints is an important part of the lesson.
 # Lists
 
 Today we will show you how to work with *lists*.
-We will use square brackets a lot because that's how are lists created:
+We will use square brackets a lot because that's how lists are created:
 
 ```python
 numbers = [1, 1, 2, 3, 5, 8, 13]
@@ -19,12 +17,12 @@ print (numbers)
 ```
 
 
-The list is a value that can contain many other values.
-As the string contains a sequence of characters,
-the list contains a sequence of anything. Numbers, for example.
-And just as we can use the `for` cycle
-to print strings after the characters,
-we can go through the following elements:
+A list is a value that can contain many other values.
+Just like a string contains a sequence of characters,
+a list contains a sequence of anything. Numbers, for example.
+And just as we can use the `for` loop
+to print strings character by character,
+we can loop over list elements:
 
 ```python
 for number in numbers:
@@ -32,19 +30,19 @@ for number in numbers:
 ```
 
 Lists in programs are very common:
-the file can be retrieved as a list of strings
-with single lines.
+A file can be retrieved as a list of strings
+line by line.
 A list of strings like `7 ♥`
-and `K ♣` can be used as a pack of cards.
+and `K ♣` can be used as a deck of cards.
 Math is full of numerical lists and
 each online service has a list of users.
 
 
-The values ​​in the list can be of any type,
+The values ​​in a list can be of any type,
 we can even mix different types in one list
 (even though we won't meet such mixed lists
-very often - they are more used in tuples
-,which we'll tell you later):
+very often - they are more used in tuples,
+which we will tell you about later):
 
 ```python
 list = [1, 'abc', True, None, range(10), len]
@@ -53,21 +51,21 @@ print(list)
 
 ## Selection from lists
 
-The most basic operation with lists,the `for`
-cycle, we have already learned.
+Yo ualready know the most basic operation with lists, 
+the `for` loop.
 The second most important operation is picking
-of individual elements.
-This works like in strings: square brackets and
-the element number. It is numbered, as with strings,
-from zero; negative numbers indicate the elements from the end.
+individual elements.
+This works the same way as in strings: square brackets and
+the element number. List elements are numbered from zero, 
+just as characters in strings; negative numbers indicate elements from the end.
 
 ```python
 print(numbers[2])
 ```
 
-We can get subsections with square brackets.
+We use square brackets to access subsets.
 [Strings Chart] ({{lesson_url ('beginners-en/str')}} # slicing-diagram)
-shows how to write numbers when we want smaller list:
+shows you how to write the numbers when you want parts of the list:
 
 ```python
 print(numbers[2:-3])
@@ -75,21 +73,21 @@ print(numbers[2:-3])
 
 ## Changing lists
 
-An important feature of lists that neither numbers nor strings
-(nor `True`/`False`/`None`) doesn't have is
+An important feature of lists, that neither numbers nor strings
+(nor `True`/`False`/`None`) have, is
 that lists can be changed.
 
 Numbers can't be changed - if you have `a = 3` and
 you write `a = a + 1`, the number `3` will not change.
-There will be calculated new number `4` and the variable` a`
+A new number `4` will be calculated, and the variable `a`
 will be set to this new number.
 
-By contrast, lists can be changed without setting a variable to new value.
-The basic way to change a list is to add
-to the end using the `append` method.
-That doesn't return *anything* (actually it returns `None`)
-but it changes the list *in place* we are working on (`append` is changing the list
-in *the last place*). Try it:
+By contrast, lists can be changed without setting a variable to a new value.
+The most basic way to change a list is to add elements
+to its end, using the `append` method.
+Doing this doesn't return *anything* (actually it returns `None`)
+but it changes the list we are working on *in place*  (`append` means 
+add to *the end* of the list). Try it:
 
 ```python
 prime_numbers = [2, 3, 5, 7, 11, 13, 17]
@@ -98,17 +96,17 @@ prime_numbers.append(19)
 print(prime_numbers)
 ```
 
-Such a change of value can sometimes be surprising,
+Such a value change can sometimes be surprising,
 because multiple variables can have the same value.
-Because the value itself changes, it may seem,
-that the variable "changes without we touching it":
+Because the value itself changes, it may seem
+that the variable "changes without us touching it":
 
 ```python
-a = [1, 2, 3] # creates a list
-b = a         # here the new list is not created, it just points to 'a' list
+a = [1, 2, 3] # creates a list 'a'
+b = a         # no new list is created, 'b' just points to 'a'
 
 # the list created in the first row now has two variable names: "a" and "b",
-# but we are still working with just one list
+# but we are still working with just one and the same list:
 
 print(b)
 a.append(4)
@@ -117,8 +115,8 @@ print(b)
 
 ## More ways to edit lists
 
-Except for the `append` method that adds
-only one element, there is the `extend` method,
+Apart from the `append` method that adds
+only one element, there is also the `extend` method,
 which can add more elements.
 The elements to be added here are in the form of a list:
 
@@ -129,8 +127,8 @@ print(primary)
 ```
 
 The `extend` method can work with other
-types of variables - it can work with anything where
-we can use `for` cycle: eg.
+types of variables - it can work with anything on which
+we can use a `for` loop: For example,
 individual strings, rows of files, or numbers from `range()`.
 
 ```python
@@ -143,9 +141,9 @@ print(listA)
 ## Changing elements
 
 But enough adding.
-Lists can also be used to change individual elements
+You can change individual elements of lists,
 simply by assigning a value to the element,
-as if it was a variable:
+as if it were a variable:
 
 ```python
 numbers = [1, 0, 3, 4]
@@ -153,10 +151,10 @@ numbers[1] = 2
 print(numbers)
 ```
 
-You can also assign new values to the sublist - in this case
-the subsection is replaced by the individual values we write.
+You can also assign new values to a sublist - in this case
+the subset is replaced by the individual values we write.
 Like with `extend`, you can replace the elements with anything 
-that works with `for` cycles - list, string,`range()`, etc.
+that works with `for` loops - list, string, `range()`, etc.
 
 ```python
 numbers = [1, 2, 3, 4]
@@ -167,8 +165,8 @@ print(numbers)
 ## Deleting elements
 
 We can also change the length of the
-list by replacing sublist with less elements
-or remove some of the elements completely:
+list by replacing a sublist with fewer elements,
+or by removing some of the elements completely:
 
 ```python
 numbers = [1, 2, 3, 4]
@@ -178,10 +176,9 @@ numbers[1:-1] = []
 print(numbers)
 ```
 
-This form of deleting the elements is quite
-unclear, and therefore we have a special command
-named `del`.
-It deletes everything that we tell him to - individual
+This form of deleting elements is quite obscure,
+therefore we have a special command named `del`.
+It deletes everything that we tell it to - individual
 elements, sublists and even variables!
 
 ```python
@@ -196,7 +193,7 @@ print(numbers)
 
 Other deleting methods are:
 * `pop`, which removes *and returns* the last element in the list - for example, if
-  I have a list of cards in the pack, it's like a "draw"
+  I have a list of cards in a deck, `pop` is like "drawing a card".
 * `remove`, which finds the element in the list and removes it,
 * `clear`, which clears the entire list.
 
@@ -215,7 +212,7 @@ print(numbers)
 
 ## Sorting
 
-And we also have the `sort` method that sorts the list elements.
+And we also have a `sort` method that sorts list elements.
 
 ```python
 listA = [4, 7, 8, 3, 5, 2, 4, 8, 5]
@@ -223,17 +220,17 @@ listA.sort()
 print(listA)
 ```
 
-In order to sort, the elements of the list must be
-*comparable* - we have to be able to put between them the operator `<`.
-The mixed list of numbers and strings can not be sorted.
+In order to be sorted, the elements of the list must be
+*comparable* - we have to be able to use the `<` operator with them.
+A mixed list of numbers and strings cannot be sorted.
 The operator `<` defines how exactly the elements will
-be sorted (e.g. numbers by size; string according to the special "alphabet"
-where are upper case smaller than lower case, etc.).
+be sorted (e.g., numbers by size; strings according to the special "alphabet"
+where upper case is smaller than lower case, etc.).
 
-The `sort` method has an argument
-`reverse`. If you set it to *True*, it will sort elements "vice versa".
-The default value is *False* so if you want the elements to be
-sorted from smaller you don't have to specify this argument.
+The `sort` method has a `reverse` argument. 
+If you set it to *True*, it will sort the elements in backwards order.
+The default value is *False*, so if you want the elements to be
+sorted from smaller to larger, you don't have to specify this argument.
 
 ```python
 listA = [4, 7, 8, 3, 5, 2, 4, 8, 5]
@@ -243,7 +240,7 @@ print(listA)
 
 ## Other methods
 
-Lots of what we can do with strings we can also do with lists.
+Lots of what we can do with strings, we can also do with lists.
 For example adding and multiplying:
 
 ```python
@@ -251,23 +248,23 @@ melody = ['C', 'E', 'G'] * 2 + ['E', 'E', 'D', 'E', 'F', 'D'] * 2 + ['E', 'D', '
 print(melody)
 ```
 
-As with strings, the list can be added only to another lists
-- not to a string or a number.
+As with strings, the list can be added only to other lists
+- not to a string or to a number.
 
-Other known methods are `len`,
-`count` and` index` and `in` operator.
+Other known methods are `len`, `count`, and` index`,
+and the `in` operator.
 
 ```python
 print(len(melody)) # Length of the list
-print(melody.count('E')) # How many 'E's are in the list
-print(melodie.index('E')) # Number of the first 'E'
+print(melody.count('E')) # How many 'E's are in the list?
+print(melodie.index('E')) # Position of the first 'E'
 print('E' in melody) # Is 'E' in the list?
 ```
 
-The last three methods are working bit differently:
-for strings they are working with *substrings*,
-for lists  they are working with *individual* elements.
-So although our melody contains elements
+The last three methods work a little bit differently:
+for strings they are work on *substrings*,
+for lists they work on *individual* elements.
+So although our melody contains the elements
 `D` and ` E` next to each other, `DE` is not in the list:
 
 ```python
@@ -278,9 +275,9 @@ print(melody.index('DE'))
 
 ## A list as a condition
 
-The list can be used in the `if` (or` while`) statement
-which is true when there is something in that list.
-In other words, `list` is an 'abbreviation' for `len (list)> 0`.
+A list can be used in an `if` (or` while`) statement
+which is true while there is something in that list.
+In other words, `list` is an 'abbreviation' for `len(list) > 0`.
 
 ```python
 if list:
@@ -290,18 +287,18 @@ else:
 ```
 
 Strings can be used similarly.
-And even numbers - the condition is *True* if they are nonzero.
+And even numbers - the condition is *True* if they are not zero.
 
 ## Creating lists
 
-Just like the `int` function converts to
-integers and `str` to strings,
-the `list` function converts to a list.
+Just like the `int` function converts values to
+integers and `str` converts values to strings,
+the `list` function converts values to a list.
 As an argument, we can give it any value,
-which can be processed by `for` loop.
-A string will make a list of characters, a file
-will make a list of rows, a `range` will make a
-list of numbers.
+which can be processed by a `for` loop.
+A string will turn into a list of characters, a file
+will turn into a list of rows, a `range` will turn 
+into a list of numbers.
 
 ```python
 alphabet = list('abcdefghijklmnopqrstuvwxyz')
@@ -311,11 +308,11 @@ print(numbers)
 ```
 
 The `list` function can also create a list from a list.
-It may sound useless, but it is not - it creates a *new* list with value that
+It may sound useless, but it isn't - it creates a *new* list that
 is not dependent on the old list.
-It will have the same elements in the same order,
+It will contain the same elements in the same order,
 but it will not be the same list:
-it will change independently to the old one.
+You can change it independently of the old one.
 
 ```python
 a = [1, 2, 3]
@@ -327,11 +324,11 @@ print(b)
 ```
 
 Another way to create lists
-(especially more complex) is first made empty
-list and then fill it up with the `append` function.
-For example if you want a list with numbers that are
-powered to two, pass the numbers in `for` cycle and for each of them
-add the appropriate power to the list:
+(especially more complex lists) is to first make an empty
+list, and then fill it up using the `append` function.
+For example, if you want a list with numbers that are
+powers of two, pass the numbers into a `for` loop, and 
+for each number, add the appropriate power to the list:
 
 ```python
 power_of_two = []
@@ -340,24 +337,24 @@ for number in range (10):
 print(power_of_two)
 ```
 
-If you want a list that represents a package of cards,
+If you want a list that represents a deck of cards,
 call `append` for all combinations of color and value.
 
 ```python
-package = []
+deck = []
 for color in '♠', '♥', '♦', '♣': # (Use text names on Windows)
     for value in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
-        package.append(str(value) + color)
-print(package)
+        deck.append(str(value) + color)
+print(deck)
 ```
 
 ## Lists and Strings
 
-Lists and strings are types of "sequences"
-so it is not surprising that it can be converted
+Lists and strings are types of "sequences",
+so it is not surprising that they can be converted
 from one type to another.
 The `list` function creates a list of characters from a string.
-If we want to get a list of words, we'll use `split` method on sentence:
+If we want to get a list of words, we use the `split` method on a sentence:
 
 ```python
 words = 'This sentence is complex, split it into words!'.split()
@@ -365,9 +362,9 @@ print(words)
 ```
 
 The `split` method can also take an argument.
-If we pass it, instead of spaces (and new lines)
-the string is "cuted" by the given separator.
-So when we have some data separated by commas,
+If we pass it a separator character, the string is "cut" 
+at this given separator, instead of at spaces (and new lines).
+So, when we have some data separated by commas,
 there is nothing easier than using `split` with a comma argument:
 
 ```python
@@ -377,8 +374,8 @@ print(records)
 
 If we want to join a list of strings into
 a single string, we use the method `join`.
-Note that this method is called on *delimiter* we want to use
-between the elements of a list, and as an argument it takes the list.
+Note that this method is called on the *delimiter* character that we want to use
+between the elements of a list, and as an argument, it takes the list.
 
 ```python
 sentence = ' '.join(words)
@@ -387,8 +384,9 @@ print(sentence)
 
 ## Task
 
-Imagine that users enter their names and surnames for you and you store them in
-the list for future use, e.g. student records. Not all are careful about what they are entering their names,
+Imagine that users enter their names and surnames, and you store them in
+a list for future use, for instance, student records. 
+Not all users are careful when entering their names,
 so the names can appear with incorrectly capitalized letters.
 For example:
 
@@ -396,12 +394,12 @@ For example:
 records = ['john doe', 'John Smith', 'Stuart little', 'petr File']
 ```
 
-The task is:
+Your task is:
 
-* Write a function that selects only those correctly entered entries that has
-first name and last name with first letter capitalized.
+* Write a function that selects only those correctly entered entries where
+the first letters of the first name and last name are capitalized.
 * Write a function that selects only the incorrectly entered records.
-* *(Optional)* - Write a function that returns a list of corrected records.
+* *(Optional)* - Write a function that returns a list with corrected records.
 
 The result should look like this:
 
@@ -424,7 +422,7 @@ print(corected_entries) # → ['John Doe', 'John Smith', 'Stuart Little', 'Petr 
 > case letters, otherwise it returns False. For example, `'abc'.islower() == True` but
 > `'aBc'.islower() == False`.
 >
-> The easy way to convert the first letter to upper case is `capitalize()`:
+> The easiest way to convert first letters to upper case is `capitalize()`:
 > `'abc'.capitalize() == 'Abc'`
 
 {% filter solution%}
@@ -462,44 +460,44 @@ def correct_entries(listA):
 
 ## Lists and random
 
-The `random` module contains two functions that can be used with the lists.
+The `random` module contains two functions that can be used with lists.
 
-First the `shuffle` function shuffles elements - all elements are randomly discarded.
-As `sort`, `shuffle` does not return anything.
+First, the `shuffle` function shuffles elements - all elements are left in a random order.
+Just like `sort`, `shuffle` does not return anything.
 
 ```python
 import random
 
-package = []
+deck = []
 for color in '♠', '♥', '♦', '♣':
     for value in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
-        package.append(str(value) + color)
-print(package)
+        deck.append(str(value) + color)
+print(deck)
 
-random.shuffle(package)
-print(package)
+random.shuffle(deck)
+print(deck)
 ```
 
-Second is the `choice` function that selects a random element from the list.
-By using the list, we can make rock/paper/scissors much easier:
+The second one is the `choice` function that selects a random element from the list.
+Using a list, it's much easier to implement rock/paper/scissors:
 
 ```python
 import random
 possibilities = ['rock', 'scissors', 'paper']
-pc_choise = random.choice(possibilities)
+pc_choice = random.choice(possibilities)
 ```
 
 ## Nested lists
 
-In the beginning of this lesson we said that list
+In the beginning of this lesson we said that a list
 can contain any type of value.
-It can contain also another lists.
+A list can even contain other lists:
 
 ```python
 list_of_lists = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 ```
 
-Such a list behaves quite usually - we can choose
+Such a list behaves as expected - we can choose
 elements (which are, of course, lists):
 
 ```python
@@ -529,10 +527,10 @@ Or:
 first_element_of_second_list = list_of_list[1][0]
 ```
 
-This approach also has some use.
-Same as nested `for` cycles
+This approach is quite useful.
+Same as nested `for` loops
 allowed us to list a table, nested lists
-will allow us to "remember" the table.
+allow us to store a table.
 
 ```python
 def create_tab(size=11):
@@ -557,6 +555,6 @@ for row in multiplication_tab:
     print()
 ```
 
-What to do with such "memorized" table?
-You can save positions of figures on a chessboard 
-or crosses and circles in *2D* tictactoes.
+What can we do with such a stored table? For example,
+you can save the positions of figures on a chessboard, 
+or of the crosses and circles in a *2D* tictactoe.
