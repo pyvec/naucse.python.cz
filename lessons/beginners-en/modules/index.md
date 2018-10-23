@@ -33,7 +33,7 @@ print(math.cos(math.pi))
 
 > [note] We don't want asterisks
 >
-> In documentation or in another course command, you have maybe seen 
+> In documentation or in another course, you have maybe seen 
 > an import with an asterisk (`*`).
 > In this course, we won't use it, we always import the whole module instead.
 > When you write more difficult programs in the future, this will make
