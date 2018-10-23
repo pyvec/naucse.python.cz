@@ -125,7 +125,7 @@ How to create a tuple with none or one element? Like this:
 
 ```python
 empty_tuple = ()
-one_el_tuple = ('a',)
+one_elem_tuple = ('a',)
 ```
 
 
@@ -137,34 +137,30 @@ you'd better encapsulate it for clarity.
 
 ## When to use the list and when the tuple?
 
-Lists are used when you do not know in advance,
-how many will be the values,
-or when there is a lot of value.
+Lists are used when you do not know in advance
+how many values you will have,
+or when there are a lot of values.
 For example, a list of words in a sentence,
 list of contest participants, list of moves in the game
 or a list of cards in the package.
-On the other hand `for greeting in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN'`
-uses <var> n </ var> -tici.
+On the other hand in `for greeting in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN'`
+we are using the tuple.
 
-<var> N </ var> -tics are often used for values
+Tuples are often used for values
 of different types where each "position"
-v <var> n </ var> - have a completely different meaning.
-For example, you can use a list of alphabet letters,
-but index-value pairs of `enumerate`
-is <var> n </ var> -tice.
+in tuple has different meaning.
+For example, you can use a list for alphabet letters,
+but pairs of index-value from `enumerate` will be a tuple.
 
-Empty <var> n </ var> -tice and <var> n </ var> -tice with one
-the element is written a little strange and it has its reasons:
-if there is a situation where you will be such a sequence
-it is usually better to reach the list.
-For example, a list of playing cards in hand or
+Empty tuple and one element tuple are a little but strange but they can appear:
+for example, a list of playing cards in hand or
 list of people currently enrolled in the competition
 may occasionally be empty.
 
-The lists also have technical limits:
-<var> n </ var> -tice can not be changed and when we learn to work with dictionaries,
-we find that lists will not be used as keys.
+Lists and tuples also have technical limits:
+tuples can not be changed and when we will learn to work with dictionaries,
+we find that lists can't be used as keys.
 
 Often, it is not entirely clear which type to use
-- in that case, it probably does not matter.
-Follow instinct. :)
+- in that case, it probably doesn't really matter.
+Follow your instinct. :)
