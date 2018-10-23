@@ -28,21 +28,45 @@ and returns one character based on the state of the game:
 ## Assignment 2
 
 Write a move function that gets a string with a game field, a field number (0-19),
-and a (x or o) symbol and returns
-a game array (i.e., a string) with a given symbol located on the given position.
+and a (x or o) symbol and returns a game field (i.e., a string with a given symbol located on the given position.
 The function header should look something like this:
-def drag (field, symbol, symbol):
-"Returns a game field with a given symbol on the given position"
 
+```python
+def move(field, symbol, symbol):
+    # Returns a game field with a given symbol on the given position
+    ...
+```
 
 ## Assignment 3
 
-TBD
+Write a player_move function, which gets a string with a game field, asks the player 
+to which position he wants to play,
+and returns the game field with the player's move. The function should reject 
+negative or too large numbers and moves to an occupied position. If user enters wrong 
+argument, the function should ask again.
 
 ## Assignment 4
 
-TBD
+Write a pc_move function that gets a string with the game field.
+It will select a position to play, and returns
+the game field with computer's move.<br>
+Use a simple random "strategy":
+* Select random number from 0 to 19.
+* If the position is empty put computer's symbol there.
+* If not, repeat from the first step (random number).
+The function header should look something like this:
+
+```python
+def pc_move(field):
+    # Returns a game field with computer move
+    ...
+```
+
 
 ## Assignment 5
 
-TBD
+Write a 1D_tictactoe function that creates a string with a game field and alternately calls the player_move and
+pc_move functions until someone wins or draws.
+Do not forget to check the status of the game after every turn.
+
+##### Can you program a better strategy for your computer? 
