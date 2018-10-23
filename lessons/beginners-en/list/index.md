@@ -13,10 +13,10 @@ what Python prints is an important part of the lesson.
 Today we will show you how to work with *lists*.
 We will use square brackets a lot because that's how are lists created:
 
-`` `python
+```python
 numbers = [1, 1, 2, 3, 5, 8, 13]
 print (numbers)
-`` `
+```
 
 
 The list is a value that can contain many other values.
@@ -26,10 +26,10 @@ And just as we can use the `for` cycle
 to print strings after the characters,
 we can go through the following elements:
 
-`` `python
+```python
 for number in numbers:
-    print (number)
-`` `
+    print (number)
+```
 
 Lists in programs are very common:
 the file can be retrieved as a list of strings
@@ -46,10 +46,10 @@ we can even mix different types in one list
 very often - they are more used in tuples
 ,which we'll tell you later):
 
-`` `python
+```python
 list = [1, 'abc', True, None, range(10), len]
 print(list)
-`` `
+```
 
 ## Selection from lists
 
@@ -61,17 +61,17 @@ This works like in strings: square brackets and
 the element number. It is numbered, as with strings,
 from zero; negative numbers indicate the elements from the end.
 
-`` `python
+```python
 print(numbers[2])
-`` `
+```
 
 We can get subsections with square brackets.
 [Strings Chart] ({{lesson_url ('beginners-en/str')}} # slicing-diagram)
 shows how to write numbers when we want smaller list:
 
-`` `python
+```python
 print(numbers[2:-3])
-`` `
+```
 
 ## Changing lists
 
@@ -91,12 +91,12 @@ That doesn't return *anything* (actually it returns `None`)
 but it changes the list *in place* we are working on (`append` is changing the list
 in *the last place*). Try it:
 
-`` `python
+```python
 prime_numbers = [2, 3, 5, 7, 11, 13, 17]
 print(prime_numbers)
 prime_numbers.append(19)
 print(prime_numbers)
-`` `
+```
 
 Such a change of value can sometimes be surprising,
 because multiple variables can have the same value.
@@ -122,11 +122,11 @@ only one element, there is the `extend` method,
 which can add more elements.
 The elements to be added here are in the form of a list:
 
-`` `python
+```python
 more_prime_nr = [23, 29, 31]
 prime_numbers.extend(more_prime_nr)
 print(primary)
-`` `
+```
 
 The `extend` method can work with other
 types of variables - it can work with anything where
