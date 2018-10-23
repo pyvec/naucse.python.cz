@@ -1,11 +1,10 @@
 # Tuples
 
-Once we know the list, let's look at its sibling: the so-called
+Now that we know about lists, let's look at their sibling: the so-called
 *tuples*.
 
-Tuples, like the list,
-may contain <var>n</var> elements.
-Tuple with two elements is a *pair*; with three
+Tuples, just like lists, can contain <var>n</var> elements.
+A Tuple with two elements is a *pair*; with three
 elements it's a *3-tuple* and with four elements
 it's a *4-tuple*, etc.
 
@@ -17,10 +16,10 @@ it's a *4-tuple*, etc.
 Tuples are created as lists, they do not have square brackets around them.
 Just the commas between the elements are enough.
 
-They behave almost like lists, but they can not change.
-They doesn't have methods like `append`
-and `pop` and can not be assigned to elements.
-But they can be used in `for` cycle
+They behave almost like lists, but they cannot change.
+They don't have methods like `append`
+and `pop`, and cannot be assigned to elements.
+But they can be used in `for` loops
 and they can read individual elements.
 
 ```python
@@ -31,12 +30,12 @@ print('First is {}'.format(people[0]))
 ```
 
 > [note]
-> Does it look familiar?
+> Does this look familiar?
 > We have already used tuples in
 > `for greeting in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN'`
 
 
-If you want to pass a tuple to a function there will be a problem 
+If you want to pass a tuple to a function, there will be a problem 
 that a comma separates the individual arguments.
 In similar cases, you have to encapsulate the tuple into
 brackets to make it clear that it is one value.
@@ -53,7 +52,7 @@ Tuples are useful if you want to return
 more than one value from the function.
 You simply declare the return values with a comma between them.
 It looks like you're returning a few values, but
-in fact, only one tuple returns.
+in fact, only one tuple is returned.
 
 ```python
 def floor_and_remainder(a, b):
@@ -61,21 +60,21 @@ def floor_and_remainder(a, b):
 ```
 
 > [note]
-> This function is in Python by default: it's called
-> `divmod` and is always available
-> (you don't have to import it).
+> Such a floor_and_remainder function already exists 
+> in Python: it's called `divmod` and it's always 
+> available (you don't have to import it).
 
 Python can do another trick: if you want to assign values
-into several variables at one time, you can just separate variables (left side)
-by a comma and the right side can be some "compound" value - for example
-a tuple.
+into several variables at once, you can just separate the variables 
+(the left side) by a comma, and the right side can be some 
+"compound" value - for example a tuple.
 
 ```python
 floor_number, remainder = floor_and_remainder(12, 5)
 ```
 
 A tuple is the best for this purpose, but
-it works with all the values ​​that can be used with `for`:
+it works with all the values ​​that can be used with a `for` loop:
 
 ```python
 x, o = 'xo'
@@ -85,11 +84,10 @@ one, two, three = [1, 2, 3]
 ## Functions returning tuples
 
 `zip` is an interesting function.
-It is used in `for` cycles, just like the`range` function that is passing numbers.
+It is used in `for` loops, just like the `range` function that returns numbers.
 
-When `zip` gets two lists
-(or other things applicable in `for`),
-it gives back a pairs, the first element of the first list is paired with
+When `zip` gets two lists (or other values that can be used in a `for` loop),
+it returns pairs -- the first element of the first list is paired with
 the first element of the second list,
 then the second element with the second, the third element with the third and so on.
 
@@ -104,12 +102,12 @@ for person, property in zip(people, properties):
     print ('{} is {}'.format(person, property))
 ```
 
-When `zip` gets three lists it will create triplets and so on.
+When `zip` gets three lists it will return triplets, and so on.
 
 The other function that returns pairs is `enumerate`.
-As an argument, it takes a list (or other thing applicable
-with `for`) and always combines the index (order in the list) with the appropriate element.
-So the first element will be (0, *first element of the ogiven list*), then
+As an argument, it takes a list (or other values that can be used in a `for` loop)
+and it pairs up the element's index (its order in the list) with the respective element.
+So the first element will be (0, *first element of the given list*), then
 (1, *second element*), (2, *third element*) and so on.
 
 ```python
@@ -121,7 +119,7 @@ for i, prime_number in enumerate(prime_numbers):
 
 ## Small tuples
 
-How to create a tuple with none or one element? Like this:
+How to create a tuple with no or one element? Like this:
 
 ```python
 empty_tuple = ()
@@ -132,7 +130,7 @@ one_elem_tuple = ('a',)
 The second example works also without brackets - `one_el_tuple = 'a',`
 but it looks like a forgotten comma.
 When you *really* need a single-element tuple, 
-you'd better encapsulate it for clarity.
+you should better encapsulate it for clarity.
 
 
 ## When to use the list and when the tuple?
@@ -141,26 +139,26 @@ Lists are used when you do not know in advance
 how many values you will have,
 or when there are a lot of values.
 For example, a list of words in a sentence,
-list of contest participants, list of moves in the game
-or a list of cards in the package.
-On the other hand in `for greeting in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN'`
-we are using the tuple.
+a list of contest participants, a list of moves in a game,
+or a list of cards in a deck.
+In contrast, in `for greeting in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN'`
+we are using a tuple.
 
 Tuples are often used for values
 of different types where each "position"
-in tuple has different meaning.
-For example, you can use a list for alphabet letters,
-but pairs of index-value from `enumerate` will be a tuple.
+inside the tuple has a different meaning.
+For example, you can use a list for the letters of the alphabet,
+but for pairs of index-value from `enumerate`, you'd use a tuple.
 
-Empty tuple and one element tuple are a little but strange but they can appear:
-for example, a list of playing cards in hand or
+The empty tuple and one-element tuple are a little strange, but they exist:
+For example, the list of playing cards in your hand, or the
 list of people currently enrolled in the competition
 may occasionally be empty.
 
 Lists and tuples also have technical limits:
-tuples can not be changed and when we will learn to work with dictionaries,
-we find that lists can't be used as keys.
+Tuples cannot be changed, and when we will learn how to work with dictionaries,
+we will find that lists cannot be used as dictionary keys.
 
-Often, it is not entirely clear which type to use
-- in that case, it probably doesn't really matter.
+Often, it is not entirely obvious which type to use
+-- in that case, it probably doesn't really matter.
 Follow your instinct. :)
