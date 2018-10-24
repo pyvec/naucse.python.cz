@@ -3,8 +3,8 @@ Moduly
 
 Zatím jsme tvořili programy v Pythonu tak nějak na divoko, tedy v jednom nebo
 více souborech bez nějakého zvláštního řádu. V této lekci se podíváme na
-to, jak tvořit redistribuovatelné moduly, které jdou nahrát na PyPI (veřejný
-seznam pythonních balíčků) a instalovat pomocí pipu.
+to, jak tvořit redistribuovatelné moduly a balíčky, které jdou nahrát na PyPI
+(veřejný seznam balíčků pro Python) a instalovat pomocí nástroje pip.
 
 Za příklad si vezmeme kód Ondřeje Caletky, který umožňuje určit české svátky
 v zadaném roce. Jako příklad je ideální, protože obsahuje jak funkce, které
@@ -15,7 +15,7 @@ můžeme volat z Pythonu, tak lze volat z příkazové řádky.
 
 Volání z příkazové řádky, pomocí příkazu `python isholiday.py` nebo
 `python -m isholiday`, zajišťuje blok `if __name__ == '__main__':`.
-Toto je rychlý způsob, jak napsat modul který jde jak importovat, tak spustit.
+Toto je rychlý způsob, jak napsat modul, který jde jak importovat, tak spustit.
 Když nějaký modul importujeme, má v proměnné `__name__` k dispozici své jméno.
 „Hlavní” modul ale není importován a jeho jméno není vždy k dispozici
 (např. v `cat isholiday.py | python`).
@@ -24,6 +24,23 @@ Python proto `__name__` „hlavního” modulu nastavuje na `'__main__'`,
 
 Později se podíváme na elegantnější způsob jak to zařídit; teď se vraťme
 zpět k balíčkování.
+
+Slovníček pojmů
+---------------
+
+Než se pustíme do samotného výkladu, zavedeme některé pojmy tak,
+aby mezi nimi nedošlo v textu záměně.
+Anglické pojmy v závorce jsou převzaty z oficiálního [glosáře](https://packaging.python.org/glossary).
+
+* **(importovatelný) modul** (_Module_ ∪ _Import Package_) je cokoliv,
+  co se dá importovat z Pythonu, v tomto textu tedy především Python soubor nebo adresář s nimi;
+* **balíček** (_Distribution Package_) je instalovatelný archiv obsahují
+  _importovatelné moduly_ pro Python a další potřebné soubory, může být i rozbalený;
+* **zdrojový balíček** (_Source Distribution_, `sdsit`) je varianta zabaleného _balíčku_ ve zdrojové formě;
+* **binární balíček** (_Binary Distribution_, `bdsit`) je varianta zabaleného _balíčku_ v nezdrojové (např. zkompilované) formě;
+* **projekt** (_Project_) je knihovna, framework, skript, plugin, aplikace apod. (či jejich kombinace), které balíme do _balíčků_.
+
+
 
 setup.py
 --------
@@ -50,10 +67,11 @@ setup(
 )
 ```
 
-Všimněte si, že jsme balíček pojmenovali stejně jako soubor se zdrojovým kódem.
+Všimněte si, že jsme balíček pojmenovali stejně jako soubor se zdrojovým kódem
+(tedy stejně jako modul).
 Je to dobrá konvence, ale není to technicky nutné.
 
-Balíček můžeme zkusit nainstalovat do virtualenvu:
+Balíček můžeme zkusit nainstalovat do virtuálního prostředí:
 
 ```console
 $ python3.7 -m venv __venv__     # (nebo jinak -- podle vašeho OS)
@@ -67,7 +85,19 @@ $ . __venv__/bin/activate        # (nebo jinak -- podle vašeho OS)
 isholiday==0.1
 ```
 
-Přes `setup.py` můžeme dělat další věci, například vytvořit archiv s balíčkem:
+Souboru `setup.py` rozumí i nástroj pip, takže můžete použít ten:
+
+```console
+(__venv__)$ python -m pip install .
+```
+
+Mezi výše uvedenými příkazy existují rozdíly, ale pro základní použití se výsledek neliší.
+
+Alternativně můžete použít příkaz `develop` (nebo `pip install --editable`),
+který balíček nainstaluje tak, že změny v souborech se projeví rovnou
+(není třeba po každé změněně instalovat znovu).
+
+Přes `setup.py` můžeme dělat i jiné věci, než jen instalovat, například vytvořit archiv, zdrojový balíček:
 
 ```console
 (__venv__)$ python setup.py sdist
@@ -193,7 +223,7 @@ Zásadně si je nevymýšlíme sami, ale hledáme je v
 Tyto informace budou později vidět na [PyPI](https://pypi.org) a
 půjde podle nich hledat.
 
-Argument `zip_safe=False` zajistí, že se modul nainstaluje do adresáře.
+Argument `zip_safe=False` zajistí, že se moduly z balíčku nainstalují do adresáře.
 Setuptools totiž mají nepříjemný zlozvyk instalovat moduly jako `zip`,
 což komplikuje práci s datovými soubory (např. *templates* pro Flask).
 Je proto lepší `zip_safe=False` uvést.
@@ -202,7 +232,7 @@ Je proto lepší `zip_safe=False` uvést.
 Více souborů s Python kódem
 ---------------------------
 
-Doteď jsme vytvářeli balíček jen z jednoho zdrojového souboru `isholiday.py`.
+Doteď jsme vytvářeli balíček jen s modulem ve formě jednoho zdrojového souboru `isholiday.py`.
 Co ale dělat, pokud je náš projekt větší a obsahuje souborů více?
 Teoreticky je možné je přidat všechny do `py_modules`, ale není to dobrý nápad.
 
@@ -211,8 +241,8 @@ Teoreticky je možné je přidat všechny do `py_modules`, ale není to dobrý n
 > balíčků by byly rozesety bez ladu a skladu mezi ostatními.
 > Mohl by snadno nastat konflikt v názvech, například pokud by více balíčků
 > mělo modul `utils`.
-> Slušně vychovaný Pythonista dá do každého balíčku právě jeden modul,
-> pojmenovaný stejně jako balíček.
+> Slušně vychovaný Pythonista dá do každého balíčku právě jeden hlavní modul,
+> pojmenovaný stejně jako balíček a všechny ostatní moduly zanoří do něj.
 
 Raději uděláme modul ve formě složky. V našem případě soubor
 `isholiday.py` zatím přesuneme do `isholiday/__init__.py`:
@@ -230,7 +260,7 @@ Raději uděláme modul ve formě složky. V našem případě soubor
 1 directory, 5 files
 ```
 
-Soubor `__init__.py` jednak značí, že adresář `isholiday` je pythonní modul,
+Soubor `__init__.py` jednak značí, že adresář `isholiday` je importovatelný modul,
 a také obsahuje kód, který se spustí při importu modulu `isholiday`.
 
 Musíme ještě mírně upravit `setup.py` – místo `py_modules` použijeme `packages`:
@@ -265,7 +295,7 @@ setup(
 
 > [note]
 > A jaký je tedy vlastně rozdíl mezi `py_modules` a `packages`?
-> Zjednodušeně: Ten první je na soubory, ten druhý na adresáře.
+> Zjednodušeně: Ten první je na moduly sestávající z jednoho souboru, ten druhý na moduly v adresáři.
 
 Momentálně máme všechen kód přímo v `__init__.py`, což sice funguje,
 ale ideální to není. Dobré je mít kód v samostatných souborech a v `__init__.py`
@@ -295,13 +325,13 @@ importovaném ale nevyužitém modulu, které může hlásit vaše IDE nebo lint
 
 > [note]
 > Python samotný pak `__all__` používá jako seznam proměnných importovaných
-> přes `from isholiday import *` Tento způsob importu nevidíme rádi,
+> přes `from isholiday import *`. Tento způsob importu nevidíme rádi,
 > protože znepřehledňuje kód, to ale neznamená, že to musíme uživatelům
 > naší knihovny znepříjemňovat (např. pro interaktivní režim).
 
 
-Spouštění balíčku
------------------
+Spouštění modulu
+----------------
 
 Pokusíme-li se teď program spustit pomocí `python -m isholiday`,
 narazíme na problém: na rozdíl od souboru se složka s kódem takto spustit nedá:
@@ -326,7 +356,7 @@ main()
 
 a v `holidays.py` zaměňte `if __name__ == '__main__':` za `def main():`.
 
-Skript teď bude možné použít pomocí `python -m isholiday`.
+Modul teď bude možné (opět) spustit pomocí `python -m isholiday`.
 Bude to fungovat i tehdy, když vytvoříte balíček (`python setup.py sdist`)
 a nainstalujete ho v jiném virtuálním prostředí.
 
@@ -381,7 +411,7 @@ potřeba není, ale v úlohách z minulých cvičení ano.
 
 Existuje několik úrovní závislostí, ve většině případů si
 vystačíte s argumentem `install_requires`.
-Balíček, který závisí na knihovnách `Flask` (jakékoli verze) a
+Balíček, který závisí na balíčkách `Flask` (jakékoli verze) a
 `click` (verze 6 a vyšší) by v `setup.py` měl mít:
 
 ```python
@@ -396,7 +426,7 @@ setup(
 Kromě závislostí v `setup.py` se u pythonních projektů často setkáme se souborem
 `requirements.txt`, který obsahuje přesné verze všech závislostí, včetně
 tranzitivních – t.j. závisí-li náš balíček na `Flask` a `Flask` na `Jinja2`,
-najdeme v `requirements.txt` mimojiné řádky:
+najdeme v `requirements.txt` mimo jiné například řádky:
 
 ```
 Flask==0.11.1
@@ -413,11 +443,11 @@ My ho používat nebudeme, vystačíme si s volnější specifikací závislost�
 v `setup.py`.
 
 
-Upload na PyPI
---------------
+Nahrání na PyPI
+---------------
 
 Balíček jde zaregistrovat a nahrát na PyPI. Původně k tomu sloužily příkazy
-`setup.py` `register` a `upload`, ale tyto příkazy používají HTTP, což není
+`setup.py` `register` a `upload`, ale tyto příkazy používaly HTTP, což není
 bezpečné. Prototo je lepší použít program `twine` (instalovatelný přes pip),
 který používá HTTPS.
 
@@ -464,14 +494,14 @@ Uploading isholiday-0.1.tar.gz
 První nahrání se zdaří, jen pokud jméno projektu již není zabrané.
 Další nahrávání je povoleno jen vám, případně uživatelům,
 kterým to povlíte přes webové rozhraní.
-Po úspěšném nahrání lze nahrávat další verze modulu, ale musí být novější
-než ta, co už na PyPI je. Nejde tedy jednou nahraný modul přepsat.
+Po úspěšném nahrání lze nahrávat další verze balíčku, ale musí být novější
+než ta, co už na PyPI je. Nejde tedy jednou nahraný balíček přepsat.
 
 Svůj balíček najdete na `https://test.pypi.org/project/<název_balíčku>/`.
 
 Pro nahrání na opravdovou PyPI stačí vynechat `-r testpypi`.
 Zabírat jména na opravdové PyPI jen tak není hezké vůči ostatním Pythonistům;
-registrujte tedy prosím jen moduly, které budou nějak pro ostatní užitečné.
+registrujte tedy prosím jen balíčky, které budou nějak pro ostatní užitečné.
 
 
 Instalace pomocí pip
@@ -510,7 +540,7 @@ verze instalovaného balíčku:
 ```
 
 Pokud u duplicitního projektu na ostré PyPI neexistuje požadovaná verze,
-nainstaluje se náš projekt z testovací PyPI.
+nainstaluje se náš balíček z testovací PyPI.
 
 Jiná možnost je zadat přímo cestu k archivu s balíčkem místo jeho názvu.
 Zde pak na umístění balíčku ani verzi nezáleží:
@@ -519,15 +549,15 @@ Zde pak na umístění balíčku ani verzi nezáleží:
 (__venv__)$ python -m pip install https://test-files.pythonhosted.org/packages/.../<název_balíčku>-0.3.tar.gz
 ```
 
-Archiv se dá najít na informační stránce o našem projektu na PyPI.
+Odkaz na archiv se dá najít na informační stránce o našem projektu na PyPI.
 
 
 Datové soubory
 --------------
 
-Některé balíčky kromě samotného kódu potřebují i datové soubory.
+Některé moduly kromě samotného kódu potřebují i datové soubory.
 Například aplikace ve Flasku potřebují *templates*.
-Taková data se dají přidat parametrem `package_data`:
+Taková data se dají do balíčku přidat parametrem `package_data`:
 
 ```python
 setup(...,
@@ -541,11 +571,11 @@ setup(...,
 Další informace jsou odkázané v [dokumentaci](https://packaging.python.org/distributing/#package-data).
 
 
-Wheel
------
+Wheel: Binární balíčky
+----------------------
 
-Zatím jsme se zabývali jen zdrojovými balíčky `sdist` (_source distribution_).
-Existují ale i balíčky „zkompilované” – `bdist` (_binary distribution_).
+Zatím jsme se zabývali jen zdrojovými balíčky (`sdist`).
+Existují ale i balíčky „zkompilované” – binární (`bdist`).
 Když se instaluje zdrojový balíček, vykonává se kód ze souboru `setup.py`.
 Binární balíček se místo toho jen rozbalí na patřičné místo.
 
@@ -561,7 +591,7 @@ Výsledek je v souboru `dist/*.whl`.
 > [note]
 > Pokud vám příkaz nefunguje, nainstalujte balík `wheel`.
 
-Obsah wheelu můžete prozkoumat, je to obyčejný ZIP.
+Obsah binárního balíčku typu wheel můžete prozkoumat, je to obyčejný ZIP.
 
 Naše programy jsou zatím platformně nezávislé a ve wheelu,
 i když se jmenuje binární, žádné binární soubory nejsou.
@@ -585,7 +615,6 @@ Proces vydání složitějšího softwaru pak může vypadat takto:
 [... kontrola vytvořených balíčků v „čistém“ virtualenvu ...]
 (__venv__)$ python -m twine upload dist/*
 ```
-
 
 
 Další
