@@ -352,8 +352,7 @@ Kdyby nefungoval ani jeden, zeptej se kouče ať najde nějaký, co u tebe fungo
 bude.
 {%- endif %}
 
-Při učení Pythonu použiješ programy/příkazy jako `python` a `git`, které
-zanedlouho nainstalujeme.
+Při učení Pythonu použiješ programy/příkazy jako `python`.
 <!--- XXX: this assumes installation is after intro to cmdline -->
 
 
