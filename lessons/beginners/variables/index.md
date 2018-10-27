@@ -121,7 +121,7 @@ u `4 * 183` není příliš jasné, co ta čísla znamenají.
 >
 > Pro připomenutí, obvod kruhu s poloměrem <var>r</var>
 > je <var>o</var> = 2π<var>r</var>, obsah <var>S</var> = π<var>r</var>²
-> a π je zhruba 3,1415926.
+> a π je zhruba 3,1415927.
 >
 > Všechna čísla, která matematici označují jen jedním
 > písmenkem (klidně řeckým), vhodně pojmenuj.
