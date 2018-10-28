@@ -124,14 +124,34 @@ zvlášť pro Windows a zvlášť pro macOS.
 Jak na to?
 Na každém systému jinak!
 
-* normální **Linux** (pokud jsi přeskočil{{a}} instalaci Virtualenv):
+* **Linux**:
+
+   Novější verze Pythonu mají zabudovaný nástroj `venv`, který použijeme níže.
+   Starší verze ho ale nemají (a některé distribuce Linuxu ho dokonce z Pythonu
+   vyřadily).
+   Potřebuješ proto zjistit, jestli `venv` máš, a případně nainstalovat alternativu.
+
+   Spusť v příkazové řádce:
+   ```console
+   $ python3 -m ensurepip --version
+   ```
+
+   Objeví-li se výpis začínající „pip“, máš funkční `venv` nainstalovaný.
+   Virtuální prostředí spusť následujícím příkazem a zbytek textu pro Linux
+   přeskoč:
 
    ```console
    $ python3 -m venv venv
    ```
 
-* starší **Linux** (pokud jsi musel{{a}} instalovat Virtualenv):
+   Objeví-li se ale nápis `No module named ensurepip`, je potřeba doinstalovat
+   alternativu, Virtualenv:
 
+   ```console
+   $ sudo apt install python-virtualenv
+   ```
+
+   Nyní můžeš virtuální prostředí spustit příkazem:
    ```console
    $ virtualenv -p python3 venv
    ```
