@@ -2,6 +2,42 @@
 
 V této lekci si vyzkoušíš *želví kreslení*.
 
+{{ anchor('check-tkinter') }}
+## Kontrola Tkinter - pouze pro uživatele LINUXu
+
+Některé linuxové distribuce obsahují standardně jen část celkové funkčnosti
+Pythonu.
+Konkrétně knihovnu `tkinter` (která umožňuje např. kreslit „želví obrázky“)
+často musíme nainstalovat zvlášť.
+Abys zjistil{{a}}, jestli je už je nainstalovaná, zadej příkaz:
+
+```console
+$ python3 -m tkinter
+```
+
+Objeví-li se okýnko, je všechno v pořádku.
+Zavři ho a přejdi na [doinstalování `virtualenv`](#install-virtualenv).
+
+Jestli ne, modul `tkinter` ještě nainstaluj:
+
+* **Fedora**:
+  {% filter markdown(inline=True) %}
+  ```console
+  $ sudo dnf install python3-tkinter
+  ```
+  {% endfilter %}
+* **Ubuntu**:
+  {% filter markdown(inline=True) %}
+  ```console
+  $ sudo apt-get install python3-tk
+  ```
+  {% endfilter %}
+
+Používáš-li jinou distribuci, musíš si správné jméno balíčku najít na Internetu.
+
+
+## Želví kreslení
+
 Pusť Python v *interaktivním módu* (bez souboru .py).
 
 ```pycon
