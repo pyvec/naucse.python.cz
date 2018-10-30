@@ -5,34 +5,14 @@ Reads source YAML files and merges them to one JSON, with
 render info for items.
 """
 
-from pathlib import Path
 import datetime
-import functools
 
-import yaml
 import jsonschema
+
+from .load import read_yaml
 
 
 API_VERSION = 1
-
-
-@functools.lru_cache()
-def _read_yaml(path):
-    print('Loading', path)
-    with path.open(encoding='utf-8') as f:
-        return yaml.safe_load(f)
-
-
-def read_yaml(*path_parts):
-    base_path = Path('.').resolve()
-
-    yaml_path = base_path.joinpath(*path_parts).resolve()
-
-    # Guard against '..' in the course_slug
-    if base_path not in yaml_path.parents:
-        raise ValueError(f'Invalid course path')
-
-    return _read_yaml(yaml_path)
 
 
 def to_list(value):

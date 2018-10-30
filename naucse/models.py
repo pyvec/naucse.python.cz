@@ -1,6 +1,7 @@
 import datetime
 from functools import singledispatch
 import textwrap
+import importlib
 
 import dateutil.tz
 import jsonschema
@@ -432,6 +433,11 @@ class RenderCall(Model):
     args = Field(default=(), doc="Arguments for the Arca call")
     kwargs = Field(factory=dict, doc="Arguments for the Arca call")
 
+    def call(self):
+        module, func_name = self.entrypoint.split(':')
+        func = getattr(importlib.import_module(module), func_name)
+        return func(*self.args, **self.kwargs)
+
 
 class Page(Model):
     title = StringField(doc='Human-readable title')
@@ -460,7 +466,8 @@ class Page(Model):
     material = parent_property
 
     def get_content(self):
-        pass
+        result = self.render_call.call()
+        return result
 
 
 class Material(Model):
