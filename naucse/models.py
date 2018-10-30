@@ -113,6 +113,7 @@ class Model:
             pass
         for name, field in self._naucse__fields.items():
             field.dump(self, result)
+        jsonschema.validate(result, get_schema(type(self), is_input=False))  # XXX
         if expanded:
             jsonschema.validate(result, get_schema(type(self), is_input=False))
             result['$schema'] = self.root._schema_url_for(
@@ -165,6 +166,7 @@ class Field:
         self, *,
         optional=False, default=NOTHING, factory=None, doc=None,
         convert=None, construct=None, data_key=None, choices=None,
+        input_optional=False,  # XXX
     ):
         if doc:
             self.doc = doc
@@ -180,6 +182,7 @@ class Field:
         if data_key:
             self.data_key = data_key
         self.choices = choices
+        self.input_optional = input_optional
 
     def __set_name__(self, instance, name):
         self.name = name
@@ -232,6 +235,8 @@ class Field:
         if is_input and self.default is not NOTHING:
             return False
         if is_input and self.factory is not None:
+            return False
+        if is_input and self.input_optional:
             return False
         return True
 
@@ -425,7 +430,7 @@ def time_from_string(time_string):
 class RenderCall(Model):
     entrypoint = StringField(doc="Arca entrypoint")
     args = Field(default=(), doc="Arguments for the Arca call")
-    kwargs = Field(factory=lambda: {}, doc="Arguments for the Arca call")
+    kwargs = Field(factory=dict, doc="Arguments for the Arca call")
 
 
 class Page(Model):
@@ -454,6 +459,9 @@ class Page(Model):
 
     material = parent_property
 
+    def get_content(self):
+        pass
+
 
 class Material(Model):
     title = StringField(doc='Human-readable title')
@@ -481,6 +489,28 @@ class Material(Model):
     def course(self):
         return self.session.course
 
+
+def _construct_time(which):
+    def _construct(session, data):
+        try:
+            value = data[f'{which}_time']
+        except KeyError:
+            time = getattr(session.course, f'default_{which}_time')
+            if time is None:
+                return NOTHING
+        else:
+            try:
+                return datetime.datetime.strftime('%Y-%m-%d %H:%M:%S', value)
+            except ValueError:
+                pass
+            time = datetime.datetime.strftime('%H:%M:%s', value)
+        date = session.date
+        if date is None:
+            return NOTHING
+        return datetime.datetime.combine(date, time)
+    return _construct
+
+
 class Session(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(doc='Machine-friendly identifier')
@@ -492,9 +522,11 @@ class Session(Model):
     materials = ListField(Material)
     start_time = DateTimeField(
         optional=True,
+        construct=_construct_time('start'),
         doc='Times of day when the session starts.')
-    start_time = DateTimeField(
+    end_time = DateTimeField(
         optional=True,
+        construct=_construct_time('end'),
         doc='Times of day when the session ends.')
 
     course = parent_property
@@ -564,13 +596,13 @@ class Course(Model):
 
     @property
     def default_start_time(self):
-        if self.default_time is None:
+        if getattr(self, 'default_time', None) is None:  # XXX
             return None
         return self.default_time['start']
 
     @property
     def default_end_time(self):
-        if self.default_time is None:
+        if getattr(self, 'default_time', None) is None:  # XXX
             return None
         return self.default_time['end']
 

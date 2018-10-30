@@ -267,7 +267,7 @@ def course_calendar_ics(course):
 
     events = []
     for session in course.sessions.values():
-        if session.start_time:
+        if getattr(session, 'start_time', None):  # XXX
             start_time = session.start_time
             end_time = session.end_time
         else:
