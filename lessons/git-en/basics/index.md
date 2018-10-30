@@ -4,10 +4,10 @@ Whether you code or write documents, often you end up
 with multiple versions of the same file.
 You may want to archive one set of changes that are not needed at the moment,
 then send another set of changes to your colleagues for a review.
-At a certain point, keeping track of all these versios becomes unfeasible.
+At a certain point, keeping track of all these versions becomes unfeasible.
 
 Tools like Dropbox or Google Drive, which you may know already, can help a bit.
-These tools allow you to share your files easily or to restore their content
+These tools allow you to share your files easily, or to restore their content
 to an earlier point in time.
 Here's an example:
 
@@ -19,15 +19,15 @@ Here's an example:
 Unfortunatelly, you can only see different versions of a *single file*.
 Also, it's hard to tell which version you might want to restore since
 there is no indication of how individual versions differ.
-A relatively large project wouldn't be manaegable with this approach.
+A relatively large project wouldn't be manageable with this approach.
 
 Therefore, programmers tend to use more powerful tools
 dubbed *version control system* (VCS).
-Currently the most popular one is Git and we'll learn more about it in this lesson.
+Currently, the most popular one is Git, and we'll learn more about it in this lesson.
 
 > [note]
 > We will rely on the command line.
-> If you not confident working with it yet, look at the
+> If you are not confident working with it yet, look at the
 > [introduction]({{ lesson_url('beginners-en/cmdline') }}).
 > 
 > Remember: don't write the `$` at the start.
@@ -38,13 +38,13 @@ Currently the most popular one is Git and we'll learn more about it in this less
 
 The process of installing Git is described 
 [here]({{ lesson_url('git/install') }}).
-If you skipped the lesson before, you might want to get back to it now.
+If you have skipped the lesson before, you might want to get back to it now.
 
 
 ## Repository
 
 Each project that you want to version-control needs to be stored in its own directory.
-Create a new directory now and navigate inside (use command `cd`).
+Create a new directory now and navigate inside (use the command `cd`).
 Then, create a new Git <em>repository</em> using the command `git init`:
 
 ```ansi
@@ -54,13 +54,13 @@ Initialized empty Git repository in ./.git/
 
 At first glance, it looks like nothing happened.
 This command created a *hidden* directory with the name `.git` and stored some information in there.
-You can see it using `ls -a` (Linux) or `dir /a` (Windows).
-`.git` is a hidden directory because it should be managed only by Git
+You can see the file using `ls -a` (Linux) or `dir /a` (Windows).
+`.git` is a hidden directory because it is managed only by Git
 and you shouldn't be changing anything inside.
 
 The repository is empty for now.
 You can see for yourself by invoking `git status`, a command that shows information
-about the state of the reposuitory:
+about the state of the repository:
 
 ```ansi
 ␛[36m$␛[0m git status
@@ -71,7 +71,7 @@ Initial commit
 nothing to commit (create/copy files and use "git add" to track)
 ```
 
-*“On branch master”* refers to so called branches, we'll get back to that later.
+*“On branch master”* refers to so-called branches, we'll get back to that later.
 *“Initial commit”* means that there is no revision stored yet.
 And *“nothing to commit”* says that there are no files to be saved and versioned in the directory.
 
@@ -101,7 +101,7 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 
-We need to make Git track any new file explicitely.
+We need to make Git track each new file explicitely.
 Let's do that for the file with your poem:
 
 ```ansi
@@ -136,7 +136,7 @@ Let's create our first commit:
 
 After entering this command, an editor opens where you can write a short description 
 of this commit, briefly summarizing what changes have been made.
-This is refferred to as a *commit message*. For now, simple `First revision` will do.
+This is referred to as a *commit message*. For now, a simple `First revision` will do.
 You can ignore the existing lines starting with `#`, these are just for your information.
 Git will ignore them as well. Finally, save the file and close the editor.
 
@@ -153,15 +153,15 @@ Git will ignore them as well. Finally, save the file and close the editor.
 > confirm the name of the file (<kbd>Enter</kbd>)
 > and exit the editor using <kbd>Ctrl</kbd>+<kbd>X</kbd>.
 >
-> If you haven't set up Git accordingly, Vim invoked directly in the command line window
-> will be used as the default editor.
+> If you haven't set up Git accordingly, Vim is invoked directly in the command line window
+> and will be used as the default editor.
 > It is a relatively complicated editor and learning to use it is beyond the scope
 > of this lesson. You can recognize it by one or two lines at the bottom that show a path
 > to a temporary file that you are currently editing.
 > In that case, first press
 > <kbd>Esc</kbd>, then type `:q!` (colon, lower letter Q, exclamation mark)
 > and confirm by pressing <kbd>Enter</kbd>.
-> Then set up Git corrently and retry `git commit` again.
+> Then set up Git corrently and try `git commit` again.
 
 
 Try reporting on the repository again:
@@ -227,7 +227,7 @@ containing the <span class="green">text in green</span> has been added.
 ## Second revision
 
 Make a small change in your poem; replace one word,
-change puntuation or add a new verse.
+change punctuation, or add a new verse.
 Then check the status of the Git repository again.
 
 ```ansi
@@ -278,8 +278,8 @@ show the newly added lines.
 > This interpretation can be customized if needed,
 > but it's a good idea to get used to the default behavior.
 
-It is that easy to see what exactly has changed since the last commit.
-If your program stops working but the last commited version still worked,
+It is easy to see what exactly has changed since the last commit.
+If your program stops working, but the last commited version still worked,
 use <code>git diff</code> –
 one of the changes listed must have introduced the error!
 
@@ -287,7 +287,7 @@ one of the changes listed must have introduced the error!
 > The line beginning with <tt class="blue">@@</tt> indicates the location in the file
 > where the changes occur. In the example above, the excerpt of the original file
 > starts at line number 1 and it is 6 lines long; the matching block in the changed varsion
-> starts at line 1 as well but it is 9 lines long.
+> starts at line 1 as well, but it is 9 lines long.
 
 If you are satisfied with the changes, stage them for the next commit:
 
@@ -313,12 +313,12 @@ in formulating the commit messages.
 There are common conventions that most programmers follow:
 the first line summarizes the changes, the second line is left blank,
 and the following lines list the reasons for the change or describe
-the changes themselves in more details.
+the changes themselves in more detail.
 Each line should have under 70 characters in length;
 the lenth of the comments (lines starting with `#`) can serve as a guide here.
-It is not worth going into details for changes that are trivial or obvious;
+It is not worth going into detail for changes that are trivial or obvious;
 rather, focus on the broader context and reasons for the changes.
-Anything that can help whoever will try to understand the changes in the commit;
+Anything that can help whomever will try to understand the changes in the commit;
 this might include you few months later.
 
 My commit message will be the following:
@@ -382,9 +382,9 @@ and how the changes move from “not staged” to “commited”.
 
 ## Log
 
-Now that we have created first few revisions in our repository,
-let's demonstrate more commands that will help us to understand
-the whole history of a GIt repository.
+Now that we have created our first few revisions in the repository,
+let's demonstrate more commands that will help us understand
+the whole history of our Git repository.
 The first command is <code>git log</code>.
 
 ```ansi
@@ -409,7 +409,7 @@ Date:   Mon Mar 20 14:51:34 2017 +0100
 <code>git log</code> prints all commits starting from the newest one and going
 all the way back to the initial commit at the origin of the repository.
 
-When there are enough commits that they don't fit on a single screen
+When there are so many commits that they don't fit on a single screen
 of your command line window, you can browse back and forth using
 <kbd>PgUp</kbd>/<kbd>PgDn</kbd>.
 Finally, exit by pressing <kbd>q</kbd>.
@@ -432,7 +432,7 @@ with the first few characters of the <span class="yellow">Git commit ID</span>.
 
 The command line can convey all sorts of information,
 but not always in a clear way.
-Graphical application called *gitk* offers a more intuitive view
+A graphical application called *gitk* offers a more intuitive look
 at the history of your repository;
 you can start it using the command `gitk --all`:
 
@@ -447,9 +447,9 @@ $ gitk --all
 
 
 The application doesn't look very appealing (almost as if
-it has been designed by programmers who ephasise substance over form),
+it has been designed by programmers who emphasise substance over form),
 but it will suit our needs.
-Get familiar with it first, then close it, commit few more sets of changes
+Get familiar with it first, then close it, commit a few more sets of changes
 and finally explore them using `git log` and `gitk --all`.
 
 ## Conclusion
@@ -464,7 +464,7 @@ Maybe all this sounded unnecessarily too complicated for a beginner.
 Indeed, our projects will be relatively simple and easy to manage
 even without the use of Git.
 But it's a good idea to learn using it from the very beginning;
-when you get to participate on bigger projects, already being used to Git
+when you get to participate in bigger projects, already being used to Git
 will come very handy.
 
 So, from now on, whenever you make even a small but meaningful change to your program,
