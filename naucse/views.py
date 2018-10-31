@@ -2,7 +2,7 @@ import datetime
 from pathlib import Path
 import calendar
 
-from flask import Flask, render_template, jsonify, url_for, Response
+from flask import Flask, render_template, jsonify, url_for, Response, abort
 from werkzeug.local import LocalProxy
 import ics
 
@@ -190,7 +190,10 @@ def session(course, session_slug, coverpage):
 @app.route('/<material:material>/<page_slug>/')
 @app.route('/<material:material>/<page_slug>/solutions/<int:solution>/')
 def page(material, page_slug='index', solution=None):
-    page = material.pages[page_slug]
+    try:
+        page = material.pages[page_slug]
+    except KeyError:
+        raise abort(404)
 
     kwargs = {}
 
@@ -205,6 +208,15 @@ def page(material, page_slug='index', solution=None):
 
     #kwargs["edit_info"] = get_edit_info(page.edit_path)
 
+    # Get canonical URL -- i.e., a lesson with the same slug
+    # XXX: This could be made much more fancy
+    try:
+        canonical = model.get_course('lessons').get_material(material.slug)
+    except KeyError:
+        canonical_url = None
+    else:
+        canonical_url = canonical.get_url(external=True)
+
     if solution is not None:
         kwargs["solution_number"] = int(solution)
 
@@ -215,6 +227,7 @@ def page(material, page_slug='index', solution=None):
         solution=solution,
         session=page.material.session,
         course=page.material.session.course,
+        canonical_url=canonical_url,
         **kwargs
     )
 

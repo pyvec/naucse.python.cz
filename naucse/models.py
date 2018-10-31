@@ -672,10 +672,14 @@ class Root(Model):
                         course = Course.load_local(self, slug)
                         run_year.runs[slug] = course
 
+        self.courses['lessons'] = Course.load_local(self, 'lessons')
+
         self.edit_info = get_local_edit_info(path)
         self.runs_edit_info = get_local_edit_info(path / 'runs')
 
     def get_course(self, slug):
+        if slug == 'lessons':
+            return self.courses[slug]
         year, identifier = slug.split('/')
         if year == 'courses':
             return self.courses[slug]

@@ -20,7 +20,7 @@ def render_page(lesson_slug, page):
     text = path.read_text(encoding='utf-8')
 
     text = env.get_template(page_name).render(
-        lesson_url=lambda a: '',  # XXX
+        lesson_url=lambda a, **kw: '',  # XXX
         subpage_url=lambda a: '',  # XXX
         **{'$solutions': [], **vars_functions(vars)},
     )

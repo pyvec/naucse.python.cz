@@ -45,7 +45,7 @@ def course_to_slug(model, course):
 
 @_converter('course')
 class CourseConverter(ModelConverter):
-    regex = r'([0-9]{4}|course)/[^/]+'
+    regex = r'((([0-9]{4}|course)/[^/]+)|lessons)'
 
     def to_python(self, value):
         return slug_to_course(self.model, value)
@@ -59,7 +59,7 @@ class MaterialConverter(ModelConverter):
     regex = CourseConverter.regex + r'/([^/]+/[^/]+)'
 
     def to_python(self, value):
-        regex = r'(?P<course>[^/]+/[^/]+)/(?P<lesson>[^/]+/[^/]+)'
+        regex = r'(?P<course>[^/]+/[^/]+|lessons)/(?P<lesson>[^/]+/[^/]+)'
         match = re.match(regex, value)
         course = slug_to_course(self.model, match.group('course'))
         return course.get_material(match.group('lesson'))

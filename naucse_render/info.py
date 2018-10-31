@@ -5,7 +5,9 @@ Reads source YAML files and merges them to one JSON, with
 render info for items.
 """
 
+from pathlib import Path
 import datetime
+import textwrap
 
 import jsonschema
 
@@ -41,13 +43,16 @@ def get_course(course_slug: str, *, version: int) -> dict:
     if version <= 0:
         raise ValueError(f'Version {version} is not supported')
 
-    parts = course_slug.split('/')
-    if len(parts) == 1 or (len(parts) == 2 and parts[0] == 'courses'):
-        info = read_yaml('courses', parts[-1], 'info.yml')
-    elif len(parts) == 2:
-        info = read_yaml('runs', *parts, 'info.yml')
+    if course_slug == 'lessons':
+        info = get_canonical_lessons_info()
     else:
-        raise ValueError(f'Invalid course slug')
+        parts = course_slug.split('/')
+        if len(parts) == 1 or (len(parts) == 2 and parts[0] == 'courses'):
+            info = read_yaml('courses', parts[-1], 'info.yml')
+        elif len(parts) == 2:
+            info = read_yaml('runs', *parts, 'info.yml')
+        else:
+            raise ValueError(f'Invalid course slug')
 
     info['api_version'] = 1, 1
 
@@ -167,3 +172,30 @@ def merge_dict(base, patch):
         else:
             result[key] = value
     return result
+
+
+def get_canonical_lessons_info():
+    # XXX: Should this be here?
+    lessons_path = Path('.').resolve() / 'lessons'
+    return {
+        'title': 'Kanonické lekce',
+        'description': 'Seznam udržovaných lekcí bez ladu a skladu.',
+        'long_description': textwrap.dedent("""
+            Seznam udržovaných lekcí bez ladu a skladu.
+
+            Jednotlivé kurzy jsou poskládané z těchto materiálů
+            (a doplněné jinými).
+        """),
+        'sessions': [
+            {
+                'title': f'`{category_path.name}`',
+                'slug': category_path.name,
+                'materials': [
+                    {'lesson': f'{category_path.name}/{lesson_path.name}'}
+                    for lesson_path in sorted(category_path.iterdir())
+                    if lesson_path.is_dir()
+                ]
+            }
+            for category_path in sorted(lessons_path.iterdir())
+        ]
+    }
