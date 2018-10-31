@@ -1,10 +1,10 @@
 from pathlib import Path
 
-import mistune
 import jinja2
 
 from .load import read_yaml
 from .templates import environment, vars_functions
+from .markdown import convert_markdown
 
 
 def render_page(lesson_slug, page):
@@ -25,6 +25,6 @@ def render_page(lesson_slug, page):
         **{'$solutions': [], **vars_functions(vars)},
     )
     if info['style'] == 'md':
-        text = mistune.markdown(text)
+        text = convert_markdown(text)
 
     return text
