@@ -28,8 +28,8 @@ Modul `venv` je součást [standardní knihovny](https://docs.python.org/3/libra
 Zkontroluj, že máš modul `ensurepip`:
 
 ```console
-$ python3.6 -m ensurepip --version
-pip 9.0.1 (nebo i jiná verze)
+$ python3.7 -m ensurepip --version
+pip 18.0 (nebo i jiná verze)
 ```
 
 Jestli ne, postupuj podle [lekce pro začátečníky]({{ lesson_url('beginners/install') }}) –
@@ -39,7 +39,7 @@ Jinak použij:
 ```console
 $ mkdir project
 $ cd project
-$ python3.6 -m venv __venv__  # vytvoření virtualenvu -- použij Python dle systému
+$ python3.7 -m venv __venv__  # vytvoření virtualenvu -- použij Python 3 dle systému
 $ . __venv__/bin/activate  # aktivace
 (__venv__)$ python -m pip install requests  # příkaz na instalaci balíčků puštěný ve virtualenvu
 (__venv__)$ ...  # práce "uvnitř"
@@ -47,7 +47,7 @@ $ . __venv__/bin/activate  # aktivace
 ```
 
 {% if var('mi-pyt') %}
-V tomto kurzu lze případně využít i Python 3.5. Pokud máš 3.4 nebo ještě nižší,
+V tomto kurzu lze případně využít i Python 3.6. Pokud máš 3.5 nebo ještě nižší,
 doporučujeme aktualizovat.
 {% endif %}
 
@@ -63,20 +63,25 @@ doporučujeme aktualizovat.
 (__venv__)> deactivate  # vypnutí virtualenvu
 ```
 
-<!-- XXX: Windows cmd prompt with active venv is not highlighted properly... -->
-
 ## Poznámky
 
-Příkaz `__venv__/bin/activate` budeš muset zadat vždy, než začneš na projektu
+Příkaz `. __venv__/bin/activate` budeš muset zadat vždy, než začneš na projektu
 pracovat.
 
 Ono `__venv__` je jen jméno adresáře. Můžeš si ho pojmenovat jak chceš; dokonce
 nemusí být v rámci adresáře s projektem.
 Někteří lidé mají všechny virtuální prostředí na jednom místě; dokonce existuje
-nástroj [virtualenvwrapper] na správu takového řešení.
-Autoři tohoto textu však doporučují `__venv__` v adresáři s projektem.
+nástroj [virtualenvwrapper] na správu takového řešení, případně [pipenv],
+který _Python Packaging Authority_ [doporučuje] pro vývoj aplikací (my ale
+budeme vyvíjet i knihovny).
+
+Autoři tohoto textu tedy doporučují `__venv__` v adresáři s projektem.
+Při použití v kombinaci s Gitem nezapomeň tento adresář přidat do souboru
+`.gitignore`.
 
 [virtualenvwrapper]: https://virtualenvwrapper.readthedocs.io/en/latest/
+[pipenv]: https://pipenv.readthedocs.io/en/latest/
+[doporučuje]: https://packaging.python.org/tutorials/managing-dependencies/
 
 Příkaz `python -m pip install` nainstaluje danou knihovnu – může to být i jiná
 než `requests` jako výše.

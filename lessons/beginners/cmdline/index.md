@@ -268,8 +268,8 @@ removed directory: ‘{{ dirname }}’
 ---
 > cd
 C:\Users\helena\Desktop
-> rmdir /S pyladies
-pyladies, Are you sure <Y/N>? Y
+> rmdir /S {{ dirname }}
+{{ dirname }}, Are you sure <Y/N>? Y
 {% endcall %}
 
 

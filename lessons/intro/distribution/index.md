@@ -56,7 +56,7 @@ Je to dobrá konvence, ale není to technicky nutné.
 Balíček můžeme zkusit nainstalovat do virtualenvu:
 
 ```console
-$ python3.6 -m venv __venv__     # (nebo jinak -- podle vašeho OS)
+$ python3.7 -m venv __venv__     # (nebo jinak -- podle vašeho OS)
 $ . __venv__/bin/activate        # (nebo jinak -- podle vašeho OS)
 (__venv__)$ python setup.py install
 ...
@@ -176,7 +176,8 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries',
         ],
     zip_safe=False,

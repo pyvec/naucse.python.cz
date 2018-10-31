@@ -1,9 +1,3 @@
-{%- if var('pyladies') -%}
-{% set rootname = 'pyladies' %}
-{%- else -%}
-{% set rootname = 'naucse-python' %}
-{%- endif -%}
-
 # 🐍 🐢
 
 V této lekci si vyzkoušíš *želví kreslení*.
@@ -70,13 +64,14 @@ nebo naimportovat a použít funkci `clear()`.
 Interaktivní mód je skvělý na hraní,
 ale teď přejdeme zase na soubory.
 
-Vytvoř si soubor <code><span class="pythondir">~/{{ rootname }}</span>/03/zelva.py</code>.
+Vytvoř si v editoru nový soubor.
+Ulož ho do adresáře pro dnešní lekci pod jménem `zelva.py`.
 
 > [note]
-> Adresář <code class="pythondir">~/{{ rootname }}</code>
-> se u tebe může jmenovat jinak – viz [instalace Pythonu]({{ lesson_url('beginners/install') }}).
+> Jestli adresář pro dnešní lekci ještě nemáš, vytvoř si ho!
+> Pojmenuj ho třeba `03`.
 
-Jestli chceš pro soubor použít jiné jméno, můžeš, ale 
+Jestli chceš pro soubor použít jiné jméno, můžeš, ale
 nepojmenovávej ho `turtle.py`.
 
 Do souboru napiš příkazy na nakreslení obrázku
@@ -194,9 +189,9 @@ Pojďme se naučit příkaz `for`.
 
 ## Opakování
 
-Zkus co dělá následující program.
-Ulož ho třeba do
-<code><span class="pythondir">~/{{ rootname }}</span>/03/cyklus.py</code>
+Udělej v editoru nový soubor, ulož ho jako `cyklus.py`, a napiš do něj
+následující program.
+Pak zkus co dělá.
 
 ```python
 for cislo in range(5):

@@ -49,16 +49,18 @@ Pak aplikaci spusťte pomocí následujících příkazů.
 (__venv__) $ export FLASK_APP=hello.py
 (__venv__) $ export FLASK_DEBUG=1
 (__venv__) $ flask run
+ * Serving Flask app "hello"
+ * Forcing debug mode on
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
  * Restarting with stat
  * Debugger is active!
- * Debugger pin code: 189-972-345
+ * Debugger PIN: 189-972-345
 ```
 Na zmíněné adrese byste měli v prohlížeči vidět použitý text.
 
 Proměnná prostředí `FLASK_APP` říká Flasku, kde aplikaci najít.
 V daném souboru Flask hledá automaticky proměnnou jménem `app`.
-([Jde nastavit](http://flask.pocoo.org/docs/0.12/cli/) i jiná.)
+([Jde nastavit](http://flask.pocoo.org/docs/1.0/cli/) i jiná.)
 Proměnná `FLASK_DEBUG` nastavuje ladícím režim, který si popíšeme za chvíli.
 
 V programu jsme jako `app` vytvořili flaskovou aplikaci.
@@ -87,7 +89,7 @@ def hello():
 
 Na adrese [`http://127.0.0.1:5000/hello/`][local-hello] pak uvidíte druhou stránku.
 
-[`@app.route`]: http://flask.pocoo.org/docs/0.12/api/#flask.Flask.route
+[`@app.route`]: http://flask.pocoo.org/docs/1.0/api/#flask.Flask.route
 [local-hello]: http://127.0.0.1:5000/hello/
 
 ### Ladící režim
@@ -115,7 +117,7 @@ jako `/user/hroncok/`, ale nemůžete při každé registraci nového uživatele
 přidávat novou funkci do kódu.
 Musíte použít [dynamické routy]:
 
-[dynamické routy]: http://flask.pocoo.org/docs/0.12/quickstart/#variable-rules
+[dynamické routy]: http://flask.pocoo.org/docs/1.0/quickstart/#variable-rules
 
 ```python
 @app.route('/user/<username>/')
@@ -157,7 +159,7 @@ K tomu se používá funkce [`url_for()`], která jako první parametr bere jmé
 routy (neboli jméno funkce, která routu obsluhuje), a pak pojmenované argumenty
 pro pravidla v dynamické routě:
 
-[`url_for()`]: http://flask.pocoo.org/docs/0.12/api/#flask.url_for
+[`url_for()`]: http://flask.pocoo.org/docs/1.0/api/#flask.url_for
 
 ```python
 from flask import url_for
@@ -418,4 +420,4 @@ Flask umí i další věci – například zpracování formulářů, chybové s
 přesměrování.
 
 Všechno to najdete
-[v dokumentaci](http://flask.pocoo.org/docs/0.11/quickstart/).
+[v dokumentaci](http://flask.pocoo.org/docs/1.0/quickstart/).
