@@ -30,13 +30,13 @@ doinstaluj Python.
 Konkrétní příkaz záleží na distribuci:
 
 * Fedora:
-  {% filter markdown(inline=True) %}
+  {% filter markdown %}
   ```console
   $ sudo dnf install python3
   ```
   {% endfilter %}
 * Ubuntu:
-  {% filter markdown(inline=True) %}
+  {% filter markdown %}
   ```console
   $ sudo apt-get install python3
   ```
@@ -64,13 +64,13 @@ Zavři ho a přejdi na [doinstalování `virtualenv`](#install-virtualenv).
 Jestli ne, modul `tkinter` ještě nainstaluj:
 
 * Fedora:
-  {% filter markdown(inline=True) %}
+  {% filter markdown %}
   ```console
   $ sudo dnf install python3-tkinter
   ```
   {% endfilter %}
 * **Ubuntu**:
-  {% filter markdown(inline=True) %}
+  {% filter markdown %}
   ```console
   $ sudo apt-get install python3-tk
   ```
@@ -103,7 +103,7 @@ a nainstaluj ho:
 <!-- na Fedoře se tohle nestává -->
 
 * Ubuntu:
-  {% filter markdown(inline=True) %}
+  {% filter markdown %}
   ```console
   $ sudo apt-get install python-virtualenv
   ```

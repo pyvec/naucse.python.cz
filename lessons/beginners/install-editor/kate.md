@@ -1,7 +1,7 @@
 {% set editor_name = 'Kate' %}
 {% set editor_cmd = 'kate' %}
 {% set editor_url = 'https://kate-editor.org/get-it/' %}
-{% extends lesson.slug + '/_linux_base.md' %}
+{% extends '_linux_base.md' %}
 
 {% block name_gen %} Kate {% endblock %}
 
