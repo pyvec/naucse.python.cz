@@ -13,7 +13,7 @@ We will use square brackets a lot because that's how lists are created:
 
 ```python
 numbers = [1, 1, 2, 3, 5, 8, 13]
-print (numbers)
+print(numbers)
 ```
 
 
@@ -26,7 +26,7 @@ we can loop over list elements:
 
 ```python
 for number in numbers:
-    print (number)
+    print(number)
 ```
 
 Lists in programs are very common:
@@ -51,7 +51,7 @@ print(list)
 
 ## Selection from lists
 
-Yo ualready know the most basic operation with lists, 
+Yo already know the most basic operation with lists, 
 the `for` loop.
 The second most important operation is picking
 individual elements.
