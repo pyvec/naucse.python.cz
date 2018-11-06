@@ -17,7 +17,7 @@ If there will appear "Python" and version number (e. g. `Python 3.5.2`)
 and the version is higher than 3.4 you are done here so continue with
 other section [`tkinter` check](#check-tkinter).
 
-If there will be „Python“ and version lower than 3.3, ask coach.
+If there will be "Python" and version lower than 3.3, ask coach.
 
 If `bash: python3: command not found` or something similar will appear
 you will have to install Python3.
@@ -44,7 +44,7 @@ how to install programs. If not try to ask Google.
 {{ anchor('check-tkinter') }}
 ## Tkinter check
 
-Some Linux ditros have just some parts of Python.
+Some Linux distros have just some parts of Python.
 Most of the time there is no `tkinter` module which will allow us to draw.
 So first you will have to check if you already have it or not.
 

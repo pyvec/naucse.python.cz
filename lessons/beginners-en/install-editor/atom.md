@@ -33,7 +33,7 @@ $ python -m pip install flake8
 
 And now just install the plug-in.
 In the main menu choose "File > Settings" and click on "Install".
-Then search for „linter-flake8“ and in the list click "Install" next to
+Then search for "linter-flake8" and in the list click "Install" next to
 the "linter-flake8". You will be also asked for installation of every 
 dependency.
 

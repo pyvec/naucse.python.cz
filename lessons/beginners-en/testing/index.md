@@ -1,308 +1,299 @@
-# Testování
+# Testing
 
-Programátorská práce nespočívá jen v tom, program napsat.
-Důležité je si i ověřit, že opravdu funguje (a případně ho pak opravit).
-Ověřování, že program funguje, se říká *testování*.
+Programming is not just about writing code. 
+It is important to verify that the code does what it should 
+(and about fixing it if needed).
+The process of verification that the program works as expected is called *testing*.
 
-Zatím jsi asi svoje programy testoval{{a}} tak, že jsi
-je zkusil{{a}} spustit, něco zadal{{a}} a podíval{{a}} se,
-jestli jsou výsledky v pořádku.
-U větších programů, které budou mít více a více
-možností, ale bude těžší a těžší takhle zkontrolovat,
-jestli všechny ty možnosti fungují, jak mají.
+You have probably tested your programs by trying to execute them, 
+entered some input data and looked if the results are correct.
+It is harder to do it for bigger programs. 
+Bigger programs have more possibilities what to do and it is harder 
+to verify that all possibilities do what they should.
 
-Proto si programátoři, místo aby program zkoušeli ručně, píšou jiné programy,
-které testují jejich výtvory za ně.
+That is why developers write code that verifies their program 
+instead of testing their programs manually.
 
-*Automatické testy* jsou funkce, které
-zkontrolují, že náš program funguje správně.
-Spuštěním testů můžeš kdykoli ověřit, že kód funguje.
-Hlavní výhoda je, že když v otestovaném kódu
-v budoucnu uděláš nějakou změnu,
-testy ověří, že jsi nerozbil{{a}} nic, co dříve
-fungovalo.
+*Automated tests* are functions that check that the program works correctly.
+You can execute the tests anytime and verify that the code works.
+The main benefit is that you can change the code in the future
+and let the tests verify that the change does not break existing functionalitye.
 
 
-## Instalace knihovny pytest
+## Installing the pytest library
 
-Zatím jsme v kurzu pracoval{{ gnd('i', 'y') }} s tím, co se instaluje
-se samotným Pythonem – s moduly jako `math` a `turtle`.
-Kromě takových modulů ale existuje ale velká spousta
-dalších *knihoven*, které nejsou přímo v Pythonu, ale dají se doinstalovat
-a používat.
+Up to now, we have used only the modules that come installed with Python, 
+for example, modules such as `math` or `turtle`.
+There are many more *libraries* that are not included in Python
+but you can install them to your Python environment and use them.
 
-Na testy je v samotném Pythonu zabudovaná knihovna `unittest`.
-Ta je ale celkem složitá na použití, proto ji my používat nebudeme.
-Nainstalujeme si knihovnu <code>pytest</code>, která se používá
-mnohem jednodušeji a je velice populární.
+The library for testing in Python is called `unittest`.
+It is quite difficult to use this library so we will use a better one.
+We will install the library `pytest` which is easy to use and very popular.
 
-Knihovny se instalují do aktivního virtuálního prostředí.
-Jak se dělá a spouští virtuální prostředí
-ses naučil{{a}} při [instalaci Pythonu]({{ lesson_url('beginners/install') }}),
-ale teprve teď to začíná být opravdu důležité.
-Ujisti se, že máš virtuální prostředí aktivované.
+You install libraries into your active virtual environment.
+We have learned how to create and activate a virtual environment
+in the lesson about [Python installation]({{ lesson_url('beginners/install') }}).
+Make sure that you have activated a virtual environment.
 
-Potom zadej následující příkaz.
-(Je to příkaz příkazové řádky, podobně jako
-`cd` nebo `mkdir`; nezadávej ho do Pythonu.)
+Submit the following command. (It is a command-line command, 
+just as `cd` or `mkdir`; do not enter it into the Python console.)
 
 ```console
 (venv)$ python -m pip install pytest
 ```
 
-> [note] Co to znamená?
-> `python -m pip` zavolá Python s tím, že má pustit modul
-> `pip`. Tento modul umí instalovat nebo
-> odinstalovávat knihovny.
-> (Jestli si pamatuješ vytváření virtuálního prostředí, použil{{a}} jsi tam
-> příkaz `python -m venv` – modul `venv` umí vytvářet virtuální prostředí.)
-> No a slova `install pytest` říkají Pipu, že má nainstalovat `pytest`.
+> [note] What does Pip do?
+> `python -m pip` calls Python and tells it to execute the
+> `pip` module. This module can install and uninstall libraries. 
+> (Similarly, when you created a virtual environment, you used the
+> command `python -m venv` – the `venv` module can create virtual environments.)
+> And the arguments `install pytest` tell Pip to install `pytest`.
 >
-> Nápověda k použití Pipu se dá vypsat pomocí příkazu
+> You can display the help for the Pip module using the command
 > `python -m pip --help`.
 
-> [warning] Pro Windows
-> Jsi-li na Windows, od této lekce začne být důležité
-> spouštět pythonní programy pomocí `python program.py`, ne jen
-> `program.py`.
-> Ačkoli se v těchto materiálech všude používá `python` na začátku, zatím
-> mohlo všechno fungovat i bez toho.
-> Program se ale bez příkazu `python` může spustit v jiném Pythonu,
-> než v tom z virtuálního prostředí – a tam `pytest` nebude k dispozici.
+> [warning] For Windows users
+> If you use Windows, it is important to run Python programs using
+> `python program.py`, and not just `program.py`.
+> Although we always show `python` in our lessons, 
+> it could work without it so far.
+> If you do not use the command `python` in the beginning, the program 
+> could start in a different Python and different virtual environment, 
+> where the `pytest` module might not have been installed.
 
 
-## Psaní testů
+## Writing tests
 
-Nejdříve si testování ukážeme na jednoduchém příkladu.
-Tady je funkce `secti`, která umí sečíst
-dvě čísla, a další funkce, která testuje, jestli se
-`secti` pro určité hodnoty
-chová správně.
+We will show testing thtough a very simple example.
+There is a function `add` that can add two numbers.
+There is another function that tests if the 
+`add` function returns correct results for specific numbers.
 
-Kód si opiš do souboru `test_secteni.py`,
-v novém prázdném adresáři.
-Pro `pytest` je (ve výchozím nastavení)
-důležité, aby jména jak souborů s testy, tak
-samotných testovacích funkcí, začínala na
-`test_`.
+Make a copy of the code into a file named `test_addition.py`
+in a new empty directory.
+
+The naming of files and test functions is important for `pytest` (with default settings). 
+It is important for names of files containing tests and test functions
+to start with `test_`.
 
 ```python
-def secti(a, b):
+def add(a, b):
     return a + b
 
-def test_secti():
-    assert secti(1, 2) == 3
+def test_add():
+    assert add(1, 2) == 3
 ```
 
-Co se v té testovací funkci děje?
+What does the test function do?
 
-Příkaz `assert` vyhodnotí výraz za ním
-a pokud výsledek není pravdivý, vyvolá výjimku,
-která způsobí, že test selže.
-Můžeš si představit, že `assert a == b` dělá následující:
+The `assert` statement evaluates the expression that follows it.
+If the result is not true then it raises an exception 
+and it makes the test fail.
+You can imagine that `assert a == b` does following:
 
 ```python
-if not (a == b):
-    raise AssertionError('Test selhal!')
+if a != b:
+    raise AssertionError('Test failed!')
 ```
 
 > [note]
-> Zatím `assert` nepoužívej jinde než v testovacích funkcích.
-> V „normálním” kódu má `assert` vlastnosti,
-> do kterých teď nebudeme zabředávat.
+> Do not use `assert` outside of test functions for now.
+> For "regular" code, the  `assert` has functionality that
+> we will not explain now.
 
 
-## Spouštění testů
+## Running tests
 
-Testy se spouští zadáním příkazu
-`python -m pytest -v` následovaným názvem souboru s testy.
-Tedy v překladu: <strong>Python</strong>e, pusť
-<strong>m</strong>odul <strong>pytest</strong>,
-v „ukecaném” režimu (angl. <strong>v</strong>erbose) nad zadaným souborem.
+You execute tests with the command `python -m pytest -v`, 
+followed by the name of the file containing the tests.
+By using this command you are telling: <strong>Python</strong>: 
+Execute the <strong>m</strong>odule named <strong>pytest</strong>,
+in <strong>v</strong>erbose mode, for the given file.
 
 ```ansi
-$ python -m pytest -v test_secteni.py
+$ python -m pytest -v test_addition.py
 ␛[1m============= test session starts =============␛[0m
-platform linux -- Python 3.6.0, pytest-3.0.6, py-1.4.32, pluggy-0.4.0 -- env/bin/python
-cachedir: .cache
-rootdir: naucse, inifile: 
+platform darwin -- Python 3.6.5, pytest-3.9.1, py-1.7.0, pluggy-0.8.0 -- 
+rootdir: learn, inifile: 
 ␛[1mcollecting ...␛[0m collected 1 items
 
-test_secteni.py::test_secti ␛[32mPASSED␛[0m
+test_addition.py::test_add ␛[32mPASSED␛[0m
 
-␛[32m============= 1 passed in 0.00 seconds =============␛[0m
+␛[32m============= 1 passed in 0.01 seconds =============␛[0m
 ```
 
-Tento příkaz projde zadaný soubor, zavolá v něm všechny funkce,
-jejichž jméno začíná na `test_`, a ověří, že nevyvolají žádnou
-výjimku – typicky výjimku z příkazu `assert`.
-Pokud výjimka nastane, dá to `pytest` velice červeně
-najevo a přidá několik informací, které můžou
-usnadnit nalezení a opravu chyby.
+This command scans the given file and calls all functions that start
+with `test_`. It checks that they do not raise any exceptions, 
+for example, an exception raised by `assert`.
+If an exception occurs, `pytest` shows a red message with
+additional details that can help you find the bug and fix it.
 
 > [note]
-> Argument s názvem souboru můžeme vynechat: `python -m pytest -v`
-> V takovém případě `pytest` projde aktuální adresář a spustí testy
-> ze všech souborů, jejichž jméno začíná na `test_`. Místo souboru
-> lze též uvést adresář a `pytest` vyhledá testy v něm.
+> You can omit the argument with the filename: `python -m pytest -v`
+> In this case, `pytest` scans the current directory and runs tests
+> in all files whose names start with `test_`. You can use a path to 
+> a directory and `pytest` finds tests in it.
 
-Zkus si změnit funkci `secti` (nebo její test) a podívat se,
-jak to vypadá když test „neprojde“.
-
-
-## Testovací moduly
-
-Testy se většinou nepíšou přímo ke kódu,
-ale do souboru vedle.
-Je to tak přehlednější a taky to pak zjednodušuje
-distribuci – předávání kódu někomu, kdo ho chce
-jen spustit a testy nepotřebuje.
-
-Rozděl soubor s testem sečítání: funkci `secti` přesuň do modulu `secteni.py`,
-a v `test_secteni.py` nech jenom test.
-Do `test_secteni.py` pak na začátek přidej `from secteni import secti`,
-aby byla funkce testu k dispozici.
-
-Test by měl opět projít.
+Try to change the `add` function (or its test) and see what happens
+if a test fails.
 
 
-## Spouštěcí moduly
+## Test modules
 
-Automatické testy musí projít „bez dozoru“.
-V praxi se často automaticky spouští, případné chyby se automaticky
-oznamují (např. e-mailem) a fungující kód se automaticky
-začne používat dál (nebo se rovnou vydá zákazníkům).
+You do not usually write tests in the same file with the regular code.
+Typically, you write tests in another file.
+This way, your code is easier to read, and it makes it possible to distribute 
+only the code, without the tests, to someone who is interested only in executing the program.
 
-Co to znamená pro nás?
-Funkce `input` v testech nefunguje. Nemá koho by se zeptala; „za klávesnicí“
-nemusí nikdo sedět.
+Split the `test_addition.py` file: Move the `add` function to a new module `addition.py`.
+In the `test_addition.py` file, keep only the test.
+To the `test_addition.py` file, add `from addition import add` to the top
+so the test can call the tested function.
 
-To může někdy „ztěžovat práci“. Ukážeme si to na složitějším projektu:
-na 1D piškvorkách.
+The test should pass again.
+
+
+## Executable modules
+
+Automated tests have to run "unattended".
+They are usually executed automatically and the failures are reported
+automatically (e.g. by email) and the code that passes all tests can
+be automatically released (installed to a system where it runs 
+or is made available to customers).
+
+What does this mean to us?
+The `input` function will not work in tests. There is no-one who can reply.
+
+This can make your work harder sometimes. Let's look at a more complex project: 1D (one-dimensional) tic-tac-toe.
 
 > [note]
 {% if var('coach-present') -%}
-> Nemáš-li hotové 1D piškvorky, následující sekce budou jen teorietické.
+> If you do not have the 1D tic-tac-toe program, the following sections are only theoretical.
 {% endif -%}
-> Učíš-li se z domu, dodělej si Piškvorky než budeš pokračovat dál!
-> Zadání najdeš (prozatím)
-> v [projektech pro PyLadies](http://pyladies.cz/v1/s004-strings/handout/handout4.pdf)
-> na straně 2.
+> If you study at home, complete the 1D tic-tac-toe lesson before continuing.
+> The homework assignment is in [PyLadies projects](http://pyladies.cz/v1/s004-strings/handout/handout4.pdf)
+> on page 2 (the English translation is at [one-dimensional tic-tac-toe](tic_tac_toe.md)).
 
-Kód pro 1D Piškvorky může rámcově vypadat zhruba takto:
+The structure of your 1D tic-tac-toe code could look like this:
 
 ```python
-import random  # (příp. import jiných věci, které budou potřeba)
+import random  # (and possibly other import statements that are needed)
 
-def tah(pole, cislo_policka, symbol):
-    """Vrátí pole s daným symbolem umístěným na danou pozici"""
+def move(board, space_number, mark):
+    """Returns the board with the specified mark placed in the specified position"""
     ...
 
-def tah_hrace(pole):
-    """Zeptá se hráče kam chce hrát a vrátí pole se zaznamenaným tahem"""
+def player_move(board):
+    """Asks the player what move should be done and returns the board
+    with the move played.
+    """
     ...
-    input('Kam chceš hrát? ')
+    input('What is your move? ')
     ...
 
-def piskvorky1d():
-    """Spustí hru
+def tic_tac_toe_1d():
+    """Starts the game
 
-    Vytvoří hrací pole a střídavě volá tah_hrace a tah_pocitace
-    dokud někdo nevyhraje"""
+    It creates an empty board and runs player_move and computer_move alternately
+    until the game is finished.
+    """
     while ...:
         ...
-        tah_hrace(...)
+        player_move(...)
         ...
 
-# Puštění hry!
-piskvorky1d()
+# Start the game:
+tic_tac_toe_1d()
 ```
 
-Když tenhle modul naimportuješ, Python v něm postupně, odshora dolů,
-provede všechny příkazy.
+If you import this module, Python executes all commands in it 
+from top to bottom.
 
-První příkaz, `import`, jen zpřístupní nějaké proměnné a funkce;
-je-li importovaný modul správně napsaný, nemá vedlejší účinek.
-Definice funkcí (příkazy `def` a všechno v nich) podobně jen definují funkce.
-Ale zavoláním funkce `piskvorky1d` se spustí hra:
-funkce `piskvorky1d` zavolá funkci `tah_hrace()` a ta zavolá `input()`.
+The first command, `import`, makes some functions and variables available.
+Imports do not usually have any side-effects.
 
-Importuješ-li tenhle modul z testů, `input` selže a import se nepovede.
+The definitions of functions (`def` statements and everything in them) 
+just define the functions (but they do not execute the functions).
+
+Calling the `tic_tac_toe_1d` function starts the game.
+The `tic_tac_toe_1d` calls the `player_move()` function which calls `input()`.
+
+If you import this module from tests, the `input` fails 
+and the module is not imported.
 
 > [note]
-> A kdybys modul importoval{{a}} odjinud – například bys chtěl{{a}} funkci
-> `tah` použít v nějaké jiné hře – uživatel si bude muset v rámci importu
-> zahrát Piškvorky!
+> If you want to import such a module from elsewhere – for example, you would like
+> to use `move` in another game – the import of the module requires the user to 
+> play 1D tic-tac-toe!
 
-Volání funkce `piskvorky1d` je vedlejší efekt, a je potřeba ho odstranit.
-No jo, ale po takovém odstranění
-už nejde jednoduše spustit hra! Co s tím?
+The calling of `tic_tac_toe_1d` is a side-effect and we need to remove it.
+Yeah but you cannot start the game without it! What about it?
 
-Můžeš na to vytvořit nový modul.
-Pojmenuj ho `hra.py` a dej do něj jenom to odstraněné volání:
-
-```python
-import piskvorky
-
-piskvorky.piskvorky1d()
-```
-
-Tenhle modul nebudeš moci testovat (protože nepřímo volá funkci `input`),
-ale můžeš ho spustit, když si budeš chtít zahrát.
-Protože k němu nemáš napsané testy, nepoznáš
-z nich, když se takový spouštěcí modul rozbije.
-Měl by být proto nejjednodušší – jeden import a jedno volání.
-
-Původní modul teď můžeš importovat bez obav – ať už z testů nebo z jiných
-modulů.
-Test může vypadat třeba takhle:
+You can create a new module.
+Name it `game.py` and put just this call into it:
 
 ```python
-import piskvorky
+import tic_tac_toe
 
-def test_tah_na_prazdne_pole():
-    pole = piskvorky.tah_pocitace('--------------------')
-    assert len(pole) == 20
-    assert pole.count('x') == 1
-    assert pole.count('-') == 19
+tic_tac_toe.tic_tac_toe_1d()
 ```
 
-## Pozitivní a negativní testy
+You cannot test this module because it calls `input` indirectly.
+But you can execute it if you want to play.
+Since you do not have tests for this module, it should be very simple: 
+one import and one statement.
 
-Testům, které kontrolují že se program za správných podmínek chová správně,
-se říká *pozitivní testy*.
-Můžeš ale testovat i reakci programu na špatné nebo neočekávané podmínky.
+You can import the original module from tests or other modules.
 
-Testy, které kontrolují reakci na „špatný“ vstup,
-se jmenují *negativní testy*.
-Můžou kontrolovat nějaký negativní výsledek (např.
-že volání jako <code>cislo_je_sude(7)</code> vrátí `False`),
-a nebo to, že nastane „rozumná“ výjimka.
+A test for the original module could look like this:
 
-Například funkce `tah_pocitace` by měla způsobit
-chybu (třeba `ValueError`), když je herní pole už plné.
+```python
+import tic_tac_toe
+
+def test_move_to_empty_space():
+    board = tic_tac_toe.computer_move('--------------------')
+    assert len(board) == 20
+    assert board.count('x') == 1
+    assert board.count('-') == 19
+```
+
+## Positive and negative tests
+
+The tests that verify that the program works correctly 
+under correct conditions are called *positive tests*.
+But you can test what your program does under unexpected conditions.
+
+The tests that check the behavior in case of "invalid" input
+are called *negative tests*.
+They can check for a specific negative result (for example 
+that a call like `is_number_even(7)` returns `False`), 
+or that a "reasonable" exception is raised. 
+
+For example, the `computer_move` function should raise an error 
+(for example `ValueError`) when the board is full.
 
 > [note]
-> Vyvolat výjimku je mnohem lepší než alternativy, např. kdyby takové volání
-> „tiše“ – bez oznámení – zablokovalo celý program.
-> Když kód pak použiješ ve větším programu,
-> můžeš si být jistá, že při špatném volání
-> dostaneš srozumitelnou chybu – tedy takovou,
-> která se co nejsnadněji opravuje.
+> It is much better to raise an exception than doing nothing 
+> and silently letting the program get stuck.
+> You can use such function in a more complex program 
+> and be sure that you will get an understandable error
+> when it is called under bad conditions. 
+> Then you can easily fix it.
 
-Na otestování výjimky to použij příkaz `with` a funkci `raises` naimportovanou
-z modulu `pytest`.
-Jak příkaz `with` přesně funguje, se dozvíme později;
-teď stačí říct, že ověří, že odsazený blok kódu
-pod ním vyvolá danou výjimku:
+Use the `with` statement and the `raises` function 
+to test that your code raises the expected exception.
+The `raises` function is imported from the `pytest` module.
+We will explain the `with` statement later.
+You just need to know that it checks that the block of code below 
+raises the specified exception:
 
 ```python
 import pytest
 
-import piskvorky
+import tic_tac_toe
 
-def test_tah_chyba():
+def test_move_failure():
     with pytest.raises(ValueError):
-        piskvorky.tah_pocitace('oxoxoxoxoxoxoxoxoxox')
+        tic_tac_toe.computer_move('oxoxoxoxoxoxoxoxoxox')
 ```
-

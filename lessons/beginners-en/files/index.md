@@ -80,7 +80,7 @@ this character remains at the end of the string `line` ¹.
 The `print()` function then adds another newline character. 
 This function always ends the line. 
 You can suppress it using the argument `end=''`).
-That is one way how to „fix“ this extra spacing. 
+That is one way how to "fix" this extra spacing. 
 The other is to use the method `rstrip()` for each line. 
 This method removes all spaces and newline characters 
 that are the end of the string.
