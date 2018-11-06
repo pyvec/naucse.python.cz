@@ -3,7 +3,7 @@
 There are also other programming languages ​​than Python.
 
 Other languages ​​can not work with python code.
-If you would like to "talk" such with programs -
+If you would like to "talk" with such programs -
 pass them some processing information
 or to get results from them -
 you have to pass the information in a simplified form.
@@ -14,7 +14,7 @@ you have to pass the information in a simplified form.
 Most programming languages ​​have some numbers, some sort of lists,
 a variety of strings and some variation of dictionaries
 (or several ways to create dictionaries).
-And they have way how to write `True`, `False` and `None`.
+And they have a way how to write `True`, `False` and `None`.
 
 These basic types are usually sufficient for information handover
 in a legible form, although there are not the exact equivalents in all languages
@@ -26,8 +26,8 @@ So we will focus on them.
 
 Another problem is data transfer:
 so for you to be able to write data on disk or transfer
-via the Internet, they have to be converted to sequence of *bytes* (numbers from 0 to 255).
-Simplified: you have to convert them to a string.
+via the Internet, it has to be converted to a sequence of *bytes* (numbers from 0 to 255).
+Simplified: you have to convert it to a string.
 
 There are plenty of ways to encode data into text.
 Each way is trying to find the right balance between
@@ -48,7 +48,7 @@ Another way to write data is [YAML] (http://www.yaml.org/):
 
 ```yaml
 name: Anna
-Brno town
+city: Prague
 languages:
    - Czech
    - English
@@ -73,7 +73,7 @@ K▒u.
 
 Finally, there is also [JSON] (http://json.org/)
 (*Javascript Object Notation*),
-which for its simplicity has expanded the most:
+which, for its simplicity, has expanded the most:
 
 ```json
 {
@@ -120,7 +120,7 @@ and returns a string.
 
 The string that `dumps(data)` returns is suitable for computer
 treatment.
-If you want to read it it is better to set `ensure_ascii = False` 
+If you want to read it, it is better to set `ensure_ascii = False` 
 (so that accented letters are not encoded with`\`)
 and `indent = 2` (indent with two spaces).
 
