@@ -708,7 +708,23 @@ Do repozitáře přidejte soubor `.travis.yml`:
 ```yaml
 language: python
 python:
+- '3.6'
+install:
+- python setup.py install
+script:
+- python setup.py test
+```
+
+Uvedený příklad je pro Python 3.6.
+Pro Python 3.7 je třeba nastavit ještě speciální specifické volby,
+jelikož je tato verze příliš nová:
+
+```yaml
+language: python
+python:
 - '3.7'
+dist: xenial
+sudo: required
 install:
 - python setup.py install
 script:
