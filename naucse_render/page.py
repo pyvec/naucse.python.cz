@@ -36,5 +36,7 @@ def render_page(lesson_slug, page):
     )
     if info['style'] == 'md':
         text = convert_markdown(text)
+    else:
+        return ''
 
     return text
