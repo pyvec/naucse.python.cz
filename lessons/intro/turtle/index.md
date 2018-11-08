@@ -105,7 +105,7 @@ Ulož ho do adresáře pro dnešní lekci pod jménem `zelva.py`.
 
 > [note]
 > Jestli adresář pro dnešní lekci ještě nemáš, vytvoř si ho!
-> Pojmenuj ho třeba `03`.
+> Pojmenuj ho třeba `02`.
 
 Jestli chceš pro soubor použít jiné jméno, můžeš, ale
 nepojmenovávej ho `turtle.py`.
