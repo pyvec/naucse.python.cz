@@ -178,19 +178,19 @@ the first one that can handle the raised exception.
 try:
     do_something()
 except ValueError:
-    print('This will be printed if there's a ValueError.')
+    print("This will be printed if there's a ValueError.")
 except NameError:
-    print('This will be printed if there's a NameError.')
+    print("This will be printed if there's a NameError.")
 except Exception:
-    print('This will be printed if there's some other exception.')
+    print("This will be printed if there's some other exception.")
     # (apart from SystemExit a KeyboardInterrupt, we don't want to catch those)
 except TypeError:
-    print('This will never be printed')
+    print("This will never be printed")
     # ("except Exception" above already caught the TypeError)
 else:
-    print('This will be printed if there's no error in try block')
+    print("This will be printed if there's no error in try block")
 finally:
-    print('This will always be printed; even if there's e.g. a `return` in the `try` block.')
+    print("This will always be printed; even if there's e.g. a 'return' in the 'try' block.")
 ```
 
 
