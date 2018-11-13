@@ -245,4 +245,5 @@ def load_number(field):
 
 print(player_move('-x----'))
 ```
+
 {% endfilter %}
