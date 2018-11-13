@@ -232,3 +232,27 @@ def get_edit_info(edit_path):
         "page_name": get_edit_page_name(),
         "url": edit_link(edit_path)
     }
+
+def czech_plural(text, n):
+    """
+    Chooses the Czech plural form based on n.
+    This either gets and immediately returns a string,
+    or it gets a list of 3 strings:
+     * for 1 item
+     * for 2-4 items
+     * for the rest
+    Picks the right one and returns it.
+    Uses the more modern option where e.g. 21 is NOT pluralized as 1
+    http://prirucka.ujc.cas.cz/?id=792
+    """
+    if isinstance(text, str):
+        return text
+
+    # we don't expect negative numbers here, but just to be sure
+    n = abs(n)
+
+    if n == 1:
+        return text[0]
+    if 1 < n < 5:
+        return text[1]
+    return text[2]

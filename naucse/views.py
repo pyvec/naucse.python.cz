@@ -28,7 +28,10 @@ from naucse.utils.views import get_recent_runs, list_months
 from naucse.utils.views import does_course_return_info
 from naucse.utils.views import raise_errors_from_forks
 from naucse.utils.views import page_content_cache_key, get_edit_info
+from naucse.utils.views import czech_plural
 from naucse.validation import DisallowedStyle, DisallowedElement, InvalidHTML
+
+import yaml
 
 # so it can be mocked
 import naucse.utils.views
@@ -43,7 +46,6 @@ POSSIBLE_FORK_EXCEPTIONS = (PullError, BuildError, DisallowedStyle, DisallowedEl
                             RequirementsMismatch, InvalidHTML, InvalidInfo)
 
 _cached_model = None
-
 
 @LocalProxy
 def model():
@@ -97,10 +99,19 @@ def session_url(course, session, coverpage='front'):
                    coverpage=coverpage)
 
 
+def load_stat_labels():
+    datafile = os.path.join(os.path.dirname(__file__), 'data/stats.yml')
+    with open(datafile) as fstr:
+        stat_labels = yaml.load(fstr)
+
+    return stat_labels
+
+
 @app.route('/')
 def index():
     return render_template("index.html",
-                           edit_info=get_edit_info(Path(".")))
+                           edit_info=get_edit_info(Path(".")),
+                           stat_labels=load_stat_labels())
 
 
 @app.route('/runs/')
@@ -172,23 +183,28 @@ def runs(year=None, all=None):
                            edit_info=get_edit_info(model.runs_edit_path))
 
 
+def safe_courses():
+    courses = []
+
+    for course in model.courses.values():
+        if not course.is_link():
+            if not course.is_meta:
+                courses.append(course)
+        elif naucse.utils.views.forks_enabled() and does_course_return_info(course):
+            courses.append(course)
+
+    return courses
+
 @app.route('/courses/')
 def courses():
     # since even the basic info about the forked courses can be broken,
     # we need to make sure the required info is provided.
     # If ``RAISE_FORK_ERRORS`` is set, exceptions are raised here,
     # otherwise the course is ignored completely.
-    safe_courses = []
-
-    for course in model.courses.values():
-        if not course.is_link():
-            if not course.is_meta:
-                safe_courses.append(course)
-        elif naucse.utils.views.forks_enabled() and does_course_return_info(course):
-            safe_courses.append(course)
+    courses = safe_courses()
 
     return render_template("course_list.html",
-                           courses=safe_courses,
+                           courses=courses,
                            title="Seznam online kurzů Pythonu",
                            edit_info=get_edit_info(model.courses_edit_path))
 
@@ -920,3 +936,75 @@ def course_calendar_ics(course):
             abort(404)
 
     return Response(str(calendar), mimetype="text/calendar")
+
+def active_runs():
+    today = datetime.date.today()
+
+    runs = (model.runs_from_year(today.year) +
+            model.runs_from_year(today.year - 1) +
+            model.runs_from_year(today.year - 2))
+    ongoing = [run for run in runs if
+                run.start_date <= today and run.end_date >= today]
+
+    return len(ongoing)
+
+def all_runs():
+    all_years = list(model.safe_run_years.keys())
+
+    return sum([len(model.runs_from_year(year)) for year in all_years])
+
+def sessions_delivered():
+    today = datetime.date.today()
+    all_years = list(model.safe_run_years.keys())
+
+    all_runs = []
+    for year in all_years:
+        all_runs.extend(model.runs_from_year(year))
+
+    all_sessions = []
+    for run in all_runs:
+        all_sessions.extend(list(run.sessions.values()))
+
+    return len([session for session in all_sessions if session.date < today])
+
+def sessions_available():
+    uniq_sessions = {}
+    for course in safe_courses():
+        for session in course.sessions.values():
+            uniq_sessions[session.slug] = session
+
+    return len(uniq_sessions)
+
+def cheatsheets():
+    sheets = 0
+    for course in safe_courses():
+        for session in course.sessions.values():
+            for material in session.materials:
+                if (material.url_type == 'cheatsheet'):
+                    sheets += 1
+
+    return sheets
+
+
+# This could use some caching, but for now it's the simplest way
+def basic_stat(name):
+    if name == 'active_runs':
+        return active_runs()
+    elif name == 'all_runs':
+        return all_runs()
+    elif name == 'sessions_delivered':
+        return sessions_delivered()
+    elif name == 'sessions_available':
+        return sessions_available()
+    elif name == 'cheatsheets':
+        return cheatsheets()
+    else: # contributors, price
+        return 0
+
+@app.template_filter('fill_label')
+def fill_label(label):
+    stat_number = basic_stat(label['label'])
+
+    formatstr = czech_plural(label['text'], stat_number)
+
+    return formatstr % stat_number
