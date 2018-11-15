@@ -3,7 +3,7 @@
 from xml.dom import SyntaxErr
 
 from naucse.models import Page
-from naucse.validation import DisallowedStyle
+from naucse.sanitize import DisallowedStyle
 
 
 class InvalidInfo(Exception):
