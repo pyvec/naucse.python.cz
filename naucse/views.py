@@ -254,7 +254,10 @@ def course_calendar(course):
     if not course.start_date:
         abort(404)
 
-    sessions_by_date = {s.date: s for s in course.sessions.values()}
+    sessions_by_date = {
+        s.date: s for s in course.sessions.values()
+        if hasattr(s, 'date')
+    }
 
     kwargs = {
         "course": course,

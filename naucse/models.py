@@ -7,7 +7,7 @@ import dateutil.tz
 import jsonschema
 
 from naucse.edit_info import get_local_edit_info
-from naucse.htmlparser import convert_html
+from naucse.htmlparser import sanitize_html
 import naucse_render
 
 # XXX: Different timezones?
@@ -466,9 +466,28 @@ class Page(Model):
 
     material = parent_property
 
+    @property
+    def session(self):
+        return self.material.session
+
+    @property
+    def course(self):
+        return self.material.session.course
+
     def get_content(self):
         result = self.render_call.call()
-        return convert_html(result)
+
+        def lesson_url(lesson, page='index', **kw):
+            lesson = self.course.get_material(lesson)
+            page = lesson.pages[page]
+            return page.get_url(**kw)
+
+        return sanitize_html(
+            result,
+            url_for={
+                'lesson': lesson_url,
+            }
+        )
 
 
 class Material(Model):
@@ -544,6 +563,7 @@ class Session(Model):
         return {mat.slug: mat for mat in self.materials if mat.slug}
 
     def get_material(self, slug):
+        print(slug)
         return self._materials_by_slug[slug]
 
 

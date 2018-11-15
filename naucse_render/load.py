@@ -20,4 +20,4 @@ def read_yaml(*path_parts):
     if base_path not in yaml_path.parents:
         raise ValueError(f'Invalid course path')
 
-    return _read_yaml(yaml_path)
+    return dict(_read_yaml(yaml_path))

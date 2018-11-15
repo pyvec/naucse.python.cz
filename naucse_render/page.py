@@ -8,13 +8,9 @@ from .markdown import convert_markdown
 
 def lesson_url(lesson_name, *, page='index'):
     if page == 'index':
-        return f'../../../{lesson_name}/'
+        return f'naucse:lesson?lesson={lesson_name}'
     else:
-        return f'../../../{lesson_name}/{page}/'
-
-
-def subpage_url(subpage_name):
-    return f'./{subpage_name}/'
+        return f'naucse:lesson?lesson={lesson_name}&page={page}'
 
 
 def render_page(lesson_slug, page):
@@ -31,7 +27,7 @@ def render_page(lesson_slug, page):
 
     text = env.get_template(page_name).render(
         lesson_url=lesson_url,
-        subpage_url=subpage_url,
+        subpage_url=lambda page: lesson_url(lesson_slug, page=page),
         **{'$solutions': [], **vars_functions(vars)},
     )
     if info['style'] == 'md':
