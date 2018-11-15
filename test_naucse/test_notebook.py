@@ -31,7 +31,7 @@ def notebook(_notebook):
 
 
 def test_notebook_markdown_cell_conversion(notebook):
-    markdown = dedent("""
+    markdown = dedent(r"""
         <h2>Markdown</h2>
         <p>This is <em>Markdown cell</em>!</p>
         <p>It even has some $\LaTeX$:</p>
