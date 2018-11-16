@@ -17,6 +17,8 @@ def assert_unchanged(input_html):
 
 
 def test_allowed_elements():
+    # During the sanitization, content is parsed and re-rendered by LXML.
+    # This does things like add the closing </strong> tag here.
     assert_changed(
         "<div><strong><u><a>Test</a></u></div>",
         "<div><strong><u><a>Test</a></u></strong></div>",
