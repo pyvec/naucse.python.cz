@@ -5,7 +5,7 @@ import jinja2
 from .markdown import convert_markdown
 
 environment = jinja2.Environment(
-    autoescape='html',
+    autoescape=jinja2.select_autoescape('html', 'xml'),
     undefined=jinja2.StrictUndefined,
 )
 
@@ -60,16 +60,12 @@ def solution(ctx, text):
     solutions = ctx['$solutions']
     solution_index = len(solutions)
 
-    solution_url = 'XXX'
-    # XXX
-    #solution_url = ctx['lesson_url'](lesson=ctx['lesson_slug'],
-    #                                 page=ctx['page_slug'],
-    #                                 solution=solution_index)
+    solution_url = f'naucse:solution?solution={solution_index}'
 
     solution = convert_markdown(text)
     solutions.append(solution)
 
-    t = jinja2.Markup(textwrap.dedent("""
+    return jinja2.Markup(textwrap.dedent("""
         <div class="solution" id="solution-{}">
             <h3>Řešení</h3>
             <div class="solution-cover">
@@ -79,8 +75,7 @@ def solution(ctx, text):
                 {}
             </div>
         </div>
-    """))
-    return t.format(solution_index, solution_url, solution)
+    """).format(solution_index, solution_url, solution))
 
 
 @template_function()

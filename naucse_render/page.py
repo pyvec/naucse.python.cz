@@ -25,14 +25,20 @@ def render_page(lesson_slug, page):
     path = lesson_directory / page_name
     text = path.read_text(encoding='utf-8')
 
+    solutions = []
+
     text = env.get_template(page_name).render(
         lesson_url=lesson_url,
         subpage_url=lambda page: lesson_url(lesson_slug, page=page),
-        **{'$solutions': [], **vars_functions(vars)},
+        **{'$solutions': solutions, **vars_functions(vars)},
     )
+
     if info['style'] == 'md':
         text = convert_markdown(text)
     else:
-        return ''
+        text = ''
 
-    return text
+    return {
+        'content': text,
+        'solutions': solutions,
+    }

@@ -33,6 +33,26 @@ NOTHING = _Nothing()
 models = {}
 
 
+class reify:
+    """Base class for a lazily computed property
+    Subclasses should reimplement a `compute` method, which creates
+    the value of the property. Then the value is stored and not computed again
+    (unless deleted).
+    """
+    def __init__(self, func):
+        self.func = func
+
+    def __set_name__(self, cls, name):
+        self.name = name
+
+    def __get__(self, instance, cls):
+        if instance is None:
+            return self
+        result = self.func(instance)
+        setattr(instance, self.name, result)
+        return result
+
+
 def get_schema(cls, *, is_input):
     definitions = {
         c.__name__: c.get_schema(is_input=is_input) for c in models.values()
@@ -129,10 +149,6 @@ class Model:
             'type': 'object',
             'title': cls.__name__,
             'additionalProperties': False,
-            'required': [
-                name for name, field in cls._naucse__fields.items()
-                if field.required_in_schema(is_input=is_input)
-            ],
             'properties': {
                 'url': {
                     'type': 'string',
@@ -145,6 +161,12 @@ class Model:
                 'api_version': {'$ref': '#/definitions/api_version'},
             },
         }
+        required = [
+            name for name, field in cls._naucse__fields.items()
+            if field.required_in_schema(is_input=is_input)
+        ]
+        if required:
+            result['required'] = required
         if cls.__doc__:
             retult['description'] == cls.__doc__
         for name, field in cls._naucse__fields.items():
@@ -473,6 +495,21 @@ class RenderCall(Model):
         return func(*self.args, **self.kwargs)
 
 
+class Solution(Model):
+    def __init__(self, *, index=None, **kw):
+        super().__init__(**kw)
+        if index is not None:
+            self.index = index
+
+    index = IntField(default=None, doc='Number of the session')
+    content = StringField(default='', doc='Solution content')
+
+    page = parent_property
+
+    def get_content(self):
+        return self.content
+
+
 class Page(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(doc='Machine-friendly identifier')
@@ -505,18 +542,40 @@ class Page(Model):
     def course(self):
         return self.material.session.course
 
-    def get_content(self):
-        result = self.render_call.call()
+    @reify
+    def _rendered_content(self):
+        return self.render_call.call()
 
-        def lesson_url(lesson, page='index', **kw):
+    @reify
+    def solutions(self):
+        solutions = []
+        for i, content in enumerate(self._rendered_content.get('solutions', ())):
+            solution = Solution.load(
+                {'content': sanitize_html(content), 'index': i},
+                parent=self
+            )
+            solutions.append(solution)
+
+        return solutions
+
+    def get_content(self):
+        result = self._rendered_content['content']
+
+        def lesson_url(*, lesson, page='index', **kw):
             lesson = self.course.get_material(lesson)
             page = lesson.pages[page]
             return page.get_url(**kw)
+
+        def solution_url(*, solution, **kw):
+            # XXX: Can't load Solutions yet, so create a fake
+            # one to get the URL
+            return Solution(parent=self, index=solution).get_url(**kw)
 
         return sanitize_html(
             result,
             url_for={
                 'lesson': lesson_url,
+                'solution': solution_url,
             }
         )
 

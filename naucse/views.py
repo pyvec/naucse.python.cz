@@ -42,6 +42,9 @@ def model():
             'web': {
                 models.Page: lambda p, **kw: url_for(
                     'page', material=p.material, page_slug=p.slug, **kw),
+                models.Solution: lambda s, **kw: url_for(
+                    'page', material=s.page.material,
+                    page_slug=s.page.slug, solution=s.index, **kw),
                 models.Course: lambda c, **kw: url_for(
                     'course', course=c, **kw),
                 models.Session: lambda s, **kw: url_for(
@@ -217,12 +220,16 @@ def page(material, page_slug='index', solution=None):
     else:
         canonical_url = canonical.get_url(external=True)
 
-    if solution is not None:
+    if solution is None:
+        content = page.get_content()
+    else:
         kwargs["solution_number"] = int(solution)
+        solution = page.solutions[solution]
+        content = solution.get_content()
 
     return render_template(
         "lesson.html",
-        content=page.get_content(),
+        content=content,
         page=page,
         solution=solution,
         session=page.material.session,
