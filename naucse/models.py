@@ -5,6 +5,7 @@ import importlib
 
 import dateutil.tz
 import jsonschema
+import yaml
 
 from naucse.edit_info import get_local_edit_info
 from naucse.htmlparser import sanitize_html
@@ -376,6 +377,28 @@ class ObjectField(Field):
         return schema_object(self.item_type, allow_ref=not is_input)
 
 
+class LicenseField(Field):
+    def convert(self, instance, data, value):
+        licenses = instance.root.licenses
+        try:
+            return licenses[value]
+        except KeyError:
+            keys = ', '.join(licenses)
+            raise ValueError(
+                f'{value} is not a valid licence (choose from {keys})'
+            )
+
+    def get_schema(self, *, is_input):
+        # XXX: Get the actal licenses as options?
+        if is_input:
+            return {
+                **super().get_schema(is_input=is_input),
+                'type': 'string',
+            }
+        else:
+            return schema_object(License)
+
+
 @property
 def parent_property(self):
     return self._parent
@@ -455,8 +478,7 @@ class Page(Model):
     slug = StringField(doc='Machine-friendly identifier')
 
     # XXX: License object?
-    license = StringField(
-        choices=("cc-by-sa-40", "cc0"),
+    license = LicenseField(
         doc=textwrap.dedent('''
             Identifier of the licence under which content is available.
             Note that Naucse supports only a limited set of licences.''')
@@ -464,9 +486,8 @@ class Page(Model):
 
     attribution = HTMLListField(doc='Authorship information')
 
-    license_code = StringField(
+    license_code = LicenseField(
         optional=True,
-        choices=("cc-by-sa-40", "cc0"),
         doc=textwrap.dedent('''
             Identifier of the licence under which code is available.
             Note that Naucse supports only a limited set of licences.''')
@@ -671,6 +692,11 @@ class RunYear(Model):
         return iter(self.runs.values())
 
 
+class License(Model):
+    title = StringField()
+    url = UrlField()
+
+
 class Root(Model):
     courses = DictField(Course)
     run_years = DictField(RunYear)
@@ -682,8 +708,11 @@ class Root(Model):
 
         self.courses = {}
         self.run_years = {}
+        self.licenses = {}
 
     def load_local(self, path):
+        self.licenses = self.load_licenses(path / 'licenses')
+
         for course_path in (path / 'courses').iterdir():
             if (course_path / 'info.yml').is_file():
                 slug = 'courses/' + course_path.name
@@ -707,6 +736,14 @@ class Root(Model):
 
         self.edit_info = get_local_edit_info(path)
         self.runs_edit_info = get_local_edit_info(path / 'runs')
+
+    def load_licenses(self, path):
+        licenses = {}
+        for licence_path in path.iterdir():
+            with (licence_path / 'info.yml').open() as f:
+                info = yaml.safe_load(f)
+            licenses[licence_path.name] = License.load(info, parent=self)
+        return licenses
 
     def get_course(self, slug):
         if slug == 'lessons':
