@@ -290,7 +290,7 @@ chybu (třeba `ValueError`), když je herní pole už plné.
 > dostaneš srozumitelnou chybu – tedy takovou,
 > která se co nejsnadněji opravuje.
 
-Na otestování výjimky to použij příkaz `with` a funkci `raises` naimportovanou
+Na otestování výjimky použij příkaz `with` a funkci `raises` naimportovanou
 z modulu `pytest`.
 Jak příkaz `with` přesně funguje, se dozvíme později;
 teď stačí říct, že ověří, že odsazený blok kódu

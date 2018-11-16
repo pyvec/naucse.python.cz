@@ -1,100 +1,115 @@
+from textwrap import dedent
+
 import pytest
 
-import naucse.validation
+import naucse.sanitize
+from naucse.sanitize import sanitize_html
+
+def assert_changed(input_html, expected):
+    input_html = dedent(input_html).strip()
+    expected = dedent(expected).strip()
+    output_html = sanitize_html(input_html)
+    assert output_html == expected
+
+
+def assert_unchanged(input_html):
+    assert_changed(input_html, input_html)
 
 
 def test_allowed_elements():
-    allowed_elements = naucse.validation.AllowedElementsParser()
-
-    allowed_elements.reset_and_feed(
-        "<div><strong><u><a>Test</a></u></div>"
+    assert_changed(
+        "<div><strong><u><a>Test</a></u></div>",
+        "<div><strong><u><a>Test</a></u></strong></div>",
     )
 
-    with pytest.raises(naucse.validation.DisallowedElement):
-        allowed_elements.reset_and_feed(
+def test_disallow_script():
+    with pytest.raises(naucse.sanitize.DisallowedElement):
+        sanitize_html(
             "<div><script>alert('XSS')</script></div>"
         )
 
 
 def test_allow_attributes():
-    allowed_elements = naucse.validation.AllowedElementsParser()
+    assert_unchanged("""
+        <div class="test">
+            <span><a href="/courses/">Text</a></span>
+        </div>
+    """)
 
-    allowed_elements.reset_and_feed(
-        "<div class='test'><span style='color: red'><a href='/courses/'>Text</a></span></div>"
-    )
+def test_disallow_onhover():
+    with pytest.raises(naucse.sanitize.DisallowedAttribute):
+        sanitize_html("""
+            <div class="test" onhover="alert('XSS')">
+                <a href="/courses/">Text</a>
+            </div>
+        """)
 
-    with pytest.raises(naucse.validation.DisallowedElement):
-        allowed_elements.reset_and_feed(
-            """<div class='test' onhover="alert('XSS')"><a href='/courses/'>Text</a></div>"""
-        )
+def test_disallow_unknown_css():
+    with pytest.raises(naucse.sanitize.DisallowedStyle):
+        sanitize_html("""
+            <div class='test'>
+                <span style='color: red'>Text</span>
+            </div>
+        """)
 
-    with pytest.raises(naucse.validation.DisallowedElement):
-        allowed_elements.reset_and_feed(
-            """<div class='test'><span style='color: red'><a href="javascript:alert('XSS')">Text</a></span></div>"""
-        )
-
-    with pytest.raises(naucse.validation.DisallowedElement):
-        allowed_elements.reset_and_feed(
-            """<div class='test' onhover="alert('XSS')"><img src="javascript:alert('XSS')" /></div>"""
+def test_disallow_javascript_href():
+    with pytest.raises(naucse.sanitize.DisallowedURLScheme):
+        sanitize_html(
+            """<div class='test'><img src="javascript:alert('XSS')" /></div>"""
         )
 
 def test_allowed_styles():
-    allowed_elements = naucse.validation.AllowedElementsParser()
-
-    allowed_elements.reset_and_feed(
-        """
+    assert_unchanged("""
         <style>
         .dataframe thead tr:only-child th {
             text-align: right;
         }
 
         </style>
-        """
-    )
+    """)
 
-    # valid styles, but wrong elements
-    with pytest.raises(naucse.validation.DisallowedStyle):
-        allowed_elements.reset_and_feed(
-            """
+def test_disallow_bad_css_syntax():
+    with pytest.raises(naucse.sanitize.BadStyleSyntax):
+        assert_unchanged("""
+            <style>
+            {
+            </style>
+        """)
+
+def test_wrong_elements():
+    with pytest.raises(naucse.sanitize.DisallowedStyle):
+        sanitize_html("""
             <style>
             .green {
                 color: green;
             }
             </style>
-            """
-        )
+        """)
 
-    # can't parse
-    with pytest.raises(naucse.validation.DisallowedStyle):
-        allowed_elements.reset_and_feed(
-            """
+def test_bad_style():
+    with pytest.raises(naucse.sanitize.DisallowedStyle):
+        sanitize_html("""
             <style>
             .green {
                 color: green
             </style>
-            """
-        )
+        """)
 
-    # multiple selectors in one rule
-    # valid:
-    allowed_elements.reset_and_feed(
-        """
+def test_allow_multiple_css_selectors():
+    assert_unchanged("""
         <style>
         .dataframe .green, .dataframe .also-green {
             color: green;
         }
         </style>
-        """
-    )
+    """)
 
-    # invalid:
-    with pytest.raises(naucse.validation.DisallowedStyle):
-        allowed_elements.reset_and_feed(
-            """
+def test_invalid_multiple_css_selectors():
+    with pytest.raises(naucse.sanitize.DisallowedStyle):
+        sanitize_html("""
             <style>
             .dataframe .green, .also-green {
                 color: green;
             }
             </style>
-            """
-        )
+        """)
