@@ -44,11 +44,12 @@ def test_disallow_onhover():
             </div>
         """)
 
+@pytest.mark.xfail
 def test_disallow_unknown_css():
     with pytest.raises(naucse.sanitize.DisallowedStyle):
         sanitize_html("""
             <div class='test'>
-                <span style='color: red'>Text</span>
+                <span style='position: absolute; top: 0;'>Text</span>
             </div>
         """)
 
