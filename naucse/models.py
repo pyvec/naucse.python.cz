@@ -316,10 +316,23 @@ class DictField(Field):
         }
 
 
+def _set_prev_next(sequence, prev_next_attrs):
+    if prev_next_attrs:
+        sequence = list(sequence)
+        prev_attr, next_attr = prev_next_attrs
+        for prev, now, next in zip(
+            [None] + sequence,
+            sequence,
+            sequence[1:] + [None],
+        ):
+            setattr(now, prev_attr, prev)
+            setattr(now, next_attr, next)
+
 class ListField(Field):
-    def __init__(self, item_type, **kwargs):
+    def __init__(self, item_type, *, prev_next_attrs=None, **kwargs):
         super().__init__(**kwargs)
         self.item_type = item_type
+        self.prev_next_attrs = prev_next_attrs
 
     def get_schema(self, *, is_input):
         return {
@@ -329,7 +342,9 @@ class ListField(Field):
         }
 
     def convert(self, instance, data, value):
-        return [self.item_type.load(d, parent=instance) for d in value]
+        result = [self.item_type.load(d, parent=instance) for d in value]
+        _set_prev_next(result, self.prev_next_attrs)
+        return result
 
 
 class StringListField(Field):
@@ -354,11 +369,15 @@ class HTMLListField(StringListField):
 
 
 class ListDictField(Field):
-    def __init__(self, item_type, *, key_attr, index_key, **kwargs):
+    def __init__(
+        self, item_type, *, key_attr, index_key, prev_next_attrs=None,
+        **kwargs,
+    ):
         super().__init__(**kwargs)
         self.item_type = item_type
         self.key_attr = key_attr
         self.index_key = index_key
+        self.prev_next_attrs = prev_next_attrs
 
     def get_schema(self, *, is_input):
         return {
@@ -373,6 +392,7 @@ class ListDictField(Field):
             item_data[self.index_key] = idx
             item = self.item_type.load(item_data, parent=instance)
             result[getattr(item, self.key_attr)] = item
+        _set_prev_next(result.values(), self.prev_next_attrs)
         return result
 
     def unconvert(self, value):
@@ -514,7 +534,6 @@ class Page(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(doc='Machine-friendly identifier')
 
-    # XXX: License object?
     license = LicenseField(
         doc=textwrap.dedent('''
             Identifier of the licence under which content is available.
@@ -636,7 +655,7 @@ class Session(Model):
                       doc='''
                         Date when this session is taught.
                         Missing for self-study materials.''')
-    materials = ListField(Material)
+    materials = ListField(Material, prev_next_attrs=('prev', 'next'))
     start_time = DateTimeField(
         optional=True,
         construct=_construct_time('start'),
@@ -668,7 +687,8 @@ class Course(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(optional=True, doc='Machine-friendly identifier')
     subtitle = StringField(optional=True, doc='Human-readable title')
-    sessions = ListDictField(Session, key_attr='slug', index_key='index')
+    sessions = ListDictField(Session, key_attr='slug', index_key='index',
+                             prev_next_attrs=('prev', 'next'))
     vars = Field(factory=dict)
     start_date = DateField(
         construct=lambda instance, data: _min_or_none(getattr(s, 'date', None) for s in instance.sessions.values()),
