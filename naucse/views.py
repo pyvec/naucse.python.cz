@@ -17,7 +17,7 @@ from werkzeug.local import LocalProxy
 
 from naucse import models
 from naucse.freezer import temporary_url_for_logger, record_url
-from naucse.models import allowed_elements_parser
+from naucse.sanitize import sanitize_html, DisallowedHTML
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.urlconverters import register_url_converters
 from naucse.utils import links
@@ -28,7 +28,6 @@ from naucse.utils.views import get_recent_runs, list_months
 from naucse.utils.views import does_course_return_info
 from naucse.utils.views import raise_errors_from_forks
 from naucse.utils.views import page_content_cache_key, get_edit_info
-from naucse.validation import DisallowedStyle, DisallowedElement, InvalidHTML
 
 # so it can be mocked
 import naucse.utils.views
@@ -39,8 +38,10 @@ logger = logging.getLogger("naucse")
 logger.setLevel(logging.DEBUG)
 
 setup_jinja_env(app.jinja_env)
-POSSIBLE_FORK_EXCEPTIONS = (PullError, BuildError, DisallowedStyle, DisallowedElement, FileNotFoundError,
-                            RequirementsMismatch, InvalidHTML, InvalidInfo)
+POSSIBLE_FORK_EXCEPTIONS = (
+    PullError, BuildError, DisallowedHTML, FileNotFoundError,
+    RequirementsMismatch, InvalidInfo,
+)
 
 _cached_model = None
 
@@ -333,7 +334,7 @@ def course(course):
         }
     else:
         content = course_content(course)
-        allowed_elements_parser.reset_and_feed(content)
+        content = sanitize_html(content)
 
         kwargs = {
             "course_content": content,
@@ -636,7 +637,7 @@ def course_page(course, lesson, page, solution=None):
             lesson, page, solution, course=course, lesson_url=lesson_url, subpage_url=subpage_url, static_url=static_url
         )
         content = content["content"]
-        allowed_elements_parser.reset_and_feed(content)
+        content = sanitize_html(content)
         title = '{}: {}'.format(course.title, page.title)
 
         kwargs["edit_info"] = get_edit_info(page.edit_path)
@@ -677,7 +678,7 @@ def lesson(lesson, page, solution=None):
                            static_url=static_url)
 
     content = content["content"]
-    allowed_elements_parser.reset_and_feed(content)
+    content = sanitize_html(content)
 
     kwargs = {}
     if solution is not None:
@@ -778,7 +779,7 @@ def session_coverpage(course, session, coverpage):
         session = course.sessions.get(session)
 
         content = session_coverpage_content(course, session, coverpage)
-        allowed_elements_parser.reset_and_feed(content)
+        content = sanitize_html(content)
 
         kwargs = {
             "course": course,
@@ -843,7 +844,7 @@ def course_calendar(course):
             abort(404)
 
         content = course_calendar_content(course)
-        allowed_elements_parser.reset_and_feed(content)
+        content = sanitize_html(content)
 
         kwargs = {
             "course": course,
