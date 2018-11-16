@@ -694,6 +694,9 @@ class Course(Model):
         default={},
         doc='Variables for rendering a page of content.')
 
+    # XXX: Are "canonical courses" useful?
+    canonical = False
+
     # XXX: is this subclassing necessary?
     @field(optional=True)
     class default_time(Field):
@@ -776,7 +779,7 @@ class Root(Model):
             if (course_path / 'info.yml').is_file():
                 slug = 'courses/' + course_path.name
                 course = Course.load_local(self, slug)
-                assert course, course
+                course.canonical = True
                 self.courses[slug] = course
 
         for year_path in sorted((path / 'runs').iterdir()):
