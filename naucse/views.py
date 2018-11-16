@@ -228,6 +228,7 @@ def page(material, page_slug='index', solution=None):
         session=page.material.session,
         course=page.material.session.course,
         canonical_url=canonical_url,
+        page_attribution=page.attribution,
         **kwargs
     )
 

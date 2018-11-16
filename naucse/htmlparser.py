@@ -123,17 +123,23 @@ def sanitize_element(element, *, url_for=None):
         sanitize_element(child, url_for=url_for)
 
 
+def sanitize_fragment(fragment, *, url_for=None):
+    if isinstance(fragment, str):
+        return Markup.escape(fragment)
+    else:
+        sanitize_element(fragment, url_for=url_for)
+        return Markup(lxml.etree.tounicode(fragment, method='html'))
+
+
 def sanitize_html(text, *, url_for=None):
     """Converts untrusted HTML to a naucse-specific form.
 
     Raises exceptions for potentially dangerous content.
     """
 
-    fragments = lxml.html.fragments_fromstring(text)
+    fragments = [
+        sanitize_fragment(fragment, url_for=url_for)
+        for fragment in lxml.html.fragments_fromstring(text)
+    ]
 
-    for fragment in fragments:
-        sanitize_element(fragment, url_for=url_for)
-
-    return Markup().join(
-        Markup(lxml.etree.tounicode(f, method='html')) for f in fragments
-    )
+    return Markup().join(fragments)

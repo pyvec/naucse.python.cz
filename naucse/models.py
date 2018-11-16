@@ -320,6 +320,16 @@ class StringListField(Field):
         }
 
 
+class HTMLListField(StringListField):
+    def convert(self, instance, data, value):
+        return [sanitize_html(d) for d in value]
+
+    def get_schema(self, *, is_input):
+        schema = super().get_schema(is_input=is_input)
+        schema['items']['format'] = 'html-inline-fragment'
+        return schema
+
+
 class ListDictField(Field):
     def __init__(self, item_type, *, key_attr, index_key, **kwargs):
         super().__init__(**kwargs)
@@ -452,7 +462,7 @@ class Page(Model):
             Note that Naucse supports only a limited set of licences.''')
     )
 
-    attribution = StringListField(doc='Authorship information')
+    attribution = HTMLListField(doc='Authorship information')
 
     license_code = StringField(
         optional=True,

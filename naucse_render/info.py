@@ -12,6 +12,7 @@ import textwrap
 import jsonschema
 
 from .load import read_yaml
+from .markdown import convert_markdown
 
 
 API_VERSION = 1
@@ -21,6 +22,10 @@ def to_list(value):
     if isinstance(value, str):
         return [value]
     return value
+
+
+def to_html_list(value, inline=False):
+    return [convert_markdown(item, inline=inline) for item in to_list(value)]
 
 
 def encode_dates(value):
@@ -113,7 +118,7 @@ def update_lesson(material, lesson_slug, vars):
         info = {**lesson_info, **page_info}
         page = {
             'title': info['title'],
-            'attribution': to_list(info['attribution']),
+            'attribution': to_html_list(info['attribution'], inline=True),
             'license': info['license'],
             'slug': slug,
             'render_call': {
