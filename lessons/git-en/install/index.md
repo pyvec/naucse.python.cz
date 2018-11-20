@@ -104,7 +104,7 @@ by typing the configuration commands again.
 
 > [note]
 > If you are afraid of spam, do not worry.
-> You e-mail address can be viewed only by people who download the project
+> Your e-mail address can be viewed only by people who download the project
 > to which you contributed.
 > Spammers mostly focus on less technically capable people than Git users. :)
 
