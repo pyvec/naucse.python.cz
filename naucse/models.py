@@ -7,7 +7,7 @@ import dateutil.tz
 import jsonschema
 import yaml
 
-from naucse.edit_info import get_local_edit_info, get_edit_info
+from naucse.edit_info import get_local_repo_info, get_repo_info
 from naucse.htmlparser import sanitize_html
 import naucse_render
 
@@ -684,6 +684,10 @@ def _min_or_none(sequence):
 
 
 class Course(Model):
+    def __init__(self, *args, repo_info, **kwargs):
+        self.repo_info = repo_info
+        super().__init__(*args, **kwargs)
+
     title = StringField(doc='Human-readable title')
     slug = StringField(optional=True, doc='Machine-friendly identifier')
     subtitle = StringField(optional=True, doc='Human-readable title')
@@ -730,12 +734,11 @@ class Course(Model):
             }
 
     @classmethod
-    def load_local(cls, parent, slug):
+    def load_local(cls, parent, slug, *, repo_info):
         data = naucse_render.get_course(slug, version=1)
         jsonschema.validate(data, get_schema(cls, is_input=True))
-        result = cls.load(data, parent=parent)
+        result = cls.load(data, parent=parent, repo_info=repo_info)
         result.slug = slug
-        result.base_edit_info = parent.edit_info
         return result
 
     @property
@@ -763,7 +766,8 @@ class Course(Model):
         raise LookupError(slug)
 
     def get_edit_info(self):
-        return self.base_edit_info / self.source_file
+        if self.source_file is not None:
+            return self.repo_info.get_edit_info(self.source_file)
 
 
 class RunYear(Model):
@@ -800,12 +804,14 @@ class Root(Model):
 
     def load_local(self, path):
         self.licenses = self.load_licenses(path / 'licenses')
-        self.edit_info = get_local_edit_info(path)
+        self.repo_info = get_local_repo_info(path)
 
         for course_path in (path / 'courses').iterdir():
             if (course_path / 'info.yml').is_file():
                 slug = 'courses/' + course_path.name
-                course = Course.load_local(self, slug)
+                course = Course.load_local(
+                    self, slug, repo_info=self.repo_info,
+                )
                 course.canonical = True
                 self.courses[slug] = course
 
@@ -813,17 +819,22 @@ class Root(Model):
             if year_path.is_dir():
                 year = int(year_path.name)
                 run_year = RunYear(year=year, parent=self)
-                run_year.edit_info = get_local_edit_info(year_path)
                 self.run_years[int(year_path.name)] = run_year
                 for course_path in year_path.iterdir():
                     if (course_path / 'info.yml').is_file():
                         slug = f'{year_path.name}/{course_path.name}'
-                        course = Course.load_local(self, slug)
+                        course = Course.load_local(
+                            self, slug, repo_info=self.repo_info,
+                        )
                         run_year.runs[slug] = course
 
-        self.courses['lessons'] = Course.load_local(self, 'lessons')
+        self.courses['lessons'] = Course.load_local(
+            self, 'lessons',
+            repo_info=self.repo_info,
+        )
 
-        self.runs_edit_info = get_local_edit_info(path / 'runs')
+        self.edit_info = self.repo_info.get_edit_info('')
+        self.runs_edit_info = self.repo_info.get_edit_info('runs')
 
     def load_licenses(self, path):
         licenses = {}
