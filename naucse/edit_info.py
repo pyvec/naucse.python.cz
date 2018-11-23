@@ -90,7 +90,7 @@ def get_local_repo_info(path='.'):
             branch = os.environ['TRAVIS_BRANCH']
         if not repo_slug:
             return None
-        return GithubEditInfo(*repo_slug.split('/', 1), branch)
+        return GithubRepoInfo(*repo_slug.split('/', 1), branch)
 
     # Otherwise, fake it!
     assumed_url = os.environ.get('NAUCSE_MAIN_REPO_URL')
