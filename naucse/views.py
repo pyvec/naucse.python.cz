@@ -355,6 +355,16 @@ def course(course):
         abort(404)
 
 
+@app.route('/<course:course>/static/<path:filename>')
+def course_static(course, filename):
+    if course.is_link():  # is static file from a link?
+        naucse.utils.views.forks_raise_if_disabled()
+        return send_from_directory(*course.course_static(filename))
+    else:
+        directory = course.path / "static"
+        return send_from_directory(directory, filename)
+
+
 def get_page(course, lesson, page):
     for session in course.sessions.values():
         for material in session.materials:

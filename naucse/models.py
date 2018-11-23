@@ -665,6 +665,12 @@ class CourseLink(CourseMixin, Model):
 
         return filename.parent, filename.name
 
+    def course_static(self, path):
+        filename = arca.static_filename(self.repo, self.branch, Path("runs") / self.slug / "static" / path,
+                                        reference=Path("."), depth=None).resolve()
+
+        return filename.parent, filename.name
+
     def get_footer_links(self, lesson_slug, page, **kwargs):
         """Return links to previous page, current session and the next page.
 
