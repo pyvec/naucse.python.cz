@@ -49,6 +49,9 @@ def model():
                     'course', course=c, **kw),
                 models.Session: lambda s, **kw: url_for(
                     'session', course=s.course, session_slug=s.slug, **kw),
+                models.SessionPage: lambda sp, **kw: url_for(
+                    'session', course=sp.course, session_slug=sp.session.slug,
+                    page=sp.slug, **kw),
                 models.Root: lambda r, **kw: url_for('index', **kw)
             },
         },
@@ -170,9 +173,9 @@ def course(course, year=None):
     )
 
 
-@app.route('/<course:course>/sessions/<session_slug>/', defaults={'coverpage': 'front'})
-@app.route('/<course:course>/sessions/<session_slug>/<coverpage>/')
-def session(course, session_slug, coverpage):
+@app.route('/<course:course>/sessions/<session_slug>/', defaults={'page': 'front'})
+@app.route('/<course:course>/sessions/<session_slug>/<page>/')
+def session(course, session_slug, page):
     session = course.sessions[session_slug]
 
     kwargs = {

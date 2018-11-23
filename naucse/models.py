@@ -654,6 +654,16 @@ def _construct_time(which):
     return _construct
 
 
+class SessionPage(Model):
+    slug = StringField(doc='Machine-friendly identifier')
+
+    session = parent_property
+
+    @property
+    def course(self):
+        return self.session.course
+
+
 class Session(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(doc='Machine-friendly identifier')
@@ -681,6 +691,13 @@ class Session(Model):
     def get_material(self, slug):
         print(slug)
         return self._materials_by_slug[slug]
+
+    @reify
+    def pages(self):
+        return {
+            'front': SessionPage.load({'slug': 'front'}, parent=self),
+            'back': SessionPage.load({'slug': 'back'}, parent=self),
+        }
 
 
 def _max_or_none(sequence):
