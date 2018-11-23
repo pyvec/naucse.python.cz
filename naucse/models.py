@@ -7,7 +7,7 @@ import dateutil.tz
 import jsonschema
 import yaml
 
-from naucse.edit_info import get_local_edit_info
+from naucse.edit_info import get_local_edit_info, get_edit_info
 from naucse.htmlparser import sanitize_html
 import naucse_render
 
@@ -714,6 +714,8 @@ class Course(Model):
         default={},
         doc='Variables for rendering a page of content.')
 
+    source_file = StringField(optional=True)
+
     # XXX: Are "canonical courses" useful?
     canonical = False
 
@@ -733,6 +735,7 @@ class Course(Model):
         jsonschema.validate(data, get_schema(cls, is_input=True))
         result = cls.load(data, parent=parent)
         result.slug = slug
+        result.base_edit_info = parent.edit_info
         return result
 
     @property
@@ -758,6 +761,9 @@ class Course(Model):
                 if mat_slug == slug:
                     return material
         raise LookupError(slug)
+
+    def get_edit_info(self):
+        return self.base_edit_info / self.source_file
 
 
 class RunYear(Model):
@@ -794,6 +800,7 @@ class Root(Model):
 
     def load_local(self, path):
         self.licenses = self.load_licenses(path / 'licenses')
+        self.edit_info = get_local_edit_info(path)
 
         for course_path in (path / 'courses').iterdir():
             if (course_path / 'info.yml').is_file():
@@ -816,7 +823,6 @@ class Root(Model):
 
         self.courses['lessons'] = Course.load_local(self, 'lessons')
 
-        self.edit_info = get_local_edit_info(path)
         self.runs_edit_info = get_local_edit_info(path / 'runs')
 
     def load_licenses(self, path):

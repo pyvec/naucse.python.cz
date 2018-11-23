@@ -11,7 +11,7 @@ def _read_yaml(path):
         return yaml.safe_load(f)
 
 
-def read_yaml(*path_parts):
+def read_yaml(*path_parts, source_key=None):
     base_path = Path('.').resolve()
 
     yaml_path = base_path.joinpath(*path_parts).resolve()
@@ -20,4 +20,7 @@ def read_yaml(*path_parts):
     if base_path not in yaml_path.parents:
         raise ValueError(f'Invalid course path')
 
-    return dict(_read_yaml(yaml_path))
+    result = dict(_read_yaml(yaml_path))
+    if source_key:
+        result[source_key] = '/'.join(path_parts)
+    return result

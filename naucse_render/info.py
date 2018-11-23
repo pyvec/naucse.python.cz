@@ -53,11 +53,13 @@ def get_course(course_slug: str, *, version: int) -> dict:
     else:
         parts = course_slug.split('/')
         if len(parts) == 1 or (len(parts) == 2 and parts[0] == 'courses'):
-            info = read_yaml('courses', parts[-1], 'info.yml')
+            path_parts = 'courses', parts[-1], 'info.yml'
         elif len(parts) == 2:
-            info = read_yaml('runs', *parts, 'info.yml')
+            path_parts = 'runs', *parts, 'info.yml'
         else:
             raise ValueError(f'Invalid course slug')
+
+        info = read_yaml(*path_parts, source_key='source_file')
 
     info['api_version'] = 1, 1
 
@@ -191,6 +193,7 @@ def get_canonical_lessons_info():
             Jednotlivé kurzy jsou poskládané z těchto materiálů
             (a doplněné jinými).
         """),
+        'source_file': '/lessons/',
         'sessions': [
             {
                 'title': f'`{category_path.name}`',

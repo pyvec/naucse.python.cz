@@ -13,6 +13,10 @@ class GithubEditInfo:
     icon='github'
 
     def __init__(self, org, repo, branch, path='/'):
+        self.org = org
+        self.repo = repo
+        self.branch = branch
+        self.path = path
         if branch == 'master' and path in ('', '/', '.'):
             self.url = (f"https://github.com/{org}/{repo}")
         else:
@@ -25,6 +29,9 @@ class GithubEditInfo:
 
     def get_edit_url(self, path):
         return f"{self.base_url}/{path}"
+
+    def __truediv__(self, path):
+        return type(self)(self.org, self.repo, self.branch, self.path + path)
 
 
 _kinds = [

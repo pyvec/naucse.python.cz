@@ -165,6 +165,7 @@ def course(course, year=None):
         "course.html",
         course=course,
         recent_runs=[], # XXX
+        edit_info=course.get_edit_info(),
         **kwargs
     )
 
