@@ -13,10 +13,11 @@ def lesson_url(lesson_name, *, page='index'):
         return f'naucse:lesson?lesson={lesson_name}&page={page}'
 
 
-def render_page(lesson_slug, page):
+def render_page(lesson_slug, page, vars=None):
     lesson_directory = Path('lessons', lesson_slug)
     env = environment.overlay(loader=jinja2.FileSystemLoader(str(lesson_directory)))
-    vars = {}
+    if vars is None:
+        vars = {}
     info = read_yaml(lesson_directory / 'info.yml')
     info = {**info, **info.get('pages', {}).get(page, {})}
 
@@ -30,7 +31,8 @@ def render_page(lesson_slug, page):
     text = env.get_template(page_name).render(
         lesson_url=lesson_url,
         subpage_url=lambda page: lesson_url(lesson_slug, page=page),
-        **{'$solutions': solutions, **vars_functions(vars)},
+        **{'$solutions': solutions},
+        **vars_functions(vars),
     )
 
     if info['style'] == 'md':

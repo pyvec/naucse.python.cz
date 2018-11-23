@@ -533,6 +533,7 @@ class Solution(Model):
 class Page(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(doc='Machine-friendly identifier')
+    vars = Field(factory=dict)
 
     license = LicenseField(
         doc=textwrap.dedent('''

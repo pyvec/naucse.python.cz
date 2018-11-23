@@ -114,7 +114,7 @@ def update_lesson(material, lesson_slug, vars):
     pages = lesson_info.pop('subpages', {})
     pages.setdefault('index', {})
 
-    material_vars = material.pop('vars', None)
+    material_vars = material.pop('vars', {})
 
     for slug, page_info in pages.items():
         info = {**lesson_info, **page_info}
@@ -131,7 +131,9 @@ def update_lesson(material, lesson_slug, vars):
         if 'license_code' in info:
             page['license_code'] = info['license_code']
         if material_vars:
-            page['vars'] = {**page.get('vars', {}), **material_vars}
+            page['vars'] = material_vars
+        page_vars = {**vars, **page.get('vars', {}), **material_vars}
+        page['render_call']['kwargs'] = {'vars': page_vars}
         pages[page['slug']] = page
 
     material['pages'] = pages
