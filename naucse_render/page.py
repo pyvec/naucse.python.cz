@@ -41,4 +41,5 @@ def render_page(lesson_slug, page):
     return {
         'content': text,
         'solutions': solutions,
+        'source_file': path,
     }

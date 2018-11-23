@@ -553,6 +553,8 @@ class Page(Model):
 
     material = parent_property
 
+    source_file = StringField(optional=True)
+
     @property
     def session(self):
         return self.material.session
@@ -597,6 +599,11 @@ class Page(Model):
                 'solution': solution_url,
             }
         )
+
+    def get_edit_info(self):
+        source_file = self._rendered_content['source_file']
+        if source_file is not None:
+            return self.course.repo_info.get_edit_info(source_file)
 
 
 class Material(Model):

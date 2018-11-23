@@ -204,8 +204,6 @@ def page(material, page_slug='index', solution=None):
     #lesson_url, subpage_url, static_url = relative_url_functions(request.path, course, lesson)
     #page, session, prv, nxt = get_page(course, lesson, page)
 
-    #kwargs["edit_info"] = get_edit_info(page.edit_path)
-
     # Get canonical URL -- i.e., a lesson with the same slug
     # XXX: This could be made much more fancy
     try:
@@ -231,6 +229,7 @@ def page(material, page_slug='index', solution=None):
         course=page.material.session.course,
         canonical_url=canonical_url,
         page_attribution=page.attribution,
+        edit_info=page.get_edit_info(),
         **kwargs
     )
 
