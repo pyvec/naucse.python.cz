@@ -13,6 +13,8 @@ before_script:  # encrypted variables aren't accessible in PRs
 - 'if [ -n "$DOCKER_HUB_PASSWORD" ]; then docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD"; fi'
 - 'if [ -z "$DOCKER_HUB_PASSWORD" ]; then export ARCA_BACKEND_REGISTRY_PULL_ONLY=true; fi'
 script:
+- export NAUCSE_MAIN_REPO_URL=https://github.com/$TRAVIS_REPO_SLUG
+- export NAUCSE_MAIN_REPO_BRANCH=$TRAVIS_BRANCH
 - pipenv graph
 - pipenv run test
 - pipenv run naucse list-courses  # don't remove, there might be timeouts otherwise, see naucse/cli.py for details

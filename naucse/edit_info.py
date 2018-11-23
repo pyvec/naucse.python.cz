@@ -80,18 +80,6 @@ def get_local_repo_info(path='.'):
     """Return the slug of the repository based on the current branch."""
     path = Path(path)
 
-    # Travis CI checks out specific GitHub commit; there isn't an active branch
-    if os.environ.get('TRAVIS'):
-        repo_slug = os.environ.get('TRAVIS_PULL_REQUEST_SLUG')
-        if repo_slug:
-            branch = os.environ['TRAVIS_PULL_REQUEST_BRANCH']
-        else:
-            repo_slug = os.environ['TRAVIS_REPO_SLUG']
-            branch = os.environ['TRAVIS_BRANCH']
-        if not repo_slug:
-            return None
-        return GithubRepoInfo(*repo_slug.split('/', 1), branch)
-
     # Otherwise, fake it!
     assumed_url = os.environ.get('NAUCSE_MAIN_REPO_URL')
     if assumed_url:
