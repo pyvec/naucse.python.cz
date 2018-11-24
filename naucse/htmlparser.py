@@ -1,4 +1,4 @@
-from urllib.parse import urlparse, urlunparse, parse_qsl
+from urllib.parse import urlsplit, urlunsplit, parse_qsl
 import re
 
 from jinja2 import Markup
@@ -57,11 +57,11 @@ PER_TAG_ATTRIBUTES = {
 }
 
 def convert_link(attr_name, value, *, url_for=None):
-    url = urlparse(value)
+    url = urlsplit(value)
     if url.scheme in ('http', 'https'):
         if url.netloc == '':
             raise DisallowedLink(value)
-        return urlunparse(url)
+        return urlunsplit(url)
     elif url.scheme == '':
         if url.netloc == '':
             # Relative URL
@@ -70,13 +70,13 @@ def convert_link(attr_name, value, *, url_for=None):
             elif url.path != '':
                 # Documents should not assume that naucse has any particular
                 # URL structure, so links to other documents aren't allowed.
-                pass# XXX: raise DisallowedLink(value)
+                raise DisallowedLink(value)
             if url.query:
                 # Query arguments are ignored on a static site; disallow them
                 raise DisallowedLink(value)
-            return urlunparse(url)
+            return urlunsplit(url)
         else:
-            return urlunparse(url)
+            return urlunsplit(url)
     if url.scheme == 'naucse':
         if not url_for:
             raise DisallowedURLScheme(url.scheme)
@@ -84,10 +84,11 @@ def convert_link(attr_name, value, *, url_for=None):
         for name in query:
             if not re.match(r'^[-_a-z]+$', name):
                 raise DisallowedLink(value)
+        new_url = url_for[url.path](**query)
         if url.fragment:
-            # XXX: Enable fragments
-            pass
-        return url_for[url.path](**query)
+            scheme, netloc, path, query, fragment = urlsplit(new_url)
+            new_url = urlunsplit((scheme, netloc, path, query, url.fragment))
+        return new_url
     else:
         raise DisallowedURLScheme(url.scheme)
 
