@@ -79,6 +79,7 @@ def get_course(course_slug: str, *, version: int) -> dict:
             d['sessions'] = d.pop('plan')
 
     for session in info['sessions']:
+        session['source_file'] = info['source_file']
         base = session.pop('base', None)
         if base:
             for base_session in base_course['sessions']:

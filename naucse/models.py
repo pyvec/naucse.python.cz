@@ -688,6 +688,16 @@ class Material(Model):
         raise TypeError(self._parent)
 
 
+class SessionPage(Model):
+    slug = StringField(doc='Machine-friendly identifier')
+
+    session = parent_property
+
+    @property
+    def course(self):
+        return self.session.course
+
+
 def _construct_time(which):
     def _construct(session, data):
         try:
@@ -709,16 +719,6 @@ def _construct_time(which):
     return _construct
 
 
-class SessionPage(Model):
-    slug = StringField(doc='Machine-friendly identifier')
-
-    session = parent_property
-
-    @property
-    def course(self):
-        return self.session.course
-
-
 class Session(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(doc='Machine-friendly identifier')
@@ -736,6 +736,7 @@ class Session(Model):
         optional=True,
         construct=_construct_time('end'),
         doc='Times of day when the session ends.')
+    source_file = StringField(optional=True)
 
     course = parent_property
 
@@ -756,6 +757,10 @@ class Session(Model):
     def freeze(self):
         for page in self.pages.values():
             page.freeze()
+
+    def get_edit_info(self):
+        if self.source_file is not None:
+            return self.course.repo_info.get_edit_info(self.source_file)
 
 
 def _max_or_none(sequence):

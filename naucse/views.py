@@ -179,18 +179,14 @@ def course(course, year=None):
 def session(course, session_slug, page):
     session = course.sessions[session_slug]
 
-    kwargs = {
-    #    "course_content": content,
-    }
-
     #recent_runs = get_recent_runs(course)
 
     return render_template(
         "coverpage.html",
-        course=course,
         session=session,
+        course=session.course,
+        edit_info=session.get_edit_info(),
         content=None, # XXX
-        **kwargs
     )
 
 

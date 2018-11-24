@@ -3,7 +3,7 @@
 {% import "_navigation_macros.html" as nav %}
 
 {% block breadcrumbs %}
-> <a href="{{ url_for('course', course=course) }}">{{ course.title }}</a>
+> <a href="{{ url_for('course', course=session.course) }}">{{ session.course.title }}</a>
 > {{ session.title }}
 {% endblock %}
 
@@ -15,9 +15,9 @@
             Lekce: {{ session.title }}
         {% endif %}
     </h1>
-
-    {% if course.place is defined and session.start_time is defined %}
-        <div class="details">{{ course.place }},
+{{ session.course.place is defined }}--{{ session.start_time is defined }}
+    {% if session.course.place is defined and session.start_time is defined %}
+        <div class="details">{{ session.course.place }},
             {{ session.start_time | format_time }}–{{ session.end_time | format_time }}</div>
     {% endif %}
 
@@ -42,9 +42,9 @@
 
     {% call nav.prevnext() %}
         {% if session.prev is defined and session.prev != None %}
-            {{ nav.prev(url_for('session', course=course, session_slug=session.slug), session.title) }}
+            {{ nav.prev(session.prev.get_url(), session.prev.title) }}
         {% endif %}
-        {{ nav.up(url_for('course', course=course), course.title) }}
-        {{ nav.next(url_for('session', course=course, session_slug=session.slug, coverpage='back'), 'Závěr lekce') }}
+        {{ nav.up(session.course.get_url(), session.course.title) }}
+        {{ nav.next(session.pages['back'].get_url(), 'Závěr lekce') }}
     {% endcall %}
 {% endblock %}
