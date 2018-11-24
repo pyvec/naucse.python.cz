@@ -4,6 +4,7 @@ import re
 from jinja2 import Markup
 import lxml.html
 import lxml.etree
+import cssutils
 
 class DisallowedElement(Exception):
     pass
@@ -94,6 +95,23 @@ def convert_link(attr_name, value, *, url_for=None):
 
     # Should not happen
     raise DisallowedLink(value)
+
+
+def sanitize_stylesheet(css):
+    """Return ``css`` limited just to the ``.lesson-content`` element.
+    This doesn't protect against malicious input.
+    """
+    parser = cssutils.CSSParser(fetcher=lambda url: None, validate=True)
+    parser = cssutils.CSSParser(raiseExceptions=True)
+    parsed = parser.parseString(css)
+
+    for rule in parsed.cssRules:
+        for selector in rule.selectorList:
+            # the space is important - there's a difference between for example
+            # ``.lesson-content:hover`` and ``.lesson-content :hover``
+            selector.selectorText = ".lesson-content " + selector.selectorText
+
+    return parsed.cssText.decode("utf-8")
 
 
 def sanitize_element(element, *, url_for=None):

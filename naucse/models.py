@@ -9,7 +9,7 @@ import jsonschema
 import yaml
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
-from naucse.sanitize import sanitize_html
+from naucse.sanitize import sanitize_html, sanitize_stylesheet
 import naucse_render
 
 # XXX: Different timezones?
@@ -609,6 +609,11 @@ class Page(Model):
             solutions.append(solution)
 
         return solutions
+
+    @reify
+    def css(self):
+        css = self._rendered_content.get('css', '')
+        return sanitize_stylesheet(css)
 
     def sanitize_content(self, text):
         def lesson_url(*, lesson, page='index', **kw):

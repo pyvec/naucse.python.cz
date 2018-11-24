@@ -81,8 +81,11 @@ def render_page(lesson_slug, page, vars=None):
     else:
         text = ''
 
-    return {
+    result = {
         'content': text,
         'solutions': solutions,
         'source_file': path,
     }
+    if 'css' in info:
+        result['css'] = info['css']
+    return result
