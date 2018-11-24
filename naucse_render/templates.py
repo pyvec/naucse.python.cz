@@ -24,8 +24,9 @@ def template_function(name=None):
 
 
 @template_filter()
-def markdown(text, inline=False):
-    return convert_markdown(text, inline=inline)
+@jinja2.contextfilter
+def markdown(ctx, text, inline=False):
+    return ctx['$markdown'](text, inline=inline)
 
 
 @template_filter()
@@ -62,7 +63,7 @@ def solution(ctx, text):
 
     solution_url = f'naucse:solution?solution={solution_index}'
 
-    solution = convert_markdown(text)
+    solution = ctx['$markdown'](text)
     solutions.append(solution)
 
     return jinja2.Markup(textwrap.dedent("""

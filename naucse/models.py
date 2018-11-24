@@ -527,8 +527,12 @@ class Solution(Model):
 
     page = parent_property
 
+    @property
+    def course(self):
+        return self.page.course
+
     def get_content(self):
-        return self.content
+        return self.page.sanitize_content(self.content)
 
 
 class StaticFile(Model):
@@ -591,16 +595,14 @@ class Page(Model):
         solutions = []
         for i, content in enumerate(self._rendered_content.get('solutions', ())):
             solution = Solution.load(
-                {'content': sanitize_html(content), 'index': i},
+                {'content': content, 'index': i},
                 parent=self
             )
             solutions.append(solution)
 
         return solutions
 
-    def get_content(self):
-        result = self._rendered_content['content']
-
+    def sanitize_content(self, text):
         def lesson_url(*, lesson, page='index', **kw):
             lesson = self.course.get_material(lesson)
             page = lesson.pages[page]
@@ -615,13 +617,16 @@ class Page(Model):
             return self.material.static_files[filename].get_url(**kw)
 
         return sanitize_html(
-            result,
+            text,
             url_for={
                 'lesson': lesson_url,
                 'solution': solution_url,
                 'static': static_url,
             }
         )
+
+    def get_content(self):
+        return self.sanitize_content(self._rendered_content['content'])
 
     def get_edit_info(self):
         source_file = self._rendered_content['source_file']
