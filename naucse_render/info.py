@@ -63,7 +63,7 @@ def get_course(course_slug: str, *, version: int) -> dict:
 
     info['api_version'] = 1, 1
 
-    # XXX: Do we need these?
+    # XXX: Set by naucse
     info.pop('meta', None)
     info.pop('canonical', None)
 
@@ -88,24 +88,34 @@ def get_course(course_slug: str, *, version: int) -> dict:
                 raise ValueError(f'Session {session} not found in base course')
             session.update(merge_dict(base_session, session))
         for material in session['materials']:
-            lesson_slug = material.pop('lesson', None)
-            if lesson_slug:
-                update_lesson(material, lesson_slug, vars=info.get('vars', {}))
-                if material.pop('url', None):
-                    raise ValueError(f'Material {material} has URL')
-                material.setdefault('type', 'lesson')
-            else:
-                url = material.pop('url', None)
-                if url:
-                    material['external_url'] = url
-                    material.setdefault('type', 'link')
-                else:
-                    material.setdefault('type', 'special')
+            update_material(material, vars=info.get('vars'))
 
     result = encode_dates(info)
     schema = read_yaml('schema/fork-schema.yml')
     jsonschema.validate(result, schema)
     return result
+
+
+def get_extra_lesson(lesson_slug, vars=None):
+    material = {'lesson': lesson_slug}
+    update_material(material, vars)
+    return material
+
+
+def update_material(material, vars=None):
+    lesson_slug = material.pop('lesson', None)
+    if lesson_slug:
+        update_lesson(material, lesson_slug, vars=vars or {})
+        if material.pop('url', None):
+            raise ValueError(f'Material {material} has URL')
+        material.setdefault('type', 'lesson')
+    else:
+        url = material.pop('url', None)
+        if url:
+            material['external_url'] = url
+            material.setdefault('type', 'link')
+        else:
+            material.setdefault('type', 'special')
 
 
 def update_lesson(material, lesson_slug, vars):

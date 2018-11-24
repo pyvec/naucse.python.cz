@@ -171,7 +171,9 @@ class Model:
         if cls.__doc__:
             retult['description'] == cls.__doc__
         for name, field in cls._naucse__fields.items():
-            result['properties'][field.name] = field.get_schema(is_input=is_input)
+            if field.included_in_schema(is_input=is_input):
+                field_schema = field.get_schema(is_input=is_input)
+                result['properties'][field.name] = field_schema
         return result
 
     def __init_subclass__(cls):
@@ -192,7 +194,7 @@ class Field:
         self, *,
         optional=False, default=NOTHING, factory=None, doc=None,
         convert=None, construct=None, data_key=None, choices=None,
-        input_optional=False,  # XXX
+        input_optional=False, output_only=False,  # XXX
     ):
         if doc:
             self.doc = doc
@@ -209,6 +211,7 @@ class Field:
             self.data_key = data_key
         self.choices = choices
         self.input_optional = input_optional
+        self.output_only = output_only
 
     def __set_name__(self, instance, name):
         self.name = name
@@ -263,6 +266,11 @@ class Field:
         if is_input and self.factory is not None:
             return False
         if is_input and self.input_optional:
+            return False
+        return True
+
+    def included_in_schema(self, *, is_input):
+        if self.output_only and is_input:
             return False
         return True
 
@@ -584,7 +592,7 @@ class Page(Model):
 
     @property
     def course(self):
-        return self.material.session.course
+        return self.material.course
 
     @reify
     def _rendered_content(self):
@@ -633,6 +641,9 @@ class Page(Model):
         if source_file is not None:
             return self.course.repo_info.get_edit_info(source_file)
 
+    def freeze(self):
+        self._rendered_content
+
 
 class Material(Model):
     title = StringField(doc='Human-readable title')
@@ -643,7 +654,13 @@ class Material(Model):
     pages = DictField(Page, optional=True)
     static_files = DictField(StaticFile, optional=True)
 
-    session = parent_property
+    prev = next = None
+
+    @property
+    def session(self):
+        if isinstance(self._parent, Session):
+            return self._parent
+        return None
 
     def get_url(self, url_type='web', **kwargs):
         if url_type != 'web':
@@ -659,7 +676,11 @@ class Material(Model):
 
     @property
     def course(self):
-        return self.session.course
+        if isinstance(self._parent, Session):
+            return self._parent.course
+        if isinstance(self._parent, Course):
+            return self._parent
+        raise TypeError(self._parent)
 
 
 def _construct_time(which):
@@ -727,6 +748,10 @@ class Session(Model):
             'back': SessionPage.load({'slug': 'back'}, parent=self),
         }
 
+    def freeze(self):
+        for page in self.pages.values():
+            page.freeze()
+
 
 def _max_or_none(sequence):
     return max([m for m in sequence if m is not None], default=NOTHING)
@@ -738,6 +763,7 @@ def _min_or_none(sequence):
 class Course(Model):
     def __init__(self, *args, repo_info, **kwargs):
         self.repo_info = repo_info
+        self._frozen = False
         super().__init__(*args, **kwargs)
 
     title = StringField(doc='Human-readable title')
@@ -769,6 +795,7 @@ class Course(Model):
     vars = Field(
         default={},
         doc='Variables for rendering a page of content.')
+    extra_materials = Field(factory=dict, output_only=True)
 
     source_file = StringField(optional=True)
 
@@ -816,7 +843,23 @@ class Course(Model):
                     continue
                 if mat_slug == slug:
                     return material
+        try:
+            return self.extra_materials[slug]
+        except KeyError:
+            pass
+        if not self._frozen:
+            info = naucse_render.get_extra_lesson(slug, vars=self.vars)
+            material = Material.load(info, parent=self)
+            self.extra_materials[slug] = material
+            return material
         raise LookupError(slug)
+
+    def freeze(self):
+        for sessions in self.sessions.values():
+            sessions.freeze()
+        for material in self.extra_materials.values():
+            material.freeze()
+        self._frozen = True
 
     def get_edit_info(self):
         if self.source_file is not None:

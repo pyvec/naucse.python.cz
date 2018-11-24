@@ -60,20 +60,23 @@
 {% endblock license %}
 
 {%- block prev_next %}
-        {%- set mat = page.material %}
+    {%- set mat = page.material %}
+    {%- if mat.prev or mat.session or mat.next %}
 
 
         {% call nav.prevnext() %}
             {% if mat.prev %}
                 {{ nav.prev(mat.prev.get_url(), mat.prev.title) }}
             {% endif %}
-            
+            {% if mat.session %}
                 {{ nav.up(mat.session.get_url(), 'Lekce: ' + mat.session.title) }}
-            
+            {% endif %}
             {% if mat.next %}
                 {{ nav.next(mat.next.get_url(), mat.next.title) }}
-            {% else %}
+            {% elif mat.session %}
                 {{ nav.next(mat.session.pages['back'].get_url(), 'Závěr lekce') }}
             {% endif %}
         {% endcall %}
+
+        {% endif %}
 {%- endblock prev_next %}

@@ -227,7 +227,7 @@ def page(material, page_slug='index', solution=None):
         page=page,
         solution=solution,
         session=page.material.session,
-        course=page.material.session.course,
+        course=page.material.course,
         canonical_url=canonical_url,
         page_attribution=page.attribution,
         edit_info=page.get_edit_info(),
