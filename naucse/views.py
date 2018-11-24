@@ -382,7 +382,7 @@ def get_footer_links(course, session, prv, nxt, lesson_url):
     if prv is not None:
         prev_link = {
             "url": lesson_url(prv.page.lesson, page=prv.page.slug),
-            "title": prv.page.title,
+            "title": prv.title,
         }
 
     session_link = None
@@ -396,7 +396,7 @@ def get_footer_links(course, session, prv, nxt, lesson_url):
     if nxt is not None:
         next_link = {
             "url": lesson_url(nxt.page.lesson, page=nxt.page.slug),
-            "title": nxt.page.title,
+            "title": nxt.title,
         }
     elif session is not None:
         next_link = {
