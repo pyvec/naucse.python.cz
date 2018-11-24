@@ -35,9 +35,15 @@
                 {% if date.month == month %}
                     {% set session = sessions_by_date.get(date, None) %}
                     {% if session %}
+                        {%- set url = url_for(
+                            'session', course=course,
+                            session_slug=session.slug,
+                        ) %}
+                        {%- set title = "#{} – {}".format(
+                            session.index+1, session.title
+                        ) %}
                         <td class="event">
-                            <a href="{{ url_for('session', course=course, session_slug=session.slug) }}"
-                             title="#{{ session.index+1 }} – {{ session.title }}">
+                            <a href="{{ url }}" title="{{ title }}">
                                 <span class="session-number">
                                     {{ date.day }}. {{ date.month }}.
                                 </span>
@@ -53,7 +59,7 @@
                     {% endif %}
                 {% else %}
                     <td class="foreign-month">
-                        &nbsp;
+                        {{ '\N{NO-BREAK SPACE}' }}
                     </td>
                 {% endif %}
                 {% if date.weekday() == 6 %}</tr>{% endif %}
