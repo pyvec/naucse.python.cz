@@ -125,11 +125,6 @@ def vars_functions(vars):
 
 
 @template_function()
-def static(url):
-    return 'static/' + url
-
-
-@template_function()
 def anchor(name):
     return jinja2.Markup('<a id="{}"></a>').format(name)
 

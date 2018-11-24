@@ -3,6 +3,7 @@ from pathlib import Path
 import calendar
 
 from flask import Flask, render_template, jsonify, url_for, Response, abort
+from flask import send_from_directory
 from werkzeug.local import LocalProxy
 import ics
 
@@ -21,7 +22,7 @@ _cached_model = None
 def model():
     """Return the root of the naucse model
 
-    In debug mode (elsa serve), a new model is returned for each requests,
+    In debug mode (elsa serve), a new model is returned for each request,
     so changes are picked up.
 
     In non-debug mode (elsa freeze), a single model is used (and stored in
@@ -52,6 +53,9 @@ def model():
                 models.SessionPage: lambda sp, **kw: url_for(
                     'session', course=sp.course, session_slug=sp.session.slug,
                     page=sp.slug, **kw),
+                models.StaticFile: lambda sf, **kw: url_for(
+                    'page_static', material=sf.material,
+                    filename=sf.filename, **kw),
                 models.Root: lambda r, **kw: url_for('index', **kw)
             },
         },
@@ -155,9 +159,6 @@ def runs(year=None, all=None):
 
 @app.route('/<course:course>/')
 def course(course, year=None):
-    #content = course_content(course)
-    #allowed_elements_parser.reset_and_feed(content)
-
     kwargs = {
     #    "course_content": content,
     }
@@ -204,9 +205,6 @@ def page(material, page_slug='index', solution=None):
 
     kwargs = {}
 
-    #lesson_url, subpage_url, static_url = relative_url_functions(request.path, course, lesson)
-    #page, session, prv, nxt = get_page(course, lesson, page)
-
     # Get canonical URL -- i.e., a lesson with the same slug
     # XXX: This could be made much more fancy
     try:
@@ -235,6 +233,16 @@ def page(material, page_slug='index', solution=None):
         edit_info=page.get_edit_info(),
         **kwargs
     )
+
+
+@app.route('/<material:material>/static/<path:filename>')
+def page_static(material, filename):
+    try:
+        static = material.static_files[filename]
+    except KeyError:
+        raise abort(404)
+
+    return send_from_directory(*static.get_file_info())
 
 
 def list_months(start_date, end_date):

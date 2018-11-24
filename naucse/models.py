@@ -2,6 +2,7 @@ import datetime
 from functools import singledispatch
 import textwrap
 import importlib
+from pathlib import Path
 
 import dateutil.tz
 import jsonschema
@@ -530,7 +531,24 @@ class Solution(Model):
         return self.content
 
 
+class StaticFile(Model):
+    filename = StringField(doc='File name')
+    path = StringField(doc='Full path to the file from the repository root')
+
+    material = parent_property
+
+    @property
+    def course(self):
+        return self.material.course
+
+    def get_file_info(self):
+        base, path = self.course.get_static_file_info(self.path)
+        base = str(Path(base).resolve())
+        return base, path
+
+
 class Page(Model):
+    # XXX: A page should not be allowed to be named "static"
     title = StringField(doc='Human-readable title')
     slug = StringField(doc='Machine-friendly identifier')
     vars = Field(factory=dict)
@@ -593,11 +611,15 @@ class Page(Model):
             # one to get the URL
             return Solution(parent=self, index=solution).get_url(**kw)
 
+        def static_url(*, filename, **kw):
+            return self.material.static_files[filename].get_url(**kw)
+
         return sanitize_html(
             result,
             url_for={
                 'lesson': lesson_url,
                 'solution': solution_url,
+                'static': static_url,
             }
         )
 
@@ -614,6 +636,7 @@ class Material(Model):
     type = StringField(default='page')
     external_url = UrlField(optional=True)
     pages = DictField(Page, optional=True)
+    static_files = DictField(StaticFile, optional=True)
 
     session = parent_property
 
@@ -690,7 +713,6 @@ class Session(Model):
         return {mat.slug: mat for mat in self.materials if mat.slug}
 
     def get_material(self, slug):
-        print(slug)
         return self._materials_by_slug[slug]
 
     @reify
@@ -764,6 +786,7 @@ class Course(Model):
         jsonschema.validate(data, get_schema(cls, is_input=True))
         result = cls.load(data, parent=parent, repo_info=repo_info)
         result.slug = slug
+        result.base_path = '.'
         return result
 
     @property
@@ -793,6 +816,9 @@ class Course(Model):
     def get_edit_info(self):
         if self.source_file is not None:
             return self.repo_info.get_edit_info(self.source_file)
+
+    def get_static_file_info(self, filename):
+        return self.base_path, filename
 
 
 class RunYear(Model):

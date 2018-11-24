@@ -13,6 +13,10 @@ def lesson_url(lesson_name, *, page='index'):
         return f'naucse:lesson?lesson={lesson_name}&page={page}'
 
 
+def static_url(filename):
+    return f'naucse:static?filename={filename}'
+
+
 def render_page(lesson_slug, page, vars=None):
     lesson_directory = Path('lessons', lesson_slug)
     env = environment.overlay(loader=jinja2.FileSystemLoader(str(lesson_directory)))
@@ -31,6 +35,7 @@ def render_page(lesson_slug, page, vars=None):
     text = env.get_template(page_name).render(
         lesson_url=lesson_url,
         subpage_url=lambda page: lesson_url(lesson_slug, page=page),
+        static=static_url,
         **{'$solutions': solutions},
         **vars_functions(vars),
     )

@@ -109,6 +109,7 @@ def get_course(course_slug: str, *, version: int) -> dict:
 
 
 def update_lesson(material, lesson_slug, vars):
+    lesson_path = Path('lessons', lesson_slug)
     lesson_info = read_yaml('lessons', lesson_slug, 'info.yml')
 
     pages = lesson_info.pop('subpages', {})
@@ -138,6 +139,7 @@ def update_lesson(material, lesson_slug, vars):
 
     material['pages'] = pages
     material['slug'] = lesson_slug
+    material['static_files'] = dict(get_static_files(lesson_path))
     material.setdefault('title', lesson_info['title'])
 
     # XXX: File edit path
@@ -150,6 +152,19 @@ def update_lesson(material, lesson_slug, vars):
     # XXX: end_time
     # XXX: has_irregular_time
     # XXX: prev/next
+
+
+def get_static_files(path):
+    static_path = path / 'static'
+    for file_path in static_path.glob('**/*'):
+        if file_path.is_file():
+            filename = str(file_path.relative_to(static_path))
+            path = str(file_path.relative_to('.'))
+            yield (
+                filename,
+                {'filename': filename, 'path': path},
+            )
+
 
 def merge_dict(base, patch):
     """Recursively merge `patch` into `base`
