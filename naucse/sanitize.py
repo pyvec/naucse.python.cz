@@ -1,38 +1,28 @@
-from xml.dom import SyntaxErr
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlsplit, urlunsplit, parse_qsl
 import re
 
-import cssutils
 from jinja2 import Markup
 import lxml.html
 import lxml.etree
 
-class DisallowedHTML(Exception):
+class DisallowedElement(Exception):
     pass
 
-class DisallowedElement(DisallowedHTML):
+class DisallowedAttribute(DisallowedElement):
     pass
 
-class DisallowedAttribute(DisallowedHTML):
+class DisallowedLink(DisallowedElement):
     pass
 
-class DisallowedURLScheme(DisallowedHTML):
+class DisallowedURLScheme(DisallowedLink):
     pass
-
-class DisallowedStyle(DisallowedHTML):
-    pass
-
-class BadStyleSyntax(DisallowedStyle):
-    pass
-
 
 ALLOWED_ELEMENTS = {
     # functional:
     'a', 'abbr', 'audio', 'img', 'source',
 
     # styling:
-    'big', 'blockquote', 'code', 'font', 'i', 'tt', 'kbd', 'u', 'var',
-    'small', 'em', 'strong', 'sub',
+    'big', 'blockquote', 'code', 'font', 'i', 'tt', 'kbd', 'u', 'var', 'small', 'em', 'strong', 'sub',
 
     # formatting:
     'br', 'div', 'hr', 'p', 'pre', 'span',
@@ -49,13 +39,14 @@ ALLOWED_ELEMENTS = {
     # icons:
     'svg', 'circle', 'path',
 
-    # For <style>, a special check is applied below
+    # A special check is applied in :meth:`handle_data` method
+    # (only ``.dataframe`` styles allowed, generated from notebook converter)
+    'style',
 }
 
 ALLOWED_ATTRIBUTES = {
     'class',
-    'id',
-    'title',
+    'id',   # XXX: validate id's
     'aria-hidden',
 }
 PER_TAG_ATTRIBUTES = {
@@ -63,95 +54,93 @@ PER_TAG_ATTRIBUTES = {
     'img': {'src', 'alt'},
     'font': {'color'},
     'ol': {'start'},
-    'audio': {'controls'},
-    'source': {'src', 'type'},
-
-    # Tables:
-    'table': {'border'},
-    'th': {'rowspan', 'colspan', 'valign', 'halign'},
-    'td': {'rowspan', 'colspan', 'valign', 'halign'},
-
-    # icons:
-    'svg': {'viewbox'},
-    'path': {'d'},
-    'circle': {'cx', 'cy', 'r'},
 }
 
-def sanitize_link(attr_name, value):
-    url = urlparse(value)
-    if url.scheme not in ('http', 'https', 'data', ''):
+def convert_link(attr_name, value, *, url_for=None):
+    url = urlsplit(value)
+    if url.scheme in ('http', 'https'):
+        if url.netloc == '':
+            raise DisallowedLink(value)
+        return urlunsplit(url)
+    elif url.scheme == '':
+        if url.netloc == '':
+            # Relative URL
+            if url.path.startswith('static/'):
+                return url.path
+            elif url.path != '':
+                # Documents should not assume that naucse has any particular
+                # URL structure, so links to other documents aren't allowed.
+                raise DisallowedLink(value)
+            if url.query:
+                # Query arguments are ignored on a static site; disallow them
+                raise DisallowedLink(value)
+            return urlunsplit(url)
+        else:
+            return urlunsplit(url)
+    if url.scheme == 'naucse':
+        if not url_for:
+            raise DisallowedURLScheme(url.scheme)
+        query = dict(parse_qsl(url.query))
+        for name in query:
+            if not re.match(r'^[-_a-z]+$', name):
+                raise DisallowedLink(value)
+        new_url = url_for[url.path](**query)
+        if url.fragment:
+            scheme, netloc, path, query, fragment = urlsplit(new_url)
+            new_url = urlunsplit((scheme, netloc, path, query, url.fragment))
+        return new_url
+    else:
         raise DisallowedURLScheme(url.scheme)
 
-    return urlunparse(url)
+    # Should not happen
+    raise DisallowedLink(value)
 
 
-def sanitize_css(data):
-    parser = cssutils.CSSParser(raiseExceptions=True)
-    try:
-        parsed_css = parser.parseString(data)
-    except SyntaxErr:
-        raise BadStyleSyntax("Could not parse CSS")
-    else:
-        if len(parsed_css.cssRules) == 0:
-            return ''
-
-    for rule in parsed_css.cssRules:
-        for selector in rule.selectorList:
-            if not selector.selectorText.startswith('.dataframe '):
-                raise DisallowedStyle(
-                    "Style element or inline css may only modify .dataframe "
-                    f"elements, got {data!r}."
-                )
-
-    return data
-
-
-def sanitize_element(element):
-
-    # Allow only known tags and comments
+def sanitize_element(element, *, url_for=None):
     if isinstance(element.tag, str):
-        if element.tag == 'style':
-            if len(element):
-                raise DisallowedElement(list(element)[0])
-            sanitize_css(element.text)
-        elif element.tag not in ALLOWED_ELEMENTS:
+        if element.tag not in ALLOWED_ELEMENTS:
             raise DisallowedElement(element.tag)
     elif element.tag is lxml.etree.Comment:
         pass
     else:
         raise DisallowedElement(element)
 
-    # Allow only known attributes
     for attr_name, value in list(element.items()):
         if attr_name == 'style':
-            # Allow inline styles
-            # XXX: This is a potential security risk.
-            pass
-        elif (
+            del element.attrib[attr_name]
+            continue
+
+        if (
             attr_name not in ALLOWED_ATTRIBUTES
             and attr_name not in PER_TAG_ATTRIBUTES.get(element.tag, ())
         ):
             raise DisallowedAttribute(f'{attr_name} on {element.tag}')
 
         if attr_name in {'href', 'src'}:
-            element.attrib[attr_name] = sanitize_link(attr_name, value)
+            element.attrib[attr_name] = convert_link(
+                attr_name, value, url_for=url_for)
 
-    # Recurse
     for child in element:
-        sanitize_element(child)
+        sanitize_element(child, url_for=url_for)
 
 
-def sanitize_html(text):
+def sanitize_fragment(fragment, *, url_for=None):
+    if isinstance(fragment, str):
+        return Markup.escape(fragment)
+    else:
+        sanitize_element(fragment, url_for=url_for)
+        return Markup(lxml.etree.tounicode(fragment, method='html'))
+
+
+def sanitize_html(text, *, url_for=None):
     """Converts untrusted HTML to a naucse-specific form.
 
     Raises exceptions for potentially dangerous content.
     """
 
-    fragments = lxml.html.fragments_fromstring(text)
+    fragments = [
+        sanitize_fragment(fragment, url_for=url_for)
+        for fragment in lxml.html.fragments_fromstring(text)
+    ]
 
-    for fragment in fragments:
-        sanitize_element(fragment)
-
-    return Markup().join(
-        Markup(lxml.etree.tounicode(f, method='html')) for f in fragments
-    )
+    return Markup().join(fragments)

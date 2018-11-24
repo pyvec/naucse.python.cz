@@ -9,7 +9,7 @@ import jsonschema
 import yaml
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
-from naucse.htmlparser import sanitize_html
+from naucse.sanitize import sanitize_html
 import naucse_render
 
 # XXX: Different timezones?
