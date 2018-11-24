@@ -272,15 +272,14 @@ def course_calendar(course):
         if hasattr(s, 'date')
     }
 
-    kwargs = {
-        "course": course,
-        #"edit_info": get_edit_info(course.edit_path),
-        'sessions_by_date': sessions_by_date,
-        'months': list_months(course.start_date, course.end_date),
-        'calendar': calendar.Calendar(),
-    }
-
-    return render_template('course_calendar.html', **kwargs)
+    return render_template(
+        'course_calendar.html',
+        course=course,
+        sessions_by_date=sessions_by_date,
+        months=list_months(course.start_date, course.end_date),
+        calendar=calendar.Calendar(),
+        edit_info=course.get_edit_info(),
+    )
 
 
 def generate_calendar_ics(course):
