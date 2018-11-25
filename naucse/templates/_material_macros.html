@@ -15,12 +15,16 @@
 {%- endmacro -%}
 
 {%- macro material_li(material) %}
-    {% set url = material.get_url() %}
+    {%- set url = material.get_url() %}
     <li>
         {% if url %}
+            
+        
+        
         <a href="{{ url }}">
         {% endif %}
-            {{- icon_for_material(material) -}}
+            {{- icon_for_material(material) | sanitize }}
+            {#- XXX: no need to sanitize the icon #}
             {{- material.title -}}
         {% if url %}
         </a>

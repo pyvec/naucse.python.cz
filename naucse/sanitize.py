@@ -55,6 +55,9 @@ PER_TAG_ATTRIBUTES = {
     'img': {'src', 'alt'},
     'font': {'color'},
     'ol': {'start'},
+    'svg': {'viewbox'},
+    'path': {'d'},
+    'circle': {'cx', 'cy', 'r'},
 }
 
 def convert_link(attr_name, value, *, url_for=None):

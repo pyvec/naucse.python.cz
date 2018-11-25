@@ -1,8 +1,11 @@
 from jinja2 import Markup, StrictUndefined
 import mistune
 
+from .sanitize import sanitize_html
 
-template_filters = {}
+template_filters = {
+    'sanitize': sanitize_html,
+}
 
 
 def template_filter(name=None):

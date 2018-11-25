@@ -8,43 +8,50 @@
 {% endblock %}
 
 {% block course_content %}
-    <h1>
-        {% if session.date is defined %}
-            Lekce: {{ session.title }} ({{ session.date }})
-        {% else %}
-            Lekce: {{ session.title }}
-        {% endif %}
-    </h1>
-
-    {% if session.course.place is defined and session.start_time is defined %}
-        <div class="details">{{ session.course.place }},
-            {{ session.start_time | format_time }}–{{ session.end_time | format_time }}</div>
+  <h1>
+    {% if session.date is defined %}
+        Lekce: {{ session.title }} ({{ session.date }})
+    {% else %}
+        Lekce: {{ session.title }}
     {% endif %}
+</h1>
 
-    <h2>Materiály</h2>
-    {{ material_list(session.materials, filter_type='lesson') }}
+{% if session.course.place is defined and session.start_time is defined %}
+    <div class="details">{{ session.course.place }},
+        {{ session.start_time | format_time }}–{{ session.end_time | format_time }}</div>
+{% endif %}
+
+<h2>Materiály</h2>
+{{ material_list(session.materials, filter_type='lesson') }}
+
+
+
+
 {#
-    {% if cheatsheet_section %}
-        <h2>Taháky</h2>
-        {{ material_list(session.materials, filter_type='cheatsheet') }}
-    {% endif %}
+{% if cheatsheet_section %}
+    <h2>Taháky</h2>
+    {{ material_list(session.materials, filter_type='cheatsheet') }}
+{% endif %}
 
-    {% if homework_section %}
-        <h2>Domácí projekty</h2>
-        {{ material_list(session.materials, filter_type='homework') }}
-    {% endif %}
+{% if homework_section %}
+    <h2>Domácí projekty</h2>
+    {{ material_list(session.materials, filter_type='homework') }}
+{% endif %}
 #}
-    {% block coverpage_content %}
+{% block coverpage_content %}
+    {% if content %}
         {{ content }}
-    {% endblock %}
+    {% endif %}
+{% endblock %}
 
-    <hr class="lesson-end">
+<hr class="lesson-end">
 
-    {% call nav.prevnext() %}
-        {% if session.prev is defined and session.prev != None %}
-            {{ nav.prev(session.prev.get_url(), session.prev.title) }}
-        {% endif %}
-        {{ nav.up(session.course.get_url(), session.course.title) }}
-        {{ nav.next(session.pages['back'].get_url(), 'Závěr lekce') }}
-    {% endcall %}
+{% call nav.prevnext() %}
+    {% if session.prev is defined and session.prev != None %}
+        {#- XXX: This is wrong! Do s/session/session.prev/ #}
+        {{ nav.prev(session.get_url(), session.title) }}
+    {% endif %}
+    {{ nav.up(session.course.get_url(), session.course.title) }}
+    {{ nav.next(session.pages['back'].get_url(), 'Závěr lekce') }}
+{% endcall %}
 {% endblock %}
