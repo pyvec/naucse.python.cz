@@ -181,8 +181,13 @@ def session(course, session_slug, page):
 
     #recent_runs = get_recent_runs(course)
 
+    template = {
+        'front': 'coverpage.html',
+        'back': 'backpage.html',
+    }[page]
+
     return render_template(
-        "coverpage.html",
+        template,
         session=session,
         course=session.course,
         edit_info=session.get_edit_info(),

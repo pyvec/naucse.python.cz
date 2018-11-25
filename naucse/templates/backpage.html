@@ -1,0 +1,37 @@
+{% extends "_base_course.html" %}
+{% from "_material_macros.html" import material_list with context %}
+{% import "_navigation_macros.html" as nav %}
+
+{% block breadcrumbs %}
+> <a href="{{ url_for('course', course=session.course) }}">{{ session.course.title }}</a>
+> {{ session.title }}
+{% endblock %}
+
+{% block course_content %}
+  <h1>
+    Závěr lekce: {{ session.title }}
+</h1>
+
+
+
+
+
+{% block coverpage_content %}
+    {% if content %}
+        {{ content }}
+    {% endif %}
+{% endblock %}
+
+<hr class="lesson-end">
+
+{% call nav.prevnext() %}
+    {% if session is defined and session != None %}
+        {#- XXX: This is wrong! Do s/session/session.prev/ #}
+        {{- nav.prev(session.get_url(), session.title) }}
+    {% endif %}
+    {{- nav.up(session.course.get_url(), session.course.title) }}
+    {% if session.next is defined and session.next != None %}
+        {{ nav.next(session.next.get_url(), session.next.title) }}
+    {% endif %}
+{% endcall %}
+{% endblock %}
