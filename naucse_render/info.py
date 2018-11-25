@@ -67,7 +67,7 @@ def get_course(course_slug: str, *, version: int) -> dict:
     info.pop('meta', None)
     info.pop('canonical', None)
 
-    base_slug = info.pop('derives', None)
+    base_slug = info.get('derives', None)
     if base_slug:
         base_course = read_yaml('courses', base_slug, 'info.yml')
     else:

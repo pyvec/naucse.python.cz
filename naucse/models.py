@@ -809,6 +809,18 @@ class Course(Model):
     def is_meta(self):
         return self.slug == 'courses/meta'
 
+    # XXX: Is course derivation useful?
+    derives = StringField(
+        optional=True, doc="Course this derives from (deprecated)")
+    @property
+    def base_course(self):
+        key = f'courses/{self.derives}'
+        try:
+            return self.root.courses[key]
+        except KeyError:
+            return None
+
+
     # XXX: is this subclassing necessary?
     @field(optional=True)
     class default_time(Field):
