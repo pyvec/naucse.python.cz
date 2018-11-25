@@ -302,9 +302,10 @@ def course_calendar_ics(course):
             name=session.title,
             begin=start_time,
             end=end_time,
-            uid=url_for("session_coverpage",
+            uid=url_for("session",
                         course=course,
-                        session=session.slug,
+                        session_slug=session.slug,
+                        page='front',
                         _external=True),
         )
         events.append(cal_event)

@@ -703,9 +703,11 @@ def _construct_time(which):
         try:
             value = data[f'{which}_time']
         except KeyError:
-            time = getattr(session.course, f'default_{which}_time')
-            if time is None:
+            try:
+                default_time = session.course.default_time
+            except AttributeError:
                 return NOTHING
+            time = default_time[which]
         else:
             try:
                 return datetime.datetime.strftime('%Y-%m-%d %H:%M:%S', value)
@@ -779,17 +781,7 @@ class Course(Model):
     title = StringField(doc='Human-readable title')
     slug = StringField(optional=True, doc='Machine-friendly identifier')
     subtitle = StringField(optional=True, doc='Human-readable title')
-    sessions = ListDictField(Session, key_attr='slug', index_key='index',
-                             prev_next_attrs=('prev', 'next'))
     vars = Field(factory=dict)
-    start_date = DateField(
-        construct=lambda instance, data: _min_or_none(getattr(s, 'date', None) for s in instance.sessions.values()),
-        optional=True,
-        doc='Date when this starts, or None')
-    end_date = DateField(
-        construct=lambda instance, data: _max_or_none(getattr(s, 'date', None) for s in instance.sessions.values()),
-        optional=True,
-        doc='Date when this starts, or None')
     place = StringField(
         optional=True,
         doc='Textual description of where the course takes place')
@@ -822,12 +814,23 @@ class Course(Model):
                 'end': time_from_string(data['default_time']['end']),
             }
 
+    sessions = ListDictField(Session, key_attr='slug', index_key='index',
+                             prev_next_attrs=('prev', 'next'))
+
+    start_date = DateField(
+        construct=lambda instance, data: _min_or_none(getattr(s, 'date', None) for s in instance.sessions.values()),
+        optional=True,
+        doc='Date when this starts, or None')
+    end_date = DateField(
+        construct=lambda instance, data: _max_or_none(getattr(s, 'date', None) for s in instance.sessions.values()),
+        optional=True,
+        doc='Date when this starts, or None')
+
     @classmethod
     def load_local(cls, parent, slug, *, repo_info):
         data = naucse_render.get_course(slug, version=1)
         jsonschema.validate(data, get_schema(cls, is_input=True))
-        result = cls.load(data, parent=parent, repo_info=repo_info)
-        result.slug = slug
+        result = cls.load({**data, 'slug': slug}, parent=parent, repo_info=repo_info)
         result.base_path = '.'
         return result
 
