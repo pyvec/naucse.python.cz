@@ -128,7 +128,8 @@ def sanitize_element(element, *, url_for=None):
 
     for attr_name, value in list(element.items()):
         if attr_name == 'style':
-            del element.attrib[attr_name]
+            # XXX: Sanitize attributes
+            # del element.attrib[attr_name]
             continue
 
         if (
