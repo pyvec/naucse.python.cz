@@ -804,6 +804,11 @@ class Course(Model):
     # XXX: Are "canonical courses" useful?
     canonical = False
 
+    # XXX: Should the "meta" course be special?
+    @property
+    def is_meta(self):
+        return self.slug == 'courses/meta'
+
     # XXX: is this subclassing necessary?
     @field(optional=True)
     class default_time(Field):
