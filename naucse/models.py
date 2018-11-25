@@ -615,6 +615,10 @@ class Page(Model):
         css = self._rendered_content.get('css', '')
         return sanitize_stylesheet(css)
 
+    @property
+    def modules(self):
+        return self._rendered_content.get('modules', {})
+
     def sanitize_content(self, text):
         def lesson_url(*, lesson, page='index', **kw):
             lesson = self.course.get_material(lesson)

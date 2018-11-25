@@ -88,4 +88,6 @@ def render_page(lesson_slug, page, vars=None):
     }
     if 'css' in info:
         result['css'] = info['css']
+    if 'latex' in info:
+        result['modules'] = {'katex': '0.7.1'}
     return result
