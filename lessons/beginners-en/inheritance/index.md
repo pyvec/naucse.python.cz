@@ -22,7 +22,7 @@ class Doggie:
     def __init__(self, name):
         self.name = name
 
-    def meow(self):
+    def woof(self):
         print("{}: Woof!".format(self.name))
 
     def eat(self, food):
@@ -30,249 +30,226 @@ class Doggie:
 ```
 
 Most of the code is the same!
+If you would have to write class for chicks, ducks and rabbits, 
+it would be quite boring without Ctrl+C.
+And because programmers are lazy to write the same piece of
+code multiple times (and mostly maintain it) they created
+mechanism how to avoid it. How?
 
-Většina kódu je stejná!
-Kdybys měla napsat i třídu pro kuřátka, kůzlátka,
-slůňátka a háďátka, bez Ctrl+C by to bylo docela nudné.
-A protože jsou programátoři líní psát stejný kód
-několikrát (a hlavně ho potom udržovat), vymysleli
-mechanismus, jak se toho vyvarovat. Jak?
-
-Koťátka i štěňátka jsou zvířátka.
-Můžeš si vytvořit třídu společnou pro všechna
-zvířátka a do ní napsat všechno, co je společné.
-Ve třídách pro jednotlivé druhy zvířat pak zbude jen
-to, co se liší.
-V Pythonu se to dělá takto:
+Kitties and doggies are animals.
+So you can create class for all animals and write
+there everything that applies to all animals.
+And to classes about each animal you will just
+write the specifics.
+That's how it's done in Python:
 
 ```python
-class Zviratko:
-    def __init__(self, jmeno):
-        self.jmeno = jmeno
+class Animal:
+    def __init__(self, name):
+        self.name = name
 
-    def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
-
-
-class Kotatko(Zviratko):
-    def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+    def eat(self, food):
+        print("{}: I like {} very much!".format(self.name, food))
 
 
-class Stenatko(Zviratko):
-    def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
+class Kittie(Animal):
+    def meow(self):
+        print("{}: Meow!".format(self.name))
 
 
-micka = Kotatko('Micka')
-azorek = Stenatko('Azorek')
-micka.zamnoukej()
-azorek.zastekej()
-micka.snez('myš')
-azorek.snez('kost')
+class Doggie(Animal):
+    def woof(self):
+        print("{}: Woof!".format(self.name))
+
+
+smokey = Kittie('Smokey')
+doggo = Doggie('Doggo')
+smokey.meow()
+doggo.woof()
+smokey.eat('mouse')
+doggo.eat('bone')
 ```
 
-Jak to funguje?
-Příkazem `class Kotatko(Zviratko):`
-říkáš Pythonu, že třída `Kotatko`
-*dědí* ze třídy `Zviratko`
-(angl. *inherits* from `Zviratko`).
-Případně se můžeš setkat s jinými termíny:
-„je odvozená” ze třídy `Zviratko`,
-(angl. *derived from*),
-nebo ji “rozšiřuje” (angl. *extends*).
-A když už jsme u terminologie, odvozeným třídám se
-říká taky *podtřídy* (angl. *subclasses*)
-a `Zviratko` je tu *nadtřída*
-(angl. *superclass*).
+How does it work?
+With command `class Kittie(Animal)` you are
+telling Python that class `Kittie` *inherits*
+behaviour from class `Animal`.
+Or you can see in different programming languages 
+that `Kittie` is *derived from* `Animal` 
+or it *extends* `Animal`.
+Derived classes are called *subclasses* and the main one
+is *superclass*
 
-Když potom Python hledá nějakou metodu
-(nebo jiný atribut), třeba `micka.snez`,
-a nenajde ji přímo ve třídě daného objektu (u nás
-`Kotatko`), podívá se do nadtřídy.
-Takže všechno, co je definované pro
-`Zviratko`, platí i pro koťátka.
-Pokud to tedy výslovně nezměníš.
+When Python searches for some method/function (or other attribute),
+for example `smokey(eat)`, and it doesn't find it in the class itself
+it will look into the superclass. So everything that has been
+defined for Animal can be applied for Kittie (if you won't
+tell Python otherwise).
 
 
-## Přepisování metod a `super()`
+## Overwriting methods and `super()`
 
-Když se ti nebude líbit chování některé metody
-v nadtřídě, stačí dát metodu stejného jména do
-podtřídy:
+If you don't like some behaviour of superclass you can
+define method with the same name into subclass:
 
 ```python
-class Kotatko(Zviratko):
-    def snez(self, jidlo):
-        print("{}: {} mi vůbec nechutná!".format(self.jmeno, jidlo))
+class Kittie(Animal):
+    def eat(self, food):
+        print("{}: I don't like {} at all!".format(self.name, food))
 
 
-micka = Kotatko('Micka')
-micka.snez('granule')
+smokey = Kittie('Smokey')
+smokey.eat('dry food')
 ```
 
 > [python]
-> Je to podobné jako když jsme minule přepisoval{{gnd('i', 'y', both='i')}}
-> atribut pomocí `micka.zamnoukej = 12345`.
-> Python atributy hledá napřed na samotném objektu,
-> potom na třídě toho objektu a pak na nadtřídě
-> (a případně dalších nadtřídách té nadtřídy).
+> It's similar to what we did in the previous lesson with
+> `misty.meow = 12345`. Python searches for the attributes in the object,
+> then the class and then the superclass (and then in superclass' superclass).
 
-Občas se může stát, že v takovéto přepsané metodě budeš
-potřebovat použít původní funkčnost, jen budeš chtít udělat ještě něco navíc.
-To umí zařídit speciální funkce `super()`,
-která umožňuje volat metody z nadtřídy.
-Třeba takhle:
+It can happen that sometimes you will need in the overwritten
+method some behaviour from the original method, you will only need to do
+something extra there. You can do it with special function `super()`,
+which allows calling methods from superclass.
 
 ```python
-class Kotatko(Zviratko):
-    def snez(self, jidlo):
-        print("({} na {} chvíli fascinovaně kouká)".format(self.jmeno, jidlo))
-        super().snez(jidlo)
+class Kittie(Animal):
+    def eat(self, food):
+        print("({} is looking at {} for a while)".format(self.name, food))
+        super().eat(food)
 
-
-micka = Kotatko('Micka')
-micka.snez('granule')
+smokey = Kittie('Smokey')
+smokey.eat('dry food')
 ```
 
-Pozor na to, že takhle volané metodě musíš dát všechny
-argumenty, které potřebuje (kromě `self`,
-který se jako obvykle doplní automaticky).
-Toho se dá i využít – můžeš použít i jiné argumenty
-než dostala původní funkce:
+Keep in mind that you have to pass everything that this `super()` method
+needs (apart from `self`, which is passed automatically).
+You can use this - you can pass different values
+than the original function received (in this case `snake` class will
+receive name `Stanley` but you want to change it to `Ssstanley`):
 
 ```python
-class Hadatko(Zviratko):
-    def __init__(self, jmeno):
-        jmeno = jmeno.replace('s', 'sss')
-        jmeno = jmeno.replace('S', 'Sss')
-        super().__init__(jmeno)
+class snake(Animal):
+    def __init__(self, name):
+        name = name.replace('s', 'sss')
+        name = name.replace('S', 'Sss')
+        super().__init__(name)
 
 
-standa = Hadatko('Stanislav')
-standa.snez('myš')
+stanley = snake('Stanley')
+stanley.eat('mouse')
 ```
 
-Jak je vidět, `super()` se dá bez problémů
-kombinovat se speciálními metodami jako `__init__`.
-Dokonce se to dělá poměrně často!
+As you can see, you can use `super()` even with special methods
+like `__init__`.
 
 
-## Polymorfismus
+## Polymorphism
 
-Programátoři nezavedli dědičnost jen proto, že jsou
-líní a nechtějí psát dvakrát stejný kód.
-To je sice dobrý důvod, ale nadtřídy mají ještě jednu
-důležitou vlastnost: když víme, že každé
-`Kotatko` nebo `Stenatko`
-nebo jakákoli jiná podtřída je zvířátko,
-můžeme si udělat seznam zvířátek s tím,
-že nám pak bude jedno, jaká přesně zvířátka to jsou:
+Programmer didn't create inheritance only because they are lazy
+to write the same code multiple times. It is, of course,
+good reason but superclasses have also another
+important feature: when we know that `Kittie` and `Doggie`
+and any other similar class are animals we can create a list
+of animals but we don't care what animals they are 
+specifically:
 
 {# XXX: last 4 lines are new and should be highlighted #}
 ```python
-class Zviratko:
-    def __init__(self, jmeno):
-        self.jmeno = jmeno
+class Animal:
+    def __init__(self, name):
+        self.name = name
 
-    def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
-
-
-class Kotatko(Zviratko):
-    def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+    def eat(self, food):
+        print("{}: I like {} very much!".format(self.name, food))
 
 
-class Stenatko(Zviratko):
-    def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
+class Kittie(Animal):
+    def meow(self):
+        print("{}: Meow!".format(self.name))
 
-zviratka = [Kotatko('Micka'), Stenatko('Azorek')]
 
-for zviratko in zviratka:
-    zviratko.snez('flákota')
+class Doggie(Animal):
+    def woof(self):
+        print("{}: Woof!".format(self.name))
+
+animals = [Kittie('Smokey'), Doggie('Doggo')]
+
+for animal in animals:
+    animal.eat('meat')
 ```
 
-Tohle je docela důležitá vlastnost podtříd:
-když máš nějaké `Kotatko`, můžeš ho použít
-kdekoliv kde program očekává `Zviratko`,
-protože každé koťátko *je* zvířátko.
+This is quite important behaviour of subclasses:
+when you have some `Kittie` you can use it anywhere
+where program expects `Animal` because each kittie
+*is* animal.
 
 > [note]
-> Tohle je docela dobrá pomůcka pro případy, kdy nebudeš vědět
-> kterou třídu podědit z které.
-> Každé *koťátko* nebo *štěňátko*
-> je *zvířátko*, každá *chata*
-> nebo *panelák* je *stavení*.
-> V takových případech dává dědičnost smysl.
+> This is good help when you won't know which class should be
+> inherited in which class.
+> Each *kittie* or *doggie* is *animal*,
+> each *cabin* or *house* is *building*.
+> In those examples heredity makes sense.
 >
-> Někdy se ale stane, že tuhle pomůcku zkusíš použít a vyjde ti
-> nesmysl jako „každé auto je volant”.
-> V takovém případě dědičnost nepoužívej.
-> I když jak auto tak volant se dají „otočit doprava”,
-> u každého to znamená něco jiného – a určitě nejde auto
-> použít kdekoli, kde bych chtěl{{a}} použít volant.
-> Takže v tomto případě je lepší si říct „každé auto
-> *má* volant”, stejně jako „každé kotě
-> *má* jméno”, udělat dvě nezávislé třídy a napsat něco jako:
+> But sometimes our help fails - for example if we would say
+> each *car* is *steering wheel*, then we will know that
+> we shouldn't use inheritance.
+> Even if we can "rotate" car and steering wheel it means different thing, 
+> and we definitely can't use car everywhere where we would want to
+> use steering wheel. So in this case we should say to ourselves:
+> each kittie *has* name and each car *has* steering wheel so we
+> should create two different classes and in car class 
+> use steering wheel as default variable:
 >
 > ```python
-> class Auto:
+> class Car:
 >     def __init__(self):
->         self.volant = Volant()
+>         self.wheel = Wheel()
 > ```
 >
-> (A až bude někdy nějaký vystudovaný informatik nespokojený
-> s tím, že porušuješ
-> [Liskovové substituční princip](https://en.wikipedia.org/wiki/Liskov_substitution_principle),
-> jde o právě tento problém.)
+> (And when some programmer will be mad at you that you
+> are breaking [Liskov_substitution_principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle)
+> it's because of this problem.)
 
-## Generalizace
+## Generalization
 
-Když se teď podíváš na funkce `zamnoukej`
-a `zastekej`, možná tě napadne, že by se
-daly pojmenovat lépe, aby se daly použít pro všechna
-zvířata, podobně jako `snez`.
-Bude nejlepší je přejmenovat:
+When you look back to functions `meow` and `woof` you will maybe find out
+that they can be named better so they can be used for each animal, similarly
+as `eat`.
 
-
-{# XXX: Every instance of "udelej_zvuk" should be highlighted #}
+{# XXX: Every instance of "speak" should be highlighted #}
 ```python
-class Zviratko:
-    def __init__(self, jmeno):
-        self.jmeno = jmeno
+class Animal:
+    def __init__(self, name):
+        self.name = name
 
-    def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
-
-
-class Kotatko(Zviratko):
-    def udelej_zvuk(self):
-        print("{}: Mňau!".format(self.jmeno))
+    def eat(self, food):
+        print("{}: I like {} very much!".format(self.name, food))
 
 
-class Stenatko(Zviratko):
-    def udelej_zvuk(self):
-        print("{}: Haf!".format(self.jmeno))
+class Kittie(Animal):
+    def speak(self):
+        print("{}: Meow!".format(self.name))
 
 
-zviratka = [Kotatko('Micka'), Stenatko('Azorek')]
+class Doggie(Animal):
+    def speak(self):
+        print("{}: Woof!".format(self.name))
 
-for zviratko in zviratka:
-    zviratko.udelej_zvuk()
-    zviratko.snez('flákota')
+animals = [Kittie('Smokey'), Doggie('Doggo')]
+
+for animal in animals:
+    animal.speak()
+    animal.eat('meat')
 ```
 
-Jak tenhle příklad naznačuje, psát nadtřídy, ze kterých se dobře dědí,
-není jednoduché. Zvlášť to platí, kdyby se z nich mělo dědit v jiném
-programu, než kde je nadtřída.
-I z toho důvodu je dobré dědičnost používat hlavně v rámci svého kódu:
-nedoporučuji dědit od tříd, které napsali ostatní (jako `bool` nebo
-`pyglet.sprite.Sprite`), pokud autor nadtřídy výslovně nezmíní, že (a jak) se
-z ní dědit má.
+As this example shows writing superclasses from which we can easily inherit
+methods is not easy. It is definitely not easy when we want to create
+subclass in different program than where is superclass.
+So that's why you should inherit classes within your code:
+we do not recommend to inherit classes that someone else wrote,
+unless the author of the superclass explicitly mentions that you can (and
+mainly how) inherit from their class.
 
-A to je zatím o třídách vše. Už toho víš dost na to,
-aby sis napsal{{a}} vlastní zoo :)
-
-Nebo [hru](../../projects/asteroids/)?
+And that's all about classes. Now you know enough to create
+your own zoo :)
