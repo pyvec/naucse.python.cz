@@ -856,11 +856,12 @@ class Course(Model):
         doc='Date when this starts, or None')
 
     @classmethod
-    def load_local(cls, parent, slug, *, repo_info):
+    def load_local(cls, parent, slug, *, repo_info, canonical=False):
         data = naucse_render.get_course(slug, version=1)
         jsonschema.validate(data, get_schema(cls, is_input=True))
         result = cls.load({**data, 'slug': slug}, parent=parent, repo_info=repo_info)
         result.base_path = '.'
+        result.canonical = canonical
         return result
 
     @property
@@ -952,8 +953,8 @@ class Root(Model):
                 slug = 'courses/' + course_path.name
                 course = Course.load_local(
                     self, slug, repo_info=self.repo_info,
+                    canonical=True,
                 )
-                course.canonical = True
                 self.courses[slug] = course
 
         for year_path in sorted((path / 'runs').iterdir()):
@@ -972,6 +973,7 @@ class Root(Model):
         self.courses['lessons'] = Course.load_local(
             self, 'lessons',
             repo_info=self.repo_info,
+            canonical=True,
         )
 
         with (path / 'courses/info.yml').open() as f:

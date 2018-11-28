@@ -206,14 +206,19 @@ def page(material, page_slug='index', solution=None):
 
     kwargs = {}
 
-    # Get canonical URL -- i.e., a lesson with the same slug
+    # Get canonical URL -- i.e., a lesson from 'lessons' with the same slug
     # XXX: This could be made much more fancy
-    try:
-        canonical = model.get_course('lessons').get_material(material.slug)
-    except KeyError:
+    lessons_course = model.get_course('lessons')
+    is_canonical_lesson = (lessons_course == material.course)
+    if is_canonical_lesson:
         canonical_url = None
     else:
-        canonical_url = canonical.get_url(external=True)
+        try:
+            canonical = lessons_course.get_material(material.slug)
+        except KeyError:
+            canonical_url = None
+        else:
+            canonical_url = canonical.get_url(external=True)
 
     if solution is None:
         content = page.get_content()
@@ -230,6 +235,7 @@ def page(material, page_slug='index', solution=None):
         session=page.material.session,
         course=page.material.course,
         canonical_url=canonical_url,
+        is_canonical_lesson=is_canonical_lesson,
         page_attribution=page.attribution,
         edit_info=page.get_edit_info(),
         **kwargs

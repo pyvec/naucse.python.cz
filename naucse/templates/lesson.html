@@ -1,6 +1,10 @@
 {% extends "_base_course.html" %}
 
-{% block title %}{{ course.title }}: {{ page.title }}{% endblock title %}
+{% block title %}
+    {%- if not is_canonical_lesson -%}
+        {{ course.title }}: {% endif -%}
+    {{ page.title }}
+{%- endblock title %}
 
 {% block style %}
     {% if page.css %}
@@ -61,7 +65,7 @@
 
 {%- block prev_next %}
     {%- set mat = page.material %}
-    {%- if mat.prev or mat.session or mat.next %}
+    {%- if not is_canonical_lesson and (mat.prev or mat.session or mat.next) %}
 
 
         {% call nav.prevnext() %}
@@ -109,7 +113,7 @@
 {%- endblock %}
 
 {% block lesson_end -%}
-        {% if page.material.session %}
+        {% if page.material.session and not is_canonical_lesson %}
         <hr class="lesson-end">
 
         {% if not page.course.canonical %}
