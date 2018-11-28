@@ -186,11 +186,16 @@ def session(course, session_slug, page):
         'back': 'backpage.html',
     }[page]
 
+    materials_by_type = {}
+    for material in session.materials:
+        materials_by_type.setdefault(material.type, []).append(material)
+
     return render_template(
         template,
         session=session,
         course=session.course,
         edit_info=session.get_edit_info(),
+        materials_by_type=materials_by_type,
         content=None, # XXX
     )
 
