@@ -58,6 +58,11 @@ PER_TAG_ATTRIBUTES = {
     'svg': {'viewbox'},
     'path': {'d'},
     'circle': {'cx', 'cy', 'r'},
+    'audio': {'controls'},
+    'source': {'src', 'type'},
+    'table': {'border'},
+    'td': {'rowspan', 'colspan', 'valign', 'halign'},
+    'th': {'rowspan', 'colspan', 'valign', 'halign'},
 }
 
 def convert_link(attr_name, value, *, url_for=None):
@@ -81,7 +86,7 @@ def convert_link(attr_name, value, *, url_for=None):
             return urlunsplit(url)
         else:
             return urlunsplit(url)
-    if url.scheme == 'naucse':
+    elif url.scheme == 'naucse':
         if not url_for:
             raise DisallowedURLScheme(url.scheme)
         query = dict(parse_qsl(url.query))
@@ -93,6 +98,9 @@ def convert_link(attr_name, value, *, url_for=None):
             scheme, netloc, path, query, fragment = urlsplit(new_url)
             new_url = urlunsplit((scheme, netloc, path, query, url.fragment))
         return new_url
+    elif url.scheme == 'data':
+        # XXX: Disallow?
+        return value
     else:
         raise DisallowedURLScheme(url.scheme)
 

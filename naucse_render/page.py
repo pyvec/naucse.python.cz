@@ -6,6 +6,7 @@ import jinja2
 from .load import read_yaml
 from .templates import environment, vars_functions
 from .markdown import convert_markdown
+from .notebook import convert_notebook
 
 def lesson_url(lesson_name, *, page='index'):
     if page == 'index':
@@ -61,10 +62,13 @@ def render_page(lesson_slug, page, vars=None):
 
     solutions = []
 
+    def convert_page_url(url):
+        return rewrite_relative_url(url, lesson_slug)
+
     def page_markdown(text, **kwargs):
         return convert_markdown(
             text,
-            convert_url=lambda u: rewrite_relative_url(u, lesson_slug),
+            convert_url=convert_page_url,
             **kwargs,
         )
 
@@ -78,8 +82,10 @@ def render_page(lesson_slug, page, vars=None):
 
     if info['style'] == 'md':
         text = page_markdown(text)
+    elif info['style'] == 'ipynb':
+        text = convert_notebook(text, convert_url=convert_page_url)
     else:
-        text = ''
+        raise ValueError(info['style'])
 
     result = {
         'content': text,
