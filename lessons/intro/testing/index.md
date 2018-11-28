@@ -33,17 +33,20 @@ def test_xmas_2016():
 Test uložíme někam do projektu, třeba do souboru `tests/test_holidays.py` a
 nainstalujeme a spustíme `pytest`:
 
-```ansi
-␛[36m(__venv__) $␛[0m python -m pip install pytest
-␛[36m(__venv__) $␛[0m python -m pytest tests/test_holidays.py
-␛[1m============================= test session starts ==============================␛[0m
-platform linux -- Python 3.7.0, pytest-3.8.1, py-1.6.0, pluggy-0.7.1
-rootdir: /tmp/tmp.PIb8ITheja, inifile:
+```console
+(__venv__) $ python -m pip install pytest
+(__venv__) $ python -m pytest tests/test_holidays.py
+```
+
+```pytest
+============================= test session starts ==============================
+platform linux -- Python 3.7.1, pytest-4.0.1, py-1.7.0, pluggy-0.8.0
+rootdir: /tmp/tmp.etepchwQWh, inifile:
 collected 1 item
 
-tests/test_holidays.py .␛[36m                                                 [100%]␛[0m
+tests/test_holidays.py .                                                 [100%]
 
-␛[32m␛[1m=========================== 1 passed in 0.01 seconds ===========================␛[0m
+=========================== 1 passed in 0.01 seconds ===========================
 ```
 
 Všimněte si několika věcí:
@@ -77,26 +80,29 @@ Pytest upravuje chování assertu, což oceníte především, pokud test selže
     assert (23, 12) in holidays
 ```
 
-```ansi
-␛[36m(__venv__) $␛[0m python -m pytest tests/test_holidays.py
-␛[1m============================= test session starts ==============================␛[0m
-platform linux -- Python 3.7.0, pytest-3.8.1, py-1.6.0, pluggy-0.7.1
-rootdir: /tmp/tmp.PIb8ITheja, inifile:
+```console
+(__venv__) $ python -m pytest tests/test_holidays.py
+```
+
+```pytest
+============================= test session starts ==============================
+platform linux -- Python 3.7.1, pytest-4.0.1, py-1.7.0, pluggy-0.8.0
+rootdir: /tmp/tmp.etepchwQWh, inifile:
 collected 1 item
 
-tests/test_holidays.py F␛[36m                                                 [100%]␛[0m
+tests/test_holidays.py F                                                 [100%]
 
 =================================== FAILURES ===================================
-␛[31m␛[1m________________________________ test_xmas_2016 ________________________________␛[0m
+________________________________ test_xmas_2016 ________________________________
 
-␛[1m    def test_xmas_2016():␛[0m
-␛[1m        """Test whether there is Christmas in 2016"""␛[0m
-␛[1m        holidays = isholiday.getholidays(2016)␛[0m
-␛[1m>       assert (23, 12) in holidays␛[0m
-␛[1m␛[31mE       assert (23, 12) in {(1, 1), (1, 5), (5, 7), (6, 7), (8, 5), (17, 11), ...}␛[0m
+    def test_xmas_2016():
+        """Test whether there is Christmas in 2016"""
+        holidays = isholiday.getholidays(2016)
+>       assert (23, 12) in holidays
+E       assert (23, 12) in {(1, 1), (1, 5), (5, 7), (6, 7), (8, 5), (17, 11), ...}
 
-␛[1m␛[31mtests/test_holidays.py␛[0m:6: AssertionError
-␛[31m␛[1m=========================== 1 failed in 0.04 seconds ===========================␛[0m
+tests/test_holidays.py:6: AssertionError
+=========================== 1 failed in 0.02 seconds ===========================
 ```
 
 S obyčejným assertem si vystačíte pro většinu testovaných případů kromě
@@ -150,16 +156,24 @@ jakýkoliv objekt, přes který jde iterovat, tedy kromě v ukázce použité
 
 Pro podrobnější výpis výsledku testů můžete použít přepínač `-v`:
 
-```ansi
-␛[36m(__venv__) $␛[0m python -m pytest -v
-...
-tests/test_holidays.py::test_xmas[2015] ␛[32mPASSED␛[0m␛[36m                           [ 20%]␛[0m
-tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m␛[36m                           [ 40%]␛[0m
-tests/test_holidays.py::test_xmas[2017] ␛[32mPASSED␛[0m␛[36m                           [ 60%]␛[0m
-tests/test_holidays.py::test_xmas[2033] ␛[32mPASSED␛[0m␛[36m                           [ 80%]␛[0m
-tests/test_holidays.py::test_xmas[2048] ␛[32mPASSED␛[0m␛[36m                           [100%]␛[0m
+```console
+(__venv__) $ python -m pytest -v
+```
 
-␛[32m␛[1m=========================== 5 passed in 0.26 seconds ===========================␛[0m
+```pytest
+============================= test session starts ==============================
+platform linux -- Python 3.7.1, pytest-4.0.1, py-1.7.0, pluggy-0.8.0 -- /tmp/tmp.etepchwQWh/__venv__/bin/python
+cachedir: .pytest_cache
+rootdir: /tmp/tmp.etepchwQWh, inifile:
+collecting ... collected 5 items
+
+tests/test_holidays.py::test_xmas[2015] PASSED                           [ 20%]
+tests/test_holidays.py::test_xmas[2016] PASSED                           [ 40%]
+tests/test_holidays.py::test_xmas[2017] PASSED                           [ 60%]
+tests/test_holidays.py::test_xmas[2033] PASSED                           [ 80%]
+tests/test_holidays.py::test_xmas[2048] PASSED                           [100%]
+
+=========================== 5 passed in 0.02 seconds ===========================
 ```
 
 Jednoduchým způsobem tak lze vyrobit z jednoho testu testů více.
@@ -199,16 +213,45 @@ Přidáme tedy dočasně na konec funkce `getholidays()` tento pesimistický kus
         holidays = set()
 ```
 
-```ansi
-␛[36m(__venv__) $␛[0m python -m pytest -v
-...
-tests/test_holidays.py::test_xmas[2015] ␛[32mPASSED␛[0m␛[36m                           [ 20%]␛[0m
-tests/test_holidays.py::test_xmas[2016] ␛[32mPASSED␛[0m␛[36m                           [ 40%]␛[0m
-tests/test_holidays.py::test_xmas[2017] ␛[32mPASSED␛[0m␛[36m                           [ 60%]␛[0m
-tests/test_holidays.py::test_xmas[2033] ␛[31mFAILED␛[0m␛[36m                           [ 80%]␛[0m
-tests/test_holidays.py::test_xmas[2048] ␛[31mFAILED␛[0m␛[36m                           [100%]␛[0m
-...
-␛[31m␛[1m====================== 2 failed, 3 passed in 0.23 seconds ======================␛[0m
+```pytest
+============================= test session starts ==============================
+platform linux -- Python 3.7.1, pytest-4.0.1, py-1.7.0, pluggy-0.8.0 -- /tmp/tmp.etepchwQWh/__venv__/bin/python
+cachedir: .pytest_cache
+rootdir: /tmp/tmp.etepchwQWh, inifile:
+collecting ... collected 5 items
+
+tests/test_holidays.py::test_xmas[2015] PASSED                           [ 20%]
+tests/test_holidays.py::test_xmas[2016] PASSED                           [ 40%]
+tests/test_holidays.py::test_xmas[2017] PASSED                           [ 60%]
+tests/test_holidays.py::test_xmas[2033] FAILED                           [ 80%]
+tests/test_holidays.py::test_xmas[2048] FAILED                           [100%]
+
+=================================== FAILURES ===================================
+_______________________________ test_xmas[2033] ________________________________
+
+year = 2033
+
+    @pytest.mark.parametrize('year', (2015, 2016, 2017, 2033, 2048))
+    def test_xmas(year):
+        """Test whether there is Christmas"""
+        holidays = isholiday.getholidays(year)
+>       assert (24, 12) in holidays
+E       assert (24, 12) in set()
+
+tests/test_holidays.py:8: AssertionError
+_______________________________ test_xmas[2048] ________________________________
+
+year = 2048
+
+    @pytest.mark.parametrize('year', (2015, 2016, 2017, 2033, 2048))
+    def test_xmas(year):
+        """Test whether there is Christmas"""
+        holidays = isholiday.getholidays(year)
+>       assert (24, 12) in holidays
+E       assert (24, 12) in set()
+
+tests/test_holidays.py:8: AssertionError
+====================== 2 failed, 3 passed in 0.03 seconds ======================
 ```
 
 
