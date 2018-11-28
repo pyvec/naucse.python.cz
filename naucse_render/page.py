@@ -8,15 +8,20 @@ from .templates import environment, vars_functions
 from .markdown import convert_markdown
 from .notebook import convert_notebook
 
-def lesson_url(lesson_name, *, page='index'):
-    if page == 'index':
-        return f'naucse:lesson?lesson={lesson_name}'
-    else:
-        return f'naucse:lesson?lesson={lesson_name}&page={page}'
+def lesson_url(lesson_name, *, page='index', _anchor=''):
+    url = f'naucse:lesson?lesson={lesson_name}'
+    if page != 'index':
+        url += f'&page={page}'
+    if _anchor:
+        url += f'#{_anchor}'
+    return url
 
 
-def static_url(filename):
-    return f'naucse:static?filename={filename}'
+def static_url(filename, *, _anchor=''):
+    url = f'naucse:static?filename={filename}'
+    if _anchor:
+        url += f'#{_anchor}'
+    return url
 
 
 def rewrite_relative_url(url, slug):
@@ -27,7 +32,7 @@ def rewrite_relative_url(url, slug):
     parts = list(PosixPath(parsed.path).parts)
 
     if parts and parts[0] == 'static':
-        return static_url('/'.join(parts[1:]))
+        return static_url('/'.join(parts[1:]), _anchor=parsed.fragment)
 
     dotdots = 0
     while parts and parts[0] == '..':
@@ -36,11 +41,11 @@ def rewrite_relative_url(url, slug):
 
     if dotdots == 2:
         group, name = parts
-        return lesson_url(f'{group}/{name}')
+        return lesson_url(f'{group}/{name}', _anchor=parsed.fragment)
     elif dotdots == 1:
         group, name = slug.split('/')
         [name] = parts
-        return lesson_url(f'{group}/{name}')
+        return lesson_url(f'{group}/{name}', _anchor=parsed.fragment)
 
     if parsed.path.startswith('.'):
         raise ValueError(url)
