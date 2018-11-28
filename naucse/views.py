@@ -864,6 +864,7 @@ def generate_calendar_ics(course):
         else:
             raise ValueError("One of the sessions doesn't have a start time.")
 
+        created = os.environ.get('NAUCSE_CALENDAR_DTSTAMP', None)
         cal_event = ics.Event(
             name=session.title,
             begin=start_time,
@@ -872,6 +873,7 @@ def generate_calendar_ics(course):
                         course=course,
                         session=session.slug,
                         _external=True),
+            created=created,
         )
         events.append(cal_event)
 
