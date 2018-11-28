@@ -974,8 +974,15 @@ class Root(Model):
             repo_info=self.repo_info,
         )
 
+        with (path / 'courses/info.yml').open() as f:
+            course_info = yaml.safe_load(f)
+        self.featured_courses = [
+            self.courses[f'courses/{n}'] for n in course_info['order']
+        ]
+
         self.edit_info = self.repo_info.get_edit_info('')
         self.runs_edit_info = self.repo_info.get_edit_info('runs')
+        self.course_edit_info = self.repo_info.get_edit_info('courses')
 
     def load_licenses(self, path):
         licenses = {}

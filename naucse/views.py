@@ -73,16 +73,15 @@ setup_jinja_env(app.jinja_env, model=model)
 
 @app.route('/')
 def index():
-    # XXX: Edit URL
     return render_template("index.html", edit_info=model.edit_info)
 
 
 @app.route('/courses/')
 def courses():
-    # XXX: Edit URL
     return render_template(
         "course_list.html",
-        courses=model.courses,
+        featured_courses=model.featured_courses,
+        edit_info=model.course_edit_info,
     )
 
 
@@ -159,9 +158,6 @@ def runs(year=None, all=None):
 
 @app.route('/<course:course>/')
 def course(course, year=None):
-    kwargs = {
-    #    "course_content": content,
-    }
 
     #recent_runs = get_recent_runs(course)
 
@@ -170,7 +166,6 @@ def course(course, year=None):
         course=course,
         recent_runs=[], # XXX
         edit_info=course.get_edit_info(),
-        **kwargs
     )
 
 
