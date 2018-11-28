@@ -356,6 +356,14 @@ class ListField(Field):
         return result
 
 
+class MaterialListField(ListField):
+    def convert(self, instance, data, value):
+        result = super().convert(instance, data, value)
+        seq = [mat for mat in result if getattr(mat, 'pages', None)]
+        _set_prev_next(seq, ('prev', 'next'))
+        return result
+
+
 class StringListField(Field):
     def get_schema(self, *, is_input):
         return {
@@ -733,7 +741,7 @@ class Session(Model):
                       doc='''
                         Date when this session is taught.
                         Missing for self-study materials.''')
-    materials = ListField(Material, prev_next_attrs=('prev', 'next'))
+    materials = MaterialListField(Material)
     start_time = DateTimeField(
         optional=True,
         construct=_construct_time('start'),
