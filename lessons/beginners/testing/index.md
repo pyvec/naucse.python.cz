@@ -120,17 +120,20 @@ Tedy v překladu: <strong>Python</strong>e, pusť
 <strong>m</strong>odul <strong>pytest</strong>,
 v „ukecaném” režimu (angl. <strong>v</strong>erbose) nad zadaným souborem.
 
-```ansi
+```console
 $ python -m pytest -v test_secteni.py
-␛[1m============= test session starts =============␛[0m
-platform linux -- Python 3.6.0, pytest-3.0.6, py-1.4.32, pluggy-0.4.0 -- env/bin/python
-cachedir: .cache
-rootdir: naucse, inifile: 
-␛[1mcollecting ...␛[0m collected 1 items
+```
 
-test_secteni.py::test_secti ␛[32mPASSED␛[0m
+```pytest
+============================= test session starts ==============================
+platform linux -- Python 3.7.1, pytest-3.6.4, py-1.5.4, pluggy-0.6.0 -- venv/bin/python
+cachedir: .pytest_cache
+rootdir: naucse, inifile:
+collecting ... collected 1 item
 
-␛[32m============= 1 passed in 0.00 seconds =============␛[0m
+test_secteni.py::test_secti PASSED                                       [100%]
+
+=========================== 1 passed in 0.00 seconds ===========================
 ```
 
 Tento příkaz projde zadaný soubor, zavolá v něm všechny funkce,
