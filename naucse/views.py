@@ -1,6 +1,7 @@
 import datetime
 from pathlib import Path
 import calendar
+import os
 
 from flask import Flask, render_template, jsonify, url_for, Response, abort
 from flask import send_from_directory
@@ -309,6 +310,7 @@ def course_calendar_ics(course):
             # Sessions without times don't show up in the calendar
             continue
 
+        created = os.environ.get('NAUCSE_CALENDAR_DTSTAMP', None)
         cal_event = ics.Event(
             name=session.title,
             begin=start_time,
@@ -318,6 +320,7 @@ def course_calendar_ics(course):
                         session_slug=session.slug,
                         page='front',
                         _external=True),
+            created=created,
         )
         events.append(cal_event)
 
