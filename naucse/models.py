@@ -1,9 +1,10 @@
+import datetime
 
 import jsonschema
 import yaml
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
-from naucse.metamodel import Schema, Field, String, Date, KeyAttrDict, Object
+from naucse.metamodel import Schema, Field, KeyAttrDict
 
 import naucse_render
 
@@ -13,37 +14,37 @@ schema = Schema()
 dump = schema.dump
 
 
-@schema
+@schema.model()
 class Solution:
     """Solution to a problem on a Page
     """
 
-@schema
+@schema.model()
 class StaticFile:
     """Static file specific to a Page
     """
 
-@schema
+@schema.model()
 class Page:
     """Rendered material
     """
 
-@schema
+@schema.model()
 class SessionPage:
     """Session-specific page, e.g. the front cover
     """
 
-@schema
+@schema.model()
 class Session:
     """A smaller collection of teaching materials
     """
-    slug = Field(String())
-    date = Field(Date(), optional=True)
+    slug = Field(str)
+    date = Field(datetime.date, optional=True)
 
 def _min_or_none(sequence):
     return min([m for m in sequence if m is not None], default=NOTHING)
 
-@schema
+@schema.model()
 class Course:
     """Collection of sessions
     """
@@ -52,13 +53,13 @@ class Course:
         self.slug = slug
         self._frozen = False
 
-    title = Field(String())
-    description = Field(String())
+    title = Field(str)
+    description = Field(str)
 
-    sessions = Field(KeyAttrDict(Object(Session), key_attr='slug'))
+    sessions = Field(KeyAttrDict(Session, key_attr='slug'))
 
     start_date = Field(
-        Date(),
+        datetime.date,
         doc='Date when this course starts, or None')
 
     @start_date.constructor()
@@ -67,7 +68,7 @@ class Course:
         return min((d for d in dates if d), default=None)
 
     end_date = Field(
-        Date(),
+        datetime.date,
         doc='Date when this course ends, or None')
 
     @end_date.constructor()
@@ -87,7 +88,7 @@ class Course:
         result.canonical = canonical
         return result
 
-@schema
+@schema.model()
 class RunYear:
     """Collection of courses given in a specific year
     """
@@ -95,12 +96,12 @@ class RunYear:
         self.year = year
         self.runs = {}
 
-@schema
+@schema.model()
 class License:
     """A license for content or code
     """
 
-@schema
+@schema.model()
 class Root:
     """Data for the naucse website
 
