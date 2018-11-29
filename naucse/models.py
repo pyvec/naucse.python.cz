@@ -1,3 +1,190 @@
+
+import jsonschema
+import yaml
+
+from naucse.edit_info import get_local_repo_info, get_repo_info
+from naucse.metamodel import Schema, Field, String, Date, KeyAttrDict, Object
+
+import naucse_render
+
+
+schema = Schema()
+
+dump = schema.dump
+
+
+@schema
+class Solution:
+    """Solution to a problem on a Page
+    """
+
+@schema
+class StaticFile:
+    """Static file specific to a Page
+    """
+
+@schema
+class Page:
+    """Rendered material
+    """
+
+@schema
+class SessionPage:
+    """Session-specific page, e.g. the front cover
+    """
+
+@schema
+class Session:
+    """A smaller collection of teaching materials
+    """
+    slug = Field(String())
+    date = Field(Date(), optional=True)
+
+def _min_or_none(sequence):
+    return min([m for m in sequence if m is not None], default=NOTHING)
+
+@schema
+class Course:
+    """Collection of sessions
+    """
+    def __init__(self, slug, repo_info):
+        self.repo_info = repo_info
+        self.slug = slug
+        self._frozen = False
+
+    title = Field(String())
+    description = Field(String())
+
+    sessions = Field(KeyAttrDict(Object(Session), key_attr='slug'))
+
+    start_date = Field(
+        Date(),
+        doc='Date when this course starts, or None')
+
+    @start_date.constructor()
+    def _construct(instance, data):
+        dates = [getattr(s, 'date', None) for s in instance.sessions.values()]
+        return min((d for d in dates if d), default=None)
+
+    end_date = Field(
+        Date(),
+        doc='Date when this course ends, or None')
+
+    @end_date.constructor()
+    def _construct(instance, data):
+        dates = [getattr(s, 'date', None) for s in instance.sessions.values()]
+        return max((d for d in dates if d), default=None)
+
+    @classmethod
+    def load_local(cls, slug, *, repo_info, canonical=False):
+        data = naucse_render.get_course(slug, version=1)
+        jsonschema.validate(data, schema.get_schema(cls))
+        result = schema.load(
+            cls, data, slug=slug, repo_info=repo_info,
+        )
+        result.repo_info = repo_info
+        result.base_path = '.'
+        result.canonical = canonical
+        return result
+
+@schema
+class RunYear:
+    """Collection of courses given in a specific year
+    """
+    def __init__(self, year):
+        self.year = year
+        self.runs = {}
+
+@schema
+class License:
+    """A license for content or code
+    """
+
+@schema
+class Root:
+    """Data for the naucse website
+
+    Contains a collection of courses plus additional metadata.
+    """
+    def __init__(self, *, url_factories, schema_url_factory):
+        self.root = self
+        self.url_factories = url_factories
+        self.schema_url_factory = schema_url_factory
+
+        self.courses = {}
+        self.run_years = {}
+        self.licenses = {}
+
+    def load_local(self, path):
+        """Load local courses from the given path"""
+        self.licenses = self.load_licenses(path / 'licenses')
+        self.repo_info = get_local_repo_info(path)
+
+        for course_path in (path / 'courses').iterdir():
+            if (course_path / 'info.yml').is_file():
+                slug = 'courses/' + course_path.name
+                course = Course.load_local(
+                    slug, repo_info=self.repo_info,
+                    canonical=True,
+                )
+                self.courses[slug] = course
+
+        for year_path in sorted((path / 'runs').iterdir()):
+            if year_path.is_dir():
+                year = int(year_path.name)
+                run_year = RunYear(year=year)
+                self.run_years[int(year_path.name)] = run_year
+                for course_path in year_path.iterdir():
+                    if (course_path / 'info.yml').is_file():
+                        slug = f'{year_path.name}/{course_path.name}'
+                        course = Course.load_local(
+                            slug, repo_info=self.repo_info,
+                        )
+                        run_year.runs[slug] = course
+
+        self.courses['lessons'] = Course.load_local(
+            'lessons',
+            repo_info=self.repo_info,
+            canonical=True,
+        )
+
+        with (path / 'courses/info.yml').open() as f:
+            course_info = yaml.safe_load(f)
+        self.featured_courses = [
+            self.courses[f'courses/{n}'] for n in course_info['order']
+        ]
+
+        self.edit_info = self.repo_info.get_edit_info('')
+        self.runs_edit_info = self.repo_info.get_edit_info('runs')
+        self.course_edit_info = self.repo_info.get_edit_info('courses')
+
+    def load_licenses(self, path):
+        licenses = {}
+        for licence_path in path.iterdir():
+            with (licence_path / 'info.yml').open() as f:
+                info = yaml.safe_load(f)
+            licenses[licence_path.name] = schema.load(License, info)
+        return licenses
+
+    def runs_from_year(self, year):
+        try:
+            runs = self.run_years[year].runs
+        except KeyError:
+            return []
+        return list(runs.values())
+
+    def get_course(self, slug):
+        # XXX: RunYears shouldn't be necessary
+        if slug == 'lessons':
+            return self.courses[slug]
+        year, identifier = slug.split('/')
+        if year == 'courses':
+            return self.courses[slug]
+        else:
+            return self.run_years[int(year)].runs[slug]
+
+
+'''
 import datetime
 from functools import singledispatch
 import textwrap
@@ -8,9 +195,7 @@ import dateutil.tz
 import jsonschema
 import yaml
 
-from naucse.edit_info import get_local_repo_info, get_repo_info
 from naucse.sanitize import sanitize_html, sanitize_stylesheet
-import naucse_render
 
 # XXX: Different timezones?
 _TIMEZONE = 'Europe/Prague'
@@ -574,18 +759,18 @@ class Page(Model):
     vars = Field(factory=dict)
 
     license = LicenseField(
-        doc=textwrap.dedent('''
+        doc=textwrap.dedent(' ''
             Identifier of the licence under which content is available.
-            Note that Naucse supports only a limited set of licences.''')
+            Note that Naucse supports only a limited set of licences.' '')
     )
 
     attribution = HTMLListField(doc='Authorship information')
 
     license_code = LicenseField(
         optional=True,
-        doc=textwrap.dedent('''
+        doc=textwrap.dedent('  ''
             Identifier of the licence under which code is available.
-            Note that Naucse supports only a limited set of licences.''')
+            Note that Naucse supports only a limited set of licences.' '')
     )
 
     render_call = ObjectField(RenderCall)
@@ -738,9 +923,9 @@ class Session(Model):
     slug = StringField(doc='Machine-friendly identifier')
     index = IntField(default=None, doc='Number of the session')
     date = DateField(optional=True,
-                      doc='''
+                      doc='' '
                         Date when this session is taught.
-                        Missing for self-study materials.''')
+                        Missing for self-study materials.' '')
     materials = MaterialListField(Material)
     start_time = DateTimeField(
         optional=True,
@@ -836,7 +1021,7 @@ class Course(Model):
     # XXX: is this subclassing necessary?
     @field(optional=True)
     class default_time(Field):
-        '''Times of day when sessions notmally take place. May be null.'''
+        ' ''Times of day when sessions notmally take place. May be null.'' '
         def convert(self, instance, data, value):
             return {
                 'start': time_from_string(data['default_time']['start']),
@@ -944,48 +1129,6 @@ class Root(Model):
         self.run_years = {}
         self.licenses = {}
 
-    def load_local(self, path):
-        self.licenses = self.load_licenses(path / 'licenses')
-        self.repo_info = get_local_repo_info(path)
-
-        for course_path in (path / 'courses').iterdir():
-            if (course_path / 'info.yml').is_file():
-                slug = 'courses/' + course_path.name
-                course = Course.load_local(
-                    self, slug, repo_info=self.repo_info,
-                    canonical=True,
-                )
-                self.courses[slug] = course
-
-        for year_path in sorted((path / 'runs').iterdir()):
-            if year_path.is_dir():
-                year = int(year_path.name)
-                run_year = RunYear(year=year, parent=self)
-                self.run_years[int(year_path.name)] = run_year
-                for course_path in year_path.iterdir():
-                    if (course_path / 'info.yml').is_file():
-                        slug = f'{year_path.name}/{course_path.name}'
-                        course = Course.load_local(
-                            self, slug, repo_info=self.repo_info,
-                        )
-                        run_year.runs[slug] = course
-
-        self.courses['lessons'] = Course.load_local(
-            self, 'lessons',
-            repo_info=self.repo_info,
-            canonical=True,
-        )
-
-        with (path / 'courses/info.yml').open() as f:
-            course_info = yaml.safe_load(f)
-        self.featured_courses = [
-            self.courses[f'courses/{n}'] for n in course_info['order']
-        ]
-
-        self.edit_info = self.repo_info.get_edit_info('')
-        self.runs_edit_info = self.repo_info.get_edit_info('runs')
-        self.course_edit_info = self.repo_info.get_edit_info('courses')
-
     def load_licenses(self, path):
         licenses = {}
         for licence_path in path.iterdir():
@@ -1003,13 +1146,6 @@ class Root(Model):
         else:
             return self.run_years[int(year)].runs[slug]
 
-    def runs_from_year(self, year):
-        try:
-            runs = self.run_years[year].runs
-        except KeyError:
-            return []
-        return list(runs.values())
-
     def _schema_url_for(self, cls, is_input, external=False):
         return self.schema_url_factory(
             cls, _external=external, is_input=is_input)
@@ -1024,3 +1160,4 @@ class Root(Model):
         except KeyError:
             raise NoURL(type(obj))
         return url_for(obj, _external=external)
+'''

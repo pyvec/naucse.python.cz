@@ -340,14 +340,14 @@ def schema(model_name, is_input):
 
 @app.route('/v1/naucse.json')
 def api():
-    return jsonify(model.dump())
+    return jsonify(models.dump(model._get_current_object()))
 
 
 @app.route('/v1/years/<int:year>.json')
 def run_year_api(year):
-    return jsonify(model.run_years[year].dump())
+    return jsonify(models.dump(model.run_years[year]))
 
 
 @app.route('/v1/<course:course>.json')
 def course_api(course):
-    return jsonify(course.dump())
+    return jsonify(models.dump(course))
