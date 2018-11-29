@@ -4,47 +4,50 @@ import jsonschema
 import yaml
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
-from naucse.metamodel import Schema, Field, KeyAttrDict
+from naucse.metamodel import Registry, Field, KeyAttrDictLoader
 
 import naucse_render
 
 
-schema = Schema()
+reg = Registry()
 
-dump = schema.dump
+dump = reg.dump
 
 
-@schema.model()
+@reg.model()
 class Solution:
     """Solution to a problem on a Page
     """
 
-@schema.model()
+@reg.model()
 class StaticFile:
     """Static file specific to a Page
     """
 
-@schema.model()
+@reg.model()
 class Page:
     """Rendered material
     """
 
-@schema.model()
+
+@reg.model()
 class SessionPage:
     """Session-specific page, e.g. the front cover
     """
 
-@schema.model()
+
+@reg.model()
 class Session:
     """A smaller collection of teaching materials
     """
-    slug = Field(str)
-    date = Field(datetime.date, optional=True)
+    slug = Field(reg[str])
+    date = Field(reg[datetime.date], optional=True)
 
 def _min_or_none(sequence):
     return min([m for m in sequence if m is not None], default=NOTHING)
 
-@schema.model()
+
+@reg.model()
 class Course:
     """Collection of sessions
     """
@@ -53,13 +56,13 @@ class Course:
         self.slug = slug
         self._frozen = False
 
-    title = Field(str)
-    description = Field(str)
+    title = Field(reg[str])
+    description = Field(reg[str])
 
-    sessions = Field(KeyAttrDict(Session, key_attr='slug'))
+    sessions = Field(KeyAttrDictLoader(reg[Session], key_attr='slug'))
 
     start_date = Field(
-        datetime.date,
+        reg[datetime.date],
         doc='Date when this course starts, or None')
 
     @start_date.constructor()
@@ -68,7 +71,7 @@ class Course:
         return min((d for d in dates if d), default=None)
 
     end_date = Field(
-        datetime.date,
+        reg[datetime.date],
         doc='Date when this course ends, or None')
 
     @end_date.constructor()
@@ -79,16 +82,15 @@ class Course:
     @classmethod
     def load_local(cls, slug, *, repo_info, canonical=False):
         data = naucse_render.get_course(slug, version=1)
-        jsonschema.validate(data, schema.get_schema(cls))
-        result = schema.load(
-            cls, data, slug=slug, repo_info=repo_info,
-        )
+        jsonschema.validate(data, reg.get_schema(cls))
+        result = reg[cls].load(data, slug=slug, repo_info=repo_info)
         result.repo_info = repo_info
         result.base_path = '.'
         result.canonical = canonical
         return result
 
-@schema.model()
+
+@reg.model()
 class RunYear:
     """Collection of courses given in a specific year
     """
@@ -96,12 +98,14 @@ class RunYear:
         self.year = year
         self.runs = {}
 
-@schema.model()
+
+@reg.model()
 class License:
     """A license for content or code
     """
 
-@schema.model()
+
+@reg.model()
 class Root:
     """Data for the naucse website
 
@@ -164,7 +168,7 @@ class Root:
         for licence_path in path.iterdir():
             with (licence_path / 'info.yml').open() as f:
                 info = yaml.safe_load(f)
-            licenses[licence_path.name] = schema.load(License, info)
+            licenses[licence_path.name] = reg[License].load(info)
         return licenses
 
     def runs_from_year(self, year):

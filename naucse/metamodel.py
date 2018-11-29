@@ -3,25 +3,30 @@ The model of the model.
 
 Key concepts:
 
-* a **loader** describes how to:
-  - load something from JSON
-  - dump something to JSON
+* A **model** is a custom class, e.g. `Course`, which can be serialized
+  to/from JSON.
+
+* A **loader** describes how to:
+
+  - load something from a JSON-compatible dict
+  - dump something to JSON-compatible dict
   - get JSON schema for something
+
+  There are loaders for integers, lists of integers, modeld, dicts of models,
+  etc.
+
+* A **registry** is a collection of loaders.
+
+* A **field** is an entry in a model, e.g. `Course.title`.
+  Each field usually *has* a loader, but it is not a loader itself.
+  The field handles attributes that are optional in JSON.
+  (In Python, missing attributes should be set to None rather than missing.)
 
 """
 import datetime
-import contextvars
 import contextlib
 
 import textwrap
-
-current_schema = contextvars.ContextVar('current_schema')
-
-@contextlib.contextmanager
-def context(var, value):
-    token = var.set(value)
-    yield
-    var.reset(token)
 
 
 class _Nothing:
@@ -31,28 +36,8 @@ class _Nothing:
 
 NOTHING = _Nothing()
 
-_standard_loaders = []
-def loader(key):
-    def _decorator(item):
-        _standard_loaders.append((key, item()))
-        return item
-    return _decorator
 
-
-def loader_for(key):
-    schema = current_schema.get()
-    return schema.get_loader(key)
-
-
-@loader(int)
-class Int:
-    def __init__(self, *, min=None, max=None):
-        self.schema = {'type': 'integer'}
-        if min:
-            self.schema['minimum'] = min
-        if max:
-            self.schema['maximum'] = max
-
+class IntegerLoader:
     def load(self, data):
         return data
 
@@ -60,11 +45,10 @@ class Int:
         return value
 
     def get_schema(self):
-        return self.schema
+        return {'type': 'integer'}
 
 
-@loader(str)
-class String:
+class StringLoader:
     def load(self, data):
         return data
 
@@ -75,8 +59,7 @@ class String:
         return {'type': 'string'}
 
 
-@loader(datetime.date)
-class Date:
+class DateLoader:
     def load(self, data):
         return datetime.datetime.strptime(data, "%Y-%m-%d").date()
 
@@ -91,71 +74,71 @@ class Date:
         }
 
 
-class List:
-    def __init__(self, item_key):
-        self.item_key = item_key
+class ListLoader:
+    def __init__(self, item_loader):
+        self.item_loader = item_loader
 
     def load(self, data):
-        return [self.item_model.load(d) for d in data]
+        return [self.item_loader.load(d) for d in data]
 
     def dump(self, value):
-        return [self.item_model.dump(v) for v in value]
+        return [self.item_loader.dump(v) for v in value]
 
     def get_schema(self):
         return {
             'type': 'array',
-            'items': self.item_model.get_schema(),
+            'items': self.item_loader.get_schema(),
         }
 
 
-class Dict:
-    def __init__(self, item_key):
-        self.item_key = item_key
+class DictLoader:
+    def __init__(self, item_loader):
+        self.item_loader = item_loader
 
     def load(self, data):
-        return {k: self.item_key.load(v) for k, v in data.items()}
+        return {k: self.item_loader.load(v) for k, v in data.items()}
 
     def dump(self, value):
-        return {k: self.item_key.dump(v) for k, v in value.items()}
+        return {k: self.item_loader.dump(v) for k, v in value.items()}
 
     def get_schema(self):
         return {
             'type': 'object',
-            'additionalProperties': self.item_key.get_schema(),
+            'additionalProperties': self.item_loader.get_schema(),
         }
 
 
-class KeyAttrDict:
-    def __init__(self, item_key, *, key_attr):
-        self.item_key = item_key
+class KeyAttrDictLoader:
+    def __init__(self, item_loader, *, key_attr):
+        self.item_loader = item_loader
         self.key_attr = key_attr
 
     def load(self, data):
         result = {}
         for value in data:
-            item = loader_for(self.item_key).load(value)
+            item = self.item_loader.load(value)
             result[getattr(item, self.key_attr)] = item
         return result
 
     def dump(self, value):
-        return [self.item_key.dump(v) for k, v in value.items()]
+        return [self.item_loader.dump(v) for k, v in value.items()]
 
     def get_schema(self):
         return {
             'type': 'array',
-            'items': loader_for(self.item_key).get_schema(),
+            'items': self.item_loader.get_schema(),
         }
 
 
 class Field:
     def __init__(
-        self, item_key, *,
+        self, item_loader, *,
         name=None, data_key=None,
         optional=False, default=NOTHING, factory=None, construct=None,
         convert=None,
         doc=None,
     ):
-        self.item_key = item_key
+        self.item_loader = item_loader
         self.name = name
         self.data_key = data_key or name
         self.optional = optional
@@ -186,7 +169,7 @@ class Field:
             else:
                 raise
         else:
-            value = loader_for(self.item_key).load(item_data)
+            value = self.item_loader.load(item_data)
         setattr(instance, self.name, value)
         for loader in self.post_loaders:
             loader(instance)
@@ -198,7 +181,7 @@ class Field:
         data[self.data_key] = value
 
     def put_schema_into(self, object_schema):
-        schema = loader_for(self.item_key).get_schema()
+        schema = self.item_loader.get_schema()
         if self.doc:
             schema['description'] = self.doc
         if self.schema_default is not NOTHING:
@@ -226,7 +209,7 @@ class Field:
         return _decorator
 
 
-class Object:
+class ModelLoader:
     def __init__(self, cls, *, doc=None):
         self.cls = cls
         self.name = cls.__name__
@@ -264,21 +247,27 @@ class Object:
         return schema
 
 
-class Schema:
-    def __init__(self):
-        self._loaders = dict(_standard_loaders)
+class Registry:
+    def __init__(self, loaders=None):
+        if loaders is None:
+            loaders = {
+                int: IntegerLoader(),
+                str: StringLoader(),
+                datetime.date: DateLoader(),
+            }
+        self._loaders = loaders
 
     def model(self):
         def _decorator(cls):
-            self._loaders[cls] = Object(cls)
+            self._loaders[cls] = ModelLoader(cls)
             return cls
         return _decorator
 
-    def get_loader(self, key):
+    def __getitem__(self, key):
         return self._loaders.get(key, key)
 
     def load(self, key, data, **init_kwargs):
-        loader = self.get_loader(key)
+        loader = self[key]
         with context(current_schema, self):
             return loader.load(data, **init_kwargs)
 
@@ -286,51 +275,43 @@ class Schema:
         if instance is None:
             instance = key
             key = type(key)
-        loader = self.get_loader(key)
-        with context(current_schema, self):
-            return loader.dump(instance)
+        loader = self[key]
+        return loader.dump(instance)
 
-    def get_schema(self, key, internal=False):
-        if internal:
-            # XXX
-            return {}
-        loader = self.get_loader(key)
-        with context(current_schema, self):
-            definitions = {
-                cls.__name__: model.get_schema()
-                for cls, model in self._loaders.items()
-            }
-            definitions.update({
-                'ref': {
-                    'type': 'object',
-                    'additionalProperties': False,
-                    'properties': {
-                        '$ref': {
-                            'type': 'string',
-                            'format': 'uri',
-                        },
+    def get_schema(self, key):
+        loader = self[key]
+        definitions = {
+            cls.__name__: model.get_schema()
+            for cls, model in self._loaders.items()
+        }
+        definitions.update({
+            'ref': {
+                'type': 'object',
+                'additionalProperties': False,
+                'properties': {
+                    '$ref': {
+                        'type': 'string',
+                        'format': 'uri',
                     },
                 },
-                'api_version': {
-                    'type': 'array',
-                    'items': {'type': 'integer'},
-                    'minItems': 2,
-                    'maxItems': 2,
-                    'description': textwrap.dedent("""
-                        Version of the information, and of the schema,
-                        as two integers – [major, minor].
-                        The minor version is increased on every change to the
-                        schema that keeps backwards compatibility for forks
-                        (i.e. input data).
-                        The major version is increased on incompatible changes.
-                    """),
-                },
-            })
-            return {
-                '$ref': f'#/definitions/{loader.name}',
-                '$schema': 'http://json-schema.org/draft-06/schema#',
-                'definitions': definitions,
-            }
-
-
-_standard_loaders = tuple(_standard_loaders)
+            },
+            'api_version': {
+                'type': 'array',
+                'items': {'type': 'integer'},
+                'minItems': 2,
+                'maxItems': 2,
+                'description': textwrap.dedent("""
+                    Version of the information, and of the schema,
+                    as two integers – [major, minor].
+                    The minor version is increased on every change to the
+                    schema that keeps backwards compatibility for forks
+                    (i.e. input data).
+                    The major version is increased on incompatible changes.
+                """),
+            },
+        })
+        return {
+            '$ref': f'#/definitions/{loader.name}',
+            '$schema': 'http://json-schema.org/draft-06/schema#',
+            'definitions': definitions,
+        }
