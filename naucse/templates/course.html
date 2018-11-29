@@ -12,15 +12,15 @@
     <div class="col-lg-8 {% if course.is_meta %}col-lg-12{% endif %}">
         {% block course_overview %}
               <h1>{{ course.title }}</h1>
-{% if course.place is defined and course.time is defined %}
+{% if course.place and course.time %}
     <div class="details">{{course.place}}, {{course.time}}</div>
 {% endif %}
 
-{% if course.subtitle is defined and course.subtitle != None %}
+{% if course.subtitle != None %}
     <h2>{{ course.subtitle }}</h2>
 {% endif%}
 
-{% if course.long_description is defined -%}
+{% if course.long_description -%}
     {{ course.long_description | markdown }}
 {%- endif %}
 
@@ -35,7 +35,7 @@
         <a href="{{ url_for('session', course=course, session_slug=session.slug) }}">
             {{ session.title }}
         </a>
-        {% if session.date is defined %}
+        {% if session.date %}
             <small>({{ session.date | format_date }})</small>
         {% endif %}
     </h4>
@@ -46,7 +46,7 @@
         {% endblock %}
     </div>
     <div class="{% if not course.is_meta %}col-lg-4{% endif %}">
-        {% if course.start_date is defined %}
+        {% if course.start_date %}
             <div class="card course-card text-center">
                 <div class="card-header">
                     Toto jsou podklady pro kurz s instruktorem
@@ -55,7 +55,7 @@
                     <div class="calendar-dates">
                         {{ (course.start_date, course.end_date) | format_date_range }}
                     </div>
-                    {% if course.default_time is defined %}
+                    {% if course.default_time %}
                         <div class="default-times">
                             {{ course.default_time['start'] | format_time }}
                             –

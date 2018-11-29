@@ -1,65 +1,206 @@
 import datetime
 
 import jsonschema
+import dateutil
 import yaml
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
-from naucse.metamodel import Registry, Field, KeyAttrDictLoader
+from naucse.metamodel import Registry, Field, KeyAttrDictLoader, ListLoader
+from naucse.metamodel import get_parent, get_index, loader
+from naucse import sanitize
 
 import naucse_render
 
+# XXX: Different timezones?
+_TIMEZONE = 'Europe/Prague'
 
 reg = Registry()
 
 dump = reg.dump
 
 
-@reg.model()
-class Solution:
+class URLLoader:
+    def load(self, data):
+        return sanitize.convert_link('href', data)
+        return data
+
+    def dump(self, value):
+        return value
+
+    @classmethod
+    def get_schema(cls):
+        return {'type': 'string', 'format': 'uri'}
+
+
+class Model:
+    def __init__(self, *, parent=None):
+        if parent is None:
+            parent = get_parent()
+        self.root = parent.root
+        self._parent = parent
+
+    def __init_subclass__(cls):
+        reg.register_model(cls)
+
+    def get_url(self, url_type='web', *, external=False):
+        return self.root._url_for(self, url_type=url_type, external=external)
+
+
+class Solution(Model):
     """Solution to a problem on a Page
     """
 
-@reg.model()
-class StaticFile:
+class StaticFile(Model):
     """Static file specific to a Page
     """
 
-@reg.model()
-class Page:
-    """Rendered material
+class Page(Model):
+    """One page of teaching text
     """
 
+class Material(Model):
+    """Teaching material
+    """
+    slug = Field(reg[str], optional=True)
+    title = Field(reg[str], optional=True)
+    external_url = Field(URLLoader(), optional=True)
+    type = Field(reg[str])
 
-@reg.model()
-class SessionPage:
+    def get_url(self, url_type='web', **kwargs):
+        if url_type != 'web':
+            raise NoURLType(url_type)
+        try:
+            return self.external_url
+        except AttributeError:
+            try:
+                pages = self.pages
+            except AttributeError:
+                return None
+            return pages['index'].get_url(**kwargs)
+
+
+class SessionPage(Model):
     """Session-specific page, e.g. the front cover
     """
+    slug = Field(reg[str])
+
+    @loader()
+    def session(self):
+        return self._parent
+
+    @loader()
+    def course(self):
+        return self.session.course
 
 
-@reg.model()
-class Session:
+class Session(Model):
     """A smaller collection of teaching materials
     """
     slug = Field(reg[str])
+    title = Field(reg[str])
     date = Field(reg[datetime.date], optional=True)
+    materials = Field(ListLoader(reg[Material]))
+
+    @loader()
+    def course(self):
+        return self._parent
+
+    source_file = Field(reg[str])
+
+    @source_file.after_load()
+    def _edit_info(self):
+        if self.source_file is None:
+            self.edit_info = None
+        else:
+            self.edit_info = self.course.repo_info.get_edit_info(self.source_file)
+
+    @loader()
+    def pages(self):
+        # XXX: These could be in the API
+        return {
+            'front': reg.load(SessionPage, {'slug': 'front'}, parent=self),
+            'back': reg.load(SessionPage, {'slug': 'back'}, parent=self),
+        }
+
+    index = Field(reg[int], factory=get_index)
+
 
 def _min_or_none(sequence):
     return min([m for m in sequence if m is not None], default=NOTHING)
 
 
-@reg.model()
-class Course:
+class AnyDictLoader:
+    def load(self, data):
+        return data
+
+    def dump(self, value):
+        return value
+
+    @classmethod
+    def get_schema(cls):
+        return {'type': 'object'}
+
+
+def time_from_string(time_string):
+    hour, minute = time_string.split(':')
+    hour = int(hour)
+    minute = int(minute)
+    tzinfo = dateutil.tz.gettz(_TIMEZONE)
+    return datetime.time(hour, minute, tzinfo=tzinfo)
+
+
+class TimeIntervalLoader:
+    def load(self, data):
+        return {
+            'start': time_from_string(data['start']),
+            'end': time_from_string(data['end']),
+        }
+
+    def dump(self, value):
+        return {
+            'start': value.strftime('%H:%M'),
+            'end': value.strftime('%H:%M'),
+        }
+
+    @classmethod
+    def get_schema(cls):
+        return {
+            'type': 'object',
+            'properties': {
+                'start': {'type': 'string', 'pattern': '[0-9]{2}:[0-9]{2}'},
+                'end': {'type': 'string', 'pattern': '[0-9]{2}:[0-9]{2}'},
+            }
+        }
+
+
+class Course(Model):
     """Collection of sessions
     """
-    def __init__(self, slug, repo_info):
+    def __init__(self, *, parent=None, slug, repo_info, is_meta=False):
+        super().__init__(parent=parent)
         self.repo_info = repo_info
         self.slug = slug
+        self.is_meta = is_meta
         self._frozen = False
 
     title = Field(reg[str])
-    description = Field(reg[str])
+    subtitle = Field(reg[str], optional=True)
+    description = Field(reg[str], optional=True)
+    long_description = Field(reg[str], optional=True)
+    vars = Field(AnyDictLoader(), factory=dict)
+    place = Field(reg[str], optional=True)
+    time = Field(reg[str], optional=True)
 
     sessions = Field(KeyAttrDictLoader(reg[Session], key_attr='slug'))
+
+    source_file = Field(reg[str])
+
+    @source_file.after_load()
+    def _edit_info(self):
+        if self.source_file is None:
+            self.edit_info = None
+        else:
+            self.edit_info = self.repo_info.get_edit_info(self.source_file)
 
     start_date = Field(
         reg[datetime.date],
@@ -80,38 +221,59 @@ class Course:
         return max((d for d in dates if d), default=None)
 
     @classmethod
-    def load_local(cls, slug, *, repo_info, canonical=False):
+    def load_local(cls, slug, *, parent, repo_info, canonical=False):
         data = naucse_render.get_course(slug, version=1)
         jsonschema.validate(data, reg.get_schema(cls))
-        result = reg[cls].load(data, slug=slug, repo_info=repo_info)
+        result = reg[cls].load(
+            data, slug=slug, repo_info=repo_info, parent=parent
+        )
         result.repo_info = repo_info
         result.base_path = '.'
         result.canonical = canonical
         return result
 
+    default_time = Field(TimeIntervalLoader(), optional=True)
 
-@reg.model()
-class RunYear:
+    # XXX: Is course derivation useful?
+    derives = Field(
+        reg[str], optional=True,
+        doc="Course this derives from (deprecated)")
+
+    @loader()
+    def base_course(self):
+        key = f'courses/{self.derives}'
+        try:
+            return self.root.courses[key]
+        except KeyError:
+            return None
+
+
+class RunYear(Model):
     """Collection of courses given in a specific year
     """
-    def __init__(self, year):
+    def __init__(self, year, *, parent=None):
+        super().__init__(parent=parent)
         self.year = year
         self.runs = {}
 
+    def __iter__(self):
+        # XXX: Sort by ... start date?
+        return iter(self.runs.values())
 
-@reg.model()
-class License:
+
+class License(Model):
     """A license for content or code
     """
 
 
-@reg.model()
-class Root:
+class Root(Model):
     """Data for the naucse website
 
     Contains a collection of courses plus additional metadata.
     """
     def __init__(self, *, url_factories, schema_url_factory):
+        self.root = self
+        super().__init__(parent=self)
         self.root = self
         self.url_factories = url_factories
         self.schema_url_factory = schema_url_factory
@@ -129,7 +291,7 @@ class Root:
             if (course_path / 'info.yml').is_file():
                 slug = 'courses/' + course_path.name
                 course = Course.load_local(
-                    slug, repo_info=self.repo_info,
+                    slug, parent=self, repo_info=self.repo_info,
                     canonical=True,
                 )
                 self.courses[slug] = course
@@ -137,13 +299,13 @@ class Root:
         for year_path in sorted((path / 'runs').iterdir()):
             if year_path.is_dir():
                 year = int(year_path.name)
-                run_year = RunYear(year=year)
+                run_year = RunYear(year=year, parent=self)
                 self.run_years[int(year_path.name)] = run_year
                 for course_path in year_path.iterdir():
                     if (course_path / 'info.yml').is_file():
                         slug = f'{year_path.name}/{course_path.name}'
                         course = Course.load_local(
-                            slug, repo_info=self.repo_info,
+                            slug, parent=self, repo_info=self.repo_info,
                         )
                         run_year.runs[slug] = course
 
@@ -151,6 +313,7 @@ class Root:
             'lessons',
             repo_info=self.repo_info,
             canonical=True,
+            parent=self,
         )
 
         with (path / 'courses/info.yml').open() as f:
@@ -168,7 +331,7 @@ class Root:
         for licence_path in path.iterdir():
             with (licence_path / 'info.yml').open() as f:
                 info = yaml.safe_load(f)
-            licenses[licence_path.name] = reg[License].load(info)
+            licenses[licence_path.name] = reg[License].load(info, parent=self)
         return licenses
 
     def runs_from_year(self, year):
@@ -188,6 +351,17 @@ class Root:
         else:
             return self.run_years[int(year)].runs[slug]
 
+    def _url_for(self, obj, url_type='web', *, external=False):
+        try:
+            urls = self.url_factories[url_type]
+        except KeyError:
+            raise NoURLType(url_type)
+        try:
+            url_for = urls[type(obj)]
+        except KeyError:
+            raise NoURL(type(obj))
+        return url_for(obj, _external=external)
+
 
 '''
 import datetime
@@ -201,9 +375,6 @@ import jsonschema
 import yaml
 
 from naucse.sanitize import sanitize_html, sanitize_stylesheet
-
-# XXX: Different timezones?
-_TIMEZONE = 'Europe/Prague'
 
 
 class NoURL(LookupError):
@@ -222,26 +393,6 @@ NOTHING = _Nothing()
 
 
 models = {}
-
-
-class reify:
-    """Base class for a lazily computed property
-    Subclasses should reimplement a `compute` method, which creates
-    the value of the property. Then the value is stored and not computed again
-    (unless deleted).
-    """
-    def __init__(self, func):
-        self.func = func
-
-    def __set_name__(self, cls, name):
-        self.name = name
-
-    def __get__(self, instance, cls):
-        if instance is None:
-            return self
-        result = self.func(instance)
-        setattr(instance, self.name, result)
-        return result
 
 
 def get_schema(cls, *, is_input):
@@ -300,10 +451,6 @@ def schema_object(cls, *, allow_ref=True):
 
 
 class Model:
-    def __init__(self, *, parent):
-        self.root = parent.root
-        self._parent = parent
-
     @classmethod
     def load(cls, data, **kwargs):
         instance = cls(**kwargs)
@@ -702,15 +849,6 @@ def _(obj, **kwargs):
     return obj.strftime('%H:%M')
 
 
-def time_from_string(time_string):
-    # XXX: Seconds?
-    hour, minute = time_string.split(':')
-    hour = int(hour)
-    minute = int(minute)
-    tzinfo = dateutil.tz.gettz(_TIMEZONE)
-    return datetime.time(hour, minute, tzinfo=tzinfo)
-
-
 class RenderCall(Model):
     entrypoint = StringField(doc="Arca entrypoint")
     args = Field(default=(), doc="Arguments for the Arca call")
@@ -1011,17 +1149,6 @@ class Course(Model):
     def is_meta(self):
         return self.slug == 'courses/meta'
 
-    # XXX: Is course derivation useful?
-    derives = StringField(
-        optional=True, doc="Course this derives from (deprecated)")
-    @property
-    def base_course(self):
-        key = f'courses/{self.derives}'
-        try:
-            return self.root.courses[key]
-        except KeyError:
-            return None
-
 
     # XXX: is this subclassing necessary?
     @field(optional=True)
@@ -1165,4 +1292,25 @@ class Root(Model):
         except KeyError:
             raise NoURL(type(obj))
         return url_for(obj, _external=external)
+
+
+
+class reify:
+    """Base class for a lazily computed property
+    Subclasses should reimplement a `compute` method, which creates
+    the value of the property. Then the value is stored and not computed again
+    (unless deleted).
+    """
+    def __init__(self, func):
+        self.func = func
+
+    def __set_name__(self, cls, name):
+        self.name = name
+
+    def __get__(self, instance, cls):
+        if instance is None:
+            return self
+        result = self.func(instance)
+        setattr(instance, self.name, result)
+        return result
 '''

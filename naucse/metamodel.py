@@ -25,8 +25,48 @@ Key concepts:
 """
 import datetime
 import contextlib
+import contextvars
 
 import textwrap
+
+_parents_var = contextvars.ContextVar('_parents_var', default=None)
+_index_var = contextvars.ContextVar('_index_var')
+
+@contextlib.contextmanager
+def model_load_context(model):
+    parents = _parents_var.get()
+    if _parents_var.get() is None:
+        token = _parents_var.set([model])
+        yield
+        _parents_var.reset(token)
+    else:
+        parents.append(model)
+        yield
+        parents.pop()
+
+
+def get_parent():
+    parents = _parents_var.get()
+    if not parents:
+        raise ValueError('No model is being loaded')
+    return parents[-1]
+
+
+def indexed(iterable):
+    token = _index_var.set(0)
+    try:
+        for i, item in enumerate(iterable):
+            _index_var.set(i)
+            yield item
+    finally:
+        _index_var.reset(token)
+
+
+def get_index():
+    try:
+        return _index_var.get()
+    except LookupError as e:
+        raise ValueError('Not sequence is being loaded') from e
 
 
 class _Nothing:
@@ -79,7 +119,7 @@ class ListLoader:
         self.item_loader = item_loader
 
     def load(self, data):
-        return [self.item_loader.load(d) for d in data]
+        return [self.item_loader.load(d) for d in indexed(data)]
 
     def dump(self, value):
         return [self.item_loader.dump(v) for v in value]
@@ -97,7 +137,7 @@ class DictLoader:
         self.item_loader = item_loader
 
     def load(self, data):
-        return {k: self.item_loader.load(v) for k, v in data.items()}
+        return {k: self.item_loader.load(v) for k, v in indexed(data.items())}
 
     def dump(self, value):
         return {k: self.item_loader.dump(v) for k, v in value.items()}
@@ -120,7 +160,7 @@ class KeyAttrDictLoader:
 
     def load(self, data):
         result = {}
-        for value in data:
+        for value in indexed(data):
             item = self.item_loader.load(value)
             result[getattr(item, self.key_attr)] = item
         return result
@@ -137,14 +177,20 @@ class KeyAttrDictLoader:
 
 class Field:
     def __init__(
-        self, item_loader, *,
+        self, loader, *,
         name=None, data_key=None, optional=False, doc=None,
+        factory=None,
     ):
-        self.item_loader = item_loader
+        self.loader = loader
         self.name = name
         self.data_key = data_key or name
         self.optional = optional
         self.doc = doc
+
+        self._after_load_hooks = []
+
+        if factory:
+            self.constructor()(lambda i: factory())
 
     default = None
 
@@ -153,28 +199,37 @@ class Field:
         self.data_key = self.data_key or self.name
 
     def load_into(self, instance, data):
-        try:
-            item_data = data[self.data_key]
-        except KeyError:
-            if self.optional:
-                value = self._load_missing(instance, data)
-            else:
-                raise
+        if self.loader is None:
+            value = self._load_missing(instance, data)
         else:
-            value = self.item_loader.load(item_data)
+            try:
+                item_data = data[self.data_key]
+            except KeyError:
+                if self.optional:
+                    value = self._load_missing(instance, data)
+                else:
+                    raise
+            else:
+                value = self.loader.load(item_data)
         setattr(instance, self.name, value)
+        for func in self._after_load_hooks:
+            func(instance)
 
     def _load_missing(self, instance, data):
         return None
 
     def dump_into(self, instance, data):
+        if self.loader is None:
+            return
         value = getattr(instance, self.name)
         if self.optional and value == self.default:
             return
         data[self.data_key] = value
 
     def put_schema_into(self, object_schema):
-        schema = self.item_loader.get_schema()
+        if self.loader is None:
+            return
+        schema = self.loader.get_schema()
         if self.doc:
             schema['description'] = self.doc
         # XXX: set schema['default'] ?
@@ -193,6 +248,20 @@ class Field:
             self._load_missing = lambda instance, data: func(instance)
             return func
         return _decorator
+
+    def after_load(self):
+        def _decorator(func):
+            self._after_load_hooks.append(func)
+            return func
+        return _decorator
+
+
+def loader():
+    def _decorator(func):
+        result = Field(None, data_key=None)
+        result.constructor()(func)
+        return result
+    return _decorator
 
 
 class ModelLoader:
@@ -217,8 +286,9 @@ class ModelLoader:
 
     def load(self, data, **init_kwargs):
         result = self.cls(**init_kwargs)
-        for field in self.iter_fields():
-            field.load_into(result, data)
+        with model_load_context(result):
+            for field in self.iter_fields():
+                field.load_into(result, data)
         return result
 
     def dump(self, value):
@@ -249,19 +319,16 @@ class Registry:
             }
         self._loaders = loaders
 
-    def model(self):
-        def _decorator(cls):
-            self._loaders[cls] = ModelLoader(cls)
-            return cls
-        return _decorator
+    def register_model(self, cls):
+        self._loaders[cls] = ModelLoader(cls)
+        return cls
 
     def __getitem__(self, key):
         return self._loaders.get(key, key)
 
     def load(self, key, data, **init_kwargs):
         loader = self[key]
-        with context(current_schema, self):
-            return loader.load(data, **init_kwargs)
+        return loader.load(data, **init_kwargs)
 
     def dump(self, key, instance=None):
         if instance is None:

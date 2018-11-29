@@ -166,7 +166,7 @@ def course(course, year=None):
         "course.html",
         course=course,
         recent_runs=[], # XXX
-        edit_info=course.get_edit_info(),
+        edit_info=course.edit_info,
     )
 
 
@@ -190,7 +190,7 @@ def session(course, session_slug, page):
         template,
         session=session,
         course=session.course,
-        edit_info=session.get_edit_info(),
+        edit_info=session.edit_info,
         materials_by_type=materials_by_type,
         content=None, # XXX
     )
@@ -238,7 +238,7 @@ def page(material, page_slug='index', solution=None):
         canonical_url=canonical_url,
         is_canonical_lesson=is_canonical_lesson,
         page_attribution=page.attribution,
-        edit_info=page.get_edit_info(),
+        edit_info=page.edit_info,
         **kwargs
     )
 
@@ -286,7 +286,7 @@ def course_calendar(course):
         sessions_by_date=sessions_by_date,
         months=list_months(course.start_date, course.end_date),
         calendar=calendar.Calendar(),
-        edit_info=course.get_edit_info(),
+        edit_info=course.edit_info,
     )
 
 
