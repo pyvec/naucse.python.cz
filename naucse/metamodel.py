@@ -92,6 +92,7 @@ class ListLoader:
 
 
 class DictLoader:
+    """Handle a dict with string keys and values loaded by `item_loader`"""
     def __init__(self, item_loader):
         self.item_loader = item_loader
 
@@ -109,6 +110,10 @@ class DictLoader:
 
 
 class KeyAttrDictLoader:
+    """Handle an ordered dict that's serialized as a list
+
+    The key of the dict is an attribute of its values, usually a `slug`.
+    """
     def __init__(self, item_loader, *, key_attr):
         self.item_loader = item_loader
         self.key_attr = key_attr
@@ -133,24 +138,15 @@ class KeyAttrDictLoader:
 class Field:
     def __init__(
         self, item_loader, *,
-        name=None, data_key=None,
-        optional=False, default=NOTHING, factory=None, construct=None,
-        convert=None,
-        doc=None,
+        name=None, data_key=None, optional=False, doc=None,
     ):
         self.item_loader = item_loader
         self.name = name
         self.data_key = data_key or name
         self.optional = optional
-        self.default = self.schema_default = default
-        self.factory = factory
-        self.construct = construct
-        self.convert = convert
         self.doc = doc
-        self.post_loaders = []
 
-        if self.optional and self.default is NOTHING:
-            self.default = None
+    default = None
 
     def __set_name__(self, cls, name):
         self.name = name
@@ -160,19 +156,16 @@ class Field:
         try:
             item_data = data[self.data_key]
         except KeyError:
-            if self.construct is not None:
-                value = self.construct(instance, data)
-            elif self.factory is not None:
-                value = self.factory()
-            elif self.default is not NOTHING:
-                value = self.default
+            if self.optional:
+                value = self._load_missing(instance, data)
             else:
                 raise
         else:
             value = self.item_loader.load(item_data)
         setattr(instance, self.name, value)
-        for loader in self.post_loaders:
-            loader(instance)
+
+    def _load_missing(self, instance, data):
+        return None
 
     def dump_into(self, instance, data):
         value = getattr(instance, self.name)
@@ -184,8 +177,7 @@ class Field:
         schema = self.item_loader.get_schema()
         if self.doc:
             schema['description'] = self.doc
-        if self.schema_default is not NOTHING:
-            schema['default'] = self.default
+        # XXX: set schema['default'] ?
         object_schema['properties'][self.data_key] = schema
         if not self.optional:
             object_schema.setdefault('required', []).append(self.data_key)
@@ -197,14 +189,8 @@ class Field:
 
     def constructor(self):
         def _decorator(func):
-            self.construct = func
             self.optional = True
-            return func
-        return _decorator
-
-    def post_loader(self):
-        def _decorator(func):
-            self.post_loaders.append(func)
+            self._load_missing = lambda instance, data: func(instance)
             return func
         return _decorator
 
@@ -223,15 +209,21 @@ class ModelLoader:
             doc = cls.__doc__
         self.doc = doc
 
+    def iter_fields(self):
+        for name, field in vars(self.cls).items():
+            if name.startswith('__') or not isinstance(field, Field):
+                continue
+            yield field
+
     def load(self, data, **init_kwargs):
         result = self.cls(**init_kwargs)
-        for name, field in self.fields.items():
+        for field in self.iter_fields():
             field.load_into(result, data)
         return result
 
     def dump(self, value):
         result = {}
-        for name, field in self.fields.items():
+        for field in self.iter_fields():
             field.dump_into(value, result)
         return result
 
@@ -242,7 +234,7 @@ class ModelLoader:
         }
         if self.doc:
             schema['description'] = self.doc
-        for name, field in self.fields.items():
+        for field in self.iter_fields():
             field.put_schema_into(schema)
         return schema
 
