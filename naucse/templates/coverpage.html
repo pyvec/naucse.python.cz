@@ -9,14 +9,14 @@
 
 {% block course_content %}
   <h1>
-    {% if session.date is defined %}
+    {% if session.date %}
         Lekce: {{ session.title }} ({{ session.date }})
     {% else %}
         Lekce: {{ session.title }}
     {% endif %}
 </h1>
 
-{% if session.course.place is defined and session.start_time is defined %}
+{% if session.course.place and session.start_time %}
     <div class="details">{{ session.course.place }},
         {{ session.start_time | format_time }}–{{ session.end_time | format_time }}</div>
 {% endif %}
@@ -43,7 +43,7 @@
 <hr class="lesson-end">
 
 {% call nav.prevnext() %}
-    {% if session.prev is defined and session.prev != None %}
+    {% if session and session != None %}
         {#- XXX: This is wrong! Do s/session/session.prev/ #}
         {{ nav.prev(session.get_url(), session.title) }}
     {% endif %}

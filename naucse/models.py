@@ -19,6 +19,13 @@ reg = Registry()
 dump = reg.dump
 
 
+class NoURL(LookupError):
+    """An object's URL could not be found"""
+
+class NoURLType(NoURL):
+    """The requested URL type is not available"""
+
+
 class URLLoader:
     def load(self, data):
         return sanitize.convert_link('href', data)
@@ -54,9 +61,16 @@ class StaticFile(Model):
     """Static file specific to a Page
     """
 
+
 class Page(Model):
     """One page of teaching text
     """
+
+
+class Lesson(Model):
+    """A lesson – collection of Pages on a single topic
+    """
+
 
 class Material(Model):
     """Teaching material
@@ -93,6 +107,51 @@ class SessionPage(Model):
         return self.session.course
 
 
+def set_prev_next(sequence, *, attr_names=('prex', 'next')):
+    sequence = list(sequence)
+    prev_attr, next_attr = attr_names
+    for prev, now, next in zip(
+        [None] + sequence,
+        sequence,
+        sequence[1:] + [None],
+    ):
+        setattr(now, prev_attr, prev)
+        setattr(now, next_attr, next)
+
+
+class SessionTimeLoader:
+    def load(self, data):
+        try:
+            return datetime.datetime.strftime('%Y-%m-%d %H:%M:%S', value)
+        except ValueError:
+            time = datetime.datetime.strftime('%H:%M:%s', value).time()
+            return time.replace(tzinfo=dateutil.tz.gettz(_TIMEZONE))
+
+    def dump(self, value):
+        return value.strptime('%Y-%m-%d %H:%M:%S')
+
+    @classmethod
+    def get_schema(cls):
+        return {
+            'type': 'string',
+            'pattern': '([0-9]{4}-[0-9]{2}-[0-9]{2} )?[0-9]{2}:[0-9]{2}:[0-9]{2}',
+        }
+
+
+def _combine_session_time(session, kind):
+    time = getattr(session, f'{kind}_time')
+    course = session.course
+    default_time = course.default_time
+    if time is None:
+        if session.date and course.default_time:
+            return datetime.datetime.combine(session.date, default_time[kind])
+    elif isinstance(time, datetime.time):
+        if session.date:
+            return datetime.datetime.combine(session.date, time)
+    else:
+        return time
+
+
 class Session(Model):
     """A smaller collection of teaching materials
     """
@@ -100,6 +159,10 @@ class Session(Model):
     title = Field(reg[str])
     date = Field(reg[datetime.date], optional=True)
     materials = Field(ListLoader(reg[Material]))
+
+    @materials.after_load()
+    def index(self):
+        set_prev_next(m for m in self.materials if not m.external_url)
 
     @loader()
     def course(self):
@@ -116,7 +179,7 @@ class Session(Model):
 
     @loader()
     def pages(self):
-        # XXX: These could be in the API
+        # XXX: These should be in the API
         return {
             'front': reg.load(SessionPage, {'slug': 'front'}, parent=self),
             'back': reg.load(SessionPage, {'slug': 'back'}, parent=self),
@@ -124,9 +187,15 @@ class Session(Model):
 
     index = Field(reg[int], factory=get_index)
 
+    start_time = Field(SessionTimeLoader(), optional=True)
+    @start_time.after_load()
+    def _combine(self):
+        self.start_time = _combine_session_time(self, 'start')
 
-def _min_or_none(sequence):
-    return min([m for m in sequence if m is not None], default=NOTHING)
+    end_time = Field(SessionTimeLoader(), optional=True)
+    @end_time.after_load()
+    def _combine(self):
+        self.end_time = _combine_session_time(self, 'end')
 
 
 class AnyDictLoader:
@@ -191,7 +260,13 @@ class Course(Model):
     place = Field(reg[str], optional=True)
     time = Field(reg[str], optional=True)
 
+    default_time = Field(TimeIntervalLoader(), optional=True)
+
     sessions = Field(KeyAttrDictLoader(reg[Session], key_attr='slug'))
+
+    @sessions.after_load()
+    def index(self):
+        set_prev_next(self.sessions.values())
 
     source_file = Field(reg[str])
 
@@ -375,13 +450,6 @@ import jsonschema
 import yaml
 
 from naucse.sanitize import sanitize_html, sanitize_stylesheet
-
-
-class NoURL(LookupError):
-    """An object's URL could not be found"""
-
-class NoURLType(NoURL):
-    """The requested URL type is not available"""
 
 
 class _Nothing:
@@ -661,18 +729,6 @@ class DictField(Field):
             'additionalProperties': schema_object(self.item_type, allow_ref=not is_input)
         }
 
-
-def _set_prev_next(sequence, prev_next_attrs):
-    if prev_next_attrs:
-        sequence = list(sequence)
-        prev_attr, next_attr = prev_next_attrs
-        for prev, now, next in zip(
-            [None] + sequence,
-            sequence,
-            sequence[1:] + [None],
-        ):
-            setattr(now, prev_attr, prev)
-            setattr(now, next_attr, next)
 
 class ListField(Field):
     def __init__(self, item_type, *, prev_next_attrs=None, **kwargs):
@@ -1103,13 +1159,6 @@ class Session(Model):
     def get_edit_info(self):
         if self.source_file is not None:
             return self.course.repo_info.get_edit_info(self.source_file)
-
-
-def _max_or_none(sequence):
-    return max([m for m in sequence if m is not None], default=NOTHING)
-
-def _min_or_none(sequence):
-    return min([m for m in sequence if m is not None], default=NOTHING)
 
 
 class Course(Model):
