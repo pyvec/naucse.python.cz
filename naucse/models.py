@@ -78,19 +78,33 @@ class Material(Model):
     slug = Field(reg[str], optional=True)
     title = Field(reg[str], optional=True)
     external_url = Field(URLLoader(), optional=True)
+    lesson_slug = Field(reg[str], optional=True)
     type = Field(reg[str])
 
+    @loader()
+    def session(self):
+        return self._parent
+
+    @loader()
+    def course(self):
+        return self.session.course
+
+    @loader()
+    def lesson(self):
+        if self.lesson_slug is not None:
+            if self.external_url:
+                raise ValueError(
+                    'external_url and lesson_slug are incompatible'
+                )
+            return self.course.lessons[self.lesson_slug]
+
     def get_url(self, url_type='web', **kwargs):
+        if self.lesson:
+            return self.lesson.get_url(**kwargs)
         if url_type != 'web':
             raise NoURLType(url_type)
-        try:
+        if self.external_url:
             return self.external_url
-        except AttributeError:
-            try:
-                pages = self.pages
-            except AttributeError:
-                return None
-            return pages['index'].get_url(**kwargs)
 
 
 class SessionPage(Model):
@@ -158,15 +172,16 @@ class Session(Model):
     slug = Field(reg[str])
     title = Field(reg[str])
     date = Field(reg[datetime.date], optional=True)
+
+    @loader()
+    def course(self):
+        return self._parent
+
     materials = Field(ListLoader(reg[Material]))
 
     @materials.after_load()
     def index(self):
         set_prev_next(m for m in self.materials if not m.external_url)
-
-    @loader()
-    def course(self):
-        return self._parent
 
     source_file = Field(reg[str])
 

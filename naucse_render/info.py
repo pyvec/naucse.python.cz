@@ -106,10 +106,14 @@ def get_extra_lesson(lesson_slug, vars=None):
 def update_material(material, vars=None):
     lesson_slug = material.pop('lesson', None)
     if lesson_slug:
-        update_lesson(material, lesson_slug, vars=vars or {})
+        material['lesson_slug'] = lesson_slug
         if material.pop('url', None):
             raise ValueError(f'Material {material} has URL')
         material.setdefault('type', 'lesson')
+        if 'title' not in material:
+            lesson_path = Path('lessons', lesson_slug)
+            lesson_info = read_yaml('lessons', lesson_slug, 'info.yml')
+            material['title'] = lesson_info['title']
     else:
         url = material.pop('url', None)
         if url:
