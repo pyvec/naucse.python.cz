@@ -70,7 +70,8 @@ def model():
             },
         },
         schema_url_factory=lambda m, is_input, **kw: url_for(
-                'schema', model_name=m.__name__, is_input=is_input, **kw),
+            'schema', model_slug=models.model_slugs[m],
+            is_input=is_input, **kw),
     )
     model.load_local(Path(app.root_path).parent)
     if not app.config['DEBUG']:
@@ -376,15 +377,11 @@ def course_calendar_ics(course_slug):
     return Response(str(cal), mimetype="text/calendar")
 
 
-@app.route('/v1/schema/<is_input:is_input>.json', defaults={'model_name': 'root'})
-@app.route('/v1/schema/<is_input:is_input>/<model_name>.json')
-def schema(model_name, is_input):
+@app.route('/v1/schema/<is_input:is_input>.json', defaults={'model_slug': 'root'})
+@app.route('/v1/schema/<is_input:is_input>/<model_slug>.json')
+def schema(model_slug, is_input):
     try:
-        cls = {
-            'root': models.Root,
-            'course': models.Course,
-            'run_year': models.RunYear,
-        }[model_name]
+        cls = models.models[model_slug]
     except KeyError:
         abort(404)
     return jsonify(models.get_schema(cls, is_input=is_input))
@@ -392,7 +389,7 @@ def schema(model_name, is_input):
 
 @app.route('/v1/naucse.json')
 def api():
-    return jsonify(models.dump(model, models.Root))
+    return jsonify(models.dump(model._get_current_object()))
 
 
 @app.route('/v1/years/<int:year>.json')

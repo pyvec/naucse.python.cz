@@ -38,6 +38,10 @@ class URLConverter(BaseConverter):
         return {'type': 'string', 'format': 'uri'}
 
 
+models = {}
+model_slugs = {}
+
+
 class Model:
     init_args = {'parent'}
     parent_attrs = ()
@@ -53,10 +57,29 @@ class Model:
 
     def __init_subclass__(cls):
         slug = re.sub('([A-Z])', r'-\1', cls.__name__).lower().lstrip('-')
-        register_model(cls, init_args=cls.init_args, slug=slug)
+        converter = NaucseModelConverter(
+            cls, init_args=cls.init_args, slug=slug,
+        )
+        models[slug] = cls
+        model_slugs[cls] = slug
+        register_model(cls, converter)
 
     def get_url(self, url_type='web', *, external=False):
         return self.root._url_for(self, url_type=url_type, external=external)
+
+
+class NaucseModelConverter(ModelConverter):
+    def dump(self, value):
+        result = super().dump(value)
+        try:
+            result['url'] = value.get_url(external=True)
+        except NoURL:
+            pass
+        try:
+            result['api_url'] = value.get_url('api', external=True)
+        except NoURL:
+            pass
+        return result
 
 
 def _sanitize_page_content(parent, content):

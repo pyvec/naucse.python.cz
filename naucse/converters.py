@@ -468,7 +468,8 @@ def load(converter, data, **init_kwargs):
     return converter.load(data, **init_kwargs)
 
 
-def register_model(cls, *, init_args=(), slug=None):
-    converter = ModelConverter(cls, init_args=init_args, slug=slug)
+def register_model(cls, converter=None):
+    if converter is None:
+        converter = ModelConverter(cls)
     cls._naucse__converter = converter
     return cls
