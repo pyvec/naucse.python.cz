@@ -26,49 +26,8 @@ Key concepts:
 
 """
 import datetime
-import contextlib
-import contextvars
 
 import textwrap
-
-_parents_var = contextvars.ContextVar('_parents_var', default=None)
-_index_var = contextvars.ContextVar('_index_var')
-
-@contextlib.contextmanager
-def model_load_context(model):
-    parents = _parents_var.get()
-    if _parents_var.get() is None:
-        token = _parents_var.set([model])
-        yield
-        _parents_var.reset(token)
-    else:
-        parents.append(model)
-        yield
-        parents.pop()
-
-
-def get_parent():
-    parents = _parents_var.get()
-    if not parents:
-        raise ValueError('No model is being loaded')
-    return parents[-1]
-
-
-def indexed(iterable):
-    token = _index_var.set(0)
-    try:
-        for i, item in enumerate(iterable):
-            _index_var.set(i)
-            yield item
-    finally:
-        _index_var.reset(token)
-
-
-def get_index():
-    try:
-        return _index_var.get()
-    except LookupError as e:
-        raise ValueError('Not sequence is being loaded') from e
 
 
 class _Nothing:
@@ -79,29 +38,27 @@ class _Nothing:
 NOTHING = _Nothing()
 
 
-class IntegerConverter:
+class BaseConverter:
+    init_args = ()
+
     def load(self, data):
         return data
 
     def dump(self, value):
         return value
 
+
+class IntegerConverter(BaseConverter):
     def get_schema(self):
         return {'type': 'integer'}
 
 
-class StringConverter:
-    def load(self, data):
-        return data
-
-    def dump(self, value):
-        return value
-
+class StringConverter(BaseConverter):
     def get_schema(self):
         return {'type': 'string'}
 
 
-class DateConverter:
+class DateConverter(BaseConverter):
     def load(self, data):
         return datetime.datetime.strptime(data, "%Y-%m-%d").date()
 
@@ -116,12 +73,19 @@ class DateConverter:
         }
 
 
-class ListConverter:
-    def __init__(self, item_converter):
+class ListConverter(BaseConverter):
+    def __init__(self, item_converter, *, index_arg=None):
         self.item_converter = item_converter
+        self.init_args = item_converter.init_args
+        self.index_arg = index_arg
 
-    def load(self, data):
-        return [self.item_converter.load(d) for d in indexed(data)]
+    def load(self, data, **init_kwargs):
+        result = []
+        for index, d in enumerate(data):
+            if self.index_arg:
+                init_kwargs[self.index_arg] = index
+            result.append(self.item_converter.load(d, **init_kwargs))
+        return result
 
     def dump(self, value):
         return [self.item_converter.dump(v) for v in value]
@@ -133,14 +97,16 @@ class ListConverter:
         }
 
 
-class DictConverter:
+class DictConverter(BaseConverter):
     """Handle a dict with string keys and values loaded by `item_converter`"""
     def __init__(self, item_converter):
         self.item_converter = item_converter
+        self.init_args = item_converter.init_args
 
-    def load(self, data):
+    def load(self, data, **init_kwargs):
         return {
-            k: self.item_converter.load(v) for k, v in indexed(data.items())
+            k: self.item_converter.load(v, **init_kwargs)
+            for k, v in data.items()
         }
 
     def dump(self, value):
@@ -153,19 +119,23 @@ class DictConverter:
         }
 
 
-class KeyAttrDictConverter:
+class KeyAttrDictConverter(BaseConverter):
     """Handle an ordered dict that's serialized as a list
 
     The key of the dict is an attribute of its values, usually a `slug`.
     """
-    def __init__(self, item_converter, *, key_attr):
+    def __init__(self, item_converter, *, key_attr, index_arg=None):
         self.item_converter = item_converter
         self.key_attr = key_attr
+        self.index_arg = index_arg
+        self.init_args = set(item_converter.init_args) | {index_arg}
 
-    def load(self, data):
+    def load(self, data, **init_kwargs):
         result = {}
-        for value in indexed(data):
-            item = self.item_converter.load(value)
+        for index, value in enumerate(data):
+            if self.index_arg:
+                init_kwargs[self.index_arg] = index
+            item = self.item_converter.load(value, **init_kwargs)
             result[getattr(item, self.key_attr)] = item
         return result
 
@@ -202,10 +172,14 @@ class Field:
         self.name = name
         self.data_key = self.data_key or self.name
 
-    def load_into(self, instance, data):
+    def load_into(self, instance, data, **init_kwargs):
         if self.converter is None:
             value = self._load_missing(instance)
         else:
+            init_kwargs = {
+                n: v for n, v in init_kwargs.items()
+                if n in self.converter.init_args
+            }
             try:
                 item_data = data[self.data_key]
             except KeyError:
@@ -214,7 +188,7 @@ class Field:
                 else:
                     raise
             else:
-                value = self.converter.load(item_data)
+                value = self.converter.load(item_data, **init_kwargs)
         setattr(instance, self.name, value)
         for func in self._after_load_hooks:
             func(instance)
@@ -271,11 +245,12 @@ def loader():
     return _decorator
 
 
-class ModelConverter:
-    def __init__(self, cls, *, doc=None):
+class ModelConverter(BaseConverter):
+    def __init__(self, cls, *, init_args=(), doc=None):
         self.cls = cls
         self.name = cls.__name__
         self.fields = {}
+        self.init_args = init_args
         for name, field in vars(cls).items():
             if name.startswith('__') or not isinstance(field, Field):
                 continue
@@ -293,9 +268,8 @@ class ModelConverter:
 
     def load(self, data, **init_kwargs):
         result = self.cls(**init_kwargs)
-        with model_load_context(result):
-            for field in self.iter_fields():
-                field.load_into(result, data)
+        for field in self.iter_fields():
+            field.load_into(result, data, parent=result)
         return result
 
     def dump(self, value):
@@ -326,8 +300,10 @@ class Registry:
             }
         self._converters = converters
 
-    def register_model(self, cls):
-        self._converters[cls] = ModelConverter(cls)
+    def register_model(self, cls, *, init_args=()):
+        self._converters[cls] = ModelConverter(
+            cls, init_args=init_args,
+        )
         return cls
 
     def __getitem__(self, key):

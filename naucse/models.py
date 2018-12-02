@@ -6,9 +6,9 @@ import dateutil
 import yaml
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
-from naucse.converters import Registry, Field, KeyAttrDictConverter
+from naucse.converters import Registry, Field, loader, BaseConverter
 from naucse.converters import ListConverter, DictConverter
-from naucse.converters import get_parent, get_index, loader
+from naucse.converters import KeyAttrDictConverter
 from naucse import sanitize
 
 import naucse_render
@@ -28,7 +28,7 @@ class NoURLType(NoURL):
     """The requested URL type is not available"""
 
 
-class URLConverter:
+class URLConverter(BaseConverter):
     def load(self, data):
         return sanitize.convert_link('href', data)
         return data
@@ -42,22 +42,20 @@ class URLConverter:
 
 
 class Model:
+    init_args = {'parent'}
+
     def __init__(self, *, parent=None):
-        if parent is None:
-            parent = get_parent()
         self.root = parent.root
-        self._parent = parent
+        self.parent = parent
 
     def __init_subclass__(cls):
-        reg.register_model(cls)
+        reg.register_model(cls, init_args=cls.init_args)
 
     def get_url(self, url_type='web', *, external=False):
         return self.root._url_for(self, url_type=url_type, external=external)
 
 
-def _sanitize_page_content(content):
-    # XXX
-    parent = get_parent()
+def _sanitize_page_content(parent, content):
     parent_page = getattr(parent, 'page', parent)
 
     def page_url(*, lesson, page='index', **kw):
@@ -80,12 +78,16 @@ def _sanitize_page_content(content):
     )
 
 
-class HTMLFragmentConverter:
-    def __init__(self, *, sanitizer=sanitize.sanitize_html):
+class HTMLFragmentConverter(BaseConverter):
+    init_args = {'parent'}
+
+    def __init__(self, *, sanitizer=None):
         self.sanitizer = sanitizer
 
-    def load(self, value):
-        return self.sanitizer(value)
+    def load(self, value, parent):
+        if self.sanitizer is None:
+            return sanitize.sanitize_html(value)
+        return self.sanitizer(parent, value)
 
     def dump(self, value):
         return value
@@ -101,13 +103,15 @@ class HTMLFragmentConverter:
 class Solution(Model):
     """Solution to a problem on a Page
     """
-    @loader()
-    def index(self):
-        return get_index()
+    init_args = {'parent', 'index'}
+
+    def __init__(self, *, parent, index):
+        super().__init__(parent=parent)
+        self.index = index
 
     @loader()
     def page(self):
-        return self._parent
+        return self.parent
 
     content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content))
 
@@ -117,7 +121,7 @@ class StaticFile(Model):
     """
     @loader()
     def lesson(self):
-        return self._parent
+        return self.parent
 
     @loader()
     def course(self):
@@ -131,7 +135,7 @@ class StaticFile(Model):
     path = Field(reg[str])
 
 
-class PageCSSConverter:
+class PageCSSConverter(BaseConverter):
     def load(self, value):
         return sanitize.sanitize_stylesheet(value)
 
@@ -146,9 +150,11 @@ class PageCSSConverter:
         }
 
 
-class LicenseConverter:
-    def load(self, value):
-        return get_parent().root.licenses[value]
+class LicenseConverter(BaseConverter):
+    init_args = {'parent'}
+
+    def load(self, value, parent):
+        return parent.root.licenses[value]
 
     def dump(self, value):
         return value.slug
@@ -166,7 +172,7 @@ class Page(Model):
 
     @loader()
     def lesson(self):
-        return self._parent
+        return self.parent
 
     @loader()
     def course(self):
@@ -204,7 +210,7 @@ class Page(Model):
         except Exception as e:
             raise ValueError(e)
 
-    solutions = Field(ListConverter(reg[Solution]))
+    solutions = Field(ListConverter(reg[Solution], index_arg='index'))
 
 
 class Lesson(Model):
@@ -212,7 +218,7 @@ class Lesson(Model):
     """
     @loader()
     def course(self):
-        return self._parent
+        return self.parent
 
     slug = Field(reg[str])
     static_files = Field(DictConverter(reg[StaticFile]))
@@ -268,7 +274,7 @@ class Material(Model):
 
     @loader()
     def session(self):
-        return self._parent
+        return self.parent
 
     @loader()
     def course(self):
@@ -304,7 +310,7 @@ class SessionPage(Model):
 
     @loader()
     def session(self):
-        return self._parent
+        return self.parent
 
     @loader()
     def course(self):
@@ -323,7 +329,7 @@ def set_prev_next(sequence, *, attr_names=('prev', 'next')):
         setattr(now, next_attr, next)
 
 
-class SessionTimeConverter:
+class SessionTimeConverter(BaseConverter):
     def load(self, data):
         try:
             return datetime.datetime.strftime('%Y-%m-%d %H:%M:%S', value)
@@ -359,13 +365,19 @@ def _combine_session_time(session, kind):
 class Session(Model):
     """A smaller collection of teaching materials
     """
+    init_args = {'parent', 'index'}
+
+    def __init__(self, *, parent, index):
+        super().__init__(parent=parent)
+        self.index = index
+
     slug = Field(reg[str])
     title = Field(reg[str])
     date = Field(reg[datetime.date], optional=True)
 
     @loader()
     def course(self):
-        return self._parent
+        return self.parent
 
     materials = Field(ListConverter(reg[Material]))
 
@@ -390,8 +402,6 @@ class Session(Model):
             'back': reg.load(SessionPage, {'slug': 'back'}, parent=self),
         }
 
-    index = Field(reg[int], factory=get_index)
-
     start_time = Field(SessionTimeConverter(), optional=True)
     @start_time.after_load()
     def _combine(self):
@@ -403,7 +413,7 @@ class Session(Model):
         self.end_time = _combine_session_time(self, 'end')
 
 
-class AnyDictConverter:
+class AnyDictConverter(BaseConverter):
     def load(self, data):
         return data
 
@@ -423,7 +433,7 @@ def time_from_string(time_string):
     return datetime.time(hour, minute, tzinfo=tzinfo)
 
 
-class TimeIntervalConverter:
+class TimeIntervalConverter(BaseConverter):
     def load(self, data):
         return {
             'start': time_from_string(data['start']),
@@ -473,7 +483,8 @@ class Course(Model):
 
     default_time = Field(TimeIntervalConverter(), optional=True)
 
-    sessions = Field(KeyAttrDictConverter(reg[Session], key_attr='slug'))
+    sessions = Field(KeyAttrDictConverter(
+        reg[Session], key_attr='slug', index_arg='index'))
 
     @sessions.after_load()
     def _index_sessions(self):
