@@ -43,10 +43,15 @@ class URLConverter(BaseConverter):
 
 class Model:
     init_args = {'parent'}
+    parent_attrs = ()
 
     def __init__(self, *, parent=None):
         self.root = parent.root
         self.parent = parent
+        for p in self.parent_attrs[:1]:
+            setattr(self, p, parent)
+        for p in self.parent_attrs[1:]:
+            setattr(self, p, getattr(parent, p))
 
     def __init_subclass__(cls):
         reg.register_model(cls, init_args=cls.init_args)
@@ -104,14 +109,11 @@ class Solution(Model):
     """Solution to a problem on a Page
     """
     init_args = {'parent', 'index'}
+    parent_attrs = 'page', 'lesson', 'course'
 
     def __init__(self, *, parent, index):
         super().__init__(parent=parent)
         self.index = index
-
-    @loader()
-    def page(self):
-        return self.parent
 
     content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content))
 
@@ -119,13 +121,7 @@ class Solution(Model):
 class StaticFile(Model):
     """Static file specific to a Lesson
     """
-    @loader()
-    def lesson(self):
-        return self.parent
-
-    @loader()
-    def course(self):
-        return self.lesson.course
+    parent_attrs = 'lesson', 'course'
 
     @loader()
     def base_path(self):
@@ -169,14 +165,7 @@ class LicenseConverter(BaseConverter):
 class Page(Model):
     """One page of teaching text
     """
-
-    @loader()
-    def lesson(self):
-        return self.parent
-
-    @loader()
-    def course(self):
-        return self.lesson.course
+    parent_attrs = 'lesson', 'course'
 
     slug = Field(reg[str])
     title = Field(reg[str])
@@ -216,9 +205,7 @@ class Page(Model):
 class Lesson(Model):
     """A lesson – collection of Pages on a single topic
     """
-    @loader()
-    def course(self):
-        return self.parent
+    parent_attrs = ('course', )
 
     slug = Field(reg[str])
     static_files = Field(DictConverter(reg[StaticFile]))
@@ -266,19 +253,13 @@ class LessonShim:
 class Material(Model):
     """Teaching material
     """
+    parent_attrs = 'session', 'course'
+
     slug = Field(reg[str], optional=True)
     title = Field(reg[str], optional=True)
     external_url = Field(URLConverter(), optional=True)
     lesson_slug = Field(reg[str], optional=True)
     type = Field(reg[str])
-
-    @loader()
-    def session(self):
-        return self.parent
-
-    @loader()
-    def course(self):
-        return self.session.course
 
     @property
     def lesson(self):
@@ -306,15 +287,9 @@ class Material(Model):
 class SessionPage(Model):
     """Session-specific page, e.g. the front cover
     """
+    parent_attrs = 'session', 'course'
+
     slug = Field(reg[str])
-
-    @loader()
-    def session(self):
-        return self.parent
-
-    @loader()
-    def course(self):
-        return self.session.course
 
 
 def set_prev_next(sequence, *, attr_names=('prev', 'next')):
@@ -366,6 +341,7 @@ class Session(Model):
     """A smaller collection of teaching materials
     """
     init_args = {'parent', 'index'}
+    parent_attrs = ('course', )
 
     def __init__(self, *, parent, index):
         super().__init__(parent=parent)
@@ -374,10 +350,6 @@ class Session(Model):
     slug = Field(reg[str])
     title = Field(reg[str])
     date = Field(reg[datetime.date], optional=True)
-
-    @loader()
-    def course(self):
-        return self.parent
 
     materials = Field(ListConverter(reg[Material]))
 
