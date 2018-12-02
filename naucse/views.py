@@ -388,14 +388,22 @@ def schema(model_name, is_input):
 
 @app.route('/v1/naucse.json')
 def api():
-    return jsonify(models.dump(model._get_current_object()))
+    return jsonify(models.dump(model, models.Root))
 
 
 @app.route('/v1/years/<int:year>.json')
 def run_year_api(year):
-    return jsonify(models.dump(model.run_years[year]))
+    try:
+        run_year = model.courses[model.run_years[year]]
+    except KeyError:
+        abort(404)
+    return jsonify(models.dump(run_year))
 
 
-@app.route('/v1/<course:course>.json')
-def course_api(course):
+@app.route('/v1/<course:course_slug>.json')
+def course_api(course_slug):
+    try:
+        course = model.courses[course_slug]
+    except KeyError:
+        abort(404)
     return jsonify(models.dump(course))

@@ -70,7 +70,7 @@ class StringConverter(BaseConverter):
 
 
 class DateConverter(BaseConverter):
-    """Converts datetime.datetime values to 'YYYY-MM-DD' strings."""
+    """Converts datetime.date values to 'YYYY-MM-DD' strings."""
     def load(self, data):
         return datetime.datetime.strptime(data, "%Y-%m-%d").date()
 
@@ -90,7 +90,7 @@ class ListConverter(BaseConverter):
 
     `item_converter` is a Converter for individual items.
 
-    If `index_arg` is given, the item index passed to the `item_converter`'s
+    If `index_arg` is given, the item index is passed to the `item_converter`'s
     `load` method under this name.
     """
     def __init__(self, item_converter, *, index_arg=None):
@@ -120,6 +120,9 @@ class DictConverter(BaseConverter):
     """Converts dicts with string keys and values of convertable items
 
     `item_converter` is a Converter for the values.
+
+    If `key_arg` is given, the key is passed to the `item_converter`'s
+    `load` method under this name.
     """
     def __init__(self, item_converter, *, key_arg=None):
         self.item_converter = item_converter
@@ -147,7 +150,11 @@ class DictConverter(BaseConverter):
 class KeyAttrDictConverter(BaseConverter):
     """Handle an ordered dict that's serialized as a list
 
-    The key of the dict is an attribute of its values, usually a `slug`.
+    The key of the dict is an attribute of its corresponding value,
+    named in `key_attr`.
+
+    If `index_arg` is given, the item index is passed to the `item_converter`'s
+    `load` method under this name.
     """
     def __init__(self, item_converter, *, key_attr, index_arg=None):
         self.item_converter = item_converter
@@ -175,10 +182,31 @@ class KeyAttrDictConverter(BaseConverter):
 
 
 class Field:
+    """Descriptor for a Model's attribute that is loaded/dumped to JSON
+
+    `converter`: Converter to use for the attribute.
+
+    `name`: Name of the attribute (if None, set automatically when Field is
+    used in a class).
+
+    `data_key`: Key in the JSON mapping.
+
+    `doc` is a documentation string. It appears as "description" of the JSON
+    schema.
+
+    `optional`: If True, `data_key` may be missing from the JSON mapping.
+    Missing values are replaced by `None`, unless a `factory` is given or
+    `default_factory` is added later.
+
+    `factory` may be a zero-argument function used to produce default values.
+    Assumes, `optional=True`.
+
+    Additional customizations can be done using the `default_factory` and
+    `after_load` decorators.
+    """
     def __init__(
-        self, converter, *,
-        name=None, data_key=None, optional=False, doc=None,
-        factory=None,
+        self, converter, *, name=None, data_key=None, doc=None,
+        optional=False, factory=None,
     ):
         self.converter = converter
         self.name = name
@@ -249,6 +277,11 @@ class Field:
         )
 
     def default_factory(self):
+        """Decorate a function that will be called to produce a default value
+
+        The decorated function will be called with the loaded instance
+        as first argument.
+        """
         def _decorator(func):
             self.optional = True
             self._load_missing = func
@@ -256,6 +289,11 @@ class Field:
         return _decorator
 
     def after_load(self):
+        """Decorate a function that will be called after an attribute is loaded
+
+        The decorated function will be called with the loaded instance
+        as first argument.
+        """
         def _decorator(func):
             self._after_load_hooks.append(func)
             return func
@@ -263,6 +301,7 @@ class Field:
 
 
 def loader():
+    """Decorator for a load-only Field"""
     def _decorator(func):
         result = Field(None, data_key=None)
         result.default_factory()(func)
@@ -285,21 +324,15 @@ class ModelConverter(BaseConverter):
             doc = cls.__doc__
         self.doc = doc
 
-    def iter_fields(self):
-        for name, field in vars(self.cls).items():
-            if name.startswith('__') or not isinstance(field, Field):
-                continue
-            yield field
-
     def load(self, data, **init_kwargs):
         result = self.cls(**init_kwargs)
-        for field in self.iter_fields():
+        for field in self.fields.values():
             field.load_into(result, data, parent=result)
         return result
 
     def dump(self, value):
         result = {}
-        for field in self.iter_fields():
+        for field in self.fields.values():
             field.dump_into(value, result)
         return result
 
@@ -310,12 +343,16 @@ class ModelConverter(BaseConverter):
         }
         if self.doc:
             schema['description'] = self.doc
-        for field in self.iter_fields():
+        for field in self.fields.values():
             field.put_schema_into(schema)
         return schema
 
 
 class Registry:
+    """Collection of Converters accessible by key
+
+    By default, Converters for `int`, `str` and `date` are included.
+    """
     def __init__(self, converters=None):
         if converters is None:
             converters = {
@@ -326,6 +363,8 @@ class Registry:
         self._converters = converters
 
     def register_model(self, cls, *, init_args=()):
+        """Register a new converter for the given model
+        """
         self._converters[cls] = ModelConverter(
             cls, init_args=init_args,
         )
@@ -338,10 +377,9 @@ class Registry:
         converter = self[key]
         return converter.load(data, **init_kwargs)
 
-    def dump(self, key, instance=None):
-        if instance is None:
-            instance = key
-            key = type(key)
+    def dump(self, instance, key=None):
+        if key is None:
+            key = type(instance)
         converter = self[key]
         return converter.dump(instance)
 

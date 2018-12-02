@@ -121,7 +121,7 @@ class StaticFile(Model):
     init_args = {'parent', 'filename'}
     parent_attrs = 'lesson', 'course'
 
-    @loader()
+    @property
     def base_path(self):
         return self.course.base_path
 
