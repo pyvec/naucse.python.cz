@@ -24,7 +24,6 @@ def get_lesson(lesson_slug, vars):
     lesson_info = read_yaml('lessons', lesson_slug, 'info.yml')
 
     lesson = {
-        'slug': lesson_slug,
         'title': lesson_info['title'],
         'static_files': dict(get_static_files(lesson_path)),
         'pages': {},
@@ -53,5 +52,5 @@ def get_static_files(path):
             path = str(file_path.relative_to('.'))
             yield (
                 filename,
-                {'filename': filename, 'path': path},
+                {'path': path},
             )

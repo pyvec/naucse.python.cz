@@ -45,13 +45,14 @@ class Model:
     init_args = {'parent'}
     parent_attrs = ()
 
-    def __init__(self, *, parent=None):
-        self.root = parent.root
-        self.parent = parent
+    def __init__(self, **kwargs):
+        for a in self.init_args:
+            setattr(self, a, kwargs[a])
         for p in self.parent_attrs[:1]:
-            setattr(self, p, parent)
+            setattr(self, p, self.parent)
         for p in self.parent_attrs[1:]:
-            setattr(self, p, getattr(parent, p))
+            setattr(self, p, getattr(self.parent, p))
+        self.root = self.parent.root
 
     def __init_subclass__(cls):
         reg.register_model(cls, init_args=cls.init_args)
@@ -111,23 +112,19 @@ class Solution(Model):
     init_args = {'parent', 'index'}
     parent_attrs = 'page', 'lesson', 'course'
 
-    def __init__(self, *, parent, index):
-        super().__init__(parent=parent)
-        self.index = index
-
     content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content))
 
 
 class StaticFile(Model):
     """Static file specific to a Lesson
     """
+    init_args = {'parent', 'filename'}
     parent_attrs = 'lesson', 'course'
 
     @loader()
     def base_path(self):
         return self.course.base_path
 
-    filename = Field(reg[str])
     path = Field(reg[str])
 
 
@@ -165,9 +162,9 @@ class LicenseConverter(BaseConverter):
 class Page(Model):
     """One page of teaching text
     """
+    init_args = {'parent', 'slug'}
     parent_attrs = 'lesson', 'course'
 
-    slug = Field(reg[str])
     title = Field(reg[str])
 
     content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content))
@@ -205,11 +202,11 @@ class Page(Model):
 class Lesson(Model):
     """A lesson – collection of Pages on a single topic
     """
+    init_args = {'parent', 'slug'}
     parent_attrs = ('course', )
 
-    slug = Field(reg[str])
-    static_files = Field(DictConverter(reg[StaticFile]))
-    pages = Field(DictConverter(reg[Page]))
+    static_files = Field(DictConverter(reg[StaticFile], key_arg='filename'))
+    pages = Field(DictConverter(reg[Page], key_arg='slug'))
 
 
 class SolutionShim:
@@ -342,10 +339,6 @@ class Session(Model):
     """
     init_args = {'parent', 'index'}
     parent_attrs = ('course', )
-
-    def __init__(self, *, parent, index):
-        super().__init__(parent=parent)
-        self.index = index
 
     slug = Field(reg[str])
     title = Field(reg[str])
@@ -534,7 +527,7 @@ class Course(Model):
         slugs = set(slugs) - set(self.lessons)
         rendered = naucse_render.get_lessons(slugs, vars=self.vars)
         for slug, data in rendered.items():
-            self.lessons[slug] = reg.load(Lesson, data, parent=self)
+            self.lessons[slug] = reg.load(Lesson, data, parent=self, slug=slug)
             self._lesson_shims.pop(slug, None)
 
     @loader()

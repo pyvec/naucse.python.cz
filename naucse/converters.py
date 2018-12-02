@@ -31,13 +31,32 @@ import textwrap
 
 
 class BaseConverter:
+    """Converts to/from JSON-compatible values and provides JSON schema
+    """
     init_args = ()
 
-    def load(self, data):
+    def load(self, data, **init_kwargs):
+        """Convert a JSON-compatible data to a Python value.
+
+        `init_kwargs` are extra values passed to `__init__`, if necessary.
+        The Converter's `init_args` attribute specifies which init_kwargs
+        are supported.
+
+        The base implementation returns `data` unchanged.
+        """
         return data
 
     def dump(self, value):
+        """Convert a Python value to JSON-compatible data.
+        """
         return value
+
+    def get_schema(self):
+        """Return JSON schema for the JSON-compatible data.
+
+        Must be reimplemented in subclasses.
+        """
+        raise NotImplementedError()
 
 
 class IntegerConverter(BaseConverter):
@@ -51,6 +70,7 @@ class StringConverter(BaseConverter):
 
 
 class DateConverter(BaseConverter):
+    """Converts datetime.datetime values to 'YYYY-MM-DD' strings."""
     def load(self, data):
         return datetime.datetime.strptime(data, "%Y-%m-%d").date()
 
@@ -66,6 +86,13 @@ class DateConverter(BaseConverter):
 
 
 class ListConverter(BaseConverter):
+    """Converts lists of convertable items
+
+    `item_converter` is a Converter for individual items.
+
+    If `index_arg` is given, the item index passed to the `item_converter`'s
+    `load` method under this name.
+    """
     def __init__(self, item_converter, *, index_arg=None):
         self.item_converter = item_converter
         self.init_args = item_converter.init_args
@@ -90,16 +117,22 @@ class ListConverter(BaseConverter):
 
 
 class DictConverter(BaseConverter):
-    """Handle a dict with string keys and values loaded by `item_converter`"""
-    def __init__(self, item_converter):
+    """Converts dicts with string keys and values of convertable items
+
+    `item_converter` is a Converter for the values.
+    """
+    def __init__(self, item_converter, *, key_arg=None):
         self.item_converter = item_converter
         self.init_args = item_converter.init_args
+        self.key_arg = key_arg
 
     def load(self, data, **init_kwargs):
-        return {
-            k: self.item_converter.load(v, **init_kwargs)
-            for k, v in data.items()
-        }
+        result = {}
+        for k, v in data.items():
+            if self.key_arg:
+                init_kwargs[self.key_arg] = k
+            result[k] = self.item_converter.load(v, **init_kwargs)
+        return result
 
     def dump(self, value):
         return {k: self.item_converter.dump(v) for k, v in value.items()}
