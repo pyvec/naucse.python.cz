@@ -55,10 +55,62 @@ class Model:
         return self.root._url_for(self, url_type=url_type, external=external)
 
 
+def _sanitize_page_content(content):
+    # XXX
+    parent = get_parent()
+    parent_page = getattr(parent, 'page', parent)
+
+    def page_url(*, lesson, page='index', **kw):
+        lesson = parent_page.course.get_lesson_shim(lesson)
+        return lesson.pages[page].get_url(**kw)
+
+    def solution_url(*, solution, **kw):
+        return SolutionShim(parent=parent_page, index=solution).get_url(**kw)
+
+    def static_url(*, filename, **kw):
+        return parent_page.lesson.static_files[filename].get_url(**kw)
+
+    return sanitize.sanitize_html(
+        content,
+        naucse_urls={
+            'page': page_url,
+            'solution': solution_url,
+            'static': static_url,
+        }
+    )
+
+
+class HTMLFragmentLoader:
+    def __init__(self, *, sanitizer=sanitize.sanitize_html):
+        self.sanitizer = sanitizer
+
+    def load(self, value):
+        return self.sanitizer(value)
+
+    def dump(self, value):
+        return value
+
+    @classmethod
+    def get_schema(cls):
+        return {
+            'type': 'string',
+            'format': 'html-fragment',
+        }
+
+
 class Solution(Model):
     """Solution to a problem on a Page
     """
-    index = Field(reg[int])
+    @loader()
+    def index(self):
+        return get_index()
+
+    @loader()
+    def page(self):
+        return self._parent
+
+    content = Field(HTMLFragmentLoader(sanitizer=_sanitize_page_content))
+
 
 class StaticFile(Model):
     """Static file specific to a Lesson
@@ -77,24 +129,6 @@ class StaticFile(Model):
 
     filename = Field(reg[str])
     path = Field(reg[str])
-
-
-class HTMLFragmentLoader:
-    def __init__(self, *, sanitizer):
-        self.sanitizer = sanitizer
-
-    def load(self, value):
-        return self.sanitizer(get_parent(), value)
-
-    def dump(self, value):
-        return value
-
-    @classmethod
-    def get_schema(cls):
-        return {
-            'type': 'string',
-            'format': 'html-fragment',
-        }
 
 
 class PageCSSLoader:
@@ -141,32 +175,12 @@ class Page(Model):
     slug = Field(reg[str])
     title = Field(reg[str])
 
-    def _sanitize_content(self, content):
-        def lesson_url(*, lesson, page='index', **kw):
-            lesson = self.course.get_lesson_shim(lesson)
-            page = lesson.pages[page]
-            return page.get_url(**kw)
-
-        def solution_url(*, solution, **kw):
-            return SolutionShim(parent=self, index=solution).get_url(**kw)
-
-        def static_url(*, filename, **kw):
-            return self.lesson.static_files[filename].get_url(**kw)
-
-        return sanitize.sanitize_html(
-            content,
-            naucse_urls={
-                'lesson': lesson_url,
-                'solution': solution_url,
-                'static': static_url,
-            }
-        )
-
-    content = Field(HTMLFragmentLoader(sanitizer=_sanitize_content))
+    content = Field(HTMLFragmentLoader(sanitizer=_sanitize_page_content))
     modules = Field(DictLoader(reg[str]), factory=dict)
 
-    attribution = Field(ListLoader(HTMLFragmentLoader(sanitizer=_sanitize_content)))
+    attribution = Field(ListLoader(HTMLFragmentLoader()))
     license = Field(LicenseLoader())
+    license_code = Field(LicenseLoader(), optional=True)
 
     source_file = Field(reg[str])
 
@@ -189,6 +203,8 @@ class Page(Model):
                         return material
         except Exception as e:
             raise ValueError(e)
+
+    solutions = Field(ListLoader(reg[Solution]))
 
 
 class Lesson(Model):
@@ -435,7 +451,7 @@ class Course(Model):
     """Collection of sessions
     """
     def __init__(
-        self, *, parent=None, slug, repo_info, base_path, is_meta=False
+        self, *, parent=None, slug, repo_info, base_path, is_meta=False,
     ):
         super().__init__(parent=parent)
         self.repo_info = repo_info
@@ -494,9 +510,10 @@ class Course(Model):
     def load_local(cls, slug, *, parent, repo_info, canonical=False):
         data = naucse_render.get_course(slug, version=1)
         jsonschema.validate(data, reg.get_schema(cls))
+        is_meta = (slug == 'courses/meta')
         result = reg[cls].load(
             data, slug=slug, repo_info=repo_info, parent=parent,
-            base_path=Path('.').resolve(),
+            base_path=Path('.').resolve(), is_meta=is_meta,
         )
         result.repo_info = repo_info
         result.canonical = canonical

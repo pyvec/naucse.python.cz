@@ -20,7 +20,7 @@ def to_html_list(value, inline=False):
 
 
 def lesson_url(lesson_name, *, page='index', _anchor=''):
-    url = f'naucse:lesson?lesson={lesson_name}'
+    url = f'naucse:page?lesson={lesson_name}'
     if page != 'index':
         url += f'&page={page}'
     if _anchor:
@@ -116,7 +116,7 @@ def render_page(lesson_slug, page_slug, info, vars=None):
         raise ValueError(info['style'])
 
     page['content'] = text
-    page['solutions'] = solutions
+    page['solutions'] = [{'content': s} for s in solutions]
     page['source_file'] = path
     if 'css' in info:
         page['css'] = info['css']

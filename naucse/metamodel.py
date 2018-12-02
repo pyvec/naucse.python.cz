@@ -186,6 +186,7 @@ class Field:
         self.data_key = data_key or name
         self.optional = optional
         self.doc = doc
+        self.converter = None
 
         self._after_load_hooks = []
 

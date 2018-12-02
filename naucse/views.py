@@ -50,9 +50,9 @@ def model():
                     'page', course_slug=p.course.slug,
                     lesson_slug=p.lesson.slug, page_slug=p.slug, **kw),
                 models.Solution: lambda s, **kw: url_for(
-                    'page', course_slug=s.course.slug,
+                    'solution', course_slug=s.course.slug,
                     lesson_slug=s.lesson.slug,
-                    page_slug=s.page.slug, solution=s.index, **kw),
+                    page_slug=s.page.slug, index=s.index, **kw),
                 models.Course: lambda c, **kw: url_for(
                     'course', course_slug=c.slug, **kw),
                 models.Session: lambda s, **kw: url_for(
@@ -219,7 +219,7 @@ def _get_canonicality_info(lesson):
     """Get canonical URL -- i.e., a lesson from 'lessons' with the same slug"""
     # XXX: This could be made much more fancy
     lessons_course = model.get_course('lessons')
-    is_canonical_lesson = (lessons_course == course)
+    is_canonical_lesson = (lessons_course == lesson.course)
     if is_canonical_lesson:
         canonical_url = None
     else:
@@ -258,13 +258,13 @@ def page(course_slug, lesson_slug, page_slug='index'):
 
 
 @app.route('/<course:course_slug>/<lesson:lesson_slug>/<page_slug>'
-              + '/solutions/<int:solution>/')
-def solution(course_slug, lesson_slug, page_slug, solution):
+              + '/solutions/<int:index>/')
+def solution(course_slug, lesson_slug, page_slug, index):
     try:
         course = model.courses[course_slug]
         lesson = course.lessons[lesson_slug]
         page = lesson.pages[page_slug]
-        solution = page.solutions[solution]
+        solution = page.solutions[index]
     except KeyError:
         raise abort(404)
 
@@ -279,6 +279,7 @@ def solution(course_slug, lesson_slug, page_slug, solution):
         is_canonical_lesson=is_canonical_lesson,
         page_attribution=page.attribution,
         edit_info=page.edit_info,
+        solution_number=index,
     )
 
 
