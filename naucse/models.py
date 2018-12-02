@@ -492,7 +492,7 @@ class Course(Model):
         reg[datetime.date],
         doc='Date when this course starts, or None')
 
-    @start_date.constructor()
+    @start_date.default_factory()
     def _construct(self):
         dates = [getattr(s, 'date', None) for s in self.sessions.values()]
         return min((d for d in dates if d), default=None)
@@ -501,7 +501,7 @@ class Course(Model):
         reg[datetime.date],
         doc='Date when this course ends, or None')
 
-    @end_date.constructor()
+    @end_date.default_factory()
     def _construct(self):
         dates = [getattr(s, 'date', None) for s in self.sessions.values()]
         return max((d for d in dates if d), default=None)

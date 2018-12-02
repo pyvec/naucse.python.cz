@@ -12,13 +12,15 @@ Key concepts:
   - dump something to JSON-compatible dict
   - get JSON schema for something
 
-  There are converters for integers, lists of integers, modeld, dicts of models,
-  etc.
+  There are converters for integers, lists of integers, models,
+  dicts of models, etc.
 
-* A **registry** is a collection of converters.
+* A **registry** is a collection of converters. Additionally it provides
+  high-level API for loading and dumping, and for getting a self-contained
+  schema.
 
-* A **field** is an entry in a model, e.g. `Course.title`.
-  Each field usually *has* a converter, but it is not a converter itself.
+* A **field** is an attribute of a model, e.g. `Course.title`.
+  Each field usually *has* a converter (but it is not a converter itself).
   The field handles attributes that are optional in JSON.
   (In Python, missing attributes should be set to None rather than missing.)
 
@@ -192,7 +194,7 @@ class Field:
         self._after_load_hooks = []
 
         if factory:
-            self.constructor()(lambda i: factory())
+            self.default_factory()(lambda i: factory())
 
     default = None
 
@@ -202,13 +204,13 @@ class Field:
 
     def load_into(self, instance, data):
         if self.converter is None:
-            value = self._load_missing(instance, data)
+            value = self._load_missing(instance)
         else:
             try:
                 item_data = data[self.data_key]
             except KeyError:
                 if self.optional:
-                    value = self._load_missing(instance, data)
+                    value = self._load_missing(instance)
                 else:
                     raise
             else:
@@ -217,7 +219,7 @@ class Field:
         for func in self._after_load_hooks:
             func(instance)
 
-    def _load_missing(self, instance, data):
+    def _load_missing(self, instance):
         return None
 
     def dump_into(self, instance, data):
@@ -247,10 +249,10 @@ class Field:
             f'{self.name!r} of {type_name} object was not yet loaded'
         )
 
-    def constructor(self):
+    def default_factory(self):
         def _decorator(func):
             self.optional = True
-            self._load_missing = lambda instance, data: func(instance)
+            self._load_missing = func
             return func
         return _decorator
 
@@ -264,7 +266,7 @@ class Field:
 def loader():
     def _decorator(func):
         result = Field(None, data_key=None)
-        result.constructor()(func)
+        result.default_factory()(func)
         return result
     return _decorator
 
