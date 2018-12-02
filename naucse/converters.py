@@ -30,14 +30,6 @@ import datetime
 import textwrap
 
 
-class _Nothing:
-    """Missing value"""
-    def __bool__(self):
-        return False
-
-NOTHING = _Nothing()
-
-
 class BaseConverter:
     init_args = ()
 
