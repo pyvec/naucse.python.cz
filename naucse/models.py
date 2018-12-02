@@ -6,19 +6,16 @@ import dateutil
 import yaml
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
-from naucse.converters import Registry, Field, loader, BaseConverter
+from naucse.converters import Field, loader, register_model, BaseConverter
 from naucse.converters import ListConverter, DictConverter
 from naucse.converters import KeyAttrDictConverter
+from naucse.converters import dump, load, get_schema
 from naucse import sanitize
 
 import naucse_render
 
 # XXX: Different timezones?
 _TIMEZONE = 'Europe/Prague'
-
-reg = Registry()
-
-dump = reg.dump
 
 
 class NoURL(LookupError):
@@ -37,7 +34,7 @@ class URLConverter(BaseConverter):
         return value
 
     @classmethod
-    def get_schema(cls):
+    def get_schema(cls, context):
         return {'type': 'string', 'format': 'uri'}
 
 
@@ -55,7 +52,7 @@ class Model:
         self.root = self.parent.root
 
     def __init_subclass__(cls):
-        reg.register_model(cls, init_args=cls.init_args)
+        register_model(cls, init_args=cls.init_args)
 
     def get_url(self, url_type='web', *, external=False):
         return self.root._url_for(self, url_type=url_type, external=external)
@@ -99,7 +96,7 @@ class HTMLFragmentConverter(BaseConverter):
         return value
 
     @classmethod
-    def get_schema(cls):
+    def get_schema(cls, context):
         return {
             'type': 'string',
             'format': 'html-fragment',
@@ -125,7 +122,7 @@ class StaticFile(Model):
     def base_path(self):
         return self.course.base_path
 
-    path = Field(reg[str])
+    path = Field(str)
 
 
 class PageCSSConverter(BaseConverter):
@@ -136,7 +133,7 @@ class PageCSSConverter(BaseConverter):
         return value
 
     @classmethod
-    def get_schema(cls):
+    def get_schema(cls, context):
         return {
             'type': 'string',
             'contentMediaType': 'text/css',
@@ -153,7 +150,7 @@ class LicenseConverter(BaseConverter):
         return value.slug
 
     @classmethod
-    def get_schema(cls):
+    def get_schema(cls, context):
         return {
             'type': 'string',
         }
@@ -165,16 +162,16 @@ class Page(Model):
     init_args = {'parent', 'slug'}
     parent_attrs = 'lesson', 'course'
 
-    title = Field(reg[str])
+    title = Field(str)
 
     content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content))
-    modules = Field(DictConverter(reg[str]), factory=dict)
+    modules = Field(DictConverter(str), factory=dict)
 
     attribution = Field(ListConverter(HTMLFragmentConverter()))
     license = Field(LicenseConverter())
     license_code = Field(LicenseConverter(), optional=True)
 
-    source_file = Field(reg[str])
+    source_file = Field(str)
 
     @source_file.after_load()
     def _edit_info(self):
@@ -196,7 +193,7 @@ class Page(Model):
         except Exception as e:
             raise ValueError(e)
 
-    solutions = Field(ListConverter(reg[Solution], index_arg='index'))
+    solutions = Field(ListConverter(Solution, index_arg='index'))
 
 
 class Lesson(Model):
@@ -205,8 +202,8 @@ class Lesson(Model):
     init_args = {'parent', 'slug'}
     parent_attrs = ('course', )
 
-    static_files = Field(DictConverter(reg[StaticFile], key_arg='filename'))
-    pages = Field(DictConverter(reg[Page], key_arg='slug'))
+    static_files = Field(DictConverter(StaticFile, key_arg='filename'))
+    pages = Field(DictConverter(Page, key_arg='slug'))
 
 
 class SolutionShim:
@@ -252,11 +249,11 @@ class Material(Model):
     """
     parent_attrs = 'session', 'course'
 
-    slug = Field(reg[str], optional=True)
-    title = Field(reg[str], optional=True)
+    slug = Field(str, optional=True)
+    title = Field(str, optional=True)
     external_url = Field(URLConverter(), optional=True)
-    lesson_slug = Field(reg[str], optional=True)
-    type = Field(reg[str])
+    lesson_slug = Field(str, optional=True)
+    type = Field(str)
 
     @property
     def lesson(self):
@@ -286,7 +283,7 @@ class SessionPage(Model):
     """
     parent_attrs = 'session', 'course'
 
-    slug = Field(reg[str])
+    slug = Field(str)
 
 
 def set_prev_next(sequence, *, attr_names=('prev', 'next')):
@@ -313,7 +310,7 @@ class SessionTimeConverter(BaseConverter):
         return value.strptime('%Y-%m-%d %H:%M:%S')
 
     @classmethod
-    def get_schema(cls):
+    def get_schema(cls, context):
         return {
             'type': 'string',
             'pattern': '([0-9]{4}-[0-9]{2}-[0-9]{2} )?[0-9]{2}:[0-9]{2}:[0-9]{2}',
@@ -334,23 +331,39 @@ def _combine_session_time(session, kind):
         return time
 
 
+class DateConverter(BaseConverter):
+    """Converts datetime.date values to 'YYYY-MM-DD' strings."""
+    def load(self, data):
+        return datetime.datetime.strptime(data, "%Y-%m-%d").date()
+
+    def dump(self, value):
+        return str(value)
+
+    def get_schema(self, context):
+        return {
+            'type': 'string',
+            'pattern': r'[0-9]{4}-[0-9]{2}-[0-9]{2}',
+            'format': 'date',
+        }
+
+
 class Session(Model):
     """A smaller collection of teaching materials
     """
     init_args = {'parent', 'index'}
     parent_attrs = ('course', )
 
-    slug = Field(reg[str])
-    title = Field(reg[str])
-    date = Field(reg[datetime.date], optional=True)
+    slug = Field(str)
+    title = Field(str)
+    date = Field(DateConverter(), optional=True)
 
-    materials = Field(ListConverter(reg[Material]))
+    materials = Field(ListConverter(Material))
 
     @materials.after_load()
     def _index_materials(self):
         set_prev_next(m for m in self.materials if not m.external_url)
 
-    source_file = Field(reg[str])
+    source_file = Field(str)
 
     @source_file.after_load()
     def _edit_info(self):
@@ -363,8 +376,8 @@ class Session(Model):
     def pages(self):
         # XXX: These should be in the API
         return {
-            'front': reg.load(SessionPage, {'slug': 'front'}, parent=self),
-            'back': reg.load(SessionPage, {'slug': 'back'}, parent=self),
+            'front': load(SessionPage, {'slug': 'front'}, parent=self),
+            'back': load(SessionPage, {'slug': 'back'}, parent=self),
         }
 
     start_time = Field(SessionTimeConverter(), optional=True)
@@ -386,7 +399,7 @@ class AnyDictConverter(BaseConverter):
         return value
 
     @classmethod
-    def get_schema(cls):
+    def get_schema(cls, context):
         return {'type': 'object'}
 
 
@@ -412,7 +425,7 @@ class TimeIntervalConverter(BaseConverter):
         }
 
     @classmethod
-    def get_schema(cls):
+    def get_schema(cls, context):
         return {
             'type': 'object',
             'properties': {
@@ -438,24 +451,24 @@ class Course(Model):
         self.lessons = {}
         self._lesson_shims = {}
 
-    title = Field(reg[str])
-    subtitle = Field(reg[str], optional=True)
-    description = Field(reg[str], optional=True)
-    long_description = Field(reg[str], optional=True)
+    title = Field(str)
+    subtitle = Field(str, optional=True)
+    description = Field(str, optional=True)
+    long_description = Field(str, optional=True)
     vars = Field(AnyDictConverter(), factory=dict)
-    place = Field(reg[str], optional=True)
-    time = Field(reg[str], optional=True)
+    place = Field(str, optional=True)
+    time = Field(str, optional=True)
 
     default_time = Field(TimeIntervalConverter(), optional=True)
 
     sessions = Field(KeyAttrDictConverter(
-        reg[Session], key_attr='slug', index_arg='index'))
+        Session, key_attr='slug', index_arg='index'))
 
     @sessions.after_load()
     def _index_sessions(self):
         set_prev_next(self.sessions.values())
 
-    source_file = Field(reg[str])
+    source_file = Field(str)
 
     @source_file.after_load()
     def _edit_info(self):
@@ -465,7 +478,7 @@ class Course(Model):
             self.edit_info = self.repo_info.get_edit_info(self.source_file)
 
     start_date = Field(
-        reg[datetime.date],
+        DateConverter(),
         doc='Date when this course starts, or None')
 
     @start_date.default_factory()
@@ -474,7 +487,7 @@ class Course(Model):
         return min((d for d in dates if d), default=None)
 
     end_date = Field(
-        reg[datetime.date],
+        DateConverter(),
         doc='Date when this course ends, or None')
 
     @end_date.default_factory()
@@ -485,10 +498,10 @@ class Course(Model):
     @classmethod
     def load_local(cls, slug, *, parent, repo_info, canonical=False):
         data = naucse_render.get_course(slug, version=1)
-        jsonschema.validate(data, reg.get_schema(cls))
+        jsonschema.validate(data, get_schema(cls))
         is_meta = (slug == 'courses/meta')
-        result = reg[cls].load(
-            data, slug=slug, repo_info=repo_info, parent=parent,
+        result = load(
+            cls, data, slug=slug, repo_info=repo_info, parent=parent,
             base_path=Path('.').resolve(), is_meta=is_meta,
         )
         result.repo_info = repo_info
@@ -499,7 +512,7 @@ class Course(Model):
 
     # XXX: Is course derivation useful?
     derives = Field(
-        reg[str], optional=True,
+        str, optional=True,
         doc="Course this derives from (deprecated)")
 
     @loader()
@@ -527,7 +540,7 @@ class Course(Model):
         slugs = set(slugs) - set(self.lessons)
         rendered = naucse_render.get_lessons(slugs, vars=self.vars)
         for slug, data in rendered.items():
-            self.lessons[slug] = reg.load(Lesson, data, parent=self, slug=slug)
+            self.lessons[slug] = load(Lesson, data, parent=self, slug=slug)
             self._lesson_shims.pop(slug, None)
 
     @loader()
@@ -564,8 +577,8 @@ class RunYear(Model):
 class License(Model):
     """A license for content or code
     """
-    url = Field(reg[str])
-    title = Field(reg[str])
+    url = Field(str)
+    title = Field(str)
 
 
 class Root(Model):
@@ -634,7 +647,7 @@ class Root(Model):
         for licence_path in path.iterdir():
             with (licence_path / 'info.yml').open() as f:
                 info = yaml.safe_load(f)
-            licenses[licence_path.name] = reg[License].load(info, parent=self)
+            licenses[licence_path.name] = load(License, info, parent=self)
         return licenses
 
     def runs_from_year(self, year):

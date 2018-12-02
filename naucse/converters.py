@@ -25,7 +25,9 @@ Key concepts:
   (In Python, missing attributes should be set to None rather than missing.)
 
 """
+import collections.abc
 import datetime
+import re
 
 import textwrap
 
@@ -34,6 +36,12 @@ class BaseConverter:
     """Converts to/from JSON-compatible values and provides JSON schema
     """
     init_args = ()
+    schema_url = None
+    definition_key = None
+
+    @property
+    def _naucse__converter(self):
+        return self
 
     def load(self, data, **init_kwargs):
         """Convert a JSON-compatible data to a Python value.
@@ -51,7 +59,7 @@ class BaseConverter:
         """
         return value
 
-    def get_schema(self):
+    def get_schema(self, context):
         """Return JSON schema for the JSON-compatible data.
 
         Must be reimplemented in subclasses.
@@ -59,30 +67,54 @@ class BaseConverter:
         raise NotImplementedError()
 
 
-class IntegerConverter(BaseConverter):
-    def get_schema(self):
-        return {'type': 'integer'}
+class NoneConverter(BaseConverter):
+    def get_schema(self, context):
+        return {'type': 'null'}
 
 
 class StringConverter(BaseConverter):
-    def get_schema(self):
+    def get_schema(self, context):
         return {'type': 'string'}
 
 
-class DateConverter(BaseConverter):
-    """Converts datetime.date values to 'YYYY-MM-DD' strings."""
+class BoolConverter(BaseConverter):
+    def get_schema(self, context):
+        return {'type': 'boolean'}
+
+
+class IntegerConverter(BaseConverter):
     def load(self, data):
-        return datetime.datetime.strptime(data, "%Y-%m-%d").date()
+        return int(data)
 
-    def dump(self, value):
-        return str(value)
+    def get_schema(self, context):
+        return {'type': 'integer'}
 
-    def get_schema(self):
-        return {
-            'type': 'string',
-            'pattern': r'[0-9]{4}-[0-9]{2}-[0-9]{2}',
-            'format': 'date',
-        }
+
+class FloatConverter(BaseConverter):
+    def load(self, data):
+        return float(data)
+
+    def get_schema(self, context):
+        return {'type': 'number'}
+
+
+BUILTIN_CONVERTERS = {
+    type(None): NoneConverter(),
+    str: StringConverter(),
+    bool: BoolConverter(),
+    int: IntegerConverter(),
+    float: FloatConverter(),
+}
+
+def get_converter(key):
+    try:
+        return key._naucse__converter
+    except AttributeError as e:
+        if key in BUILTIN_CONVERTERS:
+            return BUILTIN_CONVERTERS[key]
+        if type(key) in BUILTIN_CONVERTERS:
+            return BUILTIN_CONVERTERS[type(key)]
+        raise TypeError(f'{key} is not a converter') from e
 
 
 class ListConverter(BaseConverter):
@@ -94,8 +126,8 @@ class ListConverter(BaseConverter):
     `load` method under this name.
     """
     def __init__(self, item_converter, *, index_arg=None):
-        self.item_converter = item_converter
-        self.init_args = item_converter.init_args
+        self.item_converter = get_converter(item_converter)
+        self.init_args = self.item_converter.init_args
         self.index_arg = index_arg
 
     def load(self, data, **init_kwargs):
@@ -109,10 +141,10 @@ class ListConverter(BaseConverter):
     def dump(self, value):
         return [self.item_converter.dump(v) for v in value]
 
-    def get_schema(self):
+    def get_schema(self, context):
         return {
             'type': 'array',
-            'items': self.item_converter.get_schema(),
+            'items': context.get_schema(self.item_converter),
         }
 
 
@@ -125,8 +157,8 @@ class DictConverter(BaseConverter):
     `load` method under this name.
     """
     def __init__(self, item_converter, *, key_arg=None):
-        self.item_converter = item_converter
-        self.init_args = item_converter.init_args
+        self.item_converter = get_converter(item_converter)
+        self.init_args = self.item_converter.init_args
         self.key_arg = key_arg
 
     def load(self, data, **init_kwargs):
@@ -140,10 +172,10 @@ class DictConverter(BaseConverter):
     def dump(self, value):
         return {k: self.item_converter.dump(v) for k, v in value.items()}
 
-    def get_schema(self):
+    def get_schema(self, context):
         return {
             'type': 'object',
-            'additionalProperties': self.item_converter.get_schema(),
+            'additionalProperties': context.get_schema(self.item_converter),
         }
 
 
@@ -157,10 +189,10 @@ class KeyAttrDictConverter(BaseConverter):
     `load` method under this name.
     """
     def __init__(self, item_converter, *, key_attr, index_arg=None):
-        self.item_converter = item_converter
+        self.item_converter = get_converter(item_converter)
         self.key_attr = key_attr
         self.index_arg = index_arg
-        self.init_args = set(item_converter.init_args) | {index_arg}
+        self.init_args = set(self.item_converter.init_args)
 
     def load(self, data, **init_kwargs):
         result = {}
@@ -174,10 +206,10 @@ class KeyAttrDictConverter(BaseConverter):
     def dump(self, value):
         return [self.item_converter.dump(v) for k, v in value.items()]
 
-    def get_schema(self):
+    def get_schema(self, context):
         return {
             'type': 'array',
-            'items': self.item_converter.get_schema(),
+            'items': context.get_schema(self.item_converter),
         }
 
 
@@ -208,7 +240,10 @@ class Field:
         self, converter, *, name=None, data_key=None, doc=None,
         optional=False, factory=None,
     ):
-        self.converter = converter
+        if converter is None:
+            self.converter = None
+        else:
+            self.converter = get_converter(converter)
         self.name = name
         self.data_key = data_key or name
         self.optional = optional
@@ -257,10 +292,10 @@ class Field:
             return
         data[self.data_key] = value
 
-    def put_schema_into(self, object_schema):
+    def put_schema_into(self, object_schema, context):
         if self.converter is None:
             return
-        schema = self.converter.get_schema()
+        schema = context.get_schema(self.converter)
         if self.doc:
             schema['description'] = self.doc
         # XXX: set schema['default'] ?
@@ -310,19 +345,20 @@ def loader():
 
 
 class ModelConverter(BaseConverter):
-    def __init__(self, cls, *, init_args=(), doc=None):
+    def __init__(self, cls, *, init_args=(), schema_url=None):
         self.cls = cls
         self.name = cls.__name__
+        self.doc = cls.__doc__
         self.fields = {}
         self.init_args = init_args
+        self.schema_url = schema_url
+        hyphenized_name = re.sub('(A-Z)', r'-\1', cls.__name__)
+        self.definition_key = hyphenized_name.lower().lstrip('-')
         for name, field in vars(cls).items():
             if name.startswith('__') or not isinstance(field, Field):
                 continue
             self.fields[name] = field
 
-        if doc is None:
-            doc = cls.__doc__
-        self.doc = doc
 
     def load(self, data, **init_kwargs):
         result = self.cls(**init_kwargs)
@@ -336,87 +372,86 @@ class ModelConverter(BaseConverter):
             field.dump_into(value, result)
         return result
 
-    def get_schema(self):
+    def get_schema(self, context):
         schema = {
             'type': 'object',
+            'title': self.cls.__name__,
             'properties': {},
         }
         if self.doc:
             schema['description'] = self.doc
         for field in self.fields.values():
-            field.put_schema_into(schema)
+            field.put_schema_into(schema, context)
         return schema
 
 
-class Registry:
-    """Collection of Converters accessible by key
+class SchemaContext:
+    def __init__(self):
+        self.definition_refs = {}
+        self.definitions = {}
 
-    By default, Converters for `int`, `str` and `date` are included.
-    """
-    def __init__(self, converters=None):
-        if converters is None:
-            converters = {
-                int: IntegerConverter(),
-                str: StringConverter(),
-                datetime.date: DateConverter(),
-            }
-        self._converters = converters
+    def get_schema(self, converter):
+        if converter.definition_key:
+            if converter not in self.definition_refs:
+                key = converter.definition_key
+                if key in self.definitions:
+                    raise ValueError(f'duplicate key {key}')
+                self.definitions[key] = converter.get_schema(self)
+                self.definition_refs[converter] = f'#/definitions/{key}'
+            return {'#ref': self.definition_refs[converter]}
+        return converter.get_schema(self)
 
-    def register_model(self, cls, *, init_args=()):
-        """Register a new converter for the given model
-        """
-        self._converters[cls] = ModelConverter(
-            cls, init_args=init_args,
-        )
-        return cls
 
-    def __getitem__(self, key):
-        return self._converters.get(key, key)
-
-    def load(self, key, data, **init_kwargs):
-        converter = self[key]
-        return converter.load(data, **init_kwargs)
-
-    def dump(self, instance, key=None):
-        if key is None:
-            key = type(instance)
-        converter = self[key]
-        return converter.dump(instance)
-
-    def get_schema(self, key):
-        converter = self[key]
-        definitions = {
-            cls.__name__: model.get_schema()
-            for cls, model in self._converters.items()
-        }
-        definitions.update({
-            'ref': {
-                'type': 'object',
-                'additionalProperties': False,
-                'properties': {
-                    '$ref': {
-                        'type': 'string',
-                        'format': 'uri',
-                    },
+def get_schema(converter):
+    converter = get_converter(converter)
+    context = SchemaContext()
+    context.definitions.update({
+        'ref': {
+            'type': 'object',
+            'additionalProperties': False,
+            'properties': {
+                '$ref': {
+                    'type': 'string',
+                    'format': 'uri',
                 },
             },
-            'api_version': {
-                'type': 'array',
-                'items': {'type': 'integer'},
-                'minItems': 2,
-                'maxItems': 2,
-                'description': textwrap.dedent("""
-                    Version of the information, and of the schema,
-                    as two integers – [major, minor].
-                    The minor version is increased on every change to the
-                    schema that keeps backwards compatibility for forks
-                    (i.e. input data).
-                    The major version is increased on incompatible changes.
-                """),
-            },
-        })
-        return {
-            '$ref': f'#/definitions/{converter.name}',
-            '$schema': 'http://json-schema.org/draft-06/schema#',
-            'definitions': definitions,
-        }
+        },
+        'api_version': {
+            'type': 'array',
+            'items': {'type': 'integer'},
+            'minItems': 2,
+            'maxItems': 2,
+            'description': textwrap.dedent("""
+                Version of the information, and of the schema,
+                as two integers – [major, minor].
+                The minor version is increased on every change to the
+                schema that keeps backwards compatibility for forks
+                (i.e. input data).
+                The major version is increased on incompatible changes.
+            """),
+        },
+    })
+    return {
+        **context.get_schema(converter),
+        '$schema': 'http://json-schema.org/draft-06/schema#',
+        'definitions': context.definitions,
+    }
+
+
+def dump(instance, converter=None):
+    if converter is None:
+        converter = get_converter(instance)
+    converter = get_converter(converter)
+    return converter.dump(instance)
+
+
+def load(converter, data, **init_kwargs):
+    converter = get_converter(converter)
+    return converter.load(data, **init_kwargs)
+
+
+def register_model(cls, *, init_args=None, schema_url=None):
+    cls._naucse__converter = ModelConverter(
+        cls, init_args=init_args, schema_url=schema_url,
+    )
+    return cls
