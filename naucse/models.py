@@ -70,6 +70,18 @@ class Page(Model):
 class Lesson(Model):
     """A lesson – collection of Pages on a single topic
     """
+    slug = Field(reg[str])
+
+    @loader()
+    def course(self):
+        return self._parent
+
+
+class LessonShim:
+    """Just enough API to get a Lesson URL before the lesson is loaded"""
+    def __init__(self, *, slug, parent):
+        self.slug = slug
+        self.course = parent
 
 
 class Material(Model):
@@ -89,7 +101,7 @@ class Material(Model):
     def course(self):
         return self.session.course
 
-    @loader()
+    @property
     def lesson(self):
         if self.lesson_slug is not None:
             if self.external_url:
@@ -97,6 +109,10 @@ class Material(Model):
                     'external_url and lesson_slug are incompatible'
                 )
             return self.course.lessons[self.lesson_slug]
+
+    def get_lesson_shim(self):
+        if self.lesson_slug:
+            return self.course.get_lesson_shim(self.lesson_slug)
 
     def get_url(self, url_type='web', **kwargs):
         if self.lesson:
@@ -267,6 +283,9 @@ class Course(Model):
         self.is_meta = is_meta
         self._frozen = False
 
+        self.lessons = {}
+        self._lesson_shims = {}
+
     title = Field(reg[str])
     subtitle = Field(reg[str], optional=True)
     description = Field(reg[str], optional=True)
@@ -337,6 +356,37 @@ class Course(Model):
         except KeyError:
             return None
 
+    def get_lesson_shim(self, slug):
+        try:
+            return self.lessons[slug]
+        except KeyError:
+            if not self._frozen:
+                try:
+                    return self._lesson_shims[slug]
+                except KeyError:
+                    self._lesson_shims[slug] = LessonShim(
+                        slug=slug, parent=self)
+                return self._lesson_shims[slug]
+            raise
+
+    def load_lessons(self, slugs):
+        slugs = set(slugs) - set(self.lessons)
+        rendered = naucse_render.get_lessons(slugs, vars=self.vars)
+        for slug, data in rendered.items():
+            self.lessons[slug] = reg.load(Lesson, data, parent=self)
+            self._lesson_shims.pop(slug, None)
+
+    @loader()
+    def _frozen(self):
+        if self._frozen:
+            return
+        for session in self.sessions.values():
+            for material in session.materials:
+                material.get_lesson_shim()
+        while self._lesson_shims:
+            self.load_lessons(self._lesson_shims.keys())
+        return True
+
 
 class RunYear(Model):
     """Collection of courses given in a specific year
@@ -398,6 +448,7 @@ class Root(Model):
                             slug, parent=self, repo_info=self.repo_info,
                         )
                         run_year.runs[slug] = course
+                        self.courses[slug] = course
 
         self.courses['lessons'] = Course.load_local(
             'lessons',

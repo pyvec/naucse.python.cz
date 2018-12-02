@@ -1,5 +1,6 @@
 import datetime
 from pathlib import Path
+import functools
 import calendar
 import os
 
@@ -37,25 +38,33 @@ def model():
             'api': {
                 models.Root: lambda r, **kw: url_for('api', **kw),
                 models.Course: lambda c, **kw: url_for(
-                    'course_api', course=c, **kw),
+                    'course_api', course_slug=c.slug, **kw),
                 models.RunYear: lambda ry, **kw: url_for(
                     'run_year_api', year=ry.year, **kw),
             },
             'web': {
+                models.Lesson: lambda l, **kw: url_for(
+                    'page', course_slug=l.course.slug, lesson_slug=l.slug,
+                    page_slug='index', **kw),
                 models.Page: lambda p, **kw: url_for(
-                    'page', material=p.material, page_slug=p.slug, **kw),
+                    'page', course_slug=l.course.slug,
+                    lesson_slug=p.lesson.slug, page_slug=p.slug, **kw),
                 models.Solution: lambda s, **kw: url_for(
-                    'page', material=s.page.material,
+                    'page', course_slug=s.course.slug,
+                    lesson_slug=s.lesson.slug,
                     page_slug=s.page.slug, solution=s.index, **kw),
                 models.Course: lambda c, **kw: url_for(
-                    'course', course=c, **kw),
+                    'course', course_slug=c.slug, **kw),
                 models.Session: lambda s, **kw: url_for(
-                    'session', course=s.course, session_slug=s.slug, **kw),
+                    'session', course_slug=s.course.slug, session_slug=s.slug,
+                    **kw),
                 models.SessionPage: lambda sp, **kw: url_for(
-                    'session', course=sp.course, session_slug=sp.session.slug,
+                    'session', course_slug=sp.course.slug,
+                    session_slug=sp.session.slug,
                     page=sp.slug, **kw),
                 models.StaticFile: lambda sf, **kw: url_for(
-                    'page_static', material=sf.material,
+                    'page_static', course_slug=sf.course.slug,
+                    session_slug=sf.session.slug,
                     filename=sf.filename, **kw),
                 models.Root: lambda r, **kw: url_for('index', **kw)
             },
@@ -157,8 +166,13 @@ def runs(year=None, all=None):
     )
 
 
-@app.route('/<course:course>/')
-def course(course, year=None):
+@app.route('/<course:course_slug>/')
+def course(course_slug, year=None):
+    try:
+        course = model.courses[course_slug]
+    except KeyError:
+        print(model.courses)
+        abort(404)
 
     #recent_runs = get_recent_runs(course)
 
@@ -170,10 +184,15 @@ def course(course, year=None):
     )
 
 
-@app.route('/<course:course>/sessions/<session_slug>/', defaults={'page': 'front'})
-@app.route('/<course:course>/sessions/<session_slug>/<page>/')
-def session(course, session_slug, page):
-    session = course.sessions[session_slug]
+@app.route('/<course:course_slug>/sessions/<session_slug>/',
+              defaults={'page': 'front'})
+@app.route('/<course:course_slug>/sessions/<session_slug>/<page>/')
+def session(course_slug, session_slug, page):
+    try:
+        course = model.courses[course_slug]
+        session = course.sessions[session_slug]
+    except KeyError:
+        abort(404)
 
     #recent_runs = get_recent_runs(course)
 
@@ -196,12 +215,16 @@ def session(course, session_slug, page):
     )
 
 
-@app.route('/<material:material>/', defaults={'page_slug': 'index'})
-@app.route('/<material:material>/<page_slug>/')
-@app.route('/<material:material>/<page_slug>/solutions/<int:solution>/')
-def page(material, page_slug='index', solution=None):
+@app.route('/<course:course_slug>/<lesson:lesson_slug>/',
+              defaults={'page_slug': 'index'})
+@app.route('/<course:course_slug>/<lesson:lesson_slug>/<page_slug>/')
+@app.route('/<course:course_slug>/<lesson:lesson_slug>/<page_slug>'
+              + '/solutions/<int:solution>/')
+def page(course_slug, lesson_slug, page_slug='index', solution=None):
     try:
-        page = material.pages[page_slug]
+        course = model.courses[course_slug]
+        lesson = course.lessons[lesson_slug]
+        page = lesson.pages[page_slug]
     except KeyError:
         raise abort(404)
 
@@ -210,12 +233,12 @@ def page(material, page_slug='index', solution=None):
     # Get canonical URL -- i.e., a lesson from 'lessons' with the same slug
     # XXX: This could be made much more fancy
     lessons_course = model.get_course('lessons')
-    is_canonical_lesson = (lessons_course == material.course)
+    is_canonical_lesson = (lessons_course == course)
     if is_canonical_lesson:
         canonical_url = None
     else:
         try:
-            canonical = lessons_course.get_material(material.slug)
+            canonical = lessons_course.get_material(lesson.slug)
         except KeyError:
             canonical_url = None
         else:
@@ -233,8 +256,8 @@ def page(material, page_slug='index', solution=None):
         content=content,
         page=page,
         solution=solution,
-        session=page.material.session,
-        course=page.material.course,
+        #session=page.material.session, ## XXX
+        course=course,
         canonical_url=canonical_url,
         is_canonical_lesson=is_canonical_lesson,
         page_attribution=page.attribution,
@@ -243,10 +266,11 @@ def page(material, page_slug='index', solution=None):
     )
 
 
-@app.route('/<material:material>/static/<path:filename>')
-def page_static(material, filename):
+@app.route('/<course:course_slug>/<lesson:lesson_slug>/static/<path:filename>')
+def page_static(course_slug, lesson_slug, filename):
     try:
-        static = material.static_files[filename]
+        lesson = course.lessons[lesson_slug]
+        static = lesson.static_files[filename]
     except KeyError:
         raise abort(404)
 
@@ -270,8 +294,13 @@ def list_months(start_date, end_date):
     return months
 
 
-@app.route('/<course:course>/calendar/')
-def course_calendar(course):
+@app.route('/<course:course_slug>/calendar/')
+def course_calendar(course_slug):
+    try:
+        course = model.courses[course_slug]
+    except KeyError:
+        abort(404)
+
     if not course.start_date:
         abort(404)
 
@@ -295,10 +324,14 @@ def generate_calendar_ics(course):
     return ics.Calendar(events=events)
 
 
-@app.route('/<course:course>/calendar.ics')
-def course_calendar_ics(course):
+@app.route('/<course:course_slug>/calendar.ics')
+def course_calendar_ics(course_slug):
+    try:
+        course = model.courses[course_slug]
+    except KeyError:
+        abort(404)
+
     if not course.start_date:
-        # No sessions with a date!
         abort(404)
 
     events = []
@@ -315,11 +348,7 @@ def course_calendar_ics(course):
             name=session.title,
             begin=start_time,
             end=end_time,
-            uid=url_for("session",
-                        course=course,
-                        session_slug=session.slug,
-                        page='front',
-                        _external=True),
+            uid=session.get_url(external=True),
             created=created,
         )
         events.append(cal_event)

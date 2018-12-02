@@ -97,16 +97,19 @@ def get_course(course_slug: str, *, version: int) -> dict:
     return result
 
 
-def get_extra_lesson(lesson_slug, vars=None):
-    material = {'lesson': lesson_slug}
-    update_material(material, vars)
-    return material
+def get_lessons(lesson_slugs, vars=None):
+    result = {}
+    for slug in lesson_slugs:
+        lesson = {'lesson': slug}
+        update_material(lesson, vars)
+        result[slug] = lesson
+    return result
 
 
 def update_material(material, vars=None):
     lesson_slug = material.pop('lesson', None)
     if lesson_slug:
-        material['lesson_slug'] = lesson_slug
+        material['slug'] = lesson_slug
         if material.pop('url', None):
             raise ValueError(f'Material {material} has URL')
         material.setdefault('type', 'lesson')
