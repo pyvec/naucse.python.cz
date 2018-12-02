@@ -6,9 +6,9 @@ import dateutil
 import yaml
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
-from naucse.metamodel import Registry, Field, KeyAttrDictLoader, ListLoader
-from naucse.metamodel import DictLoader
-from naucse.metamodel import get_parent, get_index, loader
+from naucse.converters import Registry, Field, KeyAttrDictConverter
+from naucse.converters import ListConverter, DictConverter
+from naucse.converters import get_parent, get_index, loader
 from naucse import sanitize
 
 import naucse_render
@@ -28,7 +28,7 @@ class NoURLType(NoURL):
     """The requested URL type is not available"""
 
 
-class URLLoader:
+class URLConverter:
     def load(self, data):
         return sanitize.convert_link('href', data)
         return data
@@ -80,7 +80,7 @@ def _sanitize_page_content(content):
     )
 
 
-class HTMLFragmentLoader:
+class HTMLFragmentConverter:
     def __init__(self, *, sanitizer=sanitize.sanitize_html):
         self.sanitizer = sanitizer
 
@@ -109,7 +109,7 @@ class Solution(Model):
     def page(self):
         return self._parent
 
-    content = Field(HTMLFragmentLoader(sanitizer=_sanitize_page_content))
+    content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content))
 
 
 class StaticFile(Model):
@@ -131,7 +131,7 @@ class StaticFile(Model):
     path = Field(reg[str])
 
 
-class PageCSSLoader:
+class PageCSSConverter:
     def load(self, value):
         return sanitize.sanitize_stylesheet(value)
 
@@ -146,7 +146,7 @@ class PageCSSLoader:
         }
 
 
-class LicenseLoader:
+class LicenseConverter:
     def load(self, value):
         return get_parent().root.licenses[value]
 
@@ -175,12 +175,12 @@ class Page(Model):
     slug = Field(reg[str])
     title = Field(reg[str])
 
-    content = Field(HTMLFragmentLoader(sanitizer=_sanitize_page_content))
-    modules = Field(DictLoader(reg[str]), factory=dict)
+    content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content))
+    modules = Field(DictConverter(reg[str]), factory=dict)
 
-    attribution = Field(ListLoader(HTMLFragmentLoader()))
-    license = Field(LicenseLoader())
-    license_code = Field(LicenseLoader(), optional=True)
+    attribution = Field(ListConverter(HTMLFragmentConverter()))
+    license = Field(LicenseConverter())
+    license_code = Field(LicenseConverter(), optional=True)
 
     source_file = Field(reg[str])
 
@@ -191,7 +191,7 @@ class Page(Model):
         else:
             self.edit_info = self.course.repo_info.get_edit_info(self.source_file)
 
-    css = Field(PageCSSLoader(), optional=True)
+    css = Field(PageCSSConverter(), optional=True)
 
     @property
     def material(self):
@@ -204,7 +204,7 @@ class Page(Model):
         except Exception as e:
             raise ValueError(e)
 
-    solutions = Field(ListLoader(reg[Solution]))
+    solutions = Field(ListConverter(reg[Solution]))
 
 
 class Lesson(Model):
@@ -215,8 +215,8 @@ class Lesson(Model):
         return self._parent
 
     slug = Field(reg[str])
-    static_files = Field(DictLoader(reg[StaticFile]))
-    pages = Field(DictLoader(reg[Page]))
+    static_files = Field(DictConverter(reg[StaticFile]))
+    pages = Field(DictConverter(reg[Page]))
 
 
 class SolutionShim:
@@ -262,7 +262,7 @@ class Material(Model):
     """
     slug = Field(reg[str], optional=True)
     title = Field(reg[str], optional=True)
-    external_url = Field(URLLoader(), optional=True)
+    external_url = Field(URLConverter(), optional=True)
     lesson_slug = Field(reg[str], optional=True)
     type = Field(reg[str])
 
@@ -323,7 +323,7 @@ def set_prev_next(sequence, *, attr_names=('prev', 'next')):
         setattr(now, next_attr, next)
 
 
-class SessionTimeLoader:
+class SessionTimeConverter:
     def load(self, data):
         try:
             return datetime.datetime.strftime('%Y-%m-%d %H:%M:%S', value)
@@ -367,7 +367,7 @@ class Session(Model):
     def course(self):
         return self._parent
 
-    materials = Field(ListLoader(reg[Material]))
+    materials = Field(ListConverter(reg[Material]))
 
     @materials.after_load()
     def _index_materials(self):
@@ -392,18 +392,18 @@ class Session(Model):
 
     index = Field(reg[int], factory=get_index)
 
-    start_time = Field(SessionTimeLoader(), optional=True)
+    start_time = Field(SessionTimeConverter(), optional=True)
     @start_time.after_load()
     def _combine(self):
         self.start_time = _combine_session_time(self, 'start')
 
-    end_time = Field(SessionTimeLoader(), optional=True)
+    end_time = Field(SessionTimeConverter(), optional=True)
     @end_time.after_load()
     def _combine(self):
         self.end_time = _combine_session_time(self, 'end')
 
 
-class AnyDictLoader:
+class AnyDictConverter:
     def load(self, data):
         return data
 
@@ -423,7 +423,7 @@ def time_from_string(time_string):
     return datetime.time(hour, minute, tzinfo=tzinfo)
 
 
-class TimeIntervalLoader:
+class TimeIntervalConverter:
     def load(self, data):
         return {
             'start': time_from_string(data['start']),
@@ -467,16 +467,16 @@ class Course(Model):
     subtitle = Field(reg[str], optional=True)
     description = Field(reg[str], optional=True)
     long_description = Field(reg[str], optional=True)
-    vars = Field(AnyDictLoader(), factory=dict)
+    vars = Field(AnyDictConverter(), factory=dict)
     place = Field(reg[str], optional=True)
     time = Field(reg[str], optional=True)
 
-    default_time = Field(TimeIntervalLoader(), optional=True)
+    default_time = Field(TimeIntervalConverter(), optional=True)
 
-    sessions = Field(KeyAttrDictLoader(reg[Session], key_attr='slug'))
+    sessions = Field(KeyAttrDictConverter(reg[Session], key_attr='slug'))
 
     @sessions.after_load()
-    def index(self):
+    def _index_sessions(self):
         set_prev_next(self.sessions.values())
 
     source_file = Field(reg[str])
@@ -493,8 +493,8 @@ class Course(Model):
         doc='Date when this course starts, or None')
 
     @start_date.constructor()
-    def _construct(instance):
-        dates = [getattr(s, 'date', None) for s in instance.sessions.values()]
+    def _construct(self):
+        dates = [getattr(s, 'date', None) for s in self.sessions.values()]
         return min((d for d in dates if d), default=None)
 
     end_date = Field(
@@ -502,8 +502,8 @@ class Course(Model):
         doc='Date when this course ends, or None')
 
     @end_date.constructor()
-    def _construct(instance):
-        dates = [getattr(s, 'date', None) for s in instance.sessions.values()]
+    def _construct(self):
+        dates = [getattr(s, 'date', None) for s in self.sessions.values()]
         return max((d for d in dates if d), default=None)
 
     @classmethod
@@ -519,7 +519,7 @@ class Course(Model):
         result.canonical = canonical
         return result
 
-    default_time = Field(TimeIntervalLoader(), optional=True)
+    default_time = Field(TimeIntervalConverter(), optional=True)
 
     # XXX: Is course derivation useful?
     derives = Field(

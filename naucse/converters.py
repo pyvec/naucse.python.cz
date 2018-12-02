@@ -6,19 +6,19 @@ Key concepts:
 * A **model** is a custom class, e.g. `Course`, which can be serialized
   to/from JSON.
 
-* A **loader** describes how to:
+* A **converter** describes how to:
 
   - load something from a JSON-compatible dict
   - dump something to JSON-compatible dict
   - get JSON schema for something
 
-  There are loaders for integers, lists of integers, modeld, dicts of models,
+  There are converters for integers, lists of integers, modeld, dicts of models,
   etc.
 
-* A **registry** is a collection of loaders.
+* A **registry** is a collection of converters.
 
 * A **field** is an entry in a model, e.g. `Course.title`.
-  Each field usually *has* a loader, but it is not a loader itself.
+  Each field usually *has* a converter, but it is not a converter itself.
   The field handles attributes that are optional in JSON.
   (In Python, missing attributes should be set to None rather than missing.)
 
@@ -77,7 +77,7 @@ class _Nothing:
 NOTHING = _Nothing()
 
 
-class IntegerLoader:
+class IntegerConverter:
     def load(self, data):
         return data
 
@@ -88,7 +88,7 @@ class IntegerLoader:
         return {'type': 'integer'}
 
 
-class StringLoader:
+class StringConverter:
     def load(self, data):
         return data
 
@@ -99,7 +99,7 @@ class StringLoader:
         return {'type': 'string'}
 
 
-class DateLoader:
+class DateConverter:
     def load(self, data):
         return datetime.datetime.strptime(data, "%Y-%m-%d").date()
 
@@ -114,79 +114,80 @@ class DateLoader:
         }
 
 
-class ListLoader:
-    def __init__(self, item_loader):
-        self.item_loader = item_loader
+class ListConverter:
+    def __init__(self, item_converter):
+        self.item_converter = item_converter
 
     def load(self, data):
-        return [self.item_loader.load(d) for d in indexed(data)]
+        return [self.item_converter.load(d) for d in indexed(data)]
 
     def dump(self, value):
-        return [self.item_loader.dump(v) for v in value]
+        return [self.item_converter.dump(v) for v in value]
 
     def get_schema(self):
         return {
             'type': 'array',
-            'items': self.item_loader.get_schema(),
+            'items': self.item_converter.get_schema(),
         }
 
 
-class DictLoader:
-    """Handle a dict with string keys and values loaded by `item_loader`"""
-    def __init__(self, item_loader):
-        self.item_loader = item_loader
+class DictConverter:
+    """Handle a dict with string keys and values loaded by `item_converter`"""
+    def __init__(self, item_converter):
+        self.item_converter = item_converter
 
     def load(self, data):
-        return {k: self.item_loader.load(v) for k, v in indexed(data.items())}
+        return {
+            k: self.item_converter.load(v) for k, v in indexed(data.items())
+        }
 
     def dump(self, value):
-        return {k: self.item_loader.dump(v) for k, v in value.items()}
+        return {k: self.item_converter.dump(v) for k, v in value.items()}
 
     def get_schema(self):
         return {
             'type': 'object',
-            'additionalProperties': self.item_loader.get_schema(),
+            'additionalProperties': self.item_converter.get_schema(),
         }
 
 
-class KeyAttrDictLoader:
+class KeyAttrDictConverter:
     """Handle an ordered dict that's serialized as a list
 
     The key of the dict is an attribute of its values, usually a `slug`.
     """
-    def __init__(self, item_loader, *, key_attr):
-        self.item_loader = item_loader
+    def __init__(self, item_converter, *, key_attr):
+        self.item_converter = item_converter
         self.key_attr = key_attr
 
     def load(self, data):
         result = {}
         for value in indexed(data):
-            item = self.item_loader.load(value)
+            item = self.item_converter.load(value)
             result[getattr(item, self.key_attr)] = item
         return result
 
     def dump(self, value):
-        return [self.item_loader.dump(v) for k, v in value.items()]
+        return [self.item_converter.dump(v) for k, v in value.items()]
 
     def get_schema(self):
         return {
             'type': 'array',
-            'items': self.item_loader.get_schema(),
+            'items': self.item_converter.get_schema(),
         }
 
 
 class Field:
     def __init__(
-        self, loader, *,
+        self, converter, *,
         name=None, data_key=None, optional=False, doc=None,
         factory=None,
     ):
-        self.loader = loader
+        self.converter = converter
         self.name = name
         self.data_key = data_key or name
         self.optional = optional
         self.doc = doc
-        self.converter = None
 
         self._after_load_hooks = []
 
@@ -200,7 +201,7 @@ class Field:
         self.data_key = self.data_key or self.name
 
     def load_into(self, instance, data):
-        if self.loader is None:
+        if self.converter is None:
             value = self._load_missing(instance, data)
         else:
             try:
@@ -211,7 +212,7 @@ class Field:
                 else:
                     raise
             else:
-                value = self.loader.load(item_data)
+                value = self.converter.load(item_data)
         setattr(instance, self.name, value)
         for func in self._after_load_hooks:
             func(instance)
@@ -220,7 +221,7 @@ class Field:
         return None
 
     def dump_into(self, instance, data):
-        if self.loader is None:
+        if self.converter is None:
             return
         value = getattr(instance, self.name)
         if self.optional and value == self.default:
@@ -228,9 +229,9 @@ class Field:
         data[self.data_key] = value
 
     def put_schema_into(self, object_schema):
-        if self.loader is None:
+        if self.converter is None:
             return
-        schema = self.loader.get_schema()
+        schema = self.converter.get_schema()
         if self.doc:
             schema['description'] = self.doc
         # XXX: set schema['default'] ?
@@ -268,7 +269,7 @@ def loader():
     return _decorator
 
 
-class ModelLoader:
+class ModelConverter:
     def __init__(self, cls, *, doc=None):
         self.cls = cls
         self.name = cls.__name__
@@ -314,38 +315,38 @@ class ModelLoader:
 
 
 class Registry:
-    def __init__(self, loaders=None):
-        if loaders is None:
-            loaders = {
-                int: IntegerLoader(),
-                str: StringLoader(),
-                datetime.date: DateLoader(),
+    def __init__(self, converters=None):
+        if converters is None:
+            converters = {
+                int: IntegerConverter(),
+                str: StringConverter(),
+                datetime.date: DateConverter(),
             }
-        self._loaders = loaders
+        self._converters = converters
 
     def register_model(self, cls):
-        self._loaders[cls] = ModelLoader(cls)
+        self._converters[cls] = ModelConverter(cls)
         return cls
 
     def __getitem__(self, key):
-        return self._loaders.get(key, key)
+        return self._converters.get(key, key)
 
     def load(self, key, data, **init_kwargs):
-        loader = self[key]
-        return loader.load(data, **init_kwargs)
+        converter = self[key]
+        return converter.load(data, **init_kwargs)
 
     def dump(self, key, instance=None):
         if instance is None:
             instance = key
             key = type(key)
-        loader = self[key]
-        return loader.dump(instance)
+        converter = self[key]
+        return converter.dump(instance)
 
     def get_schema(self, key):
-        loader = self[key]
+        converter = self[key]
         definitions = {
             cls.__name__: model.get_schema()
-            for cls, model in self._loaders.items()
+            for cls, model in self._converters.items()
         }
         definitions.update({
             'ref': {
@@ -374,7 +375,7 @@ class Registry:
             },
         })
         return {
-            '$ref': f'#/definitions/{loader.name}',
+            '$ref': f'#/definitions/{converter.name}',
             '$schema': 'http://json-schema.org/draft-06/schema#',
             'definitions': definitions,
         }
