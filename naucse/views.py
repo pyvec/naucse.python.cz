@@ -376,11 +376,15 @@ def course_calendar_ics(course_slug):
     return Response(str(cal), mimetype="text/calendar")
 
 
-@app.route('/v1/schema/<is_input:is_input>.json', defaults={'model_name': 'Root'})
+@app.route('/v1/schema/<is_input:is_input>.json', defaults={'model_name': 'root'})
 @app.route('/v1/schema/<is_input:is_input>/<model_name>.json')
 def schema(model_name, is_input):
     try:
-        cls = models.models[model_name]
+        cls = {
+            'root': models.Root,
+            'course': models.Course,
+            'run_year': models.RunYear,
+        }[model_name]
     except KeyError:
         abort(404)
     return jsonify(models.get_schema(cls, is_input=is_input))
@@ -394,7 +398,7 @@ def api():
 @app.route('/v1/years/<int:year>.json')
 def run_year_api(year):
     try:
-        run_year = model.courses[model.run_years[year]]
+        run_year = model.run_years[year]
     except KeyError:
         abort(404)
     return jsonify(models.dump(run_year))

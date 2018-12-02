@@ -27,9 +27,10 @@ Key concepts:
 """
 import collections.abc
 import datetime
-import re
-
 import textwrap
+import inspect
+
+import jsonschema
 
 
 class BaseConverter:
@@ -108,13 +109,14 @@ BUILTIN_CONVERTERS = {
 
 def get_converter(key):
     try:
-        return key._naucse__converter
+        converter = key._naucse__converter
     except AttributeError as e:
-        if key in BUILTIN_CONVERTERS:
-            return BUILTIN_CONVERTERS[key]
         if type(key) in BUILTIN_CONVERTERS:
             return BUILTIN_CONVERTERS[type(key)]
+        elif key in BUILTIN_CONVERTERS:
+            return BUILTIN_CONVERTERS[key]
         raise TypeError(f'{key} is not a converter') from e
+    return converter._naucse__converter
 
 
 class ListConverter(BaseConverter):
@@ -213,6 +215,10 @@ class KeyAttrDictConverter(BaseConverter):
         }
 
 
+def _classname(cls):
+    return f'{cls.__module__}.{cls.__qualname__}'
+
+
 class Field:
     """Descriptor for a Model's attribute that is loaded/dumped to JSON
 
@@ -235,24 +241,33 @@ class Field:
 
     Additional customizations can be done using the `default_factory` and
     `after_load` decorators.
+
+    If `input` is true, the attribute is loaded from JSON. If it's false,
+    the default is always used (as set by `factory` or `default_factory`).
+
+    If `output` is true, the attribute is dumped to JSON. If it is false,
+    it will always be missing in the output.
     """
     def __init__(
         self, converter, *, name=None, data_key=None, doc=None,
         optional=False, factory=None,
+        input=True, output=True,
     ):
-        if converter is None:
-            self.converter = None
-        else:
-            self.converter = get_converter(converter)
+        self.converter = get_converter(converter)
         self.name = name
         self.data_key = data_key or name
         self.optional = optional
         self.doc = doc
+        self.input = input
+        self.output = output
 
         self._after_load_hooks = []
 
         if factory:
             self.default_factory()(lambda i: factory())
+
+    def __repr__(self):
+        return f'<{_classname(type(self))} {self.name} ({self.converter})>'
 
     default = None
 
@@ -261,7 +276,7 @@ class Field:
         self.data_key = self.data_key or self.name
 
     def load_into(self, instance, data, **init_kwargs):
-        if self.converter is None:
+        if not self.input:
             value = self._load_missing(instance)
         else:
             init_kwargs = {
@@ -285,15 +300,17 @@ class Field:
         return None
 
     def dump_into(self, instance, data):
-        if self.converter is None:
+        if not self.output:
             return
         value = getattr(instance, self.name)
         if self.optional and value == self.default:
             return
-        data[self.data_key] = value
+        data[self.data_key] = self.converter.dump(value)
 
     def put_schema_into(self, object_schema, context):
-        if self.converter is None:
+        if context.is_input and not self.input:
+            return
+        if not context.is_input and not self.output:
             return
         schema = context.get_schema(self.converter)
         if self.doc:
@@ -302,6 +319,8 @@ class Field:
         object_schema['properties'][self.data_key] = schema
         if not self.optional:
             object_schema.setdefault('required', []).append(self.data_key)
+        if not context.is_input:
+            object_schema['additionalProperties'] = False
 
     def __get__(self, owner, instance, m=None):
         if instance is None:
@@ -335,30 +354,22 @@ class Field:
         return _decorator
 
 
-def loader():
-    """Decorator for a load-only Field"""
-    def _decorator(func):
-        result = Field(None, data_key=None)
-        result.default_factory()(func)
-        return result
-    return _decorator
-
-
 class ModelConverter(BaseConverter):
-    def __init__(self, cls, *, init_args=(), schema_url=None):
+    def __init__(self, cls, *, slug=None, init_args=()):
         self.cls = cls
         self.name = cls.__name__
-        self.doc = cls.__doc__
+        self.doc = inspect.getdoc(cls)
         self.fields = {}
         self.init_args = init_args
-        self.schema_url = schema_url
-        hyphenized_name = re.sub('(A-Z)', r'-\1', cls.__name__)
-        self.definition_key = hyphenized_name.lower().lstrip('-')
+        self.definition_key = slug
+
         for name, field in vars(cls).items():
             if name.startswith('__') or not isinstance(field, Field):
                 continue
             self.fields[name] = field
 
+    def __repr__(self):
+        return f'<{_classname(type(self))} for {_classname(self.cls)}>'
 
     def load(self, data, **init_kwargs):
         result = self.cls(**init_kwargs)
@@ -386,9 +397,10 @@ class ModelConverter(BaseConverter):
 
 
 class SchemaContext:
-    def __init__(self):
+    def __init__(self, *, is_input):
         self.definition_refs = {}
         self.definitions = {}
+        self.is_input = is_input
 
     def get_schema(self, converter):
         if converter.definition_key:
@@ -402,9 +414,9 @@ class SchemaContext:
         return converter.get_schema(self)
 
 
-def get_schema(converter):
+def get_schema(converter, *, is_input):
     converter = get_converter(converter)
-    context = SchemaContext()
+    context = SchemaContext(is_input=is_input)
     context.definitions.update({
         'ref': {
             'type': 'object',
@@ -431,8 +443,9 @@ def get_schema(converter):
             """),
         },
     })
+    ref = context.get_schema(converter)
     return {
-        **context.get_schema(converter),
+        **ref,
         '$schema': 'http://json-schema.org/draft-06/schema#',
         'definitions': context.definitions,
     }
@@ -442,16 +455,20 @@ def dump(instance, converter=None):
     if converter is None:
         converter = get_converter(instance)
     converter = get_converter(converter)
-    return converter.dump(instance)
+    schema = get_schema(converter, is_input=False)
+    result = converter.dump(instance)
+    jsonschema.validate(result, schema)
+    return result
 
 
 def load(converter, data, **init_kwargs):
     converter = get_converter(converter)
+    schema = get_schema(converter, is_input=True)
+    jsonschema.validate(data, schema)
     return converter.load(data, **init_kwargs)
 
 
-def register_model(cls, *, init_args=None, schema_url=None):
-    cls._naucse__converter = ModelConverter(
-        cls, init_args=init_args, schema_url=schema_url,
-    )
+def register_model(cls, *, init_args=(), slug=None):
+    converter = ModelConverter(cls, init_args=init_args, slug=slug)
+    cls._naucse__converter = converter
     return cls

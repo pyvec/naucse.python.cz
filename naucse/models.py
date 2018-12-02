@@ -1,14 +1,14 @@
 import datetime
 from pathlib import Path
+import re
 
-import jsonschema
 import dateutil
 import yaml
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
-from naucse.converters import Field, loader, register_model, BaseConverter
+from naucse.converters import Field, register_model, BaseConverter
 from naucse.converters import ListConverter, DictConverter
-from naucse.converters import KeyAttrDictConverter
+from naucse.converters import KeyAttrDictConverter, ModelConverter
 from naucse.converters import dump, load, get_schema
 from naucse import sanitize
 
@@ -52,7 +52,8 @@ class Model:
         self.root = self.parent.root
 
     def __init_subclass__(cls):
-        register_model(cls, init_args=cls.init_args)
+        slug = re.sub('([A-Z])', r'-\1', cls.__name__).lower().lstrip('-')
+        register_model(cls, init_args=cls.init_args, slug=slug)
 
     def get_url(self, url_type='web', *, external=False):
         return self.root._url_for(self, url_type=url_type, external=external)
@@ -243,6 +244,9 @@ class LessonShim:
                 return PageShim(parent=self, slug=key)
         self.pages = Pages()
 
+    def get_url(self, *args, **kwargs):
+        return self.root._url_for(self, *args, obj_type=Lesson, **kwargs)
+
 
 class Material(Model):
     """Teaching material
@@ -301,13 +305,13 @@ def set_prev_next(sequence, *, attr_names=('prev', 'next')):
 class SessionTimeConverter(BaseConverter):
     def load(self, data):
         try:
-            return datetime.datetime.strftime('%Y-%m-%d %H:%M:%S', value)
+            return datetime.datetime.strptime('%Y-%m-%d %H:%M:%S', value)
         except ValueError:
-            time = datetime.datetime.strftime('%H:%M:%s', value).time()
+            time = datetime.datetime.strptime('%H:%M:%s', value).time()
             return time.replace(tzinfo=dateutil.tz.gettz(_TIMEZONE))
 
     def dump(self, value):
-        return value.strptime('%Y-%m-%d %H:%M:%S')
+        return value.strftime('%Y-%m-%d %H:%M:%S')
 
     @classmethod
     def get_schema(cls, context):
@@ -357,12 +361,6 @@ class Session(Model):
     title = Field(str)
     date = Field(DateConverter(), optional=True)
 
-    materials = Field(ListConverter(Material))
-
-    @materials.after_load()
-    def _index_materials(self):
-        set_prev_next(m for m in self.materials if not m.external_url)
-
     source_file = Field(str)
 
     @source_file.after_load()
@@ -372,10 +370,16 @@ class Session(Model):
         else:
             self.edit_info = self.course.repo_info.get_edit_info(self.source_file)
 
-    @loader()
+    materials = Field(ListConverter(Material))
+
+    @materials.after_load()
+    def _index_materials(self):
+        set_prev_next(m for m in self.materials if not m.external_url)
+
+    @materials.after_load()
     def pages(self):
         # XXX: These should be in the API
-        return {
+        self.pages = {
             'front': load(SessionPage, {'slug': 'front'}, parent=self),
             'back': load(SessionPage, {'slug': 'back'}, parent=self),
         }
@@ -420,8 +424,8 @@ class TimeIntervalConverter(BaseConverter):
 
     def dump(self, value):
         return {
-            'start': value.strftime('%H:%M'),
-            'end': value.strftime('%H:%M'),
+            'start': value['start'].strftime('%H:%M'),
+            'end': value['end'].strftime('%H:%M'),
         }
 
     @classmethod
@@ -498,7 +502,6 @@ class Course(Model):
     @classmethod
     def load_local(cls, slug, *, parent, repo_info, canonical=False):
         data = naucse_render.get_course(slug, version=1)
-        jsonschema.validate(data, get_schema(cls))
         is_meta = (slug == 'courses/meta')
         result = load(
             cls, data, slug=slug, repo_info=repo_info, parent=parent,
@@ -515,13 +518,13 @@ class Course(Model):
         str, optional=True,
         doc="Course this derives from (deprecated)")
 
-    @loader()
-    def base_course(self):
+    @derives.after_load()
+    def _set_base_course(self):
         key = f'courses/{self.derives}'
         try:
-            return self.root.courses[key]
+            self.base_course = self.root.courses[key]
         except KeyError:
-            return None
+            self.base_course = None
 
     def get_lesson_shim(self, slug):
         try:
@@ -543,8 +546,8 @@ class Course(Model):
             self.lessons[slug] = load(Lesson, data, parent=self, slug=slug)
             self._lesson_shims.pop(slug, None)
 
-    @loader()
-    def _frozen(self):
+    @derives.after_load()
+    def _freeze(self):
         if self._frozen:
             return
         for session in self.sessions.values():
@@ -558,7 +561,15 @@ class Course(Model):
                 # Avoid infinite loops in lessons
                 raise ValueError(
                     f'Lessons in course {self.slug} are linked too deeply')
-        return True
+        self._frozen = True
+
+
+class AbbreviatedDictConverter(DictConverter):
+    def dump(self, value):
+        return {
+            key: {'ref': v.get_url('api', external=True)}
+            for key, v in value.items()
+        }
 
 
 class RunYear(Model):
@@ -572,6 +583,8 @@ class RunYear(Model):
     def __iter__(self):
         # XXX: Sort by ... start date?
         return iter(self.runs.values())
+
+    runs = Field(AbbreviatedDictConverter(Course))
 
 
 class License(Model):
@@ -588,14 +601,18 @@ class Root(Model):
     """
     def __init__(self, *, url_factories, schema_url_factory):
         self.root = self
-        super().__init__(parent=self)
-        self.root = self
         self.url_factories = url_factories
         self.schema_url_factory = schema_url_factory
+        super().__init__(parent=self)
 
         self.courses = {}
         self.run_years = {}
         self.licenses = {}
+        self.canonical_courses = {}
+
+    canonical_courses = Field(AbbreviatedDictConverter(Course))
+    run_years = Field(AbbreviatedDictConverter(RunYear))
+    licenses = Field(DictConverter(License))
 
     def load_local(self, path):
         """Load local courses from the given path"""
@@ -610,6 +627,7 @@ class Root(Model):
                     canonical=True,
                 )
                 self.courses[slug] = course
+                self.canonical_courses[slug] = course
 
         for year_path in sorted((path / 'runs').iterdir()):
             if year_path.is_dir():
