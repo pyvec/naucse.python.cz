@@ -47,7 +47,7 @@ def model():
                     'page', course_slug=l.course.slug, lesson_slug=l.slug,
                     page_slug='index', **kw),
                 models.Page: lambda p, **kw: url_for(
-                    'page', course_slug=l.course.slug,
+                    'page', course_slug=p.course.slug,
                     lesson_slug=p.lesson.slug, page_slug=p.slug, **kw),
                 models.Solution: lambda s, **kw: url_for(
                     'page', course_slug=s.course.slug,
@@ -64,7 +64,7 @@ def model():
                     page=sp.slug, **kw),
                 models.StaticFile: lambda sf, **kw: url_for(
                     'page_static', course_slug=sf.course.slug,
-                    session_slug=sf.session.slug,
+                    lesson_slug=sf.lesson.slug,
                     filename=sf.filename, **kw),
                 models.Root: lambda r, **kw: url_for('index', **kw)
             },
@@ -215,22 +215,8 @@ def session(course_slug, session_slug, page):
     )
 
 
-@app.route('/<course:course_slug>/<lesson:lesson_slug>/',
-              defaults={'page_slug': 'index'})
-@app.route('/<course:course_slug>/<lesson:lesson_slug>/<page_slug>/')
-@app.route('/<course:course_slug>/<lesson:lesson_slug>/<page_slug>'
-              + '/solutions/<int:solution>/')
-def page(course_slug, lesson_slug, page_slug='index', solution=None):
-    try:
-        course = model.courses[course_slug]
-        lesson = course.lessons[lesson_slug]
-        page = lesson.pages[page_slug]
-    except KeyError:
-        raise abort(404)
-
-    kwargs = {}
-
-    # Get canonical URL -- i.e., a lesson from 'lessons' with the same slug
+def _get_canonicality_info(lesson):
+    """Get canonical URL -- i.e., a lesson from 'lessons' with the same slug"""
     # XXX: This could be made much more fancy
     lessons_course = model.get_course('lessons')
     is_canonical_lesson = (lessons_course == course)
@@ -238,43 +224,75 @@ def page(course_slug, lesson_slug, page_slug='index', solution=None):
         canonical_url = None
     else:
         try:
-            canonical = lessons_course.get_material(lesson.slug)
+            canonical = lessons_course.lessons[lesson.slug]
         except KeyError:
             canonical_url = None
         else:
             canonical_url = canonical.get_url(external=True)
+    return is_canonical_lesson, canonical_url
 
-    if solution is None:
-        content = page.get_content()
-    else:
-        kwargs["solution_number"] = int(solution)
-        solution = page.solutions[solution]
-        content = solution.get_content()
+
+@app.route('/<course:course_slug>/<lesson:lesson_slug>/',
+              defaults={'page_slug': 'index'})
+@app.route('/<course:course_slug>/<lesson:lesson_slug>/<page_slug>/')
+def page(course_slug, lesson_slug, page_slug='index'):
+    try:
+        course = model.courses[course_slug]
+        lesson = course.lessons[lesson_slug]
+        page = lesson.pages[page_slug]
+    except KeyError:
+        raise abort(404)
+
+    is_canonical_lesson, canonical_url = _get_canonicality_info(lesson)
 
     return render_template(
         "lesson.html",
-        content=content,
         page=page,
-        solution=solution,
-        #session=page.material.session, ## XXX
+        content=page.content,
         course=course,
         canonical_url=canonical_url,
         is_canonical_lesson=is_canonical_lesson,
         page_attribution=page.attribution,
         edit_info=page.edit_info,
-        **kwargs
+    )
+
+
+@app.route('/<course:course_slug>/<lesson:lesson_slug>/<page_slug>'
+              + '/solutions/<int:solution>/')
+def solution(course_slug, lesson_slug, page_slug, solution):
+    try:
+        course = model.courses[course_slug]
+        lesson = course.lessons[lesson_slug]
+        page = lesson.pages[page_slug]
+        solution = page.solutions[solution]
+    except KeyError:
+        raise abort(404)
+
+    is_canonical_lesson, canonical_url = _get_canonicality_info(lesson)
+
+    return render_template(
+        "lesson.html",
+        page=page,
+        content=solution.content,
+        course=course,
+        canonical_url=canonical_url,
+        is_canonical_lesson=is_canonical_lesson,
+        page_attribution=page.attribution,
+        edit_info=page.edit_info,
     )
 
 
 @app.route('/<course:course_slug>/<lesson:lesson_slug>/static/<path:filename>')
 def page_static(course_slug, lesson_slug, filename):
     try:
+        course = model.courses[course_slug]
         lesson = course.lessons[lesson_slug]
         static = lesson.static_files[filename]
     except KeyError:
         raise abort(404)
 
-    return send_from_directory(*static.get_file_info())
+    print('sending', static.base_path, static.filename)
+    return send_from_directory(static.base_path, static.path)
 
 
 def list_months(start_date, end_date):

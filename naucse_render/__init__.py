@@ -1,2 +1,2 @@
-from .info import get_course, get_lessons
-from .page import render_page
+from .course import get_course
+from .lesson import get_lessons

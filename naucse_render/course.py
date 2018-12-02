@@ -18,16 +18,6 @@ from .markdown import convert_markdown
 API_VERSION = 1
 
 
-def to_list(value):
-    if isinstance(value, str):
-        return [value]
-    return value
-
-
-def to_html_list(value, inline=False):
-    return [convert_markdown(item, inline=inline) for item in to_list(value)]
-
-
 def encode_dates(value):
     if isinstance(value, datetime.date):
         return value.isoformat()
@@ -97,19 +87,10 @@ def get_course(course_slug: str, *, version: int) -> dict:
     return result
 
 
-def get_lessons(lesson_slugs, vars=None):
-    result = {}
-    for slug in lesson_slugs:
-        lesson = {'lesson': slug}
-        update_material(lesson, vars)
-        result[slug] = lesson
-    return result
-
-
 def update_material(material, vars=None):
     lesson_slug = material.pop('lesson', None)
     if lesson_slug:
-        material['slug'] = lesson_slug
+        material['lesson_slug'] = lesson_slug
         if material.pop('url', None):
             raise ValueError(f'Material {material} has URL')
         material.setdefault('type', 'lesson')
@@ -124,64 +105,6 @@ def update_material(material, vars=None):
             material.setdefault('type', 'link')
         else:
             material.setdefault('type', 'special')
-
-
-def update_lesson(material, lesson_slug, vars):
-    lesson_path = Path('lessons', lesson_slug)
-    lesson_info = read_yaml('lessons', lesson_slug, 'info.yml')
-
-    pages = lesson_info.pop('subpages', {})
-    pages.setdefault('index', {})
-
-    material_vars = material.pop('vars', {})
-
-    for slug, page_info in pages.items():
-        info = {**lesson_info, **page_info}
-        page = {
-            'title': info['title'],
-            'attribution': to_html_list(info['attribution'], inline=True),
-            'license': info['license'],
-            'slug': slug,
-            'render_call': {
-                'entrypoint': 'naucse_render:render_page',
-                'args': [lesson_slug, slug],
-            }
-        }
-        if 'license_code' in info:
-            page['license_code'] = info['license_code']
-        if material_vars:
-            page['vars'] = material_vars
-        page_vars = {**vars, **page.get('vars', {}), **material_vars}
-        page['render_call']['kwargs'] = {'vars': page_vars}
-        pages[page['slug']] = page
-
-    material['pages'] = pages
-    material['slug'] = lesson_slug
-    material['static_files'] = dict(get_static_files(lesson_path))
-    material.setdefault('title', lesson_info['title'])
-
-    # XXX: File edit path
-    # XXX: Coverpages
-    # XXX: Render Markdown/Validate HTML!
-
-    # Afterwards:
-    # XXX: date
-    # XXX: start_time
-    # XXX: end_time
-    # XXX: has_irregular_time
-    # XXX: prev/next
-
-
-def get_static_files(path):
-    static_path = path / 'static'
-    for file_path in static_path.glob('**/*'):
-        if file_path.is_file():
-            filename = str(file_path.relative_to(static_path))
-            path = str(file_path.relative_to('.'))
-            yield (
-                filename,
-                {'filename': filename, 'path': path},
-            )
 
 
 def merge_dict(base, patch):

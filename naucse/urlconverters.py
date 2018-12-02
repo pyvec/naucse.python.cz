@@ -25,7 +25,7 @@ def register_url_converters(app, model):
 
 @_converter('course')
 class CourseConverter(BaseConverter):
-    regex = r'((([0-9]{4}|course)/[^/]+)|lessons)'
+    regex = r'(([0-9]{4}|course)/[^/]+)|lessons'
 
     # XXX: The URLs should really be "courses/<...>",
     # but we don't have good redirects yet,, so leave them at
@@ -44,7 +44,7 @@ class CourseConverter(BaseConverter):
 
 @_converter('lesson')
 class LessonConverter(BaseConverter):
-    regex = r'/([^/]+/[^/]+)'
+    regex = r'[^/]+/[^/]+'
 
     def to_python(self, value):
         return value

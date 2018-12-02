@@ -1,4 +1,5 @@
 import datetime
+from pathlib import Path
 
 import jsonschema
 import dateutil
@@ -6,6 +7,7 @@ import yaml
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
 from naucse.metamodel import Registry, Field, KeyAttrDictLoader, ListLoader
+from naucse.metamodel import DictLoader
 from naucse.metamodel import get_parent, get_index, loader
 from naucse import sanitize
 
@@ -56,25 +58,174 @@ class Model:
 class Solution(Model):
     """Solution to a problem on a Page
     """
+    index = Field(reg[int])
 
 class StaticFile(Model):
-    """Static file specific to a Page
+    """Static file specific to a Lesson
     """
+    @loader()
+    def lesson(self):
+        return self._parent
+
+    @loader()
+    def course(self):
+        return self.lesson.course
+
+    @loader()
+    def base_path(self):
+        return self.course.base_path
+
+    filename = Field(reg[str])
+    path = Field(reg[str])
+
+
+class HTMLFragmentLoader:
+    def __init__(self, *, sanitizer):
+        self.sanitizer = sanitizer
+
+    def load(self, value):
+        return self.sanitizer(get_parent(), value)
+
+    def dump(self, value):
+        return value
+
+    @classmethod
+    def get_schema(cls):
+        return {
+            'type': 'string',
+            'format': 'html-fragment',
+        }
+
+
+class PageCSSLoader:
+    def load(self, value):
+        return sanitize.sanitize_stylesheet(value)
+
+    def dump(self, value):
+        return value
+
+    @classmethod
+    def get_schema(cls):
+        return {
+            'type': 'string',
+            'contentMediaType': 'text/css',
+        }
+
+
+class LicenseLoader:
+    def load(self, value):
+        return get_parent().root.licenses[value]
+
+    def dump(self, value):
+        return value.slug
+
+    @classmethod
+    def get_schema(cls):
+        return {
+            'type': 'string',
+        }
 
 
 class Page(Model):
     """One page of teaching text
     """
 
+    @loader()
+    def lesson(self):
+        return self._parent
+
+    @loader()
+    def course(self):
+        return self.lesson.course
+
+    slug = Field(reg[str])
+    title = Field(reg[str])
+
+    def _sanitize_content(self, content):
+        def lesson_url(*, lesson, page='index', **kw):
+            lesson = self.course.get_lesson_shim(lesson)
+            page = lesson.pages[page]
+            return page.get_url(**kw)
+
+        def solution_url(*, solution, **kw):
+            return SolutionShim(parent=self, index=solution).get_url(**kw)
+
+        def static_url(*, filename, **kw):
+            return self.lesson.static_files[filename].get_url(**kw)
+
+        return sanitize.sanitize_html(
+            content,
+            naucse_urls={
+                'lesson': lesson_url,
+                'solution': solution_url,
+                'static': static_url,
+            }
+        )
+
+    content = Field(HTMLFragmentLoader(sanitizer=_sanitize_content))
+    modules = Field(DictLoader(reg[str]), factory=dict)
+
+    attribution = Field(ListLoader(HTMLFragmentLoader(sanitizer=_sanitize_content)))
+    license = Field(LicenseLoader())
+
+    source_file = Field(reg[str])
+
+    @source_file.after_load()
+    def _edit_info(self):
+        if self.source_file is None:
+            self.edit_info = None
+        else:
+            self.edit_info = self.course.repo_info.get_edit_info(self.source_file)
+
+    css = Field(PageCSSLoader(), optional=True)
+
+    @property
+    def material(self):
+        # XXX
+        try:
+            for session in self.course.sessions.values():
+                for material in session.materials:
+                    if self.lesson == material.lesson:
+                        return material
+        except Exception as e:
+            raise ValueError(e)
+
 
 class Lesson(Model):
     """A lesson – collection of Pages on a single topic
     """
-    slug = Field(reg[str])
-
     @loader()
     def course(self):
         return self._parent
+
+    slug = Field(reg[str])
+    static_files = Field(DictLoader(reg[StaticFile]))
+    pages = Field(DictLoader(reg[Page]))
+
+
+class SolutionShim:
+    """Just enough API to get a Solution URL before the lesson is loaded"""
+    def __init__(self, *, index, parent):
+        self.index = index
+        self.page = parent
+        self.lesson = parent.lesson
+        self.course = parent.course
+        self.root = parent.root
+
+    def get_url(self, *args, **kwargs):
+        return self.root._url_for(self, *args, obj_type=Solution, **kwargs)
+
+
+class PageShim:
+    """Just enough API to get a Page URL before the lesson is loaded"""
+    def __init__(self, *, slug, parent):
+        self.slug = slug
+        self.lesson = parent
+        self.course = parent.course
+        self.root = parent.root
+
+    def get_url(self, *args, **kwargs):
+        return self.root._url_for(self, *args, obj_type=Page, **kwargs)
 
 
 class LessonShim:
@@ -82,6 +233,12 @@ class LessonShim:
     def __init__(self, *, slug, parent):
         self.slug = slug
         self.course = parent
+        self.root = parent.root
+
+        class Pages(dict):
+            def __missing__(pages_self, key):
+                return PageShim(parent=self, slug=key)
+        self.pages = Pages()
 
 
 class Material(Model):
@@ -115,8 +272,9 @@ class Material(Model):
             return self.course.get_lesson_shim(self.lesson_slug)
 
     def get_url(self, url_type='web', **kwargs):
-        if self.lesson:
-            return self.lesson.get_url(**kwargs)
+        if self.lesson_slug:
+            shim = self.course.get_lesson_shim(self.lesson_slug)
+            return shim.get_url(**kwargs)
         if url_type != 'web':
             raise NoURLType(url_type)
         if self.external_url:
@@ -137,7 +295,7 @@ class SessionPage(Model):
         return self.session.course
 
 
-def set_prev_next(sequence, *, attr_names=('prex', 'next')):
+def set_prev_next(sequence, *, attr_names=('prev', 'next')):
     sequence = list(sequence)
     prev_attr, next_attr = attr_names
     for prev, now, next in zip(
@@ -196,7 +354,7 @@ class Session(Model):
     materials = Field(ListLoader(reg[Material]))
 
     @materials.after_load()
-    def index(self):
+    def _index_materials(self):
         set_prev_next(m for m in self.materials if not m.external_url)
 
     source_file = Field(reg[str])
@@ -276,10 +434,13 @@ class TimeIntervalLoader:
 class Course(Model):
     """Collection of sessions
     """
-    def __init__(self, *, parent=None, slug, repo_info, is_meta=False):
+    def __init__(
+        self, *, parent=None, slug, repo_info, base_path, is_meta=False
+    ):
         super().__init__(parent=parent)
         self.repo_info = repo_info
         self.slug = slug
+        self.base_path = base_path
         self.is_meta = is_meta
         self._frozen = False
 
@@ -334,10 +495,10 @@ class Course(Model):
         data = naucse_render.get_course(slug, version=1)
         jsonschema.validate(data, reg.get_schema(cls))
         result = reg[cls].load(
-            data, slug=slug, repo_info=repo_info, parent=parent
+            data, slug=slug, repo_info=repo_info, parent=parent,
+            base_path=Path('.').resolve(),
         )
         result.repo_info = repo_info
-        result.base_path = '.'
         result.canonical = canonical
         return result
 
@@ -383,8 +544,14 @@ class Course(Model):
         for session in self.sessions.values():
             for material in session.materials:
                 material.get_lesson_shim()
+        link_depth = 50
         while self._lesson_shims:
             self.load_lessons(self._lesson_shims.keys())
+            link_depth -= 1
+            if link_depth < 0:
+                # Avoid infinite loops in lessons
+                raise ValueError(
+                    f'Lessons in course {self.slug} are linked too deeply')
         return True
 
 
@@ -404,6 +571,8 @@ class RunYear(Model):
 class License(Model):
     """A license for content or code
     """
+    url = Field(reg[str])
+    title = Field(reg[str])
 
 
 class Root(Model):
@@ -492,15 +661,17 @@ class Root(Model):
         else:
             return self.run_years[int(year)].runs[slug]
 
-    def _url_for(self, obj, url_type='web', *, external=False):
+    def _url_for(self, obj, url_type='web', *, obj_type=None, external=False):
         try:
             urls = self.url_factories[url_type]
         except KeyError:
             raise NoURLType(url_type)
+        if obj_type is None:
+            obj_type = type(obj)
         try:
-            url_for = urls[type(obj)]
+            url_for = urls[obj_type]
         except KeyError:
-            raise NoURL(type(obj))
+            raise NoURL(obj_type)
         return url_for(obj, _external=external)
 
 

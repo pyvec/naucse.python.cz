@@ -65,7 +65,7 @@ PER_TAG_ATTRIBUTES = {
     'th': {'rowspan', 'colspan', 'valign', 'halign'},
 }
 
-def convert_link(attr_name, value, *, url_for=None):
+def convert_link(attr_name, value, *, naucse_urls=None):
     url = urlsplit(value)
     if url.scheme in ('http', 'https'):
         if url.netloc == '':
@@ -87,13 +87,13 @@ def convert_link(attr_name, value, *, url_for=None):
         else:
             return urlunsplit(url)
     elif url.scheme == 'naucse':
-        if not url_for:
+        if not naucse_urls:
             raise DisallowedURLScheme(url.scheme)
         query = dict(parse_qsl(url.query))
         for name in query:
             if not re.match(r'^[-_a-z]+$', name):
                 raise DisallowedLink(value)
-        new_url = url_for[url.path](**query)
+        new_url = naucse_urls[url.path](**query)
         if url.fragment:
             scheme, netloc, path, query, fragment = urlsplit(new_url)
             new_url = urlunsplit((scheme, netloc, path, query, url.fragment))
@@ -125,7 +125,7 @@ def sanitize_stylesheet(css):
     return parsed.cssText.decode("utf-8")
 
 
-def sanitize_element(element, *, url_for=None):
+def sanitize_element(element, *, naucse_urls=None):
     if isinstance(element.tag, str):
         if element.tag not in ALLOWED_ELEMENTS:
             raise DisallowedElement(element.tag)
@@ -148,28 +148,28 @@ def sanitize_element(element, *, url_for=None):
 
         if attr_name in {'href', 'src'}:
             element.attrib[attr_name] = convert_link(
-                attr_name, value, url_for=url_for)
+                attr_name, value, naucse_urls=naucse_urls)
 
     for child in element:
-        sanitize_element(child, url_for=url_for)
+        sanitize_element(child, naucse_urls=naucse_urls)
 
 
-def sanitize_fragment(fragment, *, url_for=None):
+def sanitize_fragment(fragment, *, naucse_urls=None):
     if isinstance(fragment, str):
         return Markup.escape(fragment)
     else:
-        sanitize_element(fragment, url_for=url_for)
+        sanitize_element(fragment, naucse_urls=naucse_urls)
         return Markup(lxml.etree.tounicode(fragment, method='html'))
 
 
-def sanitize_html(text, *, url_for=None):
+def sanitize_html(text, *, naucse_urls=None):
     """Converts untrusted HTML to a naucse-specific form.
 
     Raises exceptions for potentially dangerous content.
     """
 
     fragments = [
-        sanitize_fragment(fragment, url_for=url_for)
+        sanitize_fragment(fragment, naucse_urls=naucse_urls)
         for fragment in lxml.html.fragments_fromstring(text)
     ]
 

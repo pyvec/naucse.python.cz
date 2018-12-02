@@ -8,6 +8,17 @@ from .templates import environment, vars_functions
 from .markdown import convert_markdown
 from .notebook import convert_notebook
 
+
+def to_list(value):
+    if isinstance(value, str):
+        return [value]
+    return value
+
+
+def to_html_list(value, inline=False):
+    return [convert_markdown(item, inline=inline) for item in to_list(value)]
+
+
 def lesson_url(lesson_name, *, page='index', _anchor=''):
     url = f'naucse:lesson?lesson={lesson_name}'
     if page != 'index':
@@ -52,18 +63,25 @@ def rewrite_relative_url(url, slug):
     return url
 
 
-def render_page(lesson_slug, page, vars=None):
-    lesson_directory = Path('lessons', lesson_slug)
-    env = environment.overlay(loader=jinja2.FileSystemLoader(str(lesson_directory)))
+def render_page(lesson_slug, page_slug, info, vars=None):
+    print(f'Rendering page {lesson_slug} ({page_slug})')
     if vars is None:
         vars = {}
-    info = read_yaml(lesson_directory / 'info.yml')
-    info = {**info, **info.get('pages', {}).get(page, {})}
 
-    page_name = page + '.' + info['style']
+    lesson_directory = Path('lessons', lesson_slug)
+    env = environment.overlay(loader=jinja2.FileSystemLoader(str(lesson_directory)))
 
-    path = lesson_directory / page_name
-    text = path.read_text(encoding='utf-8')
+    page = {
+        'title': info['title'],
+        'attribution': to_html_list(info['attribution'], inline=True),
+        'license': info['license'],
+        'slug': page_slug,
+        'vars': {**vars, **info.get('vars', {})},
+    }
+    if 'license_code' in info:
+        page['license_code'] = info['license_code']
+
+    page_name = page_slug + '.' + info['style']
 
     solutions = []
 
@@ -77,13 +95,18 @@ def render_page(lesson_slug, page, vars=None):
             **kwargs,
         )
 
-    text = env.get_template(page_name).render(
-        lesson_url=lesson_url,
-        subpage_url=lambda page: lesson_url(lesson_slug, page=page),
-        static=static_url,
-        **{'$solutions': solutions, '$markdown': page_markdown},
-        **vars_functions(vars),
-    )
+    path = lesson_directory / page_name
+
+    if info.get('jinja', True):
+        text = env.get_template(page_name).render(
+            lesson_url=lesson_url,
+            subpage_url=lambda page: lesson_url(lesson_slug, page=page),
+            static=static_url,
+            **{'$solutions': solutions, '$markdown': page_markdown},
+            **vars_functions(vars),
+        )
+    else:
+        text = path.read_text(encoding='utf-8')
 
     if info['style'] == 'md':
         text = page_markdown(text)
@@ -92,13 +115,11 @@ def render_page(lesson_slug, page, vars=None):
     else:
         raise ValueError(info['style'])
 
-    result = {
-        'content': text,
-        'solutions': solutions,
-        'source_file': path,
-    }
+    page['content'] = text
+    page['solutions'] = solutions
+    page['source_file'] = path
     if 'css' in info:
-        result['css'] = info['css']
+        page['css'] = info['css']
     if 'latex' in info:
-        result['modules'] = {'katex': '0.7.1'}
-    return result
+        page['modules'] = {'katex': '0.7.1'}
+    return page

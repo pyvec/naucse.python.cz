@@ -240,7 +240,10 @@ class Field:
     def __get__(self, owner, instance, m=None):
         if instance is None:
             return self
-        raise AttributeError(self.name)
+        type_name = type(owner).__name__
+        raise AttributeError(
+            f'{self.name!r} of {type_name} object was not yet loaded'
+        )
 
     def constructor(self):
         def _decorator(func):
