@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
-"""Hra typu Pong
+"""Pong game
 
-Graficka hra pro dva hrace. Kazdy hrac ovlada "palku" na sve strane hriste,
-a snazi se odpalit micek na protivnikovu stranu.
+Graphics game for two players. Every player controls the "bat" on their side,
+and tries to fire the ball on the opponent's side.
 
-Ovladani:
-Hrac 1: klavesy W a S
-Hrac 2: sipky Nahoru a Dolu
-Konec: Esc
+Control:
+Hrac 1: Keys W and S
+Hrac 2: arrows Up and Down
+End: Esc
 
 
-Hra pouziva gravickou knihovnu Pyglet, coz je Pythonova nadstavba nad OpenGL.
+The game uses the Pyglet gravitational library, which is Python's superstructure over OpenGL.
 
-Souradny system okynka je nasledujici::
+The Coordinate System is following:
+
 
         y ^
           |
-    VYSKA +---------------------------------------+
+    HEIGHT +---------------------------------------+
           |                   :                   |
           |                   :                   |
           |                   :                   |
@@ -31,18 +32,17 @@ Souradny system okynka je nasledujici::
           |                   ;                   |
         0 +---------------------------------------+------> x
           :                   :                   :
-          0               SIRKA/2               SIRKA
+          0               WIDTH/2               WIDTH
 
-Pozor pokud mate zkusenosti s nekterymi grafickymi programy, nebo 2D
-knihovnami. OpenGL pouziva matematicky souradny system, nula je vlevo *dole*.
+Be careful if you have experience with some graphics programs or 2D
+libraries. OpenGL uses the mathematical coordinate system, zero is left *down*.
 
 """
 
-# Prvni radek (#!/usr/bin/env python3) je takzvany "shebang": na systemech
-# zalozenych na Unixu (Linux, OS X) umoznuje spustit tenhle soubor jednoduse
-# pomoci prikazu: ./pong.py
+# First line (#!/usr/bin/env python3) is the so-called "shebang": on
+# Unix base operating systems (Linux, OS X) allows you to run this file simply by using the command: ./pong.py
 
-# A ted uz k samotne hre: napred naimportujeme potrebne veci z knihovny pyglet
+# And now to the game itself: first you have to import the necessary methods from the pyglet library
 
 import random
 
@@ -51,135 +51,138 @@ from pyglet import gl
 from pyglet.window import key
 
 
-# Nejake konstanty:
+# Some constants:
 
-# Velikost okna (v pixelech)
-SIRKA = 900
-VYSKA = 600
+# Window size (in pixels)
+WIDTH = 900
+HEIGHT = 600
 
-VELIKOST_MICE = 20
-TLOUSTKA_PALKY = 10
-DELKA_PALKY = 100
-RYCHLOST = 200  # v pixelech za sekundu
-RYCHLOST_PALKY = RYCHLOST * 1.5  # taky v pixelech za sekundu
+BALL_SIZE = 20
+BAT_THICKNESS = 10
+BAT_LENGTH = 100
+SPEED = 200  # pixels per second
+BAT_SPEED = SPEED * 1.5  # also pixels per second
 
-DELKA_PULICI_CARKY = 20
-VELIKOST_FONTU = 42
-ODSAZENI_TEXTU = 30
+NET_LENGTH = 20
+FONT_SIZE = 42
+TEXT_ALIGN = 30
 
+# We will remember the state of the game in global variables.
+# Professional programmer would get mad but it is
+# now simpler for us.
+# Just don't forget that command like:
+#     ball_coordinates = [0, 0]
+# in function would've create only local variable, which wouldn't have
+# anything in common with global `ball_coordinates` variable.
+# And command like:
+#     ball_coordinates[0] = 0
+# sets first element in global variable `ball_coordinates`.
 
-# Stav hry si budeme pamatovat v globalnich promennych.
-# Profesionalni programator se nad tim zhrozi, ale pro nas je to tak zatim
-# jednodussi.
-# Jen nezapomente ze prikaz jako:
-#     pozice_mice = [0, 0]
-# ve funkci by vytvoril novou lokalni promennou, ktera by s globalni
-# `pozice_mice` nemela nic spolecneho. Oproti tomu prikaz jako:
-#     pozice_mice[0] = 0
-# nastavi prvni prvek globalni `pozice_mice`.
+bat_coordinates = [HEIGHT // 2, HEIGHT // 2]  # vertical position of two bats
+ball_coordinates = [0, 0]  # x, y ball coordinates -- set in reset()
+ball_speed = [0, 0]  # x, y components of ball speed -- set in reset()
+keys_pressed = set()  # set of pressed keys
+score = [0, 0]  # score for 2 players
 
-pozice_palek = [VYSKA // 2, VYSKA // 2]  # vertikalni pozice dvou palek
-pozice_mice = [0, 0]  # x, y souradnice micku -- nastavene v reset()
-rychlost_mice = [0, 0]  # x, y slozky rychlosti micku -- nastavene v reset()
-stisknute_klavesy = set()  # sada stisknutych klaves
-skore = [0, 0]  # skore dvou hracu
-
-# Pozice palek a micku vzdy bude urcovat stred daneho obdelnicku.
+# The position of the bats and the ball will always be determined by the center of the rectangle.
 
 
 def reset():
-    """Nastav pocatecni stav
+    """set initial state
 
-    Tahle funkce se bude volat na zacatku programu, a taky potom co nektery
-    z hracu prohraje.
-    Funkce da micek doprostred obrazovky a da mu nahodnou rychlost.
+    This function will be call in the beginning and also after some of
+    the players loses the game.
+    Function will place the ball to the centre of the window and will give
+    it random speed.
 
-    N.B. Neresetujeme tady skore ani pozici palek; ty zustavaji do dalsiho kola
+    We are not resetting score and bats position here, those will stay to the next round.
     """
-    pozice_mice[0] = SIRKA // 2
-    pozice_mice[1] = VYSKA // 2
+    ball_coordinates[0] = WIDTH // 2
+    ball_coordinates[1] = HEIGHT // 2
 
-    # x-ova rychlost - bud vpravo, nebo vlevo
+    # x speed - right or left
     if random.randint(0, 1):
-        rychlost_mice[0] = RYCHLOST
+        ball_speed[0] = SPEED
     else:
-        rychlost_mice[0] = -RYCHLOST
-    # y-ova rychlost - uplne nahodna
-    rychlost_mice[1] = random.uniform(-1, 1) * RYCHLOST
+        ball_speed[0] = -SPEED
+    # y speed - completely random
+    ball_speed[1] = random.uniform(-1, 1) * SPEED
 
 
-def obnov_stav(dt):
-    """Spocitej novy stav hry
+def revive(dt):
+    """Count new game state
 
-    Tahle funkce se vola mockrat za sekundu. V parametru ``dt`` dostane cas
-    v sekundach od posledniho zavolani. Pocitac je rychly, proto to
-    vetsinou bude velice male cislo - kolem sedesatiny sekundy (0.0167).
+    This function is called many times per second. It will get time
+    in seconds that has passed from the last call by `dt` argument.
+    The computer is very quick so the number will be usually small.
     """
-    # Jak zname z fyziky, micek s rychlosti `v` se za cas `t` pohne o `v*t`.
-    # Tenhle vyraz muzeme rozlozit pro slozky x, y.
-    pozice_mice[0] += rychlost_mice[0] * dt
-    pozice_mice[1] += rychlost_mice[1] * dt
+    # As we know from physics, ball with speed `v` move in time `t` about
+    # `v*t` length.
+    # We can expand this expression for x and y components.
+    ball_coordinates[0] += ball_speed[0] * dt
+    ball_coordinates[1] += ball_speed[1] * dt
 
-    # odraz od spodni hrany
-    # Kdyz je micek prilis "nizko", odrazi se, a zacne se pohybovat nahoru.
-    # To znamena ze bude mit kladnou y-ovou slozku rychlosti.
-    # x-ova slozka (vpravo/vlevo) se nezmeni.
-    if pozice_mice[1] < VELIKOST_MICE // 2:
-        rychlost_mice[1] = abs(rychlost_mice[1])
+    # bounce from the bottom edge
+    # When the ball is too "low" it should bounce back and start to move up
+    # That means that it will have y speed component above 0
+    # x component won't change
+    if ball_coordinates[1] < BALL_SIZE // 2:
+        ball_speed[1] = abs(ball_speed[1])
 
-    # odraz od vrchni hrany
-    # To same, ale micek je moc vysoko a musi se zacit pohybovat dolu.
-    if pozice_mice[1] > VYSKA - VELIKOST_MICE // 2:
-        rychlost_mice[1] = -abs(rychlost_mice[1])
+    # bounce from top edge
+    # The same but ball is too high and it has to move down.
+    if ball_coordinates[1] > HEIGHT - BALL_SIZE // 2:
+        ball_speed[1] = -abs(ball_speed[1])
 
-    # pohyb palek - cyklus se projde dvkrat; jednou pro kazdou palku
-    for cislo_palky in (0, 1):
-        # pohyb podle klaves (viz funkce `stisk_klavesy`)
-        if ('nahoru', cislo_palky) in stisknute_klavesy:
-            pozice_palek[cislo_palky] += RYCHLOST_PALKY * dt
-        if ('dolu', cislo_palky) in stisknute_klavesy:
-            pozice_palek[cislo_palky] -= RYCHLOST_PALKY * dt
+    # bat movement - loop has to run twice - once for each bat
+    for bat_number in (0, 1):
+        # movement according to pressed keys (function `key_press`)
+        if ('up', bat_number) in keys_pressed:
+            bat_coordinates[bat_number] += BAT_SPEED * dt
+        if ('down', bat_number) in keys_pressed:
+            bat_coordinates[bat_number] -= BAT_SPEED * dt
 
-        # dolni zarazka - kdyz je palka prilis dole, nastavime ji na minimum
-        if pozice_palek[cislo_palky] < DELKA_PALKY / 2:
-            pozice_palek[cislo_palky] = DELKA_PALKY / 2
-        # horni zarazka - kdyz je palka prilis nahore, nastavime ji na maximum
-        if pozice_palek[cislo_palky] > VYSKA - DELKA_PALKY / 2:
-            pozice_palek[cislo_palky] = VYSKA - DELKA_PALKY / 2
+        # bottom stop - when bat is down bellow we will set it to the minimum
+        if bat_coordinates[bat_number] < BAT_LENGTH / 2:
+            bat_coordinates[bat_number] = BAT_LENGTH / 2
+        # top stop - when bat is too high we will set it to the maximum
+        if bat_coordinates[bat_number] > HEIGHT - BAT_LENGTH / 2:
+            bat_coordinates[bat_number] = HEIGHT - BAT_LENGTH / 2
 
-    # odrazeni micku
-    # Pokud je micek prilis vlevo, muze se budto odrazit od leve palky, anebo
-    # tam palka neni a levy hrac prohral. Podobne pro pravou stranu.
-    # Doporucuju si to nakreslit na papir :)
+    # ball bounce
+    # If the ball is "too left" it could be bounced from the left bat
+    # or there isn't any bat and player on the left lost. It's
+    # similar for the right side.
+    # I recommend to draw it on a piece of paper :)
 
-    # nejdriv si poznamename minimalni a maximalni pozici, kde musi byt palka
-    # (t.j. stred palky), aby odrazila micek.
-    palka_min = pozice_mice[1] - VELIKOST_MICE/2 - DELKA_PALKY/2
-    palka_max = pozice_mice[1] + VELIKOST_MICE/2 + DELKA_PALKY/2
+    # first I will write down minimal and maximal position where the bat have to be
+    # (centre of the bat) to bounce back the ball
+    bat_min = ball_coordinates[1] - BALL_SIZE/2 - BAT_LENGTH/2
+    bat_max = ball_coordinates[1] + BALL_SIZE/2 + BAT_LENGTH/2
 
-    # odrazeni vlevo
-    if pozice_mice[0] < TLOUSTKA_PALKY + VELIKOST_MICE / 2:
-        if palka_min < pozice_palek[0] < palka_max:
-            # palka je na spravnem miste, odrazime micek
-            rychlost_mice[0] = abs(rychlost_mice[0])
+    # bounce to the left
+    if ball_coordinates[0] < BAT_THICKNESS + BALL_SIZE / 2:
+        if bat_min < bat_coordinates[0] < bat_max:
+            # bat is at the right spot we can bounce the ball back
+            ball_speed[0] = abs(ball_speed[0])
         else:
-            # palka je jinde nez ma byt, hrac prohral
-            skore[1] += 1
+            # bat is not at the right place the player lost
+            score[1] += 1
             reset()
 
-    # odrazeni vpravo
-    if pozice_mice[0] > SIRKA - (TLOUSTKA_PALKY + VELIKOST_MICE / 2):
-        if palka_min < pozice_palek[1] < palka_max:
-            rychlost_mice[0] = -abs(rychlost_mice[0])
+    # bounce to the right
+    if ball_coordinates[0] > WIDTH - (BAT_THICKNESS + BALL_SIZE / 2):
+        if bat_min < bat_coordinates[1] < bat_max:
+            ball_speed[0] = -abs(ball_speed[0])
         else:
-            skore[0] += 1
+            score[0] += 1
             reset()
 
 
-def nakresli_obdelnik(x1, y1, x2, y2):
-    """Nakresli obdelnik na dane souradnice
+def draw_rectangle(x1, y1, x2, y2):
+    """Draw the rectangle to the given coordinates
 
-    Nazorny diagram::
+    How it should look like::
 
          y2 - +-----+
               |/////|
@@ -187,139 +190,133 @@ def nakresli_obdelnik(x1, y1, x2, y2):
               :     :
              x1    x2
     """
-    # Tady pouzivam volani OpenGL, ktere je pro nas zatim asi nejjednodussi
-    # na pouziti
-    gl.glBegin(gl.GL_TRIANGLE_FAN)   # zacni kreslit spojene trojuhelniky
-    gl.glVertex2f(int(x1), int(y1))  # souradnice A
-    gl.glVertex2f(int(x1), int(y2))  # souradnice B
-    gl.glVertex2f(int(x2), int(y2))  # souradnice C, nakresli trojuhelnik ABC
-    gl.glVertex2f(int(x2), int(y1))  # souradnice D, nakresli trojuhelnik BCD
-    # dalsi souradnice E by nakreslila trojuhelnik CDE, atd.
-    gl.glEnd()  # ukonci kresleni trojuhelniku
+    # I am calling OpenGL here which is the easiest to use for us at the moment
+    gl.glBegin(gl.GL_TRIANGLE_FAN)   # draw connected triangles
+    gl.glVertex2f(int(x1), int(y1))  # coordinate A
+    gl.glVertex2f(int(x1), int(y2))  # coordinate B
+    gl.glVertex2f(int(x2), int(y2))  # coordinate C, draw triangle ABC
+    gl.glVertex2f(int(x2), int(y1))  # coordinate D, draw triangle BCD
+    # another coordinate E would draw triangle CDE and so on
+    gl.glEnd()  # stop drawing the triangles
 
 
-def nakresli_text(text, x, y, pozice_x):
-    """Nakresli dany text na danou pozici
+def draw_text(text, x, y, x_position):
+    """Draw given text on the given coordinates
 
-    Argument ``pozice_x`` muse byt "left" nebo "right", udava na kterou stranu
-    bude text zarovnany
+    Argument `x_position` can be "left" or "right" - sets where the text will be aligned
     """
-    # Texty umi vypisovat Pyglet, a to tak, ze vytvorime objekt "napis"
-    # a pak ho nakreslime.
-    # (Normalne bychom tenhle objekt udelali jednou, a pak v nem jen menili
-    # text a vykreslovali ho, ale pro jednoduchost si ho vytvorime tady:)
-    napis = pyglet.text.Label(
+    # Pyglet can print text and we will create object "write" and then we will draw it.
+    # (Usually we would create this object once and then we would just change its text and
+    # redraw it but we will do it this way cause it's easier)
+    write = pyglet.text.Label(
         text,
         font_name='League Gothic',
-        font_size=VELIKOST_FONTU,
-        x=x, y=y, anchor_x=pozice_x)
-    napis.draw()
+        font_size=FONT_SIZE,
+        x=x, y=y, anchor_x=x_position)
+    write.draw()
 
 
-def vykresli():
-    """Vykresli stav hry"""
-    gl.glClear(gl.GL_COLOR_BUFFER_BIT)  # smaz obsah okna (vybarvi na cerno)
-    gl.glColor3f(1, 1, 1)  # nastav barvu kresleni na bilou
+def render():
+    """Render(draw) state of the game"""
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT)  # clear the window (paint the window black)
+    gl.glColor3f(1, 1, 1)  # set the paint to white
 
-    # micek
-    nakresli_obdelnik(
-        pozice_mice[0] - VELIKOST_MICE // 2,
-        pozice_mice[1] - VELIKOST_MICE // 2,
-        pozice_mice[0] + VELIKOST_MICE // 2,
-        pozice_mice[1] + VELIKOST_MICE // 2)
+    # ball
+    draw_rectangle(
+        ball_coordinates[0] - BALL_SIZE // 2,
+        ball_coordinates[1] - BALL_SIZE // 2,
+        ball_coordinates[0] + BALL_SIZE // 2,
+        ball_coordinates[1] + BALL_SIZE // 2)
 
-    # palky - udelame si seznam souradnic palek, a pro kazdou dvojici souradnic
-    # v tom seznamu palku vykreslime
-    for x, y in [(0, pozice_palek[0]), (SIRKA, pozice_palek[1])] :
-        nakresli_obdelnik(
-            x - TLOUSTKA_PALKY,
-            y - DELKA_PALKY // 2,
-            x + TLOUSTKA_PALKY,
-            y + DELKA_PALKY // 2)
+    # bats - we will create list of bats coordinates and for each pair of coordinates
+    # in this list we will draw the bat
+    for x, y in [(0, bat_coordinates[0]), (WIDTH, bat_coordinates[1])] :
+        draw_rectangle(
+            x - BAT_THICKNESS,
+            y - BAT_LENGTH // 2,
+            x + BAT_THICKNESS,
+            y + BAT_LENGTH // 2)
 
-    # prerusovana pulici cara - slozena ze spousty malych obdelnicku
-    for y in range(DELKA_PULICI_CARKY // 2, VYSKA, DELKA_PULICI_CARKY * 2):
-        nakresli_obdelnik(
-            SIRKA // 2 - 1,
+    # dashed line (as net) - composed from couple of small rectangles
+    for y in range(NET_LENGTH // 2, HEIGHT, NET_LENGTH * 2):
+        draw_rectangle(
+            WIDTH // 2 - 1,
             y,
-            SIRKA // 2 + 1,
-            y + DELKA_PULICI_CARKY)
+            WIDTH // 2 + 1,
+            y + NET_LENGTH)
 
-    # A nakonec vypiseme skore obou hracu
-    nakresli_text(str(skore[0]),
-                  x=ODSAZENI_TEXTU,
-                  y=VYSKA - ODSAZENI_TEXTU - VELIKOST_FONTU,
-                  pozice_x='left')
+    # And finally we will draw the score of both players
+    draw_text(str(score[0]),
+                  x=TEXT_ALIGN,
+                  y=HEIGHT - TEXT_ALIGN - FONT_SIZE,
+                  x_position='left')
 
-    nakresli_text(str(skore[1]),
-                  x=SIRKA - ODSAZENI_TEXTU,
-                  y=VYSKA - ODSAZENI_TEXTU - VELIKOST_FONTU,
-                  pozice_x='right')
+    draw_text(str(score[1]),
+                  x=WIDTH - TEXT_ALIGN,
+                  y=HEIGHT - TEXT_ALIGN - FONT_SIZE,
+                  x_position='right')
 
 
-def stisk_klavesy(symbol, modifikatory):
-    """Osetri stisknuti klavesy
+def key_press(symbol, modifiers):
+    """Handles key press
 
-    Kdyz hrac stiskne spravnou klavesu, do mnoziny ``stisknute_klavesy`` se
-    prida dvojice (n-tice) tvaru (smer, cislo palky).
-    Program pak muze pohybovat palkou podle toho, co je v mnozine.
+    When player presses some key there will be added a tuple (direction, bat number) to `keys_pressed` set.
+    So the program can move with the bats according to what's in the set.
     """
     if symbol == key.W:
-        stisknute_klavesy.add(('nahoru', 0))
+        keys_pressed.add(('up', 0))
     if symbol == key.S:
-        stisknute_klavesy.add(('dolu', 0))
+        keys_pressed.add(('down', 0))
     if symbol == key.UP:
-        stisknute_klavesy.add(('nahoru', 1))
+        keys_pressed.add(('up', 1))
     if symbol == key.DOWN:
-        stisknute_klavesy.add(('dolu', 1))
-    # N.B. klavesu ESC Pyglet osetri sam: zavre okno a ukonci funkci run()
+        keys_pressed.add(('down', 1))
+    # Pyglet handles ESC key by itself: it closes the window and exits the run() function
 
 
-def pusteni_klavesy(symbol, modifikatory):
-    """Osetri pusteni klavesy
+def key_release(symbol, modifiers):
+    """Handles when key is released
 
-    Opak funkce ``stisk_klavesy`` -- podle argumentu vynda prislusnou
-    dvojici z mnoziny.
+    The opposite to the `key_press` function -- regarding the arguments
+    it will remove the tuple of direction and bat number from the set.
     """
-    # Vsimnete si pouziti funkce ``discard``: na rozdil od ``remove``
-    # nezpusobi chybu, kdyz prvek v mnozine neni. Takze program nespadne,
-    # kdyz napr. uzivatel zmackne klavesu, pak se prepne do naseho okna,
-    # a pak teprve klavesu pusti.
+    # Notice the usage of function `discard`: unlike `remove` it won't
+    # raise an error when the element is not in the set. So the program
+    # won't end when user press some key elsewhere and then switch back to our
+    # window and after then they will release the key.
     if symbol == key.W:
-        stisknute_klavesy.discard(('nahoru', 0))
+        keys_pressed.discard(('nahoru', 0))
     if symbol == key.S:
-        stisknute_klavesy.discard(('dolu', 0))
+        keys_pressed.discard(('dolu', 0))
     if symbol == key.UP:
-        stisknute_klavesy.discard(('nahoru', 1))
+        keys_pressed.discard(('nahoru', 1))
     if symbol == key.DOWN:
-        stisknute_klavesy.discard(('dolu', 1))
-    # Mimochodem, funkce pusteni_klavesy a stisk_klavesy by se daly hodne
-    # zjednodusit pomoci slovniku. Zkusite to?
+        keys_pressed.discard(('dolu', 1))
+    # By the way, functions key_release and key_press could be simplified by
+    # using dictionaries. Will you try that?
 
-# Nastavime prvotni stav
+# We will set the initial state.
 reset()
 
-# Vytvorime okno, do ktereho budeme kreslit
-window = pyglet.window.Window(width=SIRKA, height=VYSKA)
+# We will create the window where we will draw.
+window = pyglet.window.Window(width=WIDTH, height=HEIGHT)
 
-# Oknu priradime par funkci, ktere budou reagovat na udalosti.
-# Kdyz napr. uzivatel zmackne klavesu na klavesnici,
-# Pyglet zavola funkci, kterou tady zaregistrujeme pod `on_key_press`,
-# a preda ji prislusne argumenty.
-# Jake vsechny udalosti muzou nastat, a jake argumenty se predaji prislusne
-# funkci, se doctete v dokumentaci Pygletu,
-# nebo pomoci `help(pyglet.window.event)`.
+# We will add some functions to the window which will react to some events.
+# For example when the user will press some key, Pyglet will call
+# a function that we will register with `on_key_press`, and it will pass specific
+# key to the function. You can find the list of all the events that can happen
+# and what exactly Pyglet passes as an argument in Pyglet documentation or with
+# `help(pyglet.window.event)` function.
 window.push_handlers(
-    on_draw=vykresli,  # na vykresleni okna pouzij funkci `vykresli`
-    on_key_press=stisk_klavesy,  # po stisknuti klavesy zavolej `stisk_klavesy`
-    on_key_release=pusteni_klavesy,  # a mame i funkci na  pusteni klavesy
+    on_draw=render,  # for drawing into the window use function `render`
+    on_key_press=key_press,  # when key is pressed call function `key_press`
+    on_key_release=key_release,  # when key is released call `key_release`
     )
 
-# Jeste mame jednu podobnou funkci, kterou ale neprirazujeme primo
-# oknu. Misto toho chceme aby ji Pyglet zavolal vzdycky kdyz "tiknou hodiny"
-pyglet.clock.schedule(obnov_stav)
+# We also have another function but we don't want to assign it to any window event.
+# We want to call it everytime the clock "ticks".
+pyglet.clock.schedule(revive)
 
-pyglet.app.run()  # vse je nastaveno, at zacne hra
-# (funkce run() bude porad dokola volat obnov_stav, vykresli, a kdyz se mezitim
-# neco stane, zavola navic funkci kterou jsme nastavili jako reakci na
-# danou udalost)
+pyglet.app.run()  # everything is set, let the game begin
+# Function run() will be calling in a loop revive, render and if some event will appear it will also
+# call the function we assign to it.
