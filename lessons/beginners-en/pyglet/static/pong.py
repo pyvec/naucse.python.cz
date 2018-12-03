@@ -237,7 +237,7 @@ def render():
             x + BAT_THICKNESS,
             y + BAT_LENGTH // 2)
 
-    # dashed line (as net) - composed from couple of small rectangles
+    # midfield line (as net) - composed from couple of small rectangles
     for y in range(NET_LENGTH // 2, HEIGHT, NET_LENGTH * 2):
         draw_rectangle(
             WIDTH // 2 - 1,

@@ -4,124 +4,121 @@
     <img src="{{ static('pong.png') }}" alt="">
 </div>
 
-Dnes si prohloubíme znalosti programování grafických aplikací,
-které jsme získali na [lekci o Pygletu]({{ lesson_url('intro/pyglet') }}),
-na reálném problému.
+Now we will deepen the knowledge of programming graphics applications
+which we got in the last [lecture about Pyglet]({{ lesson_url('intro/pyglet') }}),
+by creating real program.
 
-Naprogramujeme si s pomocí knihovny Pyglet
-jednu z prvních videoher, [Pong](https://en.wikipedia.org/wiki/Pong).
-Pong vydala společnost [Atari](https://en.wikipedia.org/wiki/Atari,_Inc.)
-jako svůj první titul v roce 1972 a odstartovala tak boom herního průmyslu.
+We will program one of the first video game ever, [Pong](https://en.wikipedia.org/wiki/Pong).
+Pong was released by [Atari](https://en.wikipedia.org/wiki/Atari,_Inc.)
+as their first game of year 1972 and it started the gaming industry revolution.
 
-Na Youtube se můžeš podívat na
-[video, které ukazuje jak se Pong hraje](https://www.youtube.com/watch?v=fiShX2pTz9A).
+You can have a look on 
+[video, which shows how Pong is played](https://www.youtube.com/watch?v=fiShX2pTz9A).
 
 
-## Konstanty a stav hry
+## Constants and state of the game
 
-Hra Pong má jednoduchá pravidla. Musíme je ale umět
-vyjádřit v Pythonu a to není úplně jednoduché.
-Pojdmě si srovnat v hlavě, co ve hře máme.
+The Pong game has simple rules. But we have to know how
+to express them in Python, and it is not that easy.
+Let's take a look at what have to be in the game.
 
-* Hrací pole ve tvaru obdélníku s půlící čárou.
-* Míček létající určitou rychlostí po hracím poli.
-* Dvě pálky pohybující se vertikálně na krajích pole.
-* Dvě počítadla skóre.
+* Game board in rectangle shape with a net in the middle.
+* A ball flying at a certain speed over the game field.
+* Two bats moving vertically by the edges of the field.
+* Two score counters.
 
-Hra bude pro 2 hráče, nebudeme programovat chování počítače.
-Každý z hráčů může ovládat svou pálku stiskem kláves.
-Jeden hráč šipkou nahoru a šipkou dolů a druhý hráč klávesami <kbd>W</kbd>
-a <kbd>S</kbd>.
+The game will be for 2 players, we will not program the behavior of the computer.
+Each player can control their bat by pressing the exact key.
+One player can control the bat by up and down arrows and the other one by
+<kbd>W</kbd> and <kbd>S</kbd> keys.
 
-Stav hry dokážeme v Pythonu vyjádřit pomocí proměnných
-a konstant. To dává smysl, protože některé
-věci se ve hře mění (poloha pálek, poloha míčku, rychlost míčku, skóre)
-a některé ne (velikost hrací plochy, velikost pálek a
-míčku, poloha a velikost počítadel skóre).
-Ze složitějších datových struktur použijeme seznam
-(list, ten už známe) a množinu (set), která je velmi podobná
-matematické množině. Zjednodušeně je to seznam, který se
-nestará o pořadí a stejné prvky v něm mohou být právě jednou.
+We can express the state of the game in Python using variables and
+constants. Which makes sense because some things change in the game 
+(bats position, ball position, ball speed, score) and some do not 
+(size of the playing area, size of the bats and
+ball, position and size of score counters).
+From the complex data structures we will use list (which we already know)
+and set, which is similar to set in maths. It's similar to list but
+it doesn't care about the order and there can't be any two or more 
+same elements.
 
-Možná přemýšlíš nad tím, v jakých jednotkách můžeme měřit
-vzdálenost a rychlost v takovéto hře na počítači.
-Na obrazovce je nešikovné měřit vzdálenost např.
-v centimetrech. Nicméně každá obrazovka se skládá
-z jednotlivých svítících bodů tzn. *pixelů*.
-V grafické aplikaci jako je Pong můžeme tedy měřit
-vzdálenost dvou míst na obrazovce jako počet pixelů
-mezi těmito dvěma místy. Souřadný systém Pygletu
-je založený právě na pixelech, přičemž pixel se
-souřadnicemi [0, 0] je na obrazovce vlevo dole.
-Rychlost můžeme jednoduše měřit v pixelech za sekundu.
+You might be wondering in what units we can measure
+distance and speed in such game on a computer.
+On the screen, it is not practical to measure the distance
+in centimeters. However, each screen is composed
+from individual luminous points, ie. *pixels*.
+In a graphical application such as Pong, we can measure the
+distance of two places on the screen as the number of pixels
+between these two places. Coordinate system of Pyglet
+is based on pixels, where the pixel with the [0, 0] 
+coordinates is on the bottom left of the screen.
+The speed can be measured in in pixels per second.
 
-Založte si nový skript. Společně nadefinujeme *konstanty*, které
-budeme v tvorbě hry potřebovat. Normálně bychom
-definovali konstanty postupně, až bychom je potřebovali,
-ale pro jednoduchost to udělejme společně a najednou.
-Ukážeme si na tom, jak začít převádět problém z reálného
-světa do Pythonu.
+Create a new file. Together we will define *constants*, which
+we will need during the game creation. Usually, we would define the 
+constants when we need them, but for simplicity let's do it together 
+and all at once. We'll show you how to start translating the real 
+world problem into Python.
 
-```python
-# Velikost okna (v pixelech)
-SIRKA = 900
-VYSKA = 600
-
-VELIKOST_MICE = 20
-TLOUSTKA_PALKY = 10
-DELKA_PALKY = 100
-RYCHLOST = 200  # v pixelech za sekundu
-RYCHLOST_PALKY = RYCHLOST * 1.5  # taky v pixelech za sekundu
-
-DELKA_PULICI_CARKY = 20
-VELIKOST_FONTU = 42
-ODSAZENI_TEXTU = 30
-```
-
-Nyní nadefinujeme *proměnné* potřebné v naší hře: poloha míčku, poloha pálek,
-rychlost míče, stisknuté klávesy a skóre obou hráčů.
-Budou to globální proměnné, za což by nás profesionální
-programátor pokáral, ale nám to v tuhle chvíli ulehčí
-práci.
 
 ```python
-pozice_palek = [VYSKA // 2, VYSKA // 2]  # vertikalni pozice dvou palek
-pozice_mice = [0, 0]  # x, y souradnice micku -- nastavene v reset()
-rychlost_mice = [0, 0]  # x, y slozky rychlosti micku -- nastavene v reset()
-stisknute_klavesy = set()  # sada stisknutych klaves
-skore = [0, 0]  # skore dvou hracu
+# Window size (in pixels)
+WIDTH = 900
+HEIGHT = 600
+
+BALL_SIZE = 20
+BAT_THICKNESS = 10
+BAT_LENGTH = 100
+SPEED = 200  # pixels per second
+BAT_SPEED = SPEED * 1.5  # also pixels per second
+
+NET_LENGTH = 20
+FONT_SIZE = 42
+TEXT_ALIGN = 30
 ```
 
-## Vykreslení hrací plochy
+We will now define *variables* that we will need: ball coordinates,
+bat coordinates, pressed keys and score of two players.
+Those variables will be global which would made any programmer 
+furious but it will ease our work for now.
 
-Nejprve si v Pygletu otevřeme okno velikosti hrací plochy.
+```python
+bat_coordinates = [HEIGHT // 2, HEIGHT // 2]  # vertical position of two bats
+ball_coordinates = [0, 0]  # x, y ball coordinates -- set in reset()
+ball_speed = [0, 0]  # x, y components of ball speed -- set in reset()
+keys_pressed = set()  # set of pressed keys
+score = [0, 0]  # score for 2 players
+```
+
+## Rendering the game board
+
+First, we open the window with the same size as the game board.
 
 ```python
 import pyglet
 ...
-window = pyglet.window.Window(width=SIRKA, height=VYSKA)
-pyglet.app.run()  # vse je nastaveno, at zacne hra
+window = pyglet.window.Window(width=WIDTH, height=HEIGHT)
+pyglet.app.run()  # everything is set, let the game begin
 ```
 
-Než začneme dělat interaktivní část hry reagující na vstupy
-od uživatele, je třeba umět vůbec vykreslit prvky na hrací
-ploše. Podobně jako jsme v lekci o Pygletu měli funkci
-`vykresli()`, která vykreslila hada, budeme mít
-v Pongu funkci stejného jména, která vykreslí prvky na hrací
-ploše.
+Before we start to make an interactive part of the game responding to inputs
+from the user we have to be able to draw everything that should be on the game
+board. Just like in the Pyglet lesson where we had function `draw()` which
+rendered the python we will have similar function in the Pong which will
+render all elements on the board.
 
-Většina z tvarů jsou obdélníky, takže nejprve
-navrhněme funkci `nakresli_obdelnik`, která
-dostane čtveřici souřadnic a pomocí modulu `gl`
-z Pygletu vykreslí čtverec pomocí 2 trojúhelníků.
+Most of the shapes are rectangles so let's create
+a function `draw_rectangle` which will get 4 coordinates
+and which will draw rectangle with the help of module `gl`
+by drawing two triangles.
 
 ```python
 from pyglet import gl
 ...
-def nakresli_obdelnik(x1, y1, x2, y2):
-    """Nakresli obdelnik na dane souradnice
+def draw_rectangle(x1, y1, x2, y2):
+    """Draw the rectangle to the given coordinates
 
-    Nazorny diagram::
+    How it should look like::
 
          y2 - +-----+
               |/////|
@@ -129,177 +126,161 @@ def nakresli_obdelnik(x1, y1, x2, y2):
               :     :
              x1    x2
     """
-    # Tady pouzijeme volani OpenGL, ktere je pro nas zatim asi nejjednodussi
-    # na pouziti
-    gl.glBegin(gl.GL_TRIANGLE_FAN)   # zacni kreslit spojene trojuhelniky
-    gl.glVertex2f(int(x1), int(y1))  # vrchol A
-    gl.glVertex2f(int(x1), int(y2))  # vrchol B
-    gl.glVertex2f(int(x2), int(y2))  # vrchol C, nakresli trojuhelnik ABC
-    gl.glVertex2f(int(x2), int(y1))  # vrchol D, nakresli trojuhelnik BCD
-    # dalsi souradnice E by nakreslila trojuhelnik CDE, atd.
-    gl.glEnd()  # ukonci kresleni trojuhelniku
+    # I am calling OpenGL here which is the easiest to use for us at the moment
+    gl.glBegin(gl.GL_TRIANGLE_FAN)   # draw connected triangles
+    gl.glVertex2f(int(x1), int(y1))  # coordinate A
+    gl.glVertex2f(int(x1), int(y2))  # coordinate B
+    gl.glVertex2f(int(x2), int(y2))  # coordinate C, draw triangle ABC
+    gl.glVertex2f(int(x2), int(y1))  # coordinate D, draw triangle BCD
+    # another coordinate E would draw triangle CDE and so on
+    gl.glEnd()  # stop drawing the triangles
 ```
 
-
-Teď začneme pracovat na funkci `vykresli()`
-Nejprve ji vytvoř prázdnou a zaregistruj ji
-v Pygletu na událost `on_draw`, jak jsme to
-dělali v lekci o Pygletu. To znamená, že se tato funkce
-zavolá pokaždé, když Pyglet překreslí okno. Pokud se
-mezitím např. změnila poloha míčku, funkce ho vykreslí
-o kousek jinde. Tím vlastně vytváříme dynamiku hry.
-Analogicky jsme to dělali s hadem, tady máme jen víc
-grafických prvků.
+We can now start to work on `render()` function.
+First create it empty and register it with `on_draw` event.
+That means that it will be called everytime when Pyglet redraws 
+the window. If, for example, the position of the ball has changed the
+function will draw it a bit elsewhere. By this we are creating
+the game dynamics. We also did it with the python, but now we have more 
+graphical elements. 
 
 ```python
 ...
-def vykresli():
-    """Vykresli stav hry"""
-    gl.glClear(gl.GL_COLOR_BUFFER_BIT)  # smaz obsah okna (vybarvi na cerno)
-    gl.glColor3f(1, 1, 1)  # nastav barvu kresleni na bilou
+def render():
+    """Render(draw) state of the game"""
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT)  # clear the window (paint the window black)
+    gl.glColor3f(1, 1, 1)  # set the paint to white
 
-window = pyglet.window.Window(width=SIRKA, height=VYSKA)
+window = pyglet.window.Window(width=WIDTH, height=HEIGHT)
 window.push_handlers(
-    on_draw=vykresli,  # na vykresleni okna pouzij funkci `vykresli`
+    on_draw=render,  # for drawing into the window use function `render`
 )
-pyglet.app.run()  # vse je nastaveno, at zacne hra
+pyglet.app.run()  # everything is set, let the game begin
 ```
 
-Zatím máme v těle funkce jen volání, která vyčistí
-plochu, do které kreslíme a nastaví barvu kreslení na bílou.
+For now we only have cleaning of the window and setting the drawing
+colour to white in the body of our function.
 
-Teď zkus {{gnd('sám', 'sama')}} do funkce `vykresli()` přidat
-vykreslení `míčku` na správné pozici,
-kterou získáš z příslušné globální proměnné. Míček je
-v našem případě jen malý čtvereček jehož velikost
-máme uloženou v konstantě.
+Try to add to the `render()` function rendering of the ball in the 
+right position which you will get from the relevant global variable.
+Size of the ball is in our case just small square which size is
+stored in one of the constants.
 
 {% filter solution %}
 ```python
-def vykresli():
+def render():
     ...
-    # Vykresleni micku
-    nakresli_obdelnik(
-        pozice_mice[0] - VELIKOST_MICE // 2,
-        pozice_mice[1] - VELIKOST_MICE // 2,
-        pozice_mice[0] + VELIKOST_MICE // 2,
-        pozice_mice[1] + VELIKOST_MICE // 2,
-    )
+    # ball
+    draw_rectangle(
+    ball_coordinates[0] - BALL_SIZE // 2,
+    ball_coordinates[1] - BALL_SIZE // 2,
+    ball_coordinates[0] + BALL_SIZE // 2,
+    ball_coordinates[1] + BALL_SIZE // 2)
 ```
 {% endfilter %}
 
 
-Po míčku zkus vykreslit obě *pálky*.
-V proměnné `pozice_palek` máme vertikální
-polohu první a druhé pálky, ale horizontální poloha je
-konstantní. Jaké souřadnice musíš předat funkci
-`nakresli_obdelnik`, aby se pálka vykreslila
-správně a na správném místě? Princip určení souřadnic
-je podobný jako u vykreslení míčku.
+After that try to draw both *bats*.
+We have the vertical position of one bat stored in the 
+`bat_position` variable. Horizontal position is a constant.
+What coordinates do you have to pass to `draw_rectangle` so the bat
+is rendered correctly and on the right position? It is similar to
+drawing the ball.
 
 {% filter solution %}
 ```python
-def vykresli():
+def render():
     ...
-    # palky - udelame si seznam souradnic palek a pro kazdou dvojici souradnic
-    # v tom seznamu palku vykreslime
-    for x, y in [(0, pozice_palek[0]), (SIRKA, pozice_palek[1])]:
-        nakresli_obdelnik(
-            x - TLOUSTKA_PALKY,
-            y - DELKA_PALKY // 2,
-            x + TLOUSTKA_PALKY,
-            y + DELKA_PALKY // 2,
+    # bats - we will create list of bats coordinates and for each pair of coordinates
+    # in this list we will draw the bat
+    for x, y in [(0, bat_coordinates[0]), (WIDTH, bat_coordinates[1])] :
+        draw_rectangle(
+            x - BAT_THICKNESS,
+            y - BAT_LENGTH // 2,
+            x + BAT_THICKNESS,
+            y + BAT_LENGTH // 2)
         )
 ```
 {% endfilter %}
 
-Přehlednosti hry pomůže *půlící čára*
-uprostřed. Jak ji ale namalovat?
-Nebudeme vymýšlet zbytečné složitosti.
-Namalujme ji jako sérii obdélníčků táhnoucích se odshora
-dolů. Chce to jen vygenerovat seznam souřadnic,
-které budou mít dostatečné rozestupy, a na každé
-z nich vykreslit obdélníček. Kterou funkci z Pythonu
-bys použila na získání tohoto seznamu souřadnic?
+The *midfield line*(also the *net*) will help the game clarity.
+But how to draw it? We don't have to think about anything 
+difficult. We will just draw it as a series of rectangles from top to bottom.
+This just needs to generate a list of coordinates,
+which will have enough distance, and render a rectangle on each coordinate.
+Which Python function would you use to obtain this list?
 
 {% filter solution %}
 ```python
-def vykresli():
+def render():
     ...
-    # prerusovana pulici cara - slozena ze spousty malych obdelnicku
-    for y in range(DELKA_PULICI_CARKY // 2, VYSKA, DELKA_PULICI_CARKY * 2):
-        nakresli_obdelnik(
-            SIRKA // 2 - 1,
+    # midfield line (as net) - composed from couple of small rectangles
+    for y in range(NET_LENGTH // 2, HEIGHT, NET_LENGTH * 2):
+        draw_rectangle(
+            WIDTH // 2 - 1,
             y,
-            SIRKA // 2 + 1,
-            y + DELKA_PULICI_CARKY
-        )
+            WIDTH // 2 + 1,
+            y + NET_LENGTH)
 ```
 {% endfilter %}
 
-Co nám ještě chybí? *Počítadlo skóre* pro oba hráče.
-K tomu se musíme naučit vykreslovat v Pygletu text.
-V Pygletu je modul `text`, který obsahuje
-objekt `Label` (Nápis). Ten se hodí k vykreslení hodnoty
-skóre. Objekt musíme nejdřív vytvořit. To uděláme
-kulatými závorkami za jménem objektu, jako bychom
-volali funkci, a uložíme si ho do proměnné:
-`napis = Label()`. Normálně bychom objekt
-vytvořili jen jednou a pak měnili jeho hodnotu, ale
-pro jednoduchost vytvoříme vždy nový a celé to zabalíme
-do funkce. V jejím závěru musíme na nadpisu zavolat
-metodu `draw()`, jinak se nápis nevykreslí.
+So what's missing? *Score counter* for both players.
+For that we will have to learn how to draw text with Pyglet.
+There is already `text` module which contains `Label` object.
+And that's exactly what we need for drawing the score.
+First we have to create `Label` object. We will do that by brackets
+after the name of the object, similar to when we are calling a function:
+`write = Label()`. Usually we would create this object once and then 
+we would just change its text and redraw it but we will do it this way 
+cause it's easier. Finally we have to call `draw()` method or the
+text won't be rendered.
 
 ```python
-def nakresli_text(text, x, y, pozice_x):
-    """Nakresli dany text na danou pozici
+def draw_text(text, x, y, x_position):
+    """Draw given text on the given coordinates
 
-    Argument ``pozice_x`` muze byt "left" nebo "right", udava na kterou stranu
-    bude text zarovnany
+    Argument `x_position` can be "left" or "right" - sets where the text will be aligned
     """
-    napis = pyglet.text.Label(
+    write = pyglet.text.Label(
         text,
-        font_size=VELIKOST_FONTU,
-        x=x, y=y, anchor_x=pozice_x
-    )
-    napis.draw()
+        font_name='League Gothic',
+        font_size=FONT_SIZE,
+        x=x, y=y, anchor_x=x_position)
+    write.draw()
 ```
 
-Teď zkus tuto funkci použít ve funkci `vykresli()`
-k nakreslení skóre. K určení pozice textu použij
-konstanty SIRKA, VYSKA, ODSAZENI_TEXTU a VELIKOST_FONTU.
+Now try to use this function in `render()` function for
+rendering the score. Use constants WIDTH, HEIGHT, TEXT_ALIGN
+and TEXT_SIZE for setting the score coordinates.
 
 {% filter solution %}
 ```python
-def vykresli():
+def render():
     ...
-    # A nakonec vypiseme skore obou hracu
-    nakresli_text(
-        str(skore[0]),
-        x=ODSAZENI_TEXTU,
-        y=VYSKA - ODSAZENI_TEXTU - VELIKOST_FONTU,
-        pozice_x='left',
-    )
+     # And finally we will draw the score of both players
+    draw_text(str(score[0]),
+                  x=TEXT_ALIGN,
+                  y=HEIGHT - TEXT_ALIGN - FONT_SIZE,
+                  x_position='left')
 
-    nakresli_text(
-        str(skore[1]),
-        x=SIRKA - ODSAZENI_TEXTU,
-        y=VYSKA - ODSAZENI_TEXTU - VELIKOST_FONTU,
-        pozice_x='right',
-    )
+    draw_text(str(score[1]),
+                  x=WIDTH - TEXT_ALIGN,
+                  y=HEIGHT - TEXT_ALIGN - FONT_SIZE,
+                  x_position='right')
 
 ```
 {% endfilter %}
 
 
+Yay, now we have the whole game board rendered. Let's put it in motion!
 
-Hurá, teď už máme vykreslené hrací pole. Pojďme ho rozhýbat.
-## Dynamika hry
 
-Teď to začne být zajímavé. Nejdřív rozhýbeme pálky,
-protože je to jednodušší, pak míček.
+## Game dynamics
 
-### Vstup od uživatele
+Now it will start to be interesting. Let's move with bats first,
+because it's easier, and then with the ball.
+
+### User's input
 
 Potřebujeme pohybovat s pálkami podle vstupu od uživatele.
 Dokud bude uživatel držet např. klávesu <kbd>S</kbd>, levá pálka
