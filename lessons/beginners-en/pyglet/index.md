@@ -17,7 +17,7 @@ Installing collected packages: pyglet
 Successfully installed pyglet-1.2.4
 ```
 
-If you installed pygled successfully try to run
+If you installed Pyglet successfully try to run
 following program. There should appear
 black window.
 
@@ -75,8 +75,8 @@ rock, paper, scissors.
 And similarly works a lot of different programs which
 somehow respond to input or other actions/events.
 
-Web server is waiting for *request* about webpage. When it
-gets some, it will proccess for example page that is saved on
+Web server is waiting for *request* about web page. When it
+gets some, it will process for example page that is saved on
 disk and as output it sends some response.
 
 More complex programs are responding to a lot
@@ -102,9 +102,9 @@ It is called *event loop* and programs built on it
 are *event-driven*.
 
 When there is something useful for more programs it is
-not usuall that each programmer will write it all over from the beginning
-but some people write it once, pack it as a *library* and then everytone 
-is using it.
+not usual that each programmer will write it all over from the beginning
+but some people write it once, pack it as a *library* and then everyone 
+can use it.
 
 ## Pyglet 🐷
 
@@ -127,7 +127,7 @@ Loading of an input (e.g. from keyboard) is Pyglet doing
 itself but evaluation and drawing the result is for each program
 different so you will have to program it by yourself. 
 
-Currently Pyglet is proccessing only two events:
+Currently Pyglet is processing only two events:
 closing of the window (by "x" button which is added by 
 operating system) and pressing <kbd>Esc</kbd> key,
 which also closes the window.
@@ -169,7 +169,7 @@ Notice that when we are registering our function
 we are __not__ writing brackets although we 
 [once]({{ lesson_url('beginners/functions') }}) said
 that functions have to be called that way.
-Do you remember this example? Maybe you found it wird back then.
+Do you remember this example? Maybe you found it weird back then.
 
 ```python
 from math import sin
@@ -202,7 +202,7 @@ And function `window.push_handlers` was directly writen to
 process a function. Why? Pyglet doesn't need one result
 of function `process_text` - it is useless for it.
 And we also can't call the function cause we don't have
-usefull `text` as an argument.
+useful `text` as an argument.
 That's why we give to Pyglet the function itself and it
 will be called everytime user press some key.
 
@@ -215,7 +215,6 @@ It's a *clock tick*). That's an event, which is happening
 regularly after some time.
 
 Registration of function for ticks is done differently than `on_text`:
-Funkce pro tiky se registruje trochu jinak než `on_text`:
 
 {# XXX - highlight "tick" and "schedule_interval" blocks #}
 ```python
@@ -255,205 +254,197 @@ takes some time for Python to call our function.
 > Most of the movies are using only 24 pictures per second and
 > realistic 3D game has up to 60.
 
-## Vykreslování 🖌
+## Drawing 🖌
 
-<img src="{{ static('had.png') }}" alt="" style="display:block;float:right;">
+<img src="{{ static('snake.png') }}" alt="" style="display:block;float:right;">
 
-Program, který vypisuje na terminál spoustu čísel,
-není asi zas tak zajímavý.
-Téma téhle stránky je ale grafika, tak se začněme od
-terminálu odpoutávat. Pojďme kreslit.
+Program that prints a lot of number to a command line
+is not really interesting. But today's topic is
+graphics so we will slowly get rid off the command line.
+Let's draw! :)
 
-Najdi si na Internetu nějaký obrázek. Ne moc velký,
-tak 3cm, ať je kolem něj v našem černém okýnku dost
-místa, a nejlépe ve formátu PNG. Začni třeba na
-[téhle stránce](https://www.google.cz/search?tbs=ift:png&tbm=isch&q=snake+icon).
-Ale nevybírej obrázek, který je celý černý, protože by v našem černém okně
-nebyl vidět.
-Ulož si ho do adresáře, odkud spouštíš svůj pythonní
-program. Já mám třeba obrázek hada v souboru `had.png`.
+Find some picture on the internet. Not too big so we still have
+some room in our window. And PNG format would be the best.
+You can start for example [here](https://www.google.cz/search?tbs=ift:png&tbm=isch&q=snake+icon).
+And don't pick any dark picture because you might not
+see it in your dark window.
+Save it to the same folder where you have your program. For
+example I have the picture saved as `snake.png`.
 
-Pak obrázek vykresli (použij jméno souboru se svým obrázkem):
+Then draw the picture (use the name of your image):
 
-{# XXX: Highlight "obrazek =", "had =", "vykresli", "on_draw=vykresli" blocks #}
-{# XXX: Highlight 'had.png' strongly #}
+{# XXX: Highlight "image =", "snake =", "draw", "on_draw=draw" blocks #}
+{# XXX: Highlight 'snake.png' strongly #}
 ```python
 import pyglet
 window = pyglet.window.Window()
 
-def tik(t):
+def tick(t):
     print(t)
 
-pyglet.clock.schedule_interval(tik, 1/30)
+pyglet.clock.schedule_interval(tick, 1/30)
 
-def zpracuj_text(text):
+def process_text(text):
     print(text)
 
-obrazek = pyglet.image.load('had.png')
-had = pyglet.sprite.Sprite(obrazek)
+image = pyglet.image.load('snake.png')
+snake = pyglet.sprite.Sprite(image)
 
-def vykresli():
+def draw():
     window.clear()
-    had.draw()
+    snake.draw()
 
 window.push_handlers(
-    on_text=zpracuj_text,
-    on_draw=vykresli,
+    on_text=process_text,
+    on_draw=draw,
 )
 
 pyglet.app.run()
 ```
 
-Povedlo se?
+Success?
 
-Vysvětleme si, co se tady děje:
+Let's explain what is happening:
 
-* `obrazek = pyglet.image.load('had.png')` načte ze souboru obrázek
-* `had = pyglet.sprite.Sprite(obrazek)`
-  vytvoří speciální objekt [Sprite](https://cs.wikipedia.org/wiki/Sprite_%28po%C4%8D%C3%ADta%C4%8Dov%C3%A1_grafika%29),
-  který určuje, že tento obrázek chceme „posadit“
-  na určité místo v černém okýnku.
-  Když neuděláme nic dalšího, bude obrázek čekat v levém rohu.
-* Funkce `vykresli()` se stará o vykreslení okna – výstup našeho programu.
-  Volá se vždycky, když je potřeba okno překreslit –
-  například když okno minimalizuješ a pak vrátíš
-  nebo přesuneš částečně ven z obrazovky a pak dáš zase zpět.
-  A nebo když budeme něco animovat.
-
-> [note]
-> Některé operační systémy si pamatují i obsah oken,
-> které nejsou vidět, ale není radno na to spoléhat.
-
-* `window.clear()` vyčistí okno – natře ho černou barvou a smaže
-  všechno, co v něm bylo předtím.
+* `image = pyglet.image.load('snake.png')` loads picture from file
+* `snake = pyglet.sprite.Sprite(image)`
+  creates special object [Sprite](https://en.wikipedia.org/wiki/Sprite_(computer_graphics)),
+  which specifies that we want to "put" our image to a specific
+  place in the window. If we wouldn't do anything else the image
+  will wait in the left corner.
+* Our function `draw()` takes care of rendering(drawing into) the window.
+  It is called everytime when a window needs to be redrawn - e. g. when you
+  minimize the window and then you open it again or when you move the window
+  out of the screen and then you move it back in. Or when we will animate
+  something.
 
 > [note]
-> Na spoustě počítačů tohle není potřeba.
-> Ale je lepší psát programy tak, aby
-> běžely správně kdekoli.
+> Some operating systems remembers content of windows
+> that are not visible but you shouldn't count on it.
 
-* `had.draw()` nakreslí obrázek pomocí předpřipraveného *spritu* `had`.
-* `window.push_handlers(on_draw=vykresli)` zaregistruje funkci `vykresli` –
-  řekne Pygletu, aby ji volal vždy, když je třeba.
+* `window.clear()` cleans the window - "paints the window black" and
+  deletes everything what was there before.
+
+> [note]
+> It's not needed on a lot of computers but it's
+> better to write programs so they run correctly
+> everywhere.
+
+* `snake.draw()` draws a picture with prepared `snake` *sprite*.
+* `window.push_handlers(on_draw=draw)` registers function `draw` –
+  tells Pyglet to call it everytime it is needed.
   <br>
-  Když potřebuješ zaregistrovat pro jedno okno
-  víc funkcí na obsluhu událostí,
-  dají se dát funkci `push_handlers`
-  takhle najednou.
+  When you need to register more functions to handle events
+  you can add them to `push_handlers` function like that ↑.
 
-Jakékoli kreslení se *musí* dělat v rámci kreslící funkce,
-kterou Pyglet volá z `on_draw`.
-Jinde funkce jako `clear` a `draw` nebudou fungovat správně.
+Any drawing *must* be done within the drawing function that
+Pyglet calls from `on_draw`. Functions like `clear` and `draw`
+won't work anywhere else.
 
-## Animace
+## Animation
 
-Pojď si teď se Spritem trochu pohrát.
+Let's play with Sprite a bit.
 
-Do funkce `zpracuj_text` dej místo printu tento příkaz:
+Write to function `process_text` following:
 
 ```python
-def zpracuj_text(text):
-    had.x = 150
+def process_text(text):
+    snake.x = 150
 ```
 
+Our Sprite has *attribute* `x` which determines its 
+<var>x</var> coordinate - how far to the right it is
+from the window edge.
+You can set this attribute how you would want - mostly as
+reaction to some event but it can be also set in the beginning.
 
-Náš Sprite má *atribut* (angl. *attribute*)
-`x`, který určuje jeho <var>x</var>-ovou souřadnici –
-jak moc je vpravo od okraje okna.
-Tenhle atribut se dá nastavit, jak budeš chtít – nejčastěji
-v reakci na nějakou událost, ale často se nastavuje
-i na začátku programu.
-
-Zajímavé je zkusit k `x` něco přičíst při každém tiknutí hodin.
-Dokážeš předpovědět, co udělá tenhle kód?
+Try to add something to `x` everytime the clock ticks.
+Are you able to guess how this piece of code will behave?
 
 ```python
-def tik(t):
-    had.x = had.x + t * 20
+def tick(t):
+    snake.x = snake.x + t * 20
 ```
 
-
-Nebojíš-li se matematiky, naimportuj `math`
-a nech obrázek, ať se pohybuje podle nějaké funkce:
+If you are not scared of maths import `math`
+and let the picture move regarding to some function:
 
 ```python
-def tik(t):
-    had.x = had.x + t * 20
-    had.y = 20 + 20 * math.sin(had.x / 5)
+def tick(t):
+    snake.x = snake.x + t * 20
+    snake.y = 20 + 20 * math.sin(snake.x / 5)
 ```
 
+What will happen when you change those numbers?
 
-Co se stane, když začneš měnit ta čísla?
+What will happen when you try to set `rotation` attribute similar way?
 
-Co se stane, když zkusíš podobně nastavovat atribut `rotation`?
+## Call later
 
-## Zavolej později
+<img src="{{ static('snake2.png') }}" alt="" style="display:block;float:right;">
 
-<img src="{{ static('had2.png') }}" alt="" style="display:block;float:right;">
+Pyglet also can call a function after some time.
 
-Pyglet umí kromě opakovaného „tikání“ zavolat funkci
-jednorázově, za určitou dobu.
+Download another picture. I have another snake which
+is a bit different then the first one.
 
-Stáhni si (nebo vytvoř) druhý obrázek. Já mám druhého
-hada, tentokrát s trochu natočenou hlavou a ocasem.
+Once you have the picture in the folder with your
+program add this piece of code right before `pyglet.app.run()`:
 
-Až budeš mít obrázek v adresáři s programem,
-přidej těsně před `pyglet.app.run()` tenhle kus kódu:
-
-{# XXX: Highlight 'had2.png' strongly #}
+{# XXX: Highlight 'snake2.png' strongly #}
 ```python
-obrazek2 = pyglet.image.load('had2.png')
+image2 = pyglet.image.load('snake2.png')
 
-def zmen(t):
-    had.image = obrazek2
+def change(t):
+    snake.image =image2
 
-pyglet.clock.schedule_once(zmen, 1)
+pyglet.clock.schedule_once(change, 1)
 ```
 
-Volání `schedule_once(zmen, 1)` říká Pygletu,
-že za jednu vteřinu má zavolat funkci `zmen`.
-A funkce změní obrázek – stejně jako se předtím měnily
-souřadnice.
+Calling `schedule_once(change, 1)` tells Pyglet that it
+should call the function `change` after one second.
+And this function changes the image - similar way as we were
+changing the coordinates.
 
-`schedule_once` se dá volat i v rámci obsluhy jiné události. Zkus funkci `zmen`
-nahradit tímhle:
+`schedule_once` can be also called when you are handling another
+event. Try to replace function `change` like that:
 
 ```python
-def zmen(t):
-    had.image = obrazek2
-    pyglet.clock.schedule_once(zmen_zpatky, 0.2)
+def change(t):
+    snake.image = image2
+    pyglet.clock.schedule_once(change_back, 0.2)
 
-def zmen_zpatky(t):
-    had.image = obrazek
-    pyglet.clock.schedule_once(zmen, 0.2)
+def change_back(t):
+    snake.image = image
+    pyglet.clock.schedule_once(change, 0.2)
 ```
 
-## Klik 🐭
+## Click 🐭
 
-Poslední věc, na kterou se tady naučíme reagovat, je klikání.
-Těsně před `window.push_handlers` napiš funkci:
+Last event we will learn to handle is clicking.
+Write this function right before the `window.push_handlers`:
 
 ```python
-def klik(x, y, tlacitko, mod):
-    had.x = x
-    had.y = y
+def click(x, y, button, mode):
+    snake.x = x
+    snake.y = y
 ```
 
-… a pak v `push_handlers` ji zaregistruj
-pomocí řádku `on_mouse_press=klik,`.
+… and then register it in `push_handlers` by `on_mouse_press=click,`.
 
-Co znamená který argument, to zkus zjistit sama.
+Try to find out what each argument means by yourself.
 
-> [note] Nápověda
-> * Dokud příkazovou řádku neopustíš úplně, bude fungovat `print`!
->   Kdykoliv budeš chtít zjistit nějakou hodnotu, prostě si ji vypiš.
-> * Kolik má myš tlačítek?
-> * Jak se projeví <kbd>Shift</kbd>+klik?
+> [note] Help
+> * If you don't get rid of the command line completely
+> you can use `print`. So everytime you want to find out some
+> value, use print.
+> * How many buttons does mouse have?
+> * What will happen after <kbd>Shift</kbd>+click?
 
 
-## Pokračování příště
+## To be continued
 
-Koukám že kódu už je dnes tak akorát na ukončení lekce:
+We wrote enough code so we can end this lesson:
 
 ```python
 import math
@@ -462,73 +453,71 @@ import pyglet
 
 window = pyglet.window.Window()
 
-def tik(t):
-    had.x = had.x + t * 20
+def tick(t):
+    snake.x = snake.x + t * 20
 
-pyglet.clock.schedule_interval(tik, 1/30)
+pyglet.clock.schedule_interval(tick, 1/30)
 
-def zpracuj_text(text):
-    had.x = 150
-    had.rotation = had.rotation + 10
+def process_text(text):
+    snake.x = 150
+    snake.rotation = snake.rotation + 10
 
-obrazek = pyglet.image.load('had.png')
-had = pyglet.sprite.Sprite(obrazek, x=10, y=10)
+image = pyglet.image.load(snake.png)
+snake = pyglet.sprite.Sprite(image, x=10, y=10)
 
-def vykresli():
+def draw():
     window.clear()
-    had.draw()
+    snake.draw()
 
-def klik(x, y, tlacitko, mod):
-    print(tlacitko, mod)
-    had.x = x
-    had.y = y
+def click(x, y, button, mode):
+    print(button, mode)
+    snake.x = x
+    snake.y = y
 
 window.push_handlers(
-    on_text=zpracuj_text,
-    on_draw=vykresli,
-    on_mouse_press=klik,
+    on_text=process_text,
+    on_draw=draw,
+    on_mouse_press=click,
 )
 
-obrazek2 = pyglet.image.load('had2.png')
+image2 = pyglet.image.load('snake2.png')
 
-def zmen(t):
-    had.image = obrazek2
-    pyglet.clock.schedule_once(zmen_zpatky, 0.2)
+def change(t):
+    snake.image = image2
+    pyglet.clock.schedule_once(change_back, 0.2)
 
-def zmen_zpatky(t):
-    had.image = obrazek
-    pyglet.clock.schedule_once(zmen, 0.2)
+def change_back(t):
+    snake.image = image
+    pyglet.clock.schedule_once(change, 0.2)
 
-pyglet.clock.schedule_once(zmen, 0.2)
+pyglet.clock.schedule_once(change, 0.2)
 
 pyglet.app.run()
 ```
 
-Se vstupem z klávesnice a myši, časováním a vykreslováním
-Spritu si vystačíš u leckteré hry nebo grafické aplikace.
+With keystroke and mouse input, timing and rendering Sprite, 
+you can create a simple game or graphics application.
 
-Až budeš nějakou hru dělat, zkus udržovat
-stav aplikace v seznamech a <var>n</var>-ticích (případně
-slovnících a třídách, které se naučíme později).
-Jedna funkce by měla umět takový stav vykreslit a
-jiné s ním pak budou manipulovat.
-Tyhle dvě sady funkcí můžeš mít i v jiných souborech,
-aby se nezapletly dohromady.
+When you will write some game try to keep the state of the
+application (basically how the window should look like)
+in lists and tuples (eventually in dictionaries or classes).
+One function should draw this state and other function
+should manipulate (change) it.
+To avoid confusion you can also have those two functions 
+in different files.
 
-Zajímá-li tě toto téma, zkus si zahrát přiloženou hru
-[Pong](static/pong.py),
-která ukazuje některé další
-možnosti Pygletu: psaní textu, kreslení obdélníků
-a obsluhu jednotlivých kláves (např. šipek).
-Na první pohled může její kód vypadat složitě,
-ale zkus si k němu sednout a s pomocí komentářů ho pochopit.
-Kdyby komentáře nestačily, jsou k Pongu připravené
-i [podrobné materiály]({{ lesson_url('projects/pong') }}).
+If you are interested in this topic you can try to play and examine
+[Pong](static/pong.py) code, which shows more Pyglet options: writing text, 
+drawing rectangles and handling specific keys (e. g. arrows).
+It can look difficult but look into the comments(currently with A LOT of grammar
+errors) and try to understand it. If the comments are not enough for you
+ to understand we will also translate more detailed 
+ materials for [it]({{ lesson_url('beginners-en/pong') }}) 
 
-To, co jsme tu probral{{gnd('i', 'y', both='i')}} a pár věcí navíc,
-je shrnuto v [taháku na Pyglet](https://pyvec.github.io/cheatsheets/pyglet/pyglet-basics-cs.pdf),
-který si můžeš stáhnout a vytisknout.
+You can find things that we've learned today (and some more) in
+[Pyglet cheatsheet](https://github.com/muzikovam/cheatsheets/blob/master/pyglet/pyglet-basics-en.pdf),
+which you can download and print out.
 
-A chceš-li se do Pygletu ponořit hlouběji,
-existuje pro něj [dokumentace](http://pyglet.readthedocs.org/en/latest/index.html).
-Nebude-li ti v ní něco jasné, zeptej se!
+And if you want to dive deeper into Pyglet there is also
+[documentation](http://pyglet.readthedocs.org/en/latest/index.html).
+If anything in there won't be clear just ask!
