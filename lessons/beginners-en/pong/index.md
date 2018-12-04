@@ -366,27 +366,27 @@ pyglet.app.run()
 
 ### Bat movement
 
-Když už jsme dokázali zpracovat vstup od uživatele,
-můžeme podle něj pohnout s pálkami.
-Pohyb předmětů budeme provádět ve funkci `obnov_stav(dt)`,
-která bude registrována na tik hodin v Pygletu.
-Argument `dt` je čas od posledního zavolání funkce Pygletem.
+Once we were able to process input from the user,
+we can move with bats regarding that.
+We will move the objects in the function `revive(dt)`,
+which will be registered to the clock. Argument `dt`
+is time that passed from the last call.
 
 ```python
-def obnov_stav(dt):
-    for cislo_palky in (0, 1):
-        # pohyb podle klaves (viz funkce `stisk_klavesy`)
-        if ('nahoru', cislo_palky) in stisknute_klavesy:
-            pozice_palek[cislo_palky] += RYCHLOST_PALKY * dt
-        if ('dolu', cislo_palky) in stisknute_klavesy:
-            pozice_palek[cislo_palky] -= RYCHLOST_PALKY * dt
+def revive(dt):
+    for bat_number in (0, 1):
+        # movement according to pressed keys (function `key_press`)
+        if ('up', bat_number) in keys_pressed:
+            bat_coordinates[bat_number] += BAT_SPEED * dt
+        if ('down', bat_number) in keys_pressed:
+            bat_coordinates[bat_number] -= BAT_SPEED * dt
 
-        # dolni zarazka - kdyz je palka prilis dole, nastavime ji na minimum
-        if pozice_palek[cislo_palky] < DELKA_PALKY / 2:
-            pozice_palek[cislo_palky] = DELKA_PALKY / 2
-        # horni zarazka - kdyz je palka prilis nahore, nastavime ji na maximum
-        if pozice_palek[cislo_palky] > VYSKA - DELKA_PALKY / 2:
-            pozice_palek[cislo_palky] = VYSKA - DELKA_PALKY / 2
+        # bottom stop - when bat is down bellow we will set it to the minimum
+        if bat_coordinates[bat_number] < BAT_LENGTH / 2:
+            bat_coordinates[bat_number] = BAT_LENGTH / 2
+        # top stop - when bat is too high we will set it to the maximum
+        if bat_coordinates[bat_number] > HEIGHT - BAT_LENGTH / 2:
+            bat_coordinates[bat_number] = HEIGHT - BAT_LENGTH / 2
 ```
 
 Podívejme se na tento kus kódu. Procházíme
