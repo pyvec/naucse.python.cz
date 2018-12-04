@@ -282,118 +282,111 @@ because it's easier, and then with the ball.
 
 ### User's input
 
-Potřebujeme pohybovat s pálkami podle vstupu od uživatele.
-Dokud bude uživatel držet např. klávesu <kbd>S</kbd>, levá pálka
-pojede dolů.
-V Pygletu jsme se naučili pracovat s událostí
-`on_text`, ta nám ale v tomto případě nebude stačit.
-K realizaci pohybu pálek budeme potřebovat 2 typy událostí,
-které ještě neznáme - `on_key_press` a `on_key_release`.
+We need to move with the bats regarding to user input.
+As long as they will hold for example key <kbd>S</kbd>, left
+bat will be moving down.
+In previous lesson we learned how to work with event `on_text`,
+but this one won't be enough. We will need 2 types of events
+which we don't know yet - `on_key_press` and `on_key_release`.
 
-Pyglet zavolá funkci registrovanou na událost `on_key_press`
-stejně jako při vykreslování okna zavolal funkci `vykresli()`,
-zaregistrovanou na události `on_draw`.
-Přidáme právě stisknutou klávesu do množiny stisknutých
-kláves v globální proměnné `stisknute_klavesy`
-jako <var>n</var>-tici `(směr, číslo pálky)`, např. tedy
-`('nahoru', 0)`, což bude vyjadřovat, že levá pálka má jet nahoru.
-Při události `on_key_release` odebereme právě
-stisknutou klávesu z množiny `stisknute_klavesy`.
-Tím zajistíme, že v daný okamžik bude množina `stisknute_klavesy`
-obsahovat všechny klávesy, které uživatel drží, a budeme
-podle toho moct pohnout s pálkami.
+Pyglet calls a function registered to event `on_key_press`
+the same way it calls function `render()` registered to
+event `on_draw`.
+We will add pressed key to the global variable `keys_pressed`
+as tuple with direction and bat's number, e. g. `('up',0)`,
+which means that left bat have to go up.
+We will remove the tuple from the `keys_pressed` set 
+when `on_key_release` happens. This will ensure that the set `keys_pressed`
+includes all the keys the user holds and we will be able to move
+the bats according to that.
 
-Troufneš si napsat funkce `stisk_klavesy(symbol, modifikatory)`
-a `pusteni_klavesy(symbol, modifikatory)`?
-Poznamenejme, že do množiny `stisknute_klavesy`
-můžeš přidat prvek metodou `add(prvek)` a pak
-odebrat metodou `discard(prvek)`. Obě berou jako
-argument prvek, který se má přidat nebo odstranit,
-v našem případě konkrétní <var>n</var>-tici.
+Will you try to code `key_press(symbol, modifiers)` and
+`key_release(symbol, modifiers)` functions by yourself?
+You can add element to any set by method `add(element)`
+and delete by `discard(element)`. Both take an element which we
+want to add or discard as an argument, in our case it will
+be the tuple.
 
-Budeš potřebovat zjistit, kterou klávesu uživatel stisknul.
-Kód stisknuté klávesy předá Pyglet našim funkcím
-v argumentu `symbol`. Je to ale nic neříkající
-číslo. Z `pyglet.window` můžeš naimportovat
-modul `key`, který obsahuje konstanty jednotlivých
-kláves. Můžeš pak porovnat, zda symbol odpovídá např.
-klávese <kbd>↑</kbd> jako `symbol == key.UP`.
+You will have to find out which key was pressed. Pyglet will
+pass the code of pressed key to our function as first argument
+so in our case it will be a `symbol`. It will be a number unless
+you import `key` from `puglet.window`, which contains constants
+of each key. So you will be able to compare if the key is
+for example up arrow <kbd>↑</kbd> as `symbol == key.UP`.
 
 {% filter solution %}
 ```python
 from pyglet.window import key
 ...
-def stisk_klavesy(symbol, modifikatory):
+def key_press(symbol, modifiers):
     if symbol == key.W:
-        stisknute_klavesy.add(('nahoru', 0))
+        keys_pressed.add(('up', 0))
     if symbol == key.S:
-        stisknute_klavesy.add(('dolu', 0))
+        keys_pressed.add(('down', 0))
     if symbol == key.UP:
-        stisknute_klavesy.add(('nahoru', 1))
+        keys_pressed.add(('up', 1))
     if symbol == key.DOWN:
-        stisknute_klavesy.add(('dolu', 1))
+        keys_pressed.add(('down', 1))
+...
 
-
-def pusteni_klavesy(symbol, modifikatory):
+def key_release(symbol, modifiers):
     if symbol == key.W:
-        stisknute_klavesy.discard(('nahoru', 0))
+        keys_pressed.discard(('up', 0))
     if symbol == key.S:
-        stisknute_klavesy.discard(('dolu', 0))
+        keys_pressed.discard(('down', 0))
     if symbol == key.UP:
-        stisknute_klavesy.discard(('nahoru', 1))
+        keys_pressed.discard(('up', 1))
     if symbol == key.DOWN:
-        stisknute_klavesy.discard(('dolu', 1))
+        keys_pressed.discard(('down', 1))
 ...
 ```
 {% endfilter %}
 
 > [note]
-> Proč vlastně používáme k odebrání <var>n</var>-tice metodu
-> `discard()` místo metody `remove()`,
-> kterou známe ze seznamů a množiny ji také mají?
-> Nezpůsobí totiž chybu, když se pokusíme odebrat
-> prvek, který v množině není. To by se mohlo stát,
-> kdyby uživatel stiskl jednu z funkčních kláves
-> a teprve pak se přepnul do našeho okna a pak jí
-> pustil.
+> Why are we using `dicard()` method and not `remove()`(which
+> we already know from lists and sets also have it)? Because
+> it won't raise an error when the element is not in the set. So the program
+> won't cause an error when user press some of the defined key
+> elsewhere and then switch back to our
+> window and just after that they will release the key.
 
 
-Zaregistruj si obě funkce na příslušné události:
+Register both functions to events:
 
 ```python
 ...
-window = pyglet.window.Window(width=SIRKA, height=VYSKA)
+window = pyglet.window.Window(width=WIDTH, height=HEIGHT)
 window.push_handlers(
-    on_draw=vykresli,  # na vykresleni okna pouzij funkci `vykresli`
-    on_key_press=stisk_klavesy,
-    on_key_release=pusteni_klavesy,
-)
+    on_draw=render,  # for drawing into the window use function `render`
+    on_key_press=key_press,  # when key is pressed call function `key_press`
+    on_key_release=key_release,  # when key is released call `key_release`
+    )
 pyglet.app.run()
 ```
 
-### Pohyb pálek
+### Bat movement
 
-Když už jsme dokázali zpracovat vstup od uživatele,
-můžeme podle něj pohnout s pálkami.
-Pohyb předmětů budeme provádět ve funkci `obnov_stav(dt)`,
-která bude registrována na tik hodin v Pygletu.
-Argument `dt` je čas od posledního zavolání funkce Pygletem.
+Once we were able to process input from the user,
+we can move with bats regarding that.
+We will move the objects in the function `revive(dt)`,
+which will be registered to the clock. Argument `dt`
+is time that passed from the last call.
 
 ```python
-def obnov_stav(dt):
-    for cislo_palky in (0, 1):
-        # pohyb podle klaves (viz funkce `stisk_klavesy`)
-        if ('nahoru', cislo_palky) in stisknute_klavesy:
-            pozice_palek[cislo_palky] += RYCHLOST_PALKY * dt
-        if ('dolu', cislo_palky) in stisknute_klavesy:
-            pozice_palek[cislo_palky] -= RYCHLOST_PALKY * dt
+def revive(dt):
+    for bat_number in (0, 1):
+        # movement according to pressed keys (function `key_press`)
+        if ('up', bat_number) in keys_pressed:
+            bat_coordinates[bat_number] += BAT_SPEED * dt
+        if ('down', bat_number) in keys_pressed:
+            bat_coordinates[bat_number] -= BAT_SPEED * dt
 
-        # dolni zarazka - kdyz je palka prilis dole, nastavime ji na minimum
-        if pozice_palek[cislo_palky] < DELKA_PALKY / 2:
-            pozice_palek[cislo_palky] = DELKA_PALKY / 2
-        # horni zarazka - kdyz je palka prilis nahore, nastavime ji na maximum
-        if pozice_palek[cislo_palky] > VYSKA - DELKA_PALKY / 2:
-            pozice_palek[cislo_palky] = VYSKA - DELKA_PALKY / 2
+        # bottom stop - when bat is down bellow we will set it to the minimum
+        if bat_coordinates[bat_number] < BAT_LENGTH / 2:
+            bat_coordinates[bat_number] = BAT_LENGTH / 2
+        # top stop - when bat is too high we will set it to the maximum
+        if bat_coordinates[bat_number] > HEIGHT - BAT_LENGTH / 2:
+            bat_coordinates[bat_number] = HEIGHT - BAT_LENGTH / 2
 ```
 
 Podívejme se na tento kus kódu. Procházíme

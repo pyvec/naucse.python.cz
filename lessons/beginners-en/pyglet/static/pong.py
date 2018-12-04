@@ -285,13 +285,13 @@ def key_release(symbol, modifiers):
     # won't end when user press some key elsewhere and then switch back to our
     # window and after then they will release the key.
     if symbol == key.W:
-        keys_pressed.discard(('nahoru', 0))
+        keys_pressed.discard(('up', 0))
     if symbol == key.S:
-        keys_pressed.discard(('dolu', 0))
+        keys_pressed.discard(('down', 0))
     if symbol == key.UP:
-        keys_pressed.discard(('nahoru', 1))
+        keys_pressed.discard(('up', 1))
     if symbol == key.DOWN:
-        keys_pressed.discard(('dolu', 1))
+        keys_pressed.discard(('down', 1))
     # By the way, functions key_release and key_press could be simplified by
     # using dictionaries. Will you try that?
 
