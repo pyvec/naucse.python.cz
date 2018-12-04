@@ -389,134 +389,132 @@ def revive(dt):
             bat_coordinates[bat_number] = HEIGHT - BAT_LENGTH / 2
 ```
 
-Podívejme se na tento kus kódu. Procházíme
-v cyklu obě pálky a ptáme se, zda je v množině
-stisknutých kláves <var>n</var>-tice reprezentující
-pohyb dané pálky nahoru nebo dolů.
-Když ano, *pohneme pálkou* v daném směru
-(přičteme nebo odečteme od vertikální polohy pálky
-změnu polohy, což je čas od posledního zavolání,
-který známe, vynásobený rychlostí pálky nastavené
-v konstantě).
+Let's have a look at this piece of code.
+We are going through both bats in a loop 
+and we ask if there is the tuple of direction
+and number of bat in the set `keys_pressed`.
+If yes we *move* with the bat regarding to
+the direction(we add to or deduct from the vertical
+position of the bat the change which is time from
+the last call multiplied by bat speed which we have
+in constants).
 
-V druhé části musíme zajistit, aby pálka *nevyjela*
-z hracího pole. Z minulých hrátek s hadem víme,
-že to se může stát velmi snadno. Pálku malujeme kolem
-jejího středu, což znamená, že když se pálka přiblíží na
-na <var>y</var>-ovou pozici `DELKA_PALKY / 2`, začíná
-překračovat dolní hranici hracího pole. V tom případě
-její pozici zafixujeme na nejnižší možné souřadnici.
-Analogicky to provedeme, když se blíží hornímu okraji.
+In the second part we have to make sure that bat doesn't
+appear *outside* of the game board. We know from the last
+lesson when we were playing with the python image that it
+can happen very easily. We are drawing bat from the 
+middle, which means that if the bat `y` coordinate is lower than 
+`BAT_LENGTH / 2` it is going outside of the board. 
+In that case we will fix the position to the lowest possible coordinate.
+It is done also for the top edge accordingly.
 
-Zaregistruj vytvořenou funkci na tik hodin jako
+Register created function to the clock:
 
 ```python
 ...
-pyglet.clock.schedule(obnov_stav)
+pyglet.clock.schedule(revive)
 pyglet.app.run()
 ```
 
-a podívej se na výsledek.
+and look at the result.
 
 
-### Rozehrání
+### Kick off
 
-Než začneme míček odrážet od stěn, musíme ho nejprve
-uvést do pohybu. Vystřelíme ho ze středu hrací plochy
-do náhodného směru. Toto se také stane v momentě, kdy
-jeden z hráčů skóruje a hra se rozehrává znovu.
-Proto tohle rozehrání zabalíme do funkce `reset()`.
-Zavolejte ji, než se spustí hra.
+Before we start to bounce the ball from the walls we
+have put it into motion first. We shoot it from the centre 
+of the board to the random direction. This should also
+happen when one player scores and game is starting again.
+That's why we encapsulate this into `reset()` function.
+Call it before you run the app.
 
-Jak bude tato funkce vypadat?
-Nejprve přesuň míček do středu hrací plochy nastavením
-proměnné `pozice_mice`. Potom je třeba
-simulovat hod mincí pomocí volání funkce
-`random.randint(0, 1)`. Tím rozhodneme, zda
-se míček rozletí doprava nebo doleva.
-Míček rozpohybujeme horizontálním směrem přičtením
-požadované rychlosti k `rychlost_mice[0]`.
-Ve vertikálním směru `rychlost_mice[1]`
-se bude míček pohybovat zcela náhodně přičtením
-náhodné rychlosti.
+How will this function look like?
+First you have to move the ball to the centre of the
+board by setting `ball_coordinates` variable. Then
+we have to randomly select if the ball should go to the
+left or to the right by calling `random.randint(0, 1)`.
+We have to move the ball in the horizontal direction by adding
+required speed to the `ball_speed[0]`. The speed in vertical
+`ball_speed[1]` direction will be random.
+
 
 {% filter solution %}
 ```python
 import random
 ...
 def reset():
-    pozice_mice[0] = SIRKA // 2
-    pozice_mice[1] = VYSKA // 2
+    ball_coordinates[0] = WIDTH // 2
+    ball_coordinates[1] = HEIGHT // 2
 
-    # x-ova rychlost - bud vpravo, nebo vlevo
+    # x speed - right or left
     if random.randint(0, 1):
-        rychlost_mice[0] = RYCHLOST
+        ball_speed[0] = SPEED
     else:
-        rychlost_mice[0] = -RYCHLOST
-    # y-ova rychlost - uplne nahodna
-    rychlost_mice[1] = random.uniform(-1, 1) * RYCHLOST
-
-# nastavit vychozi stav pro start hry
+        ball_speed[0] = -SPEED
+    # y speed - completely random
+    ball_speed[1] = random.uniform(-1, 1) * SPEED
+...
+# We will set the initial state.
 reset()
 ```
 {% endfilter %}
 
-
-Nic se zatím ale nestane, protože funkce
-`obnov_stav(dt)` zatím nepracuje
-se změnou rychlosti. Musíme v ní tedy nastavit proměnnou
-`poloha_micku` podle současné rychlosti míčku
-a času uplynulého od posledního zavolání funkce podle
-fyzikálního vztahu <var>s</var> = <var>v</var> <var>t</var>, tedy že dráha
-je rovna rychlosti vynásobené časem. Přidej tedy do
-funkce `obnov_stav(dt)` následující kód:
+Nothing is happening right now because function
+`revive(dt)` is not working with the time yet.
+We have to set there `ball_coordinates`. It will be
+based on current coordinates and time from the last call
+regarding to physics equation <var>d</var> = <var>v</var> <var>t</var>,
+which means that the final distance equals to speed
+multiplied by time. So add the following to the
+`revive(dt)` function:
 
 ```python
 def obnov_stav(dt):
     ...
-    # POHYB MICKU
-    pozice_mice[0] += rychlost_mice[0] * dt
-    pozice_mice[1] += rychlost_mice[1] * dt
+    # BALL MOVEMENT
+    ball_coordinates[0] += ball_speed[0] * dt
+    ball_coordinates[1] += ball_speed[1] * dt
 ```
 
-Zkus, co se teď stane při spuštění hry.
-Míček by měl vyletět pokaždé do jiného směru.
+Now let's have a look at what happens when you run
+the game. The ball should fly into different direction
+each time.
 
-### Odrážení míčku
+### Ball bounce
 
-Míček nám teď nekontrolovaně vyletí z hřiště.
-Musíme tedy zařídit, aby se odrážel od stěn.
-Jelikož úhel dopadu se rovná úhlu odrazu,
-stačí otočit znaménko <var>y</var>-ové složky rychlosti.
-Do funkce `obnov_stav(dt)` musíme
-přidat kontroly na polohu míčku a případně
-změnit jeho směr, pokud je moc nízko nebo moc vysoko.
+The ball is flying uncontrollably out of the field now.
+So we have to make sure that it will bounce back from the walls.
+Because in our case angle of incidence equals angle of deflection
+we will just switch the signs of y part of the speed.
+So we have to add some checks of the ball position and 
+eventually change its direction if it is too low or too high to the
+`revive(dt)` function.
 
 ```python
-def obnov_stav(dt):
+def revive(dt):
     ...
-    # Odraz micku od sten
-    if pozice_mice[1] < VELIKOST_MICE // 2:
-        rychlost_mice[1] = abs(rychlost_mice[1])
-    if pozice_mice[1] > VYSKA - VELIKOST_MICE // 2:
-        rychlost_mice[1] = -abs(rychlost_mice[1])
+    if ball_coordinates[1] < BALL_SIZE // 2:
+        ball_speed[1] = abs(ball_speed[1])
+
+    if ball_coordinates[1] > HEIGHT - BALL_SIZE // 2:
+        ball_speed[1] = -abs(ball_speed[1])
 ```
 
+Now we have to code the bounce from the bat, or a 
+game reset if the ball is not hit by one of the player's
+bat(that means that the other one gets a point).
+We will be adding something to our `revive(dt)`
+function again.
 
-Teď nám zbývá odraz od pálky, případně resetování
-hry, pokud míček padne mimo pálku jednoho hráče a
-ten druhý tak získá bod. Opět tedy budeme přidávat
-kód do funkce `obnov_stav(dt)`.
-
-Prvním krokem je poznamenání mezí na <var>y</var>-ové ose,
-kde se musí míček nacházet, aby byl úspěšně odražen –
-to je mezi horním a dolním koncem pálky:
+First step is to set bounds on y axis where the ball can be to be
+successfully hit with a bat - between upper and lower
+edge of a bat:
 
 ```python
-def obnov_stav(dt):
+def revive(dt):
     ...
-    palka_min = pozice_mice[1] - VELIKOST_MICE / 2 - DELKA_PALKY / 2
-    palka_max = pozice_mice[1] + VELIKOST_MICE / 2 + DELKA_PALKY / 2
+    bat_min = ball_coordinates[1] - BALL_SIZE/2 - BAT_LENGTH/2
+    bat_max = ball_coordinates[1] + BALL_SIZE/2 + BAT_LENGTH/2
 ```
 
 Nyní když míček narazí do pravé nebo levé stěny
