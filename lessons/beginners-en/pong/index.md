@@ -517,36 +517,36 @@ def revive(dt):
     bat_max = ball_coordinates[1] + BALL_SIZE/2 + BAT_LENGTH/2
 ```
 
-Nyní když míček narazí do pravé nebo levé stěny
-se umíme zeptat, zda je pálka na správné pozici
-a my máme `odrazit` míček nebo zda hráč
-prohrál kolo a my máme přičíst jeho soupeři bod a
-`restartovat hru`.
+Now when the ball hits the left or the right wall we can ask
+if the bat it on the right spot so we can `bounce` ball back or
+if it isn't so one player lost and the other one gets point and
+we can `reset` the game.
 
 ```python
 def obnov_stav(dt):
     ...
-    # odrazeni vlevo
-    if pozice_mice[0] < TLOUSTKA_PALKY + VELIKOST_MICE / 2:
-        if palka_min < pozice_palek[0] < palka_max:
-            # palka je na spravnem miste, odrazime micek
-            rychlost_mice[0] = abs(rychlost_mice[0])
+    # bounce to the left
+    if ball_coordinates[0] < BAT_THICKNESS + BALL_SIZE / 2:
+        if bat_min < bat_coordinates[0] < bat_max:
+            # bat is at the right spot we can bounce the ball back
+            ball_speed[0] = abs(ball_speed[0])
         else:
-            # palka je jinde nez ma byt, hrac prohral
-            skore[1] += 1
+            # bat is not at the right place the player lost
+            score[1] += 1
             reset()
 
-    # odrazeni vpravo
-    if pozice_mice[0] > SIRKA - (TLOUSTKA_PALKY + VELIKOST_MICE / 2):
-        if palka_min < pozice_palek[1] < palka_max:
-            rychlost_mice[0] = -abs(rychlost_mice[0])
+    # bounce to the right
+    if ball_coordinates[0] > WIDTH - (BAT_THICKNESS + BALL_SIZE / 2):
+        if bat_min < bat_coordinates[1] < bat_max:
+            ball_speed[0] = -abs(ball_speed[0])
         else:
-            skore[0] += 1
+            score[0] += 1
             reset()
+    
 ```
 
-## Závěr
+## The end
 
-Hurá, prokousali jsme se k zdárnému konci Pongu!
-Máš teď plně funkční interaktivní grafickou
-hru zakládající se na reálné předloze. :)
+Hooray, we finished the Pong! Now you have fully
+functioning interactive graphical game based
+on real game :)
