@@ -27,7 +27,7 @@ A potom v Pythonu zkus stáhnout nějakou stránku:
 import requests
 
 # stažení stránky
-stranka = requests.get('https://cs.wikipedia.org')
+stranka = requests.get('https://cs.wikipedia.org', timeout=5)
 
 # ověření, že dotaz proběhl v pořádku
 stranka.raise_for_status()
@@ -54,10 +54,10 @@ Nyní si načteme stránku, která nám vrátí výsledek v JSON:
 import requests
 
 # klíčové slovo, podle kterého budeme vyhledávat
-klic = 'vánoce'
+klic = 'Vánoce'
 
 # stažení stránky
-stranka = requests.get('https://cs.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles={}'.format(klic))
+stranka = requests.get('https://cs.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext&exintro&format=json&titles={}'.format(klic), timeout=5)
 
 # ověření, že dotaz proběhl v pořádku
 stranka.raise_for_status()
