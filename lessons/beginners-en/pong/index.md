@@ -282,280 +282,271 @@ because it's easier, and then with the ball.
 
 ### User's input
 
-Potřebujeme pohybovat s pálkami podle vstupu od uživatele.
-Dokud bude uživatel držet např. klávesu <kbd>S</kbd>, levá pálka
-pojede dolů.
-V Pygletu jsme se naučili pracovat s událostí
-`on_text`, ta nám ale v tomto případě nebude stačit.
-K realizaci pohybu pálek budeme potřebovat 2 typy událostí,
-které ještě neznáme - `on_key_press` a `on_key_release`.
+We need to move with the bats regarding to user input.
+As long as they will hold for example key <kbd>S</kbd>, left
+bat will be moving down.
+In previous lesson we learned how to work with event `on_text`,
+but this one won't be enough. We will need 2 types of events
+which we don't know yet - `on_key_press` and `on_key_release`.
 
-Pyglet zavolá funkci registrovanou na událost `on_key_press`
-stejně jako při vykreslování okna zavolal funkci `vykresli()`,
-zaregistrovanou na události `on_draw`.
-Přidáme právě stisknutou klávesu do množiny stisknutých
-kláves v globální proměnné `stisknute_klavesy`
-jako <var>n</var>-tici `(směr, číslo pálky)`, např. tedy
-`('nahoru', 0)`, což bude vyjadřovat, že levá pálka má jet nahoru.
-Při události `on_key_release` odebereme právě
-stisknutou klávesu z množiny `stisknute_klavesy`.
-Tím zajistíme, že v daný okamžik bude množina `stisknute_klavesy`
-obsahovat všechny klávesy, které uživatel drží, a budeme
-podle toho moct pohnout s pálkami.
+Pyglet calls a function registered to event `on_key_press`
+the same way it calls function `render()` registered to
+event `on_draw`.
+We will add pressed key to the global variable `keys_pressed`
+as tuple with direction and bat's number, e. g. `('up',0)`,
+which means that left bat have to go up.
+We will remove the tuple from the `keys_pressed` set 
+when `on_key_release` happens. This will ensure that the set `keys_pressed`
+includes all the keys the user holds and we will be able to move
+the bats according to that.
 
-Troufneš si napsat funkce `stisk_klavesy(symbol, modifikatory)`
-a `pusteni_klavesy(symbol, modifikatory)`?
-Poznamenejme, že do množiny `stisknute_klavesy`
-můžeš přidat prvek metodou `add(prvek)` a pak
-odebrat metodou `discard(prvek)`. Obě berou jako
-argument prvek, který se má přidat nebo odstranit,
-v našem případě konkrétní <var>n</var>-tici.
+Will you try to code `key_press(symbol, modifiers)` and
+`key_release(symbol, modifiers)` functions by yourself?
+You can add element to any set by method `add(element)`
+and delete by `discard(element)`. Both take an element which we
+want to add or discard as an argument, in our case it will
+be the tuple.
 
-Budeš potřebovat zjistit, kterou klávesu uživatel stisknul.
-Kód stisknuté klávesy předá Pyglet našim funkcím
-v argumentu `symbol`. Je to ale nic neříkající
-číslo. Z `pyglet.window` můžeš naimportovat
-modul `key`, který obsahuje konstanty jednotlivých
-kláves. Můžeš pak porovnat, zda symbol odpovídá např.
-klávese <kbd>↑</kbd> jako `symbol == key.UP`.
+You will have to find out which key was pressed. Pyglet will
+pass the code of pressed key to our function as first argument
+so in our case it will be a `symbol`. It will be a number unless
+you import `key` from `puglet.window`, which contains constants
+of each key. So you will be able to compare if the key is
+for example up arrow <kbd>↑</kbd> as `symbol == key.UP`.
 
 {% filter solution %}
 ```python
 from pyglet.window import key
 ...
-def stisk_klavesy(symbol, modifikatory):
+def key_press(symbol, modifiers):
     if symbol == key.W:
-        stisknute_klavesy.add(('nahoru', 0))
+        keys_pressed.add(('up', 0))
     if symbol == key.S:
-        stisknute_klavesy.add(('dolu', 0))
+        keys_pressed.add(('down', 0))
     if symbol == key.UP:
-        stisknute_klavesy.add(('nahoru', 1))
+        keys_pressed.add(('up', 1))
     if symbol == key.DOWN:
-        stisknute_klavesy.add(('dolu', 1))
+        keys_pressed.add(('down', 1))
+...
 
-
-def pusteni_klavesy(symbol, modifikatory):
+def key_release(symbol, modifiers):
     if symbol == key.W:
-        stisknute_klavesy.discard(('nahoru', 0))
+        keys_pressed.discard(('up', 0))
     if symbol == key.S:
-        stisknute_klavesy.discard(('dolu', 0))
+        keys_pressed.discard(('down', 0))
     if symbol == key.UP:
-        stisknute_klavesy.discard(('nahoru', 1))
+        keys_pressed.discard(('up', 1))
     if symbol == key.DOWN:
-        stisknute_klavesy.discard(('dolu', 1))
+        keys_pressed.discard(('down', 1))
 ...
 ```
 {% endfilter %}
 
 > [note]
-> Proč vlastně používáme k odebrání <var>n</var>-tice metodu
-> `discard()` místo metody `remove()`,
-> kterou známe ze seznamů a množiny ji také mají?
-> Nezpůsobí totiž chybu, když se pokusíme odebrat
-> prvek, který v množině není. To by se mohlo stát,
-> kdyby uživatel stiskl jednu z funkčních kláves
-> a teprve pak se přepnul do našeho okna a pak jí
-> pustil.
+> Why are we using `dicard()` method and not `remove()`(which
+> we already know from lists and sets also have it)? Because
+> it won't raise an error when the element is not in the set. So the program
+> won't cause an error when user press some of the defined key
+> elsewhere and then switch back to our
+> window and just after that they will release the key.
 
 
-Zaregistruj si obě funkce na příslušné události:
+Register both functions to events:
 
 ```python
 ...
-window = pyglet.window.Window(width=SIRKA, height=VYSKA)
+window = pyglet.window.Window(width=WIDTH, height=HEIGHT)
 window.push_handlers(
-    on_draw=vykresli,  # na vykresleni okna pouzij funkci `vykresli`
-    on_key_press=stisk_klavesy,
-    on_key_release=pusteni_klavesy,
-)
+    on_draw=render,  # for drawing into the window use function `render`
+    on_key_press=key_press,  # when key is pressed call function `key_press`
+    on_key_release=key_release,  # when key is released call `key_release`
+    )
 pyglet.app.run()
 ```
 
-### Pohyb pálek
+### Bat movement
 
-Když už jsme dokázali zpracovat vstup od uživatele,
-můžeme podle něj pohnout s pálkami.
-Pohyb předmětů budeme provádět ve funkci `obnov_stav(dt)`,
-která bude registrována na tik hodin v Pygletu.
-Argument `dt` je čas od posledního zavolání funkce Pygletem.
+Once we were able to process input from the user,
+we can move with bats regarding that.
+We will move the objects in the function `revive(dt)`,
+which will be registered to the clock. Argument `dt`
+is time that passed from the last call.
 
 ```python
-def obnov_stav(dt):
-    for cislo_palky in (0, 1):
-        # pohyb podle klaves (viz funkce `stisk_klavesy`)
-        if ('nahoru', cislo_palky) in stisknute_klavesy:
-            pozice_palek[cislo_palky] += RYCHLOST_PALKY * dt
-        if ('dolu', cislo_palky) in stisknute_klavesy:
-            pozice_palek[cislo_palky] -= RYCHLOST_PALKY * dt
+def revive(dt):
+    for bat_number in (0, 1):
+        # movement according to pressed keys (function `key_press`)
+        if ('up', bat_number) in keys_pressed:
+            bat_coordinates[bat_number] += BAT_SPEED * dt
+        if ('down', bat_number) in keys_pressed:
+            bat_coordinates[bat_number] -= BAT_SPEED * dt
 
-        # dolni zarazka - kdyz je palka prilis dole, nastavime ji na minimum
-        if pozice_palek[cislo_palky] < DELKA_PALKY / 2:
-            pozice_palek[cislo_palky] = DELKA_PALKY / 2
-        # horni zarazka - kdyz je palka prilis nahore, nastavime ji na maximum
-        if pozice_palek[cislo_palky] > VYSKA - DELKA_PALKY / 2:
-            pozice_palek[cislo_palky] = VYSKA - DELKA_PALKY / 2
+        # bottom stop - when bat is down bellow we will set it to the minimum
+        if bat_coordinates[bat_number] < BAT_LENGTH / 2:
+            bat_coordinates[bat_number] = BAT_LENGTH / 2
+        # top stop - when bat is too high we will set it to the maximum
+        if bat_coordinates[bat_number] > HEIGHT - BAT_LENGTH / 2:
+            bat_coordinates[bat_number] = HEIGHT - BAT_LENGTH / 2
 ```
 
-Podívejme se na tento kus kódu. Procházíme
-v cyklu obě pálky a ptáme se, zda je v množině
-stisknutých kláves <var>n</var>-tice reprezentující
-pohyb dané pálky nahoru nebo dolů.
-Když ano, *pohneme pálkou* v daném směru
-(přičteme nebo odečteme od vertikální polohy pálky
-změnu polohy, což je čas od posledního zavolání,
-který známe, vynásobený rychlostí pálky nastavené
-v konstantě).
+Let's have a look at this piece of code.
+We are going through both bats in a loop 
+and we ask if there is the tuple of direction
+and number of bat in the set `keys_pressed`.
+If yes we *move* with the bat regarding to
+the direction(we add to or deduct from the vertical
+position of the bat the change which is time from
+the last call multiplied by bat speed which we have
+in constants).
 
-V druhé části musíme zajistit, aby pálka *nevyjela*
-z hracího pole. Z minulých hrátek s hadem víme,
-že to se může stát velmi snadno. Pálku malujeme kolem
-jejího středu, což znamená, že když se pálka přiblíží na
-na <var>y</var>-ovou pozici `DELKA_PALKY / 2`, začíná
-překračovat dolní hranici hracího pole. V tom případě
-její pozici zafixujeme na nejnižší možné souřadnici.
-Analogicky to provedeme, když se blíží hornímu okraji.
+In the second part we have to make sure that bat doesn't
+appear *outside* of the game board. We know from the last
+lesson when we were playing with the python image that it
+can happen very easily. We are drawing bat from the 
+middle, which means that if the bat `y` coordinate is lower than 
+`BAT_LENGTH / 2` it is going outside of the board. 
+In that case we will fix the position to the lowest possible coordinate.
+It is done also for the top edge accordingly.
 
-Zaregistruj vytvořenou funkci na tik hodin jako
+Register created function to the clock:
 
 ```python
 ...
-pyglet.clock.schedule(obnov_stav)
+pyglet.clock.schedule(revive)
 pyglet.app.run()
 ```
 
-a podívej se na výsledek.
+and look at the result.
 
 
-### Rozehrání
+### Kick off
 
-Než začneme míček odrážet od stěn, musíme ho nejprve
-uvést do pohybu. Vystřelíme ho ze středu hrací plochy
-do náhodného směru. Toto se také stane v momentě, kdy
-jeden z hráčů skóruje a hra se rozehrává znovu.
-Proto tohle rozehrání zabalíme do funkce `reset()`.
-Zavolejte ji, než se spustí hra.
+Before we start to bounce the ball from the walls we
+have put it into motion first. We shoot it from the centre 
+of the board to the random direction. This should also
+happen when one player scores and game is starting again.
+That's why we encapsulate this into `reset()` function.
+Call it before you run the app.
 
-Jak bude tato funkce vypadat?
-Nejprve přesuň míček do středu hrací plochy nastavením
-proměnné `pozice_mice`. Potom je třeba
-simulovat hod mincí pomocí volání funkce
-`random.randint(0, 1)`. Tím rozhodneme, zda
-se míček rozletí doprava nebo doleva.
-Míček rozpohybujeme horizontálním směrem přičtením
-požadované rychlosti k `rychlost_mice[0]`.
-Ve vertikálním směru `rychlost_mice[1]`
-se bude míček pohybovat zcela náhodně přičtením
-náhodné rychlosti.
+How will this function look like?
+First you have to move the ball to the centre of the
+board by setting `ball_coordinates` variable. Then
+we have to randomly select if the ball should go to the
+left or to the right by calling `random.randint(0, 1)`.
+We have to move the ball in the horizontal direction by adding
+required speed to the `ball_speed[0]`. The speed in vertical
+`ball_speed[1]` direction will be random.
+
 
 {% filter solution %}
 ```python
 import random
 ...
 def reset():
-    pozice_mice[0] = SIRKA // 2
-    pozice_mice[1] = VYSKA // 2
+    ball_coordinates[0] = WIDTH // 2
+    ball_coordinates[1] = HEIGHT // 2
 
-    # x-ova rychlost - bud vpravo, nebo vlevo
+    # x speed - right or left
     if random.randint(0, 1):
-        rychlost_mice[0] = RYCHLOST
+        ball_speed[0] = SPEED
     else:
-        rychlost_mice[0] = -RYCHLOST
-    # y-ova rychlost - uplne nahodna
-    rychlost_mice[1] = random.uniform(-1, 1) * RYCHLOST
-
-# nastavit vychozi stav pro start hry
+        ball_speed[0] = -SPEED
+    # y speed - completely random
+    ball_speed[1] = random.uniform(-1, 1) * SPEED
+...
+# We will set the initial state.
 reset()
 ```
 {% endfilter %}
 
-
-Nic se zatím ale nestane, protože funkce
-`obnov_stav(dt)` zatím nepracuje
-se změnou rychlosti. Musíme v ní tedy nastavit proměnnou
-`poloha_micku` podle současné rychlosti míčku
-a času uplynulého od posledního zavolání funkce podle
-fyzikálního vztahu <var>s</var> = <var>v</var> <var>t</var>, tedy že dráha
-je rovna rychlosti vynásobené časem. Přidej tedy do
-funkce `obnov_stav(dt)` následující kód:
+Nothing is happening right now because function
+`revive(dt)` is not working with the time yet.
+We have to set there `ball_coordinates`. It will be
+based on current coordinates and time from the last call
+regarding to physics equation <var>d</var> = <var>v</var> <var>t</var>,
+which means that the final distance equals to speed
+multiplied by time. So add the following to the
+`revive(dt)` function:
 
 ```python
 def obnov_stav(dt):
     ...
-    # POHYB MICKU
-    pozice_mice[0] += rychlost_mice[0] * dt
-    pozice_mice[1] += rychlost_mice[1] * dt
+    # BALL MOVEMENT
+    ball_coordinates[0] += ball_speed[0] * dt
+    ball_coordinates[1] += ball_speed[1] * dt
 ```
 
-Zkus, co se teď stane při spuštění hry.
-Míček by měl vyletět pokaždé do jiného směru.
+Now let's have a look at what happens when you run
+the game. The ball should fly into different direction
+each time.
 
-### Odrážení míčku
+### Ball bounce
 
-Míček nám teď nekontrolovaně vyletí z hřiště.
-Musíme tedy zařídit, aby se odrážel od stěn.
-Jelikož úhel dopadu se rovná úhlu odrazu,
-stačí otočit znaménko <var>y</var>-ové složky rychlosti.
-Do funkce `obnov_stav(dt)` musíme
-přidat kontroly na polohu míčku a případně
-změnit jeho směr, pokud je moc nízko nebo moc vysoko.
+The ball is flying uncontrollably out of the field now.
+So we have to make sure that it will bounce back from the walls.
+Because in our case angle of incidence equals angle of deflection
+we will just switch the signs of y part of the speed.
+So we have to add some checks of the ball position and 
+eventually change its direction if it is too low or too high to the
+`revive(dt)` function.
 
 ```python
-def obnov_stav(dt):
+def revive(dt):
     ...
-    # Odraz micku od sten
-    if pozice_mice[1] < VELIKOST_MICE // 2:
-        rychlost_mice[1] = abs(rychlost_mice[1])
-    if pozice_mice[1] > VYSKA - VELIKOST_MICE // 2:
-        rychlost_mice[1] = -abs(rychlost_mice[1])
+    if ball_coordinates[1] < BALL_SIZE // 2:
+        ball_speed[1] = abs(ball_speed[1])
+
+    if ball_coordinates[1] > HEIGHT - BALL_SIZE // 2:
+        ball_speed[1] = -abs(ball_speed[1])
 ```
 
+Now we have to code the bounce from the bat, or a 
+game reset if the ball is not hit by one of the player's
+bat(that means that the other one gets a point).
+We will be adding something to our `revive(dt)`
+function again.
 
-Teď nám zbývá odraz od pálky, případně resetování
-hry, pokud míček padne mimo pálku jednoho hráče a
-ten druhý tak získá bod. Opět tedy budeme přidávat
-kód do funkce `obnov_stav(dt)`.
-
-Prvním krokem je poznamenání mezí na <var>y</var>-ové ose,
-kde se musí míček nacházet, aby byl úspěšně odražen –
-to je mezi horním a dolním koncem pálky:
+First step is to set bounds on y axis where the ball can be to be
+successfully hit with a bat - between upper and lower
+edge of a bat:
 
 ```python
-def obnov_stav(dt):
+def revive(dt):
     ...
-    palka_min = pozice_mice[1] - VELIKOST_MICE / 2 - DELKA_PALKY / 2
-    palka_max = pozice_mice[1] + VELIKOST_MICE / 2 + DELKA_PALKY / 2
+    bat_min = ball_coordinates[1] - BALL_SIZE/2 - BAT_LENGTH/2
+    bat_max = ball_coordinates[1] + BALL_SIZE/2 + BAT_LENGTH/2
 ```
 
-Nyní když míček narazí do pravé nebo levé stěny
-se umíme zeptat, zda je pálka na správné pozici
-a my máme `odrazit` míček nebo zda hráč
-prohrál kolo a my máme přičíst jeho soupeři bod a
-`restartovat hru`.
+Now when the ball hits the left or the right wall we can ask
+if the bat it on the right spot so we can `bounce` ball back or
+if it isn't so one player lost and the other one gets point and
+we can `reset` the game.
 
 ```python
 def obnov_stav(dt):
     ...
-    # odrazeni vlevo
-    if pozice_mice[0] < TLOUSTKA_PALKY + VELIKOST_MICE / 2:
-        if palka_min < pozice_palek[0] < palka_max:
-            # palka je na spravnem miste, odrazime micek
-            rychlost_mice[0] = abs(rychlost_mice[0])
+    # bounce to the left
+    if ball_coordinates[0] < BAT_THICKNESS + BALL_SIZE / 2:
+        if bat_min < bat_coordinates[0] < bat_max:
+            # bat is at the right spot we can bounce the ball back
+            ball_speed[0] = abs(ball_speed[0])
         else:
-            # palka je jinde nez ma byt, hrac prohral
-            skore[1] += 1
+            # bat is not at the right place the player lost
+            score[1] += 1
             reset()
 
-    # odrazeni vpravo
-    if pozice_mice[0] > SIRKA - (TLOUSTKA_PALKY + VELIKOST_MICE / 2):
-        if palka_min < pozice_palek[1] < palka_max:
-            rychlost_mice[0] = -abs(rychlost_mice[0])
+    # bounce to the right
+    if ball_coordinates[0] > WIDTH - (BAT_THICKNESS + BALL_SIZE / 2):
+        if bat_min < bat_coordinates[1] < bat_max:
+            ball_speed[0] = -abs(ball_speed[0])
         else:
-            skore[0] += 1
+            score[0] += 1
             reset()
+    
 ```
 
-## Závěr
+## The end
 
-Hurá, prokousali jsme se k zdárnému konci Pongu!
-Máš teď plně funkční interaktivní grafickou
-hru zakládající se na reálné předloze. :)
+Hooray, we finished the Pong! Now you have fully
+functioning interactive graphical game based
+on real game :)

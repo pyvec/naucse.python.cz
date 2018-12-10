@@ -291,6 +291,7 @@ def key_release(symbol, modifiers):
         keys_pressed.discard(('up', 1))
     if symbol == key.DOWN:
         keys_pressed.discard(('down', 1))
+
     # By the way, the functions key_release and key_press could be simplified by
     # using dictionaries. Will you try that?
 
