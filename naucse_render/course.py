@@ -32,7 +32,7 @@ def encode_dates(value):
 
 # XXX: Clarify the version
 
-def get_course(course_slug: str, *, version: int) -> dict:
+def get_course(course_slug: str, *, version):
     """Get information about the course as a JSON-compatible dict"""
 
     if version <= 0:
@@ -50,8 +50,6 @@ def get_course(course_slug: str, *, version: int) -> dict:
             raise ValueError(f'Invalid course slug')
 
         info = read_yaml(*path_parts, source_key='source_file')
-
-    info['api_version'] = 1, 1
 
     # XXX: Set by naucse
     info.pop('meta', None)
@@ -84,7 +82,10 @@ def get_course(course_slug: str, *, version: int) -> dict:
     result = encode_dates(info)
     schema = read_yaml('schema/fork-schema.yml')
     jsonschema.validate(result, schema)
-    return result
+    return {
+        'api_version': [0, 0],
+        'course': result,
+    }
 
 
 def update_material(material, vars=None):

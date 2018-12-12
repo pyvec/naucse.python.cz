@@ -16,7 +16,10 @@ from .page import render_page
 
 
 def get_lessons(lesson_slugs, vars=None):
-    return {slug: get_lesson(slug, vars) for slug in lesson_slugs}
+    return {
+        'api_version': [0, 0],
+        'data': {slug: get_lesson(slug, vars) for slug in lesson_slugs},
+    }
 
 
 def get_lesson(lesson_slug, vars):

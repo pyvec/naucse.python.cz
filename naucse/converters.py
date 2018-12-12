@@ -37,8 +37,8 @@ class BaseConverter:
     """Converts to/from JSON-compatible values and provides JSON schema
     """
     init_args = ()
-    schema_url = None
-    definition_key = None
+    get_schema_url = None
+    slug = None
 
     @property
     def _naucse__converter(self):
@@ -355,13 +355,14 @@ class Field:
 
 
 class ModelConverter(BaseConverter):
-    def __init__(self, cls, *, slug=None, init_args=()):
+    def __init__(self, cls, *, slug=None, init_args=(), get_schema_url=None):
         self.cls = cls
         self.name = cls.__name__
-        self.doc = inspect.getdoc(cls)
+        self.doc = inspect.getdoc(cls).strip()
         self.fields = {}
         self.init_args = init_args
-        self.definition_key = slug
+        self.slug = slug
+        self.get_schema_url = get_schema_url
 
         for name, field in vars(cls).items():
             if name.startswith('__') or not isinstance(field, Field):
@@ -403,12 +404,12 @@ class SchemaContext:
         self.is_input = is_input
 
     def get_schema(self, converter):
-        if converter.definition_key:
+        if converter.slug:
             if converter not in self.definition_refs:
-                key = converter.definition_key
+                key = converter.slug
                 if key in self.definitions:
                     raise ValueError(f'duplicate key {key}')
-                self.definitions[key] = converter.get_schema(self)
+                self.definitions[key] = converter.get_schema(context=self)
                 self.definition_refs[converter] = f'#/definitions/{key}'
             return {'#ref': self.definition_refs[converter]}
         return converter.get_schema(self)
@@ -444,8 +445,15 @@ def get_schema(converter, *, is_input):
         },
     })
     ref = context.get_schema(converter)
+    slug = converter.slug or 'data'
     return {
-        **ref,
+        'type': 'object',
+        'additionalProperties': False,
+        'properties': {
+            slug: ref,
+            'api_version': {'$ref': '#/definitions/api_version'},
+        },
+        'required': [slug, 'api_version'],
         '$schema': 'http://json-schema.org/draft-06/schema#',
         'definitions': context.definitions,
     }
@@ -455,8 +463,14 @@ def dump(instance, converter=None):
     if converter is None:
         converter = get_converter(instance)
     converter = get_converter(converter)
+    slug = converter.slug or 'data'
+    result = {
+        'api_version': [0, 0],
+        slug: converter.dump(instance),
+    }
+    if converter.get_schema_url:
+        result['$schema'] = converter.get_schema_url(is_input=False)
     schema = get_schema(converter, is_input=False)
-    result = converter.dump(instance)
     jsonschema.validate(result, schema)
     return result
 
@@ -465,7 +479,8 @@ def load(converter, data, **init_kwargs):
     converter = get_converter(converter)
     schema = get_schema(converter, is_input=True)
     jsonschema.validate(data, schema)
-    return converter.load(data, **init_kwargs)
+    slug = converter.slug or 'data'
+    return converter.load(data[slug], **init_kwargs)
 
 
 def register_model(cls, converter=None):

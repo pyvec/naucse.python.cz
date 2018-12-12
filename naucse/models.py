@@ -9,7 +9,7 @@ from naucse.edit_info import get_local_repo_info, get_repo_info
 from naucse.converters import Field, register_model, BaseConverter
 from naucse.converters import ListConverter, DictConverter
 from naucse.converters import KeyAttrDictConverter, ModelConverter
-from naucse.converters import dump, load, get_schema
+from naucse.converters import dump, load, get_converter, get_schema
 from naucse import sanitize
 
 import naucse_render
@@ -80,6 +80,19 @@ class NaucseModelConverter(ModelConverter):
         except NoURL:
             pass
         return result
+
+    def get_schema(self, *args, context, **kwargs):
+        result = super().get_schema(*args, context=context, **kwargs)
+        if not context.is_input:
+            uri_schema = {'type': 'string', 'format': 'uri'}
+            result['properties']['url'] = uri_schema
+            result['properties']['api_url'] = uri_schema
+        return result
+
+    def get_schema_url(self, instance, *, is_input):
+        return instance.root.schema_url_factory(
+            self.slug, is_input=is_input, external=True
+        )
 
 
 def _sanitize_page_content(parent, content):
@@ -403,8 +416,8 @@ class Session(Model):
     def pages(self):
         # XXX: These should be in the API
         self.pages = {
-            'front': load(SessionPage, {'slug': 'front'}, parent=self),
-            'back': load(SessionPage, {'slug': 'back'}, parent=self),
+            'front': SessionPage(slug='front', parent=self),
+            'back': SessionPage(slug='back', parent=self),
         }
 
     start_time = Field(SessionTimeConverter(), optional=True)
@@ -539,7 +552,7 @@ class Course(Model):
     # XXX: Is course derivation useful?
     derives = Field(
         str, optional=True,
-        doc="Course this derives from (deprecated)")
+        doc="Slug of the course this derives from (deprecated)")
 
     @derives.after_load()
     def _set_base_course(self):
@@ -565,8 +578,15 @@ class Course(Model):
     def load_lessons(self, slugs):
         slugs = set(slugs) - set(self.lessons)
         rendered = naucse_render.get_lessons(slugs, vars=self.vars)
-        for slug, data in rendered.items():
-            self.lessons[slug] = load(Lesson, data, parent=self, slug=slug)
+        new_lessons = load(
+            DictConverter(Lesson, key_arg='slug'),
+            rendered,
+            parent=self,
+        )
+        self.lessons.update(new_lessons)
+        for slug in slugs:
+            if slug not in new_lessons:
+                raise ValueError(f'{slug} missing from rendered lessons')
             self._lesson_shims.pop(slug, None)
 
     @derives.after_load()
@@ -688,7 +708,8 @@ class Root(Model):
         for licence_path in path.iterdir():
             with (licence_path / 'info.yml').open() as f:
                 info = yaml.safe_load(f)
-            licenses[licence_path.name] = load(License, info, parent=self)
+            license = get_converter(License).load(info, parent=self)
+            licenses[licence_path.name] = license
         return licenses
 
     def runs_from_year(self, year):
