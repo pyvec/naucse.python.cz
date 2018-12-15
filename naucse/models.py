@@ -254,17 +254,6 @@ class Page(Model):
         doc="CSS specific to this page. (Subject to restrictions which " +
             "aren't yet finalized.)")
 
-    @property
-    def material(self):
-        # XXX
-        try:
-            for session in self.course.sessions.values():
-                for material in session.materials:
-                    if self.lesson == material.lesson:
-                        return material
-        except Exception as e:
-            raise ValueError(e)
-
     solutions = Field(ListConverter(Solution, index_arg='index'))
 
 
@@ -276,6 +265,14 @@ class Lesson(Model):
 
     static_files = Field(DictConverter(StaticFile, key_arg='filename'))
     pages = Field(DictConverter(Page, key_arg='slug'))
+
+    @property
+    def material(self):
+        """Return the material that contains this page, or None"""
+        for session in self.course.sessions.values():
+            for material in session.materials:
+                if self == material.lesson:
+                    return material
 
 
 class SolutionShim:
