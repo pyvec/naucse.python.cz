@@ -1,5 +1,5 @@
 """
-Retreive course meta-information
+Retreive per-lesson meta-information
 
 Reads source YAML files and merges them to one JSON, with
 render info for items.

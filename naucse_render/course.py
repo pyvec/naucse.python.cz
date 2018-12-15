@@ -152,7 +152,7 @@ def get_canonical_lessons_info():
             Jednotlivé kurzy jsou poskládané z těchto materiálů
             (a doplněné jinými).
         """),
-        'source_file': '/lessons/',
+        'source_file': 'lessons',
         'sessions': [
             {
                 'title': f'`{category_path.name}`',

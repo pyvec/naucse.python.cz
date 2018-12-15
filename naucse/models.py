@@ -164,7 +164,7 @@ class RelativePathConverter(BaseConverter):
     def get_schema(self, context):
         return {
             'type': 'string',
-            'pattern': '^[^./][^/]+(/[^./][^/]+)+$'
+            'pattern': '^[^./][^/]+(/[^./][^/]+)*$'
         }
 
 
@@ -254,7 +254,9 @@ class Page(Model):
         doc="CSS specific to this page. (Subject to restrictions which " +
             "aren't yet finalized.)")
 
-    solutions = Field(ListConverter(Solution, index_arg='index'))
+    solutions = Field(
+        ListConverter(Solution, index_arg='index'),
+        doc="Solutions to problems that appear on the page.")
 
 
 class Lesson(Model):
@@ -263,12 +265,18 @@ class Lesson(Model):
     init_arg_names = {'parent', 'slug'}
     parent_attrs = ('course', )
 
-    static_files = Field(DictConverter(StaticFile, key_arg='filename'))
-    pages = Field(DictConverter(Page, key_arg='slug'))
+    static_files = Field(
+        DictConverter(StaticFile, key_arg='filename'),
+        doc="Static files the lesson's content may reference")
+    pages = Field(
+        DictConverter(Page, key_arg='slug', required={'index'}),
+        doc="Pages of content. Used for variants (e.g. a page for Linux and "
+            + "another for Windows), or non-essential info (e.g. for "
+            + "organizers)")
 
     @property
     def material(self):
-        """Return the material that contains this page, or None"""
+        """The material that contains this page, or None"""
         for session in self.course.sessions.values():
             for material in session.materials:
                 if self == material.lesson:
@@ -317,23 +325,34 @@ class LessonShim:
 
 
 class Material(Model):
-    """Teaching material
+    """Teaching material, usually a link to a lesson or external page
     """
     parent_attrs = 'session', 'course'
 
     slug = Field(str, optional=True)
-    title = Field(str, optional=True)
-    external_url = Field(URLConverter(), optional=True)
-    lesson_slug = Field(str, optional=True)
-    type = Field(str)
+    title = Field(str, optional=True, doc="Human-readable title")
+    type = Field(
+        str,
+        doc="Type of the material (e.g. lesson, homework, cheatsheet, link, "
+            + "special). Used for the icon in material lists.")
+    external_url = Field(
+        URLConverter(), optional=True,
+        doc="URL for a link to content that's not a naucse lesson")
+    lesson_slug = Field(
+        str, optional=True,
+        doc="Slug of the corresponding lesson")
+
+    @lesson_slug.after_load()
+    def _validate_lesson_slug(self):
+        if self.lesson_slug and self.external_url:
+            raise ValueError(
+                'external_url and lesson_slug are incompatible'
+            )
 
     @property
     def lesson(self):
+        """Lesson for this Material, or None"""
         if self.lesson_slug is not None:
-            if self.external_url:
-                raise ValueError(
-                    'external_url and lesson_slug are incompatible'
-                )
             return self.course.lessons[self.lesson_slug]
 
     def get_lesson_shim(self):
@@ -341,6 +360,8 @@ class Material(Model):
             return self.course.get_lesson_shim(self.lesson_slug)
 
     def get_url(self, url_type='web', **kwargs):
+        # The material has no URL itself; it refers to a lesson, an external
+        # resource, or to nothing.
         if self.lesson_slug:
             shim = self.course.get_lesson_shim(self.lesson_slug)
             return shim.get_url(**kwargs)
@@ -348,6 +369,7 @@ class Material(Model):
             raise NoURLType(url_type)
         if self.external_url:
             return self.external_url
+        raise NoURL(self)
 
 
 class SessionPage(Model):
@@ -359,19 +381,25 @@ class SessionPage(Model):
     slug = Field(str)
 
 
-def set_prev_next(sequence, *, attr_names=('prev', 'next')):
+def set_prev_next(sequence):
+    """Set "prev" and "next" attributes of each element of a sequence"""
     sequence = list(sequence)
-    prev_attr, next_attr = attr_names
     for prev, now, next in zip(
         [None] + sequence,
         sequence,
         sequence[1:] + [None],
     ):
-        setattr(now, prev_attr, prev)
-        setattr(now, next_attr, next)
+        now.prev = prev
+        now.next = next
 
 
 class SessionTimeConverter(BaseConverter):
+    """Convert a session time, represented in JSON as string
+
+    May be loaded as a complete datetime, or as just date or None, which need
+    to be fixed up using `_combine_session_time`.
+    Converted to the full datetime on output.
+    """
     def load(self, data):
         try:
             return datetime.datetime.strptime('%Y-%m-%d %H:%M:%S', value)
@@ -384,13 +412,23 @@ class SessionTimeConverter(BaseConverter):
 
     @classmethod
     def get_schema(cls, context):
+        _date_re = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+        _time_re = '[0-9]{2}:[0-9]{2}:[0-9]{2}'
+        if context.is_input:
+            pattern = f'^({_date_re} )?{_time_re}$'
+        else:
+            pattern = f'^{_date_re} {_time_re}$'
         return {
             'type': 'string',
-            'pattern': '([0-9]{4}-[0-9]{2}-[0-9]{2} )?[0-9]{2}:[0-9]{2}:[0-9]{2}',
+            'pattern': pattern,
         }
 
 
 def _combine_session_time(session, kind):
+    """Return course start/end time combined from per-session and course data
+
+    `kind` should be "start" or "end"
+    """
     time = getattr(session, f'{kind}_time')
     course = session.course
     default_time = course.default_time
@@ -405,7 +443,7 @@ def _combine_session_time(session, kind):
 
 
 class DateConverter(BaseConverter):
-    """Converts datetime.date values to 'YYYY-MM-DD' strings."""
+    """Converter for datetime.date values (as 'YYYY-MM-DD' strings in JSON)"""
     def load(self, data):
         return datetime.datetime.strptime(data, "%Y-%m-%d").date()
 
@@ -415,22 +453,31 @@ class DateConverter(BaseConverter):
     def get_schema(self, context):
         return {
             'type': 'string',
-            'pattern': r'[0-9]{4}-[0-9]{2}-[0-9]{2}',
+            'pattern': r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
             'format': 'date',
         }
 
 
 class Session(Model):
     """A smaller collection of teaching materials
+
+    Usually used for one meeting of an in-preson course or
+    a self-contained section of a longer workshop.
     """
     init_arg_names = {'parent', 'index'}
     parent_attrs = ('course', )
 
     slug = Field(str)
-    title = Field(str)
-    date = Field(DateConverter(), optional=True)
+    title = Field(str, doc="A human-readable session title")
+    date = Field(
+        DateConverter(), optional=True,
+        doc="The date when this session occurs (if it has a set time)",
+    )
 
-    source_file = Field(str)
+    source_file = Field(
+        RelativePathConverter(),
+        doc="Path to a source file containing the page's text, "
+            + "relative to the repository root")
 
     @source_file.after_load()
     def _edit_info(self):
@@ -439,7 +486,7 @@ class Session(Model):
         else:
             self.edit_info = self.course.repo_info.get_edit_info(self.source_file)
 
-    materials = Field(ListConverter(Material))
+    materials = Field(ListConverter(Material), doc="The session's materials")
 
     @materials.after_load()
     def _index_materials(self):
@@ -447,24 +494,29 @@ class Session(Model):
 
     @materials.after_load()
     def pages(self):
-        # XXX: These should be in the API
+        # XXX: These should be in the API, eventually
         self.pages = {
             'front': SessionPage(slug='front', parent=self),
             'back': SessionPage(slug='back', parent=self),
         }
 
-    start_time = Field(SessionTimeConverter(), optional=True)
+    start_time = Field(
+        SessionTimeConverter(), optional=True,
+        doc="Time (or date) when this session starts")
     @start_time.after_load()
     def _combine(self):
         self.start_time = _combine_session_time(self, 'start')
 
-    end_time = Field(SessionTimeConverter(), optional=True)
+    end_time = Field(
+        SessionTimeConverter(), optional=True,
+        doc="Time (or date) when this session ends")
     @end_time.after_load()
     def _combine(self):
         self.end_time = _combine_session_time(self, 'end')
 
 
 class AnyDictConverter(BaseConverter):
+    """Converter of any JSON-encodable dict"""
     def load(self, data):
         return data
 
@@ -477,6 +529,7 @@ class AnyDictConverter(BaseConverter):
 
 
 def time_from_string(time_string):
+    """Get datetime.time object from a 'HH:MM' string"""
     hour, minute = time_string.split(':')
     hour = int(hour)
     minute = int(minute)
@@ -485,6 +538,7 @@ def time_from_string(time_string):
 
 
 class TimeIntervalConverter(BaseConverter):
+    """Converter for a time interval, as a dict with 'start' and 'end'"""
     def load(self, data):
         return {
             'start': time_from_string(data['start']),
@@ -524,18 +578,35 @@ class Course(Model):
         self.lessons = {}
         self._lesson_shims = {}
 
-    title = Field(str)
-    subtitle = Field(str, optional=True)
-    description = Field(str, optional=True)
-    long_description = Field(str, optional=True)
-    vars = Field(AnyDictConverter(), factory=dict)
-    place = Field(str, optional=True)
-    time = Field(str, optional=True)
+    title = Field(str, doc="""Human-readable title""")
+    subtitle = Field(
+        str, optional=True,
+        doc="Human-readable subtitle, mainly used to distinguish several"
+            + "runs of same-named courses.")
+    description = Field(
+        str, optional=True,
+        doc="Short description of the course (about one line).")
+    long_description = Field(
+        str, optional=True,
+        doc="Long description of the course (up to several paragraphs).")
+    vars = Field(
+        AnyDictConverter(), factory=dict,
+        doc="Defaults for additional values used for rendering pages")
+    place = Field(
+        str, optional=True,
+        doc="Human-readable description of the venue")
+    time = Field(
+        str, optional=True,
+        doc="Human-readable description of the time the course takes place "
+            + "(e.g. 'Wednesdays')")
 
-    default_time = Field(TimeIntervalConverter(), optional=True)
+    default_time = Field(
+        TimeIntervalConverter(), optional=True,
+        doc="Default start and end tome for sessions")
 
-    sessions = Field(KeyAttrDictConverter(
-        Session, key_attr='slug', index_arg='index'))
+    sessions = Field(
+        KeyAttrDictConverter(Session, key_attr='slug', index_arg='index'),
+        doc="Individual sessions")
 
     @sessions.after_load()
     def _index_sessions(self):

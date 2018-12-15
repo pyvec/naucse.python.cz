@@ -197,11 +197,14 @@ class DictConverter(BaseConverter):
 
     If `key_arg` is given, the key is passed to the `item_converter`'s
     `load` method under this name.
+
+    `required` are the keys the dict must contain (if any).
     """
-    def __init__(self, item_converter, *, key_arg=None):
+    def __init__(self, item_converter, *, key_arg=None, required=()):
         self.item_converter = get_converter(item_converter)
         self.load_arg_names = self.item_converter.load_arg_names
         self.key_arg = key_arg
+        self.required = required
 
     def load(self, data, **kwargs):
         result = {}
@@ -215,10 +218,13 @@ class DictConverter(BaseConverter):
         return {str(k): self.item_converter.dump(v) for k, v in value.items()}
 
     def get_schema(self, context):
-        return {
+        schema = {
             'type': 'object',
             'additionalProperties': context.get_schema(self.item_converter),
         }
+        if self.required:
+            schema['required'] = list(self.required)
+        return schema
 
 
 class KeyAttrDictConverter(BaseConverter):
