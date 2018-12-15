@@ -43,11 +43,11 @@ model_slugs = {}
 
 
 class Model:
-    init_args = {'parent'}
+    init_arg_names = {'parent'}
     parent_attrs = ()
 
     def __init__(self, **kwargs):
-        for a in self.init_args:
+        for a in self.init_arg_names:
             setattr(self, a, kwargs[a])
         for p in self.parent_attrs[:1]:
             setattr(self, p, self.parent)
@@ -58,7 +58,7 @@ class Model:
     def __init_subclass__(cls):
         slug = re.sub('([A-Z])', r'-\1', cls.__name__).lower().lstrip('-')
         converter = NaucseModelConverter(
-            cls, init_args=cls.init_args, slug=slug,
+            cls, init_arg_names=cls.init_arg_names, slug=slug,
         )
         models[slug] = cls
         model_slugs[cls] = slug
@@ -119,7 +119,7 @@ def _sanitize_page_content(parent, content):
 
 
 class HTMLFragmentConverter(BaseConverter):
-    init_args = {'parent'}
+    init_arg_names = {'parent'}
 
     def __init__(self, *, sanitizer=None):
         self.sanitizer = sanitizer
@@ -143,7 +143,7 @@ class HTMLFragmentConverter(BaseConverter):
 class Solution(Model):
     """Solution to a problem on a Page
     """
-    init_args = {'parent', 'index'}
+    init_arg_names = {'parent', 'index'}
     parent_attrs = 'page', 'lesson', 'course'
 
     content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content))
@@ -152,7 +152,7 @@ class Solution(Model):
 class StaticFile(Model):
     """Static file specific to a Lesson
     """
-    init_args = {'parent', 'filename'}
+    init_arg_names = {'parent', 'filename'}
     parent_attrs = 'lesson', 'course'
 
     @property
@@ -178,7 +178,7 @@ class PageCSSConverter(BaseConverter):
 
 
 class LicenseConverter(BaseConverter):
-    init_args = {'parent'}
+    init_arg_names = {'parent'}
 
     def load(self, value, parent):
         return parent.root.licenses[value]
@@ -196,7 +196,7 @@ class LicenseConverter(BaseConverter):
 class Page(Model):
     """One page of teaching text
     """
-    init_args = {'parent', 'slug'}
+    init_arg_names = {'parent', 'slug'}
     parent_attrs = 'lesson', 'course'
 
     title = Field(str)
@@ -236,7 +236,7 @@ class Page(Model):
 class Lesson(Model):
     """A lesson – collection of Pages on a single topic
     """
-    init_args = {'parent', 'slug'}
+    init_arg_names = {'parent', 'slug'}
     parent_attrs = ('course', )
 
     static_files = Field(DictConverter(StaticFile, key_arg='filename'))
@@ -390,7 +390,7 @@ class DateConverter(BaseConverter):
 class Session(Model):
     """A smaller collection of teaching materials
     """
-    init_args = {'parent', 'index'}
+    init_arg_names = {'parent', 'index'}
     parent_attrs = ('course', )
 
     slug = Field(str)

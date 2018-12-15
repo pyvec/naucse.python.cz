@@ -1,10 +1,11 @@
 """
-The model of the model.
+The infrastructure behind naucse's data model.
 
 Key concepts:
 
 * A **model** is a custom class, e.g. `Course`, which can be serialized
   to/from JSON.
+  Specific models are defined in models.py.
 
 * A **converter** describes how to:
 
@@ -15,15 +16,29 @@ Key concepts:
   There are converters for integers, lists of integers, models,
   dicts of models, etc.
 
-* A **registry** is a collection of converters. Additionally it provides
-  high-level API for loading and dumping, and for getting a self-contained
-  schema.
+  One can get the "default" converter for many values (or types):
+  - Basic JSONSchema scalars (None, bool, int, float, str) have hard-coded
+    defaults
+  - Other classes may register a converter using `register_model`,
+    or manually setting the "_naucse__converter" property.
+  Generic collections (list/dict) do *not* have a default converter, since
+  their schema always depends on what's supposed to be inside.
+  For them, the converter needs to be specified when loading/dumping.
+  For other types, it might make sense to use a non-default converter, for
+  example to restrict values (e.g. add minimum/maximum for integers).
 
 * A **field** is an attribute of a model, e.g. `Course.title`.
   Each field usually *has* a converter (but it is not a converter itself).
   The field handles attributes that are optional in JSON.
   (In Python, missing attributes should be set to None rather than missing.)
+  It also handles the description ("docstring").
 
+The top-level functions `load`, `dump` and `get_schema` work on messages that
+have the API version.
+The input/output is automatically validated against the schema when
+loading/dumping.
+If some restriction on the data is represented in the schema, no additional
+checks should be needed for it.
 """
 import collections.abc
 import datetime
@@ -35,8 +50,29 @@ import jsonschema
 
 class BaseConverter:
     """Converts to/from JSON-compatible values and provides JSON schema
+
+    This class is designed to be subclassed. Subclasses may override:
+
+    `load`, `dump`, `get_schema` (see docstrings)
+
+    `init_arg_names`: Names of keyword arguments the converter will pass
+        to its instances' `__init__`.
+        Collection converters (for list & dict) pass these through.
+
+    `get_schema_url`: A method that determines the schema URL for a given
+        instance.
+        If it returns None, values cannot dumped using the top-level
+        `dump` function.
+        May also *be* None (which does the same as returning None).
+
+    `slug`: An identifier for schema definitions and for top-level messages.
+        Should be None for simple converters, and converters that can be
+        parametrized.
+        If None, values cannot dumped using the top-level `dump` function.
+        Currently the slug must be unique across converters.
     """
-    init_args = ()
+
+    init_arg_names = ()
     get_schema_url = None
     slug = None
 
@@ -47,8 +83,8 @@ class BaseConverter:
     def load(self, data, **init_kwargs):
         """Convert a JSON-compatible data to a Python value.
 
-        `init_kwargs` are extra values passed to `__init__`, if necessary.
-        The Converter's `init_args` attribute specifies which init_kwargs
+        `init_kwargs` are extra keyword arguments passed to `__init__`.
+        The Converter's `init_arg_names` attribute specifies which init_kwargs
         are supported.
 
         The base implementation returns `data` unchanged.
@@ -57,6 +93,8 @@ class BaseConverter:
 
     def dump(self, value):
         """Convert a Python value to JSON-compatible data.
+
+        The base implementation returns `data` unchanged.
         """
         return value
 
@@ -64,6 +102,9 @@ class BaseConverter:
         """Return JSON schema for the JSON-compatible data.
 
         Must be reimplemented in subclasses.
+
+        Getting the schema requires a context, which holds "global" definitions
+        and options. See the `SchemaContext` class.
         """
         raise NotImplementedError()
 
@@ -124,12 +165,12 @@ class ListConverter(BaseConverter):
 
     `item_converter` is a Converter for individual items.
 
-    If `index_arg` is given, the item index is passed to the `item_converter`'s
-    `load` method under this name.
+    If `index_arg` is given, the item's index is passed to the
+    `item_converter`'s `load` method under this name.
     """
     def __init__(self, item_converter, *, index_arg=None):
         self.item_converter = get_converter(item_converter)
-        self.init_args = self.item_converter.init_args
+        self.init_arg_names = self.item_converter.init_arg_names
         self.index_arg = index_arg
 
     def load(self, data, **init_kwargs):
@@ -160,7 +201,7 @@ class DictConverter(BaseConverter):
     """
     def __init__(self, item_converter, *, key_arg=None):
         self.item_converter = get_converter(item_converter)
-        self.init_args = self.item_converter.init_args
+        self.init_arg_names = self.item_converter.init_arg_names
         self.key_arg = key_arg
 
     def load(self, data, **init_kwargs):
@@ -172,7 +213,7 @@ class DictConverter(BaseConverter):
         return result
 
     def dump(self, value):
-        return {k: self.item_converter.dump(v) for k, v in value.items()}
+        return {str(k): self.item_converter.dump(v) for k, v in value.items()}
 
     def get_schema(self, context):
         return {
@@ -182,9 +223,9 @@ class DictConverter(BaseConverter):
 
 
 class KeyAttrDictConverter(BaseConverter):
-    """Handle an ordered dict that's serialized as a list
+    """Handle an ordered dict that's JSON-serialized as a list
 
-    The key of the dict is an attribute of its corresponding value,
+    The key of the dict taken from an attribute of its corresponding value,
     named in `key_attr`.
 
     If `index_arg` is given, the item index is passed to the `item_converter`'s
@@ -194,7 +235,7 @@ class KeyAttrDictConverter(BaseConverter):
         self.item_converter = get_converter(item_converter)
         self.key_attr = key_attr
         self.index_arg = index_arg
-        self.init_args = set(self.item_converter.init_args)
+        self.init_arg_names = set(self.item_converter.init_arg_names)
 
     def load(self, data, **init_kwargs):
         result = {}
@@ -224,10 +265,10 @@ class Field:
 
     `converter`: Converter to use for the attribute.
 
-    `name`: Name of the attribute (if None, set automatically when Field is
-    used in a class).
+    `name`: Name of the attribute. (If None, set automatically when Field is
+    used in a class.)
 
-    `data_key`: Key in the JSON mapping.
+    `data_key`: Key in the JSON mapping. (Set to `name` by default.)
 
     `doc` is a documentation string. It appears as "description" of the JSON
     schema.
@@ -247,6 +288,11 @@ class Field:
 
     If `output` is true, the attribute is dumped to JSON. If it is false,
     it will always be missing in the output.
+
+    Fields within a model are loaded (and dumped) in the order they appear
+    in the model. Side-effects can take advantage of this.
+    (Note: Additional functions such as `after_load` are called together with
+    their field, regardless of where the function is defined.)
     """
     def __init__(
         self, converter, *, name=None, data_key=None, doc=None,
@@ -276,30 +322,53 @@ class Field:
         self.data_key = self.data_key or self.name
 
     def load_into(self, instance, data, **init_kwargs):
+        """Load this field's data into the given Python object.
+
+        `instance` is the Python object being initialized.
+
+        `data` is the object's data loaded from JSON.
+        (It may or might not contain a value for the field.)
+
+        `init_kwargs` are passed to the converter's `load` (if called)
+
+        This always sets the field's attribute on `instance`, if it succeeds.
+        """
         if not self.input:
-            value = self._load_missing(instance)
+            # Ignore the input data entirely
+            value = self._get_default(instance)
         else:
-            init_kwargs = {
-                n: v for n, v in init_kwargs.items()
-                if n in self.converter.init_args
-            }
             try:
                 item_data = data[self.data_key]
             except KeyError:
+                # Get the default (if we can)
                 if self.optional:
-                    value = self._load_missing(instance)
+                    value = self._get_default(instance)
                 else:
                     raise
             else:
+                # Load data from JSON
+                init_kwargs = {
+                    n: v for n, v in init_kwargs.items()
+                    if n in self.converter.init_arg_names
+                }
                 value = self.converter.load(item_data, **init_kwargs)
         setattr(instance, self.name, value)
         for func in self._after_load_hooks:
             func(instance)
 
-    def _load_missing(self, instance):
+    def _get_default(self, instance):
+        """Return the default value (for optional fields).
+
+        May be overridden in *instances*.
+        """
         return None
 
     def dump_into(self, instance, data):
+        """Dump the given Python object into the given JSON-compatible dict
+
+        If the field is not marked `output`, or is optional and has the default
+        value, this does nothing.
+        """
         if not self.output:
             return
         value = getattr(instance, self.name)
@@ -323,30 +392,42 @@ class Field:
             object_schema['additionalProperties'] = False
 
     def __get__(self, owner, instance, m=None):
+        """Debug helper
+
+        An initialized model instance should have values for all its fields
+        in its __dict__.
+
+        However, when loading, not all fields have been initialized yet.
+        Attempts to get the value of such a field will raise an informative
+        error, rather than return the Field object from the model class.
+        """
         if instance is None:
+            # Getting a class attribute -- return this Field
             return self
-        type_name = type(owner).__name__
-        raise AttributeError(
-            f'{self.name!r} of {type_name} object was not yet loaded'
-        )
+        else:
+            # Getting an instnce attribute -- raise an error
+            type_name = type(owner).__name__
+            raise AttributeError(
+                f'{self.name!r} of {type_name} object was not yet loaded'
+            )
 
     def default_factory(self):
         """Decorate a function that will be called to produce a default value
 
-        The decorated function will be called with the loaded instance
-        as first argument.
+        The decorated function will be called with one argument: the instance
+        being initialized.
         """
         def _decorator(func):
             self.optional = True
-            self._load_missing = func
+            self._get_default = func
             return func
         return _decorator
 
     def after_load(self):
         """Decorate a function that will be called after an attribute is loaded
 
-        The decorated function will be called with the loaded instance
-        as first argument.
+        The decorated function will be called with one argument: the instance
+        being initialized. (The Field's attribute will already be set on it.)
         """
         def _decorator(func):
             self._after_load_hooks.append(func)
@@ -355,14 +436,14 @@ class Field:
 
 
 class ModelConverter(BaseConverter):
-    def __init__(self, cls, *, slug=None, init_args=(), get_schema_url=None):
+    """Converter for a Model, i.e. class with several Fields"""
+    def __init__(self, cls, *, slug=None, init_arg_names=()):
         self.cls = cls
         self.name = cls.__name__
         self.doc = inspect.getdoc(cls).strip()
         self.fields = {}
-        self.init_args = init_args
+        self.init_arg_names = init_arg_names
         self.slug = slug
-        self.get_schema_url = get_schema_url
 
         for name, field in vars(cls).items():
             if name.startswith('__') or not isinstance(field, Field):
@@ -398,12 +479,23 @@ class ModelConverter(BaseConverter):
 
 
 class SchemaContext:
+    """Holds "global" definitions and options for getting a context
+
+    `is_input` determines whether schema for input (data from forks) or output
+    (naucse's exported API).
+    """
     def __init__(self, *, is_input):
         self.definition_refs = {}
         self.definitions = {}
         self.is_input = is_input
 
     def get_schema(self, converter):
+        """Get schema for the given converter
+
+        If the converter has a `slug`, its schema is added to definitions
+        (unless already present), and a reference to it is returned.
+        Otherwise, the schema is returned.
+        """
         if converter.slug:
             if converter not in self.definition_refs:
                 key = converter.slug
@@ -416,6 +508,7 @@ class SchemaContext:
 
 
 def get_schema(converter, *, is_input):
+    """Get schema for the given converter"""
     converter = get_converter(converter)
     context = SchemaContext(is_input=is_input)
     context.definitions.update({
@@ -441,7 +534,7 @@ def get_schema(converter, *, is_input):
                 schema that keeps backwards compatibility for forks
                 (i.e. input data).
                 The major version is increased on incompatible changes.
-            """),
+            """).strip(),
         },
     })
     ref = context.get_schema(converter)
@@ -459,7 +552,20 @@ def get_schema(converter, *, is_input):
     }
 
 
+def _get_schema_url(converter, instance):
+    if converter.get_schema_url:
+        schema_url = converter.get_schema_url(instance, is_input=False)
+        if schema_url is not None:
+            return schema_url
+        raise ValueError(f"{converter}.get_schema_url returned None")
+    raise ValueError(f"{converter}.get_schema_url is None")
+
+
 def dump(instance, converter=None):
+    """Dump a Python object
+
+    If converter is None, the default is used.
+    """
     if converter is None:
         converter = get_converter(instance)
     converter = get_converter(converter)
@@ -468,14 +574,14 @@ def dump(instance, converter=None):
         'api_version': [0, 0],
         slug: converter.dump(instance),
     }
-    if converter.get_schema_url:
-        result['$schema'] = converter.get_schema_url(is_input=False)
+    result['$schema'] = _get_schema_url(converter, instance)
     schema = get_schema(converter, is_input=False)
     jsonschema.validate(result, schema)
     return result
 
 
 def load(converter, data, **init_kwargs):
+    """Load a Python object from the given data"""
     converter = get_converter(converter)
     schema = get_schema(converter, is_input=True)
     jsonschema.validate(data, schema)
@@ -484,6 +590,10 @@ def load(converter, data, **init_kwargs):
 
 
 def register_model(cls, converter=None):
+    """Assign converter as default for the given class
+
+    If `converter` is not given, a new `ModelConverter` is created.
+    """
     if converter is None:
         converter = ModelConverter(cls)
     cls._naucse__converter = converter
