@@ -546,6 +546,9 @@ def get_schema(converter, *, is_input):
                 schema that keeps backwards compatibility for forks
                 (i.e. input data).
                 The major version is increased on incompatible changes.
+
+                Version 0.x means incompatible changes may be done at any
+                time. Please coordinate your use of the API with us.
             """).strip(),
         },
     })

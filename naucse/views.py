@@ -377,8 +377,8 @@ def course_calendar_ics(course_slug):
     return Response(str(cal), mimetype="text/calendar")
 
 
-@app.route('/v1/schema/<is_input:is_input>.json', defaults={'model_slug': 'root'})
-@app.route('/v1/schema/<is_input:is_input>/<model_slug>.json')
+@app.route('/v0/schema/<is_input:is_input>.json', defaults={'model_slug': 'root'})
+@app.route('/v0/schema/<is_input:is_input>/<model_slug>.json')
 def schema(model_slug, is_input):
     try:
         cls = models.models[model_slug]
@@ -387,12 +387,12 @@ def schema(model_slug, is_input):
     return jsonify(models.get_schema(cls, is_input=is_input))
 
 
-@app.route('/v1/naucse.json')
+@app.route('/v0/naucse.json')
 def api():
     return jsonify(models.dump(model._get_current_object()))
 
 
-@app.route('/v1/years/<int:year>.json')
+@app.route('/v0/years/<int:year>.json')
 def run_year_api(year):
     try:
         run_year = model.run_years[year]
@@ -401,7 +401,7 @@ def run_year_api(year):
     return jsonify(models.dump(run_year))
 
 
-@app.route('/v1/<course:course_slug>.json')
+@app.route('/v0/<course:course_slug>.json')
 def course_api(course_slug):
     try:
         course = model.courses[course_slug]
