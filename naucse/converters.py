@@ -437,13 +437,15 @@ class Field:
 
 class ModelConverter(BaseConverter):
     """Converter for a Model, i.e. class with several Fields"""
-    def __init__(self, cls, *, slug=None, init_arg_names=()):
+    def __init__(self, cls, *, slug=None, init_arg_names=(), get_schema_url=None):
         self.cls = cls
         self.name = cls.__name__
         self.doc = inspect.getdoc(cls).strip()
         self.fields = {}
         self.init_arg_names = init_arg_names
         self.slug = slug
+        if get_schema_url:
+            self.get_schema_url = get_schema_url
 
         for name, field in vars(cls).items():
             if name.startswith('__') or not isinstance(field, Field):
@@ -503,7 +505,7 @@ class SchemaContext:
                     raise ValueError(f'duplicate key {key}')
                 self.definitions[key] = converter.get_schema(context=self)
                 self.definition_refs[converter] = f'#/definitions/{key}'
-            return {'#ref': self.definition_refs[converter]}
+            return {'$ref': self.definition_refs[converter]}
         return converter.get_schema(self)
 
 
@@ -545,6 +547,7 @@ def get_schema(converter, *, is_input):
         'properties': {
             slug: ref,
             'api_version': {'$ref': '#/definitions/api_version'},
+            '$schema': {'type': 'string', 'format': 'uri'},
         },
         'required': [slug, 'api_version'],
         '$schema': 'http://json-schema.org/draft-06/schema#',

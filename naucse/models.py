@@ -57,8 +57,13 @@ class Model:
 
     def __init_subclass__(cls):
         slug = re.sub('([A-Z])', r'-\1', cls.__name__).lower().lstrip('-')
-        converter = NaucseModelConverter(
+        def get_schema_url(instance, *, is_input):
+            return instance.root.schema_url_factory(
+                cls, is_input=is_input, _external=True
+            )
+        converter = ModelConverter(
             cls, init_arg_names=cls.init_arg_names, slug=slug,
+            get_schema_url=get_schema_url,
         )
         models[slug] = cls
         model_slugs[cls] = slug
@@ -67,32 +72,17 @@ class Model:
     def get_url(self, url_type='web', *, external=False):
         return self.root._url_for(self, url_type=url_type, external=external)
 
+    _url = Field(URLConverter(), data_key='url', input=False,
+                 doc="URL for a user-facing page on naucse")
+    @_url.default_factory()
+    def _get_url(self):
+        return self.get_url(external=True)
 
-class NaucseModelConverter(ModelConverter):
-    def dump(self, value):
-        result = super().dump(value)
-        try:
-            result['url'] = value.get_url(external=True)
-        except NoURL:
-            pass
-        try:
-            result['api_url'] = value.get_url('api', external=True)
-        except NoURL:
-            pass
-        return result
-
-    def get_schema(self, *args, context, **kwargs):
-        result = super().get_schema(*args, context=context, **kwargs)
-        if not context.is_input:
-            uri_schema = {'type': 'string', 'format': 'uri'}
-            result['properties']['url'] = uri_schema
-            result['properties']['api_url'] = uri_schema
-        return result
-
-    def get_schema_url(self, instance, *, is_input):
-        return instance.root.schema_url_factory(
-            self.slug, is_input=is_input, external=True
-        )
+    _api_url = Field(URLConverter(), data_key='api_url', input=False,
+                     doc="URL for API")
+    @_api_url.default_factory()
+    def _get_api_url(self):
+        return self.get_url('api', external=True)
 
 
 def _sanitize_page_content(parent, content):
@@ -321,6 +311,7 @@ class Material(Model):
 class SessionPage(Model):
     """Session-specific page, e.g. the front cover
     """
+    init_arg_names = {'parent', 'slug'}
     parent_attrs = 'session', 'course'
 
     slug = Field(str)
@@ -610,8 +601,16 @@ class Course(Model):
 class AbbreviatedDictConverter(DictConverter):
     def dump(self, value):
         return {
-            key: {'ref': v.get_url('api', external=True)}
+            key: {'$ref': v.get_url('api', external=True)}
             for key, v in value.items()
+        }
+
+    def get_schema(self, context):
+        return {
+            'type': 'object',
+            'additionalProperties': {
+                '$ref': '#/definitions/ref',
+            },
         }
 
 

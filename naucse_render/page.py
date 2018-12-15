@@ -117,7 +117,7 @@ def render_page(lesson_slug, page_slug, info, vars=None):
 
     page['content'] = text
     page['solutions'] = [{'content': s} for s in solutions]
-    page['source_file'] = path
+    page['source_file'] = str(path)
     if 'css' in info:
         page['css'] = info['css']
     if 'latex' in info:
