@@ -168,6 +168,20 @@ class RelativePathConverter(BaseConverter):
         }
 
 
+source_file_field = Field(
+    RelativePathConverter(),
+    name='source_file',
+    doc="Path to a source file containing the page's text, "
+        + "relative to the repository root")
+
+@source_file_field.after_load()
+def _edit_info(self):
+    if self.source_file is None:
+        self.edit_info = None
+    else:
+        self.edit_info = self.course.repo_info.get_edit_info(self.source_file)
+
+
 class StaticFile(Model):
     """Static file specific to a Lesson
     """
@@ -237,17 +251,7 @@ class Page(Model):
         LicenseConverter(), optional=True,
         doc='Slug of licence for code snippets.')
 
-    source_file = Field(
-        RelativePathConverter(),
-        doc="Path to a source file containing the page's text, "
-            + "relative to the repository root")
-
-    @source_file.after_load()
-    def _edit_info(self):
-        if self.source_file is None:
-            self.edit_info = None
-        else:
-            self.edit_info = self.course.repo_info.get_edit_info(self.source_file)
+    source_file = source_file_field
 
     css = Field(
         PageCSSConverter(), optional=True,
@@ -474,17 +478,7 @@ class Session(Model):
         doc="The date when this session occurs (if it has a set time)",
     )
 
-    source_file = Field(
-        RelativePathConverter(),
-        doc="Path to a source file containing the page's text, "
-            + "relative to the repository root")
-
-    @source_file.after_load()
-    def _edit_info(self):
-        if self.source_file is None:
-            self.edit_info = None
-        else:
-            self.edit_info = self.course.repo_info.get_edit_info(self.source_file)
+    source_file = source_file_field
 
     materials = Field(ListConverter(Material), doc="The session's materials")
 
@@ -573,6 +567,7 @@ class Course(Model):
         self.slug = slug
         self.base_path = base_path
         self.is_meta = is_meta
+        self.course = self
         self._frozen = False
 
         self.lessons = {}
@@ -612,14 +607,7 @@ class Course(Model):
     def _index_sessions(self):
         set_prev_next(self.sessions.values())
 
-    source_file = Field(str)
-
-    @source_file.after_load()
-    def _edit_info(self):
-        if self.source_file is None:
-            self.edit_info = None
-        else:
-            self.edit_info = self.repo_info.get_edit_info(self.source_file)
+    source_file = source_file_field
 
     start_date = Field(
         DateConverter(),
@@ -712,6 +700,7 @@ class Course(Model):
 
 
 class AbbreviatedDictConverter(DictConverter):
+    """Dict that only shows URLs to its items when dumped"""
     def dump(self, value):
         return {
             key: {'$ref': v.get_url('api', external=True)}
