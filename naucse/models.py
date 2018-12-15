@@ -578,7 +578,7 @@ class Course(Model):
     title = Field(str, doc="""Human-readable title""")
     subtitle = Field(
         str, optional=True,
-        doc="Human-readable subtitle, mainly used to distinguish several"
+        doc="Human-readable subtitle, mainly used to distinguish several "
             + "runs of same-named courses.")
     description = Field(
         str, optional=True,
@@ -758,9 +758,15 @@ class Root(Model):
 
         self._url = self.get_url(external=True)
 
-    canonical_courses = Field(AbbreviatedDictConverter(Course))
-    run_years = Field(AbbreviatedDictConverter(RunYear))
-    licenses = Field(DictConverter(License))
+    canonical_courses = Field(
+        AbbreviatedDictConverter(Course),
+        doc="""Links to "canonical" courses – ones without a time span""")
+    run_years = Field(
+        AbbreviatedDictConverter(RunYear),
+        doc="""Links to courses by year""")
+    licenses = Field(
+        DictConverter(License),
+        doc="""Allowed licenses""")
 
     def load_local(self, path):
         """Load local courses from the given path"""
