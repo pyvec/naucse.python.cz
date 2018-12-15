@@ -28,7 +28,6 @@ class NoURLType(NoURL):
 class URLConverter(BaseConverter):
     def load(self, data):
         return sanitize.convert_link('href', data)
-        return data
 
     def dump(self, value):
         return value
@@ -75,6 +74,11 @@ class Model:
         converter = ModelConverter(
             cls, load_arg_names=cls.init_arg_names, slug=slug,
             get_schema_url=get_schema_url,
+            extra_fields=[Field(
+                URLConverter(), name='_url', data_key='url', input=False,
+                optional=True,
+                doc="URL for a user-facing page on naucse",
+            )],
         )
         models[slug] = cls
         model_slugs[cls] = slug
@@ -83,17 +87,15 @@ class Model:
     def get_url(self, url_type='web', *, external=False):
         return self.root._url_for(self, url_type=url_type, external=external)
 
-    _url = Field(URLConverter(), data_key='url', input=False,
-                 doc="URL for a user-facing page on naucse")
-    @_url.default_factory()
-    def _get_url(self):
-        return self.get_url(external=True)
-
-    _api_url = Field(URLConverter(), data_key='api_url', input=False,
-                     doc="URL for API")
-    @_api_url.default_factory()
-    def _get_api_url(self):
-        return self.get_url('api', external=True)
+    @property
+    def _url(self):
+        try:
+            return self.get_url(external=True)
+        except NoURL:
+            return None
+    @_url.setter
+    def _url(self, value):
+        return
 
 
 def _sanitize_page_content(parent, content):
@@ -368,7 +370,7 @@ class Material(Model):
         # resource, or to nothing.
         if self.lesson_slug:
             shim = self.course.get_lesson_shim(self.lesson_slug)
-            return shim.get_url(**kwargs)
+            return shim.get_url(url_type, **kwargs)
         if url_type != 'web':
             raise NoURLType(url_type)
         if self.external_url:
@@ -753,6 +755,8 @@ class Root(Model):
         self.run_years = {}
         self.licenses = {}
         self.canonical_courses = {}
+
+        self._url = self.get_url(external=True)
 
     canonical_courses = Field(AbbreviatedDictConverter(Course))
     run_years = Field(AbbreviatedDictConverter(RunYear))

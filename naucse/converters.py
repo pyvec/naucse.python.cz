@@ -396,7 +396,7 @@ class Field:
         if not context.is_input:
             object_schema['additionalProperties'] = False
 
-    def __get__(self, owner, instance, m=None):
+    def __get__(self, instance, owner):
         """Debug helper
 
         An initialized model instance should have values for all its fields
@@ -442,7 +442,10 @@ class Field:
 
 class ModelConverter(BaseConverter):
     """Converter for a Model, i.e. class with several Fields"""
-    def __init__(self, cls, *, slug=None, load_arg_names=(), get_schema_url=None):
+    def __init__(
+        self, cls, *, slug=None, load_arg_names=(),
+        get_schema_url=None, extra_fields=(),
+    ):
         self.cls = cls
         self.name = cls.__name__
         self.doc = inspect.getdoc(cls).strip()
@@ -456,6 +459,7 @@ class ModelConverter(BaseConverter):
             if name.startswith('__') or not isinstance(field, Field):
                 continue
             self.fields[name] = field
+        self.fields.update((f.name, f) for f in extra_fields)
 
     def __repr__(self):
         return f'<{_classname(type(self))} for {_classname(self.cls)}>'
@@ -528,6 +532,7 @@ def get_schema(converter, *, is_input):
                     'format': 'uri',
                 },
             },
+            'description': 'URL to the data (in JSON format)',
         },
         'api_version': {
             'type': 'array',
