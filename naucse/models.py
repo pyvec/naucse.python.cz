@@ -43,6 +43,17 @@ model_slugs = {}
 
 
 class Model:
+    """Base class for naucse models
+
+    Class attributes:
+
+    `init_arg_names` are names of keyword arguments for `__init__`.
+    These are copied to attributes of the same name.
+
+    `parent_attrs` is a tuple of attribute names of the object's parents.
+    The first for the parent itself; the subsequent ones are set from the
+    parent.
+    """
     init_arg_names = {'parent'}
     parent_attrs = ()
 
@@ -62,7 +73,7 @@ class Model:
                 cls, is_input=is_input, _external=True
             )
         converter = ModelConverter(
-            cls, init_arg_names=cls.init_arg_names, slug=slug,
+            cls, load_arg_names=cls.init_arg_names, slug=slug,
             get_schema_url=get_schema_url,
         )
         models[slug] = cls
@@ -86,6 +97,7 @@ class Model:
 
 
 def _sanitize_page_content(parent, content):
+    """Sanitize HTML for a particular page. Also rewrites URLs."""
     parent_page = getattr(parent, 'page', parent)
 
     def page_url(*, lesson, page='index', **kw):
@@ -109,7 +121,8 @@ def _sanitize_page_content(parent, content):
 
 
 class HTMLFragmentConverter(BaseConverter):
-    init_arg_names = {'parent'}
+    """Converter for a HTML fragment."""
+    load_arg_names = {'parent'}
 
     def __init__(self, *, sanitizer=None):
         self.sanitizer = sanitizer
@@ -136,7 +149,23 @@ class Solution(Model):
     init_arg_names = {'parent', 'index'}
     parent_attrs = 'page', 'lesson', 'course'
 
-    content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content))
+    content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content),
+                    doc="The right solution, as HTML")
+
+
+class RelativePathConverter(BaseConverter):
+    """Converter for a relative path, as string"""
+    def load(self, data):
+        return Path(data)
+
+    def dump(self, value):
+        return str(value)
+
+    def get_schema(self, context):
+        return {
+            'type': 'string',
+            'pattern': '^[^./][^/]+(/[^./][^/]+)+$'
+        }
 
 
 class StaticFile(Model):
@@ -149,10 +178,11 @@ class StaticFile(Model):
     def base_path(self):
         return self.course.base_path
 
-    path = Field(str)
+    path = Field(RelativePathConverter(), doc="Relative path of the file")
 
 
 class PageCSSConverter(BaseConverter):
+    """Converter for CSS for a Page"""
     def load(self, value):
         return sanitize.sanitize_stylesheet(value)
 
@@ -168,7 +198,8 @@ class PageCSSConverter(BaseConverter):
 
 
 class LicenseConverter(BaseConverter):
-    init_arg_names = {'parent'}
+    """Converter for a licence (specified as its slug in JSON)"""
+    load_arg_names = {'parent'}
 
     def load(self, value, parent):
         return parent.root.licenses[value]
@@ -189,16 +220,27 @@ class Page(Model):
     init_arg_names = {'parent', 'slug'}
     parent_attrs = 'lesson', 'course'
 
-    title = Field(str)
+    title = Field(str, doc='Human-readable title')
 
-    content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content))
-    modules = Field(DictConverter(str), factory=dict)
+    content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content),
+                    doc='Content, as HTML')
+    modules = Field(
+        DictConverter(str), factory=dict,
+        doc='Additional modules as a dict with `slug` keya and version values')
 
-    attribution = Field(ListConverter(HTMLFragmentConverter()))
-    license = Field(LicenseConverter())
-    license_code = Field(LicenseConverter(), optional=True)
+    attribution = Field(ListConverter(HTMLFragmentConverter()),
+                        doc='Lines of attribution, as HTML fragments')
+    license = Field(
+        LicenseConverter(),
+        doc='License slugs. Only approved licenses are allowed.')
+    license_code = Field(
+        LicenseConverter(), optional=True,
+        doc='Slug of licence for code snippets.')
 
-    source_file = Field(str)
+    source_file = Field(
+        RelativePathConverter(),
+        doc="Path to a source file containing the page's text, "
+            + "relative to the repository root")
 
     @source_file.after_load()
     def _edit_info(self):
@@ -207,7 +249,10 @@ class Page(Model):
         else:
             self.edit_info = self.course.repo_info.get_edit_info(self.source_file)
 
-    css = Field(PageCSSConverter(), optional=True)
+    css = Field(
+        PageCSSConverter(), optional=True,
+        doc="CSS specific to this page. (Subject to restrictions which " +
+            "aren't yet finalized.)")
 
     @property
     def material(self):
