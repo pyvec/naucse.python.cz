@@ -1,5 +1,6 @@
 import datetime
 from pathlib import Path
+import collections.abc
 import re
 
 import dateutil
@@ -85,7 +86,13 @@ class Model:
         register_model(cls, converter)
 
     def get_url(self, url_type='web', *, external=False):
-        return self.root._url_for(self, url_type=url_type, external=external)
+        return self.root._url_for(
+            type(self), pks=self.get_pks(),
+            url_type=url_type, external=external)
+
+    def get_pks(self):
+        pk_name = f'{model_slugs[type(self)]}_{self.pk_name}'
+        return {**self.parent.get_pks(), pk_name: getattr(self, self.pk_name)}
 
     @property
     def _url(self):
@@ -103,11 +110,10 @@ def _sanitize_page_content(parent, content):
     parent_page = getattr(parent, 'page', parent)
 
     def page_url(*, lesson, page='index', **kw):
-        lesson = parent_page.course.get_lesson_shim(lesson)
-        return lesson.pages[page].get_url(**kw)
+        return parent_page.course.get_lesson_url(lesson, page=page)
 
     def solution_url(*, solution, **kw):
-        return SolutionShim(parent=parent_page, index=solution).get_url(**kw)
+        return parent_page.solutions[int(solution)].get_url(**kw)
 
     def static_url(*, filename, **kw):
         return parent_page.lesson.static_files[filename].get_url(**kw)
@@ -149,10 +155,13 @@ class Solution(Model):
     """Solution to a problem on a Page
     """
     init_arg_names = {'parent', 'index'}
+    pk_name = 'index'
     parent_attrs = 'page', 'lesson', 'course'
 
-    content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content),
-                    doc="The right solution, as HTML")
+    content = Field(
+        HTMLFragmentConverter(sanitizer=_sanitize_page_content),
+        output=False,
+        doc="The right solution, as HTML")
 
 
 class RelativePathConverter(BaseConverter):
@@ -188,11 +197,15 @@ class StaticFile(Model):
     """Static file specific to a Lesson
     """
     init_arg_names = {'parent', 'filename'}
+    pk_name = 'filename'
     parent_attrs = 'lesson', 'course'
 
     @property
     def base_path(self):
         return self.course.base_path
+
+    def get_pks(self):
+        return {**self.parent.get_pks(), 'filename': self.filename}
 
     path = Field(RelativePathConverter(), doc="Relative path of the file")
 
@@ -234,15 +247,10 @@ class Page(Model):
     """One page of teaching text
     """
     init_arg_names = {'parent', 'slug'}
+    pk_name = 'slug'
     parent_attrs = 'lesson', 'course'
 
     title = Field(str, doc='Human-readable title')
-
-    content = Field(HTMLFragmentConverter(sanitizer=_sanitize_page_content),
-                    doc='Content, as HTML')
-    modules = Field(
-        DictConverter(str), factory=dict,
-        doc='Additional modules as a dict with `slug` keya and version values')
 
     attribution = Field(ListConverter(HTMLFragmentConverter()),
                         doc='Lines of attribution, as HTML fragments')
@@ -264,11 +272,21 @@ class Page(Model):
         ListConverter(Solution, index_arg='index'),
         doc="Solutions to problems that appear on the page.")
 
+    modules = Field(
+        DictConverter(str), factory=dict,
+        doc='Additional modules as a dict with `slug` key and version values')
+
+    content = Field(
+        HTMLFragmentConverter(sanitizer=_sanitize_page_content),
+        output=False,
+        doc='Content, as HTML')
+
 
 class Lesson(Model):
     """A lesson – collection of Pages on a single topic
     """
     init_arg_names = {'parent', 'slug'}
+    pk_name = 'slug'
     parent_attrs = ('course', )
 
     static_files = Field(
@@ -289,51 +307,11 @@ class Lesson(Model):
                     return material
 
 
-class SolutionShim:
-    """Just enough API to get a Solution URL before the lesson is loaded"""
-    def __init__(self, *, index, parent):
-        self.index = index
-        self.page = parent
-        self.lesson = parent.lesson
-        self.course = parent.course
-        self.root = parent.root
-
-    def get_url(self, *args, **kwargs):
-        return self.root._url_for(self, *args, obj_type=Solution, **kwargs)
-
-
-class PageShim:
-    """Just enough API to get a Page URL before the lesson is loaded"""
-    def __init__(self, *, slug, parent):
-        self.slug = slug
-        self.lesson = parent
-        self.course = parent.course
-        self.root = parent.root
-
-    def get_url(self, *args, **kwargs):
-        return self.root._url_for(self, *args, obj_type=Page, **kwargs)
-
-
-class LessonShim:
-    """Just enough API to get a Lesson URL before the lesson is loaded"""
-    def __init__(self, *, slug, parent):
-        self.slug = slug
-        self.course = parent
-        self.root = parent.root
-
-        class Pages(dict):
-            def __missing__(pages_self, key):
-                return PageShim(parent=self, slug=key)
-        self.pages = Pages()
-
-    def get_url(self, *args, **kwargs):
-        return self.root._url_for(self, *args, obj_type=Lesson, **kwargs)
-
-
 class Material(Model):
     """Teaching material, usually a link to a lesson or external page
     """
     parent_attrs = 'session', 'course'
+    pk_name = 'slug'
 
     slug = Field(str, optional=True)
     title = Field(str, optional=True, doc="Human-readable title")
@@ -361,16 +339,11 @@ class Material(Model):
         if self.lesson_slug is not None:
             return self.course.lessons[self.lesson_slug]
 
-    def get_lesson_shim(self):
-        if self.lesson_slug:
-            return self.course.get_lesson_shim(self.lesson_slug)
-
     def get_url(self, url_type='web', **kwargs):
         # The material has no URL itself; it refers to a lesson, an external
         # resource, or to nothing.
         if self.lesson_slug:
-            shim = self.course.get_lesson_shim(self.lesson_slug)
-            return shim.get_url(url_type, **kwargs)
+            return self.course.get_lesson_url(self.lesson_slug)
         if url_type != 'web':
             raise NoURLType(url_type)
         if self.external_url:
@@ -382,9 +355,13 @@ class SessionPage(Model):
     """Session-specific page, e.g. the front cover
     """
     init_arg_names = {'parent', 'slug'}
+    pk_name = 'slug'
     parent_attrs = 'session', 'course'
 
     slug = Field(str)
+
+    def get_pks(self):
+        return {**self.parent.get_pks(), 'page_slug': self.slug}
 
 
 def set_prev_next(sequence):
@@ -471,6 +448,7 @@ class Session(Model):
     a self-contained section of a longer workshop.
     """
     init_arg_names = {'parent', 'index'}
+    pk_name = 'slug'
     parent_attrs = ('course', )
 
     slug = Field(str)
@@ -558,9 +536,32 @@ class TimeIntervalConverter(BaseConverter):
         }
 
 
+class _LessonsDict(collections.abc.Mapping):
+    """Dict of lessons with lazily loaded entries"""
+    def __init__(self, course):
+        self.course = course
+
+    def __getitem__(self, key):
+        try:
+            return self.course._lessons[key]
+        except KeyError:
+            self.course.load_lessons([key])
+        return self.course._lessons[key]
+
+    def __iter__(self):
+        self.course.freeze()
+        return iter(self.course._lessons)
+
+    def __len__(self):
+        self.course.freeze()
+        return len(self.course._lessons)
+
+
 class Course(Model):
     """Collection of sessions
     """
+    pk_name = 'slug'
+
     def __init__(
         self, *, parent=None, slug, repo_info, base_path, is_meta=False,
     ):
@@ -572,8 +573,15 @@ class Course(Model):
         self.course = self
         self._frozen = False
 
-        self.lessons = {}
-        self._lesson_shims = {}
+        self._lessons = {}
+        self._requested_lessons = set()
+
+    lessons = Field(
+        DictConverter(Lesson), input=False, doc="""Lessons""")
+
+    @lessons.default_factory()
+    def _default_lessons(self):
+        return _LessonsDict(self)
 
     title = Field(str, doc="""Human-readable title""")
     subtitle = Field(
@@ -656,48 +664,66 @@ class Course(Model):
         except KeyError:
             self.base_course = None
 
-    def get_lesson_shim(self, slug):
+    def get_lesson(self, slug):
         try:
-            return self.lessons[slug]
+            return self._lessons[lesson]
         except KeyError:
-            if not self._frozen:
-                try:
-                    return self._lesson_shims[slug]
-                except KeyError:
-                    self._lesson_shims[slug] = LessonShim(
-                        slug=slug, parent=self)
-                return self._lesson_shims[slug]
-            raise
+            self.load_lessons([slug])
+        return self._lessons[lesson]
+
+    def get_lesson_url(self, slug, *, page='index', **kw):
+        if slug in self._lessons:
+            return self._lessons[slug].get_url(**kw)
+        if self._frozen:
+            return KeyError(slug)
+        self._requested_lessons.add(slug)
+        return self.root._url_for(
+            Page, pks={'page_slug': page, 'lesson_slug': slug,
+                       **self.get_pks()}
+        )
 
     def load_lessons(self, slugs):
-        slugs = set(slugs) - set(self.lessons)
+        if self._frozen:
+            raise Exception('course is frozen')
+        slugs = set(slugs) - set(self._lessons)
         rendered = naucse_render.get_lessons(slugs, vars=self.vars)
         new_lessons = load(
             DictConverter(Lesson, key_arg='slug'),
             rendered,
             parent=self,
         )
-        self.lessons.update(new_lessons)
         for slug in slugs:
-            if slug not in new_lessons:
+            try:
+                lesson = new_lessons[slug]
+            except KeyError:
                 raise ValueError(f'{slug} missing from rendered lessons')
-            self._lesson_shims.pop(slug, None)
+            self._lessons[slug] = lesson
+            self._requested_lessons.discard(slug)
 
-    @derives.after_load()
-    def _freeze(self):
+    def load_all_lessons(self):
         if self._frozen:
             return
         for session in self.sessions.values():
             for material in session.materials:
-                material.get_lesson_shim()
+                if material.lesson_slug:
+                    self._requested_lessons.add(material.lesson_slug)
+        self._requested_lessons.difference_update(self._lessons)
         link_depth = 50
-        while self._lesson_shims:
-            self.load_lessons(self._lesson_shims.keys())
+        while self._requested_lessons:
+            self._requested_lessons.difference_update(self._lessons)
+            if not self._requested_lessons:
+                break
+            self.load_lessons(self._requested_lessons)
             link_depth -= 1
             if link_depth < 0:
                 # Avoid infinite loops in lessons
                 raise ValueError(
                     f'Lessons in course {self.slug} are linked too deeply')
+
+    def freeze(self):
+        if self._frozen:
+            return
+        self.load_all_lessons()
         self._frozen = True
 
 
@@ -721,6 +747,8 @@ class AbbreviatedDictConverter(DictConverter):
 class RunYear(Model):
     """Collection of courses given in a specific year
     """
+    pk_name = 'year'
+
     def __init__(self, year, *, parent=None):
         super().__init__(parent=parent)
         self.year = year
@@ -730,12 +758,18 @@ class RunYear(Model):
         # XXX: Sort by ... start date?
         return iter(self.runs.values())
 
+    def get_pks(self):
+        return {**self.parent.get_pks(), 'year': self.year}
+
     runs = Field(AbbreviatedDictConverter(Course))
 
 
 class License(Model):
     """A license for content or code
     """
+    init_arg_names = {'parent', 'slug'}
+    pk_name = 'slug'
+
     url = Field(str)
     title = Field(str)
 
@@ -757,6 +791,8 @@ class Root(Model):
         self.canonical_courses = {}
 
         self._url = self.get_url(external=True)
+
+    pk_name = None
 
     canonical_courses = Field(
         AbbreviatedDictConverter(Course),
@@ -814,13 +850,18 @@ class Root(Model):
         self.runs_edit_info = self.repo_info.get_edit_info('runs')
         self.course_edit_info = self.repo_info.get_edit_info('courses')
 
+    def freeze(self):
+        for course in self.courses.values():
+            course.freeze()
+
     def load_licenses(self, path):
         licenses = {}
         for licence_path in path.iterdir():
             with (licence_path / 'info.yml').open() as f:
                 info = yaml.safe_load(f)
-            license = get_converter(License).load(info, parent=self)
-            licenses[licence_path.name] = license
+            slug = licence_path.name
+            license = get_converter(License).load(info, parent=self, slug=slug)
+            licenses[slug] = license
         return licenses
 
     def runs_from_year(self, year):
@@ -840,7 +881,10 @@ class Root(Model):
         else:
             return self.run_years[int(year)].runs[slug]
 
-    def _url_for(self, obj, url_type='web', *, obj_type=None, external=False):
+    def get_pks(self):
+        return {}
+
+    def _url_for(self, obj_type, pks, url_type='web', *, external=False):
         try:
             urls = self.url_factories[url_type]
         except KeyError:
@@ -851,4 +895,4 @@ class Root(Model):
             url_for = urls[obj_type]
         except KeyError:
             raise NoURL(obj_type)
-        return url_for(obj, _external=external)
+        return url_for(**pks, _external=external)

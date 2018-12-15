@@ -36,37 +36,21 @@ def model():
     model = models.Root(
         url_factories={
             'api': {
-                models.Root: lambda r, **kw: url_for('api', **kw),
-                models.Course: lambda c, **kw: url_for(
-                    'course_api', course_slug=c.slug, **kw),
-                models.RunYear: lambda ry, **kw: url_for(
-                    'run_year_api', year=ry.year, **kw),
+                models.Root: lambda **kw: url_for('api', **kw),
+                models.Course: lambda **kw: url_for('course_api', **kw),
+                models.RunYear: lambda **kw: url_for('run_year_api', **kw),
             },
             'web': {
-                models.Lesson: lambda l, **kw: url_for(
-                    'page', course_slug=l.course.slug, lesson_slug=l.slug,
+                models.Lesson: lambda **kw: url_for('page',
                     page_slug='index', **kw),
-                models.Page: lambda p, **kw: url_for(
-                    'page', course_slug=p.course.slug,
-                    lesson_slug=p.lesson.slug, page_slug=p.slug, **kw),
-                models.Solution: lambda s, **kw: url_for(
-                    'solution', course_slug=s.course.slug,
-                    lesson_slug=s.lesson.slug,
-                    page_slug=s.page.slug, index=s.index, **kw),
-                models.Course: lambda c, **kw: url_for(
-                    'course', course_slug=c.slug, **kw),
-                models.Session: lambda s, **kw: url_for(
-                    'session', course_slug=s.course.slug, session_slug=s.slug,
-                    **kw),
-                models.SessionPage: lambda sp, **kw: url_for(
-                    'session', course_slug=sp.course.slug,
-                    session_slug=sp.session.slug,
-                    page=sp.slug, **kw),
-                models.StaticFile: lambda sf, **kw: url_for(
-                    'page_static', course_slug=sf.course.slug,
-                    lesson_slug=sf.lesson.slug,
-                    filename=sf.filename, **kw),
-                models.Root: lambda r, **kw: url_for('index', **kw)
+                models.Page: lambda **kw: url_for('page', **kw),
+                models.Solution: lambda **kw: url_for('solution', **kw),
+                models.Course: lambda **kw: url_for('course', **kw),
+                models.Session: lambda **kw: url_for('session', **kw),
+                models.SessionPage: lambda page_slug, **kw: url_for(
+                    'session', page=page_slug, **kw),
+                models.StaticFile: lambda **kw: url_for('page_static', **kw),
+                models.Root: lambda **kw: url_for('index', **kw)
             },
         },
         schema_url_factory=lambda m, is_input, **kw: url_for(
@@ -74,7 +58,8 @@ def model():
             is_input=is_input, **kw),
     )
     model.load_local(Path(app.root_path).parent)
-    if not app.config['DEBUG']:
+    if os.environ.get('NAUCSE_FREEZE', not app.config['DEBUG']):
+        model.freeze()
         _cached_model = model
     return model
 
@@ -259,13 +244,13 @@ def page(course_slug, lesson_slug, page_slug='index'):
 
 
 @app.route('/<course:course_slug>/<lesson:lesson_slug>/<page_slug>'
-              + '/solutions/<int:index>/')
-def solution(course_slug, lesson_slug, page_slug, index):
+              + '/solutions/<int:solution_index>/')
+def solution(course_slug, lesson_slug, page_slug, solution_index):
     try:
         course = model.courses[course_slug]
         lesson = course.lessons[lesson_slug]
         page = lesson.pages[page_slug]
-        solution = page.solutions[index]
+        solution = page.solutions[solution_index]
     except KeyError:
         raise abort(404)
 
@@ -280,7 +265,7 @@ def solution(course_slug, lesson_slug, page_slug, index):
         is_canonical_lesson=is_canonical_lesson,
         page_attribution=page.attribution,
         edit_info=page.edit_info,
-        solution_number=index,
+        solution=solution,
     )
 
 

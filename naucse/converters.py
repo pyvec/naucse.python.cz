@@ -411,7 +411,7 @@ class Field:
             return self
         else:
             # Getting an instnce attribute -- raise an error
-            type_name = type(owner).__name__
+            type_name = owner.__name__
             raise AttributeError(
                 f'{self.name!r} of {type_name} object was not yet loaded'
             )
