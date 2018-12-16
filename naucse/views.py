@@ -57,7 +57,7 @@ def _get_model():
             },
         },
         schema_url_factory=lambda m, is_input, **kw: url_for(
-            'schema', model_slug=models.model_slugs[m],
+            'schema', model_slug=m.model_slug,
             is_input=is_input, **kw),
     )
     model.load_local(Path(app.root_path).parent)

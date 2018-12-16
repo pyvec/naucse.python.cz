@@ -39,7 +39,6 @@ class URLConverter(BaseConverter):
 
 
 models = {}
-model_slugs = {}
 
 
 class Model:
@@ -53,6 +52,10 @@ class Model:
     `parent_attrs` is a tuple of attribute names of the object's parents.
     The first for the parent itself; the subsequent ones are set from the
     parent.
+
+    `model_slug` is a Python identifier used in URLs and fragments. It is set
+    automatically by default, but can be overridden or set to None in each
+    class.
     """
     init_arg_names = {'parent'}
     parent_attrs = ()
@@ -67,7 +70,11 @@ class Model:
         self.root = self.parent.root
 
     def __init_subclass__(cls):
-        slug = re.sub('([A-Z])', r'-\1', cls.__name__).lower().lstrip('-')
+        try:
+            slug = cls.model_slug
+        except AttributeError:
+            slug = re.sub('([A-Z])', r'-\1', cls.__name__).lower().lstrip('-')
+        cls.model_slug = slug
         def get_schema_url(instance, *, is_input):
             return instance.root.schema_url_factory(
                 cls, is_input=is_input, _external=True
@@ -82,7 +89,6 @@ class Model:
             )],
         )
         models[slug] = cls
-        model_slugs[cls] = slug
         register_model(cls, converter)
 
     def get_url(self, url_type='web', *, external=False):
@@ -91,7 +97,7 @@ class Model:
             url_type=url_type, external=external)
 
     def get_pks(self):
-        pk_name = f'{model_slugs[type(self)]}_{self.pk_name}'
+        pk_name = f'{self.model_slug}_{self.pk_name}'
         return {**self.parent.get_pks(), pk_name: getattr(self, self.pk_name)}
 
     @property
