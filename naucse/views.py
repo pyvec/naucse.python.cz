@@ -4,9 +4,8 @@ import functools
 import calendar
 import os
 
-from flask import Flask, render_template, jsonify, url_for, Response, abort
+from flask import Flask, render_template, jsonify, url_for, Response, abort, g
 from flask import send_from_directory
-from werkzeug.local import LocalProxy
 import ics
 
 from naucse import models
@@ -20,19 +19,23 @@ app.config['JSON_AS_ASCII'] = False
 _cached_model = None
 
 
-@LocalProxy
-def model():
-    """Return the root of the naucse model
+@app.before_request
+def _get_model():
+    """Set `g.model` to the root of the naucse model
 
     In debug mode (elsa serve), a new model is returned for each request,
     so changes are picked up.
 
     In non-debug mode (elsa freeze), a single model is used (and stored in
-    _cached_model), so that metadata is only read once.
+    app config), so that metadata is only read once.
     """
     global _cached_model
-    if _cached_model:
-        return _cached_model
+    try:
+        g.model = app.config['NAUCSE_MODEL']
+        return
+    except KeyError:
+        pass
+
     model = models.Root(
         url_factories={
             'api': {
@@ -60,24 +63,25 @@ def model():
     model.load_local(Path(app.root_path).parent)
     if os.environ.get('NAUCSE_FREEZE', not app.config['DEBUG']):
         model.freeze()
-        _cached_model = model
-    return model
+        app.config['NAUCSE_MODEL'] = model
 
-register_url_converters(app, model)
-setup_jinja_env(app.jinja_env, model=model)
+    g.model = model
+
+register_url_converters(app)
+setup_jinja_env(app.jinja_env)
 
 
 @app.route('/')
 def index():
-    return render_template("index.html", edit_info=model.edit_info)
+    return render_template("index.html", edit_info=g.model.edit_info)
 
 
 @app.route('/courses/')
 def courses():
     return render_template(
         "course_list.html",
-        featured_courses=model.featured_courses,
-        edit_info=model.course_edit_info,
+        featured_courses=g.model.featured_courses,
+        edit_info=g.model.course_edit_info,
     )
 
 
@@ -91,7 +95,7 @@ def runs(year=None, all=None):
     # List of years to show in the pagination
     # If the current year is not there (no runs that start in the current year
     # yet), add it manually
-    all_years = list(model.run_years.keys())
+    all_years = list(g.model.run_years.keys())
     if today.year not in all_years:
         all_years.append(today.year)
     first_year, last_year = min(all_years), max(all_years)
@@ -105,15 +109,15 @@ def runs(year=None, all=None):
             abort(404)
 
     if all is not None:
-        run_data = model.run_years
+        run_data = g.model.run_years
 
         paginate_prev = {'year': first_year}
         paginate_next = {'all': 'all'}
     elif year is None:
         # Show runs that are either ongoing or ended in the last 3 months
-        runs = (model.runs_from_year(today.year) +
-                model.runs_from_year(today.year - 1) +
-                model.runs_from_year(today.year - 2))
+        runs = (g.model.runs_from_year(today.year) +
+                g.model.runs_from_year(today.year - 1) +
+                g.model.runs_from_year(today.year - 2))
         ongoing = [run for run in runs if run.end_date >= today]
         cutoff = today - datetime.timedelta(days=3*31)
         recent = [run for run in runs if today > run.end_date > cutoff]
@@ -123,8 +127,8 @@ def runs(year=None, all=None):
         paginate_next = {'year': last_year}
     else:
         run_data = {year: [run for run
-                           in model.runs_from_year(year) +
-                              model.runs_from_year(year - 1)
+                           in g.model.runs_from_year(year) +
+                              g.model.runs_from_year(year - 1)
                            if run.end_date.year >= year]}
 
         past_years = [y for y in all_years if y < year]
@@ -148,16 +152,16 @@ def runs(year=None, all=None):
         all_years=all_years,
         paginate_next=paginate_next,
         paginate_prev=paginate_prev,
-        edit_info=model.runs_edit_info,
+        edit_info=g.model.runs_edit_info,
     )
 
 
 @app.route('/<course:course_slug>/')
 def course(course_slug, year=None):
     try:
-        course = model.courses[course_slug]
+        course = g.model.courses[course_slug]
     except KeyError:
-        print(model.courses)
+        print(g.model.courses)
         abort(404)
 
     #recent_runs = get_recent_runs(course)
@@ -175,7 +179,7 @@ def course(course_slug, year=None):
 @app.route('/<course:course_slug>/sessions/<session_slug>/<page>/')
 def session(course_slug, session_slug, page):
     try:
-        course = model.courses[course_slug]
+        course = g.model.courses[course_slug]
         session = course.sessions[session_slug]
     except KeyError:
         abort(404)
@@ -204,7 +208,7 @@ def session(course_slug, session_slug, page):
 def _get_canonicality_info(lesson):
     """Get canonical URL -- i.e., a lesson from 'lessons' with the same slug"""
     # XXX: This could be made much more fancy
-    lessons_course = model.get_course('lessons')
+    lessons_course = g.model.get_course('lessons')
     is_canonical_lesson = (lessons_course == lesson.course)
     if is_canonical_lesson:
         canonical_url = None
@@ -223,7 +227,7 @@ def _get_canonicality_info(lesson):
 @app.route('/<course:course_slug>/<lesson:lesson_slug>/<page_slug>/')
 def page(course_slug, lesson_slug, page_slug='index'):
     try:
-        course = model.courses[course_slug]
+        course = g.model.courses[course_slug]
         lesson = course.lessons[lesson_slug]
         page = lesson.pages[page_slug]
     except KeyError:
@@ -247,7 +251,7 @@ def page(course_slug, lesson_slug, page_slug='index'):
               + '/solutions/<int:solution_index>/')
 def solution(course_slug, lesson_slug, page_slug, solution_index):
     try:
-        course = model.courses[course_slug]
+        course = g.model.courses[course_slug]
         lesson = course.lessons[lesson_slug]
         page = lesson.pages[page_slug]
         solution = page.solutions[solution_index]
@@ -272,7 +276,7 @@ def solution(course_slug, lesson_slug, page_slug, solution_index):
 @app.route('/<course:course_slug>/<lesson:lesson_slug>/static/<path:filename>')
 def page_static(course_slug, lesson_slug, filename):
     try:
-        course = model.courses[course_slug]
+        course = g.model.courses[course_slug]
         lesson = course.lessons[lesson_slug]
         static = lesson.static_files[filename]
     except KeyError:
@@ -302,7 +306,7 @@ def list_months(start_date, end_date):
 @app.route('/<course:course_slug>/calendar/')
 def course_calendar(course_slug):
     try:
-        course = model.courses[course_slug]
+        course = g.model.courses[course_slug]
     except KeyError:
         abort(404)
 
@@ -332,7 +336,7 @@ def generate_calendar_ics(course):
 @app.route('/<course:course_slug>/calendar.ics')
 def course_calendar_ics(course_slug):
     try:
-        course = model.courses[course_slug]
+        course = g.model.courses[course_slug]
     except KeyError:
         abort(404)
 
@@ -374,13 +378,13 @@ def schema(model_slug, is_input):
 
 @app.route('/v0/naucse.json')
 def api():
-    return jsonify(models.dump(model._get_current_object()))
+    return jsonify(models.dump(g.model))
 
 
 @app.route('/v0/years/<int:year>.json')
 def run_year_api(year):
     try:
-        run_year = model.run_years[year]
+        run_year = g.model.run_years[year]
     except KeyError:
         abort(404)
     return jsonify(models.dump(run_year))
@@ -389,7 +393,7 @@ def run_year_api(year):
 @app.route('/v0/<course:course_slug>.json')
 def course_api(course_slug):
     try:
-        course = model.courses[course_slug]
+        course = g.model.courses[course_slug]
     except KeyError:
         abort(404)
     return jsonify(models.dump(course))

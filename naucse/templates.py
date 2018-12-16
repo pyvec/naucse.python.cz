@@ -16,10 +16,9 @@ def template_filter(name=None):
     return _decorator
 
 
-def setup_jinja_env(jinja_env, *, model):
+def setup_jinja_env(jinja_env):
     """Sets up a Jinja environment with functions defined below"""
     jinja_env.filters.update(template_filters)
-    jinja_env.globals['model'] = model
     jinja_env.undefined = StrictUndefined
 
 

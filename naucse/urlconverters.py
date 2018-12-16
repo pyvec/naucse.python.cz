@@ -3,12 +3,6 @@ import re
 from werkzeug.routing import BaseConverter
 
 
-class ModelConverter(BaseConverter):
-    def __init__(self, model, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.model = model
-
-
 _converters = {}
 
 
@@ -19,7 +13,7 @@ def _converter(name):
     return decorator
 
 
-def register_url_converters(app, model):
+def register_url_converters(app):
     for name, cls in _converters.items():
         app.url_map.converters[name] = cls
 
