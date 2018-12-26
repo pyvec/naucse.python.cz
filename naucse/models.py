@@ -367,6 +367,12 @@ class Material(Model):
             return self.external_url
         raise NoURL(self)
 
+    def url_or_none(self, *args, **kwargs):
+        try:
+            return self.get_url(*args, **kwargs)
+        except NoURL:
+            return None
+
 
 class SessionPage(Model):
     """Session-specific page, e.g. the front cover
@@ -481,7 +487,7 @@ class Session(Model):
 
     @materials.after_load()
     def _index_materials(self):
-        set_prev_next(m for m in self.materials if not m.external_url)
+        set_prev_next(m for m in self.materials if m.lesson_slug)
 
     @materials.after_load()
     def pages(self):
