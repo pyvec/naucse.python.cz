@@ -1,5 +1,6 @@
 from pathlib import Path, PosixPath
 from urllib.parse import urlparse
+import types
 
 import jinja2
 
@@ -69,7 +70,7 @@ def render_page(lesson_slug, page_slug, info, vars=None):
         vars = {}
 
     lesson_directory = Path('lessons', lesson_slug)
-    env = environment.overlay(loader=jinja2.FileSystemLoader(str(lesson_directory)))
+    env = environment.overlay(loader=jinja2.FileSystemLoader('lessons'))
 
     page = {
         'title': info['title'],
@@ -98,10 +99,11 @@ def render_page(lesson_slug, page_slug, info, vars=None):
     path = lesson_directory / page_name
 
     if info.get('jinja', True):
-        text = env.get_template(page_name).render(
+        text = env.get_template(f'{lesson_slug}/{page_name}').render(
             lesson_url=lesson_url,
             subpage_url=lambda page: lesson_url(lesson_slug, page=page),
             static=static_url,
+            lesson=types.SimpleNamespace(slug=lesson_slug),
             **{'$solutions': solutions, '$markdown': page_markdown},
             **vars_functions(vars),
         )

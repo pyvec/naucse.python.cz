@@ -1,6 +1,6 @@
 {% set editor_name = 'Notepad++' %}
 {% set editor_url = 'https://notepad-plus-plus.org/' %}
-{% extends '_base.md' %}
+{% extends lesson.slug + '/_base.md' %}
 
 {% block name_gen %} Notepadu++ {% endblock %}
 

@@ -1,4 +1,4 @@
-{% extends '_base.md' %}
+{% extends lesson.slug + '/_base.md' %}
 
 {% block install %}
 

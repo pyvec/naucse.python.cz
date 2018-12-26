@@ -1,4 +1,4 @@
-{% extends '_linux_base.md' %}
+{% extends lesson.slug + '/_linux_base.md' %}
 
 {% block name_gen %} editoru {% endblock %}
 
