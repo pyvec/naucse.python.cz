@@ -28,6 +28,7 @@ def _get_model():
     app config), so that metadata is only read once.
     """
     freezing = os.environ.get('NAUCSE_FREEZE', not app.config['DEBUG'])
+    initialize = True
 
     try:
         g.model = app.config['NAUCSE_MODEL']
@@ -36,7 +37,7 @@ def _get_model():
         app.config['NAUCSE_MODEL'] = g.model
     else:
         if freezing:
-            # Model already initialized
+            # Model already initialized; don't look for changes
             return
 
     # (Re-)initialize model
@@ -48,6 +49,13 @@ def _get_model():
 
 
 def init_model():
+    trusted = os.environ.get('NAUCSE_TRUSTED_REPOS', None)
+    if trusted is None:
+        trusted_repo_patterns = ()
+    else:
+        trusted_repo_patterns = tuple(
+            line for line in trusted.split() if line
+        )
     return models.Root(
         url_factories={
             'api': {
@@ -84,8 +92,10 @@ def init_model():
                 "filename": ".arca/cache/naucse.dbm"
             },
             "ARCA_BASE_DIR": str(Path('.arca').resolve()),
-        })
+        }),
+        trusted_repo_patterns=trusted_repo_patterns,
     )
+    g.model.load_local(Path(app.root_path).parent)
 
 
 register_url_converters(app)

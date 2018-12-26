@@ -2,6 +2,7 @@ import datetime
 from pathlib import Path
 import collections.abc
 import re
+from fnmatch import fnmatch
 
 import dateutil
 import yaml
@@ -843,12 +844,16 @@ class Root(Model):
 
     Contains a collection of courses plus additional metadata.
     """
-    def __init__(self, *, url_factories, schema_url_factory, arca):
+    def __init__(
+        self, *, url_factories, schema_url_factory, arca,
+        trusted_repo_patterns,
+    ):
         self.root = self
         self.url_factories = url_factories
         self.schema_url_factory = schema_url_factory
         super().__init__(parent=self)
         self.arca = arca
+        self.trusted_repo_patterns = trusted_repo_patterns
 
         self.courses = {}
         self.run_years = {}
@@ -887,19 +892,24 @@ class Root(Model):
             if year_path.is_dir():
                 for course_path in year_path.iterdir():
                     slug = f'{year_path.name}/{course_path.name}'
+                    link_path = course_path / 'link.yml'
+                    if link_path.is_file():
+                        with link_path.open() as f:
+                            link_info = yaml.safe_load(f)
+                        if any(
+                            fnmatch('{repo}#{branch}'.format(**link_info), l)
+                            for l in self.trusted_repo_patterns
+                        ):
+                            course = Course.load_remote(
+                                slug, parent=self, link_info=link_info,
+                            )
+                            self.add_course(course)
+                            continue
                     if (course_path / 'info.yml').is_file():
                         course = Course.load_local(
                             slug, parent=self, repo_info=self.repo_info,
                         )
-                    elif (course_path / 'link.yml').is_file():
-                        with (course_path / 'link.yml').open() as f:
-                            link_info = yaml.safe_load(f)
-                        course = Course.load_remote(
-                            slug, parent=self, link_info=link_info,
-                        )
-                    else:
-                        continue
-                    self.add_course(course)
+                        self.add_course(course)
 
         self.add_course(Course.load_local(
             'lessons',
