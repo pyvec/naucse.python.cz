@@ -637,8 +637,13 @@ class Course(Model):
         doc="Individual sessions")
 
     @sessions.after_load()
-    def _index_sessions(self):
+    def _sessions_after_load(self):
         set_prev_next(self.sessions.values())
+
+        for session in self.sessions.values():
+            for material in session.materials:
+                if material.lesson_slug:
+                    self._requested_lessons.add(material.lesson_slug)
 
     source_file = source_file_field
 
@@ -743,10 +748,6 @@ class Course(Model):
     def load_all_lessons(self):
         if self._frozen:
             return
-        for session in self.sessions.values():
-            for material in session.materials:
-                if material.lesson_slug:
-                    self._requested_lessons.add(material.lesson_slug)
         self._requested_lessons.difference_update(self._lessons)
         link_depth = 50
         while self._requested_lessons:
@@ -759,6 +760,13 @@ class Course(Model):
                 # Avoid infinite loops in lessons
                 raise ValueError(
                     f'Lessons in course {self.slug} are linked too deeply')
+
+    def _has_lesson(self, slug):
+        # HACK for getting "canonical lesson" info
+        return (
+            slug in self.course._lessons
+            or slug in self.course._requested_lessons
+        )
 
     def freeze(self):
         if self._frozen:

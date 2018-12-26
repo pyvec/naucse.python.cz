@@ -226,12 +226,11 @@ def _get_canonicality_info(lesson):
     if is_canonical_lesson:
         canonical_url = None
     else:
-        try:
+        if lessons_course._has_lesson(lesson.slug):
             canonical = lessons_course.lessons[lesson.slug]
-        except KeyError:
-            canonical_url = None
-        else:
             canonical_url = canonical.get_url(external=True)
+        else:
+            canonical_url = None
     return is_canonical_lesson, canonical_url
 
 
