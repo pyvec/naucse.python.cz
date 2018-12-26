@@ -9,8 +9,6 @@ from pathlib import Path
 import datetime
 import textwrap
 
-import jsonschema
-
 from .load import read_yaml
 from .markdown import convert_markdown
 
@@ -80,8 +78,6 @@ def get_course(course_slug: str, *, version):
             update_material(material, vars=info.get('vars'))
 
     result = encode_dates(info)
-    schema = read_yaml('schema/fork-schema.yml')
-    jsonschema.validate(result, schema)
     return {
         'api_version': [0, 0],
         'course': result,
@@ -93,7 +89,8 @@ def update_material(material, vars=None):
     if lesson_slug:
         material['lesson_slug'] = lesson_slug
         if material.pop('url', None):
-            raise ValueError(f'Material {material} has URL')
+            pass
+            # XXX: raise ValueError(f'Material {material} has URL')
         material.setdefault('type', 'lesson')
         if 'title' not in material:
             lesson_path = Path('lessons', lesson_slug)

@@ -2,9 +2,11 @@ import datetime
 from pathlib import Path
 import collections.abc
 import re
+import os
 
 import dateutil
 import yaml
+from arca import Task
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
 from naucse.converters import Field, register_model, BaseConverter
@@ -539,8 +541,8 @@ class TimeIntervalConverter(BaseConverter):
         return {
             'type': 'object',
             'properties': {
-                'start': {'type': 'string', 'pattern': '[0-9]{2}:[0-9]{2}'},
-                'end': {'type': 'string', 'pattern': '[0-9]{2}:[0-9]{2}'},
+                'start': {'type': 'string', 'pattern': '[0-9]{1,2}:[0-9]{2}'},
+                'end': {'type': 'string', 'pattern': '[0-9]{1,2}:[0-9]{2}'},
             }
         }
 
@@ -657,6 +659,24 @@ class Course(Model):
         result.repo_info = repo_info
         result.canonical = canonical
         return result
+
+    @classmethod
+    def load_remote(cls, slug, *, parent, link_info):
+        url = link_info['repo']
+        branch = link_info.get('branch', 'master')
+        RE = '^https://github.com/[^/]+/naucse\.python\.cz(\.git)?$'
+        cwd = os.getcwd()
+        try:
+            if re.match(RE, url):
+                # Treat forks of naucse.python.cz as legacy.
+                # Don't run their code; just render the content.
+                fn = parent.arca.static_filename(url, branch, 'README.md')
+                os.chdir(Path(fn).parent)
+                return cls.load_local(
+                    slug, parent=parent, repo_info=parent.repo_info
+                )
+        finally:
+            os.chdir(cwd)
 
     default_time = Field(TimeIntervalConverter(), optional=True)
 
@@ -804,11 +824,12 @@ class Root(Model):
 
     Contains a collection of courses plus additional metadata.
     """
-    def __init__(self, *, url_factories, schema_url_factory):
+    def __init__(self, *, url_factories, schema_url_factory, arca):
         self.root = self
         self.url_factories = url_factories
         self.schema_url_factory = schema_url_factory
         super().__init__(parent=self)
+        self.arca = arca
 
         self.courses = {}
         self.run_years = {}
@@ -845,16 +866,21 @@ class Root(Model):
 
         for year_path in sorted((path / 'runs').iterdir()):
             if year_path.is_dir():
-                year = int(year_path.name)
-                run_year = RunYear(year=year, parent=self)
-                self.run_years[int(year_path.name)] = run_year
                 for course_path in year_path.iterdir():
+                    slug = f'{year_path.name}/{course_path.name}'
                     if (course_path / 'info.yml').is_file():
-                        slug = f'{year_path.name}/{course_path.name}'
                         course = Course.load_local(
                             slug, parent=self, repo_info=self.repo_info,
                         )
-                        self.add_course(course)
+                    elif (course_path / 'link.yml').is_file():
+                        with (course_path / 'link.yml').open() as f:
+                            link_info = yaml.safe_load(f)
+                        course = Course.load_remote(
+                            slug, parent=self, link_info=link_info,
+                        )
+                    else:
+                        continue
+                    self.add_course(course)
 
         self.add_course(Course.load_local(
             'lessons',
@@ -880,6 +906,9 @@ class Root(Model):
         self.courses[course.slug] = course
         if course.start_date:
             for year in range(course.start_date.year, course.end_date.year+1):
+                if year not in self.run_years:
+                    run_year = RunYear(year=year, parent=self)
+                    self.run_years[year] = run_year
                 self.run_years[year][course.slug] = course
             else:
                 self.canonical_courses[course.slug] = course
@@ -906,7 +935,7 @@ class Root(Model):
         if year == 'courses':
             return self.courses[slug]
         else:
-            return self.run_years[int(year)].runs[slug]
+            return self.run_years[int(year)][slug]
 
     def get_pks(self):
         return {}
