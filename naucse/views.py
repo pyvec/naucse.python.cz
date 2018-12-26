@@ -17,9 +17,6 @@ app = Flask('naucse')
 app.config['JSON_AS_ASCII'] = False
 
 
-_cached_model = None
-
-
 @app.before_request
 def _get_model():
     """Set `g.model` to the root of the naucse model
@@ -30,7 +27,6 @@ def _get_model():
     In non-debug mode (elsa freeze), a single model is used (and stored in
     app config), so that metadata is only read once.
     """
-    global _cached_model
     try:
         g.model = app.config['NAUCSE_MODEL']
         return
