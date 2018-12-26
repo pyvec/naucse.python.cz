@@ -27,13 +27,28 @@ def _get_model():
     In non-debug mode (elsa freeze), a single model is used (and stored in
     app config), so that metadata is only read once.
     """
+    freezing = os.environ.get('NAUCSE_FREEZE', not app.config['DEBUG'])
+
     try:
         g.model = app.config['NAUCSE_MODEL']
-        return
     except KeyError:
-        pass
+        g.model = init_model()
+        app.config['NAUCSE_MODEL'] = g.model
+    else:
+        if freezing:
+            # Model already initialized
+            return
 
-    model = models.Root(
+    # (Re-)initialize model
+
+    g.model.load_local(Path(app.root_path).parent)
+
+    if freezing:
+        g.model.freeze()
+
+
+def init_model():
+    return models.Root(
         url_factories={
             'api': {
                 models.Root: lambda **kw: url_for('api', **kw),
@@ -71,12 +86,7 @@ def _get_model():
             "ARCA_BASE_DIR": str(Path('.arca').resolve()),
         })
     )
-    model.load_local(Path(app.root_path).parent)
-    if os.environ.get('NAUCSE_FREEZE', not app.config['DEBUG']):
-        model.freeze()
-        app.config['NAUCSE_MODEL'] = model
 
-    g.model = model
 
 register_url_converters(app)
 setup_jinja_env(app.jinja_env)

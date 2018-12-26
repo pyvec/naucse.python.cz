@@ -853,13 +853,13 @@ class Root(Model):
         self.courses = {}
         self.run_years = {}
         self.licenses = {}
-        self.canonical_courses = {}
+        self.self_study_courses = {}
 
         self._url = self.get_url(external=True)
 
     pk_name = None
 
-    canonical_courses = Field(
+    self_study_courses = Field(
         AbbreviatedDictConverter(Course),
         doc="""Links to "canonical" courses – ones without a time span""")
     run_years = Field(
@@ -919,18 +919,24 @@ class Root(Model):
         self.course_edit_info = self.repo_info.get_edit_info('courses')
 
     def add_course(self, course):
-        if course.slug in self.courses:
-            # XXX: Make it possible to override courses
-            raise KeyError(f'overwriting course {course.slug}')
-        self.courses[course.slug] = course
+        slug = course.slug
+        if slug in self.courses:
+            old = self.courses[slug]
+            if old.start_date:
+                for year in range(old.start_date.year, old.end_date.year+1):
+                    del self.run_years[year][slug]
+            else:
+                del self.self_study_courses[slug]
+
+        self.courses[slug] = course
         if course.start_date:
             for year in range(course.start_date.year, course.end_date.year+1):
                 if year not in self.run_years:
                     run_year = RunYear(year=year, parent=self)
                     self.run_years[year] = run_year
-                self.run_years[year][course.slug] = course
-            else:
-                self.canonical_courses[course.slug] = course
+                self.run_years[year][slug] = course
+        else:
+            self.self_study_courses[slug] = course
 
     def freeze(self):
         for course in self.courses.values():
