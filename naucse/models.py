@@ -57,9 +57,12 @@ class Model:
     `model_slug` is a Python identifier used in URLs and fragments. It is set
     automatically by default, but can be overridden or set to None in each
     class.
+
+    `pk_name` is the name that holds a primary key
     """
     init_arg_names = {'parent'}
     parent_attrs = ()
+    pk_name = None
 
     def __init__(self, **kwargs):
         for a in self.init_arg_names:
@@ -107,6 +110,10 @@ class Model:
     @_url.setter
     def _url(self, value):
         return
+
+    def __repr__(self):
+        pks = ' '.join(f'{k}={v}' for k, v in self.get_pks().items())
+        return f'<{type(self).__qualname__} {pks}>'
 
 
 def _get_schema_url(instance, *, is_input):
