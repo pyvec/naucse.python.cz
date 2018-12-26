@@ -753,7 +753,7 @@ class AbbreviatedDictConverter(DictConverter):
         }
 
 
-class RunYear(Model, collections.abc.Mapping):
+class RunYear(Model, collections.abc.MutableMapping):
     """Collection of courses given in a specific year
     """
     pk_name = 'year'
@@ -769,6 +769,12 @@ class RunYear(Model, collections.abc.Mapping):
 
     def __getitem__(self, slug):
         return self.runs[slug]
+
+    def __setitem__(self, slug, course):
+        self.runs[slug] = course
+
+    def __delitem__(self, slug):
+        del self.runs[slug]
 
     def __iter__(self):
         # XXX: Sort by ... start date?
@@ -835,8 +841,7 @@ class Root(Model):
                     slug, parent=self, repo_info=self.repo_info,
                     canonical=True,
                 )
-                self.courses[slug] = course
-                self.canonical_courses[slug] = course
+                self.add_course(course)
 
         for year_path in sorted((path / 'runs').iterdir()):
             if year_path.is_dir():
@@ -849,15 +854,14 @@ class Root(Model):
                         course = Course.load_local(
                             slug, parent=self, repo_info=self.repo_info,
                         )
-                        run_year.runs[slug] = course
-                        self.courses[slug] = course
+                        self.add_course(course)
 
-        self.courses['lessons'] = Course.load_local(
+        self.add_course(Course.load_local(
             'lessons',
             repo_info=self.repo_info,
             canonical=True,
             parent=self,
-        )
+        ))
 
         with (path / 'courses/info.yml').open() as f:
             course_info = yaml.safe_load(f)
@@ -868,6 +872,17 @@ class Root(Model):
         self.edit_info = self.repo_info.get_edit_info('')
         self.runs_edit_info = self.repo_info.get_edit_info('runs')
         self.course_edit_info = self.repo_info.get_edit_info('courses')
+
+    def add_course(self, course):
+        if course.slug in self.courses:
+            # XXX: Make it possible to override courses
+            raise KeyError(f'overwriting course {course.slug}')
+        self.courses[course.slug] = course
+        if course.start_date:
+            for year in range(course.start_date.year, course.end_date.year+1):
+                self.run_years[year][course.slug] = course
+            else:
+                self.canonical_courses[course.slug] = course
 
     def freeze(self):
         for course in self.courses.values():
