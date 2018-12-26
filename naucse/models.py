@@ -2,7 +2,6 @@ import datetime
 from pathlib import Path
 import collections.abc
 import re
-import os
 
 import dateutil
 import yaml
@@ -649,12 +648,13 @@ class Course(Model):
         return max((d for d in dates if d), default=None)
 
     @classmethod
-    def load_local(cls, slug, *, parent, repo_info, canonical=False):
-        data = naucse_render.get_course(slug, version=1)
+    def load_local(cls, slug, *, parent, repo_info, path='.', canonical=False):
+        path = Path(path).resolve()
+        data = naucse_render.get_course(slug, version=1, path=path)
         is_meta = (slug == 'courses/meta')
         result = load(
             cls, data, slug=slug, repo_info=repo_info, parent=parent,
-            base_path=Path('.').resolve(), is_meta=is_meta,
+            base_path=path, is_meta=is_meta,
         )
         result.repo_info = repo_info
         result.canonical = canonical
@@ -665,18 +665,14 @@ class Course(Model):
         url = link_info['repo']
         branch = link_info.get('branch', 'master')
         RE = '^https://github.com/[^/]+/naucse\.python\.cz(\.git)?$'
-        cwd = os.getcwd()
-        try:
-            if re.match(RE, url):
-                # Treat forks of naucse.python.cz as legacy.
-                # Don't run their code; just render the content.
-                fn = parent.arca.static_filename(url, branch, 'README.md')
-                os.chdir(Path(fn).parent)
-                return cls.load_local(
-                    slug, parent=parent, repo_info=parent.repo_info
-                )
-        finally:
-            os.chdir(cwd)
+        if re.match(RE, url):
+            # Treat forks of naucse.python.cz as legacy.
+            # Don't run their code; just render the content.
+            fn = parent.arca.static_filename(url, branch, 'README.md')
+            return cls.load_local(
+                slug, parent=parent, repo_info=parent.repo_info,
+                path=Path(fn).parent,
+            )
 
     default_time = Field(TimeIntervalConverter(), optional=True)
 
@@ -715,7 +711,9 @@ class Course(Model):
         if self._frozen:
             raise Exception('course is frozen')
         slugs = set(slugs) - set(self._lessons)
-        rendered = naucse_render.get_lessons(slugs, vars=self.vars)
+        rendered = naucse_render.get_lessons(
+            slugs, vars=self.vars, path=self.base_path,
+        )
         new_lessons = load(
             DictConverter(Lesson, key_arg='slug'),
             rendered,

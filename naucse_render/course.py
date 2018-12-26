@@ -30,8 +30,10 @@ def encode_dates(value):
 
 # XXX: Clarify the version
 
-def get_course(course_slug: str, *, version):
+def get_course(course_slug: str, *, path='.', version):
     """Get information about the course as a JSON-compatible dict"""
+
+    base_path = Path(path).resolve()
 
     if version <= 0:
         raise ValueError(f'Version {version} is not supported')
@@ -47,7 +49,7 @@ def get_course(course_slug: str, *, version):
         else:
             raise ValueError(f'Invalid course slug')
 
-        info = read_yaml(*path_parts, source_key='source_file')
+        info = read_yaml(base_path, *path_parts, source_key='source_file')
 
     # XXX: Set by naucse
     info.pop('meta', None)
@@ -55,7 +57,7 @@ def get_course(course_slug: str, *, version):
 
     base_slug = info.get('derives', None)
     if base_slug:
-        base_course = read_yaml('courses', base_slug, 'info.yml')
+        base_course = read_yaml(base_path, 'courses', base_slug, 'info.yml')
     else:
         base_course = {}
 
@@ -75,7 +77,7 @@ def get_course(course_slug: str, *, version):
                 raise ValueError(f'Session {session} not found in base course')
             session.update(merge_dict(base_session, session))
         for material in session['materials']:
-            update_material(material, vars=info.get('vars'))
+            update_material(material, vars=info.get('vars'), path=path)
 
     result = encode_dates(info)
     return {
@@ -84,7 +86,7 @@ def get_course(course_slug: str, *, version):
     }
 
 
-def update_material(material, vars=None):
+def update_material(material, vars=None, *, path):
     lesson_slug = material.pop('lesson', None)
     if lesson_slug:
         material['lesson_slug'] = lesson_slug
@@ -93,8 +95,7 @@ def update_material(material, vars=None):
             # XXX: raise ValueError(f'Material {material} has URL')
         material.setdefault('type', 'lesson')
         if 'title' not in material:
-            lesson_path = Path('lessons', lesson_slug)
-            lesson_info = read_yaml('lessons', lesson_slug, 'info.yml')
+            lesson_info = read_yaml(path, 'lessons', lesson_slug, 'info.yml')
             material['title'] = lesson_info['title']
     else:
         url = material.pop('url', None)

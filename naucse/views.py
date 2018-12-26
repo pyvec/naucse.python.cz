@@ -131,7 +131,7 @@ def runs(year=None, all=None):
     elif year is None:
         # Show runs that are either ongoing or ended in the last 3 months
         runs = {**g.model.run_years[today.year],
-                **g.model.run_years[today.year - 1]}
+                **g.model.run_years.get(today.year - 1, {})}
         ongoing = {slug: run for slug, run in runs.items()
                    if run.end_date >= today}
         cutoff = today - datetime.timedelta(days=3*31)

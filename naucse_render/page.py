@@ -4,7 +4,6 @@ import types
 
 import jinja2
 
-from .load import read_yaml
 from .templates import environment, vars_functions
 from .markdown import convert_markdown
 from .notebook import convert_notebook
@@ -64,13 +63,18 @@ def rewrite_relative_url(url, slug):
     return url
 
 
-def render_page(lesson_slug, page_slug, info, vars=None):
+def render_page(lesson_slug, page_slug, info, path, vars=None):
+    base_path = Path(path).resolve()
+
     print(f'Rendering page {lesson_slug} ({page_slug})')
     if vars is None:
         vars = {}
 
-    lesson_directory = Path('lessons', lesson_slug)
-    env = environment.overlay(loader=jinja2.FileSystemLoader('lessons'))
+    lessons_path = base_path / 'lessons'
+    lesson_path = lessons_path / lesson_slug
+    env = environment.overlay(
+        loader=jinja2.FileSystemLoader(str(lessons_path)),
+    )
 
     page = {
         'title': info['title'],
@@ -96,7 +100,7 @@ def render_page(lesson_slug, page_slug, info, vars=None):
             **kwargs,
         )
 
-    path = lesson_directory / page_name
+    page_path = lesson_path / page_name
 
     if info.get('jinja', True):
         text = env.get_template(f'{lesson_slug}/{page_name}').render(
@@ -108,7 +112,7 @@ def render_page(lesson_slug, page_slug, info, vars=None):
             **vars_functions(vars),
         )
     else:
-        text = path.read_text(encoding='utf-8')
+        text = page_path.read_text(encoding='utf-8')
 
     if info['style'] == 'md':
         text = page_markdown(text)
@@ -119,7 +123,7 @@ def render_page(lesson_slug, page_slug, info, vars=None):
 
     page['content'] = text
     page['solutions'] = [{'content': s} for s in solutions]
-    page['source_file'] = str(path)
+    page['source_file'] = str(page_path.relative_to(base_path))
     if 'css' in info:
         page['css'] = info['css']
     if 'latex' in info:
