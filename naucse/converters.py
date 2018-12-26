@@ -63,6 +63,7 @@ class BaseConverter:
         If it returns None, values cannot dumped using the top-level
         `dump` function.
         May also *be* None (which does the same as returning None).
+        May be set on instances directly.
 
     `slug`: An identifier for schema definitions and for top-level messages.
         Should be None for simple converters, and converters that can be
@@ -443,8 +444,7 @@ class Field:
 class ModelConverter(BaseConverter):
     """Converter for a Model, i.e. class with several Fields"""
     def __init__(
-        self, cls, *, slug=None, load_arg_names=(),
-        get_schema_url=None, extra_fields=(),
+        self, cls, *, slug=None, load_arg_names=(), extra_fields=(),
     ):
         self.cls = cls
         self.name = cls.__name__
@@ -452,8 +452,6 @@ class ModelConverter(BaseConverter):
         self.fields = {}
         self.load_arg_names = load_arg_names
         self.slug = slug
-        if get_schema_url:
-            self.get_schema_url = get_schema_url
 
         for name, field in vars(cls).items():
             if name.startswith('__') or not isinstance(field, Field):

@@ -115,21 +115,19 @@ def runs(year=None, all=None):
         paginate_next = {'all': 'all'}
     elif year is None:
         # Show runs that are either ongoing or ended in the last 3 months
-        runs = (g.model.runs_from_year(today.year) +
-                g.model.runs_from_year(today.year - 1) +
-                g.model.runs_from_year(today.year - 2))
-        ongoing = [run for run in runs if run.end_date >= today]
+        runs = {**g.model.run_years[today.year],
+                **g.model.run_years[today.year - 1]}
+        ongoing = {slug: run for slug, run in runs.items()
+                   if run.end_date >= today}
         cutoff = today - datetime.timedelta(days=3*31)
-        recent = [run for run in runs if today > run.end_date > cutoff]
+        recent = {slug: run for slug, run in runs.items()
+                  if today > run.end_date > cutoff}
         run_data = {"ongoing": ongoing, "recent": recent}
 
         paginate_prev = {'year': None}
         paginate_next = {'year': last_year}
     else:
-        run_data = {year: [run for run
-                           in g.model.runs_from_year(year) +
-                              g.model.runs_from_year(year - 1)
-                           if run.end_date.year >= year]}
+        run_data = {year: g.model.run_years[year]}
 
         past_years = [y for y in all_years if y < year]
         if past_years:
@@ -329,7 +327,6 @@ def course_calendar(course_slug):
 
 
 def generate_calendar_ics(course):
-
     return ics.Calendar(events=events)
 
 

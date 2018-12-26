@@ -54,7 +54,7 @@
     {% if all is none and year is none %}
         <h1>Aktuální kurzy</h1>
         {% if run_data["ongoing"] | length > 0 %}
-            {% for run in run_data["ongoing"] | sort(attribute='start_date', reverse=True) %}
+            {% for run in run_data["ongoing"].values() | sort(attribute='start_date', reverse=True) %}
                 {{ show_run(run) }}
             {% endfor %}
         {% else %}
@@ -67,7 +67,7 @@
             <h1>Proběhlé kurzy</h1>
 
             {{ pagination() }}
-            {% for run in run_data["recent"] | sort(attribute='start_date', reverse=True) %}
+            {% for run in run_data["recent"].values() | sort(attribute='start_date', reverse=True) %}
                 {{ show_run(run) }}
             {% endfor %}
         {% endif %}
@@ -82,7 +82,7 @@
             {% if (run_data | length) > 1 %}
                 <h2>{{ section }}</h2>
             {% endif %}
-            {% for run in run_year | sort(attribute='start_date', reverse=True) %}
+            {% for run in run_year.values() | sort(attribute='start_date', reverse=True) %}
                 {{ show_run(run) }}
             {% else %}
                 <div class="empty-run-list">

@@ -75,21 +75,18 @@ class Model:
         except AttributeError:
             slug = re.sub('([A-Z])', r'-\1', cls.__name__).lower().lstrip('-')
         cls.model_slug = slug
-        def get_schema_url(instance, *, is_input):
-            return instance.root.schema_url_factory(
-                cls, is_input=is_input, _external=True
-            )
-        converter = ModelConverter(
-            cls, load_arg_names=cls.init_arg_names, slug=slug,
-            get_schema_url=get_schema_url,
-            extra_fields=[Field(
-                URLConverter(), name='_url', data_key='url', input=False,
-                optional=True,
-                doc="URL for a user-facing page on naucse",
-            )],
-        )
         models[slug] = cls
-        register_model(cls, converter)
+        if not hasattr(cls, '_naucse__converter'):
+            converter = ModelConverter(
+                cls, load_arg_names=cls.init_arg_names, slug=slug,
+                extra_fields=[Field(
+                    URLConverter(), name='_url', data_key='url', input=False,
+                    optional=True,
+                    doc="URL for a user-facing page on naucse",
+                )],
+            )
+            converter.get_schema_url=_get_schema_url
+            register_model(cls, converter)
 
     def get_url(self, url_type='web', *, external=False):
         return self.root._url_for(
@@ -109,6 +106,12 @@ class Model:
     @_url.setter
     def _url(self, value):
         return
+
+
+def _get_schema_url(instance, *, is_input):
+    return instance.root.schema_url_factory(
+        type(instance), is_input=is_input, _external=True
+    )
 
 
 def _sanitize_page_content(parent, content):
@@ -750,19 +753,29 @@ class AbbreviatedDictConverter(DictConverter):
         }
 
 
-class RunYear(Model):
+class RunYear(Model, collections.abc.Mapping):
     """Collection of courses given in a specific year
     """
     pk_name = 'year'
+
+    _naucse__converter = KeyAttrDictConverter(
+        Course, key_attr='slug')
+    _naucse__converter.get_schema_url=_get_schema_url
 
     def __init__(self, year, *, parent=None):
         super().__init__(parent=parent)
         self.year = year
         self.runs = {}
 
+    def __getitem__(self, slug):
+        return self.runs[slug]
+
     def __iter__(self):
         # XXX: Sort by ... start date?
-        return iter(self.runs.values())
+        return iter(self.runs)
+
+    def __len__(self):
+        return len(self.runs)
 
     def get_pks(self):
         return {**self.parent.get_pks(), 'year': self.year}
@@ -869,13 +882,6 @@ class Root(Model):
             license = get_converter(License).load(info, parent=self, slug=slug)
             licenses[slug] = license
         return licenses
-
-    def runs_from_year(self, year):
-        try:
-            runs = self.run_years[year].runs
-        except KeyError:
-            return []
-        return list(runs.values())
 
     def get_course(self, slug):
         # XXX: RunYears shouldn't be necessary
