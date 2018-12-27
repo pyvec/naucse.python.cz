@@ -2,7 +2,7 @@ import calendar
 import datetime
 import logging
 import os
-from urllib.parse import urljoin
+from urllib.parse import urlparse, urlunparse, urljoin
 from pathlib import Path
 
 import ics
@@ -649,9 +649,9 @@ def course_page(course, lesson, page, solution=None):
         canonical_url=canonical_url,
         title=title,
         content=sanitize_html(content),
-        prev_link=prev_link,
-        session_link=session_link,
-        next_link=next_link,
+        prev_link=make_absolute_link(prev_link),
+        session_link=make_absolute_link(session_link),
+        next_link=make_absolute_link(next_link),
         root_slug=model.meta.slug,
         course=course,
         lesson=lesson,
@@ -660,6 +660,26 @@ def course_page(course, lesson, page, solution=None):
         session=session,
         **kwargs
     )
+
+
+def make_absolute_link(link):
+    if link is None:
+        return None
+
+    value = link['url']
+
+    url = urlparse(value)
+
+    if (url.scheme in ('http', 'https', '')
+        and not url.netloc
+        and url.path
+        and not url.path.startswith('/')
+    ):
+        # Relative URL -- make it absolute
+        link['url'] = urljoin(request.full_path, value)
+
+    return link
+
 
 
 @app.route('/lessons/<lesson:lesson>/', defaults={'page': 'index'})
