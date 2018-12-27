@@ -14,7 +14,6 @@ from git import Repo
 import naucse.utils.views
 from naucse.utils.models import Model, YamlProperty, DataProperty, DirProperty, MultipleModelDirProperty, ForkProperty
 from naucse.utils.models import reify, arca
-from naucse.sanitize import sanitize_html
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.utils.markdown import convert_markdown
 from naucse.utils.notebook import convert_notebook
@@ -624,7 +623,7 @@ class CourseLink(CourseMixin, Model):
                           reference=Path("."), depth=None)
 
         if page_type != "calendar_ics" and result.output["content"] is not None:
-            result.output["content"] = sanitize_html(result.output["content"])
+            result.output["content"] = result.output["content"]
 
         return result.output
 

@@ -329,7 +329,7 @@ def course(course):
             )
         record_content_urls(data_from_fork, f"/{course.slug}/")
         kwargs = {
-            "course_content": content,
+            "course_content": sanitize_html(content),
             "edit_info": edit_info,
         }
     else:
@@ -637,7 +637,6 @@ def course_page(course, lesson, page, solution=None):
             lesson, page, solution, course=course, lesson_url=lesson_url, subpage_url=subpage_url, static_url=static_url
         )
         content = content["content"]
-        content = sanitize_html(content)
         title = '{}: {}'.format(course.title, page.title)
 
         kwargs["edit_info"] = get_edit_info(page.edit_path)
@@ -649,7 +648,7 @@ def course_page(course, lesson, page, solution=None):
         "lesson.html",
         canonical_url=canonical_url,
         title=title,
-        content=content,
+        content=sanitize_html(content),
         prev_link=prev_link,
         session_link=session_link,
         next_link=next_link,
@@ -757,7 +756,7 @@ def session_coverpage(course, session, coverpage):
                 "course": process_course_data(data_from_fork.get("course"), slug=course.slug),
                 "session": process_session_data(data_from_fork.get("session"), slug=session),
                 "edit_info": links.process_edit_info(data_from_fork.get("edit_info")),
-                "content": content
+                "content": sanitize_html(content)
             }
         except POSSIBLE_FORK_EXCEPTIONS as e:
             if raise_errors_from_forks():
@@ -837,7 +836,7 @@ def course_calendar(course):
         kwargs = {
             "course": course,
             "edit_info": edit_info,
-            "content": content
+            "content": sanitize_html(content)
         }
     else:
         if not course.start_date:
