@@ -1,11 +1,12 @@
 from xml.dom import SyntaxErr
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse, urljoin
 import re
 
 import cssutils
 from jinja2 import Markup
 import lxml.html
 import lxml.etree
+import flask
 
 class DisallowedHTML(Exception):
     pass
@@ -81,6 +82,14 @@ def sanitize_link(attr_name, value):
     url = urlparse(value)
     if url.scheme not in ('http', 'https', 'data', ''):
         raise DisallowedURLScheme(url.scheme)
+
+    if (url.scheme in ('http', 'https', '')
+        and not url.netloc
+        and url.path
+        and not url.path.startswith('/')
+    ):
+        # Relative URL -- make it absolute
+        return urljoin(flask.request.full_path, value)
 
     return urlunparse(url)
 
