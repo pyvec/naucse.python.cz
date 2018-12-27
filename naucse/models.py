@@ -689,7 +689,7 @@ class Course(Model):
             # Don't run their code; just render the content.
             fn = parent.arca.static_filename(url, branch, 'README.md')
             return cls.load_local(
-                slug, parent=parent, repo_info=parent.repo_info,
+                slug, parent=parent, repo_info=get_repo_info(url, branch),
                 path=Path(fn).parent,
             )
 
