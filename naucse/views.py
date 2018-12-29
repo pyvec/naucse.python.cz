@@ -126,7 +126,7 @@ def runs(year=None, all=None):
     # List of years to show in the pagination
     # If the current year is not there (no runs that start in the current year
     # yet), add it manually
-    all_years = list(g.model.run_years.keys())
+    all_years = sorted(g.model.explicit_run_years)
     if today.year not in all_years:
         all_years.append(today.year)
     first_year, last_year = min(all_years), max(all_years)
@@ -158,7 +158,16 @@ def runs(year=None, all=None):
         paginate_prev = {'year': None}
         paginate_next = {'year': last_year}
     else:
-        run_data = {year: g.model.run_years[year]}
+        # XXX: This can be just {year: {g.model.run_years[year]}}
+        # to show all courses in a given year
+        run_data = {
+            year: {
+                slug: course
+                for slug, course in g.model.run_years[year].items()
+                if course.start_date
+                and course.start_date.year == year
+            }
+        }
 
         past_years = [y for y in all_years if y < year]
         if past_years:

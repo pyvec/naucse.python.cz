@@ -860,6 +860,10 @@ class Root(Model):
         self.licenses = {}
         self.self_study_courses = {}
 
+        # For pagination of runs
+        # XXX: This shouldn't be necessary
+        self.explicit_run_years = set()
+
         self._url = self.get_url(external=True)
 
     pk_name = None
@@ -890,6 +894,7 @@ class Root(Model):
 
         for year_path in sorted((path / 'runs').iterdir()):
             if year_path.is_dir():
+                self.explicit_run_years.add(int(year_path.name))
                 for course_path in year_path.iterdir():
                     slug = f'{year_path.name}/{course_path.name}'
                     link_path = course_path / 'link.yml'
