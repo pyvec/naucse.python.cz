@@ -114,7 +114,7 @@ Když to zkusíš, zjistíš, že trochu nesedí
 
 {% filter solution %}
 Každý řádek končí znakem nového řádku, `'\n'`,
-který možná znáš ze [sekce o řetězcích](../str/).
+který možná znáš ze [sekce o řetězcích](../../beginners/str/).
 Při procházení souboru Python tento znak nechává na konci řetězce `radek` ¹.
 Funkce `print` pak přidá další nový řádek, protože ta na konci
 výpisu vždycky odřádkovává – pokud nedostane argument `end=''`.
