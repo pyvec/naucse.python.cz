@@ -101,7 +101,8 @@ def update_material(material, vars=None, *, path):
         url = material.pop('url', None)
         if url:
             material['external_url'] = url
-            material.setdefault('type', 'link')
+            # XXX: Probably a bug; this should be just 'link'
+            material.setdefault('type', 'none-link')
         else:
             material.setdefault('type', 'special')
 
