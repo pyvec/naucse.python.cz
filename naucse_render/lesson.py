@@ -17,9 +17,17 @@ from .page import render_page
 
 def get_lessons(lesson_slugs, vars=None, path='.'):
     path = Path(path).resolve()
+    data = {}
+    for slug in lesson_slugs:
+        try:
+            lesson_data = get_lesson(slug, vars, path)
+        except FileNotFoundError:
+            pass
+        else:
+            data[slug] = lesson_data
     return {
         'api_version': [0, 0],
-        'data': {slug: get_lesson(slug, vars, path) for slug in lesson_slugs},
+        'data': data,
     }
 
 
@@ -31,7 +39,7 @@ def get_lesson(lesson_slug, vars, base_path):
         'title': lesson_info['title'],
         'static_files': dict(get_static_files(base_path, lesson_path)),
         'pages': {},
-        'source_file': lesson_path / 'info.yml',
+        'source_file': str(lesson_path / 'info.yml'),
     }
 
     lesson_vars = lesson_info.pop('vars', {})
@@ -45,7 +53,6 @@ def get_lesson(lesson_slug, vars, base_path):
             lesson_slug, slug, info, vars={**vars, **lesson_vars},
             path=base_path,
         )
-
     return lesson
 
 

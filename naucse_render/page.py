@@ -1,6 +1,7 @@
 from pathlib import Path, PosixPath
 from urllib.parse import urlparse
 import types
+import sys
 
 import jinja2
 
@@ -66,7 +67,7 @@ def rewrite_relative_url(url, slug):
 def render_page(lesson_slug, page_slug, info, path, vars=None):
     base_path = Path(path).resolve()
 
-    print(f'Rendering page {lesson_slug} ({page_slug})')
+    print(f'Rendering page {lesson_slug} ({page_slug})', file=sys.stderr)
     if vars is None:
         vars = {}
 
@@ -107,9 +108,11 @@ def render_page(lesson_slug, page_slug, info, path, vars=None):
             lesson_url=lesson_url,
             subpage_url=lambda page: lesson_url(lesson_slug, page=page),
             static=static_url,
-            lesson=types.SimpleNamespace(slug=lesson_slug),
             **{'$solutions': solutions, '$markdown': page_markdown},
             **vars_functions(vars),
+
+            # XXX: 'lesson' for templates is deprecated
+            lesson=types.SimpleNamespace(slug=lesson_slug),
         )
     else:
         text = page_path.read_text(encoding='utf-8')

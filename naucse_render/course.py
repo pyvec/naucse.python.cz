@@ -77,7 +77,7 @@ def get_course(course_slug: str, *, path='.', version):
                 raise ValueError(f'Session {session} not found in base course')
             session.update(merge_dict(base_session, session))
         for material in session['materials']:
-            update_material(material, vars=info.get('vars'), path=path)
+            update_material(material, vars=info.get('vars'), path=base_path)
 
     result = encode_dates(info)
     return {

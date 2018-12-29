@@ -3,6 +3,7 @@ from pathlib import Path
 import collections.abc
 import re
 from fnmatch import fnmatch
+import shutil
 
 import dateutil
 import yaml
@@ -14,6 +15,7 @@ from naucse.converters import ListConverter, DictConverter
 from naucse.converters import KeyAttrDictConverter, ModelConverter
 from naucse.converters import dump, load, get_converter, get_schema
 from naucse import sanitize
+from naucse import arca_renderer
 
 import naucse_render
 
@@ -667,9 +669,12 @@ class Course(Model):
         return max((d for d in dates if d), default=None)
 
     @classmethod
-    def load_local(cls, slug, *, parent, repo_info, path='.', canonical=False):
+    def load_local(
+        cls, slug, *, parent, repo_info, path='.', canonical=False,
+        renderer=naucse_render
+    ):
         path = Path(path).resolve()
-        data = naucse_render.get_course(slug, version=1, path=path)
+        data = renderer.get_course(slug, version=1, path=path)
         is_meta = (slug == 'courses/meta')
         result = load(
             cls, data, slug=slug, repo_info=repo_info, parent=parent,
@@ -677,21 +682,19 @@ class Course(Model):
         )
         result.repo_info = repo_info
         result.canonical = canonical
+        result.renderer = renderer
         return result
 
     @classmethod
     def load_remote(cls, slug, *, parent, link_info):
         url = link_info['repo']
         branch = link_info.get('branch', 'master')
-        RE = '^https://github.com/[^/]+/naucse\.python\.cz(\.git)?$'
-        if re.match(RE, url):
-            # Treat forks of naucse.python.cz as legacy.
-            # Don't run their code; just render the content.
-            fn = parent.arca.static_filename(url, branch, 'README.md')
-            return cls.load_local(
-                slug, parent=parent, repo_info=get_repo_info(url, branch),
-                path=Path(fn).parent,
-            )
+        renderer = arca_renderer.Renderer(parent.arca, url, branch)
+        return cls.load_local(
+            slug, parent=parent, repo_info=get_repo_info(url, branch),
+            path=renderer.worktree_path,
+            renderer=renderer,
+        )
 
     default_time = Field(TimeIntervalConverter(), optional=True)
 
@@ -730,7 +733,7 @@ class Course(Model):
         if self._frozen:
             raise Exception('course is frozen')
         slugs = set(slugs) - set(self._lessons)
-        rendered = naucse_render.get_lessons(
+        rendered = self.course.renderer.get_lessons(
             slugs, vars=self.vars, path=self.base_path,
         )
         new_lessons = load(

@@ -1,12 +1,13 @@
 from pathlib import Path
 import functools
+import sys
 
 import yaml
 
 
 @functools.lru_cache()
 def _read_yaml(path):
-    print('Loading', path)
+    print('Loading', path, file=sys.stderr)
     with path.open(encoding='utf-8') as f:
         return yaml.safe_load(f)
 
