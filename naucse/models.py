@@ -801,8 +801,7 @@ class RunYear(Model, collections.abc.MutableMapping):
     """
     pk_name = 'year'
 
-    _naucse__converter = KeyAttrDictConverter(
-        Course, key_attr='slug')
+    _naucse__converter = AbbreviatedDictConverter(Course)
     _naucse__converter.get_schema_url=_get_schema_url
 
     def __init__(self, year, *, parent=None):
@@ -828,8 +827,6 @@ class RunYear(Model, collections.abc.MutableMapping):
 
     def get_pks(self):
         return {**self.parent.get_pks(), 'year': self.year}
-
-    runs = Field(AbbreviatedDictConverter(Course))
 
 
 class License(Model):
