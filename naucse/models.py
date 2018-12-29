@@ -18,6 +18,7 @@ from naucse.sanitize import sanitize_html
 from naucse.templates import setup_jinja_env, vars_functions
 from naucse.utils.markdown import convert_markdown
 from naucse.utils.notebook import convert_notebook
+from naucse.sanitize import sanitize_css
 from pathlib import Path
 
 
@@ -91,7 +92,7 @@ class Page(Model):
         if css is None:
             return None
 
-        return self.limit_css_to_lesson_content(css)
+        return sanitize_css(css)
 
     @reify
     def edit_path(self):
@@ -195,23 +196,6 @@ class Page(Model):
             return content
         else:
             return solutions[solution]
-
-    @staticmethod
-    def limit_css_to_lesson_content(css):
-        """Return ``css`` limited just to the ``.lesson-content`` element.
-
-        This doesn't protect against malicious input.
-        """
-        parser = cssutils.CSSParser(raiseExceptions=True)
-        parsed = parser.parseString(css)
-
-        for rule in parsed.cssRules:
-            for selector in rule.selectorList:
-                # the space is important - there's a difference between for example
-                # ``.lesson-content:hover`` and ``.lesson-content :hover``
-                selector.selectorText = ".lesson-content " + selector.selectorText
-
-        return parsed.cssText.decode("utf-8")
 
 
 class Collection(Model):

@@ -86,6 +86,11 @@ def sanitize_link(attr_name, value):
 
 
 def sanitize_css(data):
+    """Return ``css`` limited just to the ``.lesson-content`` element.
+
+    This doesn't protect against malicious input.
+    """
+
     parser = cssutils.CSSParser(raiseExceptions=True)
     try:
         parsed_css = parser.parseString(data)
@@ -97,13 +102,11 @@ def sanitize_css(data):
 
     for rule in parsed_css.cssRules:
         for selector in rule.selectorList:
-            if not selector.selectorText.startswith('.dataframe '):
-                raise DisallowedStyle(
-                    "Style element or inline css may only modify .dataframe "
-                    f"elements, got {data!r}."
-                )
+            # the space is important - there's a difference between for example
+            # ``.lesson-content:hover`` and ``.lesson-content :hover``
+            selector.selectorText = ".lesson-content " + selector.selectorText
 
-    return data
+    return parsed_css.cssText.decode("utf-8")
 
 
 def sanitize_element(element):
@@ -113,7 +116,7 @@ def sanitize_element(element):
         if element.tag == 'style':
             if len(element):
                 raise DisallowedElement(list(element)[0])
-            sanitize_css(element.text)
+            element.text = sanitize_css(element.text)
         elif element.tag not in ALLOWED_ELEMENTS:
             raise DisallowedElement(element.tag)
     elif element.tag is lxml.etree.Comment:
@@ -135,6 +138,13 @@ def sanitize_element(element):
 
         if attr_name in {'href', 'src'}:
             element.attrib[attr_name] = sanitize_link(attr_name, value)
+
+        if attr_name == 'scoped':
+            # Non-standard, obsolete attribute; see:
+            # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style#Deprecated_attributes
+            # We scope CSS in <style> tags in the validator, so the "scoped"
+            # attribute would break browsers that still honor it.
+            del element.attrib[attr_name]
 
     # Recurse
     for child in element:

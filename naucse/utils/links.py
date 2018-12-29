@@ -3,7 +3,7 @@
 from xml.dom import SyntaxErr
 
 from naucse.models import Page
-from naucse.sanitize import DisallowedStyle
+from naucse.sanitize import DisallowedStyle, sanitize_css
 
 
 class InvalidInfo(Exception):
@@ -68,7 +68,7 @@ def process_page_data(page):
 
     if page["css"]:
         try:
-            Page.limit_css_to_lesson_content(page["css"])
+            page["css"] = sanitize_css(page["css"])
         except SyntaxErr:
             raise DisallowedStyle(DisallowedStyle.COULD_NOT_PARSE)
 
