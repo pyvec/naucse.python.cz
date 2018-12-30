@@ -32,9 +32,10 @@ class Renderer:
             # from PyPI (when it's there).
 
             hack_path = self.worktree_path / 'naucse_render'
-            if hack_path.exists():
-                shutil.rmtree(hack_path)
-            shutil.copytree(Path(naucse_render.__file__).parent, hack_path)
+            try:
+                shutil.copytree(Path(naucse_render.__file__).parent, hack_path)
+            except FileExistsError:
+                pass
 
     def get_course(self, slug, *, version, path):
         task = Task(

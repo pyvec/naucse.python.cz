@@ -70,8 +70,8 @@ def init_model():
                 models.Solution: lambda **kw: url_for('solution', **kw),
                 models.Course: lambda **kw: url_for('course', **kw),
                 models.Session: lambda **kw: url_for('session', **kw),
-                models.SessionPage: lambda page_slug, **kw: url_for(
-                    'session', page=page_slug, **kw),
+                models.SessionPage: lambda **kw: url_for(
+                    'session', **kw),
                 models.StaticFile: lambda **kw: url_for('page_static', **kw),
                 models.Root: lambda **kw: url_for('index', **kw)
             },
@@ -213,21 +213,20 @@ def course(course_slug, year=None):
 
 
 @app.route('/<course:course_slug>/sessions/<session_slug>/',
-              defaults={'page': 'front'})
-@app.route('/<course:course_slug>/sessions/<session_slug>/<page>/')
-def session(course_slug, session_slug, page):
+              defaults={'page_slug': 'front'})
+@app.route('/<course:course_slug>/sessions/<session_slug>/<page_slug>/')
+def session(course_slug, session_slug, page_slug):
     try:
         course = g.model.courses[course_slug]
         session = course.sessions[session_slug]
+        page = session.pages[page_slug]
     except KeyError:
         abort(404)
-
-    #recent_runs = get_recent_runs(course)
 
     template = {
         'front': 'coverpage.html',
         'back': 'backpage.html',
-    }[page]
+    }[page.slug]
 
     materials_by_type = {}
     for material in session.materials:
@@ -239,7 +238,7 @@ def session(course_slug, session_slug, page):
         course=session.course,
         edit_info=session.edit_info,
         materials_by_type=materials_by_type,
-        content=None, # XXX
+        page=page,
     )
 
 

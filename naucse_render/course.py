@@ -40,16 +40,20 @@ def get_course(course_slug: str, *, path='.', version):
 
     if course_slug == 'lessons':
         info = get_canonical_lessons_info()
+        path_parts = None
     else:
         parts = course_slug.split('/')
         if len(parts) == 1 or (len(parts) == 2 and parts[0] == 'courses'):
-            path_parts = 'courses', parts[-1], 'info.yml'
+            path_parts = 'courses', parts[-1]
         elif len(parts) == 2:
-            path_parts = 'runs', *parts, 'info.yml'
+            path_parts = 'runs', *parts
         else:
             raise ValueError(f'Invalid course slug')
 
-        info = read_yaml(base_path, *path_parts, source_key='source_file')
+        info = read_yaml(
+            base_path, *path_parts, 'info.yml',
+            source_key='source_file',
+        )
 
     # XXX: Set by naucse
     info.pop('meta', None)
@@ -78,6 +82,18 @@ def get_course(course_slug: str, *, path='.', version):
             session.update(merge_dict(base_session, session))
         for material in session['materials']:
             update_material(material, vars=info.get('vars'), path=base_path)
+
+        if path_parts:
+            # Get coverpage content
+            page_path = base_path.joinpath(
+                *path_parts, 'sessions', session['slug']
+            )
+            if page_path.exists():
+                session['pages'] = {}
+                for page_md_path in page_path.glob('*.md'):
+                    session['pages'][page_md_path.stem] = {
+                        'content': convert_markdown(page_md_path.read_text()),
+                    }
 
     result = encode_dates(info)
     return {

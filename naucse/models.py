@@ -384,7 +384,10 @@ class SessionPage(Model):
     pk_name = 'slug'
     parent_attrs = 'session', 'course'
 
-    slug = Field(str)
+    content = Field(
+        HTMLFragmentConverter(),
+        factory=str,
+        doc='Content, as HTML')
 
     def get_pks(self):
         return {**self.parent.get_pks(), 'page_slug': self.slug}
@@ -492,13 +495,20 @@ class Session(Model):
     def _index_materials(self):
         set_prev_next(m for m in self.materials if m.lesson_slug)
 
-    @materials.after_load()
-    def pages(self):
-        # XXX: These should be in the API, eventually
-        self.pages = {
-            'front': SessionPage(slug='front', parent=self),
-            'back': SessionPage(slug='back', parent=self),
-        }
+    pages = Field(
+        DictConverter(SessionPage, key_arg='slug'),
+        optional=True,
+        doc="The session's cover pages")
+    @pages.after_load()
+    def _set_pages(self):
+        if not self.pages:
+            self.pages = {}
+        for slug in 'front', 'back':
+            if slug not in self.pages:
+                page = get_converter(SessionPage).load(
+                    {}, slug=slug, parent=self,
+                )
+                self.pages[slug] = page
 
     start_time = Field(
         SessionTimeConverter(), optional=True,
