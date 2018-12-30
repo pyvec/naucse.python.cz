@@ -1,6 +1,6 @@
 import pytest
 
-from naucse.models import merge_dict
+from naucse_render.course import merge_dict
 
 
 def test_scalars():

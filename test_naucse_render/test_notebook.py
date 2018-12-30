@@ -1,20 +1,20 @@
-import os.path
 from textwrap import dedent
+from pathlib import Path
 
 import click
 import pygments
 
 import pytest
 
-from naucse.utils.notebook import convert_notebook
+from naucse_render.notebook import convert_notebook
 
 
-FIXTURES = 'test_naucse/fixtures'
+FIXTURES = Path(__file__).parent / 'fixtures'
 
 
 @pytest.fixture(scope='module')
 def _notebook():
-    path = os.path.join(FIXTURES, 'notebook.ipynb')
+    path = FIXTURES / 'notebook.ipynb'
     with open(path) as f:
         content = f.read()
     return convert_notebook(content)

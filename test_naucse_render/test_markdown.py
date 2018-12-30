@@ -3,7 +3,7 @@ import html
 
 import pytest
 
-from naucse.utils.markdown import convert_markdown, style_space_after_prompt
+from naucse_render.markdown import convert_markdown, style_space_after_prompt
 
 
 def test_markdown_admonition():
