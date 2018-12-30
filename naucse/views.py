@@ -376,18 +376,16 @@ def course_calendar_ics(course_slug):
 
     events = []
     for session in course.sessions.values():
-        if getattr(session, 'start_time', None):  # XXX
-            start_time = session.start_time
-            end_time = session.end_time
-        else:
+        time = getattr(session, 'time', None)
+        if time is None:
             # Sessions without times don't show up in the calendar
             continue
 
         created = os.environ.get('NAUCSE_CALENDAR_DTSTAMP', None)
         cal_event = ics.Event(
             name=session.title,
-            begin=start_time,
-            end=end_time,
+            begin=time['start'],
+            end=time['end'],
             uid=session.get_url(external=True),
             created=created,
         )

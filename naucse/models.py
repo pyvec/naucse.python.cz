@@ -414,9 +414,12 @@ class SessionTimeConverter(BaseConverter):
     """
     def load(self, data):
         try:
-            return datetime.datetime.strptime('%Y-%m-%d %H:%M:%S', value)
+            return datetime.datetime.strptime('%Y-%m-%d %H:%M:%S', data)
         except ValueError:
-            time = datetime.datetime.strptime('%H:%M:%s', value).time()
+            if data.count(':') == 2:
+                time = datetime.datetime.strptime(data, '%H:%M:%s').time()
+            else:
+                time = datetime.datetime.strptime(data, '%H:%M').time()
             return time.replace(tzinfo=dateutil.tz.gettz(_TIMEZONE))
 
     def dump(self, value):
@@ -425,33 +428,16 @@ class SessionTimeConverter(BaseConverter):
     @classmethod
     def get_schema(cls, context):
         _date_re = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
-        _time_re = '[0-9]{2}:[0-9]{2}:[0-9]{2}'
         if context.is_input:
+            _time_re = '[0-9]{1,2}:[0-9]{2}(:[0-9]{2})?'
             pattern = f'^({_date_re} )?{_time_re}$'
         else:
+            _time_re = '[0-9]{2}:[0-9]{2}:[0-9]{2}'
             pattern = f'^{_date_re} {_time_re}$'
         return {
             'type': 'string',
             'pattern': pattern,
         }
-
-
-def _combine_session_time(session, kind):
-    """Return course start/end time combined from per-session and course data
-
-    `kind` should be "start" or "end"
-    """
-    time = getattr(session, f'{kind}_time')
-    course = session.course
-    default_time = course.default_time
-    if time is None:
-        if session.date and course.default_time:
-            return datetime.datetime.combine(session.date, default_time[kind])
-    elif isinstance(time, datetime.time):
-        if session.date:
-            return datetime.datetime.combine(session.date, time)
-    else:
-        return time
 
 
 class DateConverter(BaseConverter):
@@ -510,19 +496,37 @@ class Session(Model):
                 )
                 self.pages[slug] = page
 
-    start_time = Field(
-        SessionTimeConverter(), optional=True,
-        doc="Time (or date) when this session starts")
-    @start_time.after_load()
-    def _combine(self):
-        self.start_time = _combine_session_time(self, 'start')
+    time = Field(
+        DictConverter(SessionTimeConverter(), required=['start', 'end'],),
+        optional=True,
+        doc="Time when this session takes place.")
 
-    end_time = Field(
-        SessionTimeConverter(), optional=True,
-        doc="Time (or date) when this session ends")
-    @end_time.after_load()
-    def _combine(self):
-        self.end_time = _combine_session_time(self, 'end')
+    @time.after_load()
+    def _fix_time(self):
+        if self.time is None:
+            self.time = {}
+        result = {}
+        for kind in 'start', 'end':
+            time = self.time.get(kind, None)
+            if isinstance(time, datetime.datetime):
+                result[kind] = time
+            elif isinstance(time, datetime.time):
+                if self.date:
+                    result[kind] = datetime.datetime.combine(self.date, time)
+                else:
+                    self.time = None
+                    return
+            elif time is None:
+                if self.date and self.course.default_time:
+                    result[kind] = datetime.datetime.combine(
+                        self.date, self.course.default_time[kind],
+                    )
+                else:
+                    self.time = None
+                    return
+            else:
+                raise TypeError(time)
+        self.time = result
 
 
 class AnyDictConverter(BaseConverter):
