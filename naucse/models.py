@@ -725,6 +725,21 @@ class Course(Model):
         except KeyError:
             self.base_course = None
 
+    def get_recent_derived_runs(self):
+        result = []
+        if self.canonical:
+            today = datetime.date.today()
+            cutoff = today - datetime.timedelta(days=2*30)
+            for course in self.root.courses.values():
+                if (
+                    course.start_date
+                    and course.base_course == self
+                    and course.end_date > cutoff
+                ):
+                    result.append(course)
+        result.sort(key=lambda course: course.start_date, reverse=True)
+        return result
+
     def get_lesson(self, slug):
         try:
             return self._lessons[lesson]

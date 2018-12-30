@@ -144,8 +144,7 @@ def runs(year=None, all=None):
         courses = g.model.courses
         for slug, course in g.model.courses.items():
             if course.start_date:
-                year = course.start_date.year
-                run_data.setdefault(year, {})[slug] = course
+                run_data.setdefault(course.start_date.year, {})[slug] = course
 
         paginate_prev = {'year': first_year}
         paginate_next = {'all': 'all'}
@@ -198,12 +197,12 @@ def course(course_slug, year=None):
         print(g.model.courses)
         abort(404)
 
-    #recent_runs = get_recent_runs(course)
+    recent_runs = course.get_recent_derived_runs()
 
     return render_template(
         "course.html",
         course=course,
-        recent_runs=[], # XXX
+        recent_runs=recent_runs,
         edit_info=course.edit_info,
     )
 
