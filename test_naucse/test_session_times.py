@@ -2,7 +2,7 @@ import datetime
 from pathlib import Path
 
 import pytest
-import dateutil
+import dateutil.tz
 
 from naucse import models
 
