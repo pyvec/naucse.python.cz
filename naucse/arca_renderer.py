@@ -48,10 +48,13 @@ class Renderer:
         return info
 
     def get_lessons(self, lesson_slugs, *, vars, path):
+        # Default timeout is 5s; multiply this by the no. of requested lessons
+        timeout = 5 * len(lesson_slugs)
         task = Task(
             entry_point="naucse_render:get_lessons",
             args=[sorted(lesson_slugs)],
             kwargs={'vars': vars, 'path': '.'},
+            timeout=timeout,
         )
         info = self.arca.run(self.url, self.branch, task).output
 
