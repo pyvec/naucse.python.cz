@@ -140,7 +140,12 @@ def runs(year=None, all=None):
             abort(404)
 
     if all is not None:
-        run_data = g.model.run_years
+        run_data = {}
+        courses = g.model.courses
+        for slug, course in g.model.courses.items():
+            if course.start_date:
+                year = course.start_date.year
+                run_data.setdefault(year, {})[slug] = course
 
         paginate_prev = {'year': first_year}
         paginate_next = {'all': 'all'}
@@ -158,16 +163,7 @@ def runs(year=None, all=None):
         paginate_prev = {'year': None}
         paginate_next = {'year': last_year}
     else:
-        # XXX: This can be just {year: {g.model.run_years[year]}}
-        # to show all courses in a given year
-        run_data = {
-            year: {
-                slug: course
-                for slug, course in g.model.run_years[year].items()
-                if course.start_date
-                and course.start_date.year == year
-            }
-        }
+        run_data = {year: g.model.run_years[year]}
 
         past_years = [y for y in all_years if y < year]
         if past_years:
