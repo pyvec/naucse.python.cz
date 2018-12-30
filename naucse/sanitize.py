@@ -108,26 +108,33 @@ def convert_link(attr_name, value, *, naucse_urls=None):
     raise DisallowedLink(value)
 
 
-def sanitize_stylesheet(css):
+def sanitize_css(css):
     """Return ``css`` limited just to the ``.lesson-content`` element.
+
     This doesn't protect against malicious input.
     """
-    parser = cssutils.CSSParser(fetcher=lambda url: None, validate=True)
-    parser = cssutils.CSSParser(raiseExceptions=True)
-    parsed = parser.parseString(css)
+    parser = cssutils.CSSParser(
+        fetcher=lambda url: None, validate=True, raiseExceptions=True,
+    )
+    parser = cssutils.CSSParser()
+    parsed_css = parser.parseString(css)
 
-    for rule in parsed.cssRules:
+    for rule in parsed_css.cssRules:
         for selector in rule.selectorList:
             # the space is important - there's a difference between for example
             # ``.lesson-content:hover`` and ``.lesson-content :hover``
             selector.selectorText = ".lesson-content " + selector.selectorText
 
-    return parsed.cssText.decode("utf-8")
+    return parsed_css.cssText.decode("utf-8")
 
 
 def sanitize_element(element, *, naucse_urls=None):
     if isinstance(element.tag, str):
-        if element.tag not in ALLOWED_ELEMENTS:
+        if element.tag == 'style':
+            if len(element):
+                raise DisallowedElement(list(element)[0])
+            element.text = sanitize_css(element.text)
+        elif element.tag not in ALLOWED_ELEMENTS:
             raise DisallowedElement(element.tag)
     elif element.tag is lxml.etree.Comment:
         pass
@@ -149,7 +156,14 @@ def sanitize_element(element, *, naucse_urls=None):
         if attr_name in {'href', 'src'}:
             element.attrib[attr_name] = convert_link(
                 attr_name, value, naucse_urls=naucse_urls)
+        elif attr_name == 'scoped':
+            # Non-standard, obsolete attribute; see:
+            # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style#Deprecated_attributes
+            # We scope CSS in <style> tags in the validator, so the "scoped"
+            # attribute would break browsers that still honor it.
+            del element.attrib[attr_name]
 
+    # Recurse
     for child in element:
         sanitize_element(child, naucse_urls=naucse_urls)
 

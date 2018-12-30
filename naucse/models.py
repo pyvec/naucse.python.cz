@@ -233,7 +233,7 @@ class StaticFile(Model):
 class PageCSSConverter(BaseConverter):
     """Converter for CSS for a Page"""
     def load(self, value):
-        return sanitize.sanitize_stylesheet(value)
+        return sanitize.sanitize_css(value)
 
     def dump(self, value):
         return value
