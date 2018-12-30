@@ -21,11 +21,13 @@ app.config['JSON_AS_ASCII'] = False
 def _get_model():
     """Set `g.model` to the root of the naucse model
 
-    In debug mode (elsa serve), a new model is returned for each request,
+    A single model is used (and stored in app config).
+
+    In debug mode (elsa serve), the model is re-initialized for each request,
     so changes are picked up.
 
-    In non-debug mode (elsa freeze), a single model is used (and stored in
-    app config), so that metadata is only read once.
+    In non-debug mode (elsa freeze), the model is initialized once, and
+    frozen (so all course data is requested and rendered upfront).
     """
     freezing = os.environ.get('NAUCSE_FREEZE', not app.config['DEBUG'])
     initialize = True

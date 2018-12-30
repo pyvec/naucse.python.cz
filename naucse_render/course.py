@@ -55,7 +55,6 @@ def get_course(course_slug: str, *, path='.', version):
             source_key='source_file',
         )
 
-    # XXX: Set by naucse
     info.pop('meta', None)
     info.pop('canonical', None)
 
@@ -159,7 +158,7 @@ def merge_dict(base, patch):
 
 
 def get_canonical_lessons_info():
-    # XXX: Should this be here?
+    # XXX: This is not useful in "forks"
     lessons_path = Path('.').resolve() / 'lessons'
     return {
         'title': 'Kanonické lekce',
