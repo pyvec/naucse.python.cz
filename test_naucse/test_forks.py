@@ -6,13 +6,12 @@ from pathlib import Path
 
 import pytest
 import yaml
-from arca.exceptions import BuildError
 from flask.testing import FlaskClient
 from git import Repo
 
 from naucse import models
-from naucse.utils.views import page_content_cache_key
-from naucse.utils.models import arca
+
+BuildError = None  # XXX
 
 
 def generate_info(title, course_type, coach_present, some_var):
@@ -275,29 +274,6 @@ def test_run_render(model):
                                                        request_url="/2018/test-run/beginners/install/linux/")
     assert linux
     assert index != solution
-
-
-def test_cache_offer(model):
-    """Test that forks don't render content when content exists in cache.
-    """
-    repo = arca.get_repo(model.courses["test-course"].repo, model.courses["test-course"].branch)
-
-    content_key = page_content_cache_key(repo, "beginners/cmdline", "index", None, model.courses["test-course"].vars)
-
-    result = model.courses["test-course"].render_page("beginners/cmdline", "index", None,
-                                                      content_key=content_key,
-                                                      request_url="/course/test-course/beginners/cmdline/")
-
-    assert result["content"] is None
-
-    # Also test that if provided a key which is gonna be rejected,
-    # content is rendered
-
-    result = model.courses["test-course"].render_page("beginners/cmdline", "index", None,
-                                                      content_key=content_key + "asdfasdf",
-                                                      request_url="/course/test-course/beginners/cmdline/")
-
-    assert result["content"] is not None
 
 
 def test_courses_page(mocker, client: FlaskClient):
