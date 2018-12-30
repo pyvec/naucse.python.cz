@@ -628,7 +628,7 @@ class Course(Model):
         str, optional=True,
         doc="Short description of the course (about one line).")
     long_description = Field(
-        str, optional=True,
+        HTMLFragmentConverter(), factory=str,
         doc="Long description of the course (up to several paragraphs).")
     vars = Field(
         AnyDictConverter(), factory=dict,

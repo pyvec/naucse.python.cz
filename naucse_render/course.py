@@ -70,6 +70,9 @@ def get_course(course_slug: str, *, path='.', version):
         if 'plan' in d:
             d['sessions'] = d.pop('plan')
 
+    if 'long_description' in info:
+        info['long_description'] = convert_markdown(info['long_description'])
+
     for session in info['sessions']:
         session['source_file'] = info['source_file']
         base = session.pop('base', None)
@@ -161,12 +164,12 @@ def get_canonical_lessons_info():
     return {
         'title': 'Kanonické lekce',
         'description': 'Seznam udržovaných lekcí bez ladu a skladu.',
-        'long_description': textwrap.dedent("""
+        'long_description': convert_markdown(textwrap.dedent("""
             Seznam udržovaných lekcí bez ladu a skladu.
 
             Jednotlivé kurzy jsou poskládané z těchto materiálů
             (a doplněné jinými).
-        """),
+        """)),
         'source_file': 'lessons',
         'sessions': [
             {
