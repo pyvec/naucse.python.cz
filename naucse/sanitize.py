@@ -5,17 +5,24 @@ from jinja2 import Markup
 import lxml.html
 import lxml.etree
 import cssutils
+import xml.dom
 
-class DisallowedElement(Exception):
+class ValidationError(Exception):
     pass
 
-class DisallowedAttribute(DisallowedElement):
+class DisallowedElement(ValidationError):
     pass
 
-class DisallowedLink(DisallowedElement):
+class DisallowedAttribute(ValidationError):
     pass
 
-class DisallowedURLScheme(DisallowedLink):
+class DisallowedLink(DisallowedAttribute):
+    pass
+
+class DisallowedURLScheme(DisallowedAttribute):
+    pass
+
+class CSSSyntaxError(ValidationError):
     pass
 
 ALLOWED_ELEMENTS = {
@@ -116,8 +123,10 @@ def sanitize_css(css):
     parser = cssutils.CSSParser(
         fetcher=lambda url: None, validate=True, raiseExceptions=True,
     )
-    parser = cssutils.CSSParser()
-    parsed_css = parser.parseString(css)
+    try:
+        parsed_css = parser.parseString(css)
+    except xml.dom.SyntaxErr as e:
+        raise CSSSyntaxError() from e
 
     for rule in parsed_css.cssRules:
         for selector in rule.selectorList:
@@ -133,6 +142,8 @@ def sanitize_element(element, *, naucse_urls=None):
         if element.tag == 'style':
             if len(element):
                 raise DisallowedElement(list(element)[0])
+            if element.text is None:
+                element.text = ''
             element.text = sanitize_css(element.text)
         elif element.tag not in ALLOWED_ELEMENTS:
             raise DisallowedElement(element.tag)

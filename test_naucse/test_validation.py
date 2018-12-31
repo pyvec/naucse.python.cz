@@ -34,21 +34,27 @@ def test_disallow_script():
 def test_allow_attributes():
     assert_unchanged("""
         <div class="test">
-            <span><a href="/courses/">Text</a></span>
+            <span><a href="http://nauc.se/">Text</a></span>
         </div>
     """)
+
+def test_disallow_relative_url():
+    with pytest.raises(naucse.sanitize.DisallowedLink):
+        sanitize_html("""
+            <a href="/courses">Text</a>
+        """)
 
 def test_disallow_onhover():
     with pytest.raises(naucse.sanitize.DisallowedAttribute):
         sanitize_html("""
             <div class="test" onhover="alert('XSS')">
-                <a href="/courses/">Text</a>
+                <em">Text</em>
             </div>
         """)
 
 @pytest.mark.xfail
 def test_disallow_unknown_css():
-    with pytest.raises(naucse.sanitize.DisallowedStyle):
+    with pytest.raises(TypeError):
         sanitize_html("""
             <div class='test'>
                 <span style='position: absolute; top: 0;'>Text</span>
@@ -61,58 +67,61 @@ def test_disallow_javascript_href():
             """<div class='test'><img src="javascript:alert('XSS')" /></div>"""
         )
 
-def test_allowed_styles():
-    assert_unchanged("""
+def test_scope_allowed_styles():
+    assert_changed("""
         <style>
         .dataframe thead tr:only-child th {
             text-align: right;
         }
 
         </style>
+    """, """
+        <style>.lesson-content .dataframe thead tr:only-child th {
+            text-align: right
+            }</style>
     """)
 
 def test_disallow_bad_css_syntax():
-    with pytest.raises(naucse.sanitize.BadStyleSyntax):
+    with pytest.raises(naucse.sanitize.CSSSyntaxError):
         assert_unchanged("""
             <style>
             {
             </style>
         """)
 
-def test_wrong_elements():
-    with pytest.raises(naucse.sanitize.DisallowedStyle):
-        sanitize_html("""
-            <style>
-            .green {
-                color: green;
-            }
-            </style>
-        """)
-
-def test_bad_style():
-    with pytest.raises(naucse.sanitize.DisallowedStyle):
-        sanitize_html("""
-            <style>
-            .green {
-                color: green
-            </style>
-        """)
-
-def test_allow_multiple_css_selectors():
+def test_empty_style_unchanged():
     assert_unchanged("""
+        <style></style>
+    """)
+
+def test_whitespace_style():
+    assert_changed("""
+        <style>  </style>
+    """, """
+        <style></style>
+    """)
+
+def test_fix_slightly_bad_style():
+    assert_changed("""
         <style>
-        .dataframe .green, .dataframe .also-green {
+        .green {
+            color: green
+        </style>
+    """, """
+        <style>.lesson-content .green {
+            color: green
+            }</style>
+    """)
+
+def test_scope_multiple_css_selectors():
+    assert_changed("""
+        <style>
+        .dataframe .green, .also-green {
             color: green;
         }
         </style>
+    """, """
+        <style>.lesson-content .dataframe .green, .lesson-content .also-green {
+            color: green
+            }</style>
     """)
-
-def test_invalid_multiple_css_selectors():
-    with pytest.raises(naucse.sanitize.DisallowedStyle):
-        sanitize_html("""
-            <style>
-            .dataframe .green, .also-green {
-                color: green;
-            }
-            </style>
-        """)
