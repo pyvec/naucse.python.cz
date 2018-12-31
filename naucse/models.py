@@ -473,6 +473,10 @@ class Session(Model):
         doc="The date when this session occurs (if it has a set time)",
     )
 
+    description = Field(
+        HTMLFragmentConverter(), optional=True,
+        doc="Short description of the session.")
+
     source_file = source_file_field
 
     materials = Field(ListConverter(Material), doc="The session's materials")

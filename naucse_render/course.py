@@ -85,6 +85,9 @@ def get_course(course_slug: str, *, path='.', version):
         for material in session['materials']:
             update_material(material, vars=info.get('vars'), path=base_path)
 
+        if 'description' in session:
+            session['description'] = convert_markdown(session['description'])
+
         if path_parts:
             # Get coverpage content
             page_path = base_path.joinpath(
