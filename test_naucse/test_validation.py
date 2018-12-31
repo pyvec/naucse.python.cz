@@ -125,3 +125,10 @@ def test_scope_multiple_css_selectors():
             color: green
             }</style>
     """)
+
+def test_fix_bad_html():
+    # We let lxml do its best to produce valid HTML
+    assert_changed(
+        '<div>Some <em>broken</b> & bad <HTML> </div> \0 --> fix it',
+        '<div>Some <em>broken &amp; bad  </em></div>   --&gt; fix it',
+    )
