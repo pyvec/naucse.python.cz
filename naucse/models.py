@@ -878,11 +878,14 @@ class Root(Model):
     Contains a collection of courses plus additional metadata.
     """
     def __init__(
-        self, *, url_factories, schema_url_factory, arca,
-        trusted_repo_patterns,
+        self, *,
+        url_factories=None,
+        schema_url_factory=None,
+        arca=None,
+        trusted_repo_patterns=(),
     ):
         self.root = self
-        self.url_factories = url_factories
+        self.url_factories = url_factories or {}
         self.schema_url_factory = schema_url_factory
         super().__init__(parent=self)
         self.arca = arca
@@ -896,8 +899,6 @@ class Root(Model):
         # For pagination of runs
         # XXX: This shouldn't be necessary
         self.explicit_run_years = set()
-
-        self._url = self.get_url(external=True)
 
     pk_name = None
 
@@ -913,7 +914,7 @@ class Root(Model):
 
     def load_local(self, path):
         """Load local courses from the given path"""
-        self.licenses = self.load_licenses(path / 'licenses')
+        self.load_licenses(path / 'licenses')
         self.repo_info = get_local_repo_info(path)
 
         for course_path in (path / 'courses').iterdir():
@@ -991,14 +992,13 @@ class Root(Model):
             course.freeze()
 
     def load_licenses(self, path):
-        licenses = {}
+        """Add licenses from files in the given path to the model"""
         for licence_path in path.iterdir():
             with (licence_path / 'info.yml').open() as f:
                 info = yaml.safe_load(f)
             slug = licence_path.name
             license = get_converter(License).load(info, parent=self, slug=slug)
-            licenses[slug] = license
-        return licenses
+            self.licenses[slug] = license
 
     def get_course(self, slug):
         # XXX: RunYears shouldn't be necessary
