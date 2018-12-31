@@ -8,7 +8,7 @@ import naucse_render
 
 
 NAUCSE_URL_RE = re.compile(
-    '^https://github.com/[^/]+/naucse\.python\.cz(\.git)?$'
+    r'^https://github.com/[^/]+/naucse\.python\.cz(\.git)?$'
 )
 
 class Renderer:
