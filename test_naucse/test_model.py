@@ -58,3 +58,16 @@ def test_load_empty_dir():
     model = models.Root()
     with pytest.raises(FileNotFoundError):
         model.load_local_courses(fixture_path / 'empty-directory')
+
+    assert not model.courses
+
+
+def test_no_courses():
+    """Loading directory with no courses gives only an empty "lessons" course
+    """
+    model = models.Root()
+    model.load_local_courses(fixture_path / 'empty-lessons-dir')
+
+    assert sorted(model.courses) == ['lessons']
+    assert not model.courses['lessons'].sessions
+    assert not model.courses['lessons'].lessons

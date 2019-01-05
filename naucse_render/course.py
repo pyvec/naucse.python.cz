@@ -39,7 +39,7 @@ def get_course(course_slug: str, *, path='.', version):
         raise ValueError(f'Version {version} is not supported')
 
     if course_slug == 'lessons':
-        info = get_canonical_lessons_info()
+        info = get_canonical_lessons_info(path)
         path_parts = None
     else:
         parts = course_slug.split('/')
@@ -160,9 +160,9 @@ def merge_dict(base, patch):
     return result
 
 
-def get_canonical_lessons_info():
+def get_canonical_lessons_info(path):
     # XXX: This is not useful in "forks"
-    lessons_path = Path('.').resolve() / 'lessons'
+    lessons_path = path.resolve() / 'lessons'
     return {
         'title': 'Kanonické lekce',
         'description': 'Seznam udržovaných lekcí bez ladu a skladu.',
@@ -184,5 +184,6 @@ def get_canonical_lessons_info():
                 ]
             }
             for category_path in sorted(lessons_path.iterdir())
+            if category_path.is_dir()
         ]
     }

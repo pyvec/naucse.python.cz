@@ -935,7 +935,7 @@ class Root(Model):
                     slug = 'courses/' + course_path.name
                     course = Course.load_local(
                         slug, parent=self, repo_info=self.repo_info,
-                        canonical=True,
+                        canonical=True, path=path
                     )
                     self.add_course(course)
 
@@ -963,6 +963,7 @@ class Root(Model):
                         if (course_path / 'info.yml').is_file():
                             course = Course.load_local(
                                 slug, parent=self, repo_info=self.repo_info,
+                                path=path,
                             )
                             self.add_course(course)
 
@@ -971,6 +972,7 @@ class Root(Model):
             repo_info=self.repo_info,
             canonical=True,
             parent=self,
+            path=path,
         ))
 
         self_study_order_path = self_study_course_path / 'info.yml'
