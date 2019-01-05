@@ -71,3 +71,19 @@ def test_no_courses():
     assert sorted(model.courses) == ['lessons']
     assert not model.courses['lessons'].sessions
     assert not model.courses['lessons'].lessons
+
+
+def test_load_courses():
+    model = models.Root()
+    model.load_local_courses(fixture_path / 'minimal-courses')
+
+    assert sorted(model.courses) == [
+        '2019/minimal', 'courses/minimal', 'lessons',
+    ]
+
+    assert model.courses['courses/minimal'].title == 'A minimal course'
+    assert model.courses['courses/minimal'].slug == 'courses/minimal'
+    assert model.courses['2019/minimal'].title == 'A minimal course'
+    assert model.courses['2019/minimal'].slug == '2019/minimal'
+    assert model.courses['lessons'].title == 'Kanonické lekce'
+    assert model.courses['lessons'].slug == 'lessons'
