@@ -912,43 +912,59 @@ class Root(Model):
         DictConverter(License),
         doc="""Allowed licenses""")
 
-    def load_local(self, path):
-        """Load local courses from the given path"""
-        self.load_licenses(path / 'licenses')
+    def load_local_courses(self, path):
+        """Load local courses and lessons from the given path
+
+        Note: Licenses should be loaded before calling load_local_courses,
+        otherwise lessons will have no licences to choose from
+        """
         self.repo_info = get_local_repo_info(path)
 
-        for course_path in (path / 'courses').iterdir():
-            if (course_path / 'info.yml').is_file():
-                slug = 'courses/' + course_path.name
-                course = Course.load_local(
-                    slug, parent=self, repo_info=self.repo_info,
-                    canonical=True,
-                )
-                self.add_course(course)
+        self_study_course_path = path / 'courses'
+        run_path = path / 'runs'
+        lesson_path = path / 'lessons'
 
-        for year_path in sorted((path / 'runs').iterdir()):
-            if year_path.is_dir():
-                self.explicit_run_years.add(int(year_path.name))
-                for course_path in year_path.iterdir():
-                    slug = f'{year_path.name}/{course_path.name}'
-                    link_path = course_path / 'link.yml'
-                    if link_path.is_file():
-                        with link_path.open() as f:
-                            link_info = yaml.safe_load(f)
-                        if any(
-                            fnmatch('{repo}#{branch}'.format(**link_info), l)
-                            for l in self.trusted_repo_patterns
-                        ):
-                            course = Course.load_remote(
-                                slug, parent=self, link_info=link_info,
+        if not lesson_path.exists():
+            # At least one of 'runs' or 'courses' should exist for any courses
+            # to be loaded. But "lessons" needs to exist either way.
+            raise FileNotFoundError(lesson_path)
+
+        if self_study_course_path.exists():
+            for course_path in self_study_course_path.iterdir():
+                if (course_path / 'info.yml').is_file():
+                    slug = 'courses/' + course_path.name
+                    course = Course.load_local(
+                        slug, parent=self, repo_info=self.repo_info,
+                        canonical=True,
+                    )
+                    self.add_course(course)
+
+        if run_path.exists():
+            for year_path in sorted(run_path.iterdir()):
+                if year_path.is_dir():
+                    self.explicit_run_years.add(int(year_path.name))
+                    for course_path in year_path.iterdir():
+                        slug = f'{year_path.name}/{course_path.name}'
+                        link_path = course_path / 'link.yml'
+                        if link_path.is_file():
+                            with link_path.open() as f:
+                                link_info = yaml.safe_load(f)
+                            if any(
+                                fnmatch(
+                                    '{repo}#{branch}'.format(**link_info), l,
+                                )
+                                for l in self.trusted_repo_patterns
+                            ):
+                                course = Course.load_remote(
+                                    slug, parent=self, link_info=link_info,
+                                )
+                                self.add_course(course)
+                                continue
+                        if (course_path / 'info.yml').is_file():
+                            course = Course.load_local(
+                                slug, parent=self, repo_info=self.repo_info,
                             )
                             self.add_course(course)
-                            continue
-                    if (course_path / 'info.yml').is_file():
-                        course = Course.load_local(
-                            slug, parent=self, repo_info=self.repo_info,
-                        )
-                        self.add_course(course)
 
         self.add_course(Course.load_local(
             'lessons',
@@ -957,15 +973,19 @@ class Root(Model):
             parent=self,
         ))
 
-        with (path / 'courses/info.yml').open() as f:
-            course_info = yaml.safe_load(f)
-        self.featured_courses = [
-            self.courses[f'courses/{n}'] for n in course_info['order']
-        ]
+        self_study_order_path = self_study_course_path / 'info.yml'
+        if self_study_order_path.exists():
+            with (path / 'courses/info.yml').open() as f:
+                course_info = yaml.safe_load(f)
+            self.featured_courses = [
+                self.courses[f'courses/{n}'] for n in course_info['order']
+            ]
 
-        self.edit_info = self.repo_info.get_edit_info('')
-        self.runs_edit_info = self.repo_info.get_edit_info('runs')
-        self.course_edit_info = self.repo_info.get_edit_info('courses')
+        self.edit_info = self.repo_info.get_edit_info(path)
+        self.runs_edit_info = self.repo_info.get_edit_info(run_path)
+        self.course_edit_info = self.repo_info.get_edit_info(
+            self_study_course_path,
+        )
 
     def add_course(self, course):
         slug = course.slug

@@ -44,7 +44,8 @@ def _get_model():
 
     # (Re-)initialize model
 
-    g.model.load_local(Path(app.root_path).parent)
+    g.model.load_licenses(Path(app.root_path).parent / 'licenses')
+    g.model.load_local_courses(Path(app.root_path).parent)
 
     if freezing:
         g.model.freeze()
@@ -97,7 +98,6 @@ def init_model():
         }),
         trusted_repo_patterns=trusted_repo_patterns,
     )
-    g.model.load_local(Path(app.root_path).parent)
 
 
 register_url_converters(app)

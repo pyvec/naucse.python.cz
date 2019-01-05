@@ -52,3 +52,9 @@ def test_licenses():
 def test_dump_empty_model():
     model = models.Root(schema_url_factory=dummy_schema_url_factory)
     assert_matches_expected_dump(models.dump(model), 'empty-root.yml')
+
+
+def test_load_empty_dir():
+    model = models.Root()
+    with pytest.raises(FileNotFoundError):
+        model.load_local_courses(fixture_path / 'empty-directory')
