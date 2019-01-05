@@ -480,7 +480,11 @@ class Session(Model):
 
     source_file = source_file_field
 
-    materials = Field(ListConverter(Material), doc="The session's materials")
+    materials = Field(
+        ListConverter(Material),
+        factory=list,
+        doc="The session's materials",
+    )
 
     @materials.after_load()
     def _index_materials(self):

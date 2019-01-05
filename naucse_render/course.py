@@ -82,7 +82,7 @@ def get_course(course_slug: str, *, path='.', version):
             else:
                 raise ValueError(f'Session {session} not found in base course')
             session.update(merge_dict(base_session, session))
-        for material in session['materials']:
+        for material in session.get('materials', []):
             update_material(material, vars=info.get('vars'), path=base_path)
 
         if 'description' in session:
