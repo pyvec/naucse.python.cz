@@ -2,6 +2,7 @@ import datetime
 
 import pytest
 import dateutil.tz
+import jsonschema
 
 from naucse import models
 from test_naucse.conftest import fixture_path, add_test_course
@@ -123,3 +124,36 @@ def test_course_without_dates(model):
     assert session.time is None
 
     assert_yaml_dump(models.dump(course), 'session-times/without-dates')
+
+
+BAD_TIMES = {
+    'empty': {},
+    'start_only': {'start': '19:00'},
+    'start_hour_only': {'start': '19', 'end': '21'},
+    'end_hour_only': {'start': '19:00', 'end': '21'},
+    'not_a_time': {'start': '00:00', 'end': '55:00'},
+    'extra': {'start': '19:00', 'end': '21:00', 'break': '00:30'},
+}
+
+@pytest.mark.parametrize('key', BAD_TIMES)
+def test_invalid_default_time(model, key):
+    with pytest.raises((jsonschema.ValidationError, ValueError)):
+        add_test_course(model, 'courses/invalid', {
+            'title': 'Bad course',
+            'default_time': BAD_TIMES[key],
+            'sessions': [],
+        })
+
+@pytest.mark.parametrize('key', BAD_TIMES)
+def test_invalid_session_time(model, key):
+    with pytest.raises((jsonschema.ValidationError, ValueError)):
+        add_test_course(model, 'courses/invalid', {
+            'title': 'Bad course',
+            'sessions': [
+                {
+                    'title': 'A session',
+                    'slug': 'session',
+                    'time': BAD_TIMES[key],
+                },
+            ],
+        })

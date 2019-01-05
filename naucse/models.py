@@ -506,7 +506,7 @@ class Session(Model):
                 self.pages[slug] = page
 
     time = Field(
-        DictConverter(SessionTimeConverter(), required=['start', 'end'],),
+        DictConverter(SessionTimeConverter(), required=['start', 'end']),
         optional=True,
         doc="Time when this session takes place.")
 
@@ -514,6 +514,9 @@ class Session(Model):
     def _fix_time(self):
         if self.time is None:
             self.time = {}
+        else:
+            if set(self.time) != {'start', 'end'}:
+                raise ValueError('Session time may must have start and end')
         result = {}
         for kind in 'start', 'end':
             time = self.time.get(kind, None)
@@ -581,7 +584,9 @@ class TimeIntervalConverter(BaseConverter):
             'properties': {
                 'start': {'type': 'string', 'pattern': '[0-9]{1,2}:[0-9]{2}'},
                 'end': {'type': 'string', 'pattern': '[0-9]{1,2}:[0-9]{2}'},
-            }
+            },
+            'required': ['start', 'end'],
+            'additionalProperties': False,
         }
 
 
@@ -658,7 +663,7 @@ class Course(Model):
 
     default_time = Field(
         TimeIntervalConverter(), optional=True,
-        doc="Default start and end tome for sessions")
+        doc="Default start and end time for sessions")
 
     sessions = Field(
         KeyAttrDictConverter(Session, key_attr='slug', index_arg='index'),
