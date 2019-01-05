@@ -4,6 +4,7 @@ import pytest
 import yaml
 
 from naucse import models
+from naucse.edit_info import get_local_repo_info
 
 
 fixture_path = Path(__file__).parent / 'fixtures'
@@ -87,3 +88,19 @@ def test_load_courses():
     assert model.courses['2019/minimal'].slug == '2019/minimal'
     assert model.courses['lessons'].title == 'Kanonické lekce'
     assert model.courses['lessons'].slug == 'lessons'
+
+
+def test_add_course():
+    model = models.Root()
+    path = fixture_path / 'minimal-courses'
+    model.add_course(models.Course.load_local(
+        parent=model,
+        path=path,
+        repo_info=get_local_repo_info(path),
+        slug='courses/minimal',
+    ))
+
+    assert sorted(model.courses) == ['courses/minimal']
+
+    assert model.courses['courses/minimal'].title == 'A minimal course'
+    assert model.courses['courses/minimal'].slug == 'courses/minimal'
