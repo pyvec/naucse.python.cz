@@ -5,25 +5,44 @@ import dateutil.tz
 
 from naucse import models
 from test_naucse.conftest import fixture_path, add_test_course
+from test_naucse.conftest import assert_yaml_dump
 
 
 TZINFO = dateutil.tz.gettz('Europe/Prague')
 
 
-def test_run_with_times(model):
-    add_test_course(model, 'courses/with-times', {
-        'title': 'Test course with scheduled times',
+SESSIONS = [
+    {
+        'title': 'A normal session',
+        'slug': 'normal-session',
+        'date': '2000-01-01',
+    },
+    {
+        'title': 'Afterparty (with overridden time)',
+        'slug': 'afterparty',
+        'date': '2000-01-01',
+        'time': {'start': '22:00', 'end': '23:00'},
+    },
+    {
+        'title': 'Self-study (no date)',
+        'slug': 'self-study',
+    },
+    {
+        'title': 'Umm... no date, but a time',
+        'slug': 'morning-meditation',
+        'time': {'start': '7:00', 'end': '8:00'},
+    },
+]
+
+
+def test_run_with_default_times(model):
+    add_test_course(model, 'courses/with-default-times', {
+        'title': 'Test course with default times',
         'default_time': {'start': '19:00', 'end': '21:00'},
-        'sessions': [
-            {
-                'title': 'A normal session',
-                'slug': 'normal-session',
-                'date': '2000-01-01',
-            },
-        ],
+        'sessions': SESSIONS,
     })
 
-    course = model.courses['courses/with-times']
+    course = model.courses['courses/with-default-times']
     assert course.default_time == {
         'start': datetime.time(19, 00, tzinfo=TZINFO),
         'end': datetime.time(21, 00, tzinfo=TZINFO),
@@ -36,28 +55,56 @@ def test_run_with_times(model):
         'end': datetime.datetime(2000, 1, 1, 21, tzinfo=TZINFO),
     }
 
+    session = course.sessions['afterparty']
+    assert session.date == datetime.date(2000, 1, 1)
+    assert session.time == {
+        'start': datetime.datetime(2000, 1, 1, 22, tzinfo=TZINFO),
+        'end': datetime.datetime(2000, 1, 1, 23, tzinfo=TZINFO),
+    }
 
-def test_course_with_date_and_no_times(model):
-    add_test_course(model, 'courses/without-times', {
+    session = course.sessions['self-study']
+    assert session.date == None
+    assert session.time == None
+
+    session = course.sessions['morning-meditation']
+    assert session.date == None
+    assert session.time == None
+
+    assert_yaml_dump(models.dump(course), 'session-times/with-default-times')
+
+
+def test_course_with_no_default_time(model):
+    add_test_course(model, 'courses/without-default-time', {
         'title': 'Test course without scheduled times',
-        'sessions': [
-            {
-                'title': 'A normal session',
-                'slug': 'normal-session',
-                'date': '2000-01-01',
-            },
-        ],
+        'sessions': SESSIONS,
     })
 
-    course = model.courses['courses/without-times']
+    course = model.courses['courses/without-default-time']
     assert course.default_time is None
 
     session = course.sessions['normal-session']
     assert session.date == datetime.date(2000, 1, 1)
     assert session.time is None
 
+    session = course.sessions['afterparty']
+    assert session.date == datetime.date(2000, 1, 1)
+    assert session.time == {
+        'start': datetime.datetime(2000, 1, 1, 22, tzinfo=TZINFO),
+        'end': datetime.datetime(2000, 1, 1, 23, tzinfo=TZINFO),
+    }
 
-def test_course_without_date(model):
+    session = course.sessions['self-study']
+    assert session.date == None
+    assert session.time == None
+
+    session = course.sessions['morning-meditation']
+    assert session.date == None
+    assert session.time == None
+
+    assert_yaml_dump(models.dump(course), 'session-times/without-default-time')
+
+
+def test_course_without_dates(model):
     add_test_course(model, 'courses/without-dates', {
         'title': 'A plain vanilla course',
         'sessions': [
@@ -74,3 +121,5 @@ def test_course_without_date(model):
     session = course.sessions['normal-session']
     assert session.date is None
     assert session.time is None
+
+    assert_yaml_dump(models.dump(course), 'session-times/without-dates')
