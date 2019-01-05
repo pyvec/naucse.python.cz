@@ -882,6 +882,10 @@ class License(Model):
     url = Field(str)
     title = Field(str)
 
+    def get_url(self, *args, **kwargs):
+        # A Licence always has an external URL
+        return self.url
+
 
 class Root(Model):
     """Data for the naucse website
