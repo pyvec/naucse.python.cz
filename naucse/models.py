@@ -993,6 +993,7 @@ class Root(Model):
     def add_course(self, course):
         slug = course.slug
         if slug in self.courses:
+            # XXX: Replacing courses is untested
             old = self.courses[slug]
             if old.start_date:
                 for year in range(old.start_date.year, old.end_date.year+1):

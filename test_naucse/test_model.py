@@ -118,3 +118,83 @@ def test_add_course_from_data():
 
     assert model.courses['courses/minimal'].title == 'A minimal course'
     assert model.courses['courses/minimal'].slug == 'courses/minimal'
+
+
+def test_run_years(model):
+    assert model.run_years == {}
+
+    # Add a self-study course. It should not appear in run_years.
+
+    add_test_course(model, 'courses/minimal', {
+        'title': 'A minimal course',
+        'sessions': [],
+    })
+
+    assert model.run_years == {}
+    assert sorted(model.courses) == ['courses/minimal']
+    assert sorted(model.self_study_courses) == ['courses/minimal']
+    course_minimal = model.courses['courses/minimal']
+    assert course_minimal.start_date == None
+    assert course_minimal.end_date == None
+
+    # Add a course with a single session. It should appear in its run_year.
+
+    add_test_course(model, '2019/single-session', {
+        'title': 'A course with a single session',
+        'sessions': [
+            {
+                'title': 'One session',
+                'slug': 'foo',
+                'date': '2019-01-05',
+                'materials': [],
+            },
+        ],
+    })
+
+    assert sorted(model.courses) == ['2019/single-session', 'courses/minimal']
+    assert sorted(model.self_study_courses) == ['courses/minimal']
+    course_2019 = model.courses['2019/single-session']
+    assert course_2019.start_date.year == 2019
+    assert course_2019.end_date.year == 2019
+    assert sorted(model.run_years) == [2019]
+    assert model.run_years[2019] == {'2019/single-session': course_2019}
+
+    # Add a course spanning 3 years. Should appear in all run_years it spans.
+    # (Even if there are no sessions that year.)
+
+    add_test_course(model, '2017/multi-year', {
+        'title': 'A course with sessions in years 2017 and 2019',
+        'sessions': [
+            {
+                'title': 'First session, 2017',
+                'slug': 'one',
+                'date': '2017-01-05',
+                'materials': [],
+            },
+            {
+                'title': 'Last session, 2019',
+                'slug': 'two',
+                'date': '2019-01-05',
+                'materials': [],
+            },
+        ],
+    })
+
+    assert sorted(model.courses) == [
+        '2017/multi-year', '2019/single-session', 'courses/minimal',
+    ]
+    assert sorted(model.self_study_courses) == ['courses/minimal']
+    course_2017 = model.courses['2017/multi-year']
+    assert course_2017.start_date.year == 2017
+    assert course_2017.end_date.year == 2019
+    assert sorted(model.run_years) == [2017, 2018, 2019]
+    for year in 2017, 2018:
+        assert model.run_years[year] == {'2017/multi-year': course_2017}
+    assert model.run_years[2019] == {
+        '2017/multi-year': course_2017,
+        '2019/single-session': course_2019,
+    }
+
+    assert_yaml_dump(models.dump(model), 'run-years/root.yml')
+    for year, run_year in model.run_years.items():
+        assert_yaml_dump(models.dump(run_year), f'run-years/{year}.yml')
