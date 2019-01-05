@@ -16,10 +16,14 @@ def dummy_schema_url_factory(cls, **kwargs):
 
 
 class DummyURLFactories:
+    def __init__(self, url_type):
+        self.url_type = url_type
+
     def __getitem__(self, cls):
         def dummy_url_factory(_external=True, **kwargs):
             args = '&'.join(f'{k}={v}' for k, v in sorted(kwargs.items()))
-            return f'http://dummy.test/model/{cls.__name__}/?{args}'
+            base = 'http://dummy.test/model'
+            return f'{base}/{self.url_type}/{cls.__name__}/?{args}'
         return dummy_url_factory
 
 
@@ -29,7 +33,8 @@ def model():
     model = models.Root(
         schema_url_factory=dummy_schema_url_factory,
         url_factories={
-            'api': DummyURLFactories(),
+            'api': DummyURLFactories('api'),
+            'web': DummyURLFactories('web'),
         },
     )
     model.load_licenses(fixture_path / 'licenses')
