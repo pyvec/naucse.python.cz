@@ -7,46 +7,8 @@ import yaml
 from naucse import models
 from naucse.edit_info import get_local_repo_info
 
-
-fixture_path = Path(__file__).parent / 'fixtures'
-
-
-def dummy_schema_url_factory(cls, **kwargs):
-    return f'http://dummy.test/schema/{cls.__name__}'
-
-
-class DummyURLFactories:
-    def __getitem__(self, cls):
-        def dummy_url_factory(_external=True, **kwargs):
-            args = '&'.join(f'{k}={v}' for k, v in sorted(kwargs.items()))
-            return f'http://dummy.test/model/{cls.__name__}/?{args}'
-        return dummy_url_factory
-
-
-def assert_matches_expected_dump(data, filename):
-    yaml_path = fixture_path / 'expected-dumps' / filename
-    try:
-        expected_yaml = yaml_path.read_text()
-    except FileNotFoundError:
-        expected_yaml = ''
-        expected = None
-    else:
-        expected = yaml.safe_load(expected_yaml)
-    if data != expected or expected is None:
-        # I find that textually comparing structured dumped to YAML is easier
-        # than a "deep diff" algorithm (like the one in pytest).
-        # To make this easier, running in a special mode will dump the expected
-        # YAML to the given file. Changes can then be verified with `git diff`.
-        data_dump = yaml.safe_dump(data, default_flow_style=False, indent=4)
-        if os.environ.get('TEST_NAUCSE_DUMP_YAML') == '1':
-            yaml_path.write_text(data_dump)
-        else:
-            print(
-                'Note: Run with TEST_NAUCSE_DUMP_YAML=1 to dump the '
-                'expected YAML'
-            )
-        assert data_dump == expected_yaml
-        assert data == expected
+from test_naucse.conftest import fixture_path, dummy_schema_url_factory
+from test_naucse.conftest import assert_yaml_dump, add_test_course
 
 
 def test_empty_model():
@@ -76,7 +38,7 @@ def test_licenses():
 
 def test_dump_empty_model():
     model = models.Root(schema_url_factory=dummy_schema_url_factory)
-    assert_matches_expected_dump(models.dump(model), 'empty-root.yml')
+    assert_yaml_dump(models.dump(model), 'empty-root.yml')
 
 
 def test_load_empty_dir():
@@ -130,13 +92,7 @@ def test_add_local_course():
     assert model.courses['courses/minimal'].slug == 'courses/minimal'
 
 
-def test_dump_local_course():
-    model = models.Root(
-        schema_url_factory=dummy_schema_url_factory,
-        url_factories={
-            'api': DummyURLFactories(),
-        },
-    )
+def test_dump_local_course(model):
     path = fixture_path / 'minimal-courses'
     model.add_course(models.Course.load_local(
         parent=model,
@@ -145,27 +101,18 @@ def test_dump_local_course():
         slug='courses/minimal',
     ))
 
-    assert_matches_expected_dump(models.dump(model), 'minimal-root.yml')
+    assert_yaml_dump(models.dump(model), 'minimal-root.yml')
     course = model.courses['courses/minimal']
-    assert_matches_expected_dump(models.dump(course), 'minimal-course.yml')
+    assert_yaml_dump(models.dump(course), 'minimal-course.yml')
 
 
 def test_add_course_from_data():
     model = models.Root()
 
-    model.add_course(models.load(
-        models.Course,
-        slug='courses/minimal',
-        repo_info=get_local_repo_info(fixture_path),
-        parent=model,
-        data={
-            'api_version': [0, 0],
-            'course': {
-                'title': 'A minimal course',
-                'sessions': [],
-            },
-        },
-    ))
+    add_test_course(model, 'courses/minimal', {
+        'title': 'A minimal course',
+        'sessions': [],
+    })
 
     assert sorted(model.courses) == ['courses/minimal']
 
