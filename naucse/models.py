@@ -609,6 +609,7 @@ class Course(Model):
 
     def __init__(
         self, *, parent, slug, repo_info, base_path=None, is_meta=False,
+        canonical=False,
     ):
         super().__init__(parent=parent)
         self.repo_info = repo_info
@@ -617,6 +618,7 @@ class Course(Model):
         self.is_meta = is_meta
         self.course = self
         self._frozen = False
+        self.canonical = canonical
 
         self._lessons = {}
         self._requested_lessons = set()
@@ -697,10 +699,9 @@ class Course(Model):
         is_meta = (slug == 'courses/meta')
         result = load(
             cls, data, slug=slug, repo_info=repo_info, parent=parent,
-            base_path=path, is_meta=is_meta,
+            base_path=path, is_meta=is_meta, canonical=canonical,
         )
         result.repo_info = repo_info
-        result.canonical = canonical
         result.renderer = renderer
         return result
 
