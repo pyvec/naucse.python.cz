@@ -832,6 +832,16 @@ class AbbreviatedDictConverter(DictConverter):
 
 class RunYear(Model, collections.abc.MutableMapping):
     """Collection of courses given in a specific year
+
+    A RunYear behaves as a dict (slug to Course).
+    It should contain all courses that take place in a given year.
+    One course may be in multiple RunYears if it doesn't start and end in the
+    same calendar year.
+
+    RunYear is just a grouping mechanism. It exists to limit the length of
+    API responses.
+    Some course slugs include a year in them; that's just for extra
+    uniqueness and has nothing to do with RunYear.
     """
     pk_name = 'year'
 
