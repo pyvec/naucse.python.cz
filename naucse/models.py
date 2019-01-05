@@ -745,13 +745,6 @@ class Course(Model):
         result.sort(key=lambda course: course.start_date, reverse=True)
         return result
 
-    def get_lesson(self, slug):
-        try:
-            return self._lessons[lesson]
-        except KeyError:
-            self.load_lessons([slug])
-        return self._lessons[lesson]
-
     def get_lesson_url(self, slug, *, page='index', **kw):
         if slug in self._lessons:
             return self._lessons[slug].get_url(**kw)
