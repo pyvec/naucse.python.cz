@@ -90,7 +90,7 @@ def test_load_courses():
     assert model.courses['lessons'].slug == 'lessons'
 
 
-def test_add_course():
+def test_add_local_course():
     model = models.Root()
     path = fixture_path / 'minimal-courses'
     model.add_course(models.Course.load_local(
@@ -98,6 +98,29 @@ def test_add_course():
         path=path,
         repo_info=get_local_repo_info(path),
         slug='courses/minimal',
+    ))
+
+    assert sorted(model.courses) == ['courses/minimal']
+
+    assert model.courses['courses/minimal'].title == 'A minimal course'
+    assert model.courses['courses/minimal'].slug == 'courses/minimal'
+
+
+def test_add_course_from_data():
+    model = models.Root()
+
+    model.add_course(models.load(
+        models.Course,
+        slug='courses/minimal',
+        repo_info=get_local_repo_info(fixture_path),
+        parent=model,
+        data={
+            'api_version': [0, 0],
+            'course': {
+                'title': 'A minimal course',
+                'sessions': [],
+            },
+        },
     ))
 
     assert sorted(model.courses) == ['courses/minimal']

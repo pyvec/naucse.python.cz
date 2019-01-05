@@ -202,6 +202,7 @@ class RelativePathConverter(BaseConverter):
 source_file_field = Field(
     RelativePathConverter(),
     name='source_file',
+    optional=True,
     doc="Path to a source file containing the page's text, "
         + "relative to the repository root")
 
@@ -607,7 +608,7 @@ class Course(Model):
     pk_name = 'slug'
 
     def __init__(
-        self, *, parent=None, slug, repo_info, base_path, is_meta=False,
+        self, *, parent, slug, repo_info, base_path=None, is_meta=False,
     ):
         super().__init__(parent=parent)
         self.repo_info = repo_info
