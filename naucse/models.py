@@ -656,7 +656,7 @@ class Course(Model):
     place = Field(
         str, optional=True,
         doc="Human-readable description of the venue")
-    time = Field(
+    time_description = Field(
         str, optional=True,
         doc="Human-readable description of the time the course takes place "
             + "(e.g. 'Wednesdays')")

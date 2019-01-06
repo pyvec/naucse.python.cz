@@ -20,7 +20,7 @@ def check_empty_course_attrs(empty_course):
     assert empty_course.long_description == ''
     assert empty_course.vars == {}
     assert empty_course.place == None
-    assert empty_course.time == None
+    assert empty_course.time_description == None
     assert empty_course.default_time == None
     assert empty_course.sessions == {}
     assert empty_course.source_file == None

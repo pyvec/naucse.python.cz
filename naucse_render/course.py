@@ -72,6 +72,10 @@ def get_course(course_slug: str, *, path='.', version):
     if 'long_description' in info:
         info['long_description'] = convert_markdown(info['long_description'])
 
+    # Rename the text field "time" to "time_description"
+    if 'time' in info:
+        info['time_description'] = info.pop('time')
+
     for session in info['sessions']:
         session['source_file'] = info['source_file']
         base = session.pop('base', None)
