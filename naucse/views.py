@@ -361,10 +361,6 @@ def course_calendar(course_slug):
     )
 
 
-def generate_calendar_ics(course):
-    return ics.Calendar(events=events)
-
-
 @app.route('/<course:course_slug>/calendar.ics')
 def course_calendar_ics(course_slug):
     try:
