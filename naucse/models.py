@@ -1001,11 +1001,9 @@ class Root(Model):
                 self.courses[f'courses/{n}'] for n in course_info['order']
             ]
 
-        self.edit_info = self.repo_info.get_edit_info(path)
-        self.runs_edit_info = self.repo_info.get_edit_info(run_path)
-        self.course_edit_info = self.repo_info.get_edit_info(
-            self_study_course_path,
-        )
+        self.edit_info = self.repo_info.get_edit_info('.')
+        self.runs_edit_info = self.repo_info.get_edit_info('runs')
+        self.course_edit_info = self.repo_info.get_edit_info('courses')
 
     def add_course(self, course):
         slug = course.slug
