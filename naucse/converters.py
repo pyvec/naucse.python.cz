@@ -60,7 +60,7 @@ class BaseConverter:
 
     `get_schema_url`: A method that determines the schema URL for a given
         instance.
-        If it returns None, values cannot dumped using the top-level
+        If it returns None, values cannot be dumped using the top-level
         `dump` function.
         May also *be* None (which does the same as returning None).
         May be set on instances directly.
@@ -68,7 +68,7 @@ class BaseConverter:
     `slug`: An identifier for schema definitions and for top-level messages.
         Should be None for simple converters, and converters that can be
         parametrized.
-        If None, values cannot dumped using the top-level `dump` function.
+        If None, values cannot be dumped using the top-level `dump` function.
         Currently the slug must be unique across converters.
     """
 
@@ -94,7 +94,7 @@ class BaseConverter:
     def dump(self, value):
         """Convert a Python value to JSON-compatible data.
 
-        The base implementation returns `data` unchanged.
+        The base implementation returns `value` unchanged.
         """
         return value
 
