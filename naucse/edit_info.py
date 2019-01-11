@@ -37,7 +37,15 @@ def relative_path(path):
 
 
 class RepoInfo:
-    """Base class for repository information"""
+    """Base class for repository information
+
+    Attributes:
+
+    `page_name` should be in Czech dative case for use on the website
+    (na "GitHubu"), or None if unknown.
+
+    `icon` should be the icon slug for from Bytesize icons, or None.
+    """
     page_name = None
     icon = None
 
