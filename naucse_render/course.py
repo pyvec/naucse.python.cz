@@ -13,9 +13,6 @@ from .load import read_yaml
 from .markdown import convert_markdown
 
 
-API_VERSION = 1
-
-
 def encode_dates(value):
     if isinstance(value, datetime.date):
         return value.isoformat()
@@ -28,9 +25,7 @@ def encode_dates(value):
     raise TypeError(value)
 
 
-# XXX: Clarify the version
-
-def get_course(course_slug: str, *, path='.', version):
+def get_course(course_slug: str, *, path='.', version=None):
     """Get information about the course as a JSON-compatible dict
     """
     # naucse's YAML files grew organically and use confusing terminology.
@@ -38,9 +33,6 @@ def get_course(course_slug: str, *, path='.', version):
     # from (possibly old-style) YAML.
 
     base_path = Path(path).resolve()
-
-    if version <= 0:
-        raise ValueError(f'Version {version} is not supported')
 
     # Find location on disk based on the course slug
     if course_slug == 'lessons':
