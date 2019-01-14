@@ -16,6 +16,10 @@ from .page import render_page
 
 
 def get_lessons(lesson_slugs, vars=None, path='.'):
+    """Return versioned info on all lessons for the given slugs
+
+    This entrypoint is here to cut down on repeated Arca calls.
+    """
     path = Path(path).resolve()
     data = {}
     for slug in lesson_slugs:
@@ -32,6 +36,11 @@ def get_lessons(lesson_slugs, vars=None, path='.'):
 
 
 def get_lesson(lesson_slug, vars, base_path):
+    """Get information about a single lesson, including page content.
+    """
+    # Like course.get_course, this collects data on disk and
+    # cleans/aggregates/renders it for the API.
+
     lesson_path = base_path / 'lessons' / lesson_slug
     lesson_info = read_yaml(base_path, 'lessons', lesson_slug, 'info.yml')
 

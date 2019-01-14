@@ -37,6 +37,8 @@ def static_url(filename, *, _anchor=''):
 
 
 def rewrite_relative_url(url, slug):
+    """Rewrite relative URL in a page to lesson_url()/static_url()
+    """
     parsed = urlparse(url)
     if parsed.scheme or parsed.hostname:
         return url
@@ -65,6 +67,9 @@ def rewrite_relative_url(url, slug):
 
 
 def render_page(lesson_slug, page_slug, info, path, vars=None):
+    """Get rendered content and metainformation on one lesson page.
+    """
+
     base_path = Path(path).resolve()
 
     print(f'Rendering page {lesson_slug} ({page_slug})', file=sys.stderr)
@@ -73,9 +78,6 @@ def render_page(lesson_slug, page_slug, info, path, vars=None):
 
     lessons_path = base_path / 'lessons'
     lesson_path = lessons_path / lesson_slug
-    env = environment.overlay(
-        loader=jinja2.FileSystemLoader(str(lessons_path)),
-    )
 
     page = {
         'title': info['title'],
@@ -87,10 +89,16 @@ def render_page(lesson_slug, page_slug, info, path, vars=None):
     if 'license_code' in info:
         page['license_code'] = info['license_code']
 
-    page_name = page_slug + '.' + info['style']
+    # Page content can be read from Markdown (md) or Jupyter Notebook (ipynb),
+    # selected by 'style'.
+    # Each is pre-processed by jinja2 by default (opt out with 'jinja': False).
 
+    page_filename = page_slug + '.' + info['style']
+
+    # List of solutions, filled in Jinja render step bellow
     solutions = []
 
+    # Helpers for conferting URLs to naucse: links in Markdown
     def convert_page_url(url):
         return rewrite_relative_url(url, lesson_slug)
 
@@ -101,14 +109,23 @@ def render_page(lesson_slug, page_slug, info, path, vars=None):
             **kwargs,
         )
 
-    page_path = lesson_path / page_name
-
+    # Jinja pre-processing
+    page_path = lesson_path / page_filename
     if info.get('jinja', True):
-        text = env.get_template(f'{lesson_slug}/{page_name}').render(
+        # Use a Jinja environment to enable includes/template inheritance
+        env = environment.overlay(
+            loader=jinja2.FileSystemLoader(str(lessons_path)),
+        )
+        text = env.get_template(f'{lesson_slug}/{page_filename}').render(
             lesson_url=lesson_url,
             subpage_url=lambda page: lesson_url(lesson_slug, page=page),
             static=static_url,
+
+            # Special variables for internal use in filters
             **{'$solutions': solutions, '$markdown': page_markdown},
+
+            # Helpers for render-specific variables (like user gender,
+            # origin repo URL, presenter name)
             **vars_functions(vars),
 
             # XXX: 'lesson' for templates is deprecated
@@ -117,6 +134,7 @@ def render_page(lesson_slug, page_slug, info, path, vars=None):
     else:
         text = page_path.read_text(encoding='utf-8')
 
+    # Render from input format
     if info['style'] == 'md':
         text = page_markdown(text)
     elif info['style'] == 'ipynb':
@@ -124,6 +142,7 @@ def render_page(lesson_slug, page_slug, info, path, vars=None):
     else:
         raise ValueError(info['style'])
 
+    # Auxilliary metadata
     page['content'] = text
     page['solutions'] = [{'content': s} for s in solutions]
     page['source_file'] = str(page_path.relative_to(base_path))
@@ -131,4 +150,5 @@ def render_page(lesson_slug, page_slug, info, path, vars=None):
         page['css'] = info['css']
     if 'latex' in info:
         page['modules'] = {'katex': '0.7.1'}
+
     return page
