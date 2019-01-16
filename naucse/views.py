@@ -152,7 +152,7 @@ def runs(year=None, all=None):
         paginate_next = {'all': 'all'}
     elif year is None:
         # Show runs that are either ongoing or ended in the last 3 months
-        runs = {**g.model.run_years[today.year],
+        runs = {**g.model.run_years.get(today.year, {}),
                 **g.model.run_years.get(today.year - 1, {})}
         ongoing = {slug: run for slug, run in runs.items()
                    if run.end_date >= today}
@@ -164,7 +164,7 @@ def runs(year=None, all=None):
         paginate_prev = {'year': None}
         paginate_next = {'year': last_year}
     else:
-        run_data = {year: g.model.run_years[year]}
+        run_data = {year: g.model.run_years.get(year, {})}
 
         past_years = [y for y in all_years if y < year]
         if past_years:
