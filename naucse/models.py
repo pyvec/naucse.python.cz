@@ -16,6 +16,7 @@ from naucse.converters import KeyAttrDictConverter, ModelConverter
 from naucse.converters import dump, load, get_converter, get_schema
 from naucse import sanitize
 from naucse import arca_renderer
+from naucse.logger import logger
 
 import naucse_render
 
@@ -967,17 +968,17 @@ class Root(Model):
                         if link_path.is_file():
                             with link_path.open() as f:
                                 link_info = yaml.safe_load(f)
+                            checked_url = '{repo}#{branch}'.format(**link_info)
                             if any(
-                                fnmatch(
-                                    '{repo}#{branch}'.format(**link_info), l,
-                                )
+                                fnmatch(checked_url, l)
                                 for l in self.trusted_repo_patterns
                             ):
                                 course = Course.load_remote(
                                     slug, parent=self, link_info=link_info,
                                 )
                                 self.add_course(course)
-                                continue
+                            else:
+                                logger.debug(f'Untrusted repo: {checked_url}')
                         if (course_path / 'info.yml').is_file():
                             course = Course.load_local(
                                 slug, parent=self, repo_info=self.repo_info,
