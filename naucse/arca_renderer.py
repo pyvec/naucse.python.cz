@@ -24,19 +24,6 @@ class Renderer:
         readme_path = arca.static_filename(url, branch, 'README.md')
         self.worktree_path = Path(readme_path).parent
 
-        if NAUCSE_URL_RE.match(url):
-            # HACK: Forks of naucse.python.cz don't have a mechanism to
-            # get structured data (e.g. titles of lessons).
-            # Inject our "naucse_render" into them, and hope for the best
-            # XXX: This would be better done by installing naucse_render
-            # from PyPI (when it's there).
-
-            hack_path = self.worktree_path / 'naucse_render'
-            try:
-                shutil.copytree(Path(naucse_render.__file__).parent, hack_path)
-            except FileExistsError:
-                pass
-
     def get_course(self, slug, *, version, path):
         task = Task(
             entry_point="naucse_render:get_course",
