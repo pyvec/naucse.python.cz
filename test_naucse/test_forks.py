@@ -11,6 +11,9 @@ from git import Repo
 
 from naucse import models
 
+# https://github.com/pyvec/naucse.python.cz/pull/505#issuecomment-455346240
+pytestmark = pytest.mark.skip('Forks were re-implemented; tests need rewriting')
+
 BuildError = None  # XXX
 
 
