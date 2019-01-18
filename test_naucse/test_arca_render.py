@@ -110,6 +110,46 @@ def test_yaml_error(arca_model, content_repo, git_command):
             raise
 
 
+def test_lesson_error(arca_model, content_repo, git_command):
+    """Bad lesson YAML raises error with indication of repo, file, line no."""
+    yaml_path = content_repo / 'courses/bad-course/info.yml'
+    yaml_path.parent.mkdir()
+    yaml_path.write_text(textwrap.dedent("""
+        title: A course with a bad lesson
+
+        sessions:
+        - title: A normal session
+          slug: normal-session
+          materials:
+          - lesson_slug: bad/bad
+        """))
+
+    lesson_path = content_repo / 'lessons/bad/bad/info.yml'
+    lesson_path.parent.mkdir(parents=True)
+    lesson_path.write_text(textwrap.dedent("""
+        title: An incomplete lesson
+    """))
+
+    run([git_command, 'add', '.'], cwd=content_repo)
+    run([git_command, 'commit', '-a', '-mAdd bad course'], cwd=content_repo)
+
+    course = models.Course.load_remote(
+        'courses/bad-course', parent=arca_model,
+        link_info={'repo': content_repo.as_uri()},
+    )
+
+    with pytest.raises(RemoteRepoError):
+        try:
+            course.freeze()
+        except RemoteRepoError as e:
+            assert "get_lessons({'bad/bad'})" in str(e)
+            assert "repo 'file://" in str(e)
+            assert "branch 'master'" in str(e)
+
+            # Re-raise to let pytest.raise also validate the error
+            raise
+
+
 def test_removed_data(arca_model, content_repo, git_command):
     """Remove all data; check failing on FileNotFoundError"""
     yaml_path = content_repo / 'courses/normal-course/info.yml'

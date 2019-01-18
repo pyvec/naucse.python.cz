@@ -62,7 +62,7 @@ class Renderer:
             kwargs={'vars': vars, 'path': '.'},
             timeout=timeout,
         )
-        with self.wrap_errors('get_lessons', slug):
+        with self.wrap_errors('get_lessons', lesson_slugs):
             info = self.arca.run(self.url, self.branch, task).output
 
         return info
