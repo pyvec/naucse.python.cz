@@ -145,18 +145,34 @@ LINK_INFO = {
     },
 }
 
+def make_data_with_fork_link(tmp_path, course_path, link_content):
+    """Make <tmp_path>/data a naucse data directory with a fork link
 
-@pytest.mark.parametrize('slug', LINK_INFO)
-def test_fork_link(arca_model, content_repo, tmp_path, slug):
-    link_yml_path = tmp_path / f'data/{LINK_INFO[slug]["path"]}/link.yml'
+    The link is at data/<course_path>/link.yml and has the given text content.
+    """
+    link_yml_path = tmp_path / f'data/{course_path}/link.yml'
     link_yml_path.parent.mkdir(parents=True)
-    with link_yml_path.open('w') as f:
-        json.dump({'repo': content_repo.as_uri(), 'branch': 'master'}, f)
+    link_yml_path.write_text(link_content)
 
     # `data/lessons` needs to exist for `data` to be a naucse data directory
     tmp_path.joinpath('data/lessons').mkdir()
 
-    arca_model.load_local_courses(tmp_path / 'data')
 
+@pytest.mark.parametrize('slug', LINK_INFO)
+def test_fork_link(arca_model, content_repo, tmp_path, slug):
+    """Test data is loaded via link.yml pointing to a repository"""
+
+    link_info = {'repo': content_repo.as_uri(), 'branch': 'master'}
+    make_data_with_fork_link(
+        tmp_path, LINK_INFO[slug]["path"], json.dumps(link_info),
+    )
+    arca_model.load_local_courses(tmp_path / 'data')
     course = arca_model.courses[slug]
     assert_yaml_dump(models.dump(course), LINK_INFO[slug]['expected_file'])
+
+
+def test_bad_fork_link(arca_model, content_repo, tmp_path):
+    """Test that bad link.yml errors out"""
+    make_data_with_fork_link(tmp_path, 'courses/bad', 'this is not a dict')
+    with pytest.raises(TypeError):
+        arca_model.load_local_courses(tmp_path / 'data')
