@@ -117,7 +117,7 @@ def test_removed_data(arca_model, content_repo, git_command):
         [git_command, 'rm', '-r', 'courses', 'runs', 'lessons'],
         cwd=content_repo,
     )
-    run([git_command, 'commit', '-a', '-m', 'Break YAML'], cwd=content_repo)
+    run([git_command, 'commit', '-a', '-m', 'Remove all data'], cwd=content_repo)
 
     with pytest.raises(RemoteRepoError):
         try:
