@@ -170,7 +170,7 @@ def test_derives(model):
 
 
 def test_nonexisting_derives(model):
-    """Test that non0existing derives fails quietly"""
+    """Test that nonexisting derives fails quietly"""
     add_test_course(model, 'courses/bad-derives', {
         'title': 'A course derived from nothing',
         'sessions': [],
