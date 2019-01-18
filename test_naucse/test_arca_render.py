@@ -223,9 +223,9 @@ def test_bad_fork_link(arca_model, content_repo, tmp_path):
 
 def test_untrusted(arca_model, git_command, content_repo, tmp_path, caplog):
     """Test an untrusted repo/branch is not loaded"""
-    run([git_command, 'checkout', '-b', 'untrusted'], cwd=content_repo)
+    run([git_command, 'checkout', '-b', 'master-untrusted'], cwd=content_repo)
 
-    link_info = {'repo': content_repo.as_uri(), 'branch': 'untrusted'}
+    link_info = {'repo': content_repo.as_uri(), 'branch': 'master-untrusted'}
     make_data_with_fork_link(
         tmp_path, 'courses/normal-course', json.dumps(link_info),
     )
@@ -238,5 +238,5 @@ def test_untrusted(arca_model, git_command, content_repo, tmp_path, caplog):
     records = [r for r in caplog.records if r.msg.startswith('Untrusted')]
 
     assert len(records) == 1
-    wanted_message = f'Untrusted repo: {content_repo.as_uri()}#untrusted'
+    wanted_message = f'Untrusted repo: {content_repo.as_uri()}#master-untrusted'
     assert wanted_message in records[0].msg
