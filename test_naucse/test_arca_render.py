@@ -1,5 +1,6 @@
 import subprocess
 import textwrap
+import logging
 import shutil
 import json
 import os
@@ -65,7 +66,9 @@ def arca_model(tmp_path, content_repo):
             "ARCA_BACKEND_VERBOSITY": 2,
             "ARCA_BASE_DIR": str(tmp_path / '.arca'),
         }),
-        trusted_repo_patterns=('*',),
+
+        # We only trust "master" branches
+        trusted_repo_patterns=('*#master',),
     )
     return model
 
@@ -216,3 +219,24 @@ def test_bad_fork_link(arca_model, content_repo, tmp_path):
     make_data_with_fork_link(tmp_path, 'courses/bad', 'this is not a dict')
     with pytest.raises(TypeError):
         arca_model.load_local_courses(tmp_path / 'data')
+
+
+def test_untrusted(arca_model, git_command, content_repo, tmp_path, caplog):
+    """Test an untrusted repo/branch is not loaded"""
+    run([git_command, 'checkout', '-b', 'untrusted'], cwd=content_repo)
+
+    link_info = {'repo': content_repo.as_uri(), 'branch': 'untrusted'}
+    make_data_with_fork_link(
+        tmp_path, 'courses/normal-course', json.dumps(link_info),
+    )
+    arca_model.load_local_courses(tmp_path / 'data')
+
+    with caplog.at_level(logging.DEBUG):
+        assert 'courses/normal-course' not in arca_model.courses
+
+    print(caplog.records)
+    records = [r for r in caplog.records if r.msg.startswith('Untrusted')]
+
+    assert len(records) == 1
+    wanted_message = f'Untrusted repo: {content_repo.as_uri()}#untrusted'
+    assert wanted_message in records[0].msg
