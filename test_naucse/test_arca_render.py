@@ -1,9 +1,11 @@
 import subprocess
+import textwrap
 import shutil
 import os
 
 import pytest
 from arca import Arca
+from arca.exceptions import BuildError
 
 from naucse import models
 
@@ -74,3 +76,23 @@ def test_valid_fork(arca_model, content_repo):
     )
     arca_model.add_course(course)
     assert_yaml_dump(models.dump(course), 'normal-course.yaml')
+
+
+def test_yaml_error(arca_model, content_repo, git_command):
+    """Invalid YAML raises error with indication of file & line number"""
+    yaml_path = content_repo / 'courses/normal-course/info.yml'
+    yaml_path.write_text(textwrap.dedent("""
+        good: yaml
+        *bad_YAML*
+    """))
+
+    run([git_command, 'commit', '-a', '-m', 'Break YAML'], cwd=content_repo)
+
+    with pytest.raises(
+        BuildError,
+        match=r'courses/normal-course/info.yml", line 3, column '
+    ):
+        course = models.Course.load_remote(
+            'courses/normal-course', parent=arca_model,
+            link_info={'repo': content_repo.as_uri()},
+        )
