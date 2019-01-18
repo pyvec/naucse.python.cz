@@ -292,6 +292,7 @@ class Page(Model):
 
     solutions = Field(
         ListConverter(Solution, index_arg='index'),
+        factory=list,
         doc="Solutions to problems that appear on the page.")
 
     modules = Field(
@@ -313,6 +314,7 @@ class Lesson(Model):
 
     static_files = Field(
         DictConverter(StaticFile, key_arg='filename'),
+        factory=dict,
         doc="Static files the lesson's content may reference")
     pages = Field(
         DictConverter(Page, key_arg='slug', required={'index'}),
