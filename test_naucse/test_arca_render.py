@@ -5,9 +5,9 @@ import os
 
 import pytest
 from arca import Arca
-from arca.exceptions import BuildError
 
 from naucse import models
+from naucse.arca_renderer import RemoteRepoError
 
 from test_naucse.conftest import fixture_path, make_model, get_local_repo_info
 from test_naucse.conftest import assert_yaml_dump
@@ -79,7 +79,7 @@ def test_valid_fork(arca_model, content_repo):
 
 
 def test_yaml_error(arca_model, content_repo, git_command):
-    """Invalid YAML raises error with indication of file & line number"""
+    """Invalid YAML raises error with indication of repo, file, line number"""
     yaml_path = content_repo / 'courses/normal-course/info.yml'
     yaml_path.write_text(textwrap.dedent("""
         good: yaml
@@ -88,11 +88,21 @@ def test_yaml_error(arca_model, content_repo, git_command):
 
     run([git_command, 'commit', '-a', '-m', 'Break YAML'], cwd=content_repo)
 
-    with pytest.raises(
-        BuildError,
-        match=r'courses/normal-course/info.yml", line 3, column '
-    ):
-        course = models.Course.load_remote(
-            'courses/normal-course', parent=arca_model,
-            link_info={'repo': content_repo.as_uri()},
-        )
+    with pytest.raises(RemoteRepoError):
+        try:
+            course = models.Course.load_remote(
+                'courses/normal-course', parent=arca_model,
+                link_info={'repo': content_repo.as_uri()},
+            )
+        except RemoteRepoError as e:
+            # Method, argument, repo is in the RemoteRepoError wrapper
+            assert "get_course('courses/normal-course')" in str(e)
+            assert "repo 'file://" in str(e)
+            assert "branch 'master'" in str(e)
+
+            # File & line info is in Arca's BuildError, the __cause__
+            file_line_msg = 'courses/normal-course/info.yml", line 3, column '
+            assert file_line_msg in str(e.__cause__)
+
+            # Re-raise to let pytest.raise also validate the error
+            raise

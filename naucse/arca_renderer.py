@@ -1,4 +1,5 @@
 from pathlib import Path
+import contextlib
 import shutil
 import re
 
@@ -10,6 +11,11 @@ import naucse_render
 NAUCSE_URL_RE = re.compile(
     r'^https://github.com/[^/]+/naucse\.python\.cz(\.git)?$'
 )
+
+
+class RemoteRepoError(Exception):
+    """Raised when an Arca call fails and provides info about remote repo"""
+
 
 class Renderer:
     """Render courses from a remote repository using Arca
@@ -24,13 +30,26 @@ class Renderer:
         readme_path = arca.static_filename(url, branch, 'README.md')
         self.worktree_path = Path(readme_path).parent
 
+    @contextlib.contextmanager
+    def wrap_errors(self, method, arg):
+        """In case of error, provide extra information about method and repo
+        """
+        try:
+            yield
+        except Exception as e:
+            raise RemoteRepoError(
+                f'Error in {method}({arg!r}), '
+                + f'repo {self.url!r}, branch {self.branch!r}'
+            ) from e
+
     def get_course(self, slug, *, version, path):
         task = Task(
             entry_point="naucse_render:get_course",
             args=[slug],
             kwargs={'version': version, 'path': '.'},
         )
-        info = self.arca.run(self.url, self.branch, task).output
+        with self.wrap_errors('get_course', slug):
+            info = self.arca.run(self.url, self.branch, task).output
 
         return info
 
@@ -43,6 +62,7 @@ class Renderer:
             kwargs={'vars': vars, 'path': '.'},
             timeout=timeout,
         )
-        info = self.arca.run(self.url, self.branch, task).output
+        with self.wrap_errors('get_lessons', slug):
+            info = self.arca.run(self.url, self.branch, task).output
 
         return info
