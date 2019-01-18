@@ -1,16 +1,25 @@
 from pathlib import Path
 
 import pytest
+import yaml
 
 from naucse import models
 from naucse.edit_info import get_local_repo_info
 
 from test_naucse.conftest import assert_yaml_dump, add_test_course
+from test_naucse.conftest import fixture_path
 
 class DummyRenderer:
-    """Renderer that returns lessons from a dict
+    """Renderer that returns courses/lessons from the given data
 
     Mocks the get_lessons method of naucse_render or arca_renderer.Renderer.
+
+    As `course`, DummyRenderer expects a full API response, complete with
+    api_version.
+    The `lessons` argument should be a mapping of lesson slugs to full API
+    responses.
+
+    As of now, get_lessons only allows a single lesson slug.
     """
 
     def __init__(self, course=None, lessons=None):
@@ -21,7 +30,14 @@ class DummyRenderer:
         return self.course
 
     def get_lessons(self, lessons, *, vars, path):
-        return {slug: self._lessons[slug] for slug in lessons}
+        [slug] = lessons
+        try:
+            return self._lessons[slug]
+        except KeyError as e:
+            raise DummyLessonNotFound(slug) from e
+
+class DummyLessonNotFound(LookupError):
+    """Raised by DummyRenderer when a lesson is not found"""
 
 
 @pytest.fixture
@@ -77,7 +93,7 @@ def test_get_lesson_url_freeze_error(empty_course):
     """Requested lessons are loaded on freeze(), failing if not available"""
     empty_course.get_lesson_url('any/lesson')
     empty_course.renderer = DummyRenderer()
-    with pytest.raises(KeyError):
+    with pytest.raises(DummyLessonNotFound):
         empty_course.freeze()
 
 
@@ -102,3 +118,53 @@ def test_empty_course_from_renderer(model):
     )
     check_empty_course_attrs(course, source_file=Path(source))
     assert_yaml_dump(models.dump(course), 'minimal-course.yml')
+
+
+def test_complex_course(model):
+    """Valid complex json that could come from a fork is loaded correctly"""
+    with (fixture_path / 'course-data/complex-course.yml').open() as f:
+        renderer = DummyRenderer(**yaml.safe_load(f))
+    course = models.Course.load_local(
+        parent=model,
+        repo_info=get_local_repo_info('/dummy'),
+        slug='courses/complex',
+        renderer=renderer,
+    )
+    assert_yaml_dump(models.dump(course), 'complex-course.yml')
+
+    # Make sure HTML is sanitized
+    assert course.long_description == 'A <em>fun course!</em>'
+    assert course.sessions['full'].description == 'A <em>full session!</em>'
+
+
+def test_derives(model):
+    """Test that derives and base_course is set correctly"""
+    add_test_course(model, 'courses/base', {
+        'title': 'A base course',
+        'sessions': [],
+    })
+    add_test_course(model, 'courses/derived', {
+        'title': 'A derived course',
+        'sessions': [],
+        'derives': 'base'
+    })
+
+    base = model.courses['courses/base']
+    derived = model.courses['courses/derived']
+
+    assert derived.derives == 'base'
+    assert derived.base_course is base
+
+
+def test_nonexisting_derives(model):
+    """Test that non0existing derives fails quietly"""
+    add_test_course(model, 'courses/bad-derives', {
+        'title': 'A course derived from nothing',
+        'sessions': [],
+        'derives': 'nonexisting'
+    })
+
+    course = model.courses['courses/bad-derives']
+
+    assert course.derives == 'nonexisting'
+    assert course.base_course is None
