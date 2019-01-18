@@ -162,7 +162,7 @@ class HTMLFragmentConverter(BaseConverter):
         return self.sanitizer(parent, value)
 
     def dump(self, value):
-        return value
+        return str(value)
 
     @classmethod
     def get_schema(cls, context):
