@@ -106,3 +106,27 @@ def test_yaml_error(arca_model, content_repo, git_command):
 
             # Re-raise to let pytest.raise also validate the error
             raise
+
+
+def test_removed_data(arca_model, content_repo, git_command):
+    """Remove all data; check failing on FileNotFoundError"""
+    yaml_path = content_repo / 'courses/normal-course/info.yml'
+    run(
+        [git_command, 'rm', '-r', 'courses', 'runs', 'lessons'],
+        cwd=content_repo,
+    )
+    run([git_command, 'commit', '-a', '-m', 'Break YAML'], cwd=content_repo)
+
+    with pytest.raises(RemoteRepoError):
+        try:
+            course = models.Course.load_remote(
+                'courses/normal-course', parent=arca_model,
+                link_info={'repo': content_repo.as_uri()},
+            )
+        except RemoteRepoError as e:
+            assert 'Task failed' in str(e.__cause__)
+            assert 'FileNotFoundError' in str(e.__cause__)
+            assert 'courses/normal-course/info.yml' in str(e.__cause__)
+
+            # Re-raise to let pytest.raise also validate the error
+            raise
