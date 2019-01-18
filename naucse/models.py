@@ -726,8 +726,6 @@ class Course(Model):
             renderer=renderer,
         )
 
-    default_time = Field(TimeIntervalConverter(), optional=True)
-
     # XXX: Is course derivation useful?
     derives = Field(
         str, optional=True,
