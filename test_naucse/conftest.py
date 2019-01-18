@@ -27,18 +27,24 @@ class DummyURLFactories:
         return dummy_url_factory
 
 
-@pytest.fixture
-def model():
-    """Model for testing courses"""
+def make_model(**extra_kwargs):
+    """Return a set-up testing model, possibly with additional init kwargs"""
     model = models.Root(
         schema_url_factory=dummy_schema_url_factory,
         url_factories={
             'api': DummyURLFactories('api'),
             'web': DummyURLFactories('web'),
         },
+        **extra_kwargs,
     )
     model.load_licenses(fixture_path / 'licenses')
     return model
+
+
+@pytest.fixture
+def model():
+    """Model for testing courses"""
+    return make_model()
 
 
 def assert_yaml_dump(data, filename):
