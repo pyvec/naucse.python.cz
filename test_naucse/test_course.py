@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from jsonschema.exceptions import ValidationError
 
 from naucse import models
 from naucse.edit_info import get_local_repo_info
@@ -120,9 +121,13 @@ def test_empty_course_from_renderer(model):
     assert_yaml_dump(models.dump(course), 'minimal-course.yml')
 
 
-def test_complex_course(model):
-    """Valid complex json that could come from a fork is loaded correctly"""
-    with (fixture_path / 'course-data/complex-course.yml').open() as f:
+def load_course_from_fixture(model, filename):
+    """Load course from a file with info as it would come from a fork.
+
+    Contents of the file are passed as kwargs to DummyRenderer.
+    """
+
+    with (fixture_path / filename).open() as f:
         renderer = DummyRenderer(**yaml.safe_load(f))
     course = models.Course.load_local(
         parent=model,
@@ -130,6 +135,14 @@ def test_complex_course(model):
         slug='courses/complex',
         renderer=renderer,
     )
+    model.add_course(course)
+    return course
+
+
+def test_complex_course(model):
+    """Valid complex json that could come from a fork is loaded correctly"""
+    course = load_course_from_fixture(model, 'course-data/complex-course.yml')
+
     assert_yaml_dump(models.dump(course), 'complex-course.yml')
 
     # Make sure HTML is sanitized
@@ -168,3 +181,9 @@ def test_nonexisting_derives(model):
 
     assert course.derives == 'nonexisting'
     assert course.base_course is None
+
+
+def test_invalid_course(model):
+    """Invalid complex json that could come from a fork is not loaded"""
+    with pytest.raises(ValidationError):
+        load_course_from_fixture(model, 'course-data/invalid-course.yml')
