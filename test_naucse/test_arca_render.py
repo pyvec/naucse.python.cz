@@ -1,6 +1,7 @@
 import subprocess
 import textwrap
 import shutil
+import json
 import os
 
 import pytest
@@ -64,6 +65,7 @@ def arca_model(tmp_path, content_repo):
             "ARCA_BACKEND_VERBOSITY": 2,
             "ARCA_BASE_DIR": str(tmp_path / '.arca'),
         }),
+        trusted_repo_patterns=('*',),
     )
     return model
 
@@ -130,3 +132,31 @@ def test_removed_data(arca_model, content_repo, git_command):
 
             # Re-raise to let pytest.raise also validate the error
             raise
+
+
+LINK_INFO = {
+    'courses/normal-course': {
+        'path': 'courses/normal-course',
+        'expected_file': 'normal-course.yaml',
+    },
+    '2000/run-with-times': {
+        'path': 'runs/2000/run-with-times',
+        'expected_file': 'run-with-times.yaml',
+    },
+}
+
+
+@pytest.mark.parametrize('slug', LINK_INFO)
+def test_fork_link(arca_model, content_repo, tmp_path, slug):
+    link_yml_path = tmp_path / f'data/{LINK_INFO[slug]["path"]}/link.yml'
+    link_yml_path.parent.mkdir(parents=True)
+    with link_yml_path.open('w') as f:
+        json.dump({'repo': content_repo.as_uri(), 'branch': 'master'}, f)
+
+    # `data/lessons` needs to exist for `data` to be a naucse data directory
+    tmp_path.joinpath('data/lessons').mkdir()
+
+    arca_model.load_local_courses(tmp_path / 'data')
+
+    course = arca_model.courses[slug]
+    assert_yaml_dump(models.dump(course), LINK_INFO[slug]['expected_file'])
