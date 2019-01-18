@@ -948,15 +948,32 @@ class Root(Model):
             # to be loaded. But "lessons" needs to exist either way.
             raise FileNotFoundError(lesson_path)
 
-        if self_study_course_path.exists():
-            for course_path in self_study_course_path.iterdir():
-                if (course_path / 'info.yml').is_file():
-                    slug = 'courses/' + course_path.name
-                    course = Course.load_local(
-                        slug, parent=self, repo_info=self.repo_info,
-                        canonical=True, path=path
+        def _load_local_course(course_path, slug, canonical_if_local=False):
+            link_path = course_path / 'link.yml'
+            if link_path.is_file():
+                with link_path.open() as f:
+                    link_info = yaml.safe_load(f)
+                checked_url = '{repo}#{branch}'.format(**link_info)
+                if any(
+                    fnmatch(checked_url, l) for l in self.trusted_repo_patterns
+                ):
+                    course = Course.load_remote(
+                        slug, parent=self, link_info=link_info,
                     )
                     self.add_course(course)
+                else:
+                    logger.debug(f'Untrusted repo: {checked_url}')
+            if (course_path / 'info.yml').is_file():
+                course = Course.load_local(
+                    slug, parent=self, repo_info=self.repo_info, path=path,
+                    canonical=canonical_if_local,
+                )
+                self.add_course(course)
+
+        if self_study_course_path.exists():
+            for course_path in self_study_course_path.iterdir():
+                slug = 'courses/' + course_path.name
+                _load_local_course(course_path, slug, canonical_if_local=True)
 
         if run_path.exists():
             for year_path in sorted(run_path.iterdir()):
@@ -964,27 +981,7 @@ class Root(Model):
                     self.explicit_run_years.add(int(year_path.name))
                     for course_path in year_path.iterdir():
                         slug = f'{year_path.name}/{course_path.name}'
-                        link_path = course_path / 'link.yml'
-                        if link_path.is_file():
-                            with link_path.open() as f:
-                                link_info = yaml.safe_load(f)
-                            checked_url = '{repo}#{branch}'.format(**link_info)
-                            if any(
-                                fnmatch(checked_url, l)
-                                for l in self.trusted_repo_patterns
-                            ):
-                                course = Course.load_remote(
-                                    slug, parent=self, link_info=link_info,
-                                )
-                                self.add_course(course)
-                            else:
-                                logger.debug(f'Untrusted repo: {checked_url}')
-                        if (course_path / 'info.yml').is_file():
-                            course = Course.load_local(
-                                slug, parent=self, repo_info=self.repo_info,
-                                path=path,
-                            )
-                            self.add_course(course)
+                        _load_local_course(course_path, slug)
 
         self.add_course(Course.load_local(
             'lessons',
