@@ -4,7 +4,7 @@ import functools
 import calendar
 import os
 
-from flask import Flask, render_template, jsonify, url_for, Response, abort, g
+from flask import Flask, render_template, jsonify, url_for, Response, abort, g, redirect
 from flask import send_from_directory
 import ics
 from arca import Arca
