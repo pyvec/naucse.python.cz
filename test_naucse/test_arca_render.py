@@ -7,6 +7,7 @@ import os
 
 import pytest
 from arca import Arca
+from arca.exceptions import BuildError
 
 from naucse import models
 from naucse.arca_renderer import RemoteRepoError
@@ -240,3 +241,24 @@ def test_untrusted(arca_model, git_command, content_repo, tmp_path, caplog):
     assert len(records) == 1
     wanted_message = f'Untrusted repo: {content_repo.as_uri()}#master-untrusted'
     assert wanted_message in records[0].msg
+
+
+@pytest.mark.xfail(reason="Succeeds despite no naucse_render dependency")
+def test_missing_render_dependency(arca_model, content_repo, git_command):
+    """Missing naucse_render dependency gives actionable error message"""
+
+    # Remove Pipfile & lock
+    run([git_command, 'rm', 'Pipfile'], cwd=content_repo)
+    run([git_command, 'rm', 'Pipfile.lock'], cwd=content_repo)
+
+    # Instead, add requirements.txt with a dummy dependency
+    (content_repo / 'requirements.txt').write_text('pip')
+    run([git_command, 'add', 'requirements.txt'], cwd=content_repo)
+    run([git_command, 'commit', '-a', '-m', 'Break deps'], cwd=content_repo)
+
+    with pytest.raises(BuildError):
+        # Should raise BuildError (with an actionable error message)
+        course = models.Course.load_remote(
+            'courses/normal-course', parent=arca_model,
+            link_info={'repo': content_repo.as_uri()},
+        )
