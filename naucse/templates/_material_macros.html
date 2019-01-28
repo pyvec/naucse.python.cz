@@ -1,13 +1,13 @@
 {% from "_bytesize_icons.html" import bytesize_icon %}
 
 {%- macro icon_for_material(material) -%}
-    {%- if material.type == 'page' -%}
+    {%- if material.type == 'lesson' -%}
         {{- bytesize_icon('chevron-right') -}}
-    {%- elif material.url_type == 'cheatsheet' -%}
+    {%- elif material.type == 'cheatsheet' -%}
         {{- bytesize_icon('eye') -}}
-    {%- elif material.url_type == 'homework' -%}
+    {%- elif material.type == 'homework' -%}
         {{- bytesize_icon('edit') -}}
-    {%- elif material.url_type == 'special' -%}
+    {%- elif material.type == 'special' -%}
         {{- bytesize_icon('flag') -}}
     {%- else %}
         {{- bytesize_icon('link') -}}
@@ -15,18 +15,18 @@
 {%- endmacro -%}
 
 {%- macro material_li(material) %}
+    {%- set url = material.url_or_none() %}
     <li>
-        {% if material.type == "page" %}
-            {% set url=lesson_url(lesson=material.page.lesson, page=material.page.slug) %}
-        {% else %}
-            {% set url=material.url %}
-        {% endif %}
-        {% if url is defined %}
+        {% if url %}
+            
+        
+        
         <a href="{{ url }}">
         {% endif %}
-            {{- icon_for_material(material) -}}
+            {{- icon_for_material(material) | sanitize }}
+            {#- XXX: no need to sanitize the icon #}
             {{- material.title -}}
-        {% if url is defined %}
+        {% if url %}
         </a>
         {% endif %}
     </li>
@@ -35,7 +35,7 @@
 {%- macro material_list(materials, filter_type=None) %}
     <ul class="material-list">
         {% for mat in materials %}
-            {% if filter_type == None or mat.url_type == filter_type %}
+            {% if filter_type == None or mat.type == filter_type %}
                 {{ material_li(mat) }}
             {% endif %}
         {% endfor %}
