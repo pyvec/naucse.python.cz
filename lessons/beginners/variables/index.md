@@ -26,9 +26,21 @@ a obsah jako <var>S</var> = <var>a</var>².
 > na základy programování si vystačíme s matematickými
 > znalostmi ze základní školy.
 
-Výsledky by měl samozřejmě spočítat Python; číslo 1424 nebo 126736 do programu nepiš.<br>
+Výsledky by měl spočítat Python; číslo 1424 nebo 126736 do programu nepiš.<br>
 Jestli si nevíš rady, podívej se na program <code>printing.py</code>
 z [lekce o `print`]({{ lesson_url('beginners/print') }}), kde jeden řádek dělá něco podobného.
+
+Až budeš mít program hotový, nebo až budeš chtít vyzkoušet rozepsaný kousek,
+spusť ho:
+* pokud ti už na začátku příkazové řádky nesvítí `(venv)`,
+  aktivuj si virtuální prostředí,
+* pomocí `cd` donaviguj do adresáře s programem,
+* zadej `python ctverec.py`.
+
+Funguje? Jestli ne, oprav ho a zkus to znovu!
+Když už jsi v příkazové řádce ve správném adresáři, stačí zadat `python ctverec.py`.
+Abys to nemusel{{a}} celé psát, můžeš zkusit zmáčknout šipku nahoru,
+<kbd>↑</kbd>, a vrátit se tak k předchozímu příkazu.
 
 {% filter solution %}
     Program, který vypíše správný výsledek, může vypadat třeba takhle:

@@ -108,6 +108,8 @@ print('Obvod čtverce se stranou', strana, 'je', 4 * strana, 'cm')
 print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 ```
 
+Program spusť. Funguje?
+
 Co se stane, když jako stranu zadáš záporné číslo?
 Dává výstup smysl?
 

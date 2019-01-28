@@ -65,11 +65,11 @@ Dokážeš napsat tenhle program?
 
 * Začínáš s 0 body.
 * Počítač v každém kole vypíše, kolik máš bodů,
-  a zeptá se hráče, jestli chce pokračovat.
-* Pokud hráč odpoví „ne“, hra končí.
-* Pokud hráč odpoví „ano“, počítač „otočí kartu“
-  (náhodně vybere číslo od 2 do 10) a přičte její hodnotu k bodům.
-* Pokud má hráč víc než 21 bodů, prohrává.
+  a zeptá se tě, jestli chceš pokračovat.
+* Pokud odpovíš „ne“, hra končí.
+* Pokud odpovíš „ano“, počítač „otočí kartu“
+  (náhodně vybere číslo od 2 do 10), vypíše její hodnotu a přičte ji k bodům.
+* Pokud máš víc než 21 bodů, prohráváš.
 * Cílem hry je získat co nejvíc bodů, ideálně 21.
 
 {% filter solution %}

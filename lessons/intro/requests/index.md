@@ -40,6 +40,11 @@ Password:
 {'avatar_url': 'https://avatars.githubusercontent.com/u/2401856?v=3', ...}
 ```
 
+> [note]
+> Tento příklad pracuje přímo se jménem a heslem.
+> To se většinou nedělá a webové API to často ani nepodporují.
+> Pokud na GitHub používáte dvoufaktorovou autentizaci, příklad nebude fungovat.
+
 Příklady použití pro další HTTP metody najdete v [dokumentaci].
 
 [dokumentaci]: http://docs.python-requests.org/en/master/user/quickstart/
@@ -70,143 +75,26 @@ k testování HTTP dotazů:
 >>> session.headers.update({'x-test': 'true'})
 >>> r = session.get('http://httpbin.org/headers', headers={'x-test2': 'true'})
 >>> r.json()
-{'headers': {'Accept': '*/*', 'User-Agent': 'python-requests/2.10.0', 'X-Test2': 'true', 'Host': 'httpbin.org', 'Accept-Encoding': 'gzip, deflate', 'X-Test': 'true', 'Cookie': 'mipyt=best'}}
+{'headers': {'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'Connection': 'close', 'Cookie': 'mipyt=best', 'Host': 'httpbin.org', 'User-Agent': 'python-requests/2.19.1', 'X-Test': 'true', 'X-Test2': 'true'}}
 ```
 
-## Twitter API
+## GitHub API
 
-Pro reálné použití si ukážeme, jak se dá pomocí requests získat seznam tweetů.
-Nebudeme samozřejmě nic parsovat z HTML stránek, ale použijeme [API Twitteru].
-
-```pycon
->>> r = session.get('https://api.twitter.com/1.1/search/tweets.json')
->>> r.json()
-{'errors': [{'code': 215, 'message': 'Bad Authentication data.'}]}
-```
-
-Jak můžete vidět v odpovědi, Twitter API neumožňuje data číst bez autentizace.
-Jak se autentizovat byste při troše hledání našli v dokumentaci, ale protože
-tu nevyučujeme úvod do OAuthu, ale Python, rozhodli jsme se vám to zjednodušit.
-
-Nemáte-li na Twitter účet, vytvořte si ho. Můžete vytvořit nějaký *dummy* účet,
-který dál nebudete používat. Budete ale potřebovat ověřitelné telefonní číslo.
-
-Po přihlášení na Twitter jděte na [apps.twitter.com] a vytvořte aplikaci
-(URL si můžete vymyslet, třeba `http://invalid`).
-Po vytvoření najdete na kartě *Keys and Access Tokens* **API Key** a **API Secret**.
-Pozor, jedná se prakticky o hesla k vašemu Twitter účtu,
-a proto by je nikdo kromě vás neměl vidět.
-
-> [warning] Ochrana přihlašovacích tokenů
-> Ještě jednou – *API Key* a *API Secret* se chovají jako hesla.
-> Nikomu je nesmíte ukazovat!
-> Stane-li se přesto, že se k nim dostane někdo nepovolaný, na kartě
-> *Keys and Access Tokens* je můžete zrušit.
-
-Prozatím klíče nastavte do proměnných, později je schováme například do
-konfiguračního souboru.
-
-```pycon
->>> api_key = 'D4HJp6PKmpon9eya1b2c3d4e5'
->>> api_secret = 'rhvasRMhvbuHJpu4MIuAb4WO50gnoQa1b2c3d4e5f6g7h8i9j0'
-```
-
-Pomocí těchto kódů je potřeba si od Twitter API vyžádat přístupový token.
-Používá se k tomu běžné HTTP přihlášení ([HTTP Basic authentication]),
-kde je `api_key` použit jako uživatelské jméno a `api_secret` jako heslo.
-
-Pro běžné HTTP přihlášení se v knihovně requests používá
-`requests.auth.HTTPBasicAuth`:
-
-[HTTP Basic authentication]: https://cs.wikipedia.org/wiki/Basic_access_authentication
-
-```pycon
->>> r = session.post('https://api.twitter.com/oauth2/token',
-                     auth=requests.auth.HTTPBasicAuth(api_key, api_secret),
-                     data={'grant_type': 'client_credentials'})
->>> 
->>> r.json()
-{'token_type': 'bearer', 'access_token': 'AAAAAAAAAAAAAAAAAAAAAHhKXAAAAAAAaA1abB2bcC3cdD4deE5efF6fgG7ghH8hiI9ijJ0ja1b2c3d4e5f6g7h8i9j0a1b2c3d4e5f6g7h8i9j0'}
->>> bearer_token = r.json()['access_token']
-```
-
-Parametr `auth` v příkladu výše je autentizační funkce, která nějakým způsobem
-modifikuje HTTP požadavek za účelem autentizace, většinou přidává specifické
-hlavičky.
-`requests.auth.HTTPBasicAuth` zde dle specifikace zakóduje jméno a heslo pomocí
-algoritmu base64 a přidá hlavičku `Authorization`.
-
-Základní HTTP přihlášení je tak běžné, že pro něj Requests mají zkratku –
-místo `HTTPBasicAuth` se dá použít jen dvojice (jméno, heslo):
-
-```pycon
->>> r = session.post('https://api.twitter.com/oauth2/token',
-                     auth=(api_key, api_secret),
-                     data={'grant_type': 'client_credentials'})
-```
-
-Pro další komunikaci s Twitter API je nutné přidat hlavičku se získaným tokenem.
-Jelikož používáte session, není nutné to dělat u každého požadavku zvlášť,
-ale je možné nastavit autentizační funkci pro celou session.
-
-```pycon
->>> def bearer_auth(req):
-...     req.headers['Authorization'] = 'Bearer ' + bearer_token
-...     return req
-... 
->>> session.auth = bearer_auth
-```
-
-Pak už by mělo API fungovat.
-Použijeme [API pro vyhledávání tweetů][Search API]:
-
-```pycon
->>> r = session.get(
-...     'https://api.twitter.com/1.1/search/tweets.json',
-...     params={'q': '#python'},
-... )
->>> for tweet in r.json()['statuses']:
-...     print(tweet['text'])
-... 
-Once a framework decides to abstract the HTML layer from you. Customizing your UI becomes sorcery. #django #Python
-...
-```
-
-Zde je pro zjednodušení k dispozici celá funkce pro vytvoření autentizované
-*session*:
-
-```python
-import requests
-
-def twitter_session(api_key, api_secret):
-    session = requests.Session()
-
-    r = session.post('https://api.twitter.com/oauth2/token',
-                     auth=(api_key, api_secret),
-                     data={'grant_type': 'client_credentials'})
-
-    bearer_token = r.json()['access_token']
-
-    def bearer_auth(req):
-        req.headers['Authorization'] = 'Bearer ' + bearer_token
-        return req
-
-    session.auth = bearer_auth
-    return session
-```
-
-[API Twitteru]: https://dev.twitter.com/rest/public
-[apps.twitter.com]: https://apps.twitter.com/
-[Search API]: https://developer.twitter.com/en/docs/tweets/search/api-reference/get-search-tweets.html
-
-### GitHub API
-
-Podíváme se i na [GitHub API], které má jednodušší autentizaci (od GitHubu přímo
+Podíváme se teď, podobně jako v úvodním příkladu, na [GitHub API],
+které má poměrně jednoduchou autentizaci (od GitHubu přímo
 získáte token). Stačí jít do [nastavení] a vyrobit nový token
 (zatím není třeba zaškrtávat žádná oprávnění).
-Token je opět třeba patřičně chránit.
 
-Pomocí tokenu pak můžete z GitHubu získávat informace.
+> [warning] Ochrana přihlašovacích tokenů
+> Váš token je něco jako vaše heslo.
+> Nikomu je nesmíte ukazovat a nesmíte jej dát do Gitu.
+> Stane-li se přesto, že se k němu dostane někdo nepovolaný,
+> můžete jej v [nastavení] opět smazat.
+
+Pomocí tokenu můžete z GitHubu získávat informace.
+Prozatím token nastavte do proměnné, později jej schováme například do
+konfiguračního souboru.
+
 Tímto kódem lze například získat popis přihlášeného uživatele, tedy sebe sama.
 
 ```pycon
@@ -214,7 +102,7 @@ Tímto kódem lze například získat popis přihlášeného uživatele, tedy se
 >>> session = requests.Session()
 >>> session.headers = {'User-Agent': 'Python'}
 >>> def token_auth(req):
-...     req.headers['Authorization'] = 'token ' + token
+...     req.headers['Authorization'] = f'token {token}'
 ...     return req
 ... 
 >>> session.auth = token_auth
@@ -222,9 +110,33 @@ Tímto kódem lze například získat popis přihlášeného uživatele, tedy se
 >>> r.json()
 ```
 
+Funkce `session.auth` v příkladu výše je autentizační funkce,
+která nějakým způsobem modifikuje HTTP požadavek za účelem autentizace,
+většinou přidává specifické hlavičky (jak je tomu i zde).
+Lze ji nastavit buďto na celé session nebo předat argumentem `auth` s každým
+požadavkem.
+
+Existují předpřipravené funkce v modulu `requests.auth`, například 
+`requests.auth.HTTPBasicAuth` provádí základní HTTP přihlášení.
+Dle specifikace zakóduje jméno a heslo pomocí
+algoritmu base64 a přidá hlavičku `Authorization`.
+
+[Základní HTTP přihlášení](https://cs.wikipedia.org/wiki/Basic_access_authentication)
+je tak běžné, že pro něj Requests mají zkratku –
+místo `HTTPBasicAuth` se dá použít i dvojice (jméno, heslo):
+
+```pycon
+>>> requests.get('https://httpbin.org/basic-auth/AzureDiamond/hunter2',
+                 auth=requests.auth.HTTPBasicAuth('AzureDiamond', 'hunter2'))
+>>> 
+>>> requests.get('https://httpbin.org/basic-auth/AzureDiamond/hunter2',
+                 auth=('AzureDiamond', 'hunter2'))
+```
+
 > [note]
-> Všimněte si hlavičky `User-Agent`. Ta je potřeba při komunikaci s GitHub API
-> explicitně nastavit. Nastavení na objektu session zajistí, že tato hlavička
+> Všimněte si také hlavičky `User-Agent`.
+> Ta je potřeba při komunikaci s GitHub API explicitně nastavit.
+> Nastavení na objektu session zajistí, že tato hlavička
 > bude ve všech požadavcích.
 
 Pokud budete chtít něco provést, například dát hvězdičku repozitáři s těmito
@@ -264,18 +176,13 @@ My ale věříme, že ji odebrat nechcete :)
 [Dokumentace]: https://developer.github.com/v3/
 [GitHub API]: https://developer.github.com/v3
 
-
-### Chraňte své tokeny
+## Chraňte své tokeny
 
 Když ukládáte skript do gitu, mějte na paměti, že tokeny a klíče do něj nikdy
 nepatří. Můžete je uložit do konfiguračního souboru, který bude gitem ignorován,
 například takhle:
 
 ```ini
-[twitter]
-key = D4HJp6PKmpon9eya1b2c3d4e5
-secret = rhvasRMhvbuHJpu4MIuAb4WO50gnoQa1b2c3d4e5f6g7h8i9j0
-
 [github]
 token = d7313dab254b7fd0d0f3ec3cbf754b3abce462d5
 ```
@@ -288,8 +195,8 @@ A následně konfiguraci načtete pomocí modulu
 >>> config = configparser.ConfigParser()
 >>> with open('auth.cfg') as f:
 ...     config.read_file(f)
->>> config['twitter']['key']
-D4HJp6PKmpon9eya1b2c3d4e5
+>>> config['github']['token']
+'d7313dab254b7fd0d0f3ec3cbf754b3abce462d5'
 ```
 
 Do souboru `.gitignore` pak musíte přidat název ignorovaného souboru, např.:

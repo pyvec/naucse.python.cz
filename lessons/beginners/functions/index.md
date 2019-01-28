@@ -83,7 +83,7 @@ Tady jsou všechny Pythonní operátory:
     <code>&lt;=</code> <code>&gt;=</code>
     <code class="text-muted">|</code> <code class="text-muted">^</code>
     <code class="text-muted">&amp;</code>
-    <code class="text-muted">&lt;&lt;</code> <code class="muted">&gt;&gt;</code>
+    <code class="text-muted">&lt;&lt;</code> <code class="text-muted">&gt;&gt;</code>
     <code>+</code> <code>-</code>
     <code>*</code> <code class="text-muted">@</code> <code>/</code>
     <code>//</code> <code>%</code>
@@ -95,11 +95,11 @@ Tady jsou všechny Pythonní operátory:
 </div>
 
 <div>
-    <code class="muted">lambda</code>
-    <code class="muted">if else</code>
+    <code class="text-muted">lambda</code>
+    <code class="text-muted">if else</code>
     <code>or</code> <code>and</code> <code>not</code>
-    <code class="muted">in</code> <code class="muted">not in</code>
-    <code class="muted">is</code> <code class="muted">is not</code>
+    <code class="text-muted">in</code> <code class="text-muted">not in</code>
+    <code class="text-muted">is</code> <code class="text-muted">is not</code>
 </div>
 
 Je asi jasné, že většina operací,
@@ -243,7 +243,7 @@ ale pomocí argumentu `end` se dá vypsat i něco jiného.
 
 > [note]
 > Tenhle příklad je potřeba napsat do souboru; v interaktivní konzoli
-> nebude výstup vypadat jak má.
+> nebude výstup vypadat, jak má.
 
 ```python
 print('1 + 2', end=' ')
@@ -277,9 +277,9 @@ print(1, end=" ")
 print(2, 3, 4, sep=", ")
 ```
 
-Základní funkce na výstup, `input`,
-vypíše otázku, načte vstup od uživatele
-a vrátí ho jako řetězec.
+Základní funkce na načtení vstupu, `input`,
+vypíše otázku, počká na text od uživatele
+a ten vrátí jako řetězec.
 
 ```python
 input('zadej vstup: ')
@@ -391,7 +391,7 @@ užitečné pro hry.
 from random import randrange, uniform
 
 randrange(a, b)   # náhodné celé číslo od a do b-1
-uniform(a, b)     # náhodné „desetinné“ číslo od a do b
+uniform(a, b)     # náhodné reálné číslo od a do b
 ```
 
 Pozor na to, že <code>randrange(a, b)</code>

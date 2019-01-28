@@ -21,6 +21,18 @@ Osobní soubory
     Zbytek repozitáře plánuješ zveřejnit, ale tyto soubory by měly zůstat
     jen ve tvé kopii.
 
+Adresář s virtuálním prostředím
+:   Jistě už sis zvykl{{a}} na virtuální prostředí.
+    Adresář s ním se může jmenovat různě, v začátečnickém kurzu používáš název `venv`.
+    Není dobré tento adresář dávat do Gitu,
+    protože je jednoduché jej vždy vytvořit znovu
+    a pokud na projektu spolupracuje více lidí
+    (nebo ty z více počítačů), mohlo by dělat neplechu, kdyby virtuální
+    prostředí nebylo vždy na úplně stejném místě.
+    Virtuální prostředí z adresáře `/home/helena/projektABC/venv`
+    nebude fungovat z adresáře `C:\Users\Helena\projektABC\venv`,
+    ale ani z `/home/mirka/projektABC/venv`.
+
 My budeme chtít Git nastavit tak, aby tyto soubory ignoroval: aby
 `git status` neukazoval červeně, že ještě nejsou v repozitáři.
 
@@ -31,30 +43,30 @@ Založ si nový repozitář a vytvoř v něm tři soubory s tímto obsahem:
 
 * `obrazek.py`
 
-    ```python
-    from turtle import forward, left, right, getcanvas
+  ```python
+  from turtle import forward, left, right, getcanvas
 
-    forward(50)
-    left(60)
-    forward(50)
-    right(60)
-    forward(50)
+  forward(50)
+  left(60)
+  forward(50)
+  right(60)
+  forward(50)
 
-    getcanvas().postscript(file='obrazek.ps')
+  getcanvas().postscript(file='obrazek.ps')
     ```
 
 * `poznamky.txt`
 
-    ```plain
-    Tohle je tajné!
-    ```
+  ```plain
+  Tohle je tajné!
+  ```
 
 * `Autofile.tmp`
 
-    Do tohohle souboru napiš cokoliv.
-    Různé operační systémy a (jiné programy) vytváří různé soubory
-    podivných jmen; `Autofile.tmp` pro nás bude představovat takový
-    automaticky vzniklý soubor.
+  Do tohohle souboru napiš cokoliv.
+  Různé operační systémy a (jiné programy) vytváří různé soubory
+  podivných jmen; `Autofile.tmp` pro nás bude představovat takový
+  automaticky vzniklý soubor.
 
 Pythonní program spusť (pomocí `python obrazek.py`).
 Mělo by se na chvíli ukázat okno s želvou a měl by vzniknout nový soubor
@@ -107,7 +119,7 @@ Do něj napiš:
 obrazek.ps
 ```
 
-Pak se podívej na `git status.` Obrázek už by ve výpisu neměl být!
+Pak se podívej na `git status`. Obrázek už by ve výpisu neměl být!
 
 ```ansi
 ␛[36m$␛[0m git status
@@ -272,8 +284,8 @@ Další detaily je možné najít v [dokumentaci](https://git-scm.com/docs/giti
 Teď, když umíš ignorovat soubory, si můžeme ukázat zkratku. Místo
 
 ```console
-git add soubor1 soubor2
-git commit
+$ git add soubor1 soubor2
+$ git commit
 ```
 
 můžeš napsat jen `git commit` s tečkou na konci:

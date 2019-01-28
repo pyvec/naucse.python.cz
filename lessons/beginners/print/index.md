@@ -17,7 +17,13 @@ print('Máma má mísu')
 print(V míse je maso.)
 ```
 
-Program spusť. Funguje?
+Program spusť:
+* pokud ti už na začátku příkazové řádky nesvítí `(venv)`,
+  aktivuj si virtuální prostředí,
+* pomocí `cd` donaviguj do adresáře s programem,
+* zadej `python printing.py`.
+
+Funguje? Napoprvé asi ne.
 
 ## Jak číst chyby
 

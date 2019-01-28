@@ -70,7 +70,7 @@ Jestli ne, modul `tkinter` ještě nainstaluj:
   ```
   {% endfilter %}
 * **Ubuntu**:
-  {% filter markdown(inline=True) %}
+  {% filter markdown %}
   ```console
   $ sudo apt-get install python3-tk
   ```
