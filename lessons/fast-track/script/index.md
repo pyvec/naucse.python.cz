@@ -13,7 +13,7 @@ Vyzkoušejme si to. Budeme potřebovat:
 *   Ukončit interaktivní režim Pythonu
 *   Otevřít editor kódu
 *   Uložit kód do nového souboru
-*   Spustit ho!
+*   Spustit kód ze souboru!
 
 Zkus vypnout Python. Existuje na to funkce `exit()`:
 
@@ -28,7 +28,7 @@ ale ne příkazy Pythonu, jako `1 + 1`.
 
 
 Doufám, že máš nainstalovaný [textový editor](../../beginners/install-editor/).
-Ten teď otevři, udělej si nový soubor a napiš něj tento příkaz:
+Ten teď otevři, udělej si nový soubor a napiš do něj tento příkaz:
 
 ```python
 print('Hello, PyLadies!')
@@ -50,7 +50,7 @@ operačnímu systému, že jde o program v Pythonu a Python ho může spustit.
 > Nazývá se to "zvýrazňování syntaxe" a je to užitečná funkce.
 > Chce to trochu praxe, ale barvy můžou napovědět
 > že ti chybí uvozovka za řetězcem
-> nebo máš překlep v klíčovém slovu jako `del`.
+> nebo máš překlep v klíčovém slově jako `del`.
 > To je jeden z důvodů, proč používáme editory kódu :)
 
 Pokud máš soubor uložen, je čas jej spustit!
@@ -61,7 +61,10 @@ o příkazové řádce, *změň adresář* na ten, kam jsi soubor uložil{{a}}.
 Pokud nevíš jak dál, požádej o pomoc kouče.
 {% endif %}
 
-Nyní pomocí Pythonu spusť kód v souboru:
+Nyní pomocí Pythonu spusť kód v souboru: zadej příkaz `python`, mezeru
+a jméno souboru ke spuštění.
+(Je to podobné jako příkaz `cd` pro konkrétní adresář –
+<code>cd <var>jmeno_adresare</var></code>.)
 
 ``` console
 (venv) $ python python_intro.py
@@ -75,7 +78,7 @@ Cítíš se úžasně?
 
 ## Vstup a výstup
 
-Funkce `print()`, kterou jsi použila, umí něco *vypsat* na obrazovku.
+Funkce `print()`, kterou jsi použil{{a}}, umí něco *vypsat* na obrazovku.
 V konzoli se hodnoty výrazů vypisovaly automaticky, abys je mohl{{a}}
 průběžně kontrolovat, ale programy v souborech bývají složitější a výpisy
 z každého kroku by byly nepřehledné.
@@ -105,6 +108,7 @@ Odpověď pak vrátí jako řetězec, který si můžeš uložit do proměnné:
 
 ``` python
 jmeno = input('Jak se jmenuješ? ')
+
 print(jmeno, 'umí programovat!')
 ```
 
@@ -113,6 +117,7 @@ Pamatuješ si na funkci, která umí převést řetězec na číslo?
 
 ``` python
 letopocet = int(input('Jaký je letos rok? '))
+
 print('Loni byl rok', letopocet - 1)
 ```
 
@@ -142,6 +147,6 @@ Až se k programu za pár dní nebo měsíců vrátíš, poděkuješ si!
 
 ## Shrnutí
 
-* Příkaz **python** spustí uložený soubor jako program v Pythonu.
+* Příkaz **python** pustí uložený soubor jako program v Pythonu.
 * Funkce **print** vypisuje hodnoty.
 * **Komentáře** můžou zpřehlednit složitější kód. Python je ignoruje.

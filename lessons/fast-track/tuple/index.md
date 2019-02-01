@@ -34,10 +34,10 @@ def podil_a_zbytek(a, b):
 print(podil_a_zbytek(5, 2))
 ```
 
-Tomuhle se říká dvojice – nebo trojice, čtveřice, pětice, šestice, prostě
-<var>n</var>-tice (angl. *tuple*) hodnot.
-Funguje podobně jako seznam, ale nedají se do ní přidávat prvky, nebo odebírat
-a jinak měnit.
+Tomuhle se říká dvojice – a podobně se tvoří trojice, čtveřice, pětice,
+šestice, prostě <var>n</var>-tice (angl. *tuple*) hodnot.
+Funguje podobně jako seznam, ale nedá se měnit – např. se do ní nedají
+přidávat další prvky pomocí `append`.
 Když mám trojici, vždycky zůstane jako trojice.
 
 Když máš <var>n</var>-tici, můžeš ji přiřazením *rozbalit* (angl. *unpack*)
@@ -74,7 +74,7 @@ for hodnota, barva in ruka:
 
 ## Zip
 
-<var>N</var>-tice, respektive sekvenci <var>n</var>-tic vrací funkce `zip`,
+<var>N</var>-tice, respektive sekvenci <var>n</var>-tic, vrací funkce `zip`,
 která umožňuje projít zároveň několik seznamů,
 jejichž prvky si navzájem odpovídají:
 
@@ -87,4 +87,5 @@ for vec, barva, misto in zip(veci, barvy, mista):
     print(barva, vec, 'je', misto)
 ```
 
-
+V tomhle cyklu dostaneš napřed trojici prvních prvků ze všech tří seznamů,
+pak trojici všech druhých prvků, pak třetích, a tak dále.

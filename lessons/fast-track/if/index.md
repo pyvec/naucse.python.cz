@@ -20,7 +20,7 @@ Lepší program by dělal tohle:
 * Když je heslo správné:
     * Pustí uživatele dovnitř
 
-Anglicky se „když“ řekne *if*. A to je i jméno Pythoního příkazu.
+Anglicky se „když“ řekne *if*. A to je i jméno Pythonního příkazu.
 Používá se takhle:
 
 ```python
@@ -53,7 +53,7 @@ Zadej heslo: sezam
 ## Jinak
 
 V předchozím příkladu byl kód proveden pouze v případě, že podmínka byla splněna.
-Ještě lepší program by ale:
+Ještě lepší program by ale byl tenhle:
 
 * Zeptá se na tajné heslo
 * Když je heslo správné:
@@ -85,7 +85,7 @@ Napišme program, který okomentuje hlasitost hudby:
 * Když je hlasitost do 20:
     * vypíše „Je to dost potichu.“
 * Jinak, když je hlasitost do 40:
-    * vypíše „Jako hudba v pozadí dobré.“
+    * vypíše „Jako hudba na pozadí dobré.“
 * Jinak, když je hlasitost do 60:
     * vypíše „Skvělé, slyším všechny detaily.“
 * Jinak, když je hlasitost do 80:
@@ -102,7 +102,7 @@ hlasitost = int(input('Jaká je nastavená hlasitost rádia? '))
 if hlasitost < 20:
      print("Je to dost potichu.")
 elif hlasitost < 40:
-     print("Jako hudba v pozadí dobré.")
+     print("Jako hudba na pozadí dobré.")
 elif hlasitost < 60:
      print("Skvělé, slyším všechny detaily.")
 elif hlasitost < 80:

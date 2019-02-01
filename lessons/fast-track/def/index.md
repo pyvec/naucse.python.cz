@@ -80,7 +80,7 @@ Předtím, než se k příkazu `def` dostane, funkce neexistuje.
 ## Parametry
 
 Tvoje funkce se dá volat jen jako `pozdrav()`.
-Funkce jako `len('slovo')` a `print(1 + 2)` umí navíc pracovat s hodnotou.
+Funkce ale jako `len('slovo')` a `print(1 + 2)` umí navíc pracovat s hodnotou.
 
 Poďme napisať funkciu, ktorá ťa pozdraví menom.
 (Uľahčíme si to použitím jazyka, ktorý nepoužíva piaty pád.)
@@ -161,7 +161,7 @@ def dvojnasobek(x):
 print(dvojnasobek(42))
 ```
 
-Zkus napsat funkci, která pátý pád nějakého jména, třeba:
+Zkus se zamyslet, jak napsat funkci, která pátý pád nějakého jména. Třeba:
 
 * `paty_pad('Ola')` → 'Olo'
 * `paty_pad('Soňa')` → 'Soňo'
