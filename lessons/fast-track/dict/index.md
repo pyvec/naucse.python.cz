@@ -1,7 +1,7 @@
 # Slovníky
 
 Jiný typ hodnot, které v sobě mohou obsahovat další hodnoty, je *slovník*.
-Pro příklad si představ překladový slovník, třeba česko-anglický:
+Pro příklad si představ překladový slovník, třeba tenhle česko-anglický:
 
 * **Jablko**: Apple
 * **Knoflík**: Button
@@ -11,7 +11,7 @@ Slovník v Pythonu obsahuje záznamy, a každý záznam přiřazuje
 nějakému *klíči* nějakou *hodnotu*.
 V našem příkladu je klíči *Jablko* přiřazena hodnota *Apple*,
 klíči *Knoflík* náleží hodnota *Button*
-a klič *Myš* ukazuje na *Mouse*.
+a klíč *Myš* ukazuje na *Mouse*.
 
 V Pythonu by se takový slovník napsal následovně:
 
@@ -21,7 +21,7 @@ V Pythonu by se takový slovník napsal následovně:
 
 Naše klíče a hodnoty jsou slova – krátké texty, tedy řetězce,
 které je potřeba dát do uvozovek.
-Klíč a hodnota jsou oddělené dvojtečkou,
+Každý klíč je od své hodnoty oddělený dvojtečkou,
 jednotlivé dvojice se od sebe oddělují čárkou,
 a celý slovník je uzavřený ve složených závorkách.
 
@@ -36,7 +36,7 @@ Pomocí hranatých závorek můžeš zjistit hodnotu, která danému klíči odp
 ```
 
 Je to podobné jako u seznamů, jen v hranatých závorkách není index
-(pořadí prvku) nebo rozmezí s dvojtečkou, ale klíč.
+(pořadí prvku) nebo rozmezí s dvojtečkou, ale právě klíč.
 
 > [note]
 > Naopak to nejde – slovník neumožňuje podle hodnoty přímo zjistit klíč.

@@ -44,7 +44,7 @@ Teď si zkus seznam seřadit. Na to existuje metoda `sort`:
 >>> loterie.sort()
 ```
 
-Tato funkce nic nevrátí, jen změní pořadí čísel v seznamu.
+Tato metoda nic nevrátí, ale „potichu“ změní pořadí čísel v seznamu.
 Znovu si ho vypiš, ať vidíš co se stalo:
 
 ``` pycon
@@ -65,7 +65,7 @@ Vyzkoušej si ji!
 
 ## Přidávání do seznamu
 
-Podobně jako u řetězců se seznamu dají spojovat pomocí `+`:
+Podobně jako u řetězců se seznamy dají spojovat pomocí `+`:
 
 ``` pycon
 >>> loterie + [5, 6, 7, 8]
@@ -81,7 +81,7 @@ Tím se vytvoří nový seznam, ten původní zůstává nezměněný:
 
 Pokud chceš něco přidat do původního seznamu, můžeš to provést pomocí metody
 `append`.
-Ale pozor! Tahle metoda potřebuje vědět co má do seznamu přidat
+Ale pozor! Tahle metoda potřebuje vědět co má do seznamu přidat.
 Nová hodnota se zadává do závorek:
 
 ``` pycon
@@ -198,7 +198,7 @@ Stý prvek od konce v seznamu není. Nastane chyba.
 
 Chceš-li ze seznamu něco odstranit, můžeš opět použít indexy.
 Tentokrát s příkazem `del`.
-Následující kód odstraní počáteční číslo seznamu, tedy prvek číslo 0:
+Následujícím kódem odstraň počáteční číslo seznamu, tedy prvek číslo 0:
 
 ``` pycon
 >>> del loterie[0]
@@ -218,21 +218,6 @@ Zkusíš odstranit poslední prvek?
 >>> del loterie[-1]
 >>> loterie
 [42, 30, 19, 12, 3]
-```
-{% endfilter %}
-
-A co prostřední tři?
-Zkus si nejdřív vypsat, které to jsou, a pak teprve použít `del`.
-
-{% filter solution %}
-``` pycon
->>> loterie
-[42, 30, 19, 12, 3]
->>> loterie[1:-1]
-[30, 19, 12]
->>> del loterie[1:-1]
->>> loterie
-[42, 3]
 ```
 {% endfilter %}
 
@@ -317,10 +302,21 @@ Začátek a konec se dá kombinovat – číslo můžeš dát před i za dvojte�
 ['Druhý', 'Třetí']
 ```
 
+Řezání funguje i pro příkaz `del`.
+Zkus vymazat prostřední dvě čísla:
+
+``` pycon
+>>> cisla
+['První', 'Druhý', 'Třetí', 'Čtvrtý']
+>>> del cisla[1:-1]
+>>> cisla
+['První', 'Čtvrtý']
+```
+
 
 ## Řezání řetězců
 
-Hranaté závorky fungují i u řetězců:
+Hranaté závorky fungují i u řetězců, kde vybírají písmenka:
 
 ``` pycon
 >>> jidlo = 'čokoláda'
@@ -330,7 +326,7 @@ Hranaté závorky fungují i u řetězců:
 'oko'
 ```
 
-Představ si, že máš v proměnné `jmeno` jméno jako `'Ola'`,
+Představ si, že máš v proměnné `jmeno` ženské jméno jako `'Ola'`,
 `'Krystýna'` nebo `'Růžena'`.
 Jak z něj vytvoříš druhý pád (např. bez `'Růženy'`)?
 

@@ -96,8 +96,7 @@ V Pythonu můžeš zkombinovat několik porovnání do jednoho!
 ## Přítomnost
 
 Nebylo by pěkné zjistit, jestli tvoje číslo vyhrálo v loterii?
-K tomu budeš potřebovat zjistit, jestli seznam obsahuje daný prvek.
-Používá se na to operátor `in`:
+Máš-li seznam, operátorem `in` se můžeš zeptat, jestli je v něm daný prvek:
 
 ``` pycon
 >>> loterie = [3, 42, 12, 19, 30, 59]
@@ -107,16 +106,16 @@ False
 True
 ```
 
-Není to úplně porovnání, ale dostaneš stejný druh výsledku.
+Není to úplně porovnání, ale dostaneš stejný druh výsledku jako s `<` či `==`.
 
 
 ## Pravdivostní hodnoty
 
 Právě ses dozvěděl{{a}} o novém typu objektu v Pythonu.
-Podobně jako máme řetězec, číslo, seznam nebo slovník existuje
-*pravdivostní hodnota*, nebo častěji anglicky *boolean*.
+Už známe typy řetězc, číslo, seznam nebo slovník; přidali jsme k nim
+*pravdivostní hodnotu*, nebo častěji anglicky *boolean*.
 
-Může mít jednu z dvou hodnot: `True` a `False`.
+Pravdivostní hodnoty jsou jenom dvě: `True` (pravda) nebo `False` (nepravda).
 
 Aby Python pochopil, že se jedná o tento typ,
 je potřeba dávat pozor na velikost písmen.

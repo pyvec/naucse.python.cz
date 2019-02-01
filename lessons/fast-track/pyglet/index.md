@@ -67,7 +67,7 @@ Spusť ho. Mělo by se objevit černé okýnko.
 > Jestli dostaneš chybu
 > `AttributeError: module 'pyglet' has no attribute 'window'`, zkontroluj si,
 > zě jsi soubor pojmenoval{{a}} `grafika.py` a ne `pyglet.py`.
-> Soubor v editoru„ulož jako `grafika.py`, případný soubor `pyglet.py` smaž,
+> Soubor v editoru ulož jako `grafika.py`, případný soubor `pyglet.py` smaž,
 > a zkus to znovu.
 
 Hotovo? Pojďme si vysvětlit, co se v tomhle programu děje.

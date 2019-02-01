@@ -16,10 +16,11 @@ To se zapíše takto:
 Proměnná `jmeno` teď bude mít hodnotu `'Ola'`.
 
 Jak sis mohl{{a}} všimnout, tenhle příkaz nic nevrátil – Python nevypsal
-žádný výslede.
+žádný výsledek.
 Jak tedy víme, že proměnná skutečně existuje?
 
-Zadej samotné jméno proměnné (tedy `jmeno`) a stiskni <kbd>Enter</kbd>:
+Zadej samotné jméno proměnné (tedy `jmeno`, bez uvozovek) a stiskni
+<kbd>Enter</kbd>:
 
 ``` pycon
 >>> jmeno
@@ -100,15 +101,20 @@ Která z těchto jmen ti Python dovolí použít jako proměnnou?
 
 * `tlacitko5`
 * `5tlacitko`
+* `tlačítko`
 * `oblibena barva`
 * `oblibena-barva`
+* `oblibenaBarva`
 
 {% filter solution %}
 
-* `tlacitko5` ano
-* `5tlacitko` ne: jména musí začínat písmenkem
+* `tlacitko5` ano.
+* `5tlacitko` ne: jména musí začínat písmenkem.
+* `tlačítko` ano, ale je diakritice (`č`, `í`) je lepší se vyhnout.
 * `oblibena barva` ne: to není jedno jméno, ale dvě!
-* `oblibena-barva` taky ne: je to výraz `oblibena` mínus `barva`
+* `oblibena-barva` taky ne: to Python bere jako odečtení dvou proměnných
+  (`oblibena` mínus `barva`).
+* `oblibenaBarva` ano, ale velkým písmenům je lepší se vyhnout.
 
 Kdybys potřeboval{{a}} ve jménu více slov, použij podtržítko: např.
 `oblibena_barva`.
