@@ -229,7 +229,7 @@ def on_draw():
     window.clear()
     for x, y in snake:
         green_image.blit(x * TILE_SIZE, y * TILE_SIZE,
-                        width=TILE_SIZE, height=TILE_SIZE)
+                         width=TILE_SIZE, height=TILE_SIZE)
 
 pyglet.app.run()
 ```
@@ -267,10 +267,10 @@ def on_draw():
     window.clear()
     for x, y in snake:
         green_image.blit(x * TILE_SIZE, y * TILE_SIZE,
-                        width=TILE_SIZE, height=TILE_SIZE)
+                         width=TILE_SIZE, height=TILE_SIZE)
     for x, y in food:
         red_image.blit(x * TILE_SIZE, y * TILE_SIZE,
-                        width=TILE_SIZE, height=TILE_SIZE)
+                       width=TILE_SIZE, height=TILE_SIZE)
 
 pyglet.app.run()
 ```
@@ -336,43 +336,29 @@ bottom_top = pyglet.image.load('snake-tiles/bottom-top.png')
 Ale obrázků je spousta, tímhle způsobem by to bylo zdlouhavé a nejspíš bys
 na některý zapomněl{{a}}.
 
-Proto Pythonu řekneme, aby nám dal všechny soubory s koncovkou `.png` v daném
-adresáři.
-Na to se dá použít třída `Path` z modulu [`pathlib`](https://docs.python.org/3/library/pathlib.html).
-Zkus si do nového souboru, třeba `experiment.py`, napsat následující kód
-a spustit ho.
-Dokážeš vysvětlit, co dělá?
+Proto si obrázky načteme automaticky, v cyklu, a dáme je do slovníku.
+
+Program bude vypadat takhle:
+
+* Začni s prázdným slovníkem.
+* Pro každý *začátek* (`bottom`, `end`, `left`, `right`, `top`):
+  * Pro každý *konec* (`bottom`, `end`, `left`, `right`, `top`, `dead`, `tongue`):
+    * Budeme načítat obrázek „<var>začátek</var>-<var>konec</var>“; tento
+      <var>klíč</var> si dej do proměnné
+    * Načti obrázek <var>klíč</var>.png
+    * Ulož obrázek do slovníku pod <var>klíč</var>.
 
 ```python
-from pathlib import Path
-
-TILES_DIRECTORY = Path('snake-tiles')
-
-for path in TILES_DIRECTORY.glob('*.png'):
-    print(path)
+snake_tiles = {}
+for start in ['bottom', 'end', 'left', 'right', 'top']:
+    for end in ['bottom', 'end', 'left', 'right', 'top', 'dead', 'tongue']:
+        key = start + '-' + end
+        image = pyglet.image.load('snake-tiles/' + key + '.png')
+        snake_tiles[key] = image
 ```
 
-My z každého souboru potřebujeme nejlépe jméno, tedy místo
-`snake-tiles/right-end.png` jenom `right-end`.
-Na to naštěstí existuje atribut `stem` (*kořen*, t.j. jméno bez přípony).
-Místo `print(path)` použij:
-
-```python
-    print(path.stem)
-```
-
-Funguje? Máš vypsané všechny možné kousky hada?
-
-Teď budeme chtít načíst obrázky do *slovníku*.
-*Klíče* slovníku, podle kterých budeme vyhledávat, budou jména, která jsi
-právě vypsal{{a}}.
-*Hodnoty* pak budou pygletí obrázky, které ve hře můžeš rovnou vykreslit.
-
-Začni s prázdným slovníkem, `{}`, a v cyklu `for` do něj postupně přidávej
-záznamy.
 Pak celý slovník vypiš.
-
-Až to budeš mít, měl by výpis vypadat asi takhle:
+Výpis vypadat asi takhle:
 
 ```
 {'right-tongue': <ImageData 64x64>, 'top-tongue': <ImageData 64x64>,
@@ -381,22 +367,6 @@ Až to budeš mít, měl by výpis vypadat asi takhle:
  'left-top': <ImageData 64x64>, 'bottom-bottom': <ImageData 64x64>,
  ...
 ```
-
-{% filter solution %}
-```python
-from pathlib import Path
-
-import pyglet
-
-TILES_DIRECTORY = Path('snake-tiles')
-
-snake_tiles = {}
-for path in TILES_DIRECTORY.glob('*.png'):
-    snake_tiles[path.stem] = pyglet.image.load(path)
-
-print(snake_tiles)
-```
-{% endfilter %}
 
 
 ## Housenka
