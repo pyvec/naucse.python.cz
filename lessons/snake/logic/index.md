@@ -16,20 +16,20 @@ XXX - Nestíhám dopsat, omlouvám se
 Tvůj program teď, doufám, vypadá nějak takhle:
 
 ```python
-from pathlib import Path
-
 import pyglet
 
 TILE_SIZE = 64
-TILES_DIRECTORY = Path('snake-tiles')
 
 snake = [(1, 2), (2, 2), (3, 2), (3, 3), (3, 4), (3, 5), (4, 5)]
 food = [(2, 0), (5, 1), (1, 4)]
 
 red_image = pyglet.image.load('apple.png')
 snake_tiles = {}
-for path in TILES_DIRECTORY.glob('*.png'):
-    snake_tiles[path.stem] = pyglet.image.load(path)
+for start in ['bottom', 'end', 'left', 'right', 'top']:
+    for end in ['bottom', 'end', 'left', 'right', 'top', 'dead', 'tongue']:
+        key = start + '-' + end
+        image = pyglet.image.load('snake-tiles/' + key + '.png')
+        snake_tiles[key] = image
 
 window = pyglet.window.Window()
 
@@ -166,12 +166,9 @@ Pro kontrolu můžeš svůj program porovnat s mým (ale nejde o jediné správ
 
 {% filter solution %}
 ```python
-from pathlib import Path
-
 import pyglet
 
 TILE_SIZE = 64
-TILES_DIRECTORY = Path('snake-tiles')
 
 class State:
     def __init__(self):
@@ -188,8 +185,11 @@ class State:
 
 red_image = pyglet.image.load('apple.png')
 snake_tiles = {}
-for path in TILES_DIRECTORY.glob('*.png'):
-    snake_tiles[path.stem] = pyglet.image.load(path)
+for start in ['bottom', 'end', 'left', 'right', 'top']:
+    for end in ['bottom', 'end', 'left', 'right', 'top', 'dead', 'tongue']:
+        key = start + '-' + end
+        image = pyglet.image.load('snake-tiles/' + key + '.png')
+        snake_tiles[key] = image
 
 window = pyglet.window.Window()
 
@@ -816,7 +816,6 @@ from pathlib import Path
 import pyglet
 
 TILE_SIZE = 64
-TILES_DIRECTORY = Path('snake-tiles')
 
 class State:
     def __init__(self):
@@ -879,8 +878,11 @@ class State:
 
 red_image = pyglet.image.load('apple.png')
 snake_tiles = {}
-for path in TILES_DIRECTORY.glob('*.png'):
-    snake_tiles[path.stem] = pyglet.image.load(path)
+for start in ['bottom', 'end', 'left', 'right', 'top']:
+    for end in ['bottom', 'end', 'left', 'right', 'top', 'dead', 'tongue']:
+        key = start + '-' + end
+        image = pyglet.image.load('snake-tiles/' + key + '.png')
+        snake_tiles[key] = image
 
 window = pyglet.window.Window()
 
