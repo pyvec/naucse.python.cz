@@ -93,7 +93,7 @@ jmeno = 'Ola'
 print(jmeno * 8)    # Tohle jo!
 ```
 
-Do závorek funkce `print()` můěš dát i víc hodnot oddělených čárkami.
+Do závorek funkce `print()` můžeš dát i víc hodnot oddělených čárkami.
 
 ``` python
 jmeno = 'Amálka'
