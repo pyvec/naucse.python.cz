@@ -45,7 +45,7 @@ Proto jakmile v tomhle editoru vytvoříš nový soubor,
 měl{{a}} bys ho co nejdřív uložit pod správným jménem.
 
 ## Spouštění programů
-Mu není jen obyčejný editor pro psaní kódu, umí programy v Pythonu i spouštět, stačí kliknout a tlačítko play a
+Mu není jen obyčejný editor pro psaní kódu, umí programy v Pythonu i spouštět, stačí kliknout a tlačítko Run a
 kód, který máš právě otevřený se spustí, v dolní části okna se objevý výstup. Více si ukážeme na lekci.
 
 {{ figure(img=static('mu-run.png'), alt="Mu run") }}
