@@ -73,6 +73,10 @@ Vybereš-li editor, klikni na jeho jméno a dostaneš se na instrukce ke stažen
 a nastavení.
 (Na tuhle stránku se pak už nemusíš vracet.)
 
+Na kurzu budeme používat Mu editor
+
+* [Mu]({{ subpage_url('mu') }}) - Mu je jednoduchý editor určený pro začínající programátory.
+
 Nemáš-li už vlastní oblíbený editor, pro Windows a macOS
 doporučujeme *Atom*:
 
