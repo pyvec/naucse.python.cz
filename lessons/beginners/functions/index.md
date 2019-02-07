@@ -83,7 +83,7 @@ Tady jsou všechny Pythonní operátory:
     <code>&lt;=</code> <code>&gt;=</code>
     <code class="text-muted">|</code> <code class="text-muted">^</code>
     <code class="text-muted">&amp;</code>
-    <code class="text-muted">&lt;&lt;</code> <code class="muted">&gt;&gt;</code>
+    <code class="text-muted">&lt;&lt;</code> <code class="text-muted">&gt;&gt;</code>
     <code>+</code> <code>-</code>
     <code>*</code> <code class="text-muted">@</code> <code>/</code>
     <code>//</code> <code>%</code>
@@ -95,11 +95,11 @@ Tady jsou všechny Pythonní operátory:
 </div>
 
 <div>
-    <code class="muted">lambda</code>
-    <code class="muted">if else</code>
+    <code class="text-muted">lambda</code>
+    <code class="text-muted">if else</code>
     <code>or</code> <code>and</code> <code>not</code>
-    <code class="muted">in</code> <code class="muted">not in</code>
-    <code class="muted">is</code> <code class="muted">is not</code>
+    <code class="text-muted">in</code> <code class="text-muted">not in</code>
+    <code class="text-muted">is</code> <code class="text-muted">is not</code>
 </div>
 
 Je asi jasné, že většina operací,

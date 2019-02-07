@@ -695,7 +695,7 @@ Další věc, kterou metatřídy umí, je připravit počáteční jmenný prost
 Metoda `__init__` (nebo `__new__`) v metatřídě normálně dostane slovník,
 což nemusí být vždy to, co potřebuji.
 Můžu si chtít třeba „zapamatovat” pořadí, v jakém byly jednotlivé atributy
-vytvořeny – a slovník toto pořadí neuchovává.
+vytvořeny – a slovník toto pořadí neuchovává (alespoň v některých verzích Pythonu).
 
 Na to existuje speciální metoda `__prepare__`, která se, když na metatřídě
 existuje, zavolá pro vytvoření jmenného prostoru:

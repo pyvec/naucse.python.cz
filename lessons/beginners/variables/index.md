@@ -35,10 +35,10 @@ spusť ho:
 * pokud ti už na začátku příkazové řádky nesvítí `(venv)`,
   aktivuj si virtuální prostředí,
 * pomocí `cd` donaviguj do adresáře s programem,
-* zadej `python if.py`.
+* zadej `python ctverec.py`.
 
 Funguje? Jestli ne, oprav ho a zkus to znovu!
-Když už jsi v příkazové řádce ve správném adresáři, stačí zadat `python if.py`.
+Když už jsi v příkazové řádce ve správném adresáři, stačí zadat `python ctverec.py`.
 Abys to nemusel{{a}} celé psát, můžeš zkusit zmáčknout šipku nahoru,
 <kbd>↑</kbd>, a vrátit se tak k předchozímu příkazu.
 

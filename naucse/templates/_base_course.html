@@ -6,7 +6,9 @@
 <div class="page">
     <div class="container">
 
-        {% if course is defined %}
+        {% if course is defined
+            and (is_canonical_lesson is not defined or not is_canonical_lesson)
+        %}
             <header class="lesson-header">
                 <a href="{{ url_for('index') }}">Nauč se Python </a>
                 {% if course.vars.get('coach-present') %}
@@ -27,35 +29,8 @@
           {% endblock %}
         </div>
 
-        {% if (prev_link is defined and prev_link != None) or (next_link is defined and next_link != None) %}
-        <hr class="lesson-end">
-
-        {% if course is defined and not course.canonical %}
-            <div class="alert alert-info">
-                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
-                {% if course is defined and course.is_derived %}
-                    {% if canonical_url is defined and canonical_url %}
-                        <a href="{{ canonical_url }}">Přejít na stejnou lekci v kurzu pro samouky</a>.
-                    {% endif %}
-                {% endif %}
-            </div>
-        {% endif %}
-
-
-        {% call nav.prevnext() %}
-            {% if prev_link is defined and prev_link %}
-                {{ nav.prev(prev_link["url"], prev_link["title"]) }}
-            {% endif %}
-            {% if session_link is defined and session_link %}
-                {{ nav.up(session_link["url"], 'Lekce: ' + session_link["title"] ) }}
-            {% endif %}
-            {% if next_link is defined and next_link %}
-                {{ nav.next(next_link["url"], next_link["title"]) }}
-            {% endif %}
-        {% endcall %}
-
-        {% endif %}
-
+        {% block lesson_end %}{% endblock %}
+        {%- block prev_next %}{{'\n'}}{% endblock %}
     </div>
 </div>
 

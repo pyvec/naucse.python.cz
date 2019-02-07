@@ -260,7 +260,7 @@ print('Result is', result)
 ```
 
 Do `Future` se dá vložit i výjimka.
-To se využíá v případě že úloha, která má `Future` naplnit, selže. 
+To se využívá v případě, že úloha, která má `Future` naplnit, selže. 
 Metoda `result()` potom tuto výjimku způsobí v kódu, který by výsledek
 zpracovával.
 
