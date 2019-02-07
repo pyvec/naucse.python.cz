@@ -212,7 +212,7 @@ print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 Možné řešení pro 1-D piškvorky:
 
 ```python
-def nacti_cislo(pole):
+def tah_hrace(pole):
     while True:
         try:
             pozice = int(input('Kam chceš hrát? (0..19) '))

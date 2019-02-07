@@ -1,5 +1,4 @@
-# Runs a demo script and outputs a file with terminal escape sequences
-# where \e is substituted for the visible character `␛`.
+# Runs a demo script and outputs a file with terminal session
 
 if [ -z "$1" ]; then
     echo "Usage: $0 OUTFILE"
@@ -23,11 +22,9 @@ END
 
 python3 -m venv __venv__
 . __venv__/bin/activate
-PS4='————————————————————————————\n\e[36m(__venv__) $\e[0m '
+PS4='————————————————————————————\n(__venv__) $ '
 
 python -m pip install pytest
-
-export PYTEST_ADDOPTS="--color=yes"
 
 PYTHONPATH=. python -m pytest tests/test_holidays.py
 
@@ -84,10 +81,9 @@ PYTHONPATH=. python -m pytest -v
 _tempdir=$(mktemp -d)
 
 cd $_tempdir
-PS4='————————————————————————————\n\e[36m$\e[0m '
+PS4='————————————————————————————\n$ '
 set -x
 
 _the_script 2>&1 | tee $OUTFILE
-sed -i -e's/\x1b/␛/g' $OUTFILE
 
 rm -rf $_tempdir

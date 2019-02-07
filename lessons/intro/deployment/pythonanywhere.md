@@ -1,14 +1,14 @@
 Deployment webových aplikací na PythonAnywhere
 ==============================================
 
-[Python Anywhere] je pro limitované použití zdarma.
+[PythonAnywhere] je pro limitované použití zdarma.
 
 K posílání kódu na produkční prostředí budeme používat Git.
 Nejprve proto uložte celý projekt do Gitu a nahrajte na GitHub.
 
 Potom se zaregistrujte na
 [www.pythonanywhere.com](https://www.pythonanywhere.com/) a vyberte
-Beginner Account.
+*Beginner Account*.
 Po přihlášení se ukáže záložka *Consoles*, kde vytvořte "Bash" konzoli.
 V té vytvořte a aktivujte virtuální prostředí a nainstalujte Flask (plus
 případně další závislosti nebo jiný webový framework).
@@ -19,12 +19,20 @@ na vytvoření virtuální prostředí, než jste z toho kurzu zvyklí.
 Napište příkazy takto (bez úvodního `$`):
 
 ```console
-$ virtualenv --python=python3.6 __venv__
+$ virtualenv --python=python3.7 __venv__
 $ . __venv__/bin/activate
 $ python -m pip install flask
 ```
 
-Následně naklonujte na PythonAnywhere náš kód.
+> [note]
+> Pokud máte na PythonAnywhere starší účet, možná tam Python 3.7 nenajdete.
+> Můžete použít Python 3.6, nemělo by to vadit, protože tento návod je
+> koncipován tak, aby s touto verzí také fungoval.
+> Případně můžete [zažádat o aktualizaci systémové
+> image](https://www.pythonanywhere.com/forums/topic/12878/#id_post_52160).
+
+
+Následně naklonujte na PythonAnywhere váš kód.
 S veřejným repozitářem je to jednodušší – stačí ho naklonovat „anonymně”
 (`git clone https://github.com/<github-username>/<github-repo>`).
 Pokud ale používáme privátní repozitář, bude potřeba si vygenerovat SSH klíč:
@@ -46,7 +54,7 @@ Zbývá nastavit, aby PythonAnywhere tento kód spustil jako webovou aplikaci.
 
 Přejděte na stránkách PythonAnywhere do *Dashboard* do záložky *Web*,
 a vytvořte novou aplikaci.
-V nastavení zvolte *Manual Configuration* a *Python 3.6*.
+V nastavení zvolte *Manual Configuration* a *Python 3.7*.
 (Volby jiné než *Manual Configuration* automaticky vytvoří kostru aplikace.
 Vy ale už aplikaci máte hotovou, takže je nepotřebujete.)
 
@@ -77,7 +85,7 @@ Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce *Web*
 a na adrese <code><var>&lt;uživatelské-jméno&gt;</var>.pythonanywhere.com</code>
 si ji můžete prohlédnout.
 
-[Python Anywhere]: https://www.pythonanywhere.com/
+[PythonAnywhere]: https://www.pythonanywhere.com/
 
 ### Deployment soukromých údajů
 
@@ -86,10 +94,15 @@ aplikaci zvlášť.
 Konfigurační i jiné soubory jde nahrát v záložce *Files* nebo opět vytvořit
 a editovat ve webové konzoli.
 
+Pokud vaše aplikace vyžaduje nastavení nějakých proměnných prostředí
+(například s cestou ke konfiguračnímu souboru nebo přímo s nějakou konfigurací),
+můžete tak učinit přímo z *WSGI Configuration File*.
+Buďto „nízkoúrovňově“ (`os.environ`) nebo více sofistikovaně například pomocí modulu `dotenv`,
+což ostatně [doporučují i v dokumentaci](https://help.pythonanywhere.com/pages/environment-variables-for-web-apps/).
+
 > [note]
 > Doporučujeme pro tyto potřeby stejně raději nepoužívat API klíče
 > k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
-> Twitter vyžaduje před vydáním API klíčů zadání a potvrzení telefonního čísla.
 > GitHub povoluje všem vytvořit si jeden účet pro automatické operace, ale
 > takový účet musí mít napsané v popisu, že je robot.
 
