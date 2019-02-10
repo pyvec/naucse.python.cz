@@ -20,7 +20,7 @@ a nainstaluj.
 
 ## Nácvik odsazování
 
-Jak už bylo zmíňeno, v Pythonu je důležité, kolika mezerami řádek začíná.
+Jak už bylo zmíněno, v Pythonu je důležité, kolika mezerami řádek začíná.
 Proto se nám bude hodit vědět, jak rychle odsazovat bloky textu.
 Pojďme si ukázat, jak na to.
 
