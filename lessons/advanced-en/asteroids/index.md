@@ -1,408 +1,307 @@
-# Hra typu Asteroids
+# Asteroids game
 
-Dnes to všechno – třídy, grafiku, seznamy, a tak dále –
-spojíme dohromady do závěrečného projektu.
-Doufám, že se ti bude líbit!
+Our final project is going to use everything what we know: 
+classes, graphics, lists... I hope that you will like it!
 
-Zkusíme udělat klon hry [Asteroids](https://en.wikipedia.org/wiki/Asteroids_%28video_game%29),
-která poprvé vyšla na konci sedmdesátých let.
-V našem podání bude hra nakonec vypadat nějak takhle:
+We will try to make a clone of the game [Asteroids](https://en.wikipedia.org/wiki/Asteroids_%28video_game%29) 
+that has been released in 1979.
+
+Our version will look like this:
 
 {{ figure(
     img=static('screenshot.png'),
-    alt="Screenshot hry typu Asteroids"
+    alt="Asteroids-like game screenshot"
 ) }}
 
-Projekt je to docela složitý a – jako většina
-praktických projektů – využívá i některých věcí, které ještě na kurzu nebyly.
-Věřím, že ale přesto zvládneš všechno pochopit nebo dohledat!
-
-A ještě jedna věc: protože začátečnický kurz končí,
-začneme kód psát v angličtině, aby se pak dal sdílet s celým světem.
+The project is quite complex. It is using few things that were
+not covered by [the beginner's course](https://naucse.python.cz/2018/pyladies-en-prague/). 
+I know that you will be able to look them up.
 
 > [note]
-> Procházíš-li si projekt doma, je možné, že narazíš na
-> něco s čím si nebudeš vědět rady.
-> Kdyby se to stalo, prosím, ozvi se nám!
-> Rádi ti s projektem pomůžeme.
+> If you go through the project alone, it is possible that you
+> will be stuck at some problem. 
+> If it happens to you, let us know.
+> We will be happy to help you!
 
-
-## Vesmírná loď
+## Spaceship
 
 {# XXX: (asteroids1.py) #}
 
-První krok bude naprogramovat vesmírnou loď, která půjde ovládat klávesnicí.
+The first step is to program a spaceship that you can control by keyboard.
 
-* Vesmírnou loď bude reprezentovat objekt třídy `Spaceship`.
-* Každá loď má vlastní atributy `x` a `y` (pozice),
-  `x_speed` a `y_speed` (rychlost), `rotation` (úhel natočení) a
-  `sprite` (2D objekt v Pygletu s polohou, rotací a obrázkem).
-* Loď má metodu `tick`, která obstarává
-  mechaniku týkající se lodi – posouvání, natáčení a ovládání.
-* Všechny objekty ve hře si budeme dávat do globálního seznamu `objects`.
-  Zatím tam bude jenom vesmírná loď.
-* Co se ovládání týče, stisknuté klávesy si uchovávej v *množině* (angl. `set`),
-  což je datový typ podobný seznamu, jen nemá dané pořadí
-  prvků a každý prvek v ní může být pouze jednou.
-  (Na množinu se dá dívat i jako na slovník bez hodnot.)
-  Je k dispozici [tahák na množiny](https://github.com/pyvec/cheatsheets/blob/master/sets/sets-cs.pdf)
-  a pythonní dokumentace obsahuje k množinám
-  [tutoriál](https://docs.python.org/3/tutorial/datastructures.html#sets)
-  i [podrobný popis](https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset).
-  Vesmírná loď se pak do množiny „podívá” v rámci
-  své metody `tick`.
-* Můžeš použít [sadu obrázků](http://opengameart.org/content/space-shooter-redux),
-  které nakreslil [Kenney Vleugels](http://kenney.nl)
-  a zpřístupnil je zadarmo komukoli. Nebo si nakresli/stáhni vlastní!
-* Ve hře později použijeme velké množství
-  `Sprite`-ů a vykreslovat je jeden po druhém by trvalo docela dlouho.
-  Všechny `Sprite`-y proto přidej do kolekce
-  [pyglet.graphics.Batch](https://pythonhosted.org/pyglet/api/pyglet.graphics.Batch-class.html),
-  kterou pak Pyglet umí efektivně vykreslit najednou.
-  Do „batche” jde přidávat pomocí argumentu při vytváření `Sprite()`
-  a odebírat pomocí `sprite.delete()`. Například:
+* Instance of class `Spaceship` represents the spaceship.
+* Every spaceship has two attributes `x` a `y` (position),
+  `x_speed` a `y_speed`, `rotation`, and
+  `sprite` (2D object in Pyglet wiht position, speed, rotation, and image).
+* Spaceship has a method called `tick` that handles the spaceship mechanics – movement,
+  rotation, and control.
+* All objects that are in the game are stored in a global list `objects`.
+  It should contain only the spaceship for now.
+* All pressed keys should be stored in a *set* (keyword `set`).
+  It is a datatype list but without order. It members can be in
+  only once. (Sets are like dictionaries without values.)
+  You can use [sets cheatsheet](https://github.com/pyvec/cheatsheets/blob/master/sets/sets-en.pdf)
+  and the official Python documentation contains
+  [a tutorial](https://docs.python.org/3/tutorial/datastructures.html#sets)
+  and [the reference](https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset).
+  The spaceship using the set as part of the processing in its `tick` method.
+* You can use [the image set](http://opengameart.org/content/space-shooter-redux),
+  created by [Kenney Vleugels](http://kenney.nl). He made them public and free. You can draw your own if you want!
+* In the game, we will use a large number of `Sprite`s and draw them one by one would take quite a long time.
+  So add all the `Sprite`s to the (pyglet.graphics.Batch)[https://pythonhosted.org/pyglet/api/pyglet.graphics.Batch-class.html] collection, which Pyglet can efficiently draw at once. Add arguments to "batch" by using `Sprite()` to create a `sprite.delete()`. For example:
+    ```python
+    batch = pyglet.graphics.Batch()
+    sprite1 = pyglet.sprite.Sprite(image, batch=batch)
+    sprite2 = pyglet.sprite.Sprite(image, batch=batch)
 
-  ```python
-  batch = pyglet.graphics.Batch()
-  sprite1 = pyglet.sprite.Sprite(obrazek, batch=batch)
-  sprite2 = pyglet.sprite.Sprite(obrazek, batch=batch)
+    # and then you can draw all of them at once: 
+    batch.draw()
+    ```
+    You should have the `batch` collection, as well as the `objects`, kept globally.
+* To move and rotate the objects according to their center, it is good to set the
+  "anchor" of the image to its center (otherwise, the anchor is in the lower left corner):
+    ```python
+    image = pyglet.image.load(...)
+    image.anchor_x = image.width // 2
+    image.anchor_y = image.height // 2 
+    self.sprite = pyglet.sprite.Sprite(image, batch=batch)
+    ```
+* You can use the arrow keys to move left, right, and straight with the rocket.
+  The arrows to the sides spin the rocket, the arrow forward accelerates the movement
+  in the direction the rocket is turned.
+    * The basic motion of the rocket is simple: the x-coordinate is added to the x-velocity
+    times the elapsed time and the same with the y-coordinate as for the rotation angle:
+        ```python
+        self.x = self.x + dt * self.x_speed
+        self.y = self.y + dt * self.y_speed
+        self.rotation = self.rotation + dt * rotation_speed
+        ```
+        The speed of rotation depends on the arrows (left or right). In one case, it is 
+        negative, in the other positive. Choose the appropriate value by experimenting 
+        - starting at 4 radians per second. All similar "magical values" should be defined 
+        as constants - i.e. variables that you set at the beginning and never change. It is 
+        a convention to name them in capital letters and put them at the beginning of the file, 
+        right after the import:
+        ```python
+        ROTATION_SPEED  =  4   # radians per second
+        ```
+    * Acceleration is a little more complicated: the x-axis speed is added to the cosine 
+    angle of rotation times elapsed time. The sinus is used with the y-axis.
+        ```python
+        self.x_speed += dt * ACCELERATION * math.cos(self.rotation)
+        self.y_speed += dt * ACCELERATION * math.sin(self.rotation)
+        ```
+        Notice the ACCELERATION constant example. Choose it again at your discretion.
+    * If you have the `self.x`, `self.y` and `self.rotation` values counted, do not forget 
+    to project them into `self.sprite`, otherwise nothing interesting will happen.
 
-  # a potom můžeš vykreslit všechny najednou:
-  batch.draw()
-  ```
+        Beware that the `math.sin` and `math.cos` functions use radians, whereas the `pyglet` 
+        uses `Sprite.rotation` degrees. (And this is extra 0° elsewhere, and it rotates 
+        on the opposite side.) For sprite, therefore, the angle needs to be converted:
+        ```python
+        self.sprite.rotation = 90 - math.degrees(self.rotation)
+        self.sprite.x = self.x
+        self.sprite.y = self.y
+        ```
+    * When the rocket breaks out of the window, go back to the game on the other side of 
+    the screen. (Check that it works on all four sides.)
+* **Bonus 1:** Try to add a few rakets, each with a slightly different angle.
+    Each individual `Spaceship` object maintains its own state, so it should not be difficult 
+    to create more (and to control all at once).
+* **Bonus 2 :** You may have noticed a "jump" when a rocket escapes from the window and 
+    returns to the other side. This can be avoided by rendering the whole screen once more 
+    to the left, right, up and down.
 
-  Kolekci `batch` si stejně jako `objects` uchovávej globálně.
-* Aby se objekty hýbaly a otáčely podle svých středů, je dobré nastavit „kotvu“
-  obrázku na jeho střed (jinak je kotva v levém dolním rohu):
+    Pyglet has a special low-level feature that can tell "now draw everything moved by 
+    the X pixels to the left". Full explanation would be long, so just copy the code:
+    ```python
+    from pyglet import gl
 
-  ```python
-  image = pyglet.image.load(...)
-  image.anchor_x = image.width // 2
-  image.anchor_y = image.height // 2
-  self.sprite = pyglet.sprite.Sprite(image, batch=batch)
-  ```
-* Pro pohyb raketky půjde použít klávesy s šipkami doleva, doprava a rovně.
-  Šipky do stran raketu točí, šipka dopředu zrychluje pohyb tím směrem, kam je
-  raketka otočená.
-  * Základní pohyb raketky je jednoduchý: k <var>x</var>-ové
-    souřadnici se přičte <var>x</var>-ová rychlost krát uplynulý čas
-    a to samé v <var>y</var>-ové souřadnici i pro úhel otočení:
+    def draw():
+        window.clear()
 
-      ```python
-      self.x = self.x + dt * self.x_speed
-      self.y = self.y + dt * self.y_speed
-      self.rotation = self.rotation + dt * rotation_speed
-      ```
+        for x_offset in (-window.width, 0, window.width):
+            for y_offset in (-window.height, 0, window.height):
+                # Remember the current state 
+                gl.glPushMatrix () 
+                # Move everything drawn from now on by (x_offset, y_offset, 0)
+                gl.glTranslatef(x_offset, y_offset, 0)
 
-      Rychlost otáčení závisí na stisknutých šipkách (doleva nebo doprava).
-      V jednom případě je záporná, v druhém kladná. Vhodnou hodnotu zvol
-      experimentováním – začni třeba u 4 radiánů za sekundu.
-      Všechny podobné „magické hodnoty“ je vhodné definovat
-      jako konstanty – tedy proměnné, které na začátku nastavíš a nikdy
-      je neměníš. Bývá zvykem je označovat velkými písmeny a dávat je na
-      začátek souboru, hned za importy:
+                # Draw 
+                batch.draw()
 
-      ```python
-      ROTATION_SPEED = 4  # radians per second
-      ```
-  * Zrychlení je trochu složitější: k  <var>x</var>-ové rychlosti
-    se přičte kosinus úhlu otočení krát uplynulý čas.
-    U <var>y</var>-ové osy se použije sinus.
+                # Restore remembered state (this cancels the glTranslatef) 
+                gl.glPopMatrix()
+    ```
+    For an overview, the documentation for the functions used here is: 
+    [glPushMatrix](https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glPushMatrix.xml), 
+    [glPopMatrix](https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glPushMatrix.xml), 
+    [glTranslatef](https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glTranslate.xml).
 
-      ```python
-      self.x_speed += dt * ACCELERATION * math.cos(self.rotation)
-      self.y_speed += dt * ACCELERATION * math.sin(self.rotation)
-      ```
+Succeeded? Can you fly the universe?
 
-      Všimni si v příkladu konstanty `ACCELERATION`. Tu opět zvol podle uvážení.
-  * Když máš hodnoty `self.x`, `self.y` a `self.rotation` spočítané, nezapomeň
-    je promítnout do `self.sprite`, jinak se nic zajímavého nestane.
-
-    Pozor na to, že funkce `math.sin` a `math.cos` používají radiány,
-    kdežto `pyglet` používá pro `Sprite.rotation` stupně.
-    (A k tomu je navíc 0° jinde, a otáčí se na opačnou stranu.)
-    Pro sprite je tedy potřeba úhel převést:
-
-      ```python
-      self.sprite.rotation = 90 - math.degrees(self.rotation)
-      self.sprite.x = self.x
-      self.sprite.y = self.y
-      ```
-  * Když raketka vyletí z okýnka ven, vrať
-    ji zpátky do hry na druhé straně okýnka.
-    (Zkontroluj si, že to funguje na všech čtyřech stranách.)
-
-
-* **Bonus 1**: Zkus si přidat několik raketek,
-  každou trochu jinak natočenou.
-
-  Každý jednotlivý objekt třídy `Spaceship`
-  si udržuje vlastní stav, takže by nemělo být složité
-  jich vytvořit víc (a všechny ovládat najednou).
-* **Bonus 2**:
-  Možná sis všiml{{a}} „skoku”, když
-  raketa vyletí z okýnka a vrátí se na druhé straně.
-  Tomu se dá zabránit tak, že
-  vlevo, vpravo, nahoře i dole vedle naší „scény”
-  vykreslíš celou scénu ještě jednou.
-
-  Pyglet na to má speciální nízkoúrovňové funkce,
-  kterými můžeš říct „tady kresli všechno posunuté o
-  X pixelů vlevo”. Úplné vysvětlení by bylo na dlouho,
-  takže si zatím jen zkopíruj kód:
-
-  ```python
-  from pyglet import gl
-
-  def draw():
-      window.clear()
-
-      for x_offset in (-window.width, 0, window.width):
-          for y_offset in (-window.height, 0, window.height):
-              # Remember the current state
-              gl.glPushMatrix()
-              # Move everything drawn from now on by (x_offset, y_offset, 0)
-              gl.glTranslatef(x_offset, y_offset, 0)
-
-              # Draw
-              batch.draw()
-
-              # Restore remembered state (this cancels the glTranslatef)
-              gl.glPopMatrix()
-  ```
-  Pro přehled, dokumentace k použitým funkcím je tady:
-  [glPushMatrix, glPopMatrix](https://www.opengl.org/sdk/docs/man2/xhtml/glPushMatrix.xml),
-  [glTranslatef](https://www.opengl.org/sdk/docs/man2/xhtml/glTranslate.xml).
-
-Povedlo se? Můžeš létat vesmírem?
-Čas to všechno dát do Gitu!
-
-Projdi si předchozí body, jestli máš opravdu všechno, a můžeš pokračovat dál!
-
-## Asteroidy
-
+## Asteroids
 {# XXX: (asteroids2.py) #}
 
-Přidej druhý typ vesmírného objektu: `Asteroid`.
+Add a second type of space object: `Asteroid`.
 
-* Asteroidy a vesmírné lodě mají mnoho společného:
-  každý takový vesmírný objekt bude mít polohu,
-  rychlost, natočení a pravidla, jak se pohybuje.
-  Vytvoř proto třídu `SpaceObject`,
-  ve které bude všechno to společné, a z ní poděď
-  třídu `Spaceship`, ve které zůstane
-  kód specifický pro vesmírnou loď (t.j. ovládání
-  klávesnicí, obrázek lodě, začátek v prostředku
-  obrazovky).
-* Část kódu pro pohyb bude společná pro všechny
-  vesmírné objekty (např. věci kolem zrychlení);
-  část bude specifická jen pro raketku (ovládání
-  pomocí klávesnice).
-  Využij funkci `super()` z [lekce o dědičnosti](../../beginners/inheritance/).
-* Napiš ještě třídu `Asteroid`,
-  která taky dědí ze `SpaceObject`,
-  ale má svoje vlastní chování:
-  začíná buď na levé nebo spodní straně obrazovky
-  s náhodnou rychlostí
-  a ke každému asteroidu se přiřadí
-  náhodně vybraný obrázek.
-  (V Asteroidech je levý a pravý okraj v podstatě
-    to samé; a stejně tak horní a spodní.)
-* A pak pár asterojdíků různých velikostí přidej
-  na začátku do hry.
+* Asteroids and spaceships have many things in common: every space object will have its 
+position, speed, rotation, and rules how it moves. So create `SpaceObject` class, where will be 
+everything they have in common, and `Spaceship` class, that inherits from `SpaceObject`, in which the spaceship-specific 
+code remains (i.e., keyboard control, ship image, start from the middle of the screen).
+* The part of the code for motion will be common to all space objects (e.g. code for the 
+acceleration); part will be specific to the rocket only (keypad control). Take advantage 
+of the `super()` function (more in [inheritance lesson](../../beginners-en/inheritance/)).
+* Write the `Asteroid` class, which is also inherited from `SpaceObject`, but has its own 
+behavior: it starts either at the left or bottom of the screen with random speed, and each 
+asteroid have randomly assigned image. (In the Asteroids, the left and right edges 
+are essentially the same, and the top and bottom too.)
+* And then add some asteroids of different sizes to the game.
 
-Povedlo se? Máš dva typy objektů?
-Čas to všechno dát do Gitu!
+Succeeded? Do you have two types of objects?
 
-Zase si projdi, jestli máš všechno hotové,
-a jdeme na další část!
 
-## Kolize
+## Collisions
 
-{# XXX: (asteroids3.py) #}
+Our asteroids are pretty harmless yet. Let's change it.
 
-Naše asteroidy jsou zatím docela neškodné. Pojďme to změnit.
-
-* V této sekci bude tvým úkolem zjistit, kdy
-  loď narazila do asteroidu.
-  Pro zjednodušení si každý objekt nahradíme
-  kolečkem a budeme počítat, kdy se srazí kolečka.
-  Každý objekt bude potřebovat mít poloměr – atribut `radius`.
-* Aby bylo vidět co si hra o objektech „myslí”,
-  nakresli si nad každým objektem příslušné kolečko.
-  Nejlepší je to udělat pomocí
-  [pyglet.gl](http://pyglet.readthedocs.org/en/latest/programming_guide/gl.html)
-  a trochy matematiky; pro teď si jen opiš funkci
-  `draw_circle` a pro každý objekt ji zavolej.
-  Až to bude všechno fungovat, můžeš funkci dát pryč.
-
-  ```python
-  def draw_circle(x, y, radius):
+* In this section, your task will be to find out when the ship is hit by an asteroid. For 
+simplicity, we replace each object with a circle and count when the circles collide. 
+Each object will need to have a radius - `radius` attribute.
+* In order to see what game "thinks" about objects, draw a circle above each object. 
+The best thing to do is to use [pyglet.gl](https://pyglet.readthedocs.io/en/latest/programming_guide/gl.html) 
+and a little math; for now just copy the `draw_circle` function and call it for each object. 
+When everything will work, you can give it away.
+    ```python
+    def draw_circle(x, y, radius):
       iterations = 20
-      s = math.sin(2*math.pi / iterations)
-      c = math.cos(2*math.pi / iterations)
+      s = math.sin(2 * math.pi / iterations)
+      c = math.cos(2 * math.pi / iterations)
 
       dx, dy = radius, 0
 
       gl.glBegin(gl.GL_LINE_STRIP)
-      for i in range(iterations+1):
-          gl.glVertex2f(x+dx, y+dy)
-          dx, dy = (dx*c - dy*s), (dy*c + dx*s)
+      for i in range(iterations + 1):
+        gl.glVertex2f(x + dx, y + dy)
+        dx, dy = (dx * c - dy * s), (dy * c + dx * s)
       gl.glEnd()
-  ```
-* Když asteroid narazí do lodi, loď exploduje a zmizí.
-  Explozi necháme na později, teď je důležité odebrání objektu ze hry.
-  Dej ho do metody `SpaceObject.delete`,
-  protože vyndávat ze hry se dá jakýkoli objekt.
-  V této metodě musíš objekt jednak odstranit
-  ze seznamu `objects` a pak zrušit jeho `Sprite`, aby se už v rámci
-  `batch` nevykresloval.
-* A jak udělat ono narážení?
-  V rámci `Spaceship.tick` projdi
-  každý objekt, zjisti jestli vzdálenost mezi lodí
-  a objektem je menší než součet poloměrů
-  (t.j. narazily do sebe) a pokud ano,
-  zavolej na objektu metodu `hit_by_spaceship`.
+    ```
+* When the asteroid crashes into the ship, the ship will explode and disappear. We'll leave the 
+explosion for later, it's important to remove the object from the game. Put it in the 
+`SpaceObject.delete` method, because any object can be removed from the game. In this 
+method, you must remove the object from the list of `objects` and then delete its `Sprite` 
+so that it does not render within the `batch`.
+* And how do you do that collision? Within the `Spaceship.tick`, go through each object to 
+see if the distance between the ship and the other object is less than the sum of their radiuses 
+(they hit each other), and if so, call the object's `hit_by_spaceship` method.
 
-  Zjišťování vzdálenosti ve hře, kde se
-  [objekty které vyletí ven vrací na druhé straně](https://en.wikipedia.org/wiki/Wraparound_%28video_games%29),
-  není úplně přímočaré, takže si příslušný kód pro teď jen zkopíruj:
+    Finding a distance in a game where the [objects that fly out of the screen returns on the other side](https://en.wikipedia.org/wiki/Wraparound_%28video_games%29) 
+    is not entirely straightforward, so copy the code for now:
+    ```python
+    def distance(a, b, wrap_size):
+        """Distance in one direction (x or y)"""
+        result = abs(a - b)
+        if result > wrap_size / 2:
+            result = wrap_size - result
+        return result
 
-  ```python
-  def distance(a, b, wrap_size):
-      """Distance in one direction (x or y)"""
-      result = abs(a - b)
-      if result > wrap_size / 2:
-          result = wrap_size - result
-      return result
+    def overlaps(a, b):
+        """Returns true if and only if two objects overlap space"""
+        distance_squared = (distance(a.x, b.x, window.width) ** 2 +
+                            distance(a.s, b.y, window.height) ** 2)
+        max_distance_squared = (a.radius +b.radius) ** 2
+        return distance_squared < max_distance_squared
+    ```
 
-  def overlaps(a, b):
-      """Returns true iff two space objects overlap"""
-      distance_squared = (distance(a.x, b.x, window.width) ** 2 +
-                          distance(a.y, b.y, window.height) ** 2)
-      max_distance_squared = (a.radius + b.radius) ** 2
-      return distance_squared < max_distance_squared
-  ```
+    Most objects in a completed game (such as fire from the rocket, missile) will not do anything 
+    when the collision will happen, so the `SpaceObject.hit_by_spaceship` should do nothing 
+    (it only needs to exist). Just the asteroid will break the rocket, so redefine `Asteroid.hit_by_spaceship` 
+    to call `delete` ship.
 
-  Většina objektů v dokončené hře (např. oheň z
-  rakety, střela) nebude při kolizi s lodí dělat nic,
-  takže metoda `SpaceObject.hit_by_spaceship`
-  by neměla dělat nic (musí jen existovat).
-  Jen asteroid loď rozbije, takže předefinuj
-  `Asteroid.hit_by_spaceship`, aby
-  zavolala `delete` lodi.
-
-  Protože lodí může být v naší hře obecně více, musí asteroid
-  vědět, se kterou lodí se srazil, aby ji mohl rozbít.
-  Metoda `hit_by_spaceship` by tedy na to měla mít argument.
-
-Povedlo se? Konečně se dá prohrát?
-Čas to všechno zkontrolovat, dát do Gitu a můžeme pokračovat!
-
-## Útok
-
-{# XXX: (asteroids4.py) #}
-
-Teď zkusíme asteroidy rozbíjet.
-
-* Raketka umí jednou za 0,3 s vystřelit laser.
-  Ulož si pro každou raketku (jako atribut) číslo,
-  které po každém výstřelu nastav na 0,3
-  a pak ho v metodě `tick` nech klesat o 1 za vteřinu.
-  Když bude záporné, může hráč vystřelit znovu.
-* Když hráč drží mezerník a může vystřelit, vystřelí.
-  Ve hře se to projeví tak, že se přidá objekt nové třídy `Laser`.
-  Začne na souřadnicích raketky, s natočením raketky
-  a s rychlostí raketky plus něco navíc ve směru natočení.
-* Každý objekt třídy `Laser` si „pamatuje“,
-  jak dlouho ještě bude ve hře.
-  Na začátku se tohle číslo nastaví tak, aby přeletěl
-  zhruba něco víc než jednu obrazovku.
-  Když dojde čas, `Laser` zmizí.
-* Ve své metodě `tick` laser projde
-  všechny objekty, a pokud se s některým překrývá,
-  tak na něm zavolá metodu `hit_by_laser`.
-  U většiny objektů tahle metoda nedělá nic,
-  jen asteroidy bude rozbíjet.
-* Když se laser dotkne asteroidu, asteroid se
-  rozdělí na dva menší (nebo, je-li už příliš malý, zmizí úplně).
-
-  Rychlosti nových asteroidů si můžeš nastavit
-  podle sebe – důležité je jen, aby každý menší
-  asteroid letěl jinam.
-  Většinou bývají nové asteroidy rychlejší než ten původní.
-* A to je vše! Máš funkční hru!
-
-Povedlo se? Dá se i vyhrát? Čas to všechno dát do Gitu!
+    Because there could be more rockets in our game in general, the asteroid needs to know which rocket it broke. 
+    The `hit_by_spaceship` method should, therefore, have an argument.
 
 
-## Dokončení a rozšíření
+Succeeded? Can you lose now?
 
-{# XXX: (asteroids5.py) #}
+## Attack
+Now try to break the asteroids.
+ 
+* The missile can fire a laser in 0.3 seconds. For each rocket save a number (as an attribute)
+which is set, after each fire, to 0.3 and then let this number drop by 1 per second in the 
+`tick` method. If the number is negative user can fire again.
+* When a player holds a space bar and there is possibility to fire, then the ship should fire.
+This will be reflected in the game by adding an object of a new `Laser` class. It starts at 
+rocket's coordinates, with rocket's rotation and rocket speed plus something extra in the 
+direction of rotation.
+* Each `Laser` object will "remember" how long it is in the game. In the beginning, 
+it's set to a number so the laser can fly little bit more than one screen. When the time 
+comes, the `Laser` disappears.
+* In its `tick` method the laser go thru all objects and when its position overlaps with some
+of these object it calls `hit_by_laser` method. For most objects, this method does nothing, 
+only the asteroids will break.
+* When the laser touches the asteroid, the asteroid divides into two smaller ones (or, if it's
+too small, it disappears completely).
 
-Chceš-li ve hře pokračovat, tady jsou další nápady.
-Můžeš je dělat v jakémkoli pořadí – nebo si vymysli
-vlastní rozšíření!
+  You can set the speeds of new asteroids how you want - it is important that every smaller 
+  asteroid flew elsewhere. Usually, new asteroids are faster than the original ones.
 
-* Je hra příliš těžká?
+* And that's all! You have a functional game!
 
-  Můžeš přidat životy: na začátku jsou tři,
-  a dokud nějaký zbývá, raketka se po zásahu
-  asteroidem objeví znovu uprostřed,
-  s nulovou rychlostí.
-  Hra by taky při tomto „restartu” měla ignorovat
-  držené klávesy, dokud je hráč znovu nezmáčkne
-  (nejlépe pomocí `pressed_keys.clear()`).
+Succeeded? Can you also win?
 
-  Počet náhradních lodí můžeš ukázat ikonkami
-  na spodku obrazovky.
 
-  **Bonus:** Několik vteřin po
-  „restartu” může být raketka nezničitelná,
-  aby měla čas odletět, když je zrovna uprostřed
-  okýnka asteroid.
-* Je hra příliš lehká?
+## Completion and extension
+If you want to continue in the game, here are some ideas. You can do it in any order - or 
+you can invent your own extension!
 
-  Přidej úrovně: až hráč vystřílí všechny asteroidy,
-  postoupí na další úroveň, kde je asteroidů víc než v té předchozí.
+* Is the game too difficult?
 
-  Číslo úrovně můžeš ukázat pomocí
-  [pyglet.text.Label](http://pyglet.readthedocs.org/en/latest/programming_guide/text.html).
-* Je pozadí příliš černé?
+    You can add lives: there are three at the beginning, and as long as there's one left, 
+    the rocket will appear again in the middle of the screen with zero speed after the 
+    asteroid hit it. 
+    The game should also ignore the keys that were held until the player press them again 
+    (preferably use `pressed_keys.clear ()`).
 
-  V sadě obrázků v adresáři `Backgrounds`
-  si vyber pozadí, a vytapetuj s ním celý vesmír.
-* Je hra moc strohá?
+    You can show the number of ships (lives) that are left with icons at the bottom of the screen.
 
-  Přidej oheň a exploze!
-  Chovají se podobně jako `Laser`,
-  jen nic neničí a můžou třeba měnit barvu podle
-  toho, jak dlouho už jsou ve hře.
+    **Bonus**: A few seconds after the "restart", the rocket can be indestructible to have 
+    time to fly when the is an asteroid in the middle of the screen.
 
-  Na efekty můžeš použít obrázky
-  [„Smoke particle assets”](http://opengameart.org/content/smoke-particle-assets),
-  které nakreslil opět [Kenney Vleugels](http://kenney.nl).
-  Doporučuji „White Puff”, které můžeš zmenšit
-  (např. `sprite.scale = 1/10`),
-  přibarvit
-  (např. `sprite.color = 255, 100, 0`)
-  nebo částečně zprůhlednit
-  (např. `sprite.opacity = 100`).
+* Is the game too easy?
 
-  Doporučuji si na efekty udělat nový `Batch`
-  a vykreslit ho před tím hlavním, aby efekty
-  nepřekrývaly herní objekty.
-* Nepoznáš, kdy jsi prohrál{{a}} nebo vyhrál{{a}}?
+    Add Levels: When the player shoots all the asteroids, they move to the next level where 
+    are more the asteroids than in the the previous lever.
 
-  Na konci můžeš ukázat veliký nápis GAME OVER nebo WINNER.
-* Nudíš se?
+    You can display the level number using [pyglet.text.Label](https://pyglet.readthedocs.io/en/latest/programming_guide/text.html).
 
-  V původní hře se občas objeví UFO, které občas
-  vystřelí na místo, kde je právě hráčova raketka,
-  takže pokud hráč stojí pořád na jednom místě a
-  jenom se točí dokola, UFO ho sestřelí.
-  Můžeš zkusit dodělat třídu `Ufo`
-  a z `Laser` podědit `ShipLaser` a `UfoLaser`.
+* Is the background too black?
 
-Povedlo se? Vypadá to a chová se to profesionálně?
-Čas to všechno dát do Gitu!
+    In the set of pictures in the `Backgrounds` directory choose one background and paint 
+    the whole universe with it.
+
+* Is the game too austere?
+
+    Add fire and explosion! Like the `Laser`, they just don't destroy anything, they just 
+    change a colour depending on how long they are in the game.
+
+    You can use the ["Smoke particle assets"](http://opengameart.org/content/smoke-particle-assets) 
+    images drawn by (Kenney Vleugels)[https://kenney.nl/] again. I recommend "White Puff" 
+    that you can shrink (e.g. `sprite.scale = 1/10`), change colour (e.g. `sprite.color = 255, 100, 0`) 
+    or make them partially transparent (e.g. `sprite.opacity = 100`).
+
+    I recommend to make a new `batch` for the effects and draw it before the main one so the 
+    effects can't overlap the game objects.
+
+* Don't you know whether you lost or won?
+
+    In the end, you can draw the big GAME OVER or WINNER sign.
+
+* Are you bored?
+
+    In the original game UFOs sometimes appear and sometimes they shoot at the rocket, 
+    so if the rocket is still in one spot and it is just spinning around, the UFO will 
+    destroy it. You can try to complete the `Ufo` class and you can create `ShipLaser` and 
+    `UfoLaser` that inherit from the `Laser` class.
+
+Succeeded? Does it look and behave professionally?
