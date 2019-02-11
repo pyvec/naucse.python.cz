@@ -286,7 +286,7 @@ you can invent your own extension!
     change a colour depending on how long they are in the game.
 
     You can use the ["Smoke particle assets"](http://opengameart.org/content/smoke-particle-assets) 
-    images drawn by (Kenney Vleugels)[https://kenney.nl/] again. I recommend "White Puff" 
+    images drawn by [Kenney Vleugels](https://kenney.nl/) again. I recommend "White Puff" 
     that you can shrink (e.g. `sprite.scale = 1/10`), change colour (e.g. `sprite.color = 255, 100, 0`) 
     or make them partially transparent (e.g. `sprite.opacity = 100`).
 
