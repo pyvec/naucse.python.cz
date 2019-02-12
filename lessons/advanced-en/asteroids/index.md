@@ -1,8 +1,5 @@
 # Asteroids game
 
-Our final project is going to use everything what we know: 
-classes, graphics, lists... I hope that you will like it!
-
 We will try to make a clone of the game [Asteroids](https://en.wikipedia.org/wiki/Asteroids_%28video_game%29) 
 that has been released in 1979.
 
@@ -96,8 +93,8 @@ The first step is to program a spaceship that you can control by keyboard.
     to project them into `self.sprite`, otherwise nothing interesting will happen.
 
         Beware that the `math.sin` and `math.cos` functions use radians, whereas the `pyglet` 
-        uses `Sprite.rotation` degrees. (And this is extra 0° elsewhere, and it rotates 
-        in the opposite direction.) For a sprite, therefore, the angle needs to be converted:
+        `Sprite.rotation` uses degrees. (Additionally, they start at different origins, and they rotate 
+        in opposite directions.) For a sprite, therefore, the angle needs to be converted:
         ```python
         self.sprite.rotation = 90 - math.degrees(self.rotation)
         self.sprite.x = self.x
@@ -166,12 +163,14 @@ Have you succeeded? Do you have two types of objects?
 Our asteroids are still pretty harmless. Let's change that.
 
 * In this section, your task will be to find out when the ship is hit by an asteroid. For 
-simplicity, we replace each object with a circle and count when the circles collide. 
+simplicity, we replace each object with a circle and calculate if the circles collide. 
 Each object will need to have a radius - the `radius` attribute.
-* In order to see what the game "thinks" about objects, draw a circle around each object. 
-The best thing to do is to use [pyglet.gl](https://pyglet.readthedocs.io/en/latest/programming_guide/gl.html) 
-and a little math; for now just copy the `draw_circle` function and call it for each object. 
-When everything works, you can give it away.
+* In order to see what the game "thinks" where and how big our objects are, 
+draw a circle around each object. The best thing to do is to use 
+[pyglet.gl](https://pyglet.readthedocs.io/en/latest/programming_guide/gl.html) 
+and a little math; for now, just copy the `draw_circle` function and call it for each object. 
+After you got this part working, you won't need to highlight the radius any longer, 
+and you can remove the draw_circle function again.
     ```python
     def draw_circle(x, y, radius):
       iterations = 20
