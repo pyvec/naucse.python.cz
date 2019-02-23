@@ -275,7 +275,33 @@ def _classname(cls):
     return f'{cls.__module__}.{cls.__qualname__}'
 
 
-class Field:
+class AbstractField:
+    """Descriptor for a Model's attribute that is loaded/dumped to JSON
+
+    See Field for the API.
+    """
+
+    def __get__(self, instance, owner):
+        """Debug helper
+
+        An initialized model instance should have values for all its fields
+        in its __dict__.
+
+        However, when loading, not all fields have been initialized yet.
+        Attempts to get the value of such a field will raise an informative
+        error, rather than return the Field object from the model class.
+        """
+        if instance is None:
+            # Getting a class attribute -- return this Field
+            return self
+        else:
+            # Getting an instnce attribute -- raise an error
+            type_name = owner.__name__
+            raise AttributeError(
+                f'{self.name!r} of {type_name} object was not yet loaded'
+            )
+
+class Field(AbstractField):
     """Descriptor for a Model's attribute that is loaded/dumped to JSON
 
     `converter`: Converter to use for the attribute.
@@ -406,26 +432,6 @@ class Field:
         if not context.is_input:
             object_schema['additionalProperties'] = False
 
-    def __get__(self, instance, owner):
-        """Debug helper
-
-        An initialized model instance should have values for all its fields
-        in its __dict__.
-
-        However, when loading, not all fields have been initialized yet.
-        Attempts to get the value of such a field will raise an informative
-        error, rather than return the Field object from the model class.
-        """
-        if instance is None:
-            # Getting a class attribute -- return this Field
-            return self
-        else:
-            # Getting an instnce attribute -- raise an error
-            type_name = owner.__name__
-            raise AttributeError(
-                f'{self.name!r} of {type_name} object was not yet loaded'
-            )
-
     def default_factory(self):
         """Decorate a function that will be called to produce a default value
 
@@ -450,6 +456,78 @@ class Field:
         return _decorator
 
 
+class VersionField(AbstractField):
+    """Chooses Field based on the API version
+
+    `fields` should be a {version introduced: field} mapping.
+    When loading/dumping/getting schema, VersionField picks the field for
+    tat version and forwards the operation to it.
+    For versions before the first specified, the field is not loaded/dumped,
+    and the instance attribute is set to None.
+
+    VersionField adds a "Added/Modified in API version" note to the JSON Schema
+    description.
+
+    Making later fields suitably backwards-compatible is the user's
+    responsibility.
+    """
+
+    def __init__(self, fields, name=None):
+        self.fields = sorted((tuple(k), f) for k, f in fields.items())
+        self.name = name
+
+    def _field_for_context(self, context):
+        for version, field in reversed(self.fields):
+            if version <= context.version:
+                return version, field
+        return None, None
+
+    def __repr__(self):
+        return f'<{_classname(type(self))} {self.name} ({self.fields})>'
+
+    def __set_name__(self, cls, name):
+        self.name = name
+        for version, field in self.fields:
+            set_name = getattr(type(field), '__set_name__', None)
+            if set_name:
+                set_name(field, cls, name)
+
+    def load_into(self, instance, data, context, **kwargs):
+        version, field = self._field_for_context(context)
+        if field:
+            field.load_into(instance, data, context, **kwargs)
+        else:
+            setattr(instance, self.name, None)
+
+    def dump_into(self, instance, data, context):
+        version, field = self._field_for_context(context)
+        if field:
+            field.dump_into(instance, data, context)
+
+    def put_schema_into(self, object_schema, context):
+        version, field = self._field_for_context(context)
+        if field:
+            field.put_schema_into(object_schema, context)
+            try:
+                schema = object_schema['properties'][self.name]
+            except KeyError:
+                pass
+            if version == self.fields[0][0]:
+                note = 'Added in API version {}.{}'.format(*version)
+            else:
+                note = 'Modified in API version {}.{}'.format(*version)
+            if 'description' in schema:
+                schema['description'] += '\n\n' + note
+            else:
+                schema['description'] = note
+
+    def default_factory(self):
+        raise NotImplementedError('default_factory is not implemented yet')
+
+    def after_load(self):
+        raise NotImplementedError('after_load is not implemented yet')
+
+
 class ModelConverter(BaseConverter):
     """Converter for a Model, i.e. class with several Fields"""
     def __init__(
@@ -457,13 +535,17 @@ class ModelConverter(BaseConverter):
     ):
         self.cls = cls
         self.name = cls.__name__
-        self.doc = inspect.getdoc(cls).strip()
+        doc = inspect.getdoc(cls)
+        if doc:
+            self.doc = doc.strip()
+        else:
+            self.doc = ''
         self.fields = {}
         self.load_arg_names = load_arg_names
         self.slug = slug
 
         for name, field in vars(cls).items():
-            if name.startswith('__') or not isinstance(field, Field):
+            if name.startswith('__') or not isinstance(field, AbstractField):
                 continue
             self.fields[name] = field
         self.fields.update((f.name, f) for f in extra_fields)
@@ -502,7 +584,7 @@ class LoadContext:
     `version` is the API version, as a tuple of ints (major, minor).
     """
     def __init__(self, version):
-        self.version = version
+        self.version = tuple(version)
 
 
 class DumpContext:
@@ -511,7 +593,7 @@ class DumpContext:
     `version` is the API version, as a tuple of ints (major, minor).
     """
     def __init__(self, version):
-        self.version = version
+        self.version = tuple(version)
 
 
 class SchemaContext:
@@ -526,7 +608,7 @@ class SchemaContext:
         self.definition_refs = {}
         self.definitions = {}
         self.is_input = is_input
-        self.version = version
+        self.version = tuple(version)
 
     def get_schema(self, converter):
         """Get schema for the given converter
@@ -616,7 +698,7 @@ def dump(instance, converter=None, *, version):
     slug = converter.slug or 'data'
     context = DumpContext(version=version)
     result = {
-        'api_version': context.version,
+        'api_version': list(context.version),
         slug: converter.dump(instance, context),
     }
     result['$schema'] = _get_schema_url(converter, instance)
