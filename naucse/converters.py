@@ -80,8 +80,11 @@ class BaseConverter:
     def _naucse__converter(self):
         return self
 
-    def load(self, data, **kwargs):
+    def load(self, data, context, **kwargs):
         """Convert a JSON-compatible data to a Python value.
+
+        `context` is a `LoadContext`, which holds options (like the API
+        version) for loading an entire tree of objects.
 
         `kwargs` are extra keyword arguments passed to `__init__`.
         The Converter's `load_arg_names` attribute specifies which kwargs
@@ -91,8 +94,11 @@ class BaseConverter:
         """
         return data
 
-    def dump(self, value):
+    def dump(self, value, context):
         """Convert a Python value to JSON-compatible data.
+
+        `context` is a `DumpContext`, which holds options (like the API
+        version) for dumping an entire tree of objects.
 
         The base implementation returns `value` unchanged.
         """
@@ -125,7 +131,7 @@ class BoolConverter(BaseConverter):
 
 
 class IntegerConverter(BaseConverter):
-    def load(self, data):
+    def load(self, data, context):
         return int(data)
 
     def get_schema(self, context):
@@ -133,7 +139,7 @@ class IntegerConverter(BaseConverter):
 
 
 class FloatConverter(BaseConverter):
-    def load(self, data):
+    def load(self, data, context):
         return float(data)
 
     def get_schema(self, context):
@@ -173,16 +179,16 @@ class ListConverter(BaseConverter):
         self.load_arg_names = self.item_converter.load_arg_names
         self.index_arg = index_arg
 
-    def load(self, data, **kwargs):
+    def load(self, data, context, **kwargs):
         result = []
         for index, d in enumerate(data):
             if self.index_arg:
                 kwargs[self.index_arg] = index
-            result.append(self.item_converter.load(d, **kwargs))
+            result.append(self.item_converter.load(d, context, **kwargs))
         return result
 
-    def dump(self, value):
-        return [self.item_converter.dump(v) for v in value]
+    def dump(self, value, context):
+        return [self.item_converter.dump(v, context) for v in value]
 
     def get_schema(self, context):
         return {
@@ -207,16 +213,19 @@ class DictConverter(BaseConverter):
         self.key_arg = key_arg
         self.required = required
 
-    def load(self, data, **kwargs):
+    def load(self, data, context, **kwargs):
         result = {}
         for k, v in data.items():
             if self.key_arg:
                 kwargs[self.key_arg] = k
-            result[k] = self.item_converter.load(v, **kwargs)
+            result[k] = self.item_converter.load(v, context, **kwargs)
         return result
 
-    def dump(self, value):
-        return {str(k): self.item_converter.dump(v) for k, v in value.items()}
+    def dump(self, value, context):
+        return {
+            str(k): self.item_converter.dump(v, context)
+            for k, v in value.items()
+        }
 
     def get_schema(self, context):
         schema = {
@@ -243,17 +252,17 @@ class KeyAttrDictConverter(BaseConverter):
         self.index_arg = index_arg
         self.load_arg_names = set(self.item_converter.load_arg_names)
 
-    def load(self, data, **kwargs):
+    def load(self, data, context, **kwargs):
         result = {}
         for index, value in enumerate(data):
             if self.index_arg:
                 kwargs[self.index_arg] = index
-            item = self.item_converter.load(value, **kwargs)
+            item = self.item_converter.load(value, context, **kwargs)
             result[getattr(item, self.key_attr)] = item
         return result
 
-    def dump(self, value):
-        return [self.item_converter.dump(v) for k, v in value.items()]
+    def dump(self, value, context):
+        return [self.item_converter.dump(v, context) for k, v in value.items()]
 
     def get_schema(self, context):
         return {
@@ -327,7 +336,7 @@ class Field:
         self.name = name
         self.data_key = self.data_key or self.name
 
-    def load_into(self, instance, data, **kwargs):
+    def load_into(self, instance, data, context, **kwargs):
         """Load this field's data into the given Python object.
 
         `instance` is the Python object being initialized.
@@ -357,10 +366,10 @@ class Field:
                     n: v for n, v in kwargs.items()
                     if n in self.converter.load_arg_names
                 }
-                value = self.converter.load(item_data, **kwargs)
+                value = self.converter.load(item_data, context, **kwargs)
         setattr(instance, self.name, value)
         for func in self._after_load_hooks:
-            func(instance)
+            func(instance, context)
 
     def _get_default(self, instance):
         """Return the default value (for optional fields).
@@ -369,7 +378,7 @@ class Field:
         """
         return None
 
-    def dump_into(self, instance, data):
+    def dump_into(self, instance, data, context):
         """Dump the given Python object into the given JSON-compatible dict
 
         If the field is not marked `output`, or is optional and has the default
@@ -380,7 +389,7 @@ class Field:
         value = getattr(instance, self.name)
         if self.optional and value == self.default:
             return
-        data[self.data_key] = self.converter.dump(value)
+        data[self.data_key] = self.converter.dump(value, context)
 
     def put_schema_into(self, object_schema, context):
         if context.is_input and not self.input:
@@ -462,16 +471,16 @@ class ModelConverter(BaseConverter):
     def __repr__(self):
         return f'<{_classname(type(self))} for {_classname(self.cls)}>'
 
-    def load(self, data, **kwargs):
+    def load(self, data, context, **kwargs):
         result = self.cls(**kwargs)
         for field in self.fields.values():
-            field.load_into(result, data, parent=result)
+            field.load_into(result, data, context, parent=result)
         return result
 
-    def dump(self, value):
+    def dump(self, value, context):
         result = {}
         for field in self.fields.values():
-            field.dump_into(value, result)
+            field.dump_into(value, result, context)
         return result
 
     def get_schema(self, context):
@@ -487,16 +496,37 @@ class ModelConverter(BaseConverter):
         return schema
 
 
+class LoadContext:
+    """Holds "global" options for loading data
+
+    `version` is the API version, as a tuple of ints (major, minor).
+    """
+    def __init__(self, version):
+        self.version = version
+
+
+class DumpContext:
+    """Holds "global" options for dumping data
+
+    `version` is the API version, as a tuple of ints (major, minor).
+    """
+    def __init__(self, version):
+        self.version = version
+
+
 class SchemaContext:
     """Holds "global" definitions and options for getting a context
 
     `is_input` determines whether schema for input (data from forks) or output
     (naucse's exported API).
+
+    `version` is the API version, as a tuple of ints (major, minor).
     """
-    def __init__(self, *, is_input):
+    def __init__(self, *, is_input, version):
         self.definition_refs = {}
         self.definitions = {}
         self.is_input = is_input
+        self.version = version
 
     def get_schema(self, converter):
         """Get schema for the given converter
@@ -516,10 +546,10 @@ class SchemaContext:
         return converter.get_schema(self)
 
 
-def get_schema(converter, *, is_input):
+def get_schema(converter, *, is_input, version):
     """Get schema for the given converter"""
     converter = get_converter(converter)
-    context = SchemaContext(is_input=is_input)
+    context = SchemaContext(is_input=is_input, version=version)
     context.definitions.update({
         'ref': {
             'type': 'object',
@@ -575,7 +605,7 @@ def _get_schema_url(converter, instance):
     raise ValueError(f"{converter}.get_schema_url is None")
 
 
-def dump(instance, converter=None):
+def dump(instance, converter=None, *, version):
     """Dump a Python object
 
     If converter is None, the default is used.
@@ -584,23 +614,26 @@ def dump(instance, converter=None):
         converter = get_converter(instance)
     converter = get_converter(converter)
     slug = converter.slug or 'data'
+    context = DumpContext(version=version)
     result = {
-        'api_version': [0, 0],
-        slug: converter.dump(instance),
+        'api_version': context.version,
+        slug: converter.dump(instance, context),
     }
     result['$schema'] = _get_schema_url(converter, instance)
-    schema = get_schema(converter, is_input=False)
+    schema = get_schema(converter, is_input=False, version=context.version)
     jsonschema.validate(result, schema)
     return result
 
 
 def load(converter, data, **kwargs):
     """Load a Python object from the given data"""
+    version = data['api_version']
     converter = get_converter(converter)
-    schema = get_schema(converter, is_input=True)
+    context = LoadContext(version=version)
+    schema = get_schema(converter, is_input=True, version=context.version)
     jsonschema.validate(data, schema)
     slug = converter.slug or 'data'
-    return converter.load(data[slug], **kwargs)
+    return converter.load(data[slug], context, **kwargs)
 
 
 def register_model(cls, converter=None):

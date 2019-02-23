@@ -6,7 +6,7 @@ import jsonschema
 
 from naucse import models
 from test_naucse.conftest import fixture_path, add_test_course
-from test_naucse.conftest import assert_yaml_dump
+from test_naucse.conftest import assert_model_dump
 
 
 TZINFO = dateutil.tz.gettz('Europe/Prague')
@@ -71,7 +71,7 @@ def test_run_with_default_times(model):
     assert session.date == None
     assert session.time == None
 
-    assert_yaml_dump(models.dump(course), 'session-times/with-default-times')
+    assert_model_dump(course, 'session-times/with-default-times')
 
 
 def test_course_with_no_default_time(model):
@@ -102,7 +102,7 @@ def test_course_with_no_default_time(model):
     assert session.date == None
     assert session.time == None
 
-    assert_yaml_dump(models.dump(course), 'session-times/without-default-time')
+    assert_model_dump(course, 'session-times/without-default-time')
 
 
 def test_course_without_dates(model):
@@ -123,7 +123,7 @@ def test_course_without_dates(model):
     assert session.date is None
     assert session.time is None
 
-    assert_yaml_dump(models.dump(course), 'session-times/without-dates')
+    assert_model_dump(course, 'session-times/without-dates')
 
 
 BAD_TIMES = {

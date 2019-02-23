@@ -8,7 +8,7 @@ from naucse import models
 from naucse.edit_info import get_local_repo_info
 
 from test_naucse.conftest import fixture_path, dummy_schema_url_factory
-from test_naucse.conftest import assert_yaml_dump, add_test_course
+from test_naucse.conftest import assert_model_dump, add_test_course
 
 
 def test_empty_model():
@@ -38,7 +38,7 @@ def test_licenses():
 
 def test_dump_empty_model():
     model = models.Root(schema_url_factory=dummy_schema_url_factory)
-    assert_yaml_dump(models.dump(model), 'empty-root.yml')
+    assert_model_dump(model, 'empty-root.yml')
 
 
 def test_load_empty_dir():
@@ -101,9 +101,9 @@ def test_dump_local_course(model):
         slug='courses/minimal',
     ))
 
-    assert_yaml_dump(models.dump(model), 'minimal-root.yml')
+    assert_model_dump(model, 'minimal-root.yml')
     course = model.courses['courses/minimal']
-    assert_yaml_dump(models.dump(course), 'minimal-course.yml')
+    assert_model_dump(course, 'minimal-course.yml')
 
 
 def test_add_course_from_data():
@@ -195,6 +195,6 @@ def test_run_years(model):
         '2019/single-session': course_2019,
     }
 
-    assert_yaml_dump(models.dump(model), 'run-years/root.yml')
+    assert_model_dump(model, 'run-years/root.yml')
     for year, run_year in model.run_years.items():
-        assert_yaml_dump(models.dump(run_year), f'run-years/{year}.yml')
+        assert_model_dump(run_year, f'run-years/{year}.yml')

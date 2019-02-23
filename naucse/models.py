@@ -32,10 +32,10 @@ class NoURLType(NoURL):
 
 
 class URLConverter(BaseConverter):
-    def load(self, data):
+    def load(self, data, context):
         return sanitize.convert_link('href', data)
 
-    def dump(self, value):
+    def dump(self, value, context):
         return value
 
     @classmethod
@@ -156,12 +156,12 @@ class HTMLFragmentConverter(BaseConverter):
     def __init__(self, *, sanitizer=None):
         self.sanitizer = sanitizer
 
-    def load(self, value, parent):
+    def load(self, value, context, *, parent):
         if self.sanitizer is None:
             return sanitize.sanitize_html(value)
         return self.sanitizer(parent, value)
 
-    def dump(self, value):
+    def dump(self, value, context):
         return str(value)
 
     @classmethod
@@ -187,10 +187,10 @@ class Solution(Model):
 
 class RelativePathConverter(BaseConverter):
     """Converter for a relative path, as string"""
-    def load(self, data):
+    def load(self, data, context):
         return Path(data)
 
-    def dump(self, value):
+    def dump(self, value, context):
         return str(value)
 
     def get_schema(self, context):
@@ -208,7 +208,7 @@ source_file_field = Field(
         + "relative to the repository root")
 
 @source_file_field.after_load()
-def _edit_info(self):
+def _edit_info(self, context):
     if self.source_file is None:
         self.edit_info = None
     else:
@@ -234,10 +234,10 @@ class StaticFile(Model):
 
 class PageCSSConverter(BaseConverter):
     """Converter for CSS for a Page"""
-    def load(self, value):
+    def load(self, value, context):
         return sanitize.sanitize_css(value)
 
-    def dump(self, value):
+    def dump(self, value, context):
         return value
 
     @classmethod
@@ -252,10 +252,10 @@ class LicenseConverter(BaseConverter):
     """Converter for a licence (specified as its slug in JSON)"""
     load_arg_names = {'parent'}
 
-    def load(self, value, parent):
+    def load(self, value, context, *, parent):
         return parent.root.licenses[value]
 
-    def dump(self, value):
+    def dump(self, value, context):
         return value.slug
 
     @classmethod
@@ -351,7 +351,7 @@ class Material(Model):
         doc="Slug of the corresponding lesson")
 
     @lesson_slug.after_load()
-    def _validate_lesson_slug(self):
+    def _validate_lesson_slug(self, context):
         if self.lesson_slug and self.external_url:
             raise ValueError(
                 'external_url and lesson_slug are incompatible'
@@ -416,7 +416,7 @@ class SessionTimeConverter(BaseConverter):
     to be fixed up using `_combine_session_time`.
     Converted to the full datetime on output.
     """
-    def load(self, data):
+    def load(self, data, context):
         try:
             return datetime.datetime.strptime('%Y-%m-%d %H:%M:%S', data)
         except ValueError:
@@ -426,7 +426,7 @@ class SessionTimeConverter(BaseConverter):
                 time = datetime.datetime.strptime(data, '%H:%M').time()
             return time.replace(tzinfo=dateutil.tz.gettz(_TIMEZONE))
 
-    def dump(self, value):
+    def dump(self, value, context):
         return value.strftime('%Y-%m-%d %H:%M:%S')
 
     @classmethod
@@ -446,10 +446,10 @@ class SessionTimeConverter(BaseConverter):
 
 class DateConverter(BaseConverter):
     """Converter for datetime.date values (as 'YYYY-MM-DD' strings in JSON)"""
-    def load(self, data):
+    def load(self, data, context):
         return datetime.datetime.strptime(data, "%Y-%m-%d").date()
 
-    def dump(self, value):
+    def dump(self, value, context):
         return str(value)
 
     def get_schema(self, context):
@@ -490,7 +490,7 @@ class Session(Model):
     )
 
     @materials.after_load()
-    def _index_materials(self):
+    def _index_materials(self, context):
         set_prev_next(m for m in self.materials if m.lesson_slug)
 
     pages = Field(
@@ -498,13 +498,15 @@ class Session(Model):
         optional=True,
         doc="The session's cover pages")
     @pages.after_load()
-    def _set_pages(self):
+    def _set_pages(self, context):
         if not self.pages:
             self.pages = {}
         for slug in 'front', 'back':
             if slug not in self.pages:
-                page = get_converter(SessionPage).load(
-                    {}, slug=slug, parent=self,
+                page = load(
+                    SessionPage,
+                    {'api_version': [0, 0], 'session-page': {}},
+                    slug=slug, parent=self,
                 )
                 self.pages[slug] = page
 
@@ -514,7 +516,7 @@ class Session(Model):
         doc="Time when this session takes place.")
 
     @time.after_load()
-    def _fix_time(self):
+    def _fix_time(self, context):
         if self.time is None:
             self.time = {}
         else:
@@ -546,10 +548,10 @@ class Session(Model):
 
 class AnyDictConverter(BaseConverter):
     """Converter of any JSON-encodable dict"""
-    def load(self, data):
+    def load(self, data, context):
         return data
 
-    def dump(self, value):
+    def dump(self, value, context):
         return value
 
     @classmethod
@@ -568,13 +570,13 @@ def time_from_string(time_string):
 
 class TimeIntervalConverter(BaseConverter):
     """Converter for a time interval, as a dict with 'start' and 'end'"""
-    def load(self, data):
+    def load(self, data, context):
         return {
             'start': time_from_string(data['start']),
             'end': time_from_string(data['end']),
         }
 
-    def dump(self, value):
+    def dump(self, value, context):
         return {
             'start': value['start'].strftime('%H:%M'),
             'end': value['end'].strftime('%H:%M'),
@@ -673,7 +675,7 @@ class Course(Model):
         doc="Individual sessions")
 
     @sessions.after_load()
-    def _sessions_after_load(self):
+    def _sessions_after_load(self, context):
         set_prev_next(self.sessions.values())
 
         for session in self.sessions.values():
@@ -734,7 +736,7 @@ class Course(Model):
         doc="Slug of the course this derives from (deprecated)")
 
     @derives.after_load()
-    def _set_base_course(self):
+    def _set_base_course(self, context):
         key = f'courses/{self.derives}'
         try:
             self.base_course = self.root.courses[key]
@@ -819,7 +821,7 @@ class Course(Model):
 
 class AbbreviatedDictConverter(DictConverter):
     """Dict that only shows URLs to its items when dumped"""
-    def dump(self, value):
+    def dump(self, value, context):
         return {
             key: {'$ref': v.get_url('api', external=True)}
             for key, v in value.items()
@@ -1034,7 +1036,11 @@ class Root(Model):
             with (licence_path / 'info.yml').open() as f:
                 info = yaml.safe_load(f)
             slug = licence_path.name
-            license = get_converter(License).load(info, parent=self, slug=slug)
+            license = load(
+                License,
+                {'api_version': [0, 0], 'license': info},
+                parent=self, slug=slug,
+            )
             self.licenses[slug] = license
 
     def get_course(self, slug):

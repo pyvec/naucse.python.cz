@@ -13,7 +13,7 @@ from naucse import models
 from naucse.arca_renderer import RemoteRepoError
 
 from test_naucse.conftest import fixture_path, make_model, get_local_repo_info
-from test_naucse.conftest import assert_yaml_dump
+from test_naucse.conftest import assert_model_dump
 
 
 def run(args, *, cwd, check=True, env=None, **kwargs):
@@ -81,7 +81,7 @@ def test_valid_fork(arca_model, content_repo):
         link_info={'repo': content_repo.as_uri()},
     )
     arca_model.add_course(course)
-    assert_yaml_dump(models.dump(course), 'normal-course.yaml')
+    assert_model_dump(course, 'normal-course.yaml')
 
 
 def test_yaml_error(arca_model, content_repo, git_command):
@@ -212,7 +212,7 @@ def test_fork_link(arca_model, content_repo, tmp_path, slug):
     )
     arca_model.load_local_courses(tmp_path / 'data')
     course = arca_model.courses[slug]
-    assert_yaml_dump(models.dump(course), LINK_INFO[slug]['expected_file'])
+    assert_model_dump(course, LINK_INFO[slug]['expected_file'])
 
 
 def test_bad_fork_link(arca_model, content_repo, tmp_path):

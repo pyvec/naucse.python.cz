@@ -7,7 +7,7 @@ from jsonschema.exceptions import ValidationError
 from naucse import models
 from naucse.edit_info import get_local_repo_info
 
-from test_naucse.conftest import assert_yaml_dump, add_test_course
+from test_naucse.conftest import assert_model_dump, add_test_course
 from test_naucse.conftest import fixture_path
 
 class DummyRenderer:
@@ -118,7 +118,7 @@ def test_empty_course_from_renderer(model):
         renderer=renderer,
     )
     check_empty_course_attrs(course, source_file=Path(source))
-    assert_yaml_dump(models.dump(course), 'minimal-course.yml')
+    assert_model_dump(course, 'minimal-course.yml')
 
 
 def load_course_from_fixture(model, filename):
@@ -143,7 +143,7 @@ def test_complex_course(model):
     """Valid complex json that could come from a fork is loaded correctly"""
     course = load_course_from_fixture(model, 'course-data/complex-course.yml')
 
-    assert_yaml_dump(models.dump(course), 'complex-course.yml')
+    assert_model_dump(course, 'complex-course.yml')
 
     # Make sure HTML is sanitized
     assert course.long_description == 'A <em>fun course!</em>'

@@ -82,6 +82,10 @@ def assert_yaml_dump(data, filename):
             assert data == expected
 
 
+def assert_model_dump(model, filename):
+    assert_yaml_dump(models.dump(model, version=[0, 0]), filename)
+
+
 def add_test_course(model, slug, data):
     model.add_course(models.load(
         models.Course,
