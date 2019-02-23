@@ -10,8 +10,8 @@ import yaml
 from arca import Task
 
 from naucse.edit_info import get_local_repo_info, get_repo_info
-from naucse.converters import Field, register_model, BaseConverter
-from naucse.converters import ListConverter, DictConverter
+from naucse.converters import Field, VersionField, register_model
+from naucse.converters import BaseConverter, ListConverter, DictConverter
 from naucse.converters import KeyAttrDictConverter, ModelConverter
 from naucse.converters import dump, load, get_converter, get_schema
 from naucse import sanitize
@@ -476,6 +476,21 @@ class Session(Model):
         DateConverter(), optional=True,
         doc="The date when this session occurs (if it has a set time)",
     )
+    serial = VersionField({
+        (0, 1): Field(
+            str,
+            optional=True,
+            doc="""
+                Human-readable string identifying the session's position
+                in the course.
+                The serial is usually numeric: `1`, `2`, `3`, ...,
+                but, for example, i, ii, iii... can be used for appendices.
+                Some courses start numbering sessions from 0.
+            """
+        ),
+        # For API version 0.0, serial is generated in
+        # Course._sessions_after_load.
+    })
 
     description = Field(
         HTMLFragmentConverter(), optional=True,
@@ -682,6 +697,11 @@ class Course(Model):
             for material in session.materials:
                 if material.lesson_slug:
                     self._requested_lessons.add(material.lesson_slug)
+
+        if context.version < (0, 1) and len(self.sessions) > 1:
+            # Assign serials to sessions (numbering from 1)
+            for serial, session in enumerate(self.sessions.values(), start=1):
+                session.serial = str(serial)
 
     source_file = source_file_field
 
