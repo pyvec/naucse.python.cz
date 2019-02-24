@@ -158,8 +158,8 @@ a odsazené příkazy, které se provedou v opačném případě.<br>
 Potom můžeš psát příkazy, které se provedou vždycky – ty odsazené nebudou,
 podmíněná část programu už skončila.
 
-> [note]
-> Čistě technicky, odsazení nemusí být o čtyři mezery.
+> [style-note]
+> Vzato čistě technicky, odsazení nemusí být o čtyři mezery.
 > Může být třeba o dvě nebo o jedenáct, nebo dokonce o tabulátor.
 > V rámci jednoho bloku musí být ale odsazení vždycky stejné,
 > takže když pak na jednom programu spolupracuje více lidí, musí se shodnout.
@@ -200,41 +200,28 @@ else:
     print('Návštěvníky z budoucnosti tady nevidíme rádi.')
 ```
 
-## Kámen nůžky papír
+## Zanořování
 
-Příkazy `if` se dají *zanořovat* (angl. *nest*):
-jeden může být vevniř ve druhém.
-Třeba takhle:
+Příkazy `if` se dají *zanořovat* (angl. *nest*).
+V odsazeném (podmíněném) kousku může být další `if` s dalším odsazeným
+kódem.
+Třeba u tohoto programu, který rozdává naivní rady do života:
 
 ```python
-tah_pocitace = 'kámen'
-tah_cloveka = input('kámen, nůžky, nebo papír? ')
+stastna = input('Jsi šťastná?')
+bohata = input('Jsi bohatá?')
 
-if tah_cloveka == 'kámen':
-    if tah_pocitace == 'kámen':
-        print('Plichta.')
-    elif tah_pocitace == 'nůžky':
-        print('Vyhrála jsi!')
-    elif tah_pocitace == 'papír':
-        print('Počítač vyhrál.')
-elif tah_cloveka == 'nůžky':
-    if tah_pocitace == 'kámen':
-        print('Počítač vyhrál.')
-    elif tah_pocitace == 'nůžky':
-        print('Plichta.')
-    elif tah_pocitace == 'papír':
-        print('Vyhrála jsi!')
-elif tah_cloveka == 'papír':
-    if tah_pocitace == 'kámen':
-        print('Vyhrála jsi!')
-    elif tah_pocitace == 'nůžky':
-        print('Počítač vyhrál.')
-    elif tah_pocitace == 'papír':
-        print('Plichta.')
+if stastna == 'ano':
+    # Tenhle kus kódu se provede, když je "šťastná"
+    if bohata == 'ano':
+        print('Gratuluji!')
+    else:
+        print('Zkus míň utrácet.')
+
 else:
-    print('Nerozumím.')
+    # Tenhle kus kódu se provede, když není "šťastná"
+    if bohata == 'ano':
+        print('Zkus se víc usmívat!')
+    else:
+        print('To je mi líto.')
 ```
-
-Vida, tvoje první hra!
-Jen je ještě potřeba před každým spuštěním přepsat řetězec na prvním řádku.
-Jak zařídit, aby počítač vybíral náhodně, to si povíme později.

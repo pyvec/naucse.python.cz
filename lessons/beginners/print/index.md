@@ -1,7 +1,35 @@
 # Print a chybové hlášky
 
 Vytvoř v editoru nový soubor, ulož ho do adresáře pro dnešní lekci
-pod jménem `printing.py` a napiš do něj následující příkazy:
+pod jménem `printing.py` a napiš do něj teď už známý příkaz:
+
+```python
+print("Ahoj světe!")
+```
+
+Program spusť:
+* pokud ti už na začátku příkazové řádky nesvítí `(venv)`,
+  aktivuj si virtuální prostředí,
+* pomocí `cd` donaviguj do adresáře s programem,
+* zadej `python printing.py`.
+
+Funguje? Doufám, že ano; za chvíli ho vylepšíme.
+
+
+## Další příkazy
+
+Zkus do programu postupně, po jednom, přdávat další řádky.
+Po přidání každého dalšího `print` program znovu spusť a vyzkoušej, jestli
+funguje.
+
+Abys nemusel{{a}} v příkazové řádce stále dokola psát `python printing.py`,
+zkusit zmáčknout na klávesnici šipku nahoru, <kbd>↑</kbd>.
+Vrátíš se tak k předchozímu příkazu, který stačí „odklepnout“ pomocí
+<kbd>Enter</kbd>.
+
+
+Úplně každý příkaz ti asi nebude fungovat hned napoprvé – kdyby program
+dělal něco divného, přeskoč na další sekci, *jak číst chyby*.
 
 ```python
 print(1)
@@ -17,13 +45,6 @@ print('Máma má mísu')
 print(V míse je maso.)
 ```
 
-Program spusť:
-* pokud ti už na začátku příkazové řádky nesvítí `(venv)`,
-  aktivuj si virtuální prostředí,
-* pomocí `cd` donaviguj do adresáře s programem,
-* zadej `python printing.py`.
-
-Funguje? Napoprvé asi ne.
 
 ## Jak číst chyby
 
@@ -33,7 +54,8 @@ Python, neumí si domyslet, co po něm chceš.
 Ale nevěš hlavu, stává se to všem programátorům.
 Důležité je vědět, jak chybu najít.
 A k tomu ti pomůžou chybové výpisy.
-Třeba program výše vypíše po spuštění následující chybu:
+
+Pokud program výše opíšeš přesně, vypíše po spuštění následující hlášku:
 
 <pre>
   File "<span class="plhome">~/pyladies</span>/02/printing.py", line <span class="err-lineno">11</span>
@@ -42,9 +64,8 @@ Třeba program výše vypíše po spuštění následující chybu:
 <span class="err-exctype">SyntaxError</span>: invalid syntax
 </pre>
 
-Při chybě Python napřed vypíše
-jméno souboru a <span class="err-lineno">číslo řádku</span>,
-na kterém chyba je.
+Při chybě Python napřed zmíní jméno souboru a
+<span class="err-lineno">číslo řádku</span>, na kterém si chyby všimnul.
 Potom vypíše celý řádek s chybou
 a nakonec oznámí <span class="err-exctype">druh chyby</span>
 (v tomto případě je to „syntaktická chyba“)
@@ -62,13 +83,14 @@ můžeš se podívat na tento řádek a zkusit chybu najít.
 
 Když chyba není na daném řádku, může být ještě
 o pár řádků výš nebo níž:
-Python občas nesdílí lidské představy o tom, kde přesně chyba *je*,
-a ukáže jen, kde si jí sám *všimnul*.
+Python občas nesdílí lidské představy o tom, kde přesně chyba *je*.
+Ukáže jen kde si jí sám *všimnul*.
 
 V našem případě je chyba v tom, že kolem řetězce nejsou uvozovky.
 Přidej je a program znovu spusť.
 Jestli funguje, gratuluji!
 Jinak chybu opět oprav a opakuj, dokud to nebude fungovat :)
+
 
 ## Jak funguje program
 
@@ -83,7 +105,8 @@ Zanedlouho budou tvoje programy připomínat spíš recepty na
 čarodějné lektvary (*počkej do úplňku a pokud je Mars
 v konjunkci s Jupiterem, třikrát zamíchej*),
 ale základní myšlenka je stále stejná:
-počítač čte odshora dolů a provádí příkazy jeden po druhém.
+počítač „čte“ odshora dolů a provádí příkazy jeden po druhém.
+
 
 ## Print a výrazy
 
