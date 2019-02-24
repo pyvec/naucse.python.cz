@@ -193,8 +193,3 @@ Tak poznáš, že je virtuální prostředí *aktivní*.
 Aktivační příkaz si zapiš.
 Bude potřeba ho zadat vždycky, když pustíš příkazovou řádku,
 ve které budeš zkoušet své programy.
-
-{% if var('pyladies') %}
-Máš-li vytištěné <a href="http://pyladies.cz/v1/s001-install/handout/handout.pdf">domácí projekty</a>,
-příkaz si poznač tam, ať ho do příště nezapomeneš :)
-{% endif %}
