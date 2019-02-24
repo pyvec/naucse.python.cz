@@ -8,7 +8,7 @@ from naucse import models
 from naucse.edit_info import get_local_repo_info
 
 from test_naucse.conftest import fixture_path, dummy_schema_url_factory
-from test_naucse.conftest import assert_model_dump, add_test_course
+from test_naucse.conftest import add_test_course
 
 
 def test_empty_model():
@@ -36,9 +36,9 @@ def test_licenses():
     assert model.licenses['cc-by-sa-40'].title.endswith('4.0 International')
 
 
-def test_dump_empty_model():
+def test_dump_empty_model(assert_model_dump):
     model = models.Root(schema_url_factory=dummy_schema_url_factory)
-    assert_model_dump(model, 'empty-root.yml')
+    assert_model_dump(model, 'empty-root')
 
 
 def test_load_empty_dir():
@@ -92,7 +92,7 @@ def test_add_local_course():
     assert model.courses['courses/minimal'].slug == 'courses/minimal'
 
 
-def test_dump_local_course(model):
+def test_dump_local_course(model, assert_model_dump):
     path = fixture_path / 'minimal-courses'
     model.add_course(models.Course.load_local(
         parent=model,
@@ -101,9 +101,9 @@ def test_dump_local_course(model):
         slug='courses/minimal',
     ))
 
-    assert_model_dump(model, 'minimal-root.yml')
+    assert_model_dump(model, 'minimal-root')
     course = model.courses['courses/minimal']
-    assert_model_dump(course, 'minimal-course.yml')
+    assert_model_dump(course, 'minimal-course')
 
 
 def test_add_course_from_data():
@@ -120,7 +120,7 @@ def test_add_course_from_data():
     assert model.courses['courses/minimal'].slug == 'courses/minimal'
 
 
-def test_run_years(model):
+def test_run_years(model, assert_model_dump):
     assert model.run_years == {}
 
     # Add a self-study course. It should not appear in run_years.
@@ -195,6 +195,6 @@ def test_run_years(model):
         '2019/single-session': course_2019,
     }
 
-    assert_model_dump(model, 'run-years/root.yml')
+    assert_model_dump(model, 'run-years/root')
     for year, run_year in model.run_years.items():
-        assert_model_dump(run_year, f'run-years/{year}.yml')
+        assert_model_dump(run_year, f'run-years/{year}')

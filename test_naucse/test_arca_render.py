@@ -13,7 +13,6 @@ from naucse import models
 from naucse.arca_renderer import RemoteRepoError
 
 from test_naucse.conftest import fixture_path, make_model, get_local_repo_info
-from test_naucse.conftest import assert_model_dump
 
 
 def run(args, *, cwd, check=True, env=None, **kwargs):
@@ -74,14 +73,14 @@ def arca_model(tmp_path, content_repo):
     return model
 
 
-def test_valid_fork(arca_model, content_repo):
+def test_valid_fork(arca_model, content_repo, assert_model_dump):
     """Valid data can be loaded from a Git repository"""
     course = models.Course.load_remote(
         'courses/normal-course', parent=arca_model,
         link_info={'repo': content_repo.as_uri()},
     )
     arca_model.add_course(course)
-    assert_model_dump(course, 'normal-course.yaml')
+    assert_model_dump(course, 'normal-course')
 
 
 def test_yaml_error(arca_model, content_repo, git_command):
@@ -181,11 +180,11 @@ def test_removed_data(arca_model, content_repo, git_command):
 LINK_INFO = {
     'courses/normal-course': {
         'path': 'courses/normal-course',
-        'expected_file': 'normal-course.yaml',
+        'expected_file': 'normal-course',
     },
     '2000/run-with-times': {
         'path': 'runs/2000/run-with-times',
-        'expected_file': 'run-with-times.yaml',
+        'expected_file': 'run-with-times',
     },
 }
 
@@ -203,7 +202,7 @@ def make_data_with_fork_link(tmp_path, course_path, link_content):
 
 
 @pytest.mark.parametrize('slug', LINK_INFO)
-def test_fork_link(arca_model, content_repo, tmp_path, slug):
+def test_fork_link(arca_model, content_repo, tmp_path, slug, assert_model_dump):
     """Test data is loaded via link.yml pointing to a repository"""
 
     link_info = {'repo': content_repo.as_uri(), 'branch': 'master'}
