@@ -80,8 +80,11 @@ class BaseConverter:
     def _naucse__converter(self):
         return self
 
-    def load(self, data, **kwargs):
+    def load(self, data, context, **kwargs):
         """Convert a JSON-compatible data to a Python value.
+
+        `context` is a `LoadContext`, which holds options (like the API
+        version) for loading an entire tree of objects.
 
         `kwargs` are extra keyword arguments passed to `__init__`.
         The Converter's `load_arg_names` attribute specifies which kwargs
@@ -91,8 +94,11 @@ class BaseConverter:
         """
         return data
 
-    def dump(self, value):
+    def dump(self, value, context):
         """Convert a Python value to JSON-compatible data.
+
+        `context` is a `DumpContext`, which holds options (like the API
+        version) for dumping an entire tree of objects.
 
         The base implementation returns `value` unchanged.
         """
@@ -125,7 +131,7 @@ class BoolConverter(BaseConverter):
 
 
 class IntegerConverter(BaseConverter):
-    def load(self, data):
+    def load(self, data, context):
         return int(data)
 
     def get_schema(self, context):
@@ -133,7 +139,7 @@ class IntegerConverter(BaseConverter):
 
 
 class FloatConverter(BaseConverter):
-    def load(self, data):
+    def load(self, data, context):
         return float(data)
 
     def get_schema(self, context):
@@ -173,16 +179,16 @@ class ListConverter(BaseConverter):
         self.load_arg_names = self.item_converter.load_arg_names
         self.index_arg = index_arg
 
-    def load(self, data, **kwargs):
+    def load(self, data, context, **kwargs):
         result = []
         for index, d in enumerate(data):
             if self.index_arg:
                 kwargs[self.index_arg] = index
-            result.append(self.item_converter.load(d, **kwargs))
+            result.append(self.item_converter.load(d, context, **kwargs))
         return result
 
-    def dump(self, value):
-        return [self.item_converter.dump(v) for v in value]
+    def dump(self, value, context):
+        return [self.item_converter.dump(v, context) for v in value]
 
     def get_schema(self, context):
         return {
@@ -207,16 +213,19 @@ class DictConverter(BaseConverter):
         self.key_arg = key_arg
         self.required = required
 
-    def load(self, data, **kwargs):
+    def load(self, data, context, **kwargs):
         result = {}
         for k, v in data.items():
             if self.key_arg:
                 kwargs[self.key_arg] = k
-            result[k] = self.item_converter.load(v, **kwargs)
+            result[k] = self.item_converter.load(v, context, **kwargs)
         return result
 
-    def dump(self, value):
-        return {str(k): self.item_converter.dump(v) for k, v in value.items()}
+    def dump(self, value, context):
+        return {
+            str(k): self.item_converter.dump(v, context)
+            for k, v in value.items()
+        }
 
     def get_schema(self, context):
         schema = {
@@ -243,17 +252,17 @@ class KeyAttrDictConverter(BaseConverter):
         self.index_arg = index_arg
         self.load_arg_names = set(self.item_converter.load_arg_names)
 
-    def load(self, data, **kwargs):
+    def load(self, data, context, **kwargs):
         result = {}
         for index, value in enumerate(data):
             if self.index_arg:
                 kwargs[self.index_arg] = index
-            item = self.item_converter.load(value, **kwargs)
+            item = self.item_converter.load(value, context, **kwargs)
             result[getattr(item, self.key_attr)] = item
         return result
 
-    def dump(self, value):
-        return [self.item_converter.dump(v) for k, v in value.items()]
+    def dump(self, value, context):
+        return [self.item_converter.dump(v, context) for k, v in value.items()]
 
     def get_schema(self, context):
         return {
@@ -266,7 +275,33 @@ def _classname(cls):
     return f'{cls.__module__}.{cls.__qualname__}'
 
 
-class Field:
+class AbstractField:
+    """Descriptor for a Model's attribute that is loaded/dumped to JSON
+
+    See Field for the API.
+    """
+
+    def __get__(self, instance, owner):
+        """Debug helper
+
+        An initialized model instance should have values for all its fields
+        in its __dict__.
+
+        However, when loading, not all fields have been initialized yet.
+        Attempts to get the value of such a field will raise an informative
+        error, rather than return the Field object from the model class.
+        """
+        if instance is None:
+            # Getting a class attribute -- return this Field
+            return self
+        else:
+            # Getting an instnce attribute -- raise an error
+            type_name = owner.__name__
+            raise AttributeError(
+                f'{self.name!r} of {type_name} object was not yet loaded'
+            )
+
+class Field(AbstractField):
     """Descriptor for a Model's attribute that is loaded/dumped to JSON
 
     `converter`: Converter to use for the attribute.
@@ -327,7 +362,7 @@ class Field:
         self.name = name
         self.data_key = self.data_key or self.name
 
-    def load_into(self, instance, data, **kwargs):
+    def load_into(self, instance, data, context, **kwargs):
         """Load this field's data into the given Python object.
 
         `instance` is the Python object being initialized.
@@ -357,10 +392,10 @@ class Field:
                     n: v for n, v in kwargs.items()
                     if n in self.converter.load_arg_names
                 }
-                value = self.converter.load(item_data, **kwargs)
+                value = self.converter.load(item_data, context, **kwargs)
         setattr(instance, self.name, value)
         for func in self._after_load_hooks:
-            func(instance)
+            func(instance, context)
 
     def _get_default(self, instance):
         """Return the default value (for optional fields).
@@ -369,7 +404,7 @@ class Field:
         """
         return None
 
-    def dump_into(self, instance, data):
+    def dump_into(self, instance, data, context):
         """Dump the given Python object into the given JSON-compatible dict
 
         If the field is not marked `output`, or is optional and has the default
@@ -380,7 +415,7 @@ class Field:
         value = getattr(instance, self.name)
         if self.optional and value == self.default:
             return
-        data[self.data_key] = self.converter.dump(value)
+        data[self.data_key] = self.converter.dump(value, context)
 
     def put_schema_into(self, object_schema, context):
         if context.is_input and not self.input:
@@ -396,26 +431,6 @@ class Field:
             object_schema.setdefault('required', []).append(self.data_key)
         if not context.is_input:
             object_schema['additionalProperties'] = False
-
-    def __get__(self, instance, owner):
-        """Debug helper
-
-        An initialized model instance should have values for all its fields
-        in its __dict__.
-
-        However, when loading, not all fields have been initialized yet.
-        Attempts to get the value of such a field will raise an informative
-        error, rather than return the Field object from the model class.
-        """
-        if instance is None:
-            # Getting a class attribute -- return this Field
-            return self
-        else:
-            # Getting an instnce attribute -- raise an error
-            type_name = owner.__name__
-            raise AttributeError(
-                f'{self.name!r} of {type_name} object was not yet loaded'
-            )
 
     def default_factory(self):
         """Decorate a function that will be called to produce a default value
@@ -441,6 +456,78 @@ class Field:
         return _decorator
 
 
+class VersionField(AbstractField):
+    """Chooses Field based on the API version
+
+    `fields` should be a {version introduced: field} mapping.
+    When loading/dumping/getting schema, VersionField picks the field for
+    tat version and forwards the operation to it.
+    For versions before the first specified, the field is not loaded/dumped,
+    and the instance attribute is set to None.
+
+    VersionField adds a "Added/Modified in API version" note to the JSON Schema
+    description.
+
+    Making later fields suitably backwards-compatible is the user's
+    responsibility.
+    """
+
+    def __init__(self, fields, name=None):
+        self.fields = sorted((tuple(k), f) for k, f in fields.items())
+        self.name = name
+
+    def _field_for_context(self, context):
+        for version, field in reversed(self.fields):
+            if version <= context.version:
+                return version, field
+        return None, None
+
+    def __repr__(self):
+        return f'<{_classname(type(self))} {self.name} ({self.fields})>'
+
+    def __set_name__(self, cls, name):
+        self.name = name
+        for version, field in self.fields:
+            set_name = getattr(type(field), '__set_name__', None)
+            if set_name:
+                set_name(field, cls, name)
+
+    def load_into(self, instance, data, context, **kwargs):
+        version, field = self._field_for_context(context)
+        if field:
+            field.load_into(instance, data, context, **kwargs)
+        else:
+            setattr(instance, self.name, None)
+
+    def dump_into(self, instance, data, context):
+        version, field = self._field_for_context(context)
+        if field:
+            field.dump_into(instance, data, context)
+
+    def put_schema_into(self, object_schema, context):
+        version, field = self._field_for_context(context)
+        if field:
+            field.put_schema_into(object_schema, context)
+            try:
+                schema = object_schema['properties'][self.name]
+            except KeyError:
+                pass
+            if version == self.fields[0][0]:
+                note = 'Added in API version {}.{}'.format(*version)
+            else:
+                note = 'Modified in API version {}.{}'.format(*version)
+            if 'description' in schema:
+                schema['description'] += '\n\n' + note
+            else:
+                schema['description'] = note
+
+    def default_factory(self):
+        raise NotImplementedError('default_factory is not implemented yet')
+
+    def after_load(self):
+        raise NotImplementedError('after_load is not implemented yet')
+
+
 class ModelConverter(BaseConverter):
     """Converter for a Model, i.e. class with several Fields"""
     def __init__(
@@ -448,13 +535,17 @@ class ModelConverter(BaseConverter):
     ):
         self.cls = cls
         self.name = cls.__name__
-        self.doc = inspect.getdoc(cls).strip()
+        doc = inspect.getdoc(cls)
+        if doc:
+            self.doc = doc.strip()
+        else:
+            self.doc = ''
         self.fields = {}
         self.load_arg_names = load_arg_names
         self.slug = slug
 
         for name, field in vars(cls).items():
-            if name.startswith('__') or not isinstance(field, Field):
+            if name.startswith('__') or not isinstance(field, AbstractField):
                 continue
             self.fields[name] = field
         self.fields.update((f.name, f) for f in extra_fields)
@@ -462,16 +553,16 @@ class ModelConverter(BaseConverter):
     def __repr__(self):
         return f'<{_classname(type(self))} for {_classname(self.cls)}>'
 
-    def load(self, data, **kwargs):
+    def load(self, data, context, **kwargs):
         result = self.cls(**kwargs)
         for field in self.fields.values():
-            field.load_into(result, data, parent=result)
+            field.load_into(result, data, context, parent=result)
         return result
 
-    def dump(self, value):
+    def dump(self, value, context):
         result = {}
         for field in self.fields.values():
-            field.dump_into(value, result)
+            field.dump_into(value, result, context)
         return result
 
     def get_schema(self, context):
@@ -487,16 +578,37 @@ class ModelConverter(BaseConverter):
         return schema
 
 
+class LoadContext:
+    """Holds "global" options for loading data
+
+    `version` is the API version, as a tuple of ints (major, minor).
+    """
+    def __init__(self, version):
+        self.version = tuple(version)
+
+
+class DumpContext:
+    """Holds "global" options for dumping data
+
+    `version` is the API version, as a tuple of ints (major, minor).
+    """
+    def __init__(self, version):
+        self.version = tuple(version)
+
+
 class SchemaContext:
     """Holds "global" definitions and options for getting a context
 
     `is_input` determines whether schema for input (data from forks) or output
     (naucse's exported API).
+
+    `version` is the API version, as a tuple of ints (major, minor).
     """
-    def __init__(self, *, is_input):
+    def __init__(self, *, is_input, version):
         self.definition_refs = {}
         self.definitions = {}
         self.is_input = is_input
+        self.version = tuple(version)
 
     def get_schema(self, converter):
         """Get schema for the given converter
@@ -516,10 +628,10 @@ class SchemaContext:
         return converter.get_schema(self)
 
 
-def get_schema(converter, *, is_input):
+def get_schema(converter, *, is_input, version):
     """Get schema for the given converter"""
     converter = get_converter(converter)
-    context = SchemaContext(is_input=is_input)
+    context = SchemaContext(is_input=is_input, version=version)
     context.definitions.update({
         'ref': {
             'type': 'object',
@@ -575,7 +687,7 @@ def _get_schema_url(converter, instance):
     raise ValueError(f"{converter}.get_schema_url is None")
 
 
-def dump(instance, converter=None):
+def dump(instance, converter=None, *, version):
     """Dump a Python object
 
     If converter is None, the default is used.
@@ -584,23 +696,26 @@ def dump(instance, converter=None):
         converter = get_converter(instance)
     converter = get_converter(converter)
     slug = converter.slug or 'data'
+    context = DumpContext(version=version)
     result = {
-        'api_version': [0, 0],
-        slug: converter.dump(instance),
+        'api_version': list(context.version),
+        slug: converter.dump(instance, context),
     }
     result['$schema'] = _get_schema_url(converter, instance)
-    schema = get_schema(converter, is_input=False)
+    schema = get_schema(converter, is_input=False, version=context.version)
     jsonschema.validate(result, schema)
     return result
 
 
 def load(converter, data, **kwargs):
     """Load a Python object from the given data"""
+    version = data['api_version']
     converter = get_converter(converter)
-    schema = get_schema(converter, is_input=True)
+    context = LoadContext(version=version)
+    schema = get_schema(converter, is_input=True, version=context.version)
     jsonschema.validate(data, schema)
     slug = converter.slug or 'data'
-    return converter.load(data[slug], **kwargs)
+    return converter.load(data[slug], context, **kwargs)
 
 
 def register_model(cls, converter=None):

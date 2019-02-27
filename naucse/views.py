@@ -399,12 +399,14 @@ def schema(model_slug, is_input):
         cls = models.models[model_slug]
     except KeyError:
         abort(404)
-    return jsonify(models.get_schema(cls, is_input=is_input))
+    return jsonify(models.get_schema(
+        cls, is_input=is_input, version=models.API_VERSION,
+    ))
 
 
 @app.route('/v0/naucse.json')
 def api():
-    return jsonify(models.dump(g.model))
+    return jsonify(models.dump(g.model, version=models.API_VERSION))
 
 
 @app.route('/v0/years/<int:year>.json')
@@ -413,7 +415,7 @@ def run_year_api(year):
         run_year = g.model.run_years[year]
     except KeyError:
         abort(404)
-    return jsonify(models.dump(run_year))
+    return jsonify(models.dump(run_year, version=models.API_VERSION))
 
 
 @app.route('/v0/<course:course_slug>.json')
@@ -422,4 +424,4 @@ def course_api(course_slug):
         course = g.model.courses[course_slug]
     except KeyError:
         abort(404)
-    return jsonify(models.dump(course))
+    return jsonify(models.dump(course, version=models.API_VERSION))

@@ -82,6 +82,15 @@ def assert_yaml_dump(data, filename):
             assert data == expected
 
 
+@pytest.fixture(params=((0, 0), (0, 1)))
+def assert_model_dump(request):
+    version = request.param
+    def _assert(model, filename):
+        filename += '.v{}.{}.yaml'.format(*version)
+        assert_yaml_dump(models.dump(model, version=version), filename)
+    return _assert
+
+
 def add_test_course(model, slug, data):
     model.add_course(models.load(
         models.Course,
