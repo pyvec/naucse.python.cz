@@ -37,49 +37,11 @@ print('První je {}'.format(osoby[0]))
 > `for jmeno in 'Hynek', 'Vilém', 'Jarmila':`
 > ve skutečnosti používá <var>n</var>-tici!
 
-Když chceš <var>n</var>-tici předat do funkce,
-narazíš na problém, že čárka odděluje jednotlivé
-argumenty funkce.
-V podobných případech musíš <var>n</var>-tici
-uzavřít do závorek, aby bylo jasné, že jde o jednu
-hodnotu (byť složenou).
-
-```python
-seznam_dvojic = []
-for i in range(10):
-    # `append` bere jen jeden argument; dáme mu jednu dvojici
-    seznam_dvojic.append((i, i**2))
-print(seznam_dvojic)
-```
-
-<var>N</var>-tice se hodí, pokud chceš z funkce vrátit
-víc než jednu hodnotu.
-Prostě v příkazu `return` oddělíš vracené hodnoty čárkou.
-Vypadá to, že vracíš několik hodnot, ale
-ve skutečnosti se vrací jen jedna <var>n</var>-tice.
-
-```python
-def podil_a_zbytek(a, b):
-    return a // b, a % b
-```
-
-> [note]
-> Tahle funkce už mimochodem v Pythonu je: jmenuje se
-> `divmod` a je vždy k dispozici
-> (nemusí se importovat).
-
 Python umí ještě jeden trik: pokud chceš přiřadit
 do několika proměnných najednou, stačí je na levé
 straně rovnítka oddělit čárkou a na pravou stranu
 dát nějakou „složenou” hodnotu – třeba právě
 <var>n</var>-tici.
-
-```python
-podil, zbytek = podil_a_zbytek(12, 5)
-```
-
-<var>N</var>-tice se k tomuto účelu hodí nejvíc, ale
-jde to se všemi hodnotami, které jdou použít ve `for`:
 
 ```python
 x, o = 'xo'
