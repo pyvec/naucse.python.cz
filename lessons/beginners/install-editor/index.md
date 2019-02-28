@@ -67,53 +67,13 @@ Obarvování
 > ```
 
 
-## Volba a nastavení editoru
-
-Vybereš-li editor, klikni na jeho jméno a dostaneš se na instrukce ke stažení
-a nastavení.
-(Na tuhle stránku se pak už nemusíš vracet.)
-
-Nemáš-li už vlastní oblíbený editor, pro Windows a macOS
-doporučujeme *Atom*:
-
-* [Atom]({{ subpage_url('atom') }}) – doporučený editor pro
-  Windows a macOS.
-
-Na Linuxu budeš mít pravděpodobně už nainstalovaný Gedit nebo Kate.
-Zkus se podívat do systémové nabídky, jestli jeden z nich máš (případně je
-spusť z příkazové řádky jako `gedit`, resp. `kate`).
-Pokud ano, klikni na odkaz níže a editor si nastav.
-Nemáš-li ani jeden, vyber třeba Gedit.
-
-* [Gedit]({{ subpage_url('gedit') }}) – bývá na systémech s prostředím GNOME.
-* [Kate]({{ subpage_url('kate') }}) – bývá na systémech s prostředím KDE.
-
-Existují i jiné editory, na které máme návody:
-
-* [Notepad++]({{ subpage_url('notepad-plus-plus') }}) – editor doporučovaný
-  v předchozích verzích těchto materiálů.
-* [Ostatní]({{ subpage_url('others') }}) – máš-li jiný editor, zkontroluj
-  si že je správně nastaven.
-
-
-### IDE
+### Volba a nastavení IDE
 
 Existují i složitější a mocnější editory, takzvané *IDE* (angl. *Integrated
-Development Environment*, integrované vývojové prostředí),
-třeba [PyCharm], [Eclipse] nebo [KDevelop].
+Development Environment*, integrované vývojové prostředí).
 Umí spoustu pokročilých funkcí, které programátorům pomáhají:
 našeptávání, přejmenovávání, spouštění programů, správu virtuálních prostředí
 a podobně.
-Na začátek ale nejsou moc vhodné.
-
-Chceš-li takový editor přesto použít, měl{{a}} bys ho už poměrně dobře znát:
-vědět, co za tebe dělá editor a jak to spravit, až něco udělá špatně.
-{% if var('coach-present') -%}
-Koučové většinou znají jen jeden editor – ten, který používají –
-takže nemusí být schopní s pokročilým IDE rychle pomoct.
-{%- endif %}
-
-[PyCharm]: https://www.jetbrains.com/pycharm/
-[Eclipse]: https://eclipse.org/
-[KDevelop]: https://www.kdevelop.org/
+Na začátek ale není vhodné mít tuto funcionalitu zapnutou. 
+My budeme používat [Visual Studio Code]({{ subpage_url('vscode') }}).
 
