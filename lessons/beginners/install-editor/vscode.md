@@ -2,7 +2,7 @@
 {% set editor_url = 'https://code.visualstudio.com/Download' %}
 {% extends lesson.slug + '/_base.md' %}
 
-{% block name_gen %} Visual Studio Vode{% endblock %}
+{% block name_gen %} Visual Studio Code{% endblock %}
 
 {% block setup %}
 
