@@ -30,7 +30,8 @@ i nové okýnko.
 
 ## A kde je ta želva?
 
-Želva je převlečená za šipku. Ale dá se odmaskovat:
+Želva je zrovna převlečená za šipku.
+Ale funkce `shape` ji umí odmaskovat:
 
 ```python
 from turtle import shape
@@ -38,11 +39,15 @@ from turtle import shape
 shape('turtle')
 ```
 
+Modul `turtle` obsahuje spoustu dalších funkcí, kterými můžeš želvu ovládat.
+Pojďme se na ně kouknout zblízka.
+
 
 ## Otáčení
 
-Želva se umí otáčet a lézt po papíře.
-Na ocase má připevněný štětec, kterým kreslí čáru.
+Želva se umí otáčet (doleva – `left` a doprave – `right`) a lézt po papíře
+(dopředu – `forward`).
+Na ocase má připevněný štětec, kterým při pohybu kreslí čáru.
 
 ```python
 from turtle import forward, left, right
@@ -55,8 +60,8 @@ forward(50)
 ```
 
 Zkus chvíli dávat želvě příkazy.
-Když se ti něco nelíbí, můžeš buď zavřít kreslící okno,
-nebo naimportovat a použít funkci `clear()`.
+Když se ti výsledek nelíbí, můžeš buď zavřít kreslící okno
+(nebo naimportovat a použít funkci `clear()`) a zkusit to znovu.
 
 
 ## Želví program
@@ -69,20 +74,22 @@ Ulož ho do adresáře pro dnešní lekci pod jménem `zelva.py`.
 
 > [note]
 > Jestli adresář pro dnešní lekci ještě nemáš, vytvoř si ho!
-> Pojmenuj ho třeba `03`.
+> Pojmenuj ho třeba `02`.
+
+> [warning]
+> Soubor nepojmenovávej `turtle.py` – z modulu `turtle` budeš importovat.
 
 Jestli chceš pro soubor použít jiné jméno, můžeš, ale
 nepojmenovávej ho `turtle.py`.
 
 Do souboru napiš příkazy na nakreslení obrázku
-a na konec zavolej funkci `exitonclick`
-(importovanou z modulu `turtle`).
+a – pozor! – na konci programu zavolej funkci `exitonclick`
+(naimportovanou z modulu `turtle`).
 
 > [note] Otázka
-> Co dělá funkce <code>exitonclick</code>?
+> Co dělá funkce <code>exitonclick</code>, kterou voláš na konci programu?
 
-Až to budeš mít hotové, zkusíme začít kreslit
-obrázky:
+Až to budeš mít hotové, zkus začít kreslit obrázky:
 
 ### Čtverec
 
@@ -180,72 +187,149 @@ exitonclick()
 ```
 {% endfilter %}
 
-### Jde to líp?
-
 Tolik kódu! Tohle musí jít nějak zjednodušit!
 
 Jde.
-Pojďme se naučit příkaz `for`.
+Pojďme se naučit jak v Pythonu nějakou činnost opakovat.
 
-## Opakování
 
-Udělej v editoru nový soubor, ulož ho jako `cyklus.py`, a napiš do něj
-následující program.
-Pak zkus co dělá.
+## Jak opakovat – a neopakovat *se*
+
+Udělej v editoru nový soubor a ulož ho jako `cykly.py`.
+Budeme v něm zkoušet *cykly*.
+
+První opakovací program, který napíšeme, bude dělat tohle:
+
+* Stokrát po sobě:
+  * Napiš "Nikdy nebudu odsazovat o tři mezery!"
+
+Do jazyka Python se to dá přeložit následovně:
 
 ```python
-for cislo in range(5):
-    print(cislo)
+for i in range(100):
+    print('Nikdy nebudu odsazovat o tři mezery!')
+```
 
+Na ono `for i in range(100)` se detailněji podíváme za chvíli,
+teď to pro nás bude “hlavička”, která říká “opakuj stokrát”.
+
+Podobnou “hlavičku” už jsi viděl{{a}}: příkaz `if`.
+Stejně jako u `if` tu máme na konci dvojtečku a za hlavičkou následuje
+odsazený blok – *tělo* příkazu; to na co se hlavička vztahuje.
+Tělo příkazu `for` se opakuje stále dokola.
+
+
+### Výčet
+
+Zkus napsat ještě jeden vzorový program, který v češtině zní:
+
+* Pro každý <var>pozdrav</var> z výčtu: „Ahoj“, “Hello”, “Hola”, ”Hei”, "SYN":
+  * Vypiš <var>pozdrav</var> a za ním vykřičník.
+
+V Pythonu se tento program zapíše jako:
+
+```python
 for pozdrav in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN':
     print(pozdrav + '!')
 ```
 
-Co dělá příkaz `for`?
+Opět je tu hlavička a tělo příkazu.
+Tentokrát se na hlavičku podívej pozorněji.
+Pythonní <code>for <var>promenna</var> in <var>sekvence</var></code>
+znamená „Pro každé <var>promenna</var> ze <var>sekvence</var>“.
 
-{% filter solution %}
-Příkaz `for` opakuje část programu.
-Opakují se příkazy, které jsou pod `for`-em odsazené.
-Podobně jako se `if` vztahuje jen na odsazené příkazy pod ním.
-
-Příkaz `for x in range(n):` opakuje příkazy pod ním <var>n</var>-krát
-a proměnnou `x` nastaví postupně na čísla od 0 do <var>n</var>-1.
-
-Příkaz `for x in a, b, c, d, ...:` opakuje příkazy pod ním;
-proměnnou `x` nastavuje postupně na <var>a</var>, <var>b</var>,
-<var>c</var> <var>d</var>, ...
-{% endfilter %}
-
-### Přepisování proměnných
-
-Zkus popsat, jak pracuje následující program.
+Jméno proměnné si volíš {{gnd('sám', 'sama')}}.
+Příkaz `for` danou proměnnou vždy na začátku bloku *nastaví* na aktuální
+hodnotu.
+Program výše funguje úplně stejně, jako kdybys napsal{{a}}:
 
 ```python
-soucet = 0
+pozdrav = 'Ahoj'
+print(pozdrav + '!')
 
-for cislo in 8, 45, 9, 21:
-    soucet = soucet + cislo
+pozdrav = 'Hello'
+print(pozdrav + '!')
 
-print(soucet)
+pozdrav = 'Hola'
+print(pozdrav + '!')
+
+pozdrav = 'Hei'
+print(pozdrav + '!')
+
+pozdrav = 'SYN'
+print(pozdrav + '!')
 ```
 
-{% filter solution %}
-Příkaz `soucet = soucet + cislo` vypočítá hodnotu
-`soucet + cislo`, tedy přičte aktuální číslo k součtu
-a výsledek uloží do proměnné `soucet`.
-Nová hodnota součtu se pak použije v dalším průchodu cyklem.
 
-Na začátku je součet 0 a na konci se součet všech čísel vypíše.
+### Range
+
+Vraťme se k `for i in range(100)`.
+Už víš, že to znamená „Pro každé <var>i</var> z `range(100)`“.
+Co je ale to `range`? Když si ho vypíšeš, nevypadne nic vysvětlujícího:
+
+```pycon
+>>> range(100)
+range(0, 100)
+```
+
+Je ale použité jako „sekvence“
+v <code>for <var>promenna</var> in <var>sekvence</var></code>.
+Je to nějaký výčet, nějaká posloupnost hodnot.
+A teď už umíš vypsat, jaké to jsou!
+
+```python
+for i in range(10):   # Doporučuju použít jen 5 místo 100
+    print(i)
+```
+
+Program spusť. Jaká čísla se vypíšou?
+
+{% filter solution %}
+Vypíšou se čísla od 0 do 4!
+Program funguje steně, jako kdybys napsal{{a}}:
+
+```python
+i = 0
+print(i)
+i = 1
+print(i)
+i = 2
+print(i)
+i = 3
+print(i)
+i = 4
+print(i)
+```
 {% endfilter %}
 
-### Čtverec
+Funkce `range(n)` vrací *sekvenci čísel*.
+Začíná od 0 a čísel v ní je přesně <var>n</var>.
+(Na samotné <var>n</var> se tedy už nedostane.)
 
-A znovu ke kreslení, tentokrát s použitím cyklů.
+Často se `for i in range(n)` používá jako “Opakuj <var>n</var>-krát“.
+V takovém případě nás proměnná <var>i</var> – „počitadlo“ – nezajímá.
+V programu ji jednoduše nepoužijeme.
 
-Nakresli čtverec.
+Teď by už mělo být jasné, jak funguje původní program:
 
-V programu použij `forward` jen dvakrát:
-jednou v importu, jednou jako volání.
+```python
+for i in range(100):
+    print('Nikdy nebudu odsazovat o tři mezery!')
+```
+
+Python píše hlášky, jednu za druhou, a u toho si v promněnné <var>i</var>
+počítá, jak už je daleko.
+
+
+## Čtverec II
+
+A znovu ke kreslení, tentokrát s použitím cyklů!
+
+Nakresli čtverec. To se dělá následovně:
+
+* Čtyřikrát:
+  * Popojdi dopředu (a kresli přitom čáru)
+  * Otoč se o 90°
 
 ![Želví čtverec](static/turtle-square.png)
 
@@ -261,13 +345,26 @@ exitonclick()
 ```
 {% endfilter %}
 
-### Přerušovaná čára
+## Přerušovaná čára
 
 Funkce `penup` a `pendown`
 z modulu `turtle` řeknou želvě,
 aby přestala, resp. začala kreslit.
+Zkus si to:
 
-Zkus nakreslit přerušovanou čáru.
+```python
+from turtle import forward, penup, pendown, exitonclick
+
+forward(30)
+penup()         # od teď želva nekreslí
+forward(5)
+pendown()       # od teď želva zase kreslí
+forward(30)
+
+exitonclick()
+```
+
+Zkus nakreslit dlouhou přerušovanou čáru.
 
 ![Želva a přerušovaná čára](static/turtle-dashed.png)
 
@@ -292,8 +389,10 @@ větší a větší.
 
 > [note] Nápověda
 >
-> Co přesně dělá příkaz `for`?
-> Dá se využít proměnná, kterou nastavuje?
+> První čárka je dlouhá 1 jednotku, druhá 2 jednotky, třetí 3, atd.
+>
+> Dokonce můžeš na začátek dát prázdnou čárku (0 jednotek)
+> a mít tak délky 0, 1, 2, 3, 4, …
 
 {% filter solution %}
 ```python
@@ -316,6 +415,10 @@ Tentokrát už víš, jak to dělat chytře: opakuj pomocí příkazu
 `for`, ne kopírováním kódu.
 
 ![Tři želví čtverce](static/turtle-squares.png)
+
+* Třikrát:
+  * Nakresli čtverec (viz předchozí úloha)
+  * Otoč se o 20°
 
 {% filter solution %}
 ```python
@@ -341,3 +444,72 @@ Máš-li hotovo, zkus nakreslit schody:
 A máš-li i schody, zkus nakreslit těchto šest (nebo sedm?) šestiúhelníků:
 
 ![Želví plástev](static/turtle-hexagons.png)
+
+
+### Přepisování proměnných
+
+Už víš, že:
+
+```python
+print("Tady je pár čísel:")
+
+for cislo in 8, 45, 9, 21:
+    print(cislo)
+```
+
+funguje jako:
+
+```python
+print("Tady je pár čísel:")
+
+cislo = 8
+print(cislo)
+
+cislo = 45
+print(cislo)
+
+cislo = 9
+print(cislo)
+
+cislo = 21
+print(cislo)
+```
+
+Zkus popsat, jak pracuje následující program.
+
+```python
+soucet = 0
+
+for cislo in 8, 45, 9, 21:
+    soucet = soucet + cislo
+
+print(soucet)
+```
+
+
+{% filter solution %}
+```python
+soucet = 0
+
+cislo = 8
+soucet = soucet + cislo
+
+cislo = 45
+soucet = soucet + cislo
+
+cislo = 9
+soucet = soucet + cislo
+
+cislo = 21
+soucet = soucet + cislo
+
+print(soucet)
+```
+
+Příkaz `soucet = soucet + cislo` vypočítá hodnotu
+`soucet + cislo`, tedy přičte aktuální číslo k součtu.
+Výsledek uloží opět do proměnné `soucet`.
+Nová hodnota `soucet` se pak použije v dalším průchodu cyklem.
+
+Na začátku je součet 0 a na konci se součet všech čísel vypíše.
+{% endfilter %}
