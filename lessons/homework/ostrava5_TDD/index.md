@@ -2,7 +2,7 @@
 
 ## Co to je? ##
 
-Poté, co ses naučila pracovat s [řetězci][str] a psát [vlastní funkce][def], dostala jsi za [úkol][handout5] naprogramovat si jednoduchou hru: jednorozměrné piškvorky. Zatím máš předepsané, z jakých dílčích funkcí se bude hra skládat. Toho využijeme a nahlédneme do pokročilejší lekce – té o [testování][testing].
+Poté, co ses naučila pracovat s [řetězci][str] a psát [vlastní funkce][def], dostala jsi za [úkol][handout5] naprogramovat si jednoduchou hru: jednorozměrné piškvorky. V domácím projektu je předepsáno, z jakých dílčích funkcí se bude hra skládat. Mrkni se na zadání domácího projektu, než budeš pokračovat. Detailního popisu zadání hned využijeme a nahlédneme do pokročilejší lekce – té o [testování][testing]. Lekci o testování není třeba studovat celou, na to se podíváme společně za několik lekcí, ale můžeš v ní najít odpovědi na některé otázky.
 
 Testování ti pomůže ověřit, že tvůj program funguje, jak má. Neboj se však nic, všechno to složitější jsme zatím napsali za tebe. Ty tak můžeš postupovat podle zadání domácích projektů a testy ti spuštěním jednoho jednoduchého příkazu ukážou, jak moc blízko jsi dokončení programu.
 
