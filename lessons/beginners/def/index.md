@@ -8,7 +8,8 @@ print('Ahoj světe!')
 
 Dnes si ukážeme, jak psát funkce vlastní.
 
-Není to tak složité:
+Pokud umíš `if` a `for` – s jednořádkovou hlavičkou a odsazeným tělem příkazu –
+neměl by ti zápis funkce připadat nijak zvláštní:
 
 ```python
 def obvod_obdelnika(sirka, vyska):
@@ -22,15 +23,15 @@ Jak to funguje?
 
 
 Funkce se *definuje* příkazem `def`, za nějž napíšeš jméno funkce,
-pak do závorky seznam *argumentů*, které funkce bere, a pak dvojtečku.
+pak do závorky seznam *parametrů*, které funkce bere, a pak dvojtečku.
 
 Potom následuje odsazené *tělo funkce* – příkazy, které funkce provádí.
 Tělo může začít *dokumentačním řetězcem*, který popisuje, co funkce dělá.
 
-Příkazem `return` pak můžeš z funkce
-vrátit nějakou hodnotu.
+Příkazem `return` pak můžeš z funkce *vrátit* nějakou hodnotu.
 
-Tělo funkce může mít více příkazů, včetně podmínek, cyklů a podobně:
+Tělo funkce může mít více příkazů – včetně podmínek, cyklů a podobně.
+Následující procedura třeba vypíše skóre daného hráče a k tomu hlášku:
 
 ```python
 def napis_hlasku(nazev, skore):
@@ -53,7 +54,7 @@ napis_hlasku('Protivníkovo', 5)
 ```
 
 Při volání funkce se hodnoty, se kterými funkci
-zavoláš, přiřadí jednotlivým argumentům.
+zavoláš, přiřadí jednotlivým parametrům.
 Takže když zavoláš třeba `napis_hlasku('Tvoje', 256)`,
 můžeš si představit, že funkce dělá následující:
 
@@ -72,18 +73,34 @@ Speciální příkaz `return`, který jde použít jenom ve funkcích,
 
 Chová se tedy trochu jako `break`, jen místo cyklu opouští celou funkci.
 
+Podobně jako `break` se dá použít v případech, kdy potřebuješ od uživatele
+dostat odpověď – a opakuješ dotaz tak dlouho, dokud požadovanou odpověď
+nedostaneš.
+Třeba, chceš-li odpověď „ano“ nebo „ne“:
+
+* Takhle se zjišťuje odpověď ano (Pravda) nebo ne (Nepravda) na danou *otázku*:
+  * Pořád dokola:
+    * Zeptej se na *otázku*; zapamatuj si *odpověď*.
+    * Je-li odpověď „ano“:
+      * Výsledek je Pravda. Hotovo; dál nepokračuj.
+    * Jinak, je-li odpověď „ne“:
+      * Výsledek je Nepravda. Hotovo; dál nepokračuj.
+    * Pouč uživatele, ať odpoví „ano“ nebo „ne“.
+      <br>*(a zkus to znovu – viz „Pořád dokola“)*
+
 ```python
 def ano_nebo_ne(otazka):
-    "Vrátí True nebo False, podle odpovědi uživatele"
+    "Vrátí True nebo False podle odpovědi uživatele"
     while True:
         odpoved = input(otazka)
         if odpoved == 'ano':
             return True
         elif odpoved == 'ne':
             return False
-        else:
-            print('Nerozumím! Odpověz "ano" nebo "ne".')
 
+        print('Nerozumím! Odpověz "ano" nebo "ne".')
+
+# Příklad použití
 if ano_nebo_ne('Chceš si zahrát hru? '):
     print('OK! Ale napřed si ji musíš naprogramovat.')
 else:
@@ -115,7 +132,7 @@ print('Obsah elipsy s osami 3 cm a 5 cm je', obsah_elipsy(3, 5), 'cm2')
 
 ### Vrátit nebo vypsat?
 
-Předchozí program se dá napsat i takto:
+Předchozí program se dá napsat i s procedurou místo funkce:
 
 ```python
 from math import pi
@@ -129,7 +146,7 @@ obsah_elipsy(3, 5)
 Program takhle funguje, ale přichází o jednu z hlavních výhod funkcí:
 možnost vrácenou hodnotu použít i jinak jež jen v `print`.
 
-Funkci, která výsledek vrací, můžeš použít v dalších výpočtech:
+Funkci, která vrací výsledek, můžeš použít v dalších výpočtech:
 
 ```python
 def objem_eliptickeho_valce(a, b, vyska):
@@ -138,13 +155,13 @@ def objem_eliptickeho_valce(a, b, vyska):
 print(objem_eliptickeho_valce(3, 5, 3))
 ```
 
-... ale kdyby výsledek přímo vypsala, nešlo by to.
+... ale s procedurou, která výsledek přímo vypíše, by to nešlo.
 
 Další důvod, proč hodnoty spíš vracet než vypisovat, je ten, že jedna funkce se
 dá použít v různých situacích.
-Funkci s `print` by nešlo rozumně použít tehdy, když nás příkazová
-řádka vůbec nezajímá.
-Třeba v grafické hře, webové aplikaci, nebo pro ovládání robota.
+Proceduru s `print` by nešlo rozumně použít tehdy, když nás příkazová
+řádka vůbec nezajímá – třeba v grafické hře, webové aplikaci, nebo pro ovládání
+robota.
 
 Podobně je to se vstupem: když použiju v rámci své funkce `input`, bude se
 moje funkce dát použít jen v situacích, kdy je u počítače klávesnice a za ní
@@ -167,9 +184,10 @@ y = float(input('Zadej délku poloosy 2: '))
 print('Obsah je', obsah_elipsy(x, y))
 ```
 
-Samozřejmě existují výjimky: funkce která přímo vytváří textový výpis,
+Samozřejmě existují výjimky: procedura která přímo vytváří textový výpis
 může používat `print`; funkce která načítá textové informace zase `input`.
-Když ale funkce něco počítá, je dobré v ní `print` ani `input` nemít.
+Když ale funkce něco *počítá*, nebo když si nejsi jist{{gnd('ý', 'á')}},
+je dobré ve funkci `print` ani `input` nemít.
 
 
 ## None
