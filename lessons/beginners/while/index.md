@@ -32,7 +32,8 @@ Program se dá přerušit zmáčknutím
 > Tahle klávesová zkratka vyvolá v programu chybu
 > a program se – jako po každé chybě – ukončí.
 
-A nakonec, existuje příkaz `break`, který z cyklu „vyskočí“:
+Existují dva příkazy, které se hodí pro práci s cykly.
+Prvním z nich je `break`, který z cyklu „vyskočí“:
 začnou se hned vykonávat příkazy za cyklem.
 
 ```python
@@ -58,7 +59,16 @@ for i in range(10):  # Vnější cyklus
     print()
 ```
 
-Ale zpátky k `while`!
+Druhým šikovným příkazem je `continue`, který přeskočí aktuální opakování
+(iteraci) cyklu. Pokud bychom například chtěli vypsat čísla od 0 do 9,
+ale přeskočit při tom čísla větší než 2 a menší než 5, mohli bychom napsat:
+
+```python
+for i in range(10):
+    if i > 2 and i < 5:
+        continue
+    print(i)
+```
 
 ## Oko bere
 
