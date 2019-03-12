@@ -30,27 +30,6 @@ print("Vtom vnuk křik': \"Hleď!\"")
 print('"Jen ho nech," řek\' děd. "Kdo zná líp kraj?"')
 ```
 
-Zpětným lomítkem se dají přidávat i
-exotické znaky, které nemáš na klávesnici.
-Ty se dají zapsat jako `\N` a jméno znaku
-v složených („kudrnatých“) závorkách.
-Třeba následující znaky.
-(Do konzole na Windows bohužel nemusí jít všechny
-vypsat, ale aspoň první by jít měl):
-
-```python
-print('--\N{LATIN SMALL LETTER L WITH STROKE}--')
-print('--\N{SECTION SIGN}--')
-print('--\N{PER MILLE SIGN}--')
-print('--\N{BLACK STAR}--')
-print('--\N{SNOWMAN}--')
-print('--\N{KATAKANA LETTER TU}--')
-```
-
-Tahle vychytávka má jeden, někdy nepříjemný,
-důsledek: pokud chceš použít zpětné lomítko
-(třeba ve jménech souborů na Windows),
-musíš ho ve zdrojovém kódu zdvojit.
 Sekvence `\\` znamená „jedno zpětné lomítko“.
 
 ```python
@@ -353,28 +332,18 @@ je lepší si číslovat „hranice“ mezi znaky.
 
 ## Cvičení
 
-Zkus napsat funkci `zamen(retezec, pozice, znak)`.
-
-Tato funkce vrátí řetězec, který má na dané pozici
-daný znak; jinak je stejný jako původní `retezec`. Např:
-
-```python
-zamen('palec', 0, 'v') == 'valec'
-zamen('valec', 2, 'j') == 'vajec'
-```
-
-Pozor na to, že řetězce v Pythonu nelze měnit.
+Zkus napsat program, který vymění znak na dané pozici řetězce za jiný.
+Od uživatele vyžádá řetězec, pozici, na které se má provést výměna
+a znak, který se má na pozici zadat. Pozor na to, že řetězce v Pythonu nelze měnit.
 Musíš vytvořit nový řetězec poskládaný z částí toho starého.
 
 {% filter solution %}
 ```python
-def zamen(retezec, pozice, znak):
-    """Zamění znak na dané pozici
+retezec = input('Zadej původní řetězec: ')
+pozice = int(input('Na jaké pozici provedeme výměnu? '))
+znak = input('Jaký znak tam dáme? ')
 
-    Vrátí řetězec, který má na dané pozici daný znak;
-    jinak je stejný jako vstupní retezec
-    """
-
-    return retezec[:pozice] + znak + retezec[pozice + 1:]
+print('Po výměně to vypadá takto:')
+print(retezec[:pozice] + znak + retezec[pozice + 1:])
 ```
 {% endfilter %}
