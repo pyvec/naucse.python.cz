@@ -219,4 +219,5 @@ Use bdist command:
 python setup.py bdist_egg
 python setup.py bdist_wininst
 python setup.py sdist
+python setup.py upload
 ```
