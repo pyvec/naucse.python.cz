@@ -683,7 +683,7 @@ způsoby: dekorátorem:
     with cython.boundscheck(False):
         ...
 
-... případně i pro celý soubor, viz [dokumnetace][set-directives].
+... případně i pro celý soubor, viz [dokumentace][set-directives].
 
 Další zajímavá direktiva je `cython.wraparound(False)`, která podobným způsobem
 vypíná pythonní způsob indexování zápornými čísly: místo indexování od konce
@@ -699,8 +699,8 @@ operujeme jen na obsahu už existujících maticí.
 Opak je `with cython.gil:`, kterým zámek zase zamkneme – například když
 potřebujeme vyhodit výjimku.
 
-[set-directives]: http://cython.readthedocs.io/en/latest/src/reference/compilation.html#how-to-set-directives
-[directives]: http://cython.readthedocs.io/en/latest/src/reference/compilation.html#compiler-directives
+[set-directives]: https://cython.readthedocs.io/src/userguide/source_files_and_compilation.html#how-to-set-directives
+[directives]: https://cython.readthedocs.io/src/userguide/source_files_and_compilation.html#compiler-directives
 
 
 Struktury, ukazatele a dynamická alokace

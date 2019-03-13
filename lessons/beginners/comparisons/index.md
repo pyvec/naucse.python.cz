@@ -93,17 +93,14 @@ print(False)
 
 ## Podmínky
 
-{% if var('pyladies') -%}
-{% set rootname = 'pyladies' %}
-{%- else -%}
-{% set rootname = 'naucse-python' %}
-{%- endif %}
-
 Teď oprášíme program na výpočet obvodu a obsahu.
-Do nového souboru, třeba <code><span class="pythondir">~/{{ rootname }}</span>/02/if.py</code>,
-napiš následující program.
-Co se stane, když jako stranu zadáš záporné číslo?
-Dává výstup smysl?
+
+Otevři si v editoru nový soubor.
+Jestli ještě v adresáři, kde máš soubory ke kurzům Pythonu,
+nemáš adresář pro tuto lekci (třeba `02`), vytvoř si ho.
+Nový soubor ulož do něj pod jménem `if.py`.
+
+Do souboru pak napiš následující program:
 
 ```python
 strana = float(input('Zadej stranu čtverce v centimetrech: '))
@@ -111,8 +108,12 @@ print('Obvod čtverce se stranou', strana, 'je', 4 * strana, 'cm')
 print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
 ```
 
+Program spusť. Funguje?
 
-Tady je vidět, jak počítač dělá přesně, co se mu řekne, a nepřemýšlí o významu.
+Co se stane, když jako stranu zadáš záporné číslo?
+Dává výstup smysl?
+
+Tady je vidět, jak počítač dělá přesně, co se mu řekne. Nepřemýšlí o významu.
 Bylo by dobré uživateli, který zadá záporné číslo,
 přímo říct, že zadal blbost. Jak na to?
 

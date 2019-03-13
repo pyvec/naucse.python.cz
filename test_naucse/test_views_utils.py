@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-import naucse.utils.views
+import naucse.views
 
 
 @pytest.mark.parametrize(
@@ -22,4 +22,4 @@ import naucse.utils.views
           (2017, 12), (2018, 1)]),
     ])
 def test_list_months(start, end, expected):
-    assert naucse.utils.views.list_months(start, end) == expected
+    assert naucse.views.list_months(start, end) == expected

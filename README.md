@@ -9,46 +9,66 @@ Dostupné na [naucse.python.cz](https://naucse.python.cz).
 ## Instalace a spuštění
 
 Chceš-li server spustit na svém počítači, např. proto, že se chceš zapojit
-nebo abys ho měl/a k dispozici i bez připojení k Intenetu, je potřeba ho
-nejdřív nainstalovat:
+do vývoje, je potřeba ho nejdřív nainstalovat:
 
-* Vytvoř a aktivuj si [virtuální prostředí](https://naucse.python.cz/lessons/beginners/install/) v Pythonu 3.6.
+* (nepovinné) Vytvoř a aktivuj si [virtuální prostředí](https://naucse.python.cz/lessons/beginners/install/) v Pythonu 3.6.
 * Přepni se do adresáře s kódem projektu.
 * Nainstaluj závislosti:
-   ```console
-   $ python -m pip install -r requirements.txt
-   ```
+
+  * Linux/Mac:
+
+    ```console
+    $ python3 -m pip install pipenv
+    $ pipenv install
+    ```
+
+  * Windows:
+
+    ```doscon
+    > py -3 -m pip install pipenv
+    > pipenv install
+    ```
 
 Nainstalovanou aplikaci spustíš následovně:
 
-* Aktivuj si virtuální prostředí.
-* Nastav proměnnou prostředí:
-  * Linux a Mac OS:
-    ```console
-    $ export PYTHONPATH=.
-    ```
-  * Windows:
-    ```console
-    > set PYTHONPATH=.
-    ```
-* Spusť server:
+* (nepovinné) Aktivuj si virtuální prostředí, máš-li ho vytvořené.
+* Spusť vývojový server:
   ```console
-  $ python -m naucse serve
+  $ pipenv run serve
   ```
 * Program vypíše adresu (např. `http://0.0.0.0:8003/`); tu navštiv v prohlížeči.
+
+Pokud chceš místo vývojového spuštění vygenerovat statické HTML soubory (např. pro nahrání na statický hosting):
+
+* Spusť freeze. Parametr `--serve` provede spuštění webserveru, pomocí kterého si lze vygenerované soubory prohlédnout:
+  ```console
+  $ PYTHONPATH=. pipenv run freeze --serve
+  ```
+* HTML stránky jsou v adresáři `naucse/_build`.
+  Program vypíše adresu (např. `http://0.0.0.0:8000/`); tu navštiv v prohlížeči.
+
+## Externí kurzy
+
+Na naucse.python.cz jsou k dispozici i *externí* kurzy, které spravují více
+či méně důvěryhodní lidé.
+Proces vykreslování obsahu těchto kurzů jim dává velkou volnost: můžou převzít
+plnou kontrolu nad počítačem, na kterém `naucse` běží.
+Kvůli bezpečnosti je proto `naucse` ve výchozím nastavení neukazuje.
+
+
 
 ## Testy
 
 Chceš-li pustit testy, nainstaluj si závislosti:
 
 ```console
-$ python -m pip install -r test_requirements.txt
+$ pipenv install --dev
 ```
 
 a testy pusť:
 
 ```console
-$ python -m pytest test_naucse
+$ pipenv run test
 ```
 
 
