@@ -89,12 +89,12 @@ V naprosté většině případů je pro otevírání souborů nejlepší použ�
 
 Otevřené soubory se, jako např. řetězce či `range`,
 dají použít s příkazem `for`.
-Tak jako `for i in range` poskytuje za sebou jdoucí čísla a `for c in 'abcd'`
-poskytuje jednotlivé znaky řetězce, `for radek in soubor` bude do proměnné
-`radek` dávat jednotlivé řádky čtené ze souboru.
+Tak jako `for i in range` poskytuje za sebou jdoucí čísla a `for znak in 'abcd'`
+poskytuje jednotlivé znaky řetězce, `for radek in soubor` bude v proměnné
+`radek` poskytovat jednotlivé *řádky* čtené ze souboru.
 
-Například můžeš básničku odsadit,
-aby se vyjímala v textu:
+Aby se básnička líp vyjímala v textu, pojďme ji odsadit –
+před každý řádek dát měkolik mezer:
 
 ```python
 print('Slyšela jsem tuto básničku:')
@@ -109,8 +109,8 @@ print('Jak se ti líbí?')
 ```
 
 
-Když to zkusíš, zjistíš, že trochu nesedí
-řádkování. Zkusíš vysvětlit, proč tomu tak je?
+Když to zkusíš, zjistíš, že trochu nesedí řádkování.
+Zkusíš se zamyslet, proč tomu tak je?
 
 {% filter solution %}
 Každý řádek končí znakem nového řádku, `'\n'`,
@@ -121,9 +121,9 @@ výpisu vždycky odřádkovává – pokud nedostane argument `end=''`.
 
 ---
 
-¹ Proč to dělá? Kdyby `'\n'` na konci řádků nebylo,
+¹ *Proč to dělá? Kdyby `'\n'` na konci řádků nebylo,
 nedalo by se např. dobře rozlišit, jestli poslední řádek
-končí na `'\n'`
+končí na `'\n'`.*
 
 {% endfilter %}
 
@@ -160,10 +160,48 @@ Pokud soubor už existuje, otevřením s `mode='w'` se veškerý jeho obsah sma
 Po zavření tak v souboru bude jen to, co do něj ve svém programu zapíšeš.
 
 Informace pak do souboru zapiš známou funkcí `print`,
-a to s pojmenovaným argumentem `file`:
+ale s pojmenovaným argumentem `file`:
 
 ```python
 with open('druha-basnicka.txt', mode='w', encoding='utf-8') as soubor:
     print('Naše staré hodiny', file=soubor)
     print('Bijí', 2+2, 'hodiny', file=soubor)
 ```
+
+
+## Kontext
+
+> [note]
+> Čteš-li tyto materiály poprvé, tuto sekci můžeš s klidným svědomím přeskočit.
+> Pokročilejším ale doporučuju vsadit věci do širšího kontextu.
+
+Příkaz `with` pracuje s tzv. *kontextem* (tady s kontextem *otevřeného
+souboru*), který má začátek a konec a při ukončení je potřeba něco udělat
+(tady zavřít soubor).
+
+Kontext je v podstatě zkratka pro `try`/`finally`. Pamatuješ si na `finally`?
+
+Toto:
+
+```python
+with open('basnicka.txt', encoding='utf-8') as soubor:
+    # Zpracování souboru
+    obsah = soubor.read()
+```
+
+je zkratka pro:
+
+```python
+soubor = open('basnicka.txt', encoding='utf-8')
+try:
+    # Zpracování souboru
+    obsah = soubor.read()
+finally:
+    # Ukončení kontextu
+    soubor.close()
+```
+
+Jak `with` tak `finally` zaručí, že se soubor vždy uzavře:
+když se zpracování povede, ale i když ve něm nastane výjimka
+nebo když z něj vyzkočíš pomocí `return` nebo `break`.
+
