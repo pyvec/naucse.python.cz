@@ -417,12 +417,12 @@ zaznamy = ['pepa novák', 'Jiří Sládek', 'Ivo navrátil', 'jan Poledník']
 
 Úkolem je:
 
-* Napsat program, která vybere jen ty správně zadané záznamy, které mají správně
+* Napsat program, který vybere jen ty správně zadané záznamy, které mají správně
 jméno i příjmení s velkým počátečním písmenem.
-* Napsat program, která vybere naopak jen ty nesprávně zadané záznamy.
-* *(Nepovinný)* – Napsat program, která vrátí seznam s opravenými záznamy.
+* Napsat program, který vybere naopak jen ty nesprávně zadané záznamy.
+* *(Nepovinný)* – Napsat program, který opraví špatné záznamy.
 
-Výsledné funkce by měly fungovat takto:
+Výsledný kód by měl fungovat takto:
 
 ```python
 zaznamy = ['pepa novák', 'Jiří Sládek', 'Ivo navrátil', 'jan Poledník']
