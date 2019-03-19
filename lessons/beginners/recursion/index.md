@@ -132,7 +132,7 @@ součin všech  čísel od 1 do <var>x</var>, zapsaný jako <var>x</var>!,
 matematici definují takto:
 
 * 0! = 1
-* Pro kladná <var>x</var> je <var>x</var>! = <var>x</var>(<var>x</var> - 1)
+* Pro kladná <var>x</var> je <var>x</var>! = <var>x</var> · (<var>x</var> - 1)!
 
 Neboli v Pythonu:
 
@@ -140,7 +140,7 @@ Neboli v Pythonu:
 def factorial(x):
     if x == 0:
         return 1
-    else:
+    elif x > 0:
         return x * factorial(x - 1)
 
 print(factorial(5))
