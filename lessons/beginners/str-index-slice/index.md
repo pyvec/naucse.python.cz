@@ -115,8 +115,8 @@ Zkus si to: co asi udělají následující příkazy?
 ```python
 retezec = 'čokoláda'
 print(retezec[:4])
-print(retezec[2:5])
-print(retezec[-4:])
+print(retezec[2:6])
+print(retezec[-3:])
 print(retezec[:])
 ```
 
@@ -127,8 +127,8 @@ Když jednu z hodnot vynecháš, vybírá se od začádku, resp. do konce.
 ```python
 retezec = 'čokoláda'
 print(retezec[:4])      # → čoko
-print(retezec[2:5])     # → kol
-print(retezec[-4:])     # → áda
+print(retezec[2:6])     # → kolá
+print(retezec[-3:])     # → áda
 print(retezec[:])       # → čokoláda
 ```
 {% endfilter %}
