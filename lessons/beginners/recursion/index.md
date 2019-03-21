@@ -8,9 +8,9 @@ Když zadáš tento program:
 
 ```python
 def rekurzivni_funkce():
-    vyskedek = ...
+    vysledek = ...
     rekurzivni_funkce()
-    return vyskedek
+    return vysledek
 
 rekurzivni_funkce()
 ```
@@ -57,7 +57,7 @@ verze Pythonu je vypíšou jen třikrát.
 Jak rekurzi využít v praxi?
 Jeden způsob je si počítat, kolikrát se ještě „zanořit“.
 
-Představ si potapěče, který prozkoumává mořské hlubiny násletujícím způsobem:
+Představ si potapěče, který prozkoumává mořské hlubiny následujícím způsobem:
 
 * Jak *„prozkoumat moře“* v určité hloubce:
   * Porozhlédnu se kolem
