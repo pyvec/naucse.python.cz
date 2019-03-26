@@ -9,18 +9,6 @@ Každý člen týmu potřebuje mít přístup k práci ostatních.
 K tomu se dá použít Git: někde na internetu si zařídíme *sdílený repozitář*,
 se kterým se všichni budou synchronizovat.
 
-> [note] Pro samostudium
-> Pokud materiály čteš z domu a máš možnost se
-> v budoucnu dostat na nějaký sraz, zatím tuhle sekci přeskoč.
-> Na sraze pak popros zkušenější programátory, aby ti pomohli.
-> (Nechystáš-li se na sraz, můžeš pokračovat –
-> zvládnout se to dá.)
-
-> [note] Pro kouče
-> Udělej na GitHubu repozitář jménem `prezencka` a dej do
-> něj soubor se svým jménem. Příklad je na
-> [encukou/prezencka](https://github.com/encukou/prezencka).
-> Nasdílej s účastnicemi příkaz na jeho naklonování (přes https).
 
 ## GitHub
 
@@ -35,193 +23,54 @@ ukážeme.
 Jestli ještě nemáš uživatelský účet na [github.com](https://github.com), jdi
 tam a založ si ho.
 
+## Spojení tvého repozitáře s remote repozitářem
+Na úvodní stránce Githubu po založení účtu uvidíš na úvodní stránce `Learn Git and GitHub without any code!` a pod ním najdeš tlačítko `Start a project`. Zvol si jméno pro svůj nový repozitář, třeba `pyladies` a zbytek nastavení nech tak, jak je a klikni na `Create repozitory`. 
 
-## Naklonování repozitáře <small>(<code>git clone</code>)</small>
+Uvidíš stránku s velkým množství různých příkazů. Nás zajímá druhá sekce `…or push an existing repository from the command line`. 
 
-Pro začátek zkusíme práci s repozitářem, který už vytvořil někdo jiný.
-V příkazové řádce zadej příkaz, který ti oznámí kouč; něco jako
+Zkopíruj si příkaz `git remote add origin https://github.com/tvoje_jmeno/nazev_repozitare.git` a vlož ho do příkazové řádky tak, kde máš svůj gitový repozitář, který jsme si společně nastavily. Po stisknutí `enter` ti příkazová řádka nic nevypíše, což je signál, že všechno proběhlo v pořádku. 
 
-```console
-$ git clone https://github.com/{{coach_username}}/prezencka
-```
+Stejným způsobem si zkopíruj a vlož k sobě do terminálu příkaz `git push -u origin master`. Github se tě zeptá na tvé přihlašovací údaje. Vlož je (pozor, když budeš psát heslo, tak to bude vypadat, že vůbec nepíšeš, to je však jen z důvodu bezpečnosti) a pak už by si měla vidět `Branch 'master' set up to track remote branch 'master' from 'origin'.` 
 
-Vytvoří se ti nový repozitář – adresář se jménem
-`prezencka`, ve kterém je nějaký soubor.
-
-
-Na URL (adresu), kterou jsi v tomhle příkladě
-použil{{a}}, se můžeš podívat i v prohlížeči.
-Uvidíš seznam souborů a spoustu odkazů k
-informacím o repozitáři (například pod „commits”
-je historie).
-
-Přepni se do nového adresáře (`cd prezencka`)
-a zkus se podívat na historii (`gitk` nebo `git log`).
-Možná je krátká, ale hlavně, že nějaká je.
-Máš na počítači kopii projektu, který založil někdo jiný!
+To znamená, že tvoj lokální repozitář se právě nahrál na tzv. remote repozitář. Když se proklikneš do svého nového repozitáře na Githubu (`https://github.com/tvoje_jmeno/nazev_repozitare`), uvidíš tu přesnou kopii tvé složky s lekcemi.
 
 
 ## Posílání změn <small>(<code>git push</code>)</small>
 
-Teď se do projektu zapoj.
-Přidej soubor se svým jménem (nebo přezdívkou)
-a dej ho do gitu (`git add jmeno.txt`, `git commit`).
+Co když uděláš nějaké změny, například vypracuješ domácí úkol na svém druhém počítači a chtěla by, aby změny byly vidět v tvém repozitáři na Githubu? K tomu slouží příkat `git push`. 
 
-Teď zbývá „jen” změnu začlenit do původního sdíleného repozitáře.
-To ale není jen tak: repozitář, který jsi
-naklonoval{{a}}, patří koučovi. A tomu by se asi
-nelíbilo, kdyby kdokoliv na Internetu mohl přijít
-a nahrát mu do repozitáře změny.
+Pamatuješ ještě na básničku, kterou jsme psali, když jsme se učili s Gitem? Napiš si jí ještě jednou, ať já neztratíme. Přepni se do složky aktuální lekce, vytvoř soubor `basnicka.txt` a napiš do něj nějakou básničku. Přidej jí do Gitu (pomocí příkazů `git add` a `git commit`). 
 
-Spousta míst na Internetu funguje tak, že vybraná
-skupina lidí má „přístup”: můžou dělat změny,
-jak se jim líbí.
-
-S Gitem se používá jiný přístup:
-změny nahraješ do *vlastního* sdíleného
-repozitáře a majiteli původního projektu napíšeš
-žádost o začlenění těch změn (angl. *pull request*).
-Může to být třeba mail se slovy „Hele, na té a té
-adrese mám nějaké změny, které by se ti mohli hodit!
-Přidej je do svého projektu!”
-
-Výhoda je v tom, že se do projektu – pokud je
-veřejný – může zapojit kdokoliv. Nemusíš se
-předem ptát, nemusíš dokazovat že jsi důvěryhodná
-osoba, stačí něco změnit a poslat.
-Jestli se změna bude autorům projektu líbit nebo
-ne, to už je jiná věc. Ale záleží hlavně na samotné
-změně, ne na tom, kdo ji udělal.
-
-Služba [github.com](https://github.com/)
-ti umožňuje si udělat vlastní sdílený repozitář a zjednodušuje
-začleňování změn (místo posílání mailů stačí
-zmáčknout tlačítko). Pojďme se podívat, jak na to.
-
-Přihlaš se na GitHub a pak zajdi na adresu
-kterou jsi použil{{a}} pro `git clone`.
-Vlevo nahoře najdi tlačítko „Fork” a klikni na něj.
-Tím si vytvoříš na GitHubu vlastní kopii repozitáře:
-adresa by měla být něco jako
-<code>https://github.com/<i>tvojejmeno</i>/prezencka</code>.
+Pomocí příkazu `git push origin master` nahraješ nové změny na Github.
 
 
-> [note]
-> Kdybys měl{{a}} v různých kopiích repozitáře zmatek,
-> přijde vhod malé vysvětlení: jedna kopie je původní
-> projekt na GitHubu, kam správce projektu dává
-> aktuální „oficiální verzi“. Další kopie na GitHubu
-> je „tvoje“ a můžeš si do ní nahrát co chceš
-> (nejčastěji v ní ale zveřejňuješ změny, které můžou
-> být užitečné pro ostatní). A třetí kopii repozitáře
-> máš u sebe na počítači.
+## Stažení změn <small>(<code>git pull</code>)</small>
 
-> {{ figure(
-    img=static('gh-workflow-diagram.svg'),
-    alt='Diagram tří repozitářů'
-) }}
+Máš zase svůj oblíbený počítač, kde máš všechny materiály, ale chybí ti tam úkol, který si vypracovala na svém druhém počítači a nahrála na Github? 
 
-A teď, jak z tvého počítače nahrát změny na GitHub?
-Git si u každého repozitáře na tvém počítači
-pamatuje adresy, odkud se dají stahovat
-a kam se dají posílat změny.
-Seznam těchhle adres ti ukáže příkaz `git remote -v`.
-Třeba:
-
-```console
-$ git remote -v
-origin  https://github.com/{{coach_username}}/prezencka (fetch)
-origin  https://github.com/{{coach_username}}/prezencka (push)
-```
-
-Tenhle výstup znamená, že pod zkratkou „origin”
-se schovává adresa, ze které jsi repozitář
-naklonoval{{a}}.
-
-Přidej si podobnou zkratku pro vlastní repozitář na GitHubu.
-Nezapomeň nahradit <i>tvojejmeno</i> za jméno účtu,
-který máš na GitHubu ty. (Pozor, v příkazu je <i>tvojejmeno</i> dvakrát!)
-
-<div class="highlight codehilite">
-<pre><code><span class="gp">$</span> git remote add <i>tvojejmeno</i> https://github.com/<i>tvojejmeno</i>/prezencka
-</code></pre></div>
-
-a zkontroluj si, že se to povedlo:
-
-<div class="highlight codehilite">
-<pre><code><span class="gp">$</span> git remote -v
-<span class="go">origin  git@github.com:{{coach_username}}/prezencka.git (fetch)</span>
-<span class="go">origin  git@github.com:{{coach_username}}/prezencka.git (push)</span>
-<span class="go"><i>tvojejmeno</i>      https://github.com/<i>tvojejmeno</i>/prezencka (fetch)</span>
-<span class="go"><i>tvojejmeno</i>      https://github.com/<i>tvojejmeno</i>/prezencka (push)</span>
-</code></pre></div>
-
-Tolik k nastavení – `git remote add`
-stačí udělat jednou pro každý repozitář.
-Pak už můžeš změny nahrávat pomocí:
-
-
-<div class="highlight codehilite">
-<pre><code><span class="gp">$</span> git push <i>tvojejmeno</i> master
-</code></pre></div>
-
-což znamená: pošli na adresu uloženou pod zkratkou
-<code><i>tvojejmeno</i></code>
-větev `master`.
-
-Funguje? Podívej se na
-<code>https://github.com/<i>tvojejmeno</i>/prezencka</code>
-v prohlížeči a ujisti se, že tam tvoje změny jsou.
+Přepni se do složky s materiály, kde máš svůj Gitový repozitář a napiš `git pull origin master`.
+Všechny změny by se ti měly stáhnout do tvého lokálního repozitáře.
 
 
 ## Žádost o začlenění <small>(<em>pull request</em>)</small>
 
-Teď zbývá požádat autory původního projektu,
-aby změny z tvého sdíleného repozitáře přidali do svojí kopie.
-GitHub na to má mechanismus zvaný *pull request* (žádost o začlenění).
+Pull requesty se používají, když chceš začlenit nějaké větší změny do projektu, na kterém pracuješ. Ve větvi `master` by měl být funkční a hotový kód, na růzké pokusy slouží větve `branch`, o kterých jsme mluvili v minulé sekci. 
 
-Jdi na stránku původního projektu (na adresu,
-kterou jsi použil{{a}} na začátku pro
-`git clone`).
-Měl{{a}} bys tam vidět oznámení o své nově nahrané větvi
-s velkým zeleným tlačítkem *Compare & pull request*.
-Klikni na něj. Pokud chceš, tak dopiš/změň popisek
-toho, co tahle změna obnáší.
-Pak zmáčkni další tlačítko.
+My budeme využívat pull requesty k efektivní kontrole domácích projektů. Vytvoř si teď pro demonstraci novou větev, ve které upravíme naší básničku `git branch uprava_basnicky` a přepni se do ní `git checkout uprava_basnicky`. Teď udělej nějaké změny v básničce, přidej autora, další sloku, cokoliv tě napadne. 
 
-> [note]
-> Jestli tlačítko *Compare & pull request* nevidíš, běž na adresu
-> *své* kopie repozitáře a stiskni tlačítko *New pull request*.
-> Vyber, co kam chceš začlenit, dopiš/změň popisek a pak zmáčkni
-> *Create pull request*.
+Přijde úpravy do Git jako novou revizi pomocí příkazů `git add` a `git commit`. Pak pomocí příkazu `git push origin uprava_basnicky` nahraj změny na Github. Vidíš, že v tomhle případě napíšeme `git push origin master`, protože teď nechcem zveřenovat změny ve větvi master, ale ve větvi, kde jsme upravili naší básničku. 
 
-Hotovo; teď je na autorech projektu, aby
-se na změny podívali a přijali – nebo začali diskusi
-o tom, jak je ještě vylepšit.
-(Diskutovat se dá na stránce *pull requestu* nebo přes mail.)
+Jdi do svého repozitáře na Github a klikni na sekci `Pull requests`. Uvidíš velké zelené tlačítko `New pull request`. Po kliknutí uvidíš stránku nadepsanou `Compare changes`. Tady musíš nastavit, co kam chceš vlastně začlenit. Jako `base` nech větev master a do `compare` zvol větev `uprava_basnicky`. 
 
-> [note] Pro samostudium
-> Procházíš-li materiály z domu, musíš teď počkat,
-> než si někdo tvé žádosti všimne a začlení ji.
-> To může trvat i pár dní; kdyby to bylo přes týden,
-> tak se na stránce *pull requestu* zkus připomenout.
+Github ti ukáže všechny změny, které si na té větvi udělala, pak už stačí jen kliknout na `Create new pull request`. V sekci `Pull requests` najednou uvidíš v závorce (1). To znamená, že si vytvořila pull request. 
+
+Pošli odkaz na pull request svému kouči, který ti domácí úkol opraví. Díky Githubu ti může napsat komentáře přímo do kódu a nebude tak muset vypisovat čísla řádků a do je na nich špatně. Až ti kouč úkol schválí, můžeš změny sloučit do master větve pomocí tlačítka `Merge pull request`. Pak s ti správný a schválený úkol nahraje do tvé master větve. Aby si ho měla v master větvi i ve svém počítači, použij náš známý příkaz `git pull origin master`. 
 
 
-## Aktualizace <small>(<code>git pull</code>)</small>
+## Naklonování repozitáře <small>(<code>git clone</code>)</small>
 
-Když budou tvé změny – a změny od ostatních –
-začleněné, můžeš si aktualizovat lokální repozitář. (To je ten,
-který máš u sebe na počítači.)
-
-To se dělá příkazem
-`git pull origin master` (stáhni změny
-z větve „master” z adresy pod zkratkou „origin”).
-Pomocí `gitk --all` nebo `git log`
-se můžeš podívat, jak se projekt mezitím vyvinul.
-
-Gratuluji! Právě jsi {{gnd('prošel', 'prošla')}} „kolečkem“,
-které většina programátorů dělá denně: udělání nějaké změny,
-odeslání kolegům na kontrolu a začlenění a stažení změn od ostatních.
+Pokud budeš chtít mít přístup ke svým materiálům z lekcí z dalšího počítače, je nutné si tam repozitář tzv. naklonot
+Na úvodní stránce tvého repozitáře (`https://github.com/tvoje_jmeno/nazev_repozitare`) uvidíš velké zelené tlačítko `Clone or download`. Klikni na něj a zvol možnost `Clone with HTTPS`. Ještě tu je druhá možnost (`Clone with SSH`), kterou nebudeme využívat. V příkazové řádce uvidíš `Cloning into 'nazev_repozitare'...`. Vytvořila se ti nová složka, kde je přesná kopie tvého repozitáře z githubu. Přepni se do ní, zkus příkaz `git status`. Funguje?
 
 
 ## Hlášení chyb <small>(<em>issues</em>)</small>
@@ -241,81 +90,3 @@ a můžeš psát, kdy chyba nastává, co program dělá
 > Kdybys záložku Issues {{gnd('nenašel', 'nenašla')}}, podívej se
 > do dokumentace projektu, jestli tam není odkaz na
 > seznam chyb.
-
-## README: Informace pro ostatní
-
-Pokud vytváříš projekt a chceš, aby do něj přispívali i ostatní,
-je potřeba aby věděli, co tvůj projekt dělá, k čemu se hodí,
-jak se používá a podobně.
-
-Na základní informace o projektu/repozitáři se používá soubor `README`
-(z angl. _read me_, _čti mě_).
-Do tohoto souboru patří mj.:
-
-* název projektu,
-* stručný popis projektu (jedna až dvě věty),
-* krátký návod k instalaci projektu,
-* krátký návod ke spuštění projektu,
-* krátký návod k používání projektu, případně odkaz na rozsáhlejší dokumentaci,
-* pokud má projekt testy, informace o tom, jak je spustit,
-* informace o tom, jak se zapojit do vývoje projektu,
-* informace o autorech projektu,
-* informace o licenci (více se licencích dozvíš později).
-
-README by mělo být členěné a jeho přečtení by nemělo zabrat uživateli hodinu,
-většinou stačí krátké úderné informace s případným odkazem někam dál.
-Není tedy například potřeba vysvětlovat v každém projektu,
-jak se instaluje Python.
-Stačí říct, že Python je potřeba (a v jaká verze)
-a odkázat uživatele na patřičný návod.
-Je také třeba brát v úvahu, kdo bude README číst.
-Píšete-li program pro jiné vývojářky a vývojáře,
-často není třeba zabrušovat do velikých detailů.
-
-GitHub (a spousty jiných podobných služeb) umožňuje pro README použít nějaký
-značkovací jazyk, například [Markdown](https://cs.wikipedia.org/wiki/Markdown).
-Je možné pak používat nadpisy, obrázky apod.
-
-V neposlední řadě – aby se do projektu mohl zapojit
-kdokoli z celého světa, bývají open-source projekty v angličtině.
-Jména proměnných, komentáře, dokumentace – všechno
-je primárně v anglické verzi.
-Tenhle kurz je česky, aby byly začátky jednodušší,
-ale jestli se ti programování zalíbilo a chceš
-v něm po kurzu pokračovat dál, bez angličtiny
-to bude velice složité.
-
-## Licence
-
-Aby sdílení fungovalo i pro právní stránce,
-nestačí když nahraješ kus kódu na Internet.
-Musíš taky oficiálně oznámit, že si s ním ostatní můžou hrát.
-Bez *licence* totiž nemá nikdo právo tvůj
-program ani používat, natož vylepšovat.
-
-Problematika licencí může být, bohužel, docela složitá.
-Když to ale zjednodušíme na minimum, budeš
-chtít jen zajistit, aby každý mohl tvůj výtvor
-používat, učit se z něj, předávat ho dál
-a vylepšovat ho. V tom případě vyber třeba
-licenci [MIT](https://choosealicense.com/licenses/mit/).
-
-> [note]
-> Pokud chceš navíc zabránit tomu, že si tvůj kód
-> někdo vezme a začne ho „vylepšovat“ a vydělávat na
-> něm, aniž by se o vylepšení podělil s ostatními,
-> zkus licenci [AGPL](https://choosealicense.com/licenses/agpl-3.0/).
-
-> [note]
-> A tyto materiály jsou pod ještě jinou licencí –
-> [CC BY-SA](https://choosealicense.com/licenses/cc-by-sa-4.0/) –
-> protože výše jmenované licence jsou dělané na programy, ne na text.
-
-Kód se nejčastěji licencuje tak, že text licence
-dáš do souboru jménem `LICENSE` a přidáš do Gitu.
-
-Chceš-li si o licencích přečíst něco víc, odkážu tě na
-[choosealicense.com](http://choosealicense.com/),
-případně [creativecommons.org](http://creativecommons.org/choose/)
-a [opensource.org](https://opensource.org/licenses).
-

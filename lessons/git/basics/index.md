@@ -49,9 +49,9 @@ Jestli jsi instalaci přeskočil{{a}}, projdi si ji teď.
 ## Repozitář
 
 Každý projekt, který budeš verzovat, musí mít pro sebe
-vyhrazený adresář.
-Vytvoř si tedy nový adresář a přepni se do něj (pomocí `cd`).
-Pak vytvoř gitový <em>repozitář</em> (angl. repository)
+vyhrazený adresář. My budeme tenhle kurz považovat za jeden projekt.
+Přejdi do složky, kde máš uložené všechny materiály.
+Tady vytvoř gitový <em>repozitář</em> (angl. repository)
 pomocí příkazu `git init`:
 
 ```ansi
