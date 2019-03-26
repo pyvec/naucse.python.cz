@@ -150,14 +150,14 @@ Zkontroluj v `gitk --all`, jak to vypadá.
 A pak zkus sloučit i druhou větev: `git merge doplneni-autora`.
 Tady to bude složitější: Může se stát, že změny nepůjdou
 automaticky sloučit a ve výstupu se objeví hláška
-`merge conflict` (slučovací konflikt).
+`merge conflict` (konflikt při slučování).
 V tom případě se na soubor podívej v editoru: objeví
 se v něm obsah z obou konfliktních verzí,
 společně se značkami, které upozorňují na místo
 kde konflikt nastal.
 Soubor uprav ho tak, jak by měl vypadat, ulož a zadej
 `git commit`.
- 
+
 Ať nastal konflikt nebo ne, vytvoří se „slučovací revize“
 (angl. *merge commit*), které – jako každé revizi – můžeš dát popisek.
 

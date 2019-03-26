@@ -26,7 +26,7 @@ Pro větší projekt by byl takový způsob práce
 neefektivní.
 
 Programátoři proto používají mocnější nástroje na
-správu verzí (angl. version control system. VCS).
+správu verzí (angl. version control system - VCS).
 Asi nejpopulárnější z nich je Git, se kterým
 se teď seznámíme.
 
@@ -36,7 +36,7 @@ se teď seznámíme.
 > [úvod]({{ lesson_url('beginners/cmdline') }}).
 > 
 > Nezapomeň: `$` na začátku se nepíše;
-> je tu proto, aby šlo poznat že jde o příkaz.
+> je tu proto, aby šlo poznat, že jde o příkaz.
 
 
 ## Instalace
