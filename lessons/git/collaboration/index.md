@@ -32,7 +32,7 @@ Zkopíruj si příkaz začínající na `git remote add origin ...` a vlož ho d
 
 Stejným způsobem si zkopíruj a vlož k sobě do terminálu příkaz `git push -u origin master`. Github se tě zeptá na tvé přihlašovací údaje. Vlož je (pozor, když budeš psát heslo, tak to bude vypadat, že vůbec nepíšeš, to je však jen z důvodu bezpečnosti) a pak už by si měla vidět `Branch 'master' set up to track remote branch 'master' from 'origin'.`
 
-To znamená, že tvoj lokální repozitář se právě nahrál na tzv. remote repozitář. Repozitář jsme označili jménem *origin*. Když se proklikneš do svého nového repozitáře na Githubu (`https://github.com/tvoje_jmeno/nazev_repozitare`), uvidíš tu přesnou kopii tvé složky s lekcemi.
+To znamená, že tvůj lokální repozitář se právě nahrál na tzv. remote repozitář. Repozitář jsme označili jménem *origin*. Když se proklikneš do svého nového repozitáře na Githubu (`https://github.com/tvoje_jmeno/nazev_repozitare`), uvidíš tu přesnou kopii tvé složky s lekcemi.
 
 
 ## Posílání změn <small>(<code>git push</code>)</small>

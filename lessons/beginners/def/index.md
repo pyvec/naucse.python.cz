@@ -278,3 +278,22 @@ Jestli ti to celé připadá zmatené a složité, dá se tomu zatím vyhnout
 dodržováním jednoho pravidla:
 *nepřiřazuj ve funkcích do proměnných, které existují i vně funkce.*
 (Parametr funkce se počítá jako přiřazení.)
+
+
+## Domácí úkol
+
+Přepiš program na kontrolu rodného čísla tak, aby odpovídal následujícímu zadání.
+Chování programu z pohledu uživatele by mělo zůstat stejné, změní se jenom zápis kódu uvnitř.
+
+Napiš tyto funkce. Každá z nich dostane jako argument řetězec s rodným číslem a nějak ho zanalyzuje:
+
+* (a) Je ve správném formátu: 6 číslice, lomítko, 4 číslice? (vrací True nebo False)
+* (b) Je dělitelné jedenácti? (vrací True nebo False)
+* (c) Jaké datum narození je v čísle zakódováno? (vrací trojici čísel – den, měsíc, rok)
+* (d) Jaké pohlaví je v čísle zakódováno? (vrací 'muž' nebo 'žena')
+
+
+Pro účely úkolu stačí, když bude program umět zpracovat čísla vydávaná od roku 1985. Reálná rodná
+čísla můžou být složitější :)
+
+Napiš program který se uživatele zeptá na rodné číslo a vypíše výsledky.
