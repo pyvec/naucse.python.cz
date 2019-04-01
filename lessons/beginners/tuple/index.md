@@ -3,20 +3,24 @@
 Když už známe seznam, podívejme se na jeho sestřičku: takzvanou
 <var>n</var>-tici (angl. *tuple*).
 
-<var>N</var>-tice, podobně jako seznam,
-může obsahovat <var>n</var> prvků. 
+<var>N</var>-tice může, podobně jako seznam, obsahovat <var>n</var> prvků. 
 <var>N</var>-tice se dvěma prvky je *dvojice*
 neboli *pár* (angl. *pair*); se třemi
 prvky *trojice* (angl. *3-tuple*),
 se čtyřmi *čtveřice* (angl. *4-tuple*), atd.
 
 > [note]
-> Existují i <var>n</var>-tice s jedním prvkem (hmm… „jednice”?)
+> Pro úplnost: existují i <var>n</var>-tice s jedním prvkem (hmm… „jednice”?)
 > a s nula prvky (prázdné <var>n</var>-tice, angl. *empty tuple*),
-> ale těmi se ze začátku nebudeme zabývat.
+> ale ty nejsou příliš užitečné a v praxi se moc nepoužívají.
 
 <var>N</var>-tice se tvoří jako seznamy, jen kolem sebe nemají hranaté závorky.
-Stačí čárky mezi prvky.
+Stačí čárky mezi prvky:
+
+```python
+dvojice = 'Pat', 'Mat'
+print(dvojice)
+```
 
 Chovají se skoro stejně jako seznamy, jen nejdou měnit.
 Nemají tedy metody jako `append`
@@ -28,13 +32,15 @@ a dají se z nich číst jednotlivé prvky.
 osoby = 'máma', 'teta', 'babička'
 for osoba in osoby:
     print(osoba)
-print('První je {}'.format(osoby[0]))
+
+prvni = osoby[0]
+print(f'První je {prvni}')
 ```
 
 > [note]
 > Vypadá to povědomě? Aby ne!
 > <var>N</var>-tice jsme už použil{{gnd('i', 'y', both='i')}} dříve:
-> `for jmeno in 'Hynek', 'Vilém', 'Jarmila':`
+> `for pozdrav in 'Ahoj', 'Hello', 'Ciao':`
 > ve skutečnosti používá <var>n</var>-tici!
 
 Když chceš <var>n</var>-tici předat do funkce,
@@ -64,11 +70,10 @@ def podil_a_zbytek(a, b):
 ```
 
 > [note]
-> Tahle funkce už mimochodem v Pythonu je: jmenuje se
-> `divmod` a je vždy k dispozici
-> (nemusí se importovat).
+> Funkci „podíl a zbytek“ je mimochodem k dispozici přímo v Pythonu
+> pod jménem `divmod`.
 
-Python umí ještě jeden trik: pokud chceš přiřadit
+Python umí ještě jeden trik, takzvané „rozbalení“: pokud chceš přiřadit
 do několika proměnných najednou, stačí je na levé
 straně rovnítka oddělit čárkou a na pravou stranu
 dát nějakou „složenou” hodnotu – třeba právě
@@ -78,13 +83,16 @@ dát nějakou „složenou” hodnotu – třeba právě
 podil, zbytek = podil_a_zbytek(12, 5)
 ```
 
-<var>N</var>-tice se k tomuto účelu hodí nejvíc, ale
-jde to se všemi hodnotami, které jdou použít ve `for`:
+> [note]
+> <var>N</var>-tice se k „rozbalování“ hodí nejvíc, protože mají
+> daný počet prvků.
+> Jde to ale použít se všemi hodnotami, které jdou použít ve `for`:
+>
+> ```python
+> x, o = 'xo'
+> jedna, dva, tri = [1, 2, 3]
+> ```
 
-```python
-x, o = 'xo'
-jedna, dva, tri = [1, 2, 3]
-```
 
 ## Funkce, které vracejí <var>n</var>-tice
 
