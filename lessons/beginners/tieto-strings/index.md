@@ -79,6 +79,16 @@ Další možnost je například takováto:
 He said his name is Fred and he is 42 years old.
 ```
 
+Můžeme dokonce použít ve složených závorkách i Python výrazy a metody:
+
+```
+>>> name = 'Fred'
+>>> seven = 7
+>>> f'''He said his name is {name.upper()}
+...    and he is {6 * seven} years old.'''
+'He said his name is FRED\n    and he is 42 years old.'
+```
+
 Starší ekvivalent stejného kódu je: 
 
 ```
