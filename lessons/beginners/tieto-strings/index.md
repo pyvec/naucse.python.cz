@@ -70,6 +70,15 @@ Od Pythonu 3.6 můžeme formátovat řetězec i takto:
 "Euler's constant is roughly 2.718281828459045."
 ```
 
+Další možnost je například takováto:
+
+```
+>>> name = 'Fred'
+>>> age = 42
+>>> f'He said his name is {name} and he is {age} years old.'
+He said his name is Fred and he is 42 years old.
+```
+
 Starší ekvivalent stejného kódu je: 
 
 ```
