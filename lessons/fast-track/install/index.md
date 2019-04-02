@@ -15,7 +15,7 @@ Použití prostředí má dvě hlavní výhody:
   A když se něco pokazí, adresář s virtuální prostředím můžeš prostě smazat
   a vytvořit znovu.
 
-Následují zrychlené instrukce; předpokládám, že Python (3.4 a vyšší)
+Následují zrychlené instrukce; předpokládám, že Python (3.6 a vyšší)
 už máš nainstalovaný a že znáš základy práce
 s [příkazovou řádkou]({{ lesson_url('beginners/cmdline') }}).
 
