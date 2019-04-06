@@ -193,7 +193,7 @@ Sometimes you want also delete all referenced objects values as well:
 >>> y
 {'key': 'value'}
 >>> x = {}
->>> x = {}
+>>> y
 {'key': 'value'}
 ```
 
