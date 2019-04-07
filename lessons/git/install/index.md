@@ -46,9 +46,8 @@ Git a nainstaluj si ho.
 
 Při instalaci se ujisti, že jsou vybrány tyto volby:
 
-* Adjusting your PATH enviroment -> Git from the command line and also from 3rd-party software
-
-* Configuring the line ending conversions -> Checkout Windows-style, commit Unix-style line endings
+* Adjusting your PATH enviroment: Git from the command line and also from 3rd-party software
+* Configuring the line ending conversions: Checkout Windows-style, commit Unix-style line endings
 
 Ostatní možnosti neměň.
 
