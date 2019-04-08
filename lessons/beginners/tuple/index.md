@@ -94,48 +94,6 @@ podil, zbytek = podil_a_zbytek(12, 5)
 > ```
 
 
-## Funkce, které vracejí <var>n</var>-tice
-
-`zip` je zajímavá funkce.
-Používá se ve `for` cyklech, podobně jako funkce `range`, která „dává” čísla.
-
-Když funkce `zip` dostane dva seznamy
-(či jiné věci použitelné ve `for`),
-„dává” dvojice, a to tak, že nejdřív spáruje
-první prvek jednoho seznamu s prvním prvkem
-druhého seznamu,
-pak druhý s druhým, třetí s třetím a tak dál.
-
-Hodí se to, když máš dva seznamy se stejnou
-strukturou – příslušné prvky k sobě „patří”
-a chceš je zpracovávat společně:
-
-```python
-osoby = 'máma', 'teta', 'babička', 'vrah'
-vlastnosti = 'hodná', 'milá', 'laskavá', 'zákeřný'
-for osoba, vlastnost in zip(osoby, vlastnosti):
-    print('{} je {}'.format(osoba, vlastnost))
-```
-
-Když `zip` dostane tři seznamy,
-bude tvořit trojice, ze čtyř seznamů nadělá čtveřice a tak dále.
-
-Další funkce, která vrací dvojice, je `enumerate`.
-Jako argument bere seznam (či jinou věc použitelnou
-ve `for`) a vždy spáruje index (pořadí v seznamu) s příslušným prvkem.
-Jako první tedy dá
-(0, *první prvek seznamu*), potom
-(1, *druhý prvek seznamu*),
-(2, *třetí prvek seznamu*)
-a tak dále.
-
-```python
-prvocisla = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-
-for i, prvocislo in enumerate(prvocisla):
-    print('Prvočíslo č.{} je {}'.format(i, prvocislo))
-```
-
 ## Malé <var>n</var>-tice
 
 Jak vytvořit <var>n</var>-tici s žádným nebo jedním prvkem? Takhle:
