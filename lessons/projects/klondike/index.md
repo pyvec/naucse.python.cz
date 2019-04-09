@@ -86,7 +86,7 @@ kde budeš tvořit hru a kde máš `karty.py`.
 Na ulehčení testování si nainstaluj modul `pytest-level`.
 Ten umožňuje pouštět jen určité testy – podle toho, jak jsi daleko.
 
-    python -m pip install pytest-level
+    python -m pip install pytest pytest-level
 
 Zkus pustit všechny testy. Asi ti neprojdou:
 
