@@ -125,3 +125,6 @@ So you better delete `print` from our module.
 From now on, we will work on bigger projects that contain
 more files. We recommend that you create a folder for each
 of them.
+
+
+You can find more info about [import and modules here](https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html#basics-of-the-python-import-and-syspath).
