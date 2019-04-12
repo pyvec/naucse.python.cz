@@ -541,8 +541,8 @@ to je mezi horním a dolním koncem pálky:
 ```python
 def obnov_stav(dt):
     ...
-    palka_min = pozice_mice[1] - VELIKOST_MICE / 2 - DELKA_PALKY / 2
-    palka_max = pozice_mice[1] + VELIKOST_MICE / 2 + DELKA_PALKY / 2
+    palka_min_y = pozice_mice[1] - VELIKOST_MICE / 2 - DELKA_PALKY / 2
+    palka_max_y = pozice_mice[1] + VELIKOST_MICE / 2 + DELKA_PALKY / 2
 ```
 
 Nyní když míček narazí do pravé nebo levé stěny
@@ -556,7 +556,7 @@ def obnov_stav(dt):
     ...
     # odrazeni vlevo
     if pozice_mice[0] < TLOUSTKA_PALKY + VELIKOST_MICE / 2:
-        if palka_min < pozice_palek[0] < palka_max:
+        if palka_min_y < pozice_palek[0] < palka_max_y:
             # palka je na spravnem miste, odrazime micek
             rychlost_mice[0] = abs(rychlost_mice[0])
         else:
@@ -566,7 +566,7 @@ def obnov_stav(dt):
 
     # odrazeni vpravo
     if pozice_mice[0] > SIRKA - (TLOUSTKA_PALKY + VELIKOST_MICE / 2):
-        if palka_min < pozice_palek[1] < palka_max:
+        if palka_min_y < pozice_palek[1] < palka_max_y:
             rychlost_mice[0] = -abs(rychlost_mice[0])
         else:
             skore[0] += 1
