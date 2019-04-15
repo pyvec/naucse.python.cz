@@ -37,7 +37,9 @@ def funkce():
     pass
 ```
 
-Tento zápis se zavináčem je jenom *syntaktický cukr*. Usnadňuje nám zápis, ale chová se přesně stejně jako následující kód, na kterém je lépe vidět, že `dekorator` je funkce:
+Tento zápis se zavináčem je jenom *syntaktický cukr*. Usnadňuje nám zápis, ale
+chová se přesně stejně jako následující kód, na kterém je lépe vidět, že
+`dekorator` je funkce:
 
 
 ```python
