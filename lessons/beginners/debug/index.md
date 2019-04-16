@@ -16,7 +16,7 @@ nedostatečný a že si chcete program projít krok za krokem.
 
 Abychom mohli debugovat, potřebujeme k tomu nástroj zvaný
 *debugger*. VSCode spolu s [rozšířením pro Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) ho má zabudovaný.
-V následujících kapitolách si ukážeme, jak ho používat.
+Ve zbytku této lekce si ukážeme, jak ho používat.
 
 ## Ovládání debuggeru
 Do debuggeru se přepneme kliknutím na tlačítko s přeškrtnutým broukem,
@@ -55,7 +55,8 @@ Breakpoint umístíme kliknutím vlevo od řádku, kde chceme, aby se debugger z
 ) }}
 
 Pokud klikneme na tlačítko *Continue* (modrý trojúhelník nebo <kbd>F5</kbd>),
-tak bude debugger pokračovat po další breakpoint, případně na konec programu.
+tak bude debugger pokračovat až do dalšího breakpointu,
+případně na konec programu.
 
 ### Step over, into, out
 Často budeme chtít pokračovat na další řádek kódu. Docílíme toho pomocí
@@ -109,8 +110,8 @@ Najdete ji ve spodním panelu v záložce vedle integrovaného terminálu.
     alt="(Debug konzole)",
 ) }}
 
-Představte si, že jste spustily Python z příkazové řádky
-a poté zadal stejný kód, kterým debugger prošel, než se dostal na breakpoint.
+Představ si, že jsi spustila Python z příkazové řádky
+a poté zadala stejný kód, kterým debugger prošel, než se dostal na breakpoint.
 V tu chvíli tedy máte k dispozici všechny inicializované globální proměnné,
 můžete volat funkce nebo pracovat s proměnným úplně stejně,
 jak jsme to dělali v lekcích na začátku kurzu.
