@@ -233,3 +233,8 @@ def tah_hrace(pole):
 print(tah_hrace('-x----'))
 ```
 {% endfilter %}
+
+
+## Domácí úkol
+
+Přepiš program na kontrolu rodného čísla pomocí try/except bloků tam, kde to dává smysl. Cílem úkolu je, aby program nikdy neskončil výjimkou, ale vypsal hlášku, v případě že zadané rodné číslo není validní. V tom případě je také zbytečné vykonávat další funkce na kontrolu dělitelnosti a zjištění data narození a pohlaví.
