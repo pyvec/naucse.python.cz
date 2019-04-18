@@ -73,7 +73,7 @@ Vybereš-li editor, klikni na jeho jméno a dostaneš se na instrukce ke stažen
 a nastavení.
 (Na tuhle stránku se pak už nemusíš vracet.)
 
-* [Visual Studio Code](https://code.visualstudio.com/) - V poslední době asi nejpopulárnější editor kódu. Nabízí mnoho funkcí, které v jiných editorech nejsou. Má velkou základnu uživatelů a vývojářů, takže se neustále vylepšuje. Pokud v budoucnu nechceš měnit editor doporučujeme tento.
+* [VSCode]({{ subpage_url('vscode') }}) - V poslední době asi nejpopulárnější editor kódu. Nabízí mnoho funkcí, které v jiných editorech nejsou. Má velkou základnu uživatelů a vývojářů, takže se neustále vylepšuje. Pokud v budoucnu nechceš měnit editor doporučujeme tento.
 
 * [Atom]({{ subpage_url('atom') }}) – Editor s jednoduchým designem vyvíjen samotným Githubem. Nabízí plnou podporu verzovacího nástroje
 git. Některé užitečné funkce ale neobsahuje (například našeptávač barev, možnost většího rozšíření a další). Pokud se ale rozhodneš ho použít neuděláš chybu.
