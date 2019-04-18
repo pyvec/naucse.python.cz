@@ -19,8 +19,7 @@ třetí od shora. Vypadá jako čtverec, který má v sobe ještě jeden.
 
 ## Spuštění kódu
 
-V editoru nenajdeš tlačtko spusit kód. Pokud tak chceš učinit naistaluj si toto [Rozšíření](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner).
-Kód se dá spustit i v terminálu. Co to je a jak na to se dozvíš v dalších lekcích.
+Kód, který jsi vytvořil můžeš spustit přes zabudovaný terminál. Co to je a jak ho používat se dozvíš v dalších lekcích.
 
 ## A to je vše!
 Vše ostatní je již nainstalováno. Teď se jen pusť do samotného programování!
