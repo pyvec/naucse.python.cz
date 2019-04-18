@@ -17,10 +17,6 @@ třetí od shora. Vypadá jako čtverec, který má v sobe ještě jeden.
 5. V nově otevřeném okně klikni na modré tlačítko "Install".
 6. Vyčkej, než se rozšíření nainstaluje. Editor se restartuje a zobrazí se ti okno nápovědy rozšíření.
 
-## Spuštění kódu
-
-Kód, který jsi vytvořil můžeš spustit přes zabudovaný terminál. Co to je a jak ho používat se dozvíš v dalších lekcích.
-
 ## Odesílání telemetrických dat
 
 Tento textový editor odesílá data o tvém používání aby zlepšil uživatelské prostředí. Pokud si nepřeješ aby se nějaká data odesílala
