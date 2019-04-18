@@ -75,7 +75,7 @@ a nastavení.
 
 * [Visual Studio Code](https://code.visualstudio.com/) - V poslední době asi nejpopulárnější editor kódu. Nabízí mnoho funkcí, které v jiných editorech nejsou. Má velkou základnu uživatelů a vývojářů, takže se neustále vylepšuje. Pokud v budoucnu nechceš měnit editor doporučujeme tento.
 
-* [Atom](https://atom.io/) – Editor s jednoduchým designem vyvíjen samotným Githubem. Nabízí plnou podporu verzovacího nástroje
+* [Atom]({{ subpage_url('atom') }}) – Editor s jednoduchým designem vyvíjen samotným Githubem. Nabízí plnou podporu verzovacího nástroje
 git. Některé užitečné funkce ale neobsahuje (například našeptávač barev, možnost většího rozšíření a další). Pokud se ale rozhodneš ho použít neuděláš chybu.
 
 Na Linuxu budeš mít pravděpodobně už nainstalovaný Gedit nebo Kate.
