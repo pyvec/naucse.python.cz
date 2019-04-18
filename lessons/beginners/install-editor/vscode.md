@@ -21,6 +21,11 @@ třetí od shora. Vypadá jako čtverec, který má v sobe ještě jeden.
 
 Kód, který jsi vytvořil můžeš spustit přes zabudovaný terminál. Co to je a jak ho používat se dozvíš v dalších lekcích.
 
+## Odesílání telemetrických dat
+
+Tento textový editor odesílá data o tvém používání aby zlepšil uživatelské prostředí. Pokud si nepřeješ aby se nějaká data odesílala
+navštiv prosím tento [link](https://code.visualstudio.com/docs/supporting/faq#_how-to-disable-telemetry-reporting).
+
 ## A to je vše!
 Vše ostatní je již nainstalováno. Teď se jen pusť do samotného programování!
 
