@@ -7,7 +7,7 @@
 Editor VSCode or Microsoftu podobně jako Atom funguje ihned po instalaci bez těžkého nastavování
 Pokud ale chceš v editoru psát Python kód (nebo obecně každý jazyk) nainstaluj si rozšíření pro daný jazyk. 
 
-## Jak na to:
+## Instalace rozšíření pro Python
 
 1. Otevři si VSCode editor.
 2. V sloupci úpně na levo(šedý) klikni na ikonku rozšíření. Ve výchozí pozici
