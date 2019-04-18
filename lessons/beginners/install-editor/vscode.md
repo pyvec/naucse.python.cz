@@ -4,7 +4,7 @@
 {% block name_gen %} Instalace VSCode{% endblock %}
 {% block setup %}
 
-Editor VSCode or Microsoftu podobně jako Atom funguje out-of-the-box (nemusí se nic nastavovat).
+Editor VSCode or Microsoftu podobně jako Atom funguje ihned po instalci bez těžkého nastavování
 Pokud ale chceš v editoru psát Python kód (nebo obecně každý jazyk) nainstaluj si rozšíření pro daný jazyk. 
 
 ## Jak na to:
