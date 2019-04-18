@@ -20,8 +20,7 @@ třetí od shora. Vypadá jako čtverec, který má v sobe ještě jeden.
 ## Spuštění kódu
 
 V editoru nenajdeš tlačtko spusit kód. Pokud tak chceš učinit naistaluj si toto [Rozšíření](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner).
-Není ale potřeba. Spustit kód můžeš i přes příkaz v terminálu. V horním menu terminálu zvol view, terminal.
-V otevřeném terminálu napiš příkaz: python <název souboru> a stiskni klávesu ENTER. Kód ti nyní běží v terminálu editoru.
+Kód se dá spustit i v terminálu. Co to je a jak na to se dozvíš v dalších lekcích.
 
 ## A to je vše!
 Vše ostatní je již nainstalováno. Teď se jen pusť do samotného programování!
