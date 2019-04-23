@@ -2,17 +2,21 @@
 {% extends lesson.slug + '/_base.md' %}
 
 {% block name_gen %}Instalace Visual Studio Code{% endblock %}
-{% block setup %}
 
+{% block install %}
 ## Stažení a instalace 
 
 Editor si můžeš stáhnout z jeho [domovské stránky](https://code.visualstudio.com/).
 Vyber na ní zelené tlačítko Download a vyber instalátor pro svůj systém.
 Dále se řiď instrukcemi instalátoru jako u každého jiného programu.
+{% endblock %}
 
-## Odesílání telemetrických dat
+{% block setup %}
+Ve Visual Studio Code se nemusí nic nastavovat, funguje „od výroby“ tak, jak má.
 
-Tento textový editor odesílá data o tvém používání ([nejspíš včetně např.
+### Odesílání telemetrických dat
+
+Tento textový editor ale odesílá data o tvém používání ([nejspíš včetně např.
 obsahu otevřených souborů][privacy]).
 Pokud si nepřeješ aby se data odesílala, můžeš odesílání zrušit:
 
@@ -23,8 +27,5 @@ Viz též [původni postup v angličtině](https://code.visualstudio.com/docs/s
 
 [privacy]: https://privacy.microsoft.com/en-us/privacystatement
 
-
-## A to je vše!
-Vše ostatní je již nainstalováno/nastaveno. Teď se jen pusť do samotného programování!
 
 {% endblock %}
