@@ -4,8 +4,6 @@
 {% block name_gen %}Instalace Visual studio code{% endblock %}
 {% block setup %}
 
-Editor Visual studio code (nebo zkráceně VS Code)od Microsoftu podobně jako Atom funguje ihned po instalaci bez těžkého nastavování.
-
 ## Stažení a instalace 
 
 Editor si můžeš stáhnout z jeho [domovské stránky](https://code.visualstudio.com/).
