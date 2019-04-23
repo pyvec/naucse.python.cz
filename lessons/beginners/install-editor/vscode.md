@@ -8,9 +8,9 @@ Editor Visual studio code (nebo zkráceně VS Code)od Microsoftu podobně jako A
 
 ## Stažení a instalace 
 
-Editor jsi můžeš stáhnout na této [stránce] (https://www.code.visualstudio.com/.com). 
-Na hlavní stránce vyber zelené tlačítko download a vyber instalátor pro svůj systém. 
-Dále se jen řiď instrukcemi instalátoru jako u každého jiného programu. 
+Editor si můžeš stáhnout z jeho [domovské stránky](https://code.visualstudio.com/).
+Vyber na ní zelené tlačítko Download a vyber instalátor pro svůj systém.
+Dále se řiď instrukcemi instalátoru jako u každého jiného programu.
 
 ## Odesílání telemetrických dat
 
