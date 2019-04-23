@@ -1,7 +1,7 @@
 {% set editor_name = 'Visual Studio Code' %} {% set editor_url = 'https://code.visualstudio.com' %} 
 {% extends lesson.slug + '/_base.md' %}
 
-{% block name_gen %}Instalace Visual studio code{% endblock %}
+{% block name_gen %}Instalace Visual Studio Code{% endblock %}
 {% block setup %}
 
 ## Stažení a instalace 
