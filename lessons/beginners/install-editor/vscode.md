@@ -14,8 +14,17 @@ Dále se jen řiď instrukcemi instalátoru jako u každého jiného programu.
 
 ## Odesílání telemetrických dat
 
-Tento textový editor odesílá data o tvém používání aby zlepšil uživatelské prostředí. Pokud si nepřeješ aby se nějaká data odeslala, 
-navštiv prosím tento [link](https://code.visualstudio.com/docs/supporting/faq#_how-to-disable-telemetry-reporting).
+Tento textový editor odesílá data o tvém používání ([nejspíš včetně např.
+obsahu otevřených souborů][privacy]).
+Pokud si nepřeješ aby se data odesílala, můžeš odesílání zrušit:
+
+* Otevři **File** > **Preferences** > **Settings** (macOS: **Code** > **Preferences** > **Settings**).
+* Vyhledej `telemetry.enableTelemetry` a odškrtni tento záznam.
+
+Viz též [původni postup v angličtině](https://code.visualstudio.com/docs/supporting/faq#_how-to-disable-telemetry-reporting).
+
+[privacy]: https://privacy.microsoft.com/en-us/privacystatement
+
 
 ## A to je vše!
 Vše ostatní je již nainstalováno/nastaveno. Teď se jen pusť do samotného programování!
