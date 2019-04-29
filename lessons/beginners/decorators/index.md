@@ -318,7 +318,7 @@ def co_se_deje(func):
     return nahradni_funkce
 ```
 
-Do n-tice `argđ` posbíráme všechny poziční argumenty, do slovníku `kwargs`
+Do n-tice `args` posbíráme všechny poziční argumenty, do slovníku `kwargs`
 všechny pojmenované argumenty. A při volání dekorované funkce je všechny zase
 předáme dál.
 
