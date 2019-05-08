@@ -34,7 +34,7 @@ se teď seznámíme.
 > Budeme hodně pracovat s příkazovou řádkou.
 > Jestli se s ní ještě nekamarádíš, koukni se na
 > [úvod]({{ lesson_url('beginners/cmdline') }}).
-> 
+>
 > Nezapomeň: `$` na začátku se nepíše;
 > je tu proto, aby šlo poznat, že jde o příkaz.
 
@@ -346,7 +346,7 @@ Můj popisek bude znít takhle:
 Rozdělení dlouhých řádků
 
 Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
-takhle se to líp čte. (Ale co si budeme povídat, hlavní 
+takhle se to líp čte. (Ale co si budeme povídat, hlavní
 důvod je ukázat, co dělá git diff.)
 ```
 
@@ -367,7 +367,7 @@ Author: Adéla Novotná <adela.novotna@example.cz>
 Date:   Mon Mar 20 14:51:34 2017 +0100
 
     Rozdělení dlouhých řádků
-    
+
     Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
     takhle se to líp čte. (Ale co si budeme povídat, hlavní
     důvod je ukázat, co dělá git diff.)
@@ -414,7 +414,7 @@ Author: Adéla Novotná <adela.novotna@example.cz>
 Date:   Mon Mar 20 14:51:34 2017 +0100
 
     Rozdělení dlouhých řádků
-    
+
     Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
     takhle se to líp čte. (Ale co si budeme povídat, hlavní
     důvod je ukázat, co dělá git diff.)
