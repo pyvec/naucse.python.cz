@@ -40,3 +40,12 @@ Pak zmáčkni **Install now** a dále se drž instrukcí.
 Máš-li otevřenou příkazovou řádku, po instalaci Pythonu ji zavři a otevři
 novou.
 Instalace mění systémové nastavení, které se musí načíst znovu.
+
+Pokud chceš nainstalovat doplňování příkazů v interaktivní příkazové řádce, nasinstalujte tuto funkcí pomocí následujících příkazů:
+
+```
+pip install pyreadline
+
+pip install ipython[shell]
+```
+
