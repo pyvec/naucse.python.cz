@@ -103,7 +103,7 @@ Hodnoty sloupců, které neuvedeme, zůstanou nezměněné.
 
 ```sql
 -- nastaví všem robotům typ na AGGRESSIVE
-UPDATE ROBOT SET TYPE = "AGGRESSIVE"
+UPDATE ROBOT SET TYPE = "AGGRESSIVE";
 ```
 
 ### DELETE
@@ -112,7 +112,7 @@ A konečně poslední oprací v CRUD je mazání. V SQL se záznamy mažou pomoc
 
 ```sql
 -- smaže všechny roboty
-DELETE FROM ROBOT
+DELETE FROM ROBOT;
 ```
 
 ### WHERE
@@ -148,7 +148,7 @@ světa. Pozor ale na to, že ne každý na první pohled unikátní identifikát
 *skutečně* unikátní - je například možné, aby dvě osoby měly stejné rodné číslo.
 Je tedy obecně lepší používat uměle vytvořené primární klíče.
 
-Cizí klíče se používají proto, že zrychlují operace nad daty (rychle se podle
+Primární klíče se používají proto, že zrychlují operace nad daty (rychle se podle
 nich vyhledává) a také proto, že snižují riziko duplicitních dat v databázi.
 Při vytváření tabulky zadáme u sloupce, který má být primárním klíčem, vlastnost
 `PRIMARY KEY`.
