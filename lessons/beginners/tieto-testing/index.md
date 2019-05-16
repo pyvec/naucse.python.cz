@@ -382,7 +382,7 @@ test_um_pytest.py::test_strings_a_3 PASSED                                      
 ```
 
 
-#### pytest fixtures
+#### pytest setup and teardown
 
 Although unittest does allow us to have setup and teardown, pytest extends this quite a bit.
 We can add specific code to run:
@@ -446,7 +446,7 @@ class TestUM:
     def test_strings_b_2(self):
         print('test_strings_b_2  <============================ actual test code')
         assert multiply('b',2) == 'bb'
-```
+``
 
 Expected result:
 
@@ -466,7 +466,12 @@ test_um_pytest2.py::TestUM::test_strings_b_2 PASSED                             
 ========================================================================================================== 4 passed in 0.08 seconds ==========================================================================================================
 ```
 
-You can also run unittests and doctest with pytest.:w
+You can also run unittests and doctest with pytest.
+
+
+### PyTest XUnit Style Setup and Teardown
+
+
 
 
 ### Other testing tools
@@ -546,8 +551,10 @@ in that case, they will be converted into a JSON response.
 
 ### Homework
 
-Write simple unit tests with following test cases:
+Write simple production function and their unit tests with following test cases:
 
+- Function leap_year()
+- Function leap_year will return True/False based on status of year, if is leap or not
 - Returns false	for not divisible by 4
 - Returns true for divisible by 4 but not 100 and 400
 - Returns false for divisible by 4 but is divisible by 100 but not 400
