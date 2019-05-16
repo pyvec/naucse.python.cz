@@ -1,5 +1,29 @@
 ## Testing
 
+### Test Driven Development (TDD)
+
+
+> TDD is a process where the developer takes personal responsibility for the quality of his code.
+
+Steps:
+
+* Unit tests are written before production code
+* Don't write all tests or production code at once
+* Small chunks of production code and tests are written together
+
+Benefits:
+
+* Gives you confidence to change a code
+* Gives you immediate feedback
+* Documents what the code is doing
+* Drives good object oriented design
+
+### TDD Work Flow
+* Write a failing unit test (red phase)
+* Make the test pass (green phase)
+* Refactor the code to make it clean (refactor phase)
+* Repeat until the feature is complete
+
 Different kind of tests:
 
 * Unit tests: Make sure a class or a function works as expected in isolation
@@ -517,3 +541,24 @@ in that case, they will be converted into a JSON response.
      img=static('sphinx.png'),
      alt='Sphinx',)
 }}
+
+
+
+### Homework
+
+Write simple unit tests with following test cases:
+
+- Returns false	for not divisible by 4
+- Returns true for divisible by 4 but not 100 and 400
+- Returns false for divisible by 4 but is divisible by 100 but not 400
+- Returns true for divisible by 4, divisible by 100 and divisible by 400
+
+Use PyTest framework.
+
+
+
+
+
+
+
+
