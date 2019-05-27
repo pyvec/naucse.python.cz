@@ -34,14 +34,13 @@ Kdybys měla napsat i třídu pro kuřátka, kůzlátka,
 slůňátka a háďátka, bez Ctrl+C by to bylo docela nudné.
 A protože jsou programátoři líní psát stejný kód
 několikrát (a hlavně ho potom udržovat), vymysleli
-mechanismus, jak se toho vyvarovat. Jak?
+mechanismus, jak se toho vyvarovat.
 
 Koťátka i štěňátka jsou zvířátka.
 Můžeš si vytvořit třídu společnou pro všechna
 zvířátka a do ní napsat všechno, co je společné.
-Ve třídách pro jednotlivé druhy zvířat pak zbude jen
-to, co se liší.
-V Pythonu se to dělá takto:
+Ve třídách pro jednotlivé druhy zvířat pak zbude jen to, co se liší.
+V Pythonu se to dělá takto:
 
 ```python
 class Zviratko:
@@ -89,8 +88,7 @@ Když potom Python hledá nějakou metodu
 a nenajde ji přímo ve třídě daného objektu (u nás
 `Kotatko`), podívá se do nadtřídy.
 Takže všechno, co je definované pro
-`Zviratko`, platí i pro koťátka.
-Pokud to tedy výslovně nezměníš.
+`Zviratko`, platí i pro koťátka – dokud to výslovně nezměníš.
 
 
 ## Přepisování metod a `super()`
@@ -160,15 +158,15 @@ Dokonce se to dělá poměrně často!
 
 Programátoři nezavedli dědičnost jen proto, že jsou
 líní a nechtějí psát dvakrát stejný kód.
-To je sice dobrý důvod, ale nadtřídy mají ještě jednu
-důležitou vlastnost: když víme, že každé
+To je sice dobrý důvod, ale nadtřídy mají jednu
+důležitější vlastnost. Když víš, že každé
 `Kotatko` nebo `Stenatko`
 nebo jakákoli jiná podtřída je zvířátko,
-můžeme si udělat seznam zvířátek s tím,
-že nám pak bude jedno, jaká přesně zvířátka to jsou:
+můžeš si udělat seznam zvířátek s tím,
+že pak bude jedno, jaká přesně zvířátka to jsou:
 
-{# XXX: last 4 lines are new and should be highlighted #}
 ```python
+{# XXX: perhaps put these definitions back, but highlight the 4 lines below?
 class Zviratko:
     def __init__(self, jmeno):
         self.jmeno = jmeno
@@ -185,7 +183,7 @@ class Kotatko(Zviratko):
 class Stenatko(Zviratko):
     def zastekej(self):
         print("{}: Haf!".format(self.jmeno))
-
+#}
 zviratka = [Kotatko('Micka'), Stenatko('Azorek')]
 
 for zviratko in zviratka:
@@ -210,7 +208,7 @@ protože každé koťátko *je* zvířátko.
 > V takovém případě dědičnost nepoužívej.
 > I když jak auto tak volant se dají „otočit doprava”,
 > u každého to znamená něco jiného – a určitě nejde auto
-> použít kdekoli, kde bych chtěl{{a}} použít volant.
+> použít kdekoli, kde bys chtěl{{a}} použít volant.
 > Takže v tomto případě je lepší si říct „každé auto
 > *má* volant”, stejně jako „každé kotě
 > *má* jméno”, udělat dvě nezávislé třídy a napsat něco jako:
@@ -272,5 +270,3 @@ z ní dědit má.
 
 A to je zatím o třídách vše. Už toho víš dost na to,
 aby sis napsal{{a}} vlastní zoo :)
-
-Nebo [hru](../../projects/asteroids/)?
