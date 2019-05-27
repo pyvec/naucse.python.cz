@@ -32,6 +32,7 @@ Objekty spojují data a funkčnost dohromady.
 > Funkce `len` ale funguje i na
 > objektech, které s řetězci nemají nic společného.
 
+
 # Třídy
 
 Data každého objektu jsou specifická pro konkrétní
@@ -57,8 +58,8 @@ Tohle společné chování určuje
 *typ* (angl. *type*) neboli *třída* (angl. *class*) daného objektu.
 
 > [note]
-> V historických verzích Pythonu byl rozdíl mezi „typem“
-> a „třídou“, ale dnes už jsou to synonyma.
+> V jiných jazycích než Python 3 můžou slova „typ“ a „třída“ označovat různé
+> věci. Pro nás to budou synonyma.
 
 Typ objektu umí zjistit funkce `type`:
 
@@ -75,9 +76,14 @@ Typ objektu umí zjistit funkce `type`:
 <class '_io.TextIOWrapper'>
 ```
 
-Takže `type` vrací nějaké třídy.
-A co je to třída? Popis, jak se chovají všechny objekty
-daného typu.
+A co je to třída? Třída je *popis*, jak se všechny objekty
+daného typu chovají.
+
+Nepříklad `<class 'int'>` obsahuje všechno, co je společné všem celým číslům:
+že (a jak) se dají sčítat, jak takové číslo převést na řetězec, a tak dále.
+
+
+## Tvoření objektů třídy
 
 Většinu tříd jde navíc v Pythonu zavolat, jako by
 to byly funkce, a vytvořit tak nový objekt dané třídy:
@@ -95,7 +101,7 @@ Chová se to stejně jako funkce `str`! Není to podivné?
 Tady se musím omluvit:
 [materiály k funkcím](../functions/)
 tak trochu lhaly. Funkce `str`, `int`, `float` apod. totiž vůbec
-nejsou funkce – jsou to právě třídy.
+nejsou funkce – jsou to právě třídy:
 
 ```pycon
 >>> str
@@ -108,8 +114,7 @@ True
 
 Ale dají se, podobně jako funkce, zavolat.
 Třída tedy většinou obsahuje nejen „popis“, jak se
-objekty daného typu budou chovat, ale umí i objekty
-daného typu vytvořit.
+její objekty budou chovat, ale „umí“ takové objekty i vytvořit.
 
 ## Vlastní třídy
 
@@ -149,7 +154,7 @@ aby se nepletly s „normálními“ hodnotami.
 
 V těle třídy můžeš definovat metody, které vypadají
 úplně jako funkce – jen mají první argument `self`.
-Ten si ale vysvětlíme později – zamňoukání má přednost:
+Ten si ale vysvětlíme později – napřed zkus zamňoukat:
 
 ```python
 # Vytvoření konkrétního objektu
@@ -161,22 +166,28 @@ kotatko.zamnoukej()
 
 V tomhle příkladu si dej pozor na velikost písmen:
 `Kotatko` (s velkým K) je třída – popis, jak
-se koťátka chovají. `kotatko` (s malým k)
+se koťátka chovají.
+`kotatko` (s malým k)
 je konkrétní objekt (angl. *instance*) té třídy:
 hodnota, která reprezentuje kotě.
-Onen konkrétní objekt vytvoříme zavoláním třídy,
-stejně jako zavoláním `str()` se dá vytvořit
-konkrétní řetězec.
+
+Když definuješ třídu (pomocí bloku `class`), neznamená to, že v tvém
+programu je nějaké koťátko.
+Třída je jako recept nebo manuál: když si koupíš kuchařku, teoreticky víš
+jak upéct dort, jak bude takový dort vypadat a že se dá sníst.
+Ale neznamená to ještě, že máš samotný dort!
+
+Konkrétní objekt vytvoříš až zavoláním třídy.
+Stejně jako zavoláním `str()` se dá vytvořit konkrétní řetězec,
+volání `Kotatko()` vytvoří nový objekt tvé třídy, který už můžeš použít.
 
 Mňau!
 
 ## Atributy
 
-Objekty vytvořené z „vlastních“ tříd mají jednu
-vlastnost, kterou třídy jako `str`
+Objekty vytvořené z „vlastních“ tříd mají funkčnost, kterou třídy jako `str`
 nedovolují: možnost si definovat vlastní
-*atributy* – informace, které se uloží k danému
-objektu.
+*atributy* – informace, které se uloží k danému objektu.
 Atributy se označují tak, že mezi hodnotu a jméno
 jejího atributu napíšeš tečku:
 
@@ -193,9 +204,9 @@ print(micka.jmeno)
 
 Na začátku jsme si řekl{{gnd('i', 'y', both='i')}}, že objekty spojují chování
 a data.
-Chování je definováno ve třídě, data se schovávají
-právě v atributech jednotlivých objektů.
-Podle atributů jako jméno můžeš jednotlivá koťátka
+Chování je definováno ve třídě; data se schovávají
+právě v atributech jednotlivých objektů.
+Podle atributů jako `jmeno` pak můžeš jednotlivá koťátka
 rozlišit.
 
 > [note]
@@ -213,13 +224,12 @@ rozlišit.
 
 ## Parametr `self`
 
-A teď se na chvíli vrátíme k metodám,
-konkrétně k parametru `self`.
+Teď se na chvíli vraťme k metodám. Konkrétně k parametru `self`.
 
 Každá metoda má přístup ke konkrétnímu objektu, na
 kterém pracuje, právě přes argument `self`.
-Teď, když máš koťátka pojmenovaná,
-můžeš pomocí `self` rozjet dialog:
+Teď, když máš koťátka pojmenovaná, můžeš v metodě `zamnoukej` použít `self`
+a dostat se tak ke jménu daného koťátka:
 
 ```python
 class Kotatko:
@@ -236,23 +246,18 @@ mourek.zamnoukej()
 micka.zamnoukej()
 ```
 
-Co se stalo? Výraz `mourek.zamnoukej` udělá *metodu*, která, když ji zavoláš,
-předá objekt `mourek` jako první argument
-funkce `zamnoukej`.
+Co se stalo? Výraz `mourek.zamnoukej` udělá *metodu*.
+Když ji pak zavoláš (`mourek.zamnoukej()`),
+objekt `mourek` se předá funkci `zamnoukej` jako první argument, `self` .
 
 > [note]
-> Tohle je to, čím se *metoda* liší od normální *funkce*:
-> metoda si „pamatuje“ objekt, na kterém pracuje.
-
-A takový první argument, který obsahuje konkrétní
-objekt právě definované třídy, se tradičně pojmenovává `self`.
-(Když ho pojmenuješ jinak, ostatní programátoři se na tebe budou koukat hodně
-divně.)
+> Onen první argument metody můžešw teoreticky pojmenovat i jinak než `self`,
+> ale když to uděláš, ostatní programátoři se na tebe budou koukat hodně divně.
 
 
-A může taková metoda brát víc než jeden argument?
+Může taková metoda brát víc než jeden argument?
 Může – `self` se doplní na první místo,
-a zbytek argumentů se vezme z volání metody.
+zbytek argumentů se vezme z volání metody.
 Třeba:
 
 ```python
@@ -270,26 +275,32 @@ mourek.snez('ryba')
 
 ## Metoda `__init__`
 
-A když jsme u argumentů, je ještě jedno místo,
-kde můžeš třídě poslat argumenty: když vytváříš
-nový objekt (voláním třídy).
-Dá se tak hezky vyřešit problém, který možná vidíš
-v předchozím kódu: aktuálně každé koťátko potřebuje,
-aby se mu po vytvoření nastavilo jméno, jinak
-metoda `zamnoukej` nebude fungovat.
-Třída se ale dá udělat i tak, že půjde jméno nastavit
-už při vytváření, takhle:
+Co se stane, když koťátku zapomeneš nastavit jméno?
+Metoda `zamnoukej` přestane fungovat:
+
+```pycon
+>>> micka = Kotatko()
+>>> micka.snez('ryba')
+Traceback (most recent call last):
+  File "<zvirata.py>", line 5, in snez
+AttributeError: 'Kotatko' object has no attribute 'jmeno'
+```
+
+Bylo by dobré zařídit, aby každé kotě muselo být pojmenované.
+Jméno potřebujeme předat už při vytváření kotěte, nějak takhle:
 
 ```python
 mourek = Kotatko(jmeno='Mourek')
 ```
 
-Na tohle používá Python metodu,
+To ale zatím nefunguje; musíme na to třídu `Kotatko` připravit.
+
+Použijeme na to speciální metodu,
 která se jmenuje `__init__` (dvě podtržítka,
 `init`, dvě podtržítka).
 To „opodtržítkování“ znamená, že tohle jméno je nějakým způsobem speciální.
-Metoda `__init__` se totiž zavolá
-automaticky, když se vytvoří nový objekt.
+Metodu `__init__` totiž Python zavolá
+automaticky, když vytvoří nový objekt.
 Dá se tedy napsat:
 
 ```python
@@ -307,11 +318,11 @@ mourek = Kotatko('Mourek')
 mourek.zamnoukej()
 ```
 
-A teď už není možnost, jak vytvořit koťátko bez jména,
-takže `zamnoukej` bude vždycky fungovat.
+A teď už není možnost, jak vytvořit koťátko beze jména.
+Metoda `zamnoukej` bude vždycky fungovat.
 
-Podobných „opodtržítkovaných“ metod je víc,
-třeba `__str__` se volá, když je potřeba
+Podobných „opodtržítkovaných“ (speciálních) metod je víc.
+Třeba `__str__` se volá, když je potřeba
 převést objekt na řetězec:
 
 ```python
@@ -332,48 +343,6 @@ mourek = Kotatko('Mourek')
 print(mourek)
 ```
 
-## Cvičení: Kočka
-
-Teď, když už umíš dělat koťátka, zkus vytvořit třídu pro kočku.
-
-- Kočka umí mňoukat metodou `zamnoukej`.
-- Kočka má na začátku (při vytvoření) 9 životů
-(nemůže mít nikdy víc než 9 nebo míň než 0!).
-- Kočka umí říct, jestli je živá (nemá 0 životů), metodou `je_ziva`.
-- Kočka může ztratit život metodou `uber_zivot`.
-- Kočku můžeš nakrmit metodou `snez`, která bere 1 argument -
-nějaké konkrétní jídlo (řetězec). Pokud je toto jídlo `"ryba"`, kočce se obnoví
-jeden život (pokud teda už není mrtvá, nebo nemá maximální počet životů).
-
-{% filter solution %}
-```python
-class Kocka:
-    def __init__(self):         # Init funkce nemusi brat jako parametr
-        self.pocet_zivotu = 9   # pocet zivotu, ten je pokazde 9.
-
-    def zamnoukej(self):
-        print("Mnau, mnau, mnauuu!")
-
-    def je_ziva(self):
-        return self.pocet_zivotu > 0
-
-    def uber_zivot(self):
-        if not self.je_ziva():
-            print("Nemuzes zabit uz mrtvou kocku!")
-        else:
-            self.pocet_zivotu -= 1
-
-    def snez(self, jidlo):
-        if not self.je_ziva():
-            print("Je zbytecne krmit mrtvou kocku!")
-            return
-        if jidlo == "ryba" and self.pocet_zivotu < 9:
-            self.pocet_zivotu += 1
-            print("Kocka spapala rybu a obnovil se ji jeden zivot.")
-        else:
-            print("Kocka se krmi.")
-```
-{% endfilter %}
 
 A to je o samotných třídách zatím vše.
 [Příště](../inheritance/) si něco řekneme o dědičnosti.
