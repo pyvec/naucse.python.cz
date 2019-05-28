@@ -469,11 +469,6 @@ test_um_pytest2.py::TestUM::test_strings_b_2 PASSED                             
 You can also run unittests and doctest with pytest.
 
 
-### PyTest XUnit Style Setup and Teardown
-
-
-
-
 ### Other testing tools
 
 #### Unit tests
@@ -561,11 +556,3 @@ Write simple production function and their unit tests with following test cases:
 - Returns true for divisible by 4, divisible by 100 and divisible by 400
 
 Use PyTest framework.
-
-
-
-
-
-
-
-
