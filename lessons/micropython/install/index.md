@@ -47,7 +47,7 @@ oprav ji podle následujícího návodu a zkus to znova.
   [703177.059454] usb 1-1.1: New USB device strings: Mfr=0, Product=2, SerialNumber=0
   [703177.059457] usb 1-1.1: Product: USB2.0-Serial
   [703177.060474] ch341 1-1.1:1.0: ch341-uart converter detected
-  [703177.062781] usb 1-1.1: ch341-uart converter now attached to <b>ttyUSB0</b>
+  [703177.062781] usb 1-1.1: ch341-uart converter now attached to <strong>ttyUSB0</strong>
   </pre>
 
   Máš-li místo `ttyUSB0` něco jiného, v příkazu `picocom` to použij místo
