@@ -55,7 +55,7 @@ Mělo by to vypadat jako na tomto obrázku:
 
 Potom zapoj USB kabel. Dioda by se měla rozsvítit!
 
-Zkus si, co se stane, když obě nožičky diody zapojíš ke `G`.
+Zkus si, co se stane, když diodu zapojíš naopak.
 
 {{ figure(
     img=static("circuits/led_bb_off.svg"),

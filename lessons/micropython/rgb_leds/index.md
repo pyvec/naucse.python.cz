@@ -22,11 +22,9 @@ Pojďme pásek zapojit:
 
 * `GND` pásku (bílý drátek) připoj na `G`
 * `DI` (*data in* – zelený drátek) připoj na `D4`
-* `+5V` (červený drátek) připoj:
-  * na `VU`, má-li tvoje destička tuhle nožičku,
-  * jinak na `VIN`.
+* `+5V` (červený drátek) připoj na `VIN`.
 
-Nožička `VU`/`VIN` poskytuje 5 voltů.
+Nožička `VIN` poskytuje 5 voltů.
 Pozor na ni: nepřipojuj na ni zařízení, které se s pěti volty nevyrovnají.
 
 Máš-li zapojeno, můžeš začít programovat.
