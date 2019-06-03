@@ -49,7 +49,7 @@ připojit. Kdyby to nepomohlo, motorek ti dneska
 nebude fungovat. Za chvíli si řekneme proč; zatím (jsi-li na kurzu)
 se přidej do dvojice k někomu, komu to funguje.
 
-## Poznámka o napájení a napětí
+## Poznámka o napájení
 
 K tomu, aby se otočil motor, je potřeba mnohem víc
 energie, než k rozsvícení světýlka.
@@ -58,35 +58,17 @@ proto můžou být s motorkem problémy.
 
 Jak to řešit, až si přestaneš hrát a budeš chtít motorkem otáčet „doopravdy”?
 
-Elektronika, která je na našem modulu mimo
-malou destičku s „mozkem” má dva hlavní úkoly:
+Servo a destičku můžeš napájet zvlášť:
+například servo z baterií a destičku dál z USB.
+V tomhle případě je důležité:
 
-* Převádět *komunikaci* z USB, která je
-  celkem složitě zakódovaná, na něco čemu
-  malé zařízení rozumí
-  (konkrétně protokol [UART](https://en.wikipedia.org/wiki/UART) přes nožičky `TX` a `RX`).
-* Převádět napětí 5 V, které poskytuje USB,
-  na 3,3 V které potřebuje modul.
+* Napětí baterie musí odpovídat tomu, co zvládne tvůj servomotor
+* Všechny připojené součástky musí mít propojenou zem (`GND` na destičce,
+  hnědý drát servomotoru, `-` baterie).
 
-Když energie z USB přestane stačit, dá se koupit
-zařízení, které zvládne převádět komunikaci
-a napájení vyřešit z jiného zdroje 5 V.
-Kdybys to někdy zkoušel{{a}}, příslušné zařízení
-koupíš pod názvem *USB-TTL adapter* a vypadá
-nejčastěji takhle:
+Zapojení pak bude následující:
 
-{{ figure(
-    img=static("usb-ttl.png"),
-    alt="USB-TTL adapter",
-) }}
+* `-` baterie na hnědý drát (zem) serva *a zároveň* na `GND` desky
+* `+` baterie na červený drát (napájení) serva
+* `D4` desky na oranžový drát (data) serva
 
-K modulu pak tento převodník a zdroj napětí připojíš takto:
-
-<!-- XXX: obrázek -->
-* `GND` na převodníku – `G` na desce
-* `RX` na převodníku – `TX` (!) na desce
-* `TX` na převodníku – `RX` (!) na desce
-* `+5V` na zdroji napětí na `VIN` na desce
-* Zem na zdroji napětí na `G` na desce
-
-Pozor, 5V nepřipojuj jinam než na `VIN`!

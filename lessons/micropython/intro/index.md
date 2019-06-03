@@ -6,7 +6,8 @@ program, který ovládá všechny ty drátky,
 čipy a světýlka, co v ní jsou.
 My používáme firmware zvaný *MicroPython*,
 který navíc rozumí jazyku Python a umí provádět pythonní příkazy. Zkus si to!
-Tři zobáčky, které vyskočily v minulém kroku, přišly
+Tři zobáčky, které vyskočí když se k destičce připojíš (příp. když pak
+zmáčkneš Enter), přišly
 ze zařízení, které teď netrpělivě čeká na příkaz.
 
 ```pycon
@@ -36,7 +37,7 @@ počítači můžeš naimportovat, v MicroPythonu chybí.
 U modulů jako `turtle` je to pochopitelné,
 ale v rámci šetření místem chybí i moduly jako `random`.
 Většinou to příliš nevadí – malá zařízení se používají
-na jiné věci než ty velké – ale je potřeba si na to
+na jiné věci než ta velká – ale je potřeba si na to
 dát pozor.
 
 Některé věci ze standardní knihovny se dají najít
