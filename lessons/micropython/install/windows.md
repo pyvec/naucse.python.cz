@@ -43,7 +43,7 @@ a *Flow Control* na *None*:
 ) }}
 
 Potom zpátky v kategorii *Session* můžeš nastavení uložit pro příště:
-do políčka *Saved Sessions* zadej *MicroPython* a klikni OK.
+do políčka *Saved Sessions* zadej *MicroPython* a klikni *Save*.
 
 Nakonec klikni *Open*. Mělo by se otevřít
 okýnko podobné konzoli, kde se, když zmáčkneš
