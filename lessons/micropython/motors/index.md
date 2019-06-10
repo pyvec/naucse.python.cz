@@ -41,20 +41,20 @@ Co to pro nás znamená, je vysvětleno níže.)
 Čip a motorky zapoj následovně:
 
 * Napájení
-  * V<sub>logic</sub> k 5V – `Vin` na destičce
-  * V<sub>power</sub> k `+` na baterii
-  * GND (jedno který) k `GND` na destičce
-  * GND (jedno který) k `-` na baterii
+  * V<sub>logic</sub> čipu k 5V – `Vin` na destičce
+  * V<sub>power</sub> čipu k `+` na baterii
+  * GND (jedno který) čipu k `GND` na destičce
+  * GND (jedno který) čipu k `-` na baterii
 * První motorek:
-  * `1A` na `D1`
-  * `2A` na `D2`
-  * `1,2EN` na `D3`
-  * `1Y` a `2Y` k dvěma kontaktům motorku
+  * `1A` čipu na `D1` na destičce
+  * `2A` čipu na `D2` na destičce
+  * `1,2EN` čipu na `D3` na destičce
+  * `1Y` a `2Y` čipu k dvěma kontaktům motorku
 * Druhý motorek:
-  * `3A` na `D6`
-  * `4A` na `D7`
-  * `3,4EN` na `D8`
-  * `3Y` a `4Y` k dvěma kontaktům motorku
+  * `3A` čipu na `D6` na destičce
+  * `4A` čipu na `D7` na destičce
+  * `3,4EN` čipu na `D8` na destičce
+  * `3Y` a `4Y` čipu k dvěma kontaktům motorku
 
 {{ figure(img=static('motors_bb.svg'), alt="L293D pinout") }}
 
