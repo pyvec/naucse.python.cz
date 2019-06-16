@@ -267,6 +267,21 @@ Součástí předpovědi je tento údaj ve formě textu, např. `Clear`, `Rain`,
 `Clouds`. My se s tím ale nespokojíme a nahradíme si ho obrázky. Můžeme využít
 například ty z Unicode tabulky http://xahlee.info/comp/unicode_weather_symbols.html
 
+> [note]
+> Písma v příkazové řádce ve Windows stále emoji umí jen ve velmi omezené míře.
+> Změň si ho dočasně na `MS Gothic`, pokud ho máš nainstalované.
+> Můžeš použít třeba tyto vyzkoušené znaky z UNICODE tabulky:
+> ```
+> SNOWFLAKE
+> CLOUD
+> UMBRELLA WITH RAIN DROPS
+> FLOWER
+> WHITE SMILING FACE
+> BLACK SMILING FACE
+> ```
+
+
+
 Chceme tedy řetězec `Snow` přeložit na `❄` a napíšeme si na to funkci.
 
 ```python
