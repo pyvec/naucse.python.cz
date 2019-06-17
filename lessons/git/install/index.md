@@ -45,7 +45,7 @@ Jdi na stránku [git-scm.org](https://git-scm.org), stáhni si
 Git a nainstaluj si ho.
 Při instalaci vyber tyto volby:
 
-* Run Git from the Windows Command Prompt
+* Git from the command line and also from 3rd-party software
 * Checkout Windows-style, commit Unix-style line endings
 
 Ostatní možnosti neměň.
