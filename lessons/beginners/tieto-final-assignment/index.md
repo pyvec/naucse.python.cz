@@ -117,6 +117,65 @@ script:
 
 ```
 {% endfilter %}
+
+Content of app/__init__.py:
+
+{% filter solution %}
+```python
+from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
+from flask_mail import Mail
+from flask_moment import Moment
+from flask_sqlalchemy import SQLAlchemy
+from config import config
+
+bootstrap = Bootstrap()
+mail = Mail()
+moment = Moment()
+db = SQLAlchemy()
+
+def create_app(config_name):
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
+
+    bootstrap.init_app(app)
+    mail.init_app(app)
+    moment.init_app(app)
+    db.init_app(app)
+
+    # attach routes and custom error pages here
+
+    return app
+```
+{% endfilter %}
+
+
+Content of activity.py
+
+{% filter solution %}
+```python
+import os
+import click
+from flask_migrate import Migrate
+from app import create_app, db
+
+@pytest.fixture
+app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+migrate = Migrate(app, db)
+
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db)
+
+@app.route('/')
+def hello():
+    return "Hello World!"
+```
+{% endfilter %}
+
+
+
 5. Create test case for first function (route)
 6. Create first function
 7. Create basic application that will do following:
