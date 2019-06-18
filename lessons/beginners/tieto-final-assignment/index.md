@@ -132,7 +132,7 @@ def test_sqrt():
 {% endfilter %}
 
 
-Content of app/__init__.py:
+Content of app/\_\_init\_\_.py:
 
 {% filter solution %}
 ```python
