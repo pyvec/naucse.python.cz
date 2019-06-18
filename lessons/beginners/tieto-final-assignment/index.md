@@ -118,6 +118,20 @@ script:
 ```
 {% endfilter %}
 
+Content of tests/test_math.py:
+
+{% filter solution %}
+
+```bash
+import math
+
+def test_sqrt():
+   num = 25
+   assert math.sqrt(num) == 5
+```
+{% endfilter %}
+
+
 Content of app/__init__.py:
 
 {% filter solution %}
