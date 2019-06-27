@@ -75,7 +75,7 @@ a nastavení.
 
 Na kurzu budeme používat Mu editor
 
-* [Mu]({{ subpage_url('mu') }}) - Mu je jednoduchý editor určený pro začínající programátory.
+* [Mu]({{ subpage_url('mu') }}) - jednoduchý editor určený pro začínající programátory.
 
 Nemáš-li už vlastní oblíbený editor, pro Windows a macOS
 doporučujeme *Atom*:

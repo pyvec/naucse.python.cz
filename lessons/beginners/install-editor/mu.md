@@ -9,7 +9,7 @@ Na Windows
 si stáhni {{ editor_name }} z jeho [domovské stránky]({{ editor_url }})
 a nainstaluj. Použij 64-bitovou nebo 32-bitovou verzi, stejně jako v případě Pythonu.
 
-Na Linuxu se Mu instaluje přes `pip`, který je součástí Python.
+Na Linuxu se Mu instaluje přes `pip`, který je součástí Pythonu.
 ```console
 $ python -m pip install mu-editor
 ```
