@@ -1,0 +1,43 @@
+{% extends "_base_course.html" %}
+{% from "_material_macros.html" import material_list with context %}
+{% import "_navigation_macros.html" as nav %}
+
+{% block breadcrumbs %}
+> <a href="{{ session.course.get_url() }}">{{ session.course.title }}</a>
+> {{ session.title }}
+{% endblock %}
+
+{% block course_content %}
+  <h1>
+    Závěr lekce: {{ session.title }}
+</h1>
+
+{% if 'homework' in materials_by_type %}
+    <h2>Domácí projekty</h2>
+    {{ material_list(session.materials, filter_type='homework') }}
+{% endif %}
+
+{% if 'link' in materials_by_type %}
+    <h2>Zajímavé odkazy</h2>
+    {{ material_list(session.materials, filter_type='link') }}
+{% endif %}
+
+
+    {% if page.content %}
+        {{ page.content }}
+    {% endif %}
+
+
+<hr class="lesson-end">
+
+{% call nav.prevnext() %}
+    {% if session is defined and session != None %}
+        {#- XXX: This is wrong! Do s/session/session.prev/ #}
+        {{- nav.prev(session.get_url(), session.title) }}
+    {% endif %}
+    {{- nav.up(session.course.get_url(), session.course.title) }}
+    {% if session.next is defined and session.next != None %}
+        {{ nav.next(session.next.get_url(), session.next.title) }}
+    {% endif %}
+{% endcall %}
+{% endblock %}

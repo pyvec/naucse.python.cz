@@ -1,343 +1,583 @@
-import os
-import re
-from collections import OrderedDict
-from operator import attrgetter
 import datetime
-
-import cssutils
-import dateutil.tz
-import giturlparse
-import jinja2
-from arca import Task
-from git import Repo
-
-import naucse.utils.views
-from naucse.utils.models import Model, YamlProperty, DataProperty, DirProperty, MultipleModelDirProperty, ForkProperty
-from naucse.utils.models import reify, arca
-from naucse.sanitize import sanitize_html
-from naucse.templates import setup_jinja_env, vars_functions
-from naucse.utils.markdown import convert_markdown
-from naucse.utils.notebook import convert_notebook
 from pathlib import Path
+import collections.abc
+import re
+from fnmatch import fnmatch
+import shutil
 
+import dateutil
+import yaml
+from arca import Task
 
+from naucse.edit_info import get_local_repo_info, get_repo_info
+from naucse.converters import Field, VersionField, register_model
+from naucse.converters import BaseConverter, ListConverter, DictConverter
+from naucse.converters import KeyAttrDictConverter, ModelConverter
+from naucse.converters import dump, load, get_converter, get_schema
+from naucse import sanitize
+from naucse import arca_renderer
+from naucse.logger import logger
+
+import naucse_render
+
+API_VERSION = 0, 1
+
+# XXX: Different timezones?
 _TIMEZONE = 'Europe/Prague'
 
 
-class Lesson(Model):
-    """An individual lesson stored on naucse"""
-    def __str__(self):
-        return '{} - {}'.format(self.slug, self.title)
+class NoURL(LookupError):
+    """An object's URL could not be found"""
 
-    info = YamlProperty()
+class NoURLType(NoURL):
+    """The requested URL type is not available"""
 
-    title = DataProperty(info)
 
-    @reify
-    def slug(self):
-        return '/'.join(self.path.parts[-2:])
+class URLConverter(BaseConverter):
+    def load(self, data, context):
+        return sanitize.convert_link('href', data)
 
-    @reify
-    def pages(self):
-        pages = dict(self.info.get('subpages', {}))
-        pages.setdefault('index', {})
-        return {slug: Page(self, slug, self.info, p)
-                for slug, p in pages.items()}
+    def dump(self, value, context):
+        return value
 
-    @reify
-    def index_page(self):
-        return self.pages['index']
+    @classmethod
+    def get_schema(cls, context):
+        return {'type': 'string', 'format': 'uri'}
+
+
+models = {}
+
+
+class Model:
+    """Base class for naucse models
+
+    Class attributes:
+
+    `init_arg_names` are names of keyword arguments for `__init__`.
+    These are copied to attributes of the same name.
+
+    `parent_attrs` is a tuple of attribute names of the object's parents.
+    The first for the parent itself; the subsequent ones are set from the
+    parent.
+
+    `model_slug` is a Python identifier used in URLs and fragments. It is set
+    automatically by default, but can be overridden or set to None in each
+    class.
+
+    `pk_name` is the name that holds a primary key
+    """
+    init_arg_names = {'parent'}
+    parent_attrs = ()
+    pk_name = None
+
+    def __init__(self, **kwargs):
+        for a in self.init_arg_names:
+            setattr(self, a, kwargs[a])
+        for p in self.parent_attrs[:1]:
+            setattr(self, p, self.parent)
+        for p in self.parent_attrs[1:]:
+            setattr(self, p, getattr(self.parent, p))
+        self.root = self.parent.root
+
+    def __init_subclass__(cls):
+        try:
+            slug = cls.model_slug
+        except AttributeError:
+            slug = re.sub('([A-Z])', r'-\1', cls.__name__).lower().lstrip('-')
+        cls.model_slug = slug
+        models[slug] = cls
+        if not hasattr(cls, '_naucse__converter'):
+            converter = ModelConverter(
+                cls, load_arg_names=cls.init_arg_names, slug=slug,
+                extra_fields=[Field(
+                    URLConverter(), name='_url', data_key='url', input=False,
+                    optional=True,
+                    doc="URL for a user-facing page on naucse",
+                )],
+            )
+            converter.get_schema_url=_get_schema_url
+            register_model(cls, converter)
+
+    def get_url(self, url_type='web', *, external=False):
+        return self.root._url_for(
+            type(self), pks=self.get_pks(),
+            url_type=url_type, external=external)
+
+    def get_pks(self):
+        pk_name = f'{self.model_slug}_{self.pk_name}'
+        return {**self.parent.get_pks(), pk_name: getattr(self, self.pk_name)}
+
+    @property
+    def _url(self):
+        try:
+            return self.get_url(external=True)
+        except NoURL:
+            return None
+    @_url.setter
+    def _url(self, value):
+        return
+
+    def __repr__(self):
+        pks = ' '.join(f'{k}={v}' for k, v in self.get_pks().items())
+        return f'<{type(self).__qualname__} {pks}>'
+
+
+def _get_schema_url(instance, *, is_input):
+    return instance.root.schema_url_factory(
+        type(instance), is_input=is_input, _external=True
+    )
+
+
+def _sanitize_page_content(parent, content):
+    """Sanitize HTML for a particular page. Also rewrites URLs."""
+    parent_page = getattr(parent, 'page', parent)
+
+    def page_url(*, lesson, page='index', **kw):
+        return parent_page.course.get_lesson_url(lesson, page=page)
+
+    def solution_url(*, solution, **kw):
+        return parent_page.solutions[int(solution)].get_url(**kw)
+
+    def static_url(*, filename, **kw):
+        return parent_page.lesson.static_files[filename].get_url(**kw)
+
+    return sanitize.sanitize_html(
+        content,
+        naucse_urls={
+            'page': page_url,
+            'solution': solution_url,
+            'static': static_url,
+        }
+    )
+
+
+class HTMLFragmentConverter(BaseConverter):
+    """Converter for a HTML fragment."""
+    load_arg_names = {'parent'}
+
+    def __init__(self, *, sanitizer=None):
+        self.sanitizer = sanitizer
+
+    def load(self, value, context, *, parent):
+        if self.sanitizer is None:
+            return sanitize.sanitize_html(value)
+        return self.sanitizer(parent, value)
+
+    def dump(self, value, context):
+        return str(value)
+
+    @classmethod
+    def get_schema(cls, context):
+        return {
+            'type': 'string',
+            'format': 'html-fragment',
+        }
+
+
+class Solution(Model):
+    """Solution to a problem on a Page
+    """
+    init_arg_names = {'parent', 'index'}
+    pk_name = 'index'
+    parent_attrs = 'page', 'lesson', 'course'
+
+    content = Field(
+        HTMLFragmentConverter(sanitizer=_sanitize_page_content),
+        output=False,
+        doc="The right solution, as HTML")
+
+
+class RelativePathConverter(BaseConverter):
+    """Converter for a relative path, as string"""
+    def load(self, data, context):
+        return Path(data)
+
+    def dump(self, value, context):
+        return str(value)
+
+    def get_schema(self, context):
+        return {
+            'type': 'string',
+            'pattern': '^[^./][^/]+(/[^./][^/]+)*$'
+        }
+
+
+source_file_field = Field(
+    RelativePathConverter(),
+    name='source_file',
+    optional=True,
+    doc="Path to a source file containing the page's text, "
+        + "relative to the repository root")
+
+@source_file_field.after_load()
+def _edit_info(self, context):
+    if self.source_file is None:
+        self.edit_info = None
+    else:
+        self.edit_info = self.course.repo_info.get_edit_info(self.source_file)
+
+
+class StaticFile(Model):
+    """Static file specific to a Lesson
+    """
+    init_arg_names = {'parent', 'filename'}
+    pk_name = 'filename'
+    parent_attrs = 'lesson', 'course'
+
+    @property
+    def base_path(self):
+        return self.course.base_path
+
+    def get_pks(self):
+        return {**self.parent.get_pks(), 'filename': self.filename}
+
+    path = Field(RelativePathConverter(), doc="Relative path of the file")
+
+
+class PageCSSConverter(BaseConverter):
+    """Converter for CSS for a Page"""
+    def load(self, value, context):
+        return sanitize.sanitize_css(value)
+
+    def dump(self, value, context):
+        return value
+
+    @classmethod
+    def get_schema(cls, context):
+        return {
+            'type': 'string',
+            'contentMediaType': 'text/css',
+        }
+
+
+class LicenseConverter(BaseConverter):
+    """Converter for a licence (specified as its slug in JSON)"""
+    load_arg_names = {'parent'}
+
+    def load(self, value, context, *, parent):
+        return parent.root.licenses[value]
+
+    def dump(self, value, context):
+        return value.slug
+
+    @classmethod
+    def get_schema(cls, context):
+        return {
+            'type': 'string',
+        }
 
 
 class Page(Model):
-    """A (sub-) page of a lesson"""
-    def __init__(self, lesson, slug, *infos):
-        self.slug = slug
-        self.info = {}
-        for i in infos:
-            self.info.update(i)
-        self.lesson = lesson
-        path = lesson.path.joinpath('{}.{}'.format(slug, self.info['style']))
-        super().__init__(lesson.root, path)
+    """One page of teaching text
+    """
+    init_arg_names = {'parent', 'slug'}
+    pk_name = 'slug'
+    parent_attrs = 'lesson', 'course'
 
-    def __str__(self):
-        return '{}/{}'.format(self.lesson.slug, self.slug)
+    title = Field(str, doc='Human-readable title')
 
-    @reify
-    def style(self):
-        return self.info['style']
+    attribution = Field(ListConverter(HTMLFragmentConverter()),
+                        doc='Lines of attribution, as HTML fragments')
+    license = Field(
+        LicenseConverter(),
+        doc='License slugs. Only approved licenses are allowed.')
+    license_code = Field(
+        LicenseConverter(), optional=True,
+        doc='Slug of licence for code snippets.')
 
-    @reify
-    def title(self):
-        return self.info['title']
+    source_file = source_file_field
 
-    @reify
-    def jinja(self):
-        return self.info.get('jinja', True)
+    css = Field(
+        PageCSSConverter(), optional=True,
+        doc="CSS specific to this page. (Subject to restrictions which " +
+            "aren't yet finalized.)")
 
-    @reify
-    def latex(self):
-        return self.info.get('latex', False)
+    solutions = Field(
+        ListConverter(Solution, index_arg='index'),
+        factory=list,
+        doc="Solutions to problems that appear on the page.")
 
-    @reify
-    def css(self):
-        """Return lesson-specific extra CSS.
+    modules = Field(
+        DictConverter(str), factory=dict,
+        doc='Additional modules as a dict with `slug` key and version values')
 
-        If the lesson defines extra CSS, the scope of the styles is limited
-        to ``.lesson-content``, which contains the actual lesson content.
-        """
-        css = self.info.get("css")
-
-        if css is None:
-            return None
-
-        return self.limit_css_to_lesson_content(css)
-
-    @reify
-    def edit_path(self):
-        return self.path.relative_to(self.root.path)
-
-    @reify
-    def attributions(self):
-        attr = self.info.get('attribution', ())
-        if isinstance(attr, str):
-            attr = [attr]
-        return tuple(attr)
-
-    @reify
-    def license(self):
-        return self.root.licenses[self.info['license']]
-
-    @reify
-    def license_code(self):
-        if 'license_code' in self.info:
-            return self.root.licenses[self.info['license_code']]
-        return None
-
-    @reify
-    def vars(self):
-        return self.info.get('vars', {})
-
-    def _get_template(self):
-        name = '{}/{}.{}'.format(self.lesson.slug, self.slug, self.style)
-        try:
-            return self.root.lesson_jinja_env.get_template(name)
-        except jinja2.TemplateNotFound:
-            raise FileNotFoundError(name)
-
-    def render_html(self, solution=None,
-                    static_url=None,
-                    lesson_url=None,
-                    subpage_url=None,
-                    vars=None,
-                    ):
-        lesson = self.lesson
-
-        if not vars:
-            vars = {}
-        else:
-            vars = dict(vars)
-        vars.update(self.vars)
-
-        solutions = []
-
-        if static_url is None:
-            def static_url(path):
-                return 'static/{}'.format(path)
-
-        if lesson_url is None:
-            def lesson_url(lesson, page='index', solution=None):
-                lesson = self.root.get_lesson(lesson)
-                url = '../../{}/'.format(lesson.slug)
-                if page != 'index' or solution is not None:
-                    url += '{}/'.format(page)
-                if solution is not None:
-                    url += '{}/'.format(solution)
-                return url
-
-        if subpage_url is None:
-            def subpage_url(page):
-                return lesson_url(lesson=lesson, page=page)
-
-        kwargs = {
-            'static': lambda path: static_url(path),
-            'lesson_url': lambda lesson, page='index', solution=None:
-                lesson_url(lesson=lesson, page=page, solution=solution),
-            'subpage_url': subpage_url,
-            'lesson': lesson,
-            'page': self,
-            '$solutions': solutions,
-        }
-        kwargs.update(vars_functions(vars))
-
-        if self.jinja:
-            template = self._get_template()
-            content = template.render(**kwargs)
-        else:
-            with self.path.open(encoding="utf-8") as file:
-                content = file.read()
-
-        def convert_url(url):
-            prefix = 'static/'
-            if not url.startswith(prefix):
-                return url
-            return static_url(url[len(prefix):])
-
-        if self.style == 'md':
-            content = jinja2.Markup(convert_markdown(content, convert_url))
-        elif self.style == 'ipynb':
-            content = jinja2.Markup(convert_notebook(content, convert_url))
-        else:
-            template = self._get_template()
-            content = jinja2.Markup(content)
-
-        if solution is None:
-            return content
-        else:
-            return solutions[solution]
-
-    @staticmethod
-    def limit_css_to_lesson_content(css):
-        """Return ``css`` limited just to the ``.lesson-content`` element.
-
-        This doesn't protect against malicious input.
-        """
-        parser = cssutils.CSSParser(raiseExceptions=True)
-        parsed = parser.parseString(css)
-
-        for rule in parsed.cssRules:
-            for selector in rule.selectorList:
-                # the space is important - there's a difference between for example
-                # ``.lesson-content:hover`` and ``.lesson-content :hover``
-                selector.selectorText = ".lesson-content " + selector.selectorText
-
-        return parsed.cssText.decode("utf-8")
+    content = Field(
+        HTMLFragmentConverter(sanitizer=_sanitize_page_content),
+        output=False,
+        doc='Content, as HTML')
 
 
-class Collection(Model):
-    """A collection of lessons"""
-    def __str__(self):
-        return self.path.parts[-1]
+class Lesson(Model):
+    """A lesson – collection of Pages on a single topic
+    """
+    init_arg_names = {'parent', 'slug'}
+    pk_name = 'slug'
+    parent_attrs = ('course', )
 
-    lessons = DirProperty(Lesson)
+    static_files = Field(
+        DictConverter(StaticFile, key_arg='filename'),
+        factory=dict,
+        doc="Static files the lesson's content may reference")
+    pages = Field(
+        DictConverter(Page, key_arg='slug', required={'index'}),
+        doc="Pages of content. Used for variants (e.g. a page for Linux and "
+            + "another for Windows), or non-essential info (e.g. for "
+            + "organizers)")
 
-
-def material(root, path, info):
-    if "lesson" in info:
-        lesson = root.get_lesson(info['lesson'])
-        page = lesson.pages[info.get("page", "index")]
-        return PageMaterial(root, path, page, info.get("type", "lesson"), info.get("title"))
-    elif "url" in info:
-        url = info["url"]
-        if url:
-            return UrlMaterial(root, path, url, info["title"], info.get("type"))
-        else:
-            return SpecialMaterial(root, path, info["title"], info.get("type"))
-    else:
-        raise ValueError("Unknown material type: {}".format(info))
+    @property
+    def material(self):
+        """The material that contains this page, or None"""
+        for session in self.course.sessions.values():
+            for material in session.materials:
+                if self == material.lesson:
+                    return material
 
 
 class Material(Model):
-    """A link – either to a lesson, or an external URL"""
-    def __init__(self, root, path, url_type):
-        super().__init__(root, path)
-        self.url_type = url_type
-        self.prev = None
-        self.next = None
-        # prev and next is set later
-
-    def __str__(self):
-        return self.title
-
-
-class PageMaterial(Material):
-    type = "page"
-    has_navigation = True
-
-    def __init__(self, root, path, page, url_type, title=None, subpages=None):
-        super().__init__(root, path, url_type)
-        self.page = page
-        self.title = title or page.title
-
-        if subpages is None:
-            self.subpages = {}
-
-            for slug, subpage in page.lesson.pages.items():
-                if slug == self.page.slug:
-                    item = self
-                else:
-                    item = PageMaterial(root, path, subpage, url_type,
-                                        subpages=self.subpages)
-                self.subpages[slug] = item
-        else:
-            self.subpages = subpages
-
-    def set_prev_next(self, prev, next):
-        for slug, subpage in self.subpages.items():
-            if slug == self.page.slug:
-                subpage.prev = prev
-                subpage.next = next
-            else:
-                subpage.prev = self
-                subpage.next = next
-
-
-class UrlMaterial(Material):
-    prev = None
-    next = None
-    type = "url"
-    has_navigation = False
-
-    def __init__(self, root, path, url, title, url_type):
-        super().__init__(root, path, url_type)
-        self.url = url
-        self.title = title
-
-
-class SpecialMaterial(Material):
-    prev = None
-    next = None
-    type = "special"
-    has_navigation = False
-
-    def __init__(self, root, path, title, url_type):
-        super().__init__(root, path, url_type)
-        self.title = title
-
-
-def merge_dict(base, patch):
-    """Recursively merge `patch` into `base`
-
-    If a key exists in both `base` and `patch`, then:
-    - if the values are dicts, they are merged recursively
-    - if the values are lists, the value from `patch` is used,
-      but if the string `'+merge'` occurs in the list, it is replaced
-      with the value from `base`.
+    """Teaching material, usually a link to a lesson or external page
     """
+    parent_attrs = 'session', 'course'
+    pk_name = 'slug'
 
-    result = dict(base)
+    slug = Field(str, optional=True)
+    title = Field(str, optional=True, doc="Human-readable title")
+    type = Field(
+        str,
+        doc="Type of the material (e.g. lesson, homework, cheatsheet, link, "
+            + "special). Used for the icon in material lists.")
+    external_url = Field(
+        URLConverter(), optional=True,
+        doc="URL for a link to content that's not a naucse lesson")
+    lesson_slug = Field(
+        str, optional=True,
+        doc="Slug of the corresponding lesson")
 
-    for key, value in patch.items():
-        if key not in result:
-            result[key] = value
-            continue
+    @lesson_slug.after_load()
+    def _validate_lesson_slug(self, context):
+        if self.lesson_slug and self.external_url:
+            raise ValueError(
+                'external_url and lesson_slug are incompatible'
+            )
 
-        previous = base[key]
-        if isinstance(value, dict):
-            result[key] = merge_dict(previous, value)
-        elif isinstance(value, list):
-            result[key] = new = []
-            for item in value:
-                if item == '+merge':
-                    new.extend(previous)
-                else:
-                    new.append(item)
+    @property
+    def lesson(self):
+        """Lesson for this Material, or None"""
+        if self.lesson_slug is not None:
+            return self.course.lessons[self.lesson_slug]
+
+    def get_url(self, url_type='web', **kwargs):
+        # The material has no URL itself; it refers to a lesson, an external
+        # resource, or to nothing.
+        if self.lesson_slug:
+            return self.course.get_lesson_url(self.lesson_slug)
+        if url_type != 'web':
+            raise NoURLType(url_type)
+        if self.external_url:
+            return self.external_url
+        raise NoURL(self)
+
+    def url_or_none(self, *args, **kwargs):
+        try:
+            return self.get_url(*args, **kwargs)
+        except NoURL:
+            return None
+
+
+class SessionPage(Model):
+    """Session-specific page, e.g. the front cover
+    """
+    init_arg_names = {'parent', 'slug'}
+    pk_name = 'slug'
+    parent_attrs = 'session', 'course'
+
+    content = Field(
+        HTMLFragmentConverter(),
+        factory=str,
+        doc='Content, as HTML')
+
+    def get_pks(self):
+        return {**self.parent.get_pks(), 'page_slug': self.slug}
+
+
+def set_prev_next(sequence):
+    """Set "prev" and "next" attributes of each element of a sequence"""
+    sequence = list(sequence)
+    for prev, now, next in zip(
+        [None] + sequence,
+        sequence,
+        sequence[1:] + [None],
+    ):
+        now.prev = prev
+        now.next = next
+
+
+class SessionTimeConverter(BaseConverter):
+    """Convert a session time, represented in JSON as string
+
+    May be loaded as a complete datetime, or as just date or None, which need
+    to be fixed up using `_combine_session_time`.
+    Converted to the full datetime on output.
+    """
+    def load(self, data, context):
+        try:
+            return datetime.datetime.strptime('%Y-%m-%d %H:%M:%S', data)
+        except ValueError:
+            if data.count(':') == 2:
+                time = datetime.datetime.strptime(data, '%H:%M:%s').time()
+            else:
+                time = datetime.datetime.strptime(data, '%H:%M').time()
+            return time.replace(tzinfo=dateutil.tz.gettz(_TIMEZONE))
+
+    def dump(self, value, context):
+        return value.strftime('%Y-%m-%d %H:%M:%S')
+
+    @classmethod
+    def get_schema(cls, context):
+        _date_re = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+        if context.is_input:
+            _time_re = '[0-9]{1,2}:[0-9]{2}(:[0-9]{2})?'
+            pattern = f'^({_date_re} )?{_time_re}$'
         else:
-            result[key] = value
-    return result
+            _time_re = '[0-9]{2}:[0-9]{2}:[0-9]{2}'
+            pattern = f'^{_date_re} {_time_re}$'
+        return {
+            'type': 'string',
+            'pattern': pattern,
+        }
+
+
+class DateConverter(BaseConverter):
+    """Converter for datetime.date values (as 'YYYY-MM-DD' strings in JSON)"""
+    def load(self, data, context):
+        return datetime.datetime.strptime(data, "%Y-%m-%d").date()
+
+    def dump(self, value, context):
+        return str(value)
+
+    def get_schema(self, context):
+        return {
+            'type': 'string',
+            'pattern': r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
+            'format': 'date',
+        }
+
+
+class Session(Model):
+    """A smaller collection of teaching materials
+
+    Usually used for one meeting of an in-preson course or
+    a self-contained section of a longer workshop.
+    """
+    init_arg_names = {'parent', 'index'}
+    pk_name = 'slug'
+    parent_attrs = ('course', )
+
+    slug = Field(str)
+    title = Field(str, doc="A human-readable session title")
+    date = Field(
+        DateConverter(), optional=True,
+        doc="The date when this session occurs (if it has a set time)",
+    )
+    serial = VersionField({
+        (0, 1): Field(
+            str,
+            optional=True,
+            doc="""
+                Human-readable string identifying the session's position
+                in the course.
+                The serial is usually numeric: `1`, `2`, `3`, ...,
+                but, for example, i, ii, iii... can be used for appendices.
+                Some courses start numbering sessions from 0.
+            """
+        ),
+        # For API version 0.0, serial is generated in
+        # Course._sessions_after_load.
+    })
+
+    description = Field(
+        HTMLFragmentConverter(), optional=True,
+        doc="Short description of the session.")
+
+    source_file = source_file_field
+
+    materials = Field(
+        ListConverter(Material),
+        factory=list,
+        doc="The session's materials",
+    )
+
+    @materials.after_load()
+    def _index_materials(self, context):
+        set_prev_next(m for m in self.materials if m.lesson_slug)
+
+    pages = Field(
+        DictConverter(SessionPage, key_arg='slug'),
+        optional=True,
+        doc="The session's cover pages")
+    @pages.after_load()
+    def _set_pages(self, context):
+        if not self.pages:
+            self.pages = {}
+        for slug in 'front', 'back':
+            if slug not in self.pages:
+                page = load(
+                    SessionPage,
+                    {'api_version': [0, 0], 'session-page': {}},
+                    slug=slug, parent=self,
+                )
+                self.pages[slug] = page
+
+    time = Field(
+        DictConverter(SessionTimeConverter(), required=['start', 'end']),
+        optional=True,
+        doc="Time when this session takes place.")
+
+    @time.after_load()
+    def _fix_time(self, context):
+        if self.time is None:
+            self.time = {}
+        else:
+            if set(self.time) != {'start', 'end'}:
+                raise ValueError('Session time may must have start and end')
+        result = {}
+        for kind in 'start', 'end':
+            time = self.time.get(kind, None)
+            if isinstance(time, datetime.datetime):
+                result[kind] = time
+            elif isinstance(time, datetime.time):
+                if self.date:
+                    result[kind] = datetime.datetime.combine(self.date, time)
+                else:
+                    self.time = None
+                    return
+            elif time is None:
+                if self.date and self.course.default_time:
+                    result[kind] = datetime.datetime.combine(
+                        self.date, self.course.default_time[kind],
+                    )
+                else:
+                    self.time = None
+                    return
+            else:
+                raise TypeError(time)
+        self.time = result
+
+
+class AnyDictConverter(BaseConverter):
+    """Converter of any JSON-encodable dict"""
+    def load(self, data, context):
+        return data
+
+    def dump(self, value, context):
+        return value
+
+    @classmethod
+    def get_schema(cls, context):
+        return {'type': 'object'}
 
 
 def time_from_string(time_string):
+    """Get datetime.time object from a 'HH:MM' string"""
     hour, minute = time_string.split(':')
     hour = int(hour)
     minute = int(minute)
@@ -345,541 +585,508 @@ def time_from_string(time_string):
     return datetime.time(hour, minute, tzinfo=tzinfo)
 
 
-class Session(Model):
-    """An ordered collection of materials"""
-    def __init__(self, root, path, base_course, info, index, course=None):
-        super().__init__(root, path)
-        base_name = info.get('base')
-        self.index = index
+class TimeIntervalConverter(BaseConverter):
+    """Converter for a time interval, as a dict with 'start' and 'end'"""
+    def load(self, data, context):
+        return {
+            'start': time_from_string(data['start']),
+            'end': time_from_string(data['end']),
+        }
+
+    def dump(self, value, context):
+        return {
+            'start': value['start'].strftime('%H:%M'),
+            'end': value['end'].strftime('%H:%M'),
+        }
+
+    @classmethod
+    def get_schema(cls, context):
+        return {
+            'type': 'object',
+            'properties': {
+                'start': {'type': 'string', 'pattern': '[0-9]{1,2}:[0-9]{2}'},
+                'end': {'type': 'string', 'pattern': '[0-9]{1,2}:[0-9]{2}'},
+            },
+            'required': ['start', 'end'],
+            'additionalProperties': False,
+        }
+
+
+class _LessonsDict(collections.abc.Mapping):
+    """Dict of lessons with lazily loaded entries"""
+    def __init__(self, course):
         self.course = course
-        if base_name is None:
-            self.info = info
-        else:
-            base = base_course.sessions[base_name].info
-            self.info = merge_dict(base, info)
-        # self.prev and self.next are set later
 
-    def __str__(self):
-        return self.title
-
-    info = YamlProperty()
-
-    title = DataProperty(info)
-    slug = DataProperty(info)
-    date = DataProperty(info, default=None)
-    description = DataProperty(info, default=None)
-
-    def _time(self, time):
-        if self.date and time:
-            return datetime.datetime.combine(self.date, time)
-        return None
-
-    def _session_time(self, key):
-        sesion_time = self.info.get('time')
-        if sesion_time:
-            return time_from_string(sesion_time[key])
-        return None
-
-    @reify
-    def has_irregular_time(self):
-        """True iff the session has its own start or end time, the course has
-        a default start or end time, and either of those does not match."""
-
-        irregular_start = self.course.default_start_time is not None \
-            and self._time(self.course.default_start_time) != self.start_time
-        irregular_end = self.course.default_end_time is not None \
-            and self._time(self.course.default_end_time) != self.end_time
-        return irregular_start or irregular_end
-
-    @reify
-    def start_time(self):
-        session_time = self._session_time('start')
-        if session_time:
-            return self._time(session_time)
-        if self.course:
-            return self._time(self.course.default_start_time)
-        return None
-
-    @reify
-    def end_time(self):
-        session_time = self._session_time('end')
-        if session_time:
-            return self._time(session_time)
-        if self.course:
-            return self._time(self.course.default_end_time)
-        return None
-
-    @reify
-    def materials(self):
-        materials = [material(self.root, self.path, s)
-                     for s in self.info['materials']]
-        materials_with_nav = [mat for mat in materials if mat.has_navigation]
-        for prev, current, next in zip([None] + materials_with_nav,
-                                       materials_with_nav,
-                                       materials_with_nav[1:] + [None]
-                                       ):
-            current.set_prev_next(prev, next)
-
-        return materials
-
-    def get_edit_path(self, run, coverpage):
-        coverpage_path = self.path / "sessions" / self.slug / (coverpage + ".md")
-        if coverpage_path.exists():
-            return coverpage_path.relative_to(self.root.path)
-
-        return run.edit_path
-
-    def get_coverpage_content(self, run, coverpage, app):
-        coverpage += ".md"
-        q = self.path / 'sessions' / self.slug / coverpage
-
+    def __getitem__(self, key):
         try:
-            with q.open(encoding="utf-8") as f:
-                md_content = f.read()
-        except FileNotFoundError:
-            return ""
+            return self.course._lessons[key]
+        except KeyError:
+            self.course.load_lessons([key])
+        return self.course._lessons[key]
 
-        html_content = convert_markdown(md_content)
-        return html_content
+    def __iter__(self):
+        self.course.freeze()
+        return iter(self.course._lessons)
 
-
-def _get_sessions(course, plan):
-    result = OrderedDict()
-    for index, sess_info in enumerate(plan):
-        session = Session(course.root, course.path, course.base_course,
-                          sess_info, index=index, course=course)
-        result[session.slug] = session
-
-    sessions = list(result.values())
-
-    for prev, current, next in zip([None] + sessions,
-                                   sessions,
-                                   sessions[1:] + [None]):
-        current.prev = prev
-        current.next = next
-
-    if len(result) != len(set(result)):
-        raise ValueError('slugs not unique in {!r}'.format(course))
-    if sessions != sorted(sessions, key=lambda d: d.date or 0):
-        raise ValueError('sessions not ordered by date in {!r}'.format(course))
-    return result
+    def __len__(self):
+        self.course.freeze()
+        return len(self.course._lessons)
 
 
-class CourseMixin:
-    """Methods common for both :class:`Course` and :class:`CourseLink`.
+class Course(Model):
+    """Collection of sessions
     """
+    pk_name = 'slug'
 
-    @reify
-    def slug(self):
-        directory = self.path.parts[-1]
-        parent_directory = self.path.parts[-2]
-        if parent_directory == "courses":
-            parent_directory = "course"  # legacy URL
-        return parent_directory + "/" + directory
+    def __init__(
+        self, *, parent, slug, repo_info, base_path=None, is_meta=False,
+        canonical=False,
+    ):
+        super().__init__(parent=parent)
+        self.repo_info = repo_info
+        self.slug = slug
+        self.base_path = base_path
+        self.is_meta = is_meta
+        self.course = self
+        self._frozen = False
+        self.canonical = canonical
 
-    @reify
-    def is_meta(self):
-        return self.info.get("meta", False)
+        self._lessons = {}
+        self._requested_lessons = set()
 
-    def is_link(self):
-        return isinstance(self, CourseLink)
+    lessons = Field(
+        DictConverter(Lesson), input=False, doc="""Lessons""")
 
-    @reify
-    def is_derived(self):
-        return self.base_course is not None
+    @lessons.default_factory()
+    def _default_lessons(self):
+        return _LessonsDict(self)
 
+    title = Field(str, doc="""Human-readable title""")
+    subtitle = Field(
+        str, optional=True,
+        doc="Human-readable subtitle, mainly used to distinguish several "
+            + "runs of same-named courses.")
+    description = Field(
+        str, optional=True,
+        doc="Short description of the course (about one line).")
+    long_description = Field(
+        HTMLFragmentConverter(), factory=str,
+        doc="Long description of the course (up to several paragraphs).")
+    vars = Field(
+        AnyDictConverter(), factory=dict,
+        doc="Defaults for additional values used for rendering pages")
+    place = Field(
+        str, optional=True,
+        doc="Human-readable description of the venue")
+    time_description = Field(
+        str, optional=True,
+        doc="Human-readable description of the time the course takes place "
+            + "(e.g. 'Wednesdays')")
 
-class Course(CourseMixin, Model):
-    """A course – ordered collection of sessions"""
-    def __str__(self):
-        return '{} - {}'.format(self.slug, self.title)
+    default_time = Field(
+        TimeIntervalConverter(), optional=True,
+        doc="Default start and end time for sessions")
 
-    info = YamlProperty()
-    title = DataProperty(info)
-    description = DataProperty(info)
-    long_description = DataProperty(info)
+    sessions = Field(
+        KeyAttrDictConverter(Session, key_attr='slug', index_arg='index'),
+        doc="Individual sessions")
 
-    # none of the variables are required, so empty ``vars:`` should not be required either
-    vars = DataProperty(info, default=(), convert=dict)
-    subtitle = DataProperty(info, default=None)
-    time = DataProperty(info, default=None)
-    place = DataProperty(info, default=None)
+    @sessions.after_load()
+    def _sessions_after_load(self, context):
+        set_prev_next(self.sessions.values())
 
-    canonical = DataProperty(info, default=False)
+        for session in self.sessions.values():
+            for material in session.materials:
+                if material.lesson_slug:
+                    self._requested_lessons.add(material.lesson_slug)
 
-    data_filename = "info.yml"  # for MultipleModelDirProperty
+        if context.version < (0, 1) and len(self.sessions) > 1:
+            # Assign serials to sessions (numbering from 1)
+            for serial, session in enumerate(self.sessions.values(), start=1):
+                session.serial = str(serial)
 
-    # These two class attributes define what the function
-    # ``naucse.utils.forks:course_info`` returns from forks,
-    # meaning, the function in the fork looks at these lists
-    # that are in the fork and returns those.
-    # If you're adding an attribute to these lists, you have to
-    # make sure that you provide a default in the CourseLink
-    # attribute since existing forks don't contain the value.
-    COURSE_INFO = ["title", "description", "vars", "canonical"]
-    RUN_INFO = ["title", "description", "start_date", "end_date", "canonical", "subtitle", "derives", "vars",
-                "default_start_time", "default_end_time"]
+    source_file = source_file_field
 
-    @property
-    def derives(self):
-        return self.info.get("derives")
+    start_date = Field(
+        DateConverter(),
+        doc='Date when this course starts, or None')
 
-    @reify
-    def base_course(self):
-        name = self.info.get('derives')
-        if name is None:
-            return None
-        return self.root.courses[name]
+    @start_date.default_factory()
+    def _construct(self):
+        dates = [getattr(s, 'date', None) for s in self.sessions.values()]
+        return min((d for d in dates if d), default=None)
 
-    @reify
-    def sessions(self):
-        return _get_sessions(self, self.info['plan'])
+    end_date = Field(
+        DateConverter(),
+        doc='Date when this course ends, or None')
 
-    @reify
-    def edit_path(self):
-        return self.path.relative_to(self.root.path) / "info.yml"
+    @end_date.default_factory()
+    def _construct(self):
+        dates = [getattr(s, 'date', None) for s in self.sessions.values()]
+        return max((d for d in dates if d), default=None)
 
-    @reify
-    def start_date(self):
-        dates = [s.date for s in self.sessions.values() if s.date is not None]
-        if not dates:
-            return None
-        return min(dates)
-
-    @reify
-    def end_date(self):
-        dates = [s.date for s in self.sessions.values() if s.date is not None]
-        if not dates:
-            return None
-        return max(dates)
-
-    def _default_time(self, key):
-        default_time = self.info.get('default_time')
-        if default_time:
-            return time_from_string(default_time[key])
-        return None
-
-    @reify
-    def default_start_time(self):
-        return self._default_time('start')
-
-    @reify
-    def default_end_time(self):
-        return self._default_time('end')
-
-
-def optional_convert_date(datestr):
-    if not datestr:
-        return None
-
-    try:
-        return datetime.datetime.strptime(datestr, "%Y-%m-%d").date()
-    except ValueError:
-        return None
-
-
-def optional_convert_time(timestr):
-    if not timestr:
-        return None
-
-    try:
-        return datetime.datetime.strptime(timestr, "%H:%M:%S").time()
-    except ValueError:
-        return None
-
-
-class CourseLink(CourseMixin, Model):
-    """A link to a course from a separate git repo.
-    """
-
-    link = YamlProperty()
-    repo: str = DataProperty(link)
-    branch: str = DataProperty(link, default="master")
-
-    info = ForkProperty(repo, branch, entry_point="naucse.utils.forks:course_info",
-                        args=lambda instance: [instance.slug])
-    title = DataProperty(info)
-    description = DataProperty(info)
-    start_date = DataProperty(info, default=None, convert=optional_convert_date)
-    end_date = DataProperty(info, default=None, convert=optional_convert_date)
-    subtitle = DataProperty(info, default=None)
-    derives = DataProperty(info, default=None)
-    vars = DataProperty(info, default=None)
-    canonical = DataProperty(info, default=False)
-    default_start_time = DataProperty(info, default=None, convert=optional_convert_time)
-    default_end_time = DataProperty(info, default=None, convert=optional_convert_time)
-
-    data_filename = "link.yml"  # for MultipleModelDirProperty
-
-    def __str__(self):
-        return 'CourseLink: {} ({})'.format(self.repo, self.branch)
-
-    @reify
-    def base_course(self):
-        name = self.derives
-        if name is None:
-            return None
-        try:
-            return self.root.courses[name]
-        except LookupError:
-            return None
-
-    def render(self, page_type, *args, **kwargs):
-        """Render a page in the fork.
-
-        Check the content and registers URLs to freeze.
-        """
-        naucse.utils.views.forks_raise_if_disabled()
-
-        task = Task(
-            "naucse.utils.forks:render",
-            args=[page_type, self.slug] + list(args),
-            kwargs=kwargs,
+    @classmethod
+    def load_local(
+        cls, slug, *, parent, repo_info, path='.', canonical=False,
+        renderer=naucse_render
+    ):
+        path = Path(path).resolve()
+        data = renderer.get_course(slug, version=1, path=path)
+        is_meta = (slug == 'courses/meta')
+        result = load(
+            cls, data, slug=slug, repo_info=repo_info, parent=parent,
+            base_path=path, is_meta=is_meta, canonical=canonical,
         )
-        result = arca.run(self.repo, self.branch, task,
-                          reference=Path("."), depth=None)
+        result.repo_info = repo_info
+        result.renderer = renderer
+        return result
 
-        if page_type != "calendar_ics" and result.output["content"] is not None:
-            result.output["content"] = sanitize_html(result.output["content"])
-
-        return result.output
-
-    def render_course(self, **kwargs):
-        return self.render("course", **kwargs)
-
-    def render_calendar(self, **kwargs):
-        return self.render("calendar", **kwargs)
-
-    def render_calendar_ics(self, **kwargs):
-        return self.render("calendar_ics", **kwargs)
-
-    def render_page(self, lesson_slug, page, solution, content_key=None, **kwargs):
-        return self.render("course_page", lesson_slug, page, solution, content_key=content_key, **kwargs)
-
-    def render_session_coverpage(self, session, coverpage, **kwargs):
-        return self.render("session_coverpage", session, coverpage, **kwargs)
-
-    def lesson_static(self, lesson_slug, path):
-        filename = arca.static_filename(self.repo, self.branch, Path("lessons") / lesson_slug / "static" / path,
-                                        reference=Path("."), depth=None).resolve()
-
-        return filename.parent, filename.name
-
-    def get_footer_links(self, lesson_slug, page, **kwargs):
-        """Return links to previous page, current session and the next page.
-
-        Each link is either a dict with 'url' and 'title' keys or ``None``.
-
-        If :meth:`render_page` fails and a canonical version is in the
-        base repo, it's used instead with a warning.
-        This method provides the correct footer links for the page,
-        since ``sessions`` is not included in the info provided by forks.
-        """
-        naucse.utils.views.forks_raise_if_disabled()
-
-        task = Task(
-            "naucse.utils.forks:get_footer_links",
-            args=[self.slug, lesson_slug, page],
-            kwargs=kwargs
+    @classmethod
+    def load_remote(cls, slug, *, parent, link_info):
+        url = link_info['repo']
+        branch = link_info.get('branch', 'master')
+        renderer = arca_renderer.Renderer(parent.arca, url, branch)
+        return cls.load_local(
+            slug, parent=parent, repo_info=get_repo_info(url, branch),
+            path=renderer.worktree_path,
+            renderer=renderer,
         )
 
-        result = arca.run(self.repo, self.branch, task, reference=Path("."), depth=None)
+    # XXX: Is course derivation useful?
+    derives = Field(
+        str, optional=True,
+        doc="Slug of the course this derives from (deprecated)")
 
-        to_return = []
+    @derives.after_load()
+    def _set_base_course(self, context):
+        key = f'courses/{self.derives}'
+        try:
+            self.base_course = self.root.courses[key]
+        except KeyError:
+            self.base_course = None
 
-        from naucse.views import logger
-        logger.debug(result.output)
+    def get_recent_derived_runs(self):
+        result = []
+        if self.canonical:
+            today = datetime.date.today()
+            cutoff = today - datetime.timedelta(days=2*30)
+            for course in self.root.courses.values():
+                if (
+                    course.start_date
+                    and course.base_course == self
+                    and course.end_date > cutoff
+                ):
+                    result.append(course)
+        result.sort(key=lambda course: course.start_date, reverse=True)
+        return result
 
-        if not isinstance(result.output, dict):
-            return None, None, None
+    def get_lesson_url(self, slug, *, page='index', **kw):
+        if slug in self._lessons:
+            return self._lessons[slug].get_url(**kw)
+        if self._frozen:
+            return KeyError(slug)
+        self._requested_lessons.add(slug)
+        return self.root._url_for(
+            Page, pks={'page_slug': page, 'lesson_slug': slug,
+                       **self.get_pks()}
+        )
 
-        def validate_link(link, key):
-            return key in link and isinstance(link[key], str)
+    def load_lessons(self, slugs):
+        if self._frozen:
+            raise Exception('course is frozen')
+        slugs = set(slugs) - set(self._lessons)
+        rendered = self.course.renderer.get_lessons(
+            slugs, vars=self.vars, path=self.base_path,
+        )
+        new_lessons = load(
+            DictConverter(Lesson, key_arg='slug'),
+            rendered,
+            parent=self,
+        )
+        for slug in slugs:
+            try:
+                lesson = new_lessons[slug]
+            except KeyError:
+                raise ValueError(f'{slug} missing from rendered lessons')
+            self._lessons[slug] = lesson
+            self._requested_lessons.discard(slug)
 
-        for link_type in "prev_link", "session_link", "next_link":
-            link = result.output.get(link_type)
+    def load_all_lessons(self):
+        if self._frozen:
+            return
+        self._requested_lessons.difference_update(self._lessons)
+        link_depth = 50
+        while self._requested_lessons:
+            self._requested_lessons.difference_update(self._lessons)
+            if not self._requested_lessons:
+                break
+            self.load_lessons(self._requested_lessons)
+            link_depth -= 1
+            if link_depth < 0:
+                # Avoid infinite loops in lessons
+                raise ValueError(
+                    f'Lessons in course {self.slug} are linked too deeply')
 
-            if (isinstance(link, dict) and
-                    validate_link(link, "url") and
-                    validate_link(link, "title")):
-                to_return.append(link)
-            else:
-                to_return.append(None)
+    def _has_lesson(self, slug):
+        # HACK for getting "canonical lesson" info
+        return (
+            slug in self.course._lessons
+            or slug in self.course._requested_lessons
+        )
 
-        logger.debug(to_return)
-
-        return to_return
-
-    @reify
-    def edit_path(self):
-        return self.path.relative_to(self.root.path) / "link.yml"
+    def freeze(self):
+        if self._frozen:
+            return
+        self.load_all_lessons()
+        self._frozen = True
 
 
-class RunYear(Model):
-    """A year of runs"""
-    def __str__(self):
-        return self.path.parts[-1]
+class AbbreviatedDictConverter(DictConverter):
+    """Dict that only shows URLs to its items when dumped"""
+    def dump(self, value, context):
+        return {
+            key: {'$ref': v.get_url('api', external=True)}
+            for key, v in value.items()
+        }
 
-    runs = MultipleModelDirProperty([Course, CourseLink])
+    def get_schema(self, context):
+        return {
+            'type': 'object',
+            'additionalProperties': {
+                '$ref': '#/definitions/ref',
+            },
+        }
+
+
+class RunYear(Model, collections.abc.MutableMapping):
+    """Collection of courses given in a specific year
+
+    A RunYear behaves as a dict (slug to Course).
+    It should contain all courses that take place in a given year.
+    One course may be in multiple RunYears if it doesn't start and end in the
+    same calendar year.
+
+    RunYear is just a grouping mechanism. It exists to limit the length of
+    API responses.
+    Some course slugs include a year in them; that's just for extra
+    uniqueness and has nothing to do with RunYear.
+    """
+    pk_name = 'year'
+
+    _naucse__converter = AbbreviatedDictConverter(Course)
+    _naucse__converter.get_schema_url=_get_schema_url
+
+    def __init__(self, year, *, parent=None):
+        super().__init__(parent=parent)
+        self.year = year
+        self.runs = {}
+
+    def __getitem__(self, slug):
+        return self.runs[slug]
+
+    def __setitem__(self, slug, course):
+        self.runs[slug] = course
+
+    def __delitem__(self, slug):
+        del self.runs[slug]
+
+    def __iter__(self):
+        # XXX: Sort by ... start date?
+        return iter(self.runs)
+
+    def __len__(self):
+        return len(self.runs)
+
+    def get_pks(self):
+        return {**self.parent.get_pks(), 'year': self.year}
 
 
 class License(Model):
-    def __str__(self):
-        return self.path.parts[-1]
-
-    info = YamlProperty()
-
-    title = DataProperty(info)
-    url = DataProperty(info)
-
-
-class MetaInfo:
-    """Info about the current repository.
+    """A license for content or code
     """
+    init_arg_names = {'parent', 'slug'}
+    pk_name = 'slug'
 
-    def __str__(self):
-        return "Meta Information"
+    url = Field(str)
+    title = Field(str)
 
-    _default_slug = "pyvec/naucse.python.cz"
-    _default_branch = "master"
-
-    @reify
-    def slug(self):
-        """Return the slug of the repository based on the current branch.
-
-        Returns the default if not on a branch, the branch doesn't
-        have a remote, or the remote url can't be parsed.
-        """
-        from naucse.views import logger
-
-        # Travis CI checks out specific commit, so there isn't an active branch
-        if os.environ.get("TRAVIS") and os.environ.get("TRAVIS_REPO_SLUG"):
-            return os.environ.get("TRAVIS_REPO_SLUG")
-
-        repo = Repo(".")
-
-        try:
-            active_branch = repo.active_branch
-        except TypeError:  # thrown if not in a branch
-            logger.warning("MetaInfo.slug: There is not active branch")
-            return self._default_slug
-
-        try:
-            remote_name = active_branch.remote_name
-        except ValueError:
-            tracking_branch = active_branch.tracking_branch()
-
-            if tracking_branch is None:  # a branch without a remote
-                logger.warning("MetaInfo.slug: The branch doesn't have a remote")
-                return self._default_slug
-
-            remote_name = tracking_branch.remote_name
-
-        remote_url = repo.remotes[remote_name].url
-
-        parsed = giturlparse.parse(remote_url)
-
-        if hasattr(parsed, "owner") and hasattr(parsed, "repo"):
-            return f"{parsed.owner}/{parsed.repo}"
-
-        logger.warning("MetaInfo.slug: The url could not be parsed.")
-        logger.debug("MetaInfo.slug: Parsed %s", parsed.__dict__)
-
-        return self._default_slug
-
-    @reify
-    def branch(self):
-        """Return the active branch name, or 'master' if not on a branch.
-        """
-        from naucse.views import logger
-
-        # Travis CI checks out specific commit, so there isn't an active branch
-        if os.environ.get("TRAVIS") and os.environ.get("TRAVIS_BRANCH"):
-            return os.environ.get("TRAVIS_BRANCH")
-
-        repo = Repo(".")
-
-        try:
-            return repo.active_branch.name
-        except TypeError:  # thrown if not in a branch
-            logger.warning("MetaInfo.branch: There is not active branch")
-            return self._default_branch
+    def get_url(self, *args, **kwargs):
+        # A Licence always has an external URL
+        return self.url
 
 
 class Root(Model):
-    """The base of the model"""
-    def __init__(self, path):
-        super().__init__(self, path)
+    """Data for the naucse website
 
-    collections = DirProperty(Collection, 'lessons')
-    courses = MultipleModelDirProperty([Course, CourseLink], 'courses')
-    run_years = DirProperty(RunYear, 'runs', keyfunc=int)
-    licenses = DirProperty(License, 'licenses')
-    courses_edit_path = Path("courses")
-    runs_edit_path = Path("runs")
+    Contains a collection of courses plus additional metadata.
+    """
+    def __init__(
+        self, *,
+        url_factories=None,
+        schema_url_factory=None,
+        arca=None,
+        trusted_repo_patterns=(),
+    ):
+        self.root = self
+        self.url_factories = url_factories or {}
+        self.schema_url_factory = schema_url_factory
+        super().__init__(parent=self)
+        self.arca = arca
+        self.trusted_repo_patterns = trusted_repo_patterns
 
-    @reify
-    def runs(self):
-        return {
-            (year, slug): run
-            for year, run_year in self.run_years.items()
-            for slug, run in run_year.runs.items()
-        }
+        self.courses = {}
+        self.run_years = {}
+        self.licenses = {}
+        self.self_study_courses = {}
 
-    @reify
-    def safe_runs(self):
-        return {
-            (year, run.slug): run
-            for year, run_year in self.safe_run_years.items()
-            for run in run_year
-        }
+        # For pagination of runs
+        # XXX: This shouldn't be necessary
+        self.explicit_run_years = set()
 
-    @reify
-    def meta(self):
-        return MetaInfo()
+    pk_name = None
 
-    @reify
-    def safe_run_years(self):
-        # since even the basic info about the forked runs can be broken,
-        # we need to make sure the required info is provided.
-        # If ``RAISE_FORK_ERRORS`` is set, exceptions are raised here.
-        # Otherwise the run is ignored completely.
-        safe_years = {}
-        for year, run_years in self.run_years.items():
-            safe_run_years = []
+    self_study_courses = Field(
+        AbbreviatedDictConverter(Course),
+        doc="""Links to "canonical" courses – ones without a time span""")
+    run_years = Field(
+        AbbreviatedDictConverter(RunYear),
+        doc="""Links to courses by year""")
+    licenses = Field(
+        DictConverter(License),
+        doc="""Allowed licenses""")
 
-            for run in run_years.runs.values():
-                if not run.is_link():
-                    safe_run_years.append(run)
-                elif (naucse.utils.views.forks_enabled() and
-                      naucse.utils.views.does_course_return_info(run, extra_required=["start_date", "end_date"])):
-                    safe_run_years.append(run)
+    def load_local_courses(self, path):
+        """Load local courses and lessons from the given path
 
-            safe_years[year] = safe_run_years
+        Note: Licenses should be loaded before calling load_local_courses,
+        otherwise lessons will have no licences to choose from
+        """
+        self.repo_info = get_local_repo_info(path)
 
-        return safe_years
+        self_study_course_path = path / 'courses'
+        run_path = path / 'runs'
+        lesson_path = path / 'lessons'
 
-    def runs_from_year(self, year):
-        """Get all runs started in a given year."""
-        run_year = self.safe_run_years.get(year)
-        if run_year:
-            return sorted(run_year, key=attrgetter('start_date'))
-        return []
+        if not lesson_path.exists():
+            # At least one of 'runs' or 'courses' should exist for any courses
+            # to be loaded. But "lessons" needs to exist either way.
+            raise FileNotFoundError(lesson_path)
 
-    def get_lesson(self, name):
-        if isinstance(name, Lesson):
-            return name
-        if name[-1] == "/":
-            name = name[:-1]
-        collection_name, name = name.split('/', 2)
-        collection = self.collections[collection_name]
-        return collection.lessons[name]
+        def _load_local_course(course_path, slug, canonical_if_local=False):
+            link_path = course_path / 'link.yml'
+            if link_path.is_file():
+                with link_path.open() as f:
+                    link_info = yaml.safe_load(f)
+                checked_url = '{repo}#{branch}'.format(**link_info)
+                if any(
+                    fnmatch(checked_url, l) for l in self.trusted_repo_patterns
+                ):
+                    course = Course.load_remote(
+                        slug, parent=self, link_info=link_info,
+                    )
+                    self.add_course(course)
+                else:
+                    logger.debug(f'Untrusted repo: {checked_url}')
+            if (course_path / 'info.yml').is_file():
+                course = Course.load_local(
+                    slug, parent=self, repo_info=self.repo_info, path=path,
+                    canonical=canonical_if_local,
+                )
+                self.add_course(course)
 
-    @reify
-    def lesson_jinja_env(self):
-        env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader([str(self.path / 'lessons')]),
-            autoescape=jinja2.select_autoescape(['html', 'xml']),
-        )
-        setup_jinja_env(env)
-        return env
+        if self_study_course_path.exists():
+            for course_path in self_study_course_path.iterdir():
+                slug = 'courses/' + course_path.name
+                _load_local_course(course_path, slug, canonical_if_local=True)
+
+        if run_path.exists():
+            for year_path in sorted(run_path.iterdir()):
+                if year_path.is_dir():
+                    self.explicit_run_years.add(int(year_path.name))
+                    for course_path in year_path.iterdir():
+                        slug = f'{year_path.name}/{course_path.name}'
+                        _load_local_course(course_path, slug)
+
+        self.add_course(Course.load_local(
+            'lessons',
+            repo_info=self.repo_info,
+            canonical=True,
+            parent=self,
+            path=path,
+        ))
+
+        self_study_order_path = self_study_course_path / 'info.yml'
+        if self_study_order_path.exists():
+            with (path / 'courses/info.yml').open() as f:
+                course_info = yaml.safe_load(f)
+            self.featured_courses = [
+                self.courses[f'courses/{n}'] for n in course_info['order']
+            ]
+
+        self.edit_info = self.repo_info.get_edit_info('.')
+        self.runs_edit_info = self.repo_info.get_edit_info('runs')
+        self.course_edit_info = self.repo_info.get_edit_info('courses')
+
+    def add_course(self, course):
+        slug = course.slug
+        if slug in self.courses:
+            # XXX: Replacing courses is untested
+            old = self.courses[slug]
+            if old.start_date:
+                for year in range(old.start_date.year, old.end_date.year+1):
+                    del self.run_years[year][slug]
+            else:
+                del self.self_study_courses[slug]
+
+        self.courses[slug] = course
+        if course.start_date:
+            for year in range(course.start_date.year, course.end_date.year+1):
+                if year not in self.run_years:
+                    run_year = RunYear(year=year, parent=self)
+                    self.run_years[year] = run_year
+                self.run_years[year][slug] = course
+        else:
+            self.self_study_courses[slug] = course
+
+    def freeze(self):
+        for course in self.courses.values():
+            course.freeze()
+
+    def load_licenses(self, path):
+        """Add licenses from files in the given path to the model"""
+        for licence_path in path.iterdir():
+            with (licence_path / 'info.yml').open() as f:
+                info = yaml.safe_load(f)
+            slug = licence_path.name
+            license = load(
+                License,
+                {'api_version': [0, 0], 'license': info},
+                parent=self, slug=slug,
+            )
+            self.licenses[slug] = license
+
+    def get_course(self, slug):
+        # XXX: RunYears shouldn't be necessary
+        if slug == 'lessons':
+            return self.courses[slug]
+        year, identifier = slug.split('/')
+        if year == 'courses':
+            return self.courses[slug]
+        else:
+            return self.run_years[int(year)][slug]
+
+    def get_pks(self):
+        return {}
+
+    def _url_for(self, obj_type, pks, url_type='web', *, external=False):
+        try:
+            urls = self.url_factories[url_type]
+        except KeyError:
+            raise NoURLType(url_type)
+        if obj_type is None:
+            obj_type = type(obj)
+        try:
+            url_for = urls[obj_type]
+        except KeyError:
+            raise NoURL(obj_type)
+        return url_for(**pks, _external=external)
