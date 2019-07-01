@@ -11,7 +11,10 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 
-Příkaz vypíše několik informací. Z prvního řádku se můžeš ujistit, že používáš Python 3. (Vidíš-li číslo jako `2.7.11`, něco je špatně – popros o radu kouče.)
+Příkaz vypíše několik informací. Z prvního řádku se můžeš ujistit, že používáš Python 3.
+(Verze by měla být `3.6` nebo vyšší. Vidíš-li číslo jako `2.7.11`, něco je špatně – popros o radu kouče.)
+Další řádek je informační: Python má k dispozici návody a informace sám o sobě,
+ale jsou psané v angličtině a pro trochu pokročilejší publikum.
 
 Třemi „zobáčky“ `>>>` pak Python poprosí o instrukce.
 Je to jako v příkazové řádce, ale místo příkazů jako `cd` a `mkdir` sem budeš psát příkazy Pythonu.
@@ -33,7 +36,10 @@ takže si ji dobře prohlédni, ať ji příště poznáš.
 
 ## První příkaz
 
-Jako první instrukci použijeme Pythonu jako kalkulačku.
+Třemi „zobáčky“ `>>>` Python prosí o instrukce.
+Pojď mu nějakou dát!
+
+Ze začátku použij Pythonu jako kalkulačku.
 Za tři zobáčky napiš třeba `2 + 3` a zmáčkni <kbd>Enter</kbd>.
 
 ``` pycon
@@ -48,7 +54,7 @@ Zkusíš i odečítání?
 
 A jak je to s násobením?
 {# XXX: Jak zapsat násobení? `4 x 5` `4 . 5` `4 × 5` `4 * 5` -#}
-Na kalkulačce bys zadala `4 × 5`, což se na klávesnici píše špatně.
+Na kalkulačce bys zadal{{a}} `4 × 5`, což se na klávesnici píše špatně.
 Python proto používá symbol `*`.
 
 ``` pycon
@@ -58,7 +64,7 @@ Python proto používá symbol `*`.
 
 Symboly jako `+` a `*` se odborně nazývají *operátory*.
 
-Operátor pro dělení je `/`.
+Operátor pro dělení je `/` – jako u násobení, znak `÷` by se psal špatně.
 
 Při dělení může vzniknout necelé číslo, třeba dva a půl.
 Python používá desetinnou *tečku*, ukáže se tedy `2.5`:
@@ -75,8 +81,7 @@ objeví i když vyjde číslo celé:
 2.0
 ```
 
-Občas se hodí použít dělení se zbytkem.
-Výsledek tak zůstane jako celé číslo.
+Občas se hodí použít dělení se zbytkem, kdy výsledek zůstane jako celé číslo.
 Na to má Python operátory `//` (podíl) a `%` (zbytek):
 
 ``` pycon
@@ -107,7 +112,7 @@ V Pythonu se to dělá pomocí `quit()`, s prázdnými závorkami na konci.
 </pre></div>
 
 Zobáčky `>>>` se změnily na výzvu
-příkazové řádky (která začíná `(venv)` a končí `$` nebo `>`).
+příkazové řádky, která začíná `(venv)` a končí `$` nebo `>`.
 Teď fungují příkazy jako `whoami` a `cd`, ale příkazy Pythonu
 jako `1 + 2` fungovat nebudou, dokud Python opět nepustíš pomocí
 příkazu `python`.
