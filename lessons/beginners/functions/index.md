@@ -40,16 +40,16 @@ Třeba program v jazyce APL laik jednoduše ani nenapíše, ani nepřečte:
 Expert v APL může být vysoce produktivní, ale Python se zaměřuje spíš na to,
 aby se dal snadno naučit.
 A tak používá symboly jen pro ty nejčastější operace.
-Je jich dokonce tak málo, že už jich zhruba půlku znáš!
+Operátorů, které využívají symboly, je tak málo, že už jich zhruba půlku znáš!
 
 > [note]
-> Pro zajímavost, tady jsou všechny operátory v Pythonu, které používají
-> symboly:
+> Pro zajímavost, tady jsou všechny – i ty co ještě neznáš:
 >
 > <div>
 >     <code>==</code> <code>!=</code>
 >     <code>&lt;</code> <code>&gt;</code>
 >     <code>&lt;=</code> <code>&gt;=</code>
+>     <code class="text-muted">:=</code>
 >     <code class="text-muted">|</code> <code class="text-muted">^</code>
 >     <code class="text-muted">&amp;</code>
 >     <code class="text-muted">&lt;&lt;</code> <code class="text-muted">&gt;&gt;</code>
@@ -70,29 +70,26 @@ Všechno ostatní vyjádříme slovně.
 
 Jedna operace, na kterou v Pythonu není symbol, je zjištění délky řetězce.
 
-Matematik by něco takového napsal třeba pomocí svislých čárek
-(s poznámkou, co přesně ty čárky reprezentují):
-
-* <var>s</var> = “Ahoj!”
-* <var>delka</var> = |<var>s</var>|
-
-V Pythonu má operace „délka řetězce“ místo symolu název.
-Jmenuje se `len` (z angl. *length*, délka), a píše se `len(s)`:
+Místo symolu má název.
+Jmenuje se `len` (z angl. *length*, délka):
 
 ```python
-s = 'Ahoj'
-delka = len(s)      # Vypočítání délky
+slovo = 'Ahoj'
+delka = len(slovo)      # Vypočítání délky
 print(delka)
 ```
 
-Ono `len(s)` výraz – operace, která něco udělá podle hodnoty `s` a výsledek
-dá k dispozici.
-Funguje podobně jako jiné výrazy – třeba `a + b`, což je operace, která něco
-udělá podle hodnot `a` a `b` a výsledek dá k dispozici.
-V první případě je výsledkem délka; ve druhém součet.
+Ono `len(slovo)` je *výraz*, který něco udělá podle hodnoty `slovo`
+a výsledek dá k dispozici.
 
-To `len` je *funkce* a zápisu `len(s)` se říká *volání funkce*.
-Pojďme se si je popsat trochu zevrubněji.
+Stejně fungují výrazy s operátorem – třeba výraz `a + b` něco
+udělá podle hodnot `a` a `b` a výsledek dá k dispozici.
+
+Výsledek výrazu pak může zbytek programu dál zpracovat:
+náš program ho přiřadí do proměnné (pomocí `delka =`).
+
+Název `len` označuje *funkci* a výrazu `len(s)` se říká *volání funkce*.
+Pojďme si taková volání popsat trochu zevrubněji.
 
 > [note] Pro matemati{{gnd('', 'č', both='')}}ky
 > Máš-li rád{{a}} matematiku, dej pozor!
@@ -103,66 +100,30 @@ Pojďme se si je popsat trochu zevrubněji.
 
 ## Volání funkcí
 
-Funkci voláme *jménem*, například `len`.
-
-Je to jméno jako u proměnných.
-(Vlastně to je proměnná, jen místo čísla nebo řetězce označuje funkci.)
+Funkci zavoláš *jménem*, například `len`.
 
 Za jméno funkce patří závorky,
-do nichž uzavřeme *argument* (neboli *vstup*) funkce.
-To je informace, se kterou bude naše funkce
+do nichž uzavřeš *argument* (neboli *vstup*) funkce.
+To je informace, se kterou bude funkce
 pracovat – třeba `len` ze svého argumentu vypočítá délku.
 
 Volání funkce je výraz a jeho výsledek, takzvaná *návratová* hodnota
 (angl. *return value*) se dá třeba přiřadit do proměnné.
 
-```python
-#   jméno funkce
-#       │
-#      ╭┴╮
-   x = len('Ahoj!')
-#  ▲       ╰──┬──╯
-#  │     argument
-#  │
-#  ╰── návratová hodnota
-```
-
-Nebo se volání funkce dá použít místo čísla v součtu:
-
-```python
-delka = len('Ahoj') + len('!')
-```
-
-Nebo v podmínce ifu:
-
-```python
-if len('Ahoj!') < 3:
-```
-
-Nebo dokonce jako argument jiné funkce:
-
-```python
-print(len('Ahoj'))
-```
-
-Nebo to zkombinovat dohromady:
-
-```python
-print(len('Ahoj') + 1)
-```
-
-… a podobně.
+{{ figure(img=static('call-anatomy.svg'), alt="Diagram volání funkce") }}
 
 
-### Funkce a procedury
+### Procedury
 
-Možná sis všiml{{a}}, že příkaz `print(x)` vypadá podobně jako volání funkce.
-To není vůbec náhoda – `print` je totiž taky funkce!
-Stejně jako `len` dostává v závorkách argument – hodnotu, se kterou pracuje.
+Možná sis všiml{{a}}, že jednu funkci už voláš déle: `print("Ahoj!")`
+je taky volání funkce.
+Stejně jako `len` dostává `print` v závorkách argument – hodnotu, se
+kterou pracuje.
+Liší se ale návratovou hodnotou.
 
-Na rozdíl od `len` ane `print` nic nevrací.
-Výsledek volání `print('Ahoj')` není žádná smysluplná hodnota.
-Místo vypočítání nějaké hodnoty `print` něco *udělá* – vypíše text na obrazovku.
+Funkce `print` sice něco *udělá* – vypíše text
+na obrazovku – ale nevrátí žádný smysluplný výsledek, který by zbytek programu
+mohl dál zpracovat.
 
 Funkcím, které nic nevrací (jen něco udělají) se občas říká *procedury*.
 V Pythonu není hranice mezi „normální“ funkcí a procedurou příliš ostrá,
@@ -186,15 +147,134 @@ Pár příkladů:
 > odkaž ho prosím na tyto materiály.
 
 
-### Argumenty
+## Vyhodnocování výrazů
 
-Argument je to, co funkci „předhodíš“ – dáš k dispozici.
+Zaměřme se ale zpátky na funkce, které vrací nějakou hodnotu.
+Volání takové funkce se dá použít všude, kde lze použít výraz.
+S funkcemi začínají být výrazy trochu složitější, tak se podívejme na to,
+jak Python výrazy vyhodnocuje.
+
+Když chceš spočítat matematický výraz, třeba `3 * (5 + 2)`, nejdřív
+spočítáš to, co je v závorkách: `(5 + 2)` je `7`.
+Výsledek dosadíš do původního výrazu místo závorky: `3 * 7`.
+Stejně fungují výrazy v Pythonu.
+
+Možná to zní jednoduše, ale protože budeme tenhle postup používat
+i na složitější výrazy, hodí se ho umět „rozepsat“:
+
+```python
+vysledek = 3 * (5 + 2)
+#              ╰──┬──╯
+vysledek = 3 *    7
+#          ╰─┬────╯
+vysledek =  21
+```
+
+Když Python potřebuje vyhodnotit proměnnou, dosadí její hodnotu:
+
+```python
+a = 4
+b = 5
+
+vysledek = (a + b) / a
+#           |    |   |
+vysledek = (4 + 5) / 4
+#          ╰──┬──╯
+vysledek =    9    / 4
+#             ╰────┬─╯
+vysledek =        2.25
+```
+
+Funguje to i u složitých výrazů.
+
+> [note]
+> Python se složitými výrazy nemá problém, ale člověk, který program čte či
+> píše, se v nich může ztratit.
+> Když opravdu potřebuješ napsat složitý výraz, je dobré jej vysvětlit
+> pomocí komentáře.
+
+```python
+a = 2
+b = 5
+c = 3
+
+
+x = -b + (b ** 2 + 4 * a * c) ** 0.5 / (2 * a)
+#    |    |            |   |                |
+x = -5 + (5 ** 2 + 4 * 2 * 3) ** 0.5 / (2 * 2)
+#         ╰──┬─╯   ╰─┬─╯               ╰──┬──╯
+x = -5 + (  25   +   8   * 3) ** 0.5 /    4
+#                   ╰────┬─╯
+x = -5 + (  25   +      24  ) ** 0.5 /    4
+#        ╰───────┬──────────╯
+x = -5 +         49           ** 0.5 /    4
+#                ╰──────┬──────────╯
+x = -5 +               7.0           /    4
+#                      ╰─────────────┬────╯
+x = -5 +                            1.75
+#   ╰──────────────┬───────────────────╯
+x =              -3.25
+```
+
+
+Nebo se volání funkce dá použít místo čísla v součtu:
+
+```python
+delka = len('Ahoj') + len('!')
+#        ╰──┬─────╯    ╰─┬───╯
+delka =     4       +    1
+#           ╰───────┬────╯
+delka =             5
+```
+
+Nebo v podmínce ifu – třeba u:
+
+```python
+if len('Ahoj!') <= 3:
+    print('pozdrav je krátký')
+```
+
+… se podmínka vyhodnotí jako nepravda:
+
+```python
+   len('Ahoj!') <= 3
+#  ╰─────┬────╯
+         5      <= 3
+#        ╰──────┬──╯
+              False
+```
+
+Nebo dokonce jako argument jiné funkce:
+
+```python
+print(len('Ahoj'))
+#     ╰────┬────╯
+print(     4     )   # vypíše 4
+```
+
+Nebo to zkombinovat dohromady:
+
+```python
+x = 5
+print(len('Ahoj') + x)
+#     ╰────┬────╯   |
+print(     4      + 5)
+#          ╰───┬────╯
+print(         9     )
+```
+
+… a podobně.
+
+
+## Argumenty
+
+Argument je to, co funkci dáš k dispozici.
 Chceš-li délku řetězce `Ahoj!`, použiješ funkci `len` která umí vypočítat
 délku *jakéhokoli* řetězce – a jako argument, v závorkách, jí dáš tu svoji
 konkrétní hodnotu: `len('Ahoj!')`.
 
 Podobně funkce `print` umí vypsat jakoukoli hodnotu.
-Tu, kterou má vypsat v tvém konkrétním případě, jí předáš jako argument.
+Tu, kterou má vypsat ve tvém konkrétním případě, jí předáš jako argument.
 
 Některým funkcím můžeš předat i více argumentů.
 Třeba zrovna funkci `print`, která všechny své argumenty vypíše na řádek.
@@ -219,9 +299,6 @@ print()
 
 {% filter solution %}
 Funkce `print` zavolaná bez argumentů napíše prázdný řádek.
-
-(Je to přesně podle definice – funkce `print` všechny své argumenty vypíše
-na řádek.)
 {% endfilter %}
 
 
@@ -231,12 +308,20 @@ Některé funkce umí pracovat i s *pojmenovanými* argumenty.
 Píšou se podobně jako přiřazení do proměnné,
 s rovnítkem, ale uvnitř závorek.
 
-Třeba funkce `print` normálně ukončí výpis novým řádkem,
-ale pomocí argumentu `end` se dá vypsat i něco jiného.
+Třeba funkce `print` při výpisu odděluje jednotlivé argumenty mezerou,
+ale pomocí argumentu `sep` se dá použít i něco jiného.
+
+```python
+print(1, 2, 3, 4, sep=', ')     # Místo mezery odděluj čárkou
+```
+
+Dá změnit i to, co `print` udělá na konci výpisu.
+Normálně přejde na nový řádek, ale argumentem `sep` můžeš říct co se má vypsat 
+*místo toho*.
 
 > [note]
 > Tenhle příklad je potřeba napsat do souboru; v interaktivní konzoli
-> nebude výstup vypadat, jak má.
+> nebude výstup vypadat tak, jak má.
 
 ```python
 print('1 + 2', end=' ')     # Místo přechodu na nový řádek jen napiš mezeru
@@ -361,7 +446,8 @@ cislo = int(input('Zadej číslo: '))
 ```
 
 Jak Python vyhodnotí tento výraz?
-Zadá-li uživatel <kbd>4</kbd><kbd>2</kbd>, funkce `input` vrátí řetězec`'42'`.
+Zadá-li uživatel <kbd>4</kbd><kbd>2</kbd><kbd>Enter</kbd>,
+funkce `input` vrátí řetězec`'42'`.
 Ten pak funkce `int` vezme jako argument, udělá z něj číslo a to číslo vrátí:
 
 ```python
@@ -369,7 +455,7 @@ cislo = int(input('Zadej číslo: '))
       #     ╰─────────┬─────────╯
 cislo = int(        '42'          )
       # ╰────────────┬────────────╯
-cislo =              42
+cislo =             42
 ```
 
 
@@ -388,7 +474,7 @@ round(cislo)    # zaokrouhlení
 Spousta dalších není k dispozici od začátku programu.
 Ne každý má rád matematiku, a ne ve všech druzích programu jsou takové operace
 potřeba.
-Proto musíme předem – typicky na začátku souboru – říct, že je budeme používat.
+Proto musíš předem – typicky na začátku souboru – říct, že je budeme používat.
 To se dělá *naimportováním* z modulu `math`:
 
 ```python
@@ -418,8 +504,7 @@ ceil(cislo)     # zaokrouhlení nahoru
 
 ### Náhoda
 
-Nakonec si ukážeme dvě funkce, které vrací náhodná čísla:
-`randrange` a `uniform`.
+Nakonec si ukážeme dvě funkce, které vrací náhodná čísla.
 Jsou užitečné třeba pro hry, ve kterých se hází kostkou nebo tahají
 náhodné karty.
 
@@ -440,7 +525,7 @@ uniform(a, b)     # náhodné reálné číslo od a do b
 
 Pozor na to, že <code>randrange(a, b)</code>
 nikdy nevrátí samotné <code>b</code>.
-Pokud potřebujeme náhodně vybrat ze tří možností,
+Pokud potřebuješ náhodně vybrat ze tří možností,
 použij <code>randrange(0, 3)</code>,
 což vrátí <code>0</code>, <code>1</code>, nebo
 <code>2</code>:
@@ -448,12 +533,12 @@ což vrátí <code>0</code>, <code>1</code>, nebo
 ```python
 from random import randrange
 
-cislo = randrange(0, 3)  # číslo je od 0, 1, nebo 2
+cislo = randrange(0, 3)  # číslo je 0, 1, nebo 2
 if cislo == 0:
     print('Kolečko')
 elif cislo == 1:
     print('Čtvereček')
-else:  # 2
+else:  # tady musí být číslo 2
     print('Trojúhelníček')
 ```
 
