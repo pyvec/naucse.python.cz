@@ -305,6 +305,8 @@ class LoginForm(FlaskForm):
 Content of app/templates/base.html:
 
 {% filter solution %}
+```jinja
+{% raw %}
 <ul class="nav navbar-nav navbar-right">
     {% if current_user.is_authenticated %}
     <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
@@ -312,11 +314,15 @@ Content of app/templates/base.html:
     <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
     {% endif %}
 </ul>
+{% endraw %}
+```
 {% endfilter %}
 
 Content of apps/templates/auth/login.html
 
 {% filter solution %}
+```jinja
+{% raw %}
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
@@ -343,6 +349,8 @@ Content of apps/templates/auth/login.html
     <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h1>
 </div>
 {% endblock %}
+{% endraw %}
+```
 {% endfilter %}
 
 5. Create test case for first function (route)
