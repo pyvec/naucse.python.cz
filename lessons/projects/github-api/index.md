@@ -41,7 +41,7 @@ K práci s internetovými stránkami použijeme knihovnu Requests.
 V aktivovaném virtuálním prostředí si ji nainstaluj příkazem:
 
 ```console
-(env)$ python -m pip install requests
+(venv)$ python -m pip install requests
 ```
 
 A potom v Pythonu zkus stáhnout nějakou stránku:
@@ -129,7 +129,7 @@ Pomocí webových API se dají informace nejen číst, ale i měnit.
 
 Na stránce
 [github.com/pyvec/naucse.python.cz/stargazers](https://github.com/pyvec/naucse.python.cz/stargazers)
-je seznam lidí, kteří „ohvězdičkovali” tyto učební ateriály.
+je seznam lidí, kteří „ohvězdičkovali” tyto učební materiály.
 Je jich zatím málo; pojďme se k nim pomocí webového API přidat.
 
 Napřed svému tokenu (na Githubu v nastavení

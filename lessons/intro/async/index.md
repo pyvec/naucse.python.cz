@@ -321,7 +321,7 @@ loop.close()
 ```
 
 Tenhle problém můžeme vyřešit tak, že asynchronní funkci „zabalíme“ do `Future`.
-Na to ma dokonce `asyncio` speciální funkci `ensure_future`, která:
+Na to má dokonce `asyncio` speciální funkci `ensure_future`, která:
 
 * dostane-li asynchronní funkci, „zabalí“ ji do `Future`, a
 * výsledek přímo naplánuje na smyčce událostí, takže se asynchronní funkce
