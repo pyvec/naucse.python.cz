@@ -75,7 +75,7 @@ do života.
 Zkus si ho projít a okomentovat části, které nejsou na první pohled jasné.
 
 ```python
-# Tento program rozdává naivní rady do života.
+# Tento program rozdává nejapné rady do života.
 
 print('Odpovídej "ano" nebo "ne".')
 stastna_retezec = input('Jsi šťastná? ')
