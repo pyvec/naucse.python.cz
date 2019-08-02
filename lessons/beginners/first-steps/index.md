@@ -59,7 +59,6 @@ Pokud ano, gratuluji! První příkaz v Pythonu máš za sebou.
 Zkusíš i odečítání?
 
 A jak je to s násobením?
-{# XXX: Jak zapsat násobení? `4 x 5` `4 . 5` `4 × 5` `4 * 5` -#}
 Na kalkulačce bys zadal{{a}} `4 × 5`, což se na klávesnici píše špatně.
 Python proto používá symbol `*`.
 
