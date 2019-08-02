@@ -1,6 +1,7 @@
 # Interaktivní režim Pythonu
 
-Chceš-li si začít hrát s Pythonem, otevři *příkazový řádek* a aktivuj virtuální prostředí.  Zkontroluj si, že na začátku příkazové řádky ti svítí `(venv)`.
+Chceš-li si začít hrát s Pythonem, otevři *příkazový řádek* a aktivuj virtuální prostředí.
+Zkontroluj si, že ti na začátku příkazové řádky svítí `(venv)`.
 
 Je-li tomu tak, nezbývá než – konečně – pustit Python. K tomu použij příkaz `python`:
 
@@ -75,7 +76,7 @@ Python používá desetinnou *tečku*, ukáže se tedy `2.5`:
 ```
 
 Z důvodů, do kterých teď nebudeme zabíhat, se při dělení desetinná tečka
-objeví i když vyjde číslo celé:
+objeví, i když vyjde číslo celé:
 ``` pycon
 >>> 4 / 2
 2.0
