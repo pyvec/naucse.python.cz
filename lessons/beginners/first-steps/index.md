@@ -20,8 +20,9 @@ ale jsou psané v angličtině a pro trochu pokročilejší publikum.
 Třemi „zobáčky“ `>>>` pak Python poprosí o instrukce.
 Je to jako v příkazové řádce, ale místo příkazů jako `cd` a `mkdir` sem budeš psát příkazy Pythonu.
 
-Vyzkoušej si, že příkazy z příkazové řádky v Pythonu nefungují,
-ačkoli okýnko vypadá skoro stejně:
+Příkazy z příkazové řádky v Pythonu nefungují,
+ačkoli okýnko vypadá skoro stejně.
+Vyzkoušej si to. Za „zobáčky“ napiš `whoami` a zmáčkni Enter:
 
 ```pycon
 >>> whoami
@@ -47,6 +48,10 @@ Za tři zobáčky napiš třeba `2 + 3` a zmáčkni <kbd>Enter</kbd>.
 >>> 2 + 3
 5
 ```
+
+> [note]
+> Zobáčky `>>>` i odpověď vypisuje sám Python!
+> {{ gnd('sám', 'sama') }} zadej jen číslo a Enter.
 
 Zobrazila se ti správná odpověď?
 Pokud ano, gratuluji! První příkaz v Pythonu máš za sebou.
