@@ -1,6 +1,6 @@
 # Teploměr
 
-Poslední součástkou, kterou si dnes ukážeme, bude jednoduchý teploměr DS18B20.
+Ukážeme si jednoduchý teploměr DS18B20.
 Tento teploměr se vyrábí v několika provedeních a je velmi populární především
 pro jednoduchost použití a velmi nízkou cenu.
 

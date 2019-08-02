@@ -10,18 +10,18 @@ připravená, mohla by se destička zničit.
 Představ si náramkové hodninky a traktor: obě zařízení něčím točí (ručičkami
 nebo koly), ale kdybys připojil{{a}} motor z traktoru na mechanismus hodinek,
 moc dlouho by správný čas neukazovaly.
-A motůrek z hodinek by zase nepohohl při orání pole.
+A motůrek z hodinek by zase nepomohl při orání pole.
 
 Proto použijeme čip s názvem L293D, který elektřinu potřebnou pro “hrubou sílu”
-motorku odstínit od logických signálů z destičky.
+motorku odstíní od logických signálů z destičky.
 
 Potřebnou energii dodáme z baterií.
 
 Čip je černá krabička, která na sobě má trochu textu, ale ne dost na to,
 abys poznal{{a}} co dělá.
-To je deteilně popsáno v takzvaném *datasheetu* – PDF, které vypadne když
+To je detailně popsáno v takzvaném *datasheetu* – PDF, které vypadne, když
 zadáš „L293D“ do vyhledávače.
-Tam lze najít kompletní popis této součástky včetně diagramy, který ukazuje
+Tam lze najít kompletní popis této součástky včetně diagramu, který ukazuje
 kde najít kterou nožičku:
 
 {{ figure(img=static('l293d.svg'), alt="L293D pinout") }}
