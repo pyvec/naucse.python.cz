@@ -433,107 +433,58 @@ pyglet.app.run()
 
 
 ## Jak vybrat čtverečky?
-
 Místo toho, aby byl všude stejný kousek hada,
-ale budeme chtít vybrat vždycky ten správný.
+budeme chtít vybrat vždycky ten správný.
 
 Jak na to?
 Podle čeho ho vybrat?
 
-Pojďme si to vyzkoušet vedle.
-Vytvoř soubor `smery.py` a napiš do něj:
+Obrázky s kousky hada jsou pojmenovány
+<code><var>odkud</var>-</var>kam</var>.png</code>.
+To není náhoda – ukazuje to, co potřebuješ vědět, abys mohl{{a}} ten správný
+kousek vybrat.
+
+Když máš hada podle následujícího obrázku, na políčko (3, 2) patří
+kousek, na kterém had „leze“ zleva nahoru – tedy `left-top.png`
+
+{{ figure(
+    img=static('tile-selection.svg'),
+    alt="Had na „šachovnici“ se souřadnicemi. Políčko (3, 2) je zvýrazněné a vedou z něj šipky doleva a nahoru, kudy had pokračuje.",
+) }}
+
+Pro každé z políček budeš potřebovat zjistit, odkud a kam na něm had leze –
+tedy směr k *předchozí* a *následující* souřadnici.
+
+Potřebuješ pro *každé políčko* hada zjistit
+* <var>x</var>-ovou a <var>y</var>-ovou souřadnici políčka
+* směr k *předchozímu* a *následujícímu* políčku
+
+Do programu se pak dají hodnoty zadat nějak takto:
 
 ```python
-snake = [(1, 2), (2, 2), (3, 2), (3, 3), (3, 4), (3, 5), (4, 5)]
-
-for x, y in snake:
-    print(x, y)
-```
-
-Tenhle kód vypisuje souřadnice:
-
-```
-1 2
-2 2
-3 2
-3 3
-3 4
-3 5
-4 5
-```
-
-Zkus vymyslet, jak by se tenhle kód dal změnit, aby vypisoval ke každé
-souřadnici *směr* k předchozímu a následujícímu políčku – tedy odkud a kam
-každý kousek hada „vede“.
-Takhle:
-
-{#
-snake = [(1, 2), (2, 2), (3, 2), (3, 3), (3, 4), (3, 5), (4, 5)]
-
-def direction(a, b):
-    if a is None:
-        return 'end'
-    if b is None:
-        return 'end'
-    x1, y1 = a
-    x2, y2 = b
-    if x1 == x2 - 1:
-        return 'left'
-    elif x1 == x2 + 1:
-        return 'right'
-    elif y1 == y2 - 1:
-        return 'bottom'
-    elif y1 == y2 + 1:
-        return 'top'
-    return 'end'
-
-for a, b, c in zip([None] + snake, snake, snake[1:] + [None]):
-    x, y = b
-    u = direction(a, b)
-    v = direction(c, b)
-    print(x, y, u, v)
-#}
-
-
-```
-1 2 end right
-2 2 left right
-3 2 left top
-3 3 bottom top
-3 4 bottom top
-3 5 bottom right
-4 5 left end
-```
-
-Toto je **těžký úkol**.
-Nepředpokládám, že ho zvládneš vyřešit hned, i když všechny potřebné informace
-a nástroje k tomu znáš.
-Zkus nad tím ale přemýšlet, nech si to rozležet v hlavě třeba přes noc,
-vrať se k materiálům k předchozím lekcím (hlavně k úvodu do Pythonu),
-zkoušej a objevuj… A časem na to přijdeš.
-
-Až se to stane, zkus své řešení co nejvíc *zjednodušit* a pak ho zakomponovat
-do vykreslovací funkce místo existujícího cyklu `for x, y in snake`.
-Směr k předchozímu, resp. následujícímu políčku se dá pojmenovat `before`,
-resp. `after`.
-
-```python
-    for ... in ...:
-        ...
+    for ... in ...:   # čím bude cyklus procházet? Samotným self.snake?
         x = ...
         y = ...
-        before = ...
-        after = ...
-        ...
+        before = ...  # Směr k předchozímu políčku ('left' nebo 'top' nebo ...)
+        after = ...   # Směr k následujícímu políčku 
 
         snake_tiles[before + '-' + after].blit(
             x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
 ```
 
-Soubor `smery.py` po vyřešení nemaž, bude se ti pak hodit.
+Toto je **těžký úkol**.
+I když všechny potřebné informace a nástroje k tomu teď teoreticky znáš,
+je potřeba je správným způsobem poskládat dohromady.
+Tohle skládání dohromady, *návrh algoritmů*, je nejsložitější programátorská 
+disciplína.
 
-Odměnou za vyřešení tohoto úkolu ti bude had místo housenky.
+Zkus nad tím ale přemýšlet, nech si to rozležet v hlavě třeba přes noc,
+vrať se k materiálům k předchozím lekcím (hlavně k úvodu do Pythonu),
+zkoušej a objevuj… A časem na to přijdeš.
+Odměnou za vyřešení ti bude had místo housenky.
 
 Než na to přijdeš, zbytek programu ti neuteče.
 Housenka je úplně stejně hratelná jako had, jen jinak vypadá.
-Klidně přejdi na další část – logiku hry – s housenkou.
+Klidně přejdi na [psaní logiky hry](../logic) s housenkou.
+
+Nebo se [necháš poddat](../tile-selection)?
