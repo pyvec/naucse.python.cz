@@ -1,7 +1,7 @@
 # Nekonečná klec
 
-Místo konce hry při naražení do zdi můžeme nechat hada „projít“ a objevit se na
-druhé straně.
+Místo konce hry při naražení do okraje okýnka můžeš nechat hada „projít“
+a objevit se na druhé straně.
 
 Z pohledu logiky hry to není tak složité, jak to může znít.
 Stačí v `move` místo ukončení hry správně nastavit příslušnou hodnotu.
@@ -24,23 +24,23 @@ Zkus to!
 ```
 {% endfilter %}
 
-> [note]
-> Jestli už vykresluješ hada místo housenky, možná teď narazíš na problém
-> s vybíráním správných dílků – okraj herní plochy hada vizuálně rozdělí
-> na dva menší.
-> Zatím tenhle vizuální problém ignoruj.
+Jestli ale vykresluješ hada (místo housenky), narazíš teď na problém
+s vybíráním správných dílků – okraj herní plochy hada vizuálně rozdělí
+na dva menší.
+Řešení tohoto problému nechávám na čtenáři – s tím, že je to hodně těžký
+problém.
 
 
 ## Zbytkové řešení
 
-Jde to jednodušeji? Jde!
+Jde logiku vylázání z okýnka vyřešit jednodušeji? Jde!
 Matematikové vymysleli operaci, která se jmenuje *zbytek po dělení*.
-Ta dělá přesně to, co potřebujeme – zbytek po dělení nové souřadnice velikostí
+Ta dělá přesně to, co tu potřebuješ – zbytek po dělení nové souřadnice velikostí
 hřiště dá souřadnici, která leží v hřišti.
 Když byla předchozí souřadnice o jedna větší než maximum,
 zbytek po dělení bude nula; když byla -1, dostaneme maximum.
 
-Python moužívá pro zbytek po dělení ooperátor `%`. Zkus si to:
+Python moužívá pro zbytek po dělení operátor `%`. Zkus si to:
 
 ``` pycon
 >>> 6 % 10      # Zbytek po dělení šesti desíti

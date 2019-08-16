@@ -159,7 +159,7 @@ label = pyglet.text.Label("Ahoj!", x=10, y=20)
 V proměnné `label` teď budeš mít máš popisek s textem `"Ahoj"`, který patří
 na pozici (10, 20) – 10 bodů od pravého okraje okna, 20 od spodního.
 
-To je ale jen informace.
+Popisek se ale sám nevypíše.
 Podobně jako pro vypsání textu do konzole je potřeba zavolat `print`,
 pro nakreslení textu je potřeba reagovat na událost
 *vykreslení okna* – `on_draw`.

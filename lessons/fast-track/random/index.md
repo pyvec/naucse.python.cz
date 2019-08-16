@@ -2,7 +2,7 @@
 
 Občas je potřeba vybrat náhodnou hodnotu.
 Na to není v Pythonu funkce k dispozici přímo, ale dá se zpřístupnit
-pomocí příkazu `import`"
+pomocí příkazu `import`:
 
 ```pycon
 >>> from random import randrange
@@ -22,6 +22,13 @@ Jaká čísla můžeš dostat?
 {% filter solution %}
 Čísla od 0 do 5 – šestku ne.
 Programátoři totiž počítají od nuly, a když počítáš od nuly a chceš šest čísel, dostaneš se jen k pětce.
+
+Můžeš ale napsat:
+```pycon
+>>> from random import randrange
+>>> print('Na kostce padlo', randrange(6) + 1)
+4
+```
 {% endfilter %}
 
 Modulů jako `random`, ze kterých se dají *naimportovat* užitečná rozšiření,

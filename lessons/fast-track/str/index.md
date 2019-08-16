@@ -34,7 +34,7 @@ ale počítač je hloupé zařízení.
 'Já jsem Ola'
 ```
 
-Pozor na mezeru! Když zadáš `'Já jsem'+'Ola'`, spojí se ti dvě slova dohromady.
+Pozor na mezeru! Když zadáš `'Já jsem '+' Ola'`, spojí se ti dvě slova dohromady.
 Počítač považuje i mezeru za *znak*; chová se k ní stejně jako k jakémukoli
 písmenku.
 Když nedáš mezeru do uvozovek, nebude součástí řetězce.
@@ -122,9 +122,9 @@ závorky:
 ```
 {% endfilter %}
 
-Co je metoda (které voláš s tečkou, jako `'Ola'.upper()`) a co je funkce
+Co je metoda (kterou voláš s tečkou, jako `'Ola'.upper()`) a co je funkce
 (kde vložíš informaci do závorek jako `len('Ola')`),
-to se budeš muset vždycky zapamatovat nebo vyhledat.
+to si budeš muset u každé nové funkce/metody zapamatovat nebo vyhledat.
 
 
 {# XXX: Move elsewhere? #}

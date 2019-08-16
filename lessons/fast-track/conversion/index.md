@@ -17,7 +17,7 @@ Ta říká, že objekty typu `int` (zkratka anglického *integer*, celé číslo
 nemají délku.
 Tak co můžeme udělat teď?
 Možná můžeme zkusit napsat naše číslo jako řetězec?
-Řetězce mají délky, že?
+Řetězce mají délku, že?
 
 ```pycon
 >>> len("304023")
@@ -44,6 +44,8 @@ Co by se stalo, kdyby ses pokusil{{a}} na číslo převést řetězec, ve které
 nejsou číslice?
 
 {% filter solution() %}
+Nastane chyba!
+
 ``` pycon
 >>> int('hello')
 Traceback (most recent call last):

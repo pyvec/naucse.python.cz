@@ -46,7 +46,7 @@ daným jménem skrývá:
 'Soňa'
 ```
 
-Můžeš ji také použít ve funkcích:
+Můžeš ji také předat funkci:
 
 ``` pycon
 >>> len(jmeno)
@@ -54,7 +54,8 @@ Můžeš ji také použít ve funkcích:
 ```
 
 Super, ne?
-Proměnná může obsahovat cokoliv, například také čísla!
+
+Proměnná může obsahovat cokoliv, například i čísla.
 Zkus tohle:
 
 ``` pycon

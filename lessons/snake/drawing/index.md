@@ -70,6 +70,11 @@ hadovi vědět.
 Počítačům (a programátorům?) to takhle stačí.
 My si to ale zkusme zobrazit barevně, ať hadovi rozumí i hráč naší budoucí hry.
 
+> [note] Angličtina
+> Teď, když děláme profesionální software, zkusíme začít používat pro
+> jména proměnných, funkcí a podobně univerzálnější jazyk než je čeština.
+> Moje proměnná se jmenuje `snake` místo `had`.
+
 
 ## Logické a zobrazovací souřadnice
 
@@ -201,16 +206,17 @@ for x, y in snake:
     ...
 ```
 
-Funguje to? Vidíš v tom – aspoň zhruba – hada poskládaného ze čtverečků?
+Zvládneš to?
+Ve výsledku by měl být vidět – aspoň zhruba – had poskládaný ze čtverečků.
 
 {{ figure(
     img=static('coords-blocks.svg'),
     alt="Had na „šachovnici“ a ukázka programu",
 ) }}
 
-Jestli ne, nezoufej, zkontroluj si to znovu, poptej se na radu.
+Jestli to nefunguje, nezoufej, zkontroluj si to znovu, poptej se na radu.
 Ukázkové řešení využij až jako krajní možnost, jak pokračovat dál.
-Nebo pro kontrolu.
+Anebo pro kontrolu!
 
 {% filter solution %}
 ```python
@@ -358,7 +364,8 @@ for start in ['bottom', 'end', 'left', 'right', 'top']:
 ```
 
 Pak celý slovník vypiš.
-Výpis vypadat asi takhle:
+Výpis bude vypadat dost nepřehledně, ale třeba v něm poznáš slovník –
+*{klíč: hodnota, klíč: hodnota, ...}*:
 
 ```
 {'right-tongue': <ImageData 64x64>, 'top-tongue': <ImageData 64x64>,
@@ -399,8 +406,11 @@ food = [(2, 0), (5, 1), (1, 4)]
 
 red_image = pyglet.image.load('apple.png')
 snake_tiles = {}
-for path in TILES_DIRECTORY.glob('*.png'):
-    snake_tiles[path.stem] = pyglet.image.load(path)
+for start in ['bottom', 'end', 'left', 'right', 'top']:
+    for end in ['bottom', 'end', 'left', 'right', 'top', 'dead', 'tongue']:
+        key = start + '-' + end
+        image = pyglet.image.load('snake-tiles/' + key + '.png')
+        snake_tiles[key] = image
 
 window = pyglet.window.Window()
 
@@ -410,7 +420,8 @@ def on_draw():
     pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
     pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
     for x, y in snake:
-        snake_tiles['end-end'].blit(
+        tile = snake_tiles['end-end']
+        tile.blit(
             x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
     for x, y in food:
         red_image.blit(
@@ -503,17 +514,19 @@ zkoušej a objevuj… A časem na to přijdeš.
 
 Až se to stane, zkus své řešení co nejvíc *zjednodušit* a pak ho zakomponovat
 do vykreslovací funkce místo existujícího cyklu `for x, y in snake`.
+Směr k předchozímu, resp. následujícímu políčku se dá pojmenovat `before`,
+resp. `after`.
 
 ```python
     for ... in ...:
         ...
         x = ...
         y = ...
-        odkud = ...
-        kam = ...
+        before = ...
+        after = ...
         ...
 
-        snake_tiles[odkud + '-' + kam].blit(
+        snake_tiles[before + '-' + after].blit(
             x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
 ```
 

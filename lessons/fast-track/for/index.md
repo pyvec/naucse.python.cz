@@ -63,7 +63,7 @@ Když chceš něco 200-krát zopakovat, napiš:
 
 ```python
 for i in range(200):
-     print("Nebudu nikdy házet igelit do táboráku!")
+     print("Už nikdy nebudu házet igelit do táboráku!")
 ```
 
 Jak to funguje?
