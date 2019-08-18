@@ -84,7 +84,7 @@ můžeš se podívat na tento řádek a zkusit chybu najít.
 Když chyba není na daném řádku, může být ještě
 o pár řádků výš nebo níž:
 Python občas nesdílí lidské představy o tom, kde přesně chyba *je*.
-Ukáže jen kde si jí sám *všimnul*.
+Ukáže jen, kde si jí sám *všimnul*.
 
 V našem případě je chyba v tom, že kolem řetězce nejsou uvozovky.
 Přidej je a program znovu spusť.

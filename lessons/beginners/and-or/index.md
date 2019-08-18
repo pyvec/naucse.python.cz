@@ -46,10 +46,10 @@ if a <= 0 or b <= 0:
 
 > [warning] Falešní kamarádi
 >
-> Pozor na to, že `and` a `or` nejsou anglická slovíčka, ale operátory
+> Pozor na to, že `and` a `or` nejsou anglická slovíčka, ale operátory,
 > které spojují logické výrazy.
-> Na *obě* strany `and` i `or` patří porovnání (nebo proměnná/výraz,
-> ve které je `True`/`False`):
+> Na *obě* strany `and` i `or` patří výraz, jehož hodnota je `True`/`False`
+> (například porovnání).
 >
 > ```python
 > if a <= 0 or b <= 0:
@@ -75,7 +75,7 @@ do života.
 Zkus si ho projít a okomentovat části, které nejsou na první pohled jasné.
 
 ```python
-# Tento program rozdává naivní rady do života.
+# Tento program rozdává nejapné rady do života.
 
 print('Odpovídej "ano" nebo "ne".')
 stastna_retezec = input('Jsi šťastná? ')
@@ -87,9 +87,9 @@ else:
     print('Nerozumím!')
 
 bohata_retezec = input('Jsi bohatá? ')
-if bohata_retezec == 'ano' or stastna_retezec == 'Ano':
+if bohata_retezec == 'ano' or bohata_retezec == 'Ano':
     bohata = True
-elif bohata_retezec == 'ne' or stastna_retezec == 'Ne':
+elif bohata_retezec == 'ne' or bohata_retezec == 'Ne':
     bohata = False
 else:
     print('Nerozumím!')
