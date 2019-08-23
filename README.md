@@ -56,22 +56,6 @@ plnou kontrolu nad počítačem, na kterém `naucse` běží.
 Kvůli bezpečnosti je proto `naucse` ve výchozím nastavení neukazuje.
 
 
-
-## Testy
-
-Chceš-li pustit testy, nainstaluj si závislosti:
-
-```console
-$ pipenv install --dev
-```
-
-a testy pusť:
-
-```console
-$ pipenv run test
-```
-
-
 ## Licence
 
 Kód je k dispozici pod licencí MIT, viz soubor [LICENSE.MIT].
