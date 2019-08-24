@@ -1,6 +1,9 @@
 # Instalace Pythonu pro Windows
 
-Běž na [stahovací stránku Pythonu](https://www.python.org/downloads/)
+Pokud máš verzi Windows 10, napiš do příkazové řádky *python* nebo *python3*, otevře se ti 
+automaticky stránka Microsoft Store s odkazem na instalaci Pythonu
+
+Pokud nemáš verzi Windows 10: Běž na [stahovací stránku Pythonu](https://www.python.org/downloads/)
 a stáhni si instalátor nejnovější stabilní verze Pythonu.
 Ověř si že je to verze **3.6.0 nebo novější** –
 verze 3.6.0 má jistá vylepšení, která budeme v tomto kurzu používat.
