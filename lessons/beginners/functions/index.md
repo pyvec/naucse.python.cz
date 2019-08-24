@@ -1,14 +1,14 @@
 # Funkce
 
-Známe spoustu matematických operací, které se zapisují symboly – třeba plus
-a minus.
+Známe spoustu matematických operací, které se zapisují pomocí symbolů – třeba
+plus a minus.
 Python se snaží používat stejné symboly jako matematici:
 
 * 3 + 4
 * <var>a</var> - <var>b</var>
 
-S násobením a dělením už je to složitější,
-matematický zápis se na běžné klávesnici nedá napsat:
+S násobením a dělením už je to složitější.
+Matematický zápis se na běžné klávesnici nedá napsat:
 
 * 3 · 4
 * ¾
@@ -16,7 +16,7 @@ matematický zápis se na běžné klávesnici nedá napsat:
 V Pythonu si ale pořád vystačíme se symbolem, byť trochu jiným – `*`, `/`.
 
 Matematici ale píšou na papír, a tak si můžou dovolit vymýšlet stále
-zajímavější klikyháky, které se pak na klávesnici píšou dost špatně:
+zajímavější klikyháky, které se pak na klávesnici píšou stále hůř:
 
 * <var>x</var>²
 * <var>x</var> ≤ <var>y</var>
@@ -69,9 +69,8 @@ Všechno ostatní vyjádříme slovně.
 ## Délka řetězce
 
 Jedna operace, na kterou v Pythonu není symbol, je zjištění délky řetězce.
-
 Místo symolu má název.
-Jmenuje se `len` (z angl. *length*, délka):
+Jmenuje se `len` (z angl. *length*, délka), a používá se takto:
 
 ```python
 slovo = 'Ahoj'
@@ -79,17 +78,21 @@ delka = len(slovo)      # Vypočítání délky
 print(delka)
 ```
 
-Ono `len(slovo)` je *výraz*, který něco udělá podle hodnoty `slovo`
-a výsledek dá k dispozici.
+To `len` je *funkce* (angl. *function*).
+Jak se takové funkce požívají?
 
-Stejně fungují výrazy s operátorem – třeba výraz `a + b` něco
-udělá podle hodnot `a` a `b` a výsledek dá k dispozici.
+K tomu, abys funkci mohl{{a}} použít, potřebuješ znát její
+*jméno* – tady `len`.
+Za jméno funkce patří závorky,
+do nichž uzavřeš *argument* (neboli *vstup*) funkce.
+To je informace, se kterou bude funkce
+pracovat – třeba `len` ze svého argumentu vypočítá délku.
 
-Výsledek výrazu pak může zbytek programu dál zpracovat:
-náš program ho přiřadí do proměnné (pomocí `delka =`).
+Celému výrazu `len(slovo)` se říká *volání funkce* (angl. *function call*).
+Jeho výsledek, takzvaná *návratová* hodnota
+(angl. *return value*) se dá třeba přiřadit do proměnné.
 
-Název `len` označuje *funkci* a výrazu `len(s)` se říká *volání funkce*.
-Pojďme si taková volání popsat trochu zevrubněji.
+{{ figure(img=static('call-anatomy.svg'), alt="Diagram volání funkce") }}
 
 > [note] Pro matemati{{gnd('', 'č', both='')}}ky
 > Máš-li rád{{a}} matematiku, dej pozor!
@@ -98,19 +101,79 @@ Pojďme si taková volání popsat trochu zevrubněji.
 > Pythonní funkce může např. dávat pro jeden argument různé hodnoty.
 
 
-## Volání funkcí
+### Volání funkce jako výraz
 
-Funkci zavoláš *jménem*, například `len`.
+Vzpomínáš si, jak Python vyhodnocuje výrazy?
 
-Za jméno funkce patří závorky,
-do nichž uzavřeš *argument* (neboli *vstup*) funkce.
-To je informace, se kterou bude funkce
-pracovat – třeba `len` ze svého argumentu vypočítá délku.
+```python
+vysledek = 3 * (5 + 2)
+#              ╰──┬──╯
+vysledek = 3 *    7
+#          ╰─┬────╯
+vysledek =  21
+```
 
-Volání funkce je výraz a jeho výsledek, takzvaná *návratová* hodnota
-(angl. *return value*) se dá třeba přiřadit do proměnné.
+Volání funkce je taky výraz.
+Stejně jako `a + b` je výraz, který něco udělá podle hodnot `a` a `b`
+a výsledek dá k dispozici, `len(slovo)` je výraz, který něco udělá
+podle hodnoty `slovo` a výsledek dá k dispozici.
 
-{{ figure(img=static('call-anatomy.svg'), alt="Diagram volání funkce") }}
+Vždycky, když Python potřebuje spočítat hodnotu, funkci *zavolá*,
+zjistí výsledek a dosadí ho:
+
+```python
+vysledek = len("Ahoj!")
+#          ╰────┬─────╯
+vysledek =      5
+```
+
+Volání funkce můžeš kombinovat s jinými výrazy, třeba se součtem:
+
+```python
+delka = len('Ahoj') + len('!')
+#        ╰──┬─────╯    ╰─┬───╯
+delka =     4       +    1
+#           ╰───────┬────╯
+delka =             5
+```
+
+Nebo v podmínce ifu – třeba u:
+
+```python
+if len('Ahoj!') <= 3:
+    print('pozdrav je krátký')
+```
+
+… se za `len('Ahoj!') <= 3` nakonec dosadí nepravda (`False`):
+
+```python
+   len('Ahoj!') <= 3
+#  ╰─────┬────╯
+         5      <= 3
+#        ╰──────┬──╯
+              False
+```
+
+Volání funkce můžeš použít i jako argument pro jinou funkci:
+
+```python
+print(len('Ahoj'))
+#     ╰────┬────╯
+print(     4     )   # vypíše 4
+```
+
+Nebo to zkombinovat dohromady:
+
+```python
+x = 5
+print(len('Ahoj') + x)
+#     ╰────┬────╯   |
+print(     4      + 5)
+#          ╰───┬────╯
+print(         9     )
+```
+
+… a podobně.
 
 
 ### Procedury
@@ -145,125 +208,6 @@ Pár příkladů:
 > Je vypůjčený z jazyka Pascal.
 > Kdybys o něm diskutoval{{a}} s nějakým zkušeným programátorem,
 > odkaž ho prosím na tyto materiály.
-
-
-## Vyhodnocování výrazů
-
-Zaměřme se ale zpátky na funkce, které vrací nějakou hodnotu.
-Volání takové funkce se dá použít všude, kde lze použít výraz.
-S funkcemi začínají být výrazy trochu složitější, tak se podívejme na to,
-jak Python výrazy vyhodnocuje.
-
-Když chceš spočítat matematický výraz, třeba `3 * (5 + 2)`, nejdřív
-spočítáš to, co je v závorkách: `(5 + 2)` je `7`.
-Výsledek dosadíš do původního výrazu místo závorky: `3 * 7`.
-Stejně fungují výrazy v Pythonu.
-
-Možná to zní jednoduše, ale protože budeme tenhle postup používat
-i na složitější výrazy, hodí se ho umět „rozepsat“:
-
-```python
-vysledek = 3 * (5 + 2)
-#              ╰──┬──╯
-vysledek = 3 *    7
-#          ╰─┬────╯
-vysledek =  21
-```
-
-Když Python potřebuje vyhodnotit proměnnou, dosadí její hodnotu:
-
-```python
-a = 4
-b = 5
-
-vysledek = (a + b) / a
-#           |    |   |
-vysledek = (4 + 5) / 4
-#          ╰──┬──╯
-vysledek =    9    / 4
-#             ╰────┬─╯
-vysledek =        2.25
-```
-
-Funguje to i u složitých výrazů.
-
-> [note]
-> Python se složitými výrazy nemá problém, ale člověk, který program čte či
-> píše, se v nich může ztratit.
-> Když opravdu potřebuješ napsat složitý výraz, je dobré jej vysvětlit
-> pomocí komentáře.
-
-```python
-a = 2
-b = 5
-c = 3
-
-
-x = -b + (b ** 2 + 4 * a * c) ** 0.5 / (2 * a)
-#    |    |            |   |                |
-x = -5 + (5 ** 2 + 4 * 2 * 3) ** 0.5 / (2 * 2)
-#         ╰──┬─╯   ╰─┬─╯               ╰──┬──╯
-x = -5 + (  25   +   8   * 3) ** 0.5 /    4
-#                   ╰────┬─╯
-x = -5 + (  25   +      24  ) ** 0.5 /    4
-#        ╰───────┬──────────╯
-x = -5 +         49           ** 0.5 /    4
-#                ╰──────┬──────────╯
-x = -5 +               7.0           /    4
-#                      ╰─────────────┬────╯
-x = -5 +                            1.75
-#   ╰──────────────┬───────────────────╯
-x =              -3.25
-```
-
-
-Nebo se volání funkce dá použít místo čísla v součtu:
-
-```python
-delka = len('Ahoj') + len('!')
-#        ╰──┬─────╯    ╰─┬───╯
-delka =     4       +    1
-#           ╰───────┬────╯
-delka =             5
-```
-
-Nebo v podmínce ifu – třeba u:
-
-```python
-if len('Ahoj!') <= 3:
-    print('pozdrav je krátký')
-```
-
-… se podmínka vyhodnotí jako nepravda:
-
-```python
-   len('Ahoj!') <= 3
-#  ╰─────┬────╯
-         5      <= 3
-#        ╰──────┬──╯
-              False
-```
-
-Nebo dokonce jako argument jiné funkce:
-
-```python
-print(len('Ahoj'))
-#     ╰────┬────╯
-print(     4     )   # vypíše 4
-```
-
-Nebo to zkombinovat dohromady:
-
-```python
-x = 5
-print(len('Ahoj') + x)
-#     ╰────┬────╯   |
-print(     4      + 5)
-#          ╰───┬────╯
-print(         9     )
-```
-
-… a podobně.
 
 
 ## Argumenty
