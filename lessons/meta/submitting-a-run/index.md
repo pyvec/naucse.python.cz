@@ -17,7 +17,7 @@ Na stránce repozitáře vpravo nahoře na to je tlačítko _Fork_.
 ) }}
 </div>
 
-Jsi-li na GitHubu v nějaké organizaci (např. PyLadies CZ), můžeš vybrat,
+Jsi-li na GitHubu v nějaké organizaci (např. PyLadiesCZ), můžeš vybrat,
 jestli *fork* bude pod tvým účtem nebo pod organizací.
 Děláš-li kurz pro organizaci, použij tu,
 abyste do materiálů mohli přispívat všichni.
@@ -27,8 +27,8 @@ Vytvoření chvilku trvá.
 To, že je fork vytvořen, poznáš tak, že tě GitHub přesměruje na stránku, která bude skoro stejná, ale v hlavičce bude jiné uživatelské jméno (tvoje nebo tvé
 organizace) a pod tím text `forked from pyvec/naucse.python.cz`.
 
-Tvůj fork si teď potřebuješ přidat do lokálního repozitáře jako *referenci*, aby jsi tam pak mohl{{a}} poslat svůj kurz.
-To uděláš pomocí příkazu (nahraď obě `uzivatelskejmeno` za tvoje uživatelské jméno,
+Tvůj fork si teď potřebuješ přidat do lokálního repozitáře jako *referenci*, abys tam pak mohl{{a}} poslat svůj kurz.
+To uděláš pomocí příkazu (nahraď obě `uzivatelskejmeno` za uživatelské jméno,
 pod kterým fork je):
 
 ```console
