@@ -6,8 +6,9 @@ Budeme k tomu potřebovat jen pár příkazu v Gitu a trochu trpělivosti.
 ## Nahrání do vlastního forku
 
 První věc, kterou budeš potřebovat, je vlastní účet na [GitHubu](https://github.com/).
-Poté, co se zaregistruješ na GitHubu, potřebuješ „fork” [repozitáře pyvec/naucse.python.cz](https://github.com/pyvec/naucse.python.cz).
-Fork si vytvoříš tím, že na stránce repozitáře vpravo nahoře klikneš na tlačítko _Fork_.
+
+Přihlaš se na GitHub a vytvoř „fork” [repozitáře pyvec/naucse.python.cz](https://github.com/pyvec/naucse.python.cz).
+Na stránce repozitáře vpravo nahoře na to je tlačítko _Fork_.
 
 <div style="text-align: center">
 {{ figure(
@@ -16,19 +17,27 @@ Fork si vytvoříš tím, že na stránce repozitáře vpravo nahoře klikneš n
 ) }}
 </div>
 
-Vytvoření chvilku trvá.
-To, že je fork vytvořen, poznáš tak, že tě GitHub přesměruje na stránku, která bude skoro stejná, ale v hlavičce bude tvoje uživatelské jméno a pod tím text `forked from pyvec/naucse.python.cz`.
+Jsi-li na GitHubu v nějaké organizaci (např. PyLadiesCZ), můžeš vybrat,
+jestli *fork* bude pod tvým účtem nebo pod organizací.
+Děláš-li kurz pro organizaci, použij tu,
+abyste do materiálů mohli přispívat všichni.
+Jinak udělej kurz pod vlastním účtem.
 
-Tvůj fork si teď potřebuješ přidat do lokálního repozitáře jako referenci, aby jsi tam pak mohl{{a}} poslat svůj kurz.
-To uděláš pomocí příkazu (nahraď obě `tvojejmeno` za tvoje uživatelské jméno na GitHubu):
+Vytvoření chvilku trvá.
+To, že je fork vytvořen, poznáš tak, že tě GitHub přesměruje na stránku, která bude skoro stejná, ale v hlavičce bude jiné uživatelské jméno (tvoje nebo tvé
+organizace) a pod tím text `forked from pyvec/naucse.python.cz`.
+
+Tvůj fork si teď potřebuješ přidat do lokálního repozitáře jako *referenci*, abys tam pak mohl{{a}} poslat svůj kurz.
+To uděláš pomocí příkazu (nahraď obě `uzivatelskejmeno` za uživatelské jméno,
+pod kterým fork je):
 
 ```console
-$ git remote add tvojejmeno https://github.com/tvojejmeno/naucse.python.cz.git
+$ git remote add uzivatelskejmeno https://github.com/uzivatelskejmeno/naucse.python.cz.git
 ```
 
 Dále potřebuješ vytvořit commit se svým kurzem a případně se změnami v materiálech.
-Je také nutné se rozhodnout, jestli chceš svoje změny dělat přímo v hlavní větvi nebo jestli si na kurz vytvořit separátní větev.
-Pokud se s větvemi nechceš zaobírat, můžeš vytvářet rovnou commit, pokud chceš větev vytvořit, vymysli si nějaký její název a pusť příkazy
+Je dobré změny dělat v zvláštní větvi, ne v `master`.
+Vymysli si název větve (např. `podzim-2016`) a pusť příkazy
 
 ```console
 $ git branch nazevvetve
@@ -39,10 +48,11 @@ Jak vytvořit commit, se dozvíš například v [návodu na používání Gitu](
 Více o větvích se můžeš dozvědět v [návodu na větvení v Gitu]({{lesson_url("git/branching")}}).
 
 Svůj commit teď potřebuješ dostat do svého forku na GitHubu.
-To uděláš příkazem (`tvojejmeno` nahraď za tvoje uživatelské jméno na GitHubu):
+To uděláš příkazem (`uzivatelskejmeno` nahraď za uživatelské jméno, pod kterým fork
+je):
 
 ```console
-$ git push tvojejmeno
+$ git push uzivatelskejmeno
 ```
 
 ## Informace o forku pro Nauč se Python
@@ -63,20 +73,20 @@ Teď potřebuješ vytvořit stejnou složku jako jsi vytvořil{{a}} pro soubor `
 V té složce vytvoř soubor, který se tentokrát bude jmenovat `link.yml`.
 Bude zase ve formátu YAML, ale tentokrát bude jednoduchý.
 Jedinou povinou informací je klíč `repo`, do kterého musíš dát odkaz na tvůj fork.
-Pokud sis vytvořil{{a}} pro kurz separátní větev, napiš jí do klíče `branch` (pokud ne, klíč `branch` tam vůbec nemusíš dávat).
+Jméno větve pak napiš do klíče `branch`.
 Pozor, jedná se o větev s kurzem, ne o větev, ze které kurz přidáváš na Nauč se Python (tedy **ne** `pridanikurzu` z příkladu výše).
 
 Výsledný soubor pak vypadá následovně:
 
 ```yaml
-repo: https://github.com/tvojejmeno/naucse.python.cz.git
+repo: https://github.com/uzivatelskejmeno/naucse.python.cz.git
 branch: nazevvetve
 ```
 
 Vytvoř s tímto souborem (a jen tímto souborem) commit a zase odešli změnu na GitHub.
 
 ```console
-$ git push tvojejmeno
+$ git push uzivatelskejmeno
 ```
 
 Teď už potřebuješ udělat _Pull Request_ (dále jen jako PR) se souborem `link.yml`.
@@ -89,7 +99,7 @@ Po tom, co správci PR schválí a sloučí tvoje změny do základního repozit
 
 Pokud budeš chtít na svém kurzu něco změnit, musíš se nejdřív zpátky přepnout do větve, ve které ten kurz je.
 To uděláš následujícím příkazem.
-`nazevvetve` nahraď za větev, ve které kurz máš, případně za `master`, pokud jsi na začátku této stránky novou větev nevytvářel{{a}}.
+`nazevvetve` nahraď za větev, ve které kurz máš.
 
 ```console
 $ git checkout nazevvetve
