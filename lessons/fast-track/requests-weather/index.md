@@ -53,7 +53,7 @@ má podobu odpovědi s kódem `3xx`. Přímo tuto odpověď neuvidíte, protože
 knihovna `requests` ví, že je to přesměrování a proto automaticky půjde na
 adresu, kam vás server poslal.
 
-Ke každému číselnému kódu existuje i texotvý popis. Ty najdete třeba na
+Ke každému číselnému kódu existuje i textový popis. Ty najdete třeba na
 [Wikipedii](), nebo můžete použít <https://http.cat>.
 
 > [note]
