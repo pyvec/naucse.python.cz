@@ -217,11 +217,9 @@ hláškou a kódem.
 
 ```python
 def validate_username(ctx, param, value):
-    try:
-        assert len(value) == 8
-        assert re.match('^[a-zA-Z]+[0-9]*$', value)
+    if 2 <= len(value) <= 8 and re.match('^[a-zA-Z]+[0-9]*$', value):
         return value.lower()
-    except AssertionError:
+    else:
         raise click.BadParameter('not valid CTU username')
 
 @click.command()
