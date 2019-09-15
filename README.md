@@ -5,6 +5,52 @@ tak pro samouky.
 
 Dostupné na [naucse.python.cz](https://naucse.python.cz).
 
+## Návod pro přispěvatele do kurzu datové analýzy
+
+### Základní pravidla
+
+* Materiály píšeme česky ve formě Jupyter notebooků
+* Čtenáři tykáme (`… vyzkoušej si to!`) případně mluvíme
+ke skupině (`… můžeme použít několik metod.`).
+* Jedna lekce by se měla dát odučit do dvou hodin celkového času
+* Snažíme se, aby na sebe jednotlivé lekce příliš nenavazovaly, protože
+nikdy není předem známo, jak bude ten či onen výsledný kurz nakonec vypadat. Samozřejmostí je, že u pokročilejších lekcí počítáme se
+základními znalostmi, případně můžeme na některé materiály odkázat.
+* I když existuje [osnova kurzu](https://docs.google.com/document/d/1ILN-opBfgAyLvxno4_Kdcgbhy4JHatwI2Aj4BmPfHeQ/edit),
+je možné tvořit i jakékoli materiály navíc, které se pak dají
+použít na workshopech či bonusových hodinách pro nadšené zájemce.
+
+### Struktura
+
+Ve složce `lessons/pydata` bude ve výsledku existovat složka pro každou lekci.
+Tato složka bude obsahovat soubor `index.ipynb` coby hlavní soubor lekce
+a soubor `info.yml` s následujícím obsahem:
+
+```
+title: <Název lekce>
+style: ipynb
+attribution: Pro PyData napsal(a) <jméno a příjmení>, 2019
+license: cc-by-sa-40
+```
+
+Pokud bude lekce potřebovat nějaké statické soubory, vloží se do složky
+`pydata/<lekce>/static`.
+
+Aby byla lekce vidět v seznamu materiálů pro kurz datové analýzy, je
+třeba ji ještě přidat do souboru `courses/pydata/info.yml`.
+
+### Datové sady
+
+Datové sady pro jednotlivé lekce volíme tak, aby se na nich dala dobře
+prezentovat náplň dané lekce. Pokud je to záměrem (především pro lekce EDA),
+mohou datové sady obsahovat chyby či být jinak nedokonalé.
+
+Pokud je datová sada stažená z internetu, je důležité zkontrolovat její licenci
+a do materiálů doplnit odkaz na zdroj (příp. další věci vyžadované licencí).
+
+Pokud je datová sada vytvořená nějakým generátorem či skriptem, je dobré k ní
+dodat i zdrojový skript (nejlépe ve formě notebooku s vysvětlením
+procesu generování).
 
 ## Instalace a spuštění
 
