@@ -16,9 +16,14 @@ ke skupině (`… můžeme použít několik metod.`).
 * Snažíme se, aby na sebe jednotlivé lekce příliš nenavazovaly, protože
 nikdy není předem známo, jak bude ten či onen výsledný kurz nakonec vypadat. Samozřejmostí je, že u pokročilejších lekcí počítáme se
 základními znalostmi, případně můžeme na některé materiály odkázat.
-* I když existuje [osnova kurzu](https://docs.google.com/document/d/1ILN-opBfgAyLvxno4_Kdcgbhy4JHatwI2Aj4BmPfHeQ/edit),
-je možné tvořit i jakékoli materiály navíc, které se pak dají
-použít na workshopech či bonusových hodinách pro nadšené zájemce.
+
+
+### Obsah lekcí a návrhy na nová témata
+
+* Stávající osnova kurzu je [zde](https://docs.google.com/document/d/1ILN-opBfgAyLvxno4_Kdcgbhy4JHatwI2Aj4BmPfHeQ/edit),
+* Je však možné tvořit i jakékoli materiály navíc, které se pak dají použít na workshopech či bonusových hodinách pro nadšené zájemce. 
+* Autoři jednotlivých lekcí i zájemci o nerozebraná a nová témata založí Issue pojmenované "Osnova - 'Téma'" a přiloží odkaz na Google dokument s přibližnou osnovou (s právy přidávat komentáře)
+* Odkazy na zajímavé materiály, které můžeme použít pro tvorbu kurzu nebo jen inspiraci, vkládáme do [souvisejícího Issue](https://github.com/PyDataCZ/naucse.python.cz/issues/4)
 
 ### Struktura
 
