@@ -18,7 +18,7 @@ se čtyřmi *čtveřice* (angl. *4-tuple*), atd.
 <var>N</var>-tice se tvoří jako seznamy, jen kolem sebe nemají hranaté závorky.
 Stačí čárky mezi prvky.
 
-Chovají skoro stejně jako seznamy, jen nejdou měnit.
+Chovají se skoro stejně jako seznamy, jen nejdou měnit.
 Nemají tedy metody jako `append`
 a `pop` a nedá se jim přiřazovat do prvků.
 Dají se ale použít v cyklu `for`
