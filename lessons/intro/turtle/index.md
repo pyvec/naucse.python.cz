@@ -278,9 +278,12 @@ Je to nějaký výčet, nějaká posloupnost hodnot.
 A teď už umíš vypsat, jaké to jsou!
 
 ```python
-for i in range(10):   # Doporučuju použít jen 5 místo 100
+for i in range(5):   # Doporučuju použít jen 5 místo 100
     print(i)
 ```
+
+* Pro každé <var>i</var> z `range(5)`:
+  * Vypiš <var>i</var>
 
 Program spusť. Jaká čísla se vypíšou?
 
@@ -291,24 +294,31 @@ Program funguje steně, jako kdybys napsal{{a}}:
 ```python
 i = 0
 print(i)
+
 i = 1
 print(i)
+
 i = 2
 print(i)
+
 i = 3
 print(i)
+
 i = 4
 print(i)
 ```
+
+V sekvenci `range(5)` jsou čísla 0, 1, 2, 3 a 4. Je jich celkem pět.
 {% endfilter %}
 
 Funkce `range(n)` vrací *sekvenci čísel*.
 Začíná od 0 a čísel v ní je přesně <var>n</var>.
 (Na samotné <var>n</var> se tedy už nedostane.)
 
-Často se `for i in range(n)` používá jako “Opakuj <var>n</var>-krát“.
-V takovém případě nás proměnná <var>i</var> – „počitadlo“ – nezajímá.
-V programu ji jednoduše nepoužijeme.
+Často budeš potřebovat Pythonu říct, ať něco „<var>n</var>-krát zopakuje“.
+Na to můžeš použít `for i in range(n)` („pro každé <var>i</var> od 0 do
+<var>n</var>-1“) s tím, že proměnná <var>i</var> – „počitadlo“ – tě nezajímá.
+V programu ji jednoduše nepoužiješ.
 
 Teď by už mělo být jasné, jak funguje původní program:
 
@@ -316,6 +326,9 @@ Teď by už mělo být jasné, jak funguje původní program:
 for i in range(100):
     print('Nikdy nebudu odsazovat o tři mezery!')
 ```
+
+* Zopakuj 100krát:
+  * Vypiš `'Nikdy nebudu odsazovat o tři mezery!'`
 
 Python píše hlášky, jednu za druhou, a u toho si v promněnné <var>i</var>
 počítá, jak už je daleko.
@@ -417,17 +430,22 @@ Tentokrát už víš, jak to dělat chytře: opakuj pomocí příkazu
 ![Tři želví čtverce](static/turtle-squares.png)
 
 * Třikrát:
-  * Nakresli čtverec (viz předchozí úloha)
+  * Nakresli čtverec (viz jedna z předchozích úloh)
   * Otoč se o 20°
 
 {% filter solution %}
 ```python
 from turtle import forward, left, right, speed, exitonclick
 
+# Třikrát:
 for i in range(3):
+
+    # Nakresli čtverec (kód zkopírovaný z předchozí úlohy a odsazený)
     for j in range(4):
         forward(50)
         left(90)
+
+    # Otoč se o 20°
     left(20)
 
 exitonclick()
@@ -446,7 +464,7 @@ A máš-li i schody, zkus nakreslit těchto šest (nebo sedm?) šestiúhelníků
 ![Želví plástev](static/turtle-hexagons.png)
 
 
-### Přepisování proměnných
+## Přepisování proměnných
 
 Už víš, že:
 
