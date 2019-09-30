@@ -98,7 +98,7 @@ Jeho výsledek, takzvaná *návratová* hodnota
 > Máš-li rád{{a}} matematiku, dej pozor!
 > Funkce v Pythonu je něco jiného než funkce v matematice,
 > i když se stejně jmenují a podobně zapisují.
-> Pythonní funkce může např. dávat pro jeden argument různé hodnoty.
+> Pythonní funkce může např. mít pro stejný argument různé hodnoty.
 
 
 ### Volání funkce jako výraz
@@ -118,8 +118,8 @@ Stejně jako `a + b` je výraz, který něco udělá podle hodnot `a` a `b`
 a výsledek dá k dispozici, `len(slovo)` je výraz, který něco udělá
 podle hodnoty `slovo` a výsledek dá k dispozici.
 
-Vždycky, když Python potřebuje spočítat hodnotu, funkci *zavolá*,
-zjistí výsledek a dosadí ho:
+Vždycky, když Python při vyhodnocování narazí na jméno funkce se závorkami,
+funkci *zavolá*, zjistí výsledek a dosadí ho:
 
 ```python
 vysledek = len("Ahoj!")
@@ -212,9 +212,9 @@ Pár příkladů:
 
 ## Argumenty
 
-Argument je to, co funkci dáš k dispozici.
+Argument je to, co funkci dáš k dispozici. Hodnota, se kterou funkce pracuje.
 Chceš-li délku řetězce `Ahoj!`, použiješ funkci `len` která umí vypočítat
-délku *jakéhokoli* řetězce – a jako argument, v závorkách, jí dáš tu svoji
+délku *jakéhokoli* řetězce a jako argument, v závorkách, jí dáš tu svoji
 konkrétní hodnotu: `len('Ahoj!')`.
 
 Podobně funkce `print` umí vypsat jakoukoli hodnotu.
@@ -234,7 +234,7 @@ print("Jedna plus dva je", 1 + 2)
 
 Některé funkce nepotřebují žádný argument.
 Příkladem je zase `print`.
-Je ale nutné napsat závorky – i když jsou prázdné.
+Je ale nutné použít závorky – i když jsou prázdné.
 Hádej, co tohle volání udělá?
 
 ```python

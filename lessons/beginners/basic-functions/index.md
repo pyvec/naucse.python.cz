@@ -2,17 +2,29 @@
 # Užitečné funkce
 
 Ukažme si pár základních funkcí, které Python nabízí.
+
+Tato kapitola ukazuje výběr z nástrojů, které ti Python nabízí.
+Tvůj cíl není naučit se vše nazpaměť, ale mít přehled o tom, co je zhruba
+možné.
+Detaily můžeš vždycky dohledat – ať už na taháku (které jsou, na rozdíl od
+školy, vždycky povoleny!), v těchto matreriálech, nebo v oficiální
+dokumentaci či jinde na Internetu.
+
 Můžeš si stáhnout i
-<a href="https://github.com/encukou/cheatsheets/raw/master/basic-functions/basic-functions-cs.pdf">přehled</a>,
+<a href="https://github.com/encukou/cheatsheets/raw/master/basic-functions/basic-functions-cs.pdf">tahák</a>,
 který se rozdává na srazech.
+Doporučuji ho mít ze začátku při ruce.
+Když narazíš na úkol, který nevíš jak vyřešit, projdi si ho a zamysli se,
+která z funkcí by se dala použít.
+
 
 ## Vstup a výstup
 
 Tyhle funkce už známe.
 `print` vypíše nepojmenované argumenty, oddělené mezerou.
-Pojmenovaný argument `end` určuje, co se vypíše na konci (místo přechodu
+Pojmenovaný argument `end` určuje co se vypíše na konci (místo přechodu
 na nový řádek);
-`sep` zase, co se vypíše mezi jednotlivými argumenty (místo mezery).
+`sep` zase co se vypíše mezi jednotlivými argumenty (místo mezery).
 
 > [note]
 > Příklad opět spusť ze souboru, ne interaktivně:
@@ -94,7 +106,8 @@ cislo = int(input('Zadej číslo: '))
 Jak Python vyhodnotí tento výraz?
 Zadá-li uživatel <kbd>4</kbd><kbd>2</kbd><kbd>Enter</kbd>,
 funkce `input` vrátí řetězec`'42'`.
-Ten pak funkce `int` vezme jako argument, udělá z něj číslo a to číslo vrátí:
+Ten pak funkce `int` vezme jako argument, udělá podle něj číslo a to
+číslo vrátí:
 
 ```python
 cislo = int(input('Zadej číslo: '))
@@ -103,7 +116,6 @@ cislo = int(        '42'          )
       # ╰────────────┬────────────╯
 cislo =             42
 ```
-
 
 
 ## Matematické funkce
@@ -120,7 +132,7 @@ round(cislo)    # zaokrouhlení
 Spousta dalších není k dispozici od začátku programu.
 Ne každý má rád matematiku, a ne ve všech druzích programu jsou takové operace
 potřeba.
-Proto musíš předem – typicky na začátku souboru – říct, že je budeme používat.
+Proto musíš předem – typicky na začátku souboru – říct, že je budeš používat.
 To se dělá *naimportováním* z modulu `math`:
 
 ```python
