@@ -470,6 +470,10 @@ def login():
 @auth.route('/logout')
 def logout():
     ...
+
+@auth.app_template_filter('userlink')
+def user_link(username):
+    ...
 ```
 
 Blueprint pak stačí ve Flask aplikaci [registrovat](https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.register_blueprint)
@@ -483,6 +487,12 @@ from auth.views import auth
 app = Flask(__name__)
 # this will create the /auth/login and /auth/logout endpoints
 app.register_blueprint(auth, url_prefix='/auth')
+```
+
+V případě použití `url_for` je třeba cesty z blueprintu namespacovat, např.:
+
+```python
+url_for('auth.login')
 ```
 
 [blueprinty]: https://flask.palletsprojects.com/en/1.1.x/blueprints/
