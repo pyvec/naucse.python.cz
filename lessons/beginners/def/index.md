@@ -14,7 +14,8 @@ neměl by ti zápis funkce připadat nijak zvláštní:
 ```python
 def obvod_obdelnika(sirka, vyska):
     "Vrátí obvod obdélníka daných rozměrů"
-    return 2 * (sirka + vyska)
+    obvod = 2 * (sirka + vyska)
+    return obvod
 
 print(obvod_obdelnika(4, 2))
 ```
@@ -59,11 +60,15 @@ Takže když zavoláš třeba `napis_hlasku('Tvoje', 256)`,
 můžeš si představit, že funkce dělá následující:
 
 ```python
+# Nastavení proměnných podle parametrů
 nazev = 'Tvoje'
 skore = 256
 
+# Samotné tělo funkce
 print(nazev, 'skóre je', skore)
 if skore > 1000:
+    print('Světový rekord!')
+elif skore > 100:
     ... # atd.
 ```
 ## Vracení
@@ -132,7 +137,8 @@ print('Obsah elipsy s osami 3 cm a 5 cm je', obsah_elipsy(3, 5), 'cm2')
 
 ### Vrátit nebo vypsat?
 
-Předchozí program se dá napsat i s procedurou místo funkce:
+Předchozí program se dá napsat i jako procedura, tedy funkce která nic nevrací.
+Výsledek může třeba vypsat na obrazovku:
 
 ```python
 from math import pi
@@ -204,3 +210,5 @@ def nic():
 
 print(nic())
 ```
+
+Procedury v Pythonu vracejí právě toto „nic“.
