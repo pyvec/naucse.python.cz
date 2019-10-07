@@ -151,7 +151,7 @@ Vtom vnuk křik': "Hleď!"
 Ve výsledném řetězci pak ovšem žádné zpětné lomítko *není*.
 Sekvence `\'` je jen způsob, jak v Pythonu zadat `'` – jediný znak.
 Tomu je celkem důležité porozumět.
-Zkus si, jestli předpovědět výsledek těchto příkazů:
+Zkus si, jestli zvládneš předpovědět výsledek těchto příkazů:
 
 ```python
 print(".\".")
@@ -184,10 +184,12 @@ a       b
 3
 ```
 
-Se zpětným lomítkem zadat jakýkoli znak – včetně *emoji* – podle jména
+Se zpětným lomítkem se dá zadat jakýkoli znak – včetně *emoji* – podle jména
 (`\N{…}`) nebo identifikačního čísla (`\x..`, `\u....`, `\U........`)
 standardu Unicode.
-Délka všech následujících řetězců je 3:
+Stačí přesné jméno nebo číslo znát (nebo dohledat).
+V následujících řetězcích jsou takové znaky pro přehlednost mezi dvěma
+pomlčkami `-`. Délka každého řetězce je tedy celkem 3:
 
 ```pycon
 >>> print('-\N{GREEK CAPITAL LETTER DELTA}-')
@@ -222,7 +224,7 @@ print('C:\\PyLadies\\Nový adresář')
 ```
 
 Podobně jako `\"` je zápis pro uvozovku a `\'` pro apostrof, sekvence `\\`
-je zápis pro znak `\`.
+je zápis pro jedno zpětné lomítko.
 
 
 ### Nový řádek
@@ -230,7 +232,7 @@ je zápis pro znak `\`.
 Někdy potřebuješ řetězce, které obsahují více řádků.
 Pythonní řetězce ale můžeš normálně napsat jen na *jeden* řádek.
 (Python se tak snaží ulehčit hledání chyby, kdybys koncovou uvozovku
-zapoměl{{a}}: kdyby mohla být kdekoli ve zbytku souboru, špatně by se hledala.)
+zapoměl{{a}}.)
 
 Můžeš ale do řetězce znak pro nový řádek vložit pomocí sekvence `\n`:
 
@@ -266,8 +268,7 @@ Co se stalo?
 Prase kozu potrkalo!'''
 ```
 
-Víceřádkové řetězce se často používají jako dokumentační řetězce funkcí.
-U nich nevadí, že jsou na začátku řádků mezery.
+Víceřádkové řetězce se často používají jako dokumentační řetězce funkcí:
 
 ```python
 def vynasob(a, b):
@@ -291,11 +292,13 @@ Jaká je délka těchto řetězců?
 
 Výsledek zjistíš snadno, zkus se ale zamyslet a Python použít jen pro ověření.
 
+{# Highlighted as plain text to avoid spoilers #}
 ```plain
-{# 2, 3, 4, 5 #}
+{# 2, 3, 4, 5 -#}
 print(len('ahoj'))
 print(len("""Ahoj!"""))
-print(len(' a b '))
+print(len('a b'))
+print(len( ' a b ' ))
 print(len('\N{SNOWMAN}ové'))
 print(len('a\nb'))
 print(len('a\tb'))
