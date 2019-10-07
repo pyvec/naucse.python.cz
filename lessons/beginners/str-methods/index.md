@@ -107,7 +107,7 @@ Proč tomu tak je, to za nějakou dobu poznáš.
 
 ## Metoda format
 
-Pro úplnost: občas uvidíš metoda `format`, která doplní do šablony
+Pro úplnost: občas uvidíš metodu `format`, která doplní do šablony
 podobné jako u formátovacích řetězců (`f'...'`).
 
 ```python
@@ -132,8 +132,13 @@ Tato funkce vrátí řetězec, který má na dané pozici
 daný znak; jinak je stejný jako původní `retezec`. Například:
 
 ```python
-# Zaměň třetí znak ve slově "čokoláda"
-print(zamen('čokoláda', 3, 'u'))   # → čokuláda
+# Zaměň znak číslo 2 ve slově "baňka" na "j"
+print(zamen('baňka', 2, 'j'))   # → bajka
+
+# A podobně:
+print(zamen('kočka', 1, 'a'))   # → kačka
+print(zamen('slůně', 1, 't'))   # → stůně
+print(zamen('kapka', 0, 'l'))   # → lapka
 ```
 
 Pozor na to, že řetězce v Pythonu nelze měnit.
@@ -148,6 +153,8 @@ def zamen(retezec, pozice, znak):
     jinak je stejný jako vstupní retezec
     """
 
-    return retezec[:pozice] + znak + retezec[pozice + 1:]
+    zacatek = retezec[:pozice]
+    konec = retezec[pozice + 1:]
+    return zacatek + znak + konec
 ```
 {% endfilter %}
