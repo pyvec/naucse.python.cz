@@ -268,9 +268,91 @@ Proč tomu tak je, to za nějakou dobu poznáš.
 
 ## Formátování
 
-Obzvláště užitečná je metoda `format`,
-která v rámci řetězce nahradí dvojice „kudrnatých“ závorek
-za to, co dostane v argumentech:
+A ještě přidám jednu vychtytávku: *šablony*, kterými můžeš do řetězce vložit
+hodnotu.
+
+Řekněme, že chceš vypsat určitou hodnotu uživatelovi s nějakou „omáčkou“ okolo.
+Dá se na to použít `print()`, kterému můžeš předat „mix“ řetězců a čísel:
+
+```pycon
+>>> soucet = 3 + 4
+>>> print('Součet je', soucet)
+```
+
+Co ale když chceš celý tento výpis uložit do proměnné – jako jeden řetězec?
+Čárka tu fungovat nebude, ta odděluje argumenty ve volání funkce.
+Je potřeba `soucet` převést na řetězec a ten pak připojit k „omáčce“:
+
+
+```pycon
+>>> hlaska = 'Součet je ' + str(soucet)
+```
+
+To ale není tak přehledné, jak by mohlo.
+Lze to zpřehlednit použitím šablony – *formátovacího řetězce*
+(angl. *format string* nebo *f-string*).
+
+Takovou šablonu si představ jako formulář s vynechanými místy:
+
+```plain
+Mil[ý/á] _______,
+Váš výsledek je __________.
+
+S pozdravem,
+_________
+```
+
+Aby Python věděl, kam co doplnit, jednotlivá vynechaná místa označíš jmény
+v „kudrnatých“ závorkách:
+
+```plain
+Mil{y_a} {osloveni},
+Váš výsledek je {soucet}.
+
+S pozdravem,
+{podpis}.
+```
+
+A nakonec, aby Python věděl že jde o šablonu, před první uvozovku dej
+písmenko `f`.
+Pro náš první případ bude šablona `f'Součet je {soucet}'`:
+
+```pycon
+>>> soucet = 3 + 4
+>>> hlaska = f'Součet je {soucet}'
+>>> print(hlaska)
+```
+
+Program s dlouhou šablonou může vypadat jako:
+
+```python
+y_a = 'á'
+osloveni = 'Anežko'
+soucet = 3 + 4
+podpis = 'Váš Program'
+
+print(f"""Mil{y_a} {osloveni},
+Váš výsledek je {soucet}.
+
+S pozdravem,
+{podpis}""")
+```
+
+A nakonec – v šabloně můžeš použít nejen jména proměnných, ale jakékoli výrazy.
+
+```pycon
+>>> hlaska = f'Součet je {3 + 4}'
+```
+
+Ale nepřežeň to!
+Většinou je program přehlednější, když si každou vypisovanou hodnotu zvlášť
+pojmenuješ.
+
+### Metoda `format`
+
+Dříve se používala k formátování řetězců metoda `format`. Je dobré o ní vědět,
+kdybys na ni v nějakém starším kódu narazila. Tato metoda v rámci řetězce
+nahradí dvojice „kudrnatých“ závorek za to, co dostane v argumentech:
 
 ```python
 vypis = '{}×{} je {}'.format(3, 4, 3 * 4)
@@ -289,9 +371,8 @@ vypis = 'Ahoj {jmeno}! Výsledek je {cislo}.'.format(cislo=7, jmeno='Elvíro')
 print(vypis)
 ```
 
-Formátování se používá skoro všude, kde je
-potřeba „hezky“ vypsat nějakou hodnotu.
 
+Formátování se používá skoro všude, kde je potřeba „hezky“ vypsat nějakou hodnotu.
 
 ## Sekání řetězců
 
