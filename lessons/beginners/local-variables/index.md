@@ -135,11 +135,11 @@ Zkus odpovědět na tyto otázky:
 
 > [note] A pro úplnost
 >
-> * Klíčová slova `from`, `import`, `def`, `return` nejsou proměnné.
-> * Jméno modulu `math` není proměnná.
+> * Klíčová slova `from`, `import`, `def`, `return` neoznačují proměnné.
+> * Jméno modulu `math` taky neoznačuje proměnnou.
 > * Proměnná `print` se dá považovat za globální.
 >   (Ve skutečnosti existuje zvláštní kategorie *zabudovaných* (angl. *builtin*)
->   proměnných.)
+>   proměnných – ty jsou „ještě globálnější“.)
 
 {% endfilter %}
 
