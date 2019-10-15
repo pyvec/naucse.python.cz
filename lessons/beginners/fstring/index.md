@@ -94,3 +94,29 @@ A nakonec – v šabloně můžeš použít nejen jména proměnných, ale jak�
 Ale nepřežeň to!
 Většinou je program přehlednější, když si každou vypisovanou hodnotu zvlášť
 pojmenuješ – tedy uložíš do vhodně pojmenované proměnné.
+
+
+## Metoda format
+
+Někdy se stane, že jednu šablonu potřebuješ použít vícekrát.
+Pak formátovací řetězec použít nemůžeš, protože se do něj proměnné doplňují
+automaticky a hned.
+Pro takové případy existuje metoda `format`:
+
+```python
+sablona = 'Ahoj {jmeno}! Tvoje číslo {cislo}.'
+print(sablona.format(cislo=7, jmeno='Anežko'))
+print(sablona.format(cislo=42, jmeno='Elvíro'))
+print(sablona.format(cislo=3, jmeno='Viléme'))
+```
+
+Oproti formátovacím řetězcům umí `format` užitečnou zkratku: nepojmenované
+argumenty dosadí postupně do nepojmenovaných míst v šabloně:
+
+```python
+vypis = '{} krát {} je {}'.format(3, 4, 3 * 4)
+print(vypis)
+```
+
+Výrazy jako `f'Součet je {3 + 4}'` ale `format` dosadit neumí.
+Složitější dosazované hodnoty si proto vždycky pojmenuj.
