@@ -170,14 +170,19 @@ takto:
 
 ![markdown](static/markdown.png)
 
-### LaTeX
+### Matematické vzorce
 
-Pokud potřebuješ zapsat do dokumentu nějaké rovnice či vzorce, můžeš k tomu
-použít LaTeX. Latexovou formuli stačí začít a ukončit pomocí `$$`.
+Pokud znáš notaci matematických formulí, která se používá v jazyce LaTeX, můžeš
+ji používat i v textu v notebooku. Latexovou formuli stačí začít a ukončit
+pomocí `$` (případně `$$`).
 
-Například zápis `$$ c = \sqrt(a^2 + b^2)$$` bude po spuštění buňky vypadat takto:
+Příklady několika zápisů:
 
-![latex](static/latex.png)
+![latex examples](static/latex_examples.png)
+
+Budeš-li vzorce potřebovat a tato notace je pro tebe nová, není třeba se učit
+vše kolem jazyka LaTeX, stačí ti jednoduchá pravidla pro zápis matematických
+vzorců. Pomůže ti např. [tato nápověda](https://cs.wikipedia.org/wiki/N%C3%A1pov%C4%9Bda:Matematick%C3%A9_vzorce/) z české wikipedie.
 
 ## Další užitečné funkce
 
