@@ -1,26 +1,24 @@
 # Testování
 
 Programátorská práce nespočívá jen v tom, program napsat.
-Důležité je si i ověřit, že opravdu funguje (a případně ho pak opravit).
-Ověřování, že program funguje, se říká *testování*.
+Důležité je si i ověřit, že opravdu funguje, a případně ho pak opravit.
+Ověřování, že program funguje, se říká *testování* (angl. *testing*).
 
 Zatím jsi asi svoje programy testoval{{a}} tak, že jsi
 je zkusil{{a}} spustit, něco zadal{{a}} a podíval{{a}} se,
 jestli jsou výsledky v pořádku.
 U větších programů, které budou mít více a více
 možností, ale bude těžší a těžší takhle zkontrolovat,
-jestli všechny ty možnosti fungují, jak mají.
+jestli všechny ty možnosti fungují jak mají.
 
-Proto si programátoři, místo aby program zkoušeli ručně, píšou jiné programy,
-které testují jejich výtvory za ně.
+Proto si programátoři často nezkouší programy „ručně“.
+Píšou jiné programy, které jejich výtvory testují za ně.
 
 *Automatické testy* jsou funkce, které
-zkontrolují, že náš program funguje správně.
+zkontrolují že program funguje správně.
 Spuštěním testů můžeš kdykoli ověřit, že kód funguje.
-Hlavní výhoda je, že když v otestovaném kódu
-v budoucnu uděláš nějakou změnu,
-testy ověří, že jsi nerozbil{{a}} nic, co dříve
-fungovalo.
+Když v otestovaném kódu v budoucnu uděláš nějakou změnu,
+testy ověří, že jsi nerozbil{{a}} nic, co dříve fungovalo.
 
 
 ## Instalace knihovny pytest
@@ -46,11 +44,17 @@ Potom zadej následující příkaz.
 (Je to příkaz příkazové řádky, podobně jako
 `cd` nebo `mkdir`; nezadávej ho do Pythonu.)
 
+> [warning] Opisuj opatrně!
+> Příkaz níže instaluje software z Internetu.
+> Za knihovnu `pytest` autoři tohoto kurzu ručí.
+> Jiné knihovny ale můžou dělat neplechu nebo být dokonce „zavirované“.
+> Dej si proto pozor a ve jménu `pytest` neudělej překlep!
+
 ```console
 (venv)$ python -m pip install pytest
 ```
 
-> [note] Co to znamená?
+> [note] Co ten příkaz znamená?
 > `python -m pip` zavolá Python s tím, že má pustit modul
 > `pip`. Tento modul umí instalovat nebo
 > odinstalovávat knihovny.
@@ -96,9 +100,8 @@ def test_secti():
 
 Co se v té testovací funkci děje?
 
-Příkaz `assert` vyhodnotí výraz za ním
-a pokud výsledek není pravdivý, vyvolá výjimku,
-která způsobí, že test selže.
+Příkaz `assert` vyhodnotí výraz za ním a pokud výsledek není pravdivý,
+vyvolá výjimku která způsobí že test selže.
 Můžeš si představit, že `assert a == b` dělá následující:
 
 ```python
@@ -108,8 +111,8 @@ if not (a == b):
 
 > [note]
 > Zatím `assert` nepoužívej jinde než v testovacích funkcích.
-> V „normálním” kódu má `assert` vlastnosti,
-> do kterých teď nebudeme zabředávat.
+> V „normálním” kódu se `assert` může chovat trochu jinak než výše,
+> ale do toho teď nebudeme zabředávat.
 
 
 ## Spouštění testů
@@ -118,7 +121,7 @@ Testy se spouští zadáním příkazu
 `python -m pytest -v` následovaným názvem souboru s testy.
 Tedy v překladu: <strong>Python</strong>e, pusť
 <strong>m</strong>odul <strong>pytest</strong>,
-v „ukecaném” režimu (angl. <strong>v</strong>erbose) nad zadaným souborem.
+v „ukecaném” režimu (angl. <strong>v</strong>erbose) a se zadaným souborem.
 
 ```console
 $ python -m pytest -v test_secteni.py
@@ -137,17 +140,17 @@ test_secteni.py::test_secti PASSED                                       [100%]
 ```
 
 Tento příkaz projde zadaný soubor, zavolá v něm všechny funkce,
-jejichž jméno začíná na `test_`, a ověří, že nevyvolají žádnou
+jejichž jméno začíná na `test_`, a ověří že nevyvolají žádnou
 výjimku – typicky výjimku z příkazu `assert`.
 Pokud výjimka nastane, dá to `pytest` velice červeně
 najevo a přidá několik informací, které můžou
 usnadnit nalezení a opravu chyby.
 
 > [note]
-> Argument s názvem souboru můžeme vynechat: `python -m pytest -v`
+> Argument s názvem souboru můžeš vynechat: `python -m pytest -v`.
 > V takovém případě `pytest` projde aktuální adresář a spustí testy
 > ze všech souborů, jejichž jméno začíná na `test_`. Místo souboru
-> lze též uvést adresář a `pytest` vyhledá testy v něm.
+> lze též uvést adresář: `pytest` vyhledá testy v něm.
 
 Zkus si změnit funkci `secti` (nebo její test) a podívat se,
 jak to vypadá když test „neprojde“.
@@ -158,7 +161,7 @@ jak to vypadá když test „neprojde“.
 Testy se většinou nepíšou přímo ke kódu,
 ale do souboru vedle.
 Je to tak přehlednější a taky to pak zjednodušuje
-distribuci – předávání kódu někomu, kdo ho chce
+*distribuci* – předání kódu někomu, kdo ho chce
 jen spustit a testy nepotřebuje.
 
 Rozděl soubor s testem sečítání: funkci `secti` přesuň do modulu `secteni.py`,
@@ -173,7 +176,7 @@ Test by měl opět projít.
 
 Automatické testy musí projít „bez dozoru“.
 V praxi se často automaticky spouští, případné chyby se automaticky
-oznamují (např. e-mailem) a fungující kód se automaticky
+oznamují (např. e-mailem) a fungující otestovaný kód se automaticky
 začne používat dál (nebo se rovnou vydá zákazníkům).
 
 Co to znamená pro nás?
