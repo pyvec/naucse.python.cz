@@ -360,8 +360,9 @@ Tomuto rozdělení se říká *fan-out*.
 
 Opačná operace je *fan-in*, kdy několik úloh opět spojíme do jedné.
 Výše uvedený scraper může počkat, než jsou všechny stránky stažené –
-třeba pomocí jednoho `await` pro každý `Task`, po kterém může
-pokračovat zpracováním získaných dat.
+třeba pomocí jednoho `await` pro každý `Task` nebo asynchronní funkce
+[gather](https://docs.python.org/3/library/asyncio-task.html#asyncio.gather),
+poté může pokračovat zpracováním získaných dat.
 
 Co se týče webového serveru, může se zdát, že tady není potřeba explicitně
 počkat na výsledek každého úkolu.
