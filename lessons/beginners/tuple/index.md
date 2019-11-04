@@ -12,7 +12,7 @@ se čtyřmi *čtveřice* (angl. *4-tuple*), atd.
 > [note]
 > Pro úplnost: existují i <var>n</var>-tice s jedním prvkem (hmm… „jednice”?)
 > a s nula prvky (prázdné <var>n</var>-tice, angl. *empty tuple*),
-> ale ty nejsou příliš užitečné a v praxi se moc nepoužívají.
+> ale ty se v praxi tolik nepoužívají.
 
 <var>N</var>-tice se tvoří jako seznamy, jen kolem sebe nemají hranaté závorky.
 Stačí čárky mezi prvky:
@@ -23,10 +23,8 @@ print(dvojice)
 ```
 
 Chovají se skoro stejně jako seznamy, jen nejdou měnit.
-Nemají tedy metody jako `append`
-a `pop` a nedá se jim přiřazovat do prvků.
-Dají se ale použít v cyklu `for`
-a dají se z nich číst jednotlivé prvky.
+Nemají tedy metody jako `append` a `pop` a nedá se jim přiřazovat do prvků.
+Dají se ale použít v cyklu `for` a dají se z nich číst jednotlivé prvky.
 
 ```python
 osoby = 'máma', 'teta', 'babička'
@@ -41,7 +39,7 @@ print(f'První je {prvni}')
 > Vypadá to povědomě? Aby ne!
 > <var>N</var>-tice jsme už použil{{gnd('i', 'y', both='i')}} dříve:
 > `for pozdrav in 'Ahoj', 'Hello', 'Ciao':`
-> ve skutečnosti používá <var>n</var>-tici!
+> ve skutečnosti používá <var>n</var>-tici.
 
 Když chceš <var>n</var>-tici předat do funkce,
 narazíš na problém, že čárka odděluje jednotlivé
@@ -49,6 +47,10 @@ argumenty funkce.
 V podobných případech musíš <var>n</var>-tici
 uzavřít do závorek, aby bylo jasné, že jde o jednu
 hodnotu (byť složenou).
+
+```python
+print('osoby:', ('máma', 'teta', 'babička'))
+```
 
 ```python
 seznam_dvojic = []
@@ -60,8 +62,8 @@ print(seznam_dvojic)
 
 <var>N</var>-tice se hodí, pokud chceš z funkce vrátit
 víc než jednu hodnotu.
-Prostě v příkazu `return` oddělíš vracené hodnoty čárkou.
-Vypadá to, že vracíš několik hodnot, ale
+Když příkazu `return` oddělíš vracené hodnoty čárkou,
+vypadá to, že vracíš několik hodnot, ale
 ve skutečnosti se vrací jen jedna <var>n</var>-tice.
 
 ```python
@@ -70,14 +72,13 @@ def podil_a_zbytek(a, b):
 ```
 
 > [note]
-> Funkci „podíl a zbytek“ je mimochodem k dispozici přímo v Pythonu
+> Funkce „podíl a zbytek“ je mimochodem k dispozici přímo v Pythonu
 > pod jménem `divmod`.
 
-Python umí ještě jeden trik, takzvané „rozbalení“: pokud chceš přiřadit
-do několika proměnných najednou, stačí je na levé
+Python umí ještě jeden trik, takzvané „rozbalení“ (angl. *unpacking*).
+Když chceš přiřadit do několika proměnných najednou, stačí je na levé
 straně rovnítka oddělit čárkou a na pravou stranu
-dát nějakou „složenou” hodnotu – třeba právě
-<var>n</var>-tici.
+dát nějakou „složenou” hodnotu – třeba právě <var>n</var>-tici.
 
 ```python
 podil, zbytek = podil_a_zbytek(12, 5)
@@ -89,7 +90,7 @@ podil, zbytek = podil_a_zbytek(12, 5)
 > Jde to ale použít se všemi hodnotami, které jdou použít ve `for`:
 >
 > ```python
-> x, o = 'xo'
+> ix, ocko = 'xo'
 > jedna, dva, tri = [1, 2, 3]
 > ```
 
@@ -125,8 +126,7 @@ používá <var>n</var>-tici.
 různých typů, kdy má každá „pozice”
 v <var>n</var>-tici úplně jiný význam.
 Například seznam můžeš použít na písmena abecedy,
-ale dvojice index–hodnota z `enumerate`
-je <var>n</var>-tice.
+ale dvojice „podíl a zbytek“ je <var>n</var>-tice.
 
 Prázdné <var>n</var>-tice a <var>n</var>-tice s jedním
 prvkem se zapisují trochu divně a má to své důvody:
@@ -142,4 +142,3 @@ zjistíme že seznamy tam nepůjdou použít jako klíče.
 
 Často není úplně jasné, který typ použít
 – v takovém případě je to pravděpodobně jedno.
-Řiď se instinktem. :)
