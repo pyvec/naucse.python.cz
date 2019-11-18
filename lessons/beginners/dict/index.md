@@ -85,8 +85,8 @@ přiřazeny překlady.
 cisla = {
     'Maruška': '153 85283',
     'Terka': '237 26505',
-    'Renata': '385 11223',
     'Michal': '491 88047',
+    'Renata': '385 11223',
 }
 
 barvy = {
@@ -169,21 +169,29 @@ Slovník je ovšem dost specifická struktura –
 čísla nebo typické seznamy na něj převádět nejdou.
 Můžeme ale na slovník převést *jiný slovník*.
 Nový slovník žije svým vlastním životem;
-následné změny se promítnou jen do něj.
+můžeš ho měnit nezávisle na tom původním.
 
 ```python
 barvy_po_tydnu = dict(barvy)
 for klic in barvy_po_tydnu:
     barvy_po_tydnu[klic] = 'černo-hnědo-' + barvy_po_tydnu[klic]
-print(barvy['jablko'])
 print(barvy_po_tydnu['jablko'])
+
+print(barvy['jablko'])  # původní slovník se nezměnil
 ```
 
 Druhá věc, která jde převést na slovník, je
-*sekvence dvojic* klíč/hodnota:
+*sekvence dvojic* klíč/hodnota – ať už seznam:
 
 ```python
 data = [(1, 'jedna'), (2, 'dva'), (3, 'tři')]
+nazvy_cisel = dict(data)
+```
+
+nebo jiný iterovatelný objekt:
+
+```python
+data = enumerate(['jedna', 'dva' 'tři'])
 nazvy_cisel = dict(data)
 ```
 

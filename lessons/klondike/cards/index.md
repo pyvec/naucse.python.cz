@@ -32,7 +32,7 @@ Tyto hry obecně fungují takto:
 
 * Karty se určitým způsobem *rozdají* do několika balíčků, hromádek nebo
   jiných skupin
-* Dokud hráč *nevyhrál* ani *neprohrál*:
+* Dokud hráč *nevyhrál*:
   * Hráč *udělá tah*: podle určitých pravidel přesune karty z jedné hromádky
     na druhou
 

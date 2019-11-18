@@ -1,18 +1,68 @@
 # Klondike Solitaire: Balíčky
 
-> [warning] Předbíháš!
-> Tyto materiály nejsou dopsané. Nemusí dávat smysl.
+Postupně tvoříme hru *Klondike Solitaire*, která bude nakonec fungovat takto:
+
+* Karty se určitým způsobem *rozdají* do několika balíčků, hromádek nebo
+  jiných skupin
+* Dokud hráč *nevyhrál*:
+  * Hráč *udělá tah*: podle určitých pravidel přesune karty z jedné hromádky
+    na druhou
+
+Pro počítačovou verzi to bude potřeba doplnit o zobrazení stavu hry
+a o načítání hráčova tahu:
+
+* Rozdej karty
+* Dokud hráč nevyhrál:
+  * Zobraz stav hry
+  * Zeptej se hráče, kam chce hrát
+  * Je-li to možné:
+    * Proveď tah
+  * Jinak:
+    * Vynadej hráči, že daný tah nedává smysl
+* Pogratuluj hráči
+
+(Hráč může i prohrát, ale na to může přijít sám a hru ukončit.)
+
+Minule jsme počítač naučil{{gnd('i', 'y', both='i')}} co to je *karta*
+a jak vytvořit zamíchaný *balíček*.
+Pojďme se konečně vrhnout na první krok výše: rozdávání.
+
 
 ## Rozdání sloupečků
 
-Teď zkus rozdat 7 sloupečků karet, tedy konečně první krok hry.
+Karty se určitým způsobem *rozdají* do několika balíčků, hromádek nebo
+jiných skupin.
+Pro přehlednost si tyto skupiny označíme písmenky:
+
+* Dobírací balíčky `U`, `V`, ze kterých se berou karty.
+* Cílové hromádky `W`-`Z`, kam se dávají seřazené karty. Cíl hry je do těchto
+  hromádek dát všechny karty.
+* 7 sloupečků `A`-`G`, kde hráč může s kartami manipulovat.
+
+Prvotní rozdání karet spočívá v tom, že rozdáš karty do 7 sloupečků.
+Nerozdané karty zůstanou v balíčku `U`; ostatní místa na karty budou prázdné:
+
+{{ figure(img=static('game.png'), alt="Ukázka sloupečků") }}
+
+```plain
+   U     V          W     X     Y     Z
+ [???] [   ]      [   ] [   ] [   ] [   ]
+
+   A     B     C     D     E     F     G
+ [3♣ ] [???] [???] [???] [???] [???] [???]
+       [5 ♥] [???] [???] [???] [???] [???]
+             [6♣ ] [???] [???] [???] [???]
+                   [5♠ ] [???] [???] [???]
+                         [Q ♥] [???] [???]
+                               [4♠ ] [???]
+                                     [3 ♦]
+```
 
 V <var>N</var>-tém sloupečku (počítáno od nuly) je <var>N</var>
 karet rubem nahoru plus jedna karta lícem nahoru.
 Karty do sloupečků se z balíčku rozdávají postupně: vždy se lízne
 vrchní (poslední) karta z balíčku a dá se na konec sloupečku.
 
-{{ figure(img=static('klondike.png'), alt="Ukázka sloupečků") }}
 
 Napiš následující funkci:
 
@@ -21,7 +71,7 @@ def rozdej_sloupecky(balicek):
     """Rozdá z daného balíčku 7 "sloupečků" -- seznamů karet
 
     Karty ve sloupečcích jsou odstraněny z balíčku.
-    Vrátí všechny sloupečky -- tedy seznam sedmi seznamů.
+    Vrátí všechny sloupečky -- tedy seznam (nebo n-tici) sedmi seznamů.
     """
 ```
 
@@ -30,7 +80,6 @@ Například:
 ```pycon
 >>> balicek = priprav_balicek()
 >>> sloupecky = rozdej_sloupecky(balicek)
-24
 >>> popis_seznam_karet(sloupecky[0])
 [3♣ ]
 >>> popis_seznam_karet(sloupecky[1])
@@ -40,6 +89,7 @@ Například:
 >>> popis_seznam_karet(sloupecky[6])
 [???] [???] [???] [???] [???] [???] [3 ♦]
 >>> len(balicek)    # Z balíčku zmizely karty, které jsou ve sloupečcích
+24
 ```
 
 Jak tahle funkce funguje?
@@ -56,21 +106,21 @@ Jak tahle funkce funguje?
   * Hotový sloupeček přidá do seznamu sloupečků
 * Výsledné sloupečky vrátí
 
-Testy:
+Pro ověření spusť testy:
 
-* level 30: Funkce existuje
-* level 31: Funkce vrací seznam sedmi seznamů
-* level 32:
+* level 40: Funkce existuje
+* level 41: Funkce vrací seznam sedmi seznamů
+* level 42:
   * V každém sloupečku je aspoň jedna karta
   * Poslední karta je lícem nahoru
-* level 33: V každém sloupečku je správný počet karet rubem nahoru
+* level 43: V každém sloupečku je správný počet karet rubem nahoru
 
 
 ## Vypsání sloupečků
 
 Vzpomínáš si na základní schéma hry?
 
-* Rozdej balíček a sloupečky karet
+* Rozdej karty
 * Dokud hráč nevyhrál:
   * Zobraz stav hry
   * Zeptej se hráče, kam chce hrát
@@ -81,7 +131,7 @@ Vzpomínáš si na základní schéma hry?
 * Pogratuluj hráči
 
 Rozdání balíčku a sloupečků už víceméně máš!
-Pro teď přeskoč zjišťování, jestli hráč vyhrál, a podívej se na vypsání
+Pro teď přeskočíme zjišťování, jestli hráč vyhrál, a koukneme se na zobrazení
 stavu hry.
 
 Například, pokud jsou sloupečky tyto:
@@ -131,6 +181,8 @@ Znáš funkci, která vezme několik seznamů, a dá ti k dispozici napřed prvn
 prvky těch seznamů, potom druhé, a tak dál?
 Zkus ji použít!
 
+Pozor, bude tu potřeba pořádně se zamyslet.
+
 ```python
 def vypis_sloupecky(sloupecky):
     """Vypíše sloupečky textově.
@@ -140,15 +192,18 @@ def vypis_sloupecky(sloupecky):
     """
 ```
 
-* level 40: Funkce existuje
-* level 41: Funkce vypisuje karty ze věch sloupečků
-* level 42: Funkce funguje, když jsou sloupečky nestejně dlouhé. (Na prázdné místo patří 5 mezer.)
+* level 50: Funkce existuje
+* level 51: Funkce vypisuje karty ze věch sloupečků
+* level 52: Funkce funguje, když jsou sloupečky nestejně dlouhé. (Na prázdné místo patří 5 mezer.)
 
 
 ## Práce se sloupečky
 
 Aby sis v budoucnu ušetřil{{a}} práci, a aby sis procvičila seznamy,
-zkus teď napsat dvě funkce, které přesunují karty mezi balíčky:
+zkus teď napsat dvě funkce, které přesunují karty mezi balíčky.
+
+Použij na to metody seznamů (`append`, `extend`, `pop`, příkaz `del`)
+a pomocné funkce, které už máš (`otoc_kartu`).
 
 ```python
 def presun_kartu(sloupec_odkud, sloupec_kam, pozadovane_otoceni):
@@ -162,7 +217,7 @@ def presun_nekolik_karet(sloupec_odkud, sloupec_kam, pocet):
     """
 ```
 
-* level 50: Funkce `presun_kartu` existuje
-* level 51: Funkce `presun_kartu` funguje dle zadání
-* level 60: Funkce `presun_nekolik_karet` existuje
-* level 61: Funkce `presun_nekolik_karet` funguje dle zadání
+* level 60: Funkce `presun_kartu` existuje
+* level 61: Funkce `presun_kartu` funguje dle zadání
+* level 70: Funkce `presun_nekolik_karet` existuje
+* level 71: Funkce `presun_nekolik_karet` funguje dle zadání

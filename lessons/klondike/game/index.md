@@ -1,7 +1,11 @@
 # Klondike Solitaire: Hra
 
-> [warning] Předbíháš!
-> Tyto materiály nejsou dopsané. Nemusí dávat smysl.
+Klondike Solitaire zbývá dát konečně dohromady kousky, které jsme
+v několika posledních lekcích připravovali!
+
+V těchto materiálech najdeš hotové funkce, které je dobré si prohlédnout
+a porozumět jim, ale pak si je můžeš zkopírovat do svého kódu.
+Velké procvičení seznamů a slovníků přijde na konci.
 
 ## Hra
 
@@ -21,6 +25,10 @@ V Pythonu to bude vypadat následovně.
 Program si ulož do modulu `hra.py`:
 
 ```python
+from klondike import udelej_hru, vypis_hru, presun_kartu, presun_nekolik_karet
+
+print()
+
 hra = udelej_hru()
 
 while not hrac_vyhral(hra):
@@ -40,19 +48,7 @@ onu `hru`.
 Ta se skládá z několika balíčků/sloupečků, tedy seznamů karet.
 Ve výpisu butou pojmenované A-Z:
 
-```plain
-   U     V          W     X     Y     Z
- [???] [   ]      [   ] [   ] [   ] [   ]
-
-   A     B     C     D     E     F     G
- [3♣ ] [???] [???] [???] [???] [???] [???]
-       [5 ♥] [???] [???] [???] [???] [???]
-             [6♣ ] [???] [???] [???] [???]
-                   [5♠ ] [???] [???] [???]
-                         [Q ♥] [???] [???]
-                               [4♠ ] [???]
-                                     [3 ♦]
-```
+{{ figure(img=static('game.png'), alt="Ukázka sloupečků") }}
 
 * `U` je dobírací balíček, ze kterého se doplňuje `V`.
 * `V` je balíček, ze kterého můžeš brát karty
@@ -75,6 +71,7 @@ def udelej_hru():
     hra = {
         'U': balicek,
     }
+
     # V-Z začínají jako prázdné seznamy
     for pismenko in 'VWXYZ':
         hra[pismenko] = []
@@ -86,7 +83,25 @@ def udelej_hru():
     return hra
 ```
 
-A takhle se hra dá vypsat:
+Další funkce, `vypis_hru`, hru vypíše do konzole pomocí `print`.
+Výsledek bude něco jako:
+
+```plain
+   U     V          W     X     Y     Z
+ [???] [   ]      [   ] [   ] [   ] [   ]
+
+   A     B     C     D     E     F     G
+ [3♣ ] [???] [???] [???] [???] [???] [???]
+       [5 ♥] [???] [???] [???] [???] [???]
+             [6♣ ] [???] [???] [???] [???]
+                   [5♠ ] [???] [???] [???]
+                         [Q ♥] [???] [???]
+                               [4♠ ] [???]
+                                     [3 ♦]
+```
+
+V téhle funkci není nic moc objevného a testům záleží na každé mezeře,
+takže si ji určitě zkopíruj:
 
 ```python
 def vypis_hru(hra):
@@ -98,17 +113,18 @@ def vypis_hru(hra):
     print()
     print('  U     V           W     X     Y     Z')
     print('{} {}       {} {} {} {}'.format(
-        popis_balicku(hra['U']),
-        popis_balicku(hra['V']),
-        popis_balicku(hra['W']),
-        popis_balicku(hra['X']),
-        popis_balicku(hra['Y']),
-        popis_balicku(hra['Z']),
+        popis_vrchni_kartu(hra['U']),
+        popis_vrchni_kartu(hra['V']),
+        popis_vrchni_kartu(hra['W']),
+        popis_vrchni_kartu(hra['X']),
+        popis_vrchni_kartu(hra['Y']),
+        popis_vrchni_kartu(hra['Z']),
     ))
     print()
     print('  A     B     C     D     E     F     G')
-    vypis_sloupecky([hra['A'], hra['B'], hra['C'], hra['D'],
-                     hra['E'], hra['F'], hra['G']])
+    vypis_sloupecky([
+        hra['A'], hra['B'], hra['C'], hra['D'], hra['E'], hra['F'], hra['G']
+    ])
     print()
 ```
 
@@ -125,9 +141,9 @@ Pro kontrolu můžeš pustit testy:
 Hra se bude ovládat zadáním dvou jmen balíčku: odkud a kam hráč chce kartu
 přesunout.
 
-Tahle funkce není součást logiky hry. Dej ji do `hra.py`.
+Tahle funkce není součást logiky hry. Dej ji do `hra.py`, hned za `import`.
 
-```
+```python
 def nacti_tah():
     while True:
         tah = input('Tah? ')
@@ -143,16 +159,23 @@ def nacti_tah():
 
 K úplné hře nám chybí ještě samotná logika hry: `hrac_vyhral` a `udelej_tah`.
 
-Aby nám hra aspoň trochu fungovala, vytvoř si zástupné funkce,
-které nic nekontrolují a nenechají tě vyhrát:
+Aby ti hra aspoň trochu fungovala, vytvoř si zástupné funkce,
+které nic nekontrolují a nenechají tě vyhrát.
+Dej ji do `hra.py`, opět hned za `import`:
 
-```
+```python
 def hrac_vyhral(hra):
     """Vrací True, pokud je hra vyhraná.
     """
     return False
 
 def udelej_tah(hra, jmeno_odkud, jmeno_kam):
+    """Udělá tah z jednoho místa na druhé.
+
+    Místa jsou označovány velkými písmeny (např. 'A', 'V' nebo 'X').
+
+    Není-li tah možný, vyhodí ValueError s popisem problému.
+    """
     presun_kartu(hra[jmeno_odkud], hra[jmeno_kam], True)
 ```
 
@@ -175,7 +198,8 @@ program – ne jen ten, který jsi napsal{{a}} ty.
 
 Jeden takový si můžeš vyzkoušet:
 
-* Nainstaluj si do virtuálního prostředí knihovnu `pyglet`:
+* Nainstaluj si do virtuálního prostředí knihovnu `pyglet`, která umí ovládat
+  grafická okýnka:
 
   ```console
   (venv)$ python -m pip install pyglet
@@ -192,7 +216,11 @@ Jeden takový si můžeš vyzkoušet:
   (venv)$ python ui.py
   ```
 
-  
+Hra považuje chyby `ValueError` za chyby uživatele, tedy tahy proti pravidlům.
+Zobrazí je v terminálu a v titulku okýnka.
+Ostatní chyby by ve správném programu neměly nastat; objeví se jako normální
+chybové hlášky na terminálu.
+
 *Obrázky karet jsou z [Board Game Pack](https://kenney.nl/assets/boardgame-pack)
 studia [kenney.nl](https://kenney.nl).*
 
@@ -219,13 +247,13 @@ Možné tahy:
   * Přesouvají se všechny karty, seřazené v opačném pořadí;
     otočí se rubem nahoru (tj. volej dokola
     `presun_kartu(hra['V'], hra['U'], False)` dokud ve V něco je)
-* Balíček `V` nebo sloupeček `A`-`G` (zdroj) → cíl `W`-`Z`: 
+* Balíček `V` nebo sloupeček `A`-`G` (zdroj) → hromádka `W`-`Z`: 
   * Přesouvá se jedna karta
-  * Je-li cíl prázdný:
+  * Je-li cílová hromádka prázdná:
     * Musí to být eso
   * Jinak:
-    * Přesouvaná karta musí mít stejnou barvu jako vrchní karta cíle
-    * Přesouvaná karta musí být o 1 vyšší než vrchní karta cíle
+    * Přesouvaná karta musí mít stejnou barvu jako vrchní karta cílové hromádky
+    * Přesouvaná karta musí být o 1 vyšší než vrchní karta cílové hromádky
   * Je-li zdroj po přesunu neprázdný, jeho vrchní karta se otočí lícem nahoru
 * Balíček `V` → „cílový“ sloupeček `A`-`G`
   * Přesouvá se jedna karta
@@ -235,10 +263,10 @@ Možné tahy:
     * (zkontroluj všechny možnosti: 1 až počet karet ve zdrojovém sloupečku;
       vždy je max. jedna správná možnost) 
   * Všechny přesouvané karty musí být otočené lícem nahoru
-  * První z přesouvaných karet musí pasovat*) na cílový sloupeček
+  * První z přesouvaných karet musí pasovat\*⁾ na cílový sloupeček
 * Cíl `W`-`Z` → sloupeček `A`-`G` (nepovinné – jen v některých variantách hry)
   * Přesouvá se jedna karta
-  * Přesouvaná karta musí pasovat*) na cílový sloupeček
+  * Přesouvaná karta musí pasovat\*⁾ na cílový sloupeček
 
 \*⁾ Kdy přesouvaná karta pasuje na sloupeček?
 * Je-li sloupeček prázdný:
@@ -247,4 +275,5 @@ Možné tahy:
   * Barva přesouvané karty musí být opačná než barva vrchní karty sloupečku, tedy:
     * Červená (♥ nebo ♦) jde dát jen na černou (♠ nebo ♣)
     * Černá (♠ nebo ♣) jde dát jen na červenou (♥ nebo ♦)
-  * Hodnota přesouvané karty musí být o 1 nižší než hodnota vrchní karty sloupečku
+  * A zároveň musí hodnota přesouvané karty být o 1 nižší než hodnota vrchní
+    karty sloupečku.
