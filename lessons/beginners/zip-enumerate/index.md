@@ -33,8 +33,8 @@ trpaslici = ['Prófa', 'Stydlín', 'Dřímal', 'Kejchal', 'Štístko',
 ```
 
 Když na něj použiješ `enumerate`, dostaneš objekt `enumerate`,
-který podobně jako `range()` neukáže svůj obsah „rovnou“,
-ale můžeš se „do něj“ podívat převedením na seznam.
+který podobně jako `range()` neukáže svůj obsah rovnou,
+ale můžeš se „do něj podívat“ převedením na seznam.
 Uvidíš tak seznam dvojic (číslo, trpaslík):
 
 ```pycon
@@ -82,7 +82,7 @@ print(f'Na pozici {index} je {trpaslik}!')
 ```
 
 Kdybys to psal{{a}} ručně, lze to zjednodušit – přiřadit do dvou proměnných
-najedno, bez pomocné `dvojice`:
+najednou, bez pomocné proměnné `dvojice`:
 
 ```python
 index, trpaslik = 0, 'Prófa'    # nastavení proměnných
@@ -97,8 +97,8 @@ print(f'Na pozici {index} je {trpaslik}!')
 # A tak dále
 ```
 
-A `for` tohle ve skutečnosti umí: místo do proměnné `dvojice` může přiřadit
-rovnou do dvou proměnných `index, trpaslik`:
+Cyklus `for` tohle ve skutečnosti umí: místo do proměnné `dvojice` může
+přiřadit rovnou do dvou proměnných `index, trpaslik`:
 
 ```python
 for index, trpaslik in enumerate(trpaslici):
@@ -154,6 +154,7 @@ for index, den in enumerate(dny, start=1):
 
 Další iterátor <var>n</var>-tic je funkce `zip`, která umí projít dvě sekvence
 naráz.
+
 Řekněme že máš seznam věcí a k nim příslušných barev:
 
 ``` python
@@ -161,14 +162,27 @@ veci = ['tráva', 'slunce', 'mrkev', 'řeka']
 barvy = ['zelená', 'žluté', 'oranžová', 'modrá']
 ```
 
-Kdtyž tyto dva seznamy dáš funkci `zip`, dostaneš iterátor který příslušné
-hodnoty spáruje.
-Bude tedy obsahovat:
+Když na ně zavoláš `zip`, dostaneš iterátor, který (podobně jako `enumerate`
+nebo `range`) sám od sebe nic neříká:
 
-* Dvojici prvních prvků obou seznamů: (`tráva`, `zelená`)
-* Dvojici druhých prvků obou seznamů: (`slunce`, `žluté`)
-* Dvojici třetích prvků obou seznamů: (`mrkev`, `oranžová`)
-* ...
+```pycon
+>>> zip(veci, barvy)
+<zip object at 0x7f0db61b1f48>
+```
+
+Po převedení na seznam se ale ukáže seznam odpovídajících si dvojic:
+
+* Dvojice prvních prvků obou seznamů: (`tráva`, `zelená`)
+* Dvojice druhých prvků obou seznamů: (`slunce`, `žluté`)
+* Dvojice třetích prvků obou seznamů: (`mrkev`, `oranžová`)
+* A tak dál…
+
+```pycon
+>>> list(zip(veci, barvy))
+[('tráva', 'zelená'), ('slunce', 'žluté'), ('mrkev', 'oranžová'), ('řeka', 'modrá')]
+```
+
+Takové dvojice jsou připravené na to, že je rozbalíš v cyklu `for`:
 
 ``` python
 for vec, barva in zip(veci, barvy):
@@ -176,7 +190,7 @@ for vec, barva in zip(veci, barvy):
 ```
 
 Funguje to i pro více sekvencí.
-V následujícím případě je výsledný `zip` iterátor čtveřic (věc, barva,
+V následujícím případě vznikne iterátor čtveřic (věc, barva,
 místo, číslo):
 
 ```python
@@ -187,21 +201,6 @@ cisla = range(4)
 
 for vec, barva, misto, cislo in zip(veci, barvy, mista, cisla):
     print(f"{cislo}. {barva} {vec} je {misto}")
-```
-
-Když si ale vypíšeš samotný objekt `zip`, zjistíš že o sobě nic moc neřekne
-– podobně jako `enumerate`:
-
-```pycon
->>> zip(veci, barvy, cisla)
-<zip object at 0x7f0db61b1f48>
-```
-
-Po převedení na seznam se ale seznam <var>n</var>-tic „ukáže”:
-
-```pycon
->>> list(zip(veci, barvy, cisla))
-[('tráva', 'zelená', 0), ('slunce', 'žluté', 1), ('mrkev', 'oranžová', 2), ('řeka', 'modrá', 3)]
 ```
 
 
@@ -217,7 +216,7 @@ for vec, barva in zip(veci, barvy):
 ```
 
 {% filter solution %}
-Výsledek `zip` skončí hned když „dojde“ nejkratší sekvence.
+Iterátor `zip` skončí hned když dojdou prvky nejkratší sekvence.
 {% endfilter %}
 
 Občas je potřeba projít všechny záznamy.
@@ -229,7 +228,7 @@ for vec, barva in zip_longest(veci, barvy, fillvalue='(nevím)'):
     print(f"{vec} je {barva}")
 ```
 
-Argument `fillvalue` říká, co se doplní za chybějící hodnoty.
+Pojmenovaný argument `fillvalue` říká, co se doplní za chybějící hodnoty.
 Když ho nezadáš, doplní se `None` („nic“, hodnota kterou např. vrací procedury).
 To se často používá, když je pro chybějící hodnoty potřeba nějaká
 složitější logika:
