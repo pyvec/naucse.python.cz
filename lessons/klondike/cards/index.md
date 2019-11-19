@@ -310,7 +310,7 @@ Například:
     ]
 
 >>> popis_balicek(karty)
-[A♠ ] [2 ♥] [3 ♦] [???]
+[K♠ ] [Q ♥] [J ♦] [???]
 ```
 
 Jak na to?
