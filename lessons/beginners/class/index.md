@@ -252,8 +252,7 @@ divně.)
 
 A může taková metoda brát víc než jeden argument?
 Může – `self` se doplní na první místo,
-a zbytek argumentů se vezme z volání metody.{} mi chutná
-        print("{}: Meow!".format(self.name))
+a zbytek argumentů se vezme z volání metody.
 
 ```python
 def eat(self, food):
