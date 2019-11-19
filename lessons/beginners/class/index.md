@@ -42,12 +42,12 @@ Třeba řetězcová metoda `count()` by se dala
 napsat zhruba jako:
 
 ```python
-def count(retezec, znak):
-    pocet = 0
-    for c in retezec:
-        if c == znak:
-            pocet = pocet + 1
-    return pocet
+def count(input_string, character):
+    quantity = 0
+    for c in input_string:
+        if c == character:
+            quantity = quantity + 1
+    return quantity
 ```
 
 … a ačkoliv bude vracet jinou hodnotu pro každý řetězec,
@@ -69,7 +69,7 @@ Typ objektu umí zjistit funkce `type`:
 <class 'bool'>
 >>> type("abc")
 <class 'str'>
->>> with open('soubor.txt') as f:
+>>> with open('file.txt') as f:
 ...     type(f)
 ... 
 <class '_io.TextIOWrapper'>
@@ -83,10 +83,10 @@ Většinu tříd jde navíc v Pythonu zavolat, jako by
 to byly funkce, a vytvořit tak nový objekt dané třídy:
 
 ```pycon
->>> trida_retezcu = type("abc")
->>> trida_retezcu(8)
+>>> class_of_strings = type("abc")
+>>> class_of_strings(8)
 '8'
->>> trida_retezcu([1, 2, 3])
+>>> class_of_strings([1, 2, 3])
 '[1, 2, 3]'
 ```
 
@@ -126,9 +126,9 @@ My teď potřebujeme napsat program o zvířátkách.
 Začni tím, že napíšeš třídu pro koťátka, která umí mňoukat:
 
 ```python
-class Kotatko:
-    def zamnoukej(self):
-        print("Mňau!")
+class Kitten:
+    def meow(self):
+        print("Meow!")
 ```
 
 Tak jako se funkce definují pomocí `def`,
@@ -137,7 +137,7 @@ za které napíšeš jméno třídy, dvojtečku,
 a pak odsazené tělo třídy.
 Podobně jako `def` dělá funkce, příkaz
 `class` udělá novou třídu a přiřadí ji
-do proměnné daného jména (tady `Kotatko`).
+do proměnné daného jména (tady `Kitten`).
 
 Třídy se tradičně pojmenovávají s velkým písmenem,
 aby se nepletly s „normálními“ hodnotami.
@@ -153,22 +153,22 @@ Ten si ale vysvětlíme později – zamňoukání má přednost:
 
 ```python
 # Vytvoření konkrétního objektu
-kotatko = Kotatko()
+kitten = Kitten()
 
 # Volání metody
-kotatko.zamnoukej()
+kitten.meow()
 ```
 
 V tomhle příkladu si dej pozor na velikost písmen:
-`Kotatko` (s velkým K) je třída – popis, jak
-se koťátka chovají. `kotatko` (s malým k)
+`Kitten` (s velkým K) je třída – popis, jak
+se koťátka chovají. `kitten` (s malým k)
 je konkrétní objekt (angl. *instance*) té třídy:
 hodnota, která reprezentuje kotě.
 Onen konkrétní objekt vytvoříme zavoláním třídy,
 stejně jako zavoláním `str()` se dá vytvořit
 konkrétní řetězec.
 
-Mňau!
+Meow!
 
 ## Atributy
 
@@ -181,14 +181,14 @@ Atributy se označují tak, že mezi hodnotu a jméno
 jejího atributu napíšeš tečku:
 
 ```python
-mourek = Kotatko()
-mourek.jmeno = 'Mourek'
+mourek = Kitten()
+mourek.name = 'Mourek'
 
-micka = Kotatko()
-micka.jmeno = 'Micka'
+micka = Kitten()
+micka.name = 'Micka'
 
-print(mourek.jmeno)
-print(micka.jmeno)
+print(mourek.name)
+print(micka.name)
 ```
 
 Na začátku jsme si řekl{{gnd('i', 'y', both='i')}}, že objekty spojují chování
@@ -206,9 +206,9 @@ rozlišit.
 > metoda z třídy? Vyzkoušej si to:
 >
 > ```python
-> micka = Kotatko()
-> micka.zamnoukej = 12345
-> micka.zamnoukej()
+> micka = Kitten()
+> micka.meow = 12345
+> micka.meow()
 > ```
 
 ## Parametr `self`
@@ -222,23 +222,23 @@ Teď, když máš koťátka pojmenovaná,
 můžeš pomocí `self` rozjet dialog:
 
 ```python
-class Kotatko:
-    def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+class Kitten:
+    def meow(self):
+        print("{}: Meow!".format(self.name))
 
-mourek = Kotatko()
-mourek.jmeno = 'Mourek'
+mourek = Kitten()
+mourek.name = 'Mourek'
 
-micka = Kotatko()
-micka.jmeno = 'Micka'
+micka = Kitten()
+micka.name = 'Micka'
 
-mourek.zamnoukej()
-micka.zamnoukej()
+mourek.meow()
+micka.meow()
 ```
 
-Co se stalo? Výraz `mourek.zamnoukej` udělá *metodu*, která, když ji zavoláš,
+Co se stalo? Výraz `mourek.meow` udělá *metodu*, která, když ji zavoláš,
 předá objekt `mourek` jako první argument
-funkce `zamnoukej`.
+funkce `meow`.
 
 > [note]
 > Tohle je to, čím se *metoda* liší od normální *funkce*:
@@ -252,21 +252,18 @@ divně.)
 
 A může taková metoda brát víc než jeden argument?
 Může – `self` se doplní na první místo,
-a zbytek argumentů se vezme z volání metody.
-Třeba:
+a zbytek argumentů se vezme z volání metody.{} mi chutná
+        print("{}: Meow!".format(self.name))
 
 ```python
-class Kotatko:
-    def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+def eat(self, food):
+    print("{}: Meow meow! I like {}!".format(self.name, food))
 
-    def snez(self, jidlo):
-        print("{}: Mňau mňau! {} mi chutná!".format(self.jmeno, jidlo))
-
-mourek = Kotatko()
-mourek.jmeno = 'Mourek'
-mourek.snez('ryba')
+mourek = Kitten()
+mourek.name = 'Mourek'
+mourek.eat('fish')
 ```
+
 
 ## Metoda `__init__`
 
@@ -276,12 +273,12 @@ nový objekt (voláním třídy).
 Dá se tak hezky vyřešit problém, který možná vidíš
 v předchozím kódu: aktuálně každé koťátko potřebuje,
 aby se mu po vytvoření nastavilo jméno, jinak
-metoda `zamnoukej` nebude fungovat.
+metoda `meow` nebude fungovat.
 Třída se ale dá udělat i tak, že půjde jméno nastavit
 už při vytváření, takhle:
 
 ```python
-mourek = Kotatko(jmeno='Mourek')
+mourek = Kitten(name='Mourek')
 ```
 
 Na tohle používá Python metodu,
@@ -293,85 +290,85 @@ automaticky, když se vytvoří nový objekt.
 Dá se tedy napsat:
 
 ```python
-class Kotatko:
-    def __init__(self, jmeno):
-        self.jmeno = jmeno
+class Kitten:
+    def __init__(self, name):
+        self.name = name
 
-    def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+    def meow(self):
+        print("{}: Meow!".format(self.name))
 
-    def snez(self, jidlo):
-        print("{}: Mňau mňau! {} mi chutná!".format(self.jmeno, jidlo))
+    def eat(self, food):
+        print("{}: Meow meow! I like {}!".format(self.name, food))
 
-mourek = Kotatko('Mourek')
-mourek.zamnoukej()
+mourek = Kitten('Mourek')
+mourek.meow()
 ```
 
 A teď už není možnost, jak vytvořit koťátko bez jména,
-takže `zamnoukej` bude vždycky fungovat.
+takže `meow` bude vždycky fungovat.
 
 Podobných „opodtržítkovaných“ metod je víc,
 třeba `__str__` se volá, když je potřeba
 převést objekt na řetězec:
 
 ```python
-class Kotatko:
-    def __init__(self, jmeno):
-        self.jmeno = jmeno
+class Kitten:
+    def __init__(self, name):
+        self.name = name
 
     def __str__(self):
-        return '<Kotatko jmenem {}>'.format(self.jmeno)
+        return '<Kitten named {}>'.format(self.name)
 
-    def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+    def meow(self):
+        print("{}: Meow!".format(self.name))
 
-    def snez(self, jidlo):
-        print("{}: Mňau mňau! {} mi chutná!".format(self.jmeno, jidlo))
+    def eat(self, food):
+        print("{}: Meow meow! I like {}!".format(self.name, food))
 
-mourek = Kotatko('Mourek')
+mourek = Kitten('Mourek')
 print(mourek)
 ```
 
-## Cvičení: Kočka
+## Cvičení: Cat
 
 Teď, když už umíš dělat koťátka, zkus vytvořit třídu pro kočku.
 
-- Kočka umí mňoukat metodou `zamnoukej`.
+- Kočka umí mňoukat metodou `meow`.
 - Kočka má na začátku (při vytvoření) 9 životů
 (nemůže mít nikdy víc než 9 nebo míň než 0!).
-- Kočka umí říct, jestli je živá (nemá 0 životů), metodou `je_ziva`.
-- Kočka může ztratit život metodou `uber_zivot`.
-- Kočku můžeš nakrmit metodou `snez`, která bere 1 argument -
-nějaké konkrétní jídlo (řetězec). Pokud je toto jídlo `"ryba"`, kočce se obnoví
+- Kočka umí říct, jestli je živá (nemá 0 životů), metodou `is_alive`.
+- Kočka může ztratit život metodou `lose_life`.
+- Kočku můžeš nakrmit metodou `eat`, která bere 1 argument -
+nějaké konkrétní jídlo (řetězec). Pokud je toto jídlo `"fish"`, kočce se obnoví
 jeden život (pokud teda už není mrtvá, nebo nemá maximální počet životů).
 
 {% filter solution %}
 ```python
-class Kocka:
+class Cat:
     def __init__(self):         # Init funkce nemusi brat jako parametr
-        self.pocet_zivotu = 9   # pocet zivotu, ten je pokazde 9.
+        self.number_of_lives = 9   # pocet zivotu, ten je pokazde 9.
 
-    def zamnoukej(self):
-        print("Mnau, mnau, mnauuu!")
+    def meow(self):
+        print("Moew, moew, meooooow!")
 
-    def je_ziva(self):
-        return self.pocet_zivotu > 0
+    def is_alive(self):
+        return self.number_of_lives > 0
 
-    def uber_zivot(self):
-        if not self.je_ziva():
-            print("Nemuzes zabit uz mrtvou kocku!")
+    def lose_life(self):
+        if not self.is_alive():
+            print("Cannot kill dead cat!")
         else:
-            self.pocet_zivotu -= 1
+            self.number_of_lives -= 1
 
-    def snez(self, jidlo):
-        if not self.je_ziva():
-            print("Je zbytecne krmit mrtvou kocku!")
+    def eat(self, food):
+        if not self.is_alive():
+            print("It is pointless to feed dead cat!")
             return
-        if jidlo == "ryba" and self.pocet_zivotu < 9:
-            self.pocet_zivotu += 1
-            print("Kocka spapala rybu a obnovil se ji jeden zivot.")
+        if food == "fish" and self.number_of_lives < 9:
+            self.number_of_lives += 1
+            print("Cat ate fish and gained one.")
         else:
-            print("Kocka se krmi.")
+            print("Cat is eating.")
 ```
 {% endfilter %}
 
