@@ -15,19 +15,18 @@ betamaxu či Pythonu samotného, viděli jste dokumentaci vytvořenou ve Sphinxu
 [Sphinx]: http://www.sphinx-doc.org/
 
 Pro vytvoření základní kostry dokumentace se používá jednoduchý průvodce,
-`sphinx.quickstart`.
+`sphinx-quickstart`.
 
 Postupujte podle následující ukázky. Jsou v ní zobrazeny jen věci,
-kde nestačí nechat výchozí hodnota; u ostatních otázek stačí výchozí hodnotu
-potvrdit (<kbd>Enter</kbd>).
-K modulům `autodoc` a `doctest` se dostaneme později.
+kde nestačí nechat výchozí hodnota; u ostatních otázek (dostanete-li je)
+stačí výchozí hodnotu potvrdit (<kbd>Enter</kbd>).
 
 ```ansi
 ␛[36m$␛[0m . __venv__/bin/activate
 ␛[36m(__venv__) $␛[0m python -m pip install sphinx
 ␛[36m(__venv__) $␛[0m mkdir docs
 ␛[36m(__venv__) $␛[0m cd docs
-␛[36m(__venv__) $␛[0m python -m sphinx.quickstart
+␛[36m(__venv__) $␛[0m sphinx-quickstart
 ␛[01mWelcome to the Sphinx 1.8.1 quickstart utility.␛[39;49;00m
 
 Please enter values for the following settings (just press Enter to
@@ -40,22 +39,10 @@ Either, you use a directory "_build" within the root path, or you separate
 "source" and "build" directories within the root path.
 ␛[35m> Separate source and build directories (y/n) [n]: ␛[39;49;00m
 
-Inside the root directory, two more directories will be created; "_templates"
-for custom HTML templates and "_static" for custom stylesheets and other static
-files. You can enter another prefix (such as ".") to replace the underscore.
-␛[35m> Name prefix for templates and static dir [_]: ␛[39;49;00m
-
 The project name will occur in several places in the built documentation.
 ␛[35m> Project name: ␛[39;49;00mcoolthing
 ␛[35m> Author name(s): ␛[39;49;00mPythonista Dokumentarista
 ␛[35m> Project release []: ␛[39;49;00m 0.1
-
-...
-
-Please indicate if you want to use one of the following Sphinx extensions:
-␛[35m> autodoc: automatically insert docstrings from modules (y/n) [n]: ␛[39;49;00my
-␛[35m> doctest: automatically test code snippets in doctest blocks (y/n) [n]: ␛[39;49;00my
-␛[35m> intersphinx: link between Sphinx documentation of different projects (y/n) [n]: ␛[39;49;00my
 
 ...
 
@@ -94,11 +81,18 @@ Textový obsah v dokumentaci
 ---------------------------
 
 Text dokumentace začíná v souboru `index.rst` a píše se ve značkovacím formátu
-[reStructuredText] neboli rst. Bohužel nelze psát v Markdownu, ačkoli existují
-složité triky, jak docílit nějaké konverze.
-
-reStructuredText se od Markdownu liší v syntaxi, která je komplikovanější na
+[reStructuredText] neboli rst.
+Ten se od Markdownu liší v syntaxi, která je komplikovanější na
 psaní, ale umožňuje dělat komplexnější věci.
+
+> [note]
+> Dokumentaci [lze psát i ve formátu Markdown][sphinx-md],
+> ale tato možnost je poměrně nová.
+> Jazyk Markdown nebyl navržen pro složitější strukturované texty
+> a nepodporuje přímo všechny možnosti, které Sphinx nabízí.
+> V dokumentaci se tak dočtete, jak chybějící možnosti doplnit
+> [vložením reStructuredText do Markdownového dokumentu][eval_rst].
+> My budeme používat reStructuredText.
 
 Pro přehled o tom, co reStructuredText umí a jakou má syntaxi,
 můžete použít [přehled] z dokumentace Sphinxu, případně [tahák].
@@ -107,11 +101,15 @@ můžete použít [přehled] z dokumentace Sphinxu, případně [tahák].
 [přehled]: http://www.sphinx-doc.org/en/stable/rest.html
 [tahák]: https://github.com/ralsina/rst-cheatsheet
 
+[sphinx-md]: https://www.sphinx-doc.org/en/master/usage/markdown.html
+[eval_rst]: https://recommonmark.readthedocs.io/en/latest/auto_structify.html#embed-restructuredtext
+
 V `index.rst` je seznam kapitol:
 
 ```rst
 .. toctree::
    :maxdepth: 2
+   :caption: Contents:
 ```
 
 Tam můžete přidat další kapitoly:
@@ -119,6 +117,7 @@ Tam můžete přidat další kapitoly:
 ```rst
 .. toctree::
    :maxdepth: 2
+   :caption: Contents:
 
    intro
    tutorial/foo
@@ -180,7 +179,7 @@ README. Ale i tam by měl být stejný druh informací jako ve „velké“ doku
 Na první stránce dokumentace (nebo v README) typicky najdeme:
 
 * krátký text o tom, co projekt dělá;
-* ukázku – u knihovny příklad kódu, u aplikace screenshot, u webové stránky
+* ukázku – u knihovny příklad kódu, u aplikace screenshot, u webové aplikace
   odkaz na běžící instanci;
 * návod na instalaci;
 * odkazy na zbytek dokumentace;
@@ -191,8 +190,28 @@ Delší dokumentace knihoven pak většinou obsahuje:
 
 * tutoriál – návod, který uživatele provede použitím a možnostmi knihovny;
 * popis architektury, návrhu, použitých konceptů;
-* API dokumentaci – popis všech veřejných modulů, tříd, funkcí a podobně;
+* dokumentaci API – popis všech veřejných modulů, tříd, funkcí a podobně;
 * podrobný návod jak přispívat.
+
+
+Nastavení a rozšíření
+---------------------
+
+Průvodce `sphinx-quickstart` generuje soubor s nastavením, `conf.py`,
+ve kterém můžete měnit nastavení Sphinxu a jeho rozšíření, včetně detailů
+jako jméno a verze projektu.
+
+Průvodce automaticky aktivuje tři rozšíření, která jsou obecně užitečná.
+To se ale může v jiných verzích Sphinxu měnit, proto teď nastavení
+zkontrolujte a případně rozšíření doplňte:
+
+```python
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+]
+```
 
 
 doctest
@@ -200,18 +219,19 @@ doctest
 
 `doctest` je modul ze standardní knihovny, který najde v dokumentaci bloky kódu
 a otestuje, jestli odpovídají ukázanému výstupu.
+Rozšíření `sphinx.ext.doctest` integruje `doctest` do dokumentů
+ve formátu reStructuredText.
 
 Pro nás to bude způsob, jak testovat *dokumentaci* – tedy jestli jsou ukázky
 kódu v ní stále platné.
 Dá se sice použít i k testování samotného kódu, ale na to existují
 [lepší nástroje]({{lesson_url('intro/testing')}}).
 
-V kombinaci se Sphinxem se dá použít rozšíření `doctest`, které jsme v průvodci
-aktivovali. Můžete to dělat dvěma způsoby. První je mít v dokumentaci
+Můžete to dělat dvěma způsoby. První je mít v dokumentaci
 příklad vypadající jako interaktivní konzole.
 Takový příklad nemusí být odsazený ani ničím uvozený; stačí `>>>` na začátku.
 
-```python
+```pycon
 >>> 1 + 1
 2
 ```
@@ -321,7 +341,7 @@ You can use other values:
    parrot.die()
 ```
 
-Testy se také dají zařazovat do skupin, více
+Testy se také dají např. zařazovat do skupin. Více najdete
 v [dokumentaci](http://www.sphinx-doc.org/en/master/ext/doctest.html).
 
 ```console
@@ -372,7 +392,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 ### Travis CI
 
-Neexistuje žádný unifikovaný způsob, jak specifikovat závislosti pro sestavení
+Neexistuje zatím unifikovaný způsob, jak specifikovat závislosti pro sestavení
 dokumentace. Proto, pokud chcete mít nějaký jednoduchý způsob, jak pouštět
 doctesty na Travisu, vytvořte například soubor `docs/requirements.txt`
 a do něj dejte závislosti potřebné pro sestavení dokumentace.
@@ -394,11 +414,34 @@ script:
 - cd docs && make doctest
 ```
 
+> [note]
+> Chcete-li jít s dobou, můžete vyzkoušet strukturovaný způsob závislostí
+> pro vývoj pomocí *extras*. Aktuálně pro to neexistuje standard,
+> ale vypadá to, že následující způsob je nejlepší kandidát na
+> standardizaci.
+>
+> Do `setup.py` přidejte:
+>
+> ```python
+> extras_require={
+>     'dev':  ["sphinx"],
+> }
+> ```
+>
+> Projekt pak lze nainstalovat pomocí `.[dev]` (tedy jméno balíčku a za ním
+> jméno *extras* v hranatých závorkách):
+>
+> ```
+> install:
+> - python -m pip install .[dev]
+> ```
+
+
 autodoc
 -------
 
-Pro dokumentaci API lze použít `autodoc`, rozšíření Sphinxu, které jsme povolili
-v průvodci.
+Pro dokumentaci API lze použít `sphinx.ext.autodoc`, další rozšíření Sphinxu,
+které průvodce přidává automaticky.
 
 > [note]
 > Nemáte-li toto rozšíření povolené, přidejte jej do `conf.py`:
@@ -425,10 +468,10 @@ Pokud chcete selektivně vybrat, dokumentaci čeho chcete generovat,
 můžete použít i
 [jiné direktivy](http://www.sphinx-doc.org/en/master/ext/autodoc.html#directive-automodule).
 
-Pro vygenerování hezké struktury si můžete pomoci příkazem `apidoc`:
+Pro vygenerování hezké struktury si můžete pomoci příkazem `sphinx-apidoc`:
 
 ```console
-(__venv__) $ python -m sphinx.apidoc -o docs mymodule
+(__venv__) $ sphinx-apidoc -o docs mymodule
 ```
 
 V dokumentačních řetězcích samozřejmě můžete použít [reStructuredText] a je to
