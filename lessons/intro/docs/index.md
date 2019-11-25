@@ -74,8 +74,8 @@ dokumentace sestavit do HTML.
 The HTML pages are in _build/html.
 ```
 
-Ve zmíněné složce byste měli najít `index.html`, ten si můžete prohlédnout
-v prohlížeči.
+Ve zmíněné složce byste měli najít `index.html`.
+Ten si můžete prohlédnout v prohlížeči.
 
 Textový obsah v dokumentaci
 ---------------------------
@@ -149,7 +149,16 @@ It refers to the section itself, see :ref:`my-reference-label`.
 It could refer to a different section as well :)
 ```
 
-[konstrukce ref]: http://www.sphinx-doc.org/en/master/markup/inline.html#role-ref
+Všimněte si, že Sphinx použije pro text odkazu název odkazované sekce.
+Pokud potřebujete použít jiný text, nebo pokud neodkazujete na pojmenovanou
+sekci, identifikátor uzavřete do špičatých závorek:
+
+```rst
+It refers to :ref:`the section itself <my-reference-label>`.
+It could refer to a different section as well :)
+```
+
+[konstrukce ref]: http://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html#ref-role
 
 
 Co do dokumentace psát
@@ -201,9 +210,9 @@ Průvodce `sphinx-quickstart` generuje soubor s nastavením, `conf.py`,
 ve kterém můžete měnit nastavení Sphinxu a jeho rozšíření, včetně detailů
 jako jméno a verze projektu.
 
-Průvodce automaticky aktivuje tři rozšíření, která jsou obecně užitečná.
-To se ale může v jiných verzích Sphinxu měnit, proto teď nastavení
-zkontrolujte a případně rozšíření doplňte:
+K základní konfiguraci je vhodné přidat rozšíření [autodoc],
+[doctest] a [intersphinx].
+Přidejde jejich celá jména rozšíření do seznamu `extensions` v `conf.py`:
 
 ```python
 extensions = [
@@ -212,6 +221,16 @@ extensions = [
     'sphinx.ext.intersphinx',
 ]
 ```
+
+[autodoc]: http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+[doctest]: http://www.sphinx-doc.org/en/master/usage/extensions/doctest.html
+[intersphinx]: http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html
+
+> [note]
+> Jeden z důvodů proč tato rozšíření nejsou „přímo v základu“ je,
+> že Sphinx je možné použít pro jakoukoli technickou dokumentaci, nezávisle na
+> programovacím jazyce.
+> Rozšíření se postarají o integraci s Pythonem.
 
 
 doctest
@@ -440,8 +459,7 @@ script:
 autodoc
 -------
 
-Pro dokumentaci API lze použít `sphinx.ext.autodoc`, další rozšíření Sphinxu,
-které průvodce přidává automaticky.
+Pro dokumentaci API lze použít další rozšíření Sphinxu: `sphinx.ext.autodoc`.
 
 > [note]
 > Nemáte-li toto rozšíření povolené, přidejte jej do `conf.py`:
@@ -544,6 +562,22 @@ Chcete-li do rejstříku přidat něco navíc, použijte direktivu [index].
 
 [domény Python]: http://www.sphinx-doc.org/en/master/domains.html#cross-referencing-python-objects
 [index]: http://www.sphinx-doc.org/en/master/markup/misc.html#index-generating-markup
+
+### Intersphinx
+
+Sphinx automaticky generuje strojově čitelné rejstříky, pomocí kterých
+lze odkazovat na externí stránky s dokumentací.
+To umožňuje rozšíření [intersphinx], kterému je potřeba v `conf.py` nastavit
+adresu k odkazované dokumentaci:
+
+```python
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
+```
+
+Pak můžete ze své dokumentace odkázat na dokumentaci Pythonu, např. pomocí
+<code>:class:`python:collections.Counter`</code>.
+Zveřejníte-li svou dokumentaci na Webu, budou na ni stejným způsobem moci
+odkazovat ostatní.
 
 
 README.rst
