@@ -4,29 +4,29 @@ Minule jsme probral{{gnd('i', 'y', both='i')}} třídy – jako příklad jsme s
 ukázal{{gnd('i', 'y', both='i')}} třídu pro koťátka:
 
 ```python
-class Kotatko:
-    def __init__(self, jmeno):
-        self.jmeno = jmeno
+class Kitten:
+    def __init__(self, name):
+        self.name = name
 
-    def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+    def meow(self):
+        print("{}: Meow!".format(self.name))
 
-    def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+    def eat(self, food):
+        print("{}: I like {}!".format(self.name, food))
 ```
 
 Zkus si udělat podobnou třídu pro štěňátka:
 
 ```python
-class Stenatko:
-    def __init__(self, jmeno):
-        self.jmeno = jmeno
+class Puppy:
+    def __init__(self, name):
+        self.name = name
 
-    def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+    def woof(self):
+        print("{}: Woof!".format(self.name))
 
-    def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
+    def eat(self, food):
+        print("{}: I like {}!".format(self.name, food))
 ```
 
 Většina kódu je stejná!
@@ -44,52 +44,52 @@ to, co se liší.
 V Pythonu se to dělá takto:
 
 ```python
-class Zviratko:
-    def __init__(self, jmeno):
-        self.jmeno = jmeno
+class Animal:
+    def __init__(self, name):
+        self.name = name
 
-    def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
-
-
-class Kotatko(Zviratko):
-    def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+    def eat(self, food):
+        print("{}: I like {}!".format(self.name, food))
 
 
-class Stenatko(Zviratko):
-    def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
+class Kitten:
+    def meow(self):
+        print("{}: Meow!".format(self.name))
 
 
-micka = Kotatko('Micka')
-azorek = Stenatko('Azorek')
-micka.zamnoukej()
-azorek.zastekej()
-micka.snez('myš')
-azorek.snez('kost')
+class Puppy:
+    def woof(self):
+        print("{}: Woof!".format(self.name))
+
+
+micka = Kitten('Micka')
+azorek = Puppy('Azorek')
+micka.meow()
+azorek.woof()
+micka.eat('mouse')
+azorek.eat('bone')
 ```
 
 Jak to funguje?
-Příkazem `class Kotatko(Zviratko):`
-říkáš Pythonu, že třída `Kotatko`
-*dědí* ze třídy `Zviratko`
-(angl. *inherits* from `Zviratko`).
+Příkazem `class Kitten(Animal):`
+říkáš Pythonu, že třída `Kitten`
+*dědí* ze třídy `Animal`
+(angl. *inherits* from `Animal`).
 Případně se můžeš setkat s jinými termíny:
-„je odvozená” ze třídy `Zviratko`,
+„je odvozená” ze třídy `Animal`,
 (angl. *derived from*),
 nebo ji “rozšiřuje” (angl. *extends*).
 A když už jsme u terminologie, odvozeným třídám se
 říká taky *podtřídy* (angl. *subclasses*)
-a `Zviratko` je tu *nadtřída*
+a `Animal` je tu *nadtřída*
 (angl. *superclass*).
 
 Když potom Python hledá nějakou metodu
-(nebo jiný atribut), třeba `micka.snez`,
+(nebo jiný atribut), třeba `micka.eat`,
 a nenajde ji přímo ve třídě daného objektu (u nás
-`Kotatko`), podívá se do nadtřídy.
+`Kitten`), podívá se do nadtřídy.
 Takže všechno, co je definované pro
-`Zviratko`, platí i pro koťátka.
+`Animal`, platí i pro koťátka.
 Pokud to tedy výslovně nezměníš.
 
 
@@ -100,18 +100,18 @@ v nadtřídě, stačí dát metodu stejného jména do
 podtřídy:
 
 ```python
-class Kotatko(Zviratko):
-    def snez(self, jidlo):
-        print("{}: {} mi vůbec nechutná!".format(self.jmeno, jidlo))
+class Kitten(Animal):
+    def eat(self, food):
+        print("{}: I really do not like {}!".format(self.name, food))
 
 
-micka = Kotatko('Micka')
-micka.snez('granule')
+micka = Kitten('Micka')
+micka.eat('granule')
 ```
 
 > [python]
 > Je to podobné jako když jsme minule přepisoval{{gnd('i', 'y', both='i')}}
-> atribut pomocí `micka.zamnoukej = 12345`.
+> atribut pomocí `micka.meow = 12345`.
 > Python atributy hledá napřed na samotném objektu,
 > potom na třídě toho objektu a pak na nadtřídě
 > (a případně dalších nadtřídách té nadtřídy).
@@ -123,14 +123,14 @@ která umožňuje volat metody z nadtřídy.
 Třeba takhle:
 
 ```python
-class Kotatko(Zviratko):
-    def snez(self, jidlo):
-        print("({} na {} chvíli fascinovaně kouká)".format(self.jmeno, jidlo))
-        super().snez(jidlo)
+class Kitten(Animal):
+    def eat(self, food):
+        print("({} looks at {}.)".format(self.name, food))
+        super().eat(food)
 
 
-micka = Kotatko('Micka')
-micka.snez('granule')
+micka = Kitten('Micka')
+micka.eat('granule')
 ```
 
 Pozor na to, že takhle volané metodě musíš dát všechny
@@ -140,15 +140,15 @@ Toho se dá i využít – můžeš použít i jiné argumenty
 než dostala původní funkce:
 
 ```python
-class Hadatko(Zviratko):
-    def __init__(self, jmeno):
-        jmeno = jmeno.replace('s', 'sss')
-        jmeno = jmeno.replace('S', 'Sss')
-        super().__init__(jmeno)
+class Snek(Animal):
+    def __init__(self, name):
+        name = name.replace('s', 'sss')
+        name = name.replace('S', 'Sss')
+        super().__init__(name)
 
 
-standa = Hadatko('Stanislav')
-standa.snez('myš')
+standa = Snek('Stanislav')
+standa.eat('mouse')
 ```
 
 Jak je vidět, `super()` se dá bez problémů
@@ -162,39 +162,39 @@ Programátoři nezavedli dědičnost jen proto, že jsou
 líní a nechtějí psát dvakrát stejný kód.
 To je sice dobrý důvod, ale nadtřídy mají ještě jednu
 důležitou vlastnost: když víme, že každé
-`Kotatko` nebo `Stenatko`
+`Kitten` nebo `Puppy`
 nebo jakákoli jiná podtřída je zvířátko,
 můžeme si udělat seznam zvířátek s tím,
 že nám pak bude jedno, jaká přesně zvířátka to jsou:
 
 {# XXX: last 4 lines are new and should be highlighted #}
 ```python
-class Zviratko:
-    def __init__(self, jmeno):
-        self.jmeno = jmeno
+class Animal:
+    def __init__(self, name):
+        self.name = name
 
-    def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
-
-
-class Kotatko(Zviratko):
-    def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+    def eat(self, food):
+        print("{}: I like {}!".format(self.name, food))
 
 
-class Stenatko(Zviratko):
-    def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
+class Kitten(Animal):
+    def meow(self):
+        print("{}: Meow!".format(self.name))
 
-zviratka = [Kotatko('Micka'), Stenatko('Azorek')]
 
-for zviratko in zviratka:
-    zviratko.snez('flákota')
+class Puppy(Animal):
+    def woof(self):
+        print("{}: Woof!".format(self.name))
+
+animals = [Kitten('Micka'), Puppy('Azorek')]
+
+for animal in animals:
+    animal.eat('meat')
 ```
 
 Tohle je docela důležitá vlastnost podtříd:
-když máš nějaké `Kotatko`, můžeš ho použít
-kdekoliv kde program očekává `Zviratko`,
+když máš nějaké `Kitten`, můžeš ho použít
+kdekoliv kde program očekává `Animal`,
 protože každé koťátko *je* zvířátko.
 
 > [note]
@@ -216,9 +216,9 @@ protože každé koťátko *je* zvířátko.
 > *má* jméno”, udělat dvě nezávislé třídy a napsat něco jako:
 >
 > ```python
-> class Auto:
+> class Car:
 >     def __init__(self):
->         self.volant = Volant()
+>         self.steering_wheel = SteeringWheel()
 > ```
 >
 > (A až bude někdy nějaký vystudovaný informatik nespokojený
@@ -228,38 +228,38 @@ protože každé koťátko *je* zvířátko.
 
 ## Generalizace
 
-Když se teď podíváš na funkce `zamnoukej`
-a `zastekej`, možná tě napadne, že by se
+Když se teď podíváš na funkce `meow`
+a `woof`, možná tě napadne, že by se
 daly pojmenovat lépe, aby se daly použít pro všechna
-zvířata, podobně jako `snez`.
+zvířata, podobně jako `eat`.
 Bude nejlepší je přejmenovat:
 
 
-{# XXX: Every instance of "udelej_zvuk" should be highlighted #}
+{# XXX: Every instance of "make_sound" should be highlighted #}
 ```python
-class Zviratko:
-    def __init__(self, jmeno):
-        self.jmeno = jmeno
+class Animal:
+    def __init__(self, name):
+        self.name = name
 
-    def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
-
-
-class Kotatko(Zviratko):
-    def udelej_zvuk(self):
-        print("{}: Mňau!".format(self.jmeno))
+    def eat(self, food):
+        print("{}: I like {}!".format(self.name, food))
 
 
-class Stenatko(Zviratko):
-    def udelej_zvuk(self):
-        print("{}: Haf!".format(self.jmeno))
+class Kitten(Animal):
+    def make_sound(self):
+        print("{}: Meow!".format(self.name))
 
 
-zviratka = [Kotatko('Micka'), Stenatko('Azorek')]
+class Puppy(Animal):
+    def make_sound(self):
+        print("{}: Woof!".format(self.name))
 
-for zviratko in zviratka:
-    zviratko.udelej_zvuk()
-    zviratko.snez('flákota')
+
+animals = [Kitten('Micka'), Puppy('Azorek')]
+
+for animal in animals:
+    animal.make_sound()
+    animal.eat('meat')
 ```
 
 Jak tenhle příklad naznačuje, psát nadtřídy, ze kterých se dobře dědí,
