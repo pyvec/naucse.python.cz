@@ -52,12 +52,12 @@ class Animal:
         print("{}: I like {}!".format(self.name, food))
 
 
-class Kitten:
+class Kitten(Animal):
     def meow(self):
         print("{}: Meow!".format(self.name))
 
 
-class Puppy:
+class Puppy(Animal):
     def woof(self):
         print("{}: Woof!".format(self.name))
 
