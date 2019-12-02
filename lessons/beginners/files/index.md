@@ -55,7 +55,7 @@ ji předtím otevřít a potom zavřít.
 Bez zavření to sice na první pohled funguje taky,
 ale pravděpodobně potom brzo něco zplesniví.
 
-Stejně tak je docela důležité soubor zavřít po tom,
+Stejně tak je docela důležité zavířít soubor – ideálně hned po tom,
 co s ním přestaneš pracovat.
 Bez zavření to na první pohled funguje, ale složitější programy se můžou dostat
 do problémů.
@@ -77,7 +77,7 @@ print(obsah)
 ```
 
 Příkaz `with` vezme otevřený soubor (který vrací funkce `open`)
-a přiřadí ho do proměnné `soubor`.
+a přiřadí ho do proměnné za `as` (tady `soubor`).
 Pak následuje odsazený blok kódu, kde se souborem můžeš pracovat – v tomhle
 případě pomocí metody `read` přečíst obsah jako řetězec.
 Když se Python dostane na konec odsazeného bloku, soubor automaticky zavře.
@@ -87,11 +87,11 @@ V naprosté většině případů je pro otevírání souborů nejlepší použ�
 
 ## Iterace nad soubory
 
-Otevřené soubory se, jako např. řetězce či `range`,
-dají použít s příkazem `for`.
-Tak jako `for i in range` poskytuje za sebou jdoucí čísla a `for znak in 'abcd'`
-poskytuje jednotlivé znaky řetězce, `for radek in soubor` bude v proměnné
-`radek` poskytovat jednotlivé *řádky* čtené ze souboru.
+Otevřené soubory se dají použít s příkazem `for`,
+stejně jako např. řetězce či `range`.
+Tak jako `for i in range(...)` poskytuje za sebou jdoucí čísla a
+`for znak in 'abcd'` poskytuje jednotlivé znaky řetězce, `for radek in soubor`
+bude v proměnné `radek` poskytovat jednotlivé *řádky* čtené ze souboru.
 
 Aby se básnička líp vyjímala v textu, pojďme ji odsadit –
 před každý řádek dát měkolik mezer:
@@ -203,5 +203,16 @@ finally:
 
 Jak `with` tak `finally` zaručí, že se soubor vždy uzavře:
 když se zpracování povede, ale i když ve něm nastane výjimka
-nebo když z něj vyzkočíš pomocí `return` nebo `break`.
+nebo když z něj vyskočíš pomocí `return` nebo `break`:
 
+```python
+def nacti_cele_cislo(jmeno_souboru):
+    with open(jmeno_souboru, encoding='utf-8') as soubor:
+        return int(soubor.read())
+        # I když "return" vyskočí z funkce (nebo int() zbůsobí ValueError),
+        # soubor se zavře.
+
+
+# Pro vyzkoušení napiš do souboru 'cislo.txt' nějaké číslo.
+print(nacti_cele_cislo('cislo.txt') * 11)
+```
