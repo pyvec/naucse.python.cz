@@ -111,8 +111,8 @@ Používejte ho proto *pouze* na svém počítači.
 ### Dynamické routy
 
 Když vytváříte dynamický web, ne vždy můžete všechna URL znát dopředu.
-Budete například chctít zobrazit informace o uživatelích na adresách
-jako `/user/hroncok/`, ale nemůžete při každé registraci nového uživatele
+Budete například chtít zobrazit informace o uživatelích na adresách
+jako `/user/pylady/`, ale nemůžete při každé registraci nového uživatele
 přidávat novou funkci do kódu.
 Musíte použít [dynamické routy]:
 
