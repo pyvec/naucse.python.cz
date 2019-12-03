@@ -3,7 +3,7 @@
 Dnes se podíváme na to, jak v Pythonu číst z
 (a pak i zapisovat do) souborů.
 
-Vytvoř si v editoru soubor `basnicka.txt` a napiš do něj libovolnou básničku.
+Vytvoř si v editoru soubor `poem.txt` a napiš do něj libovolnou básničku.
 Soubor ulož.
 
 > [note]
@@ -26,14 +26,14 @@ Soubor ulož.
 Potom napiš tento program:
 
 ```python
-soubor = open('basnicka.txt', encoding='utf-8')
-obsah = soubor.read()
-soubor.close()
+file_ = open('poem.txt', encoding='utf-8')
+content = file_.read()
+file_.close()
 
-print(obsah)
+print(content)
 ```
 a spusť ho z adresáře, ve kterém je
-`basnicka.txt` (jinými slovy, aktuální adresář musí být ten, který
+`poem.txt` (jinými slovy, aktuální adresář musí být ten, který
 obsahuje soubor s básničkou).
 
 Obsah souboru se vypíše!
@@ -70,10 +70,10 @@ Proto Python poskytuje příkaz `with`, který soubory zavírá automaticky.
 Používá se takhle:
 
 ```python
-with open('basnicka.txt', encoding='utf-8') as soubor:
-    obsah = soubor.read()
+with open('poem.txt', encoding='utf-8') as file_:
+    content = file_.read()
 
-print(obsah)
+print(content)
 ```
 
 Příkaz `with` vezme otevřený soubor (který vrací funkce `open`)
@@ -90,22 +90,22 @@ V naprosté většině případů je pro otevírání souborů nejlepší použ�
 Otevřené soubory se, jako např. řetězce či `range`,
 dají použít s příkazem `for`.
 Tak jako `for i in range` poskytuje za sebou jdoucí čísla a `for c in 'abcd'`
-poskytuje jednotlivé znaky řetězce, `for radek in soubor` bude do proměnné
-`radek` dávat jednotlivé řádky čtené ze souboru.
+poskytuje jednotlivé znaky řetězce, `for line in file_` bude do proměnné
+`line` dávat jednotlivé řádky čtené ze souboru.
 
 Například můžeš básničku odsadit,
 aby se vyjímala v textu:
 
 ```python
-print('Slyšela jsem tuto básničku:')
+print('I heard this poem:')
 print()
 
-with open('basnicka.txt', encoding='utf-8') as soubor:
-    for radek in soubor:
-        print('    ' + radek)
+with open('poem.txt', encoding='utf-8') as file_:
+    for line in file_:
+        print('    ' + line)
 
 print()
-print('Jak se ti líbí?')
+print('Do you like it?')
 ```
 
 
@@ -115,7 +115,7 @@ Když to zkusíš, zjistíš, že trochu nesedí
 {% filter solution %}
 Každý řádek končí znakem nového řádku, `'\n'`,
 který možná znáš ze [sekce o řetězcích](../str/).
-Při procházení souboru Python tento znak nechává na konci řetězce `radek` ¹.
+Při procházení souboru Python tento znak nechává na konci řetězce `line` ¹.
 Funkce `print` pak přidá další nový řádek, protože ta na konci
 výpisu vždycky odřádkovává – pokud nedostane argument `end=''`.
 
@@ -132,16 +132,16 @@ bílé znaky (mezery a nové řádky) pomocí metody `rstrip`:
 
 
 ```python
-print('Slyšela jsem tuto básničku:')
+print('I heard this poem:')
 print()
 
-with open('basnicka.txt', encoding='utf-8') as soubor:
-    for radek in soubor:
-        radek = radek.rstrip()
-        print('    ' + radek)
+with open('poem.txt', encoding='utf-8') as file_:
+    for line in file_:
+        line = line.rstrip()
+        print('    ' + line)
 
 print()
-print('Jak se ti líbí?')
+print('Do you like it?')
 ```
 
 
@@ -163,7 +163,7 @@ Informace pak do souboru zapiš známou funkcí `print`,
 a to s pojmenovaným argumentem `file`:
 
 ```python
-with open('druha-basnicka.txt', mode='w', encoding='utf-8') as soubor:
-    print('Naše staré hodiny', file=soubor)
-    print('Bijí', 2+2, 'hodiny', file=soubor)
+with open('second-poem.txt', mode='w', encoding='utf-8') as file_:
+    print('Naše staré hodiny', file=file_)
+    print('Bijí', 2+2, 'hodiny', file=file_)
 ```

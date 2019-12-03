@@ -39,36 +39,36 @@ My už známe syntaxi Pythonu:
 
 ```python
 {
-    'jméno': 'Anna',
-    'město': 'Brno',
-    'jazyky': ['čeština', 'angličtina', 'Python'],
-    'věk': 26,
+    'name': 'Anna',
+    'city': 'Brno',
+    'language': ['czech', 'english', 'Python'],
+    'age': 26,
 }
 ```
 
 Jiný způsob zápisu dat je [YAML](http://www.yaml.org/):
 
 ```yaml
-jméno: Anna
-město: Brno
-jazyky:
-  - čeština
-  - angličtina
+name: Anna
+city: Brno
+language:
+  - czech
+  - english
   - Python
-věk: 26
+age: 26
 ```
 
 Nebo třeba [Bencode](http://en.wikipedia.org/wiki/Bencode):
 
 ```plain
-d6:jazykyl9:čeština11:angličtina6:Pythone4:věki26e6:město4:Brno6:jméno4:Annae
+d6:languagel9:czech11:english6:Pythone4:agei26e6:city4:Brno6:name4:Annae
 ```
 
 Existují i netextové formáty, jako
 [Pickle 3](https://docs.python.org/3/library/pickle.html):
 
 ```plain
-}q(XjmÃ©noqXAnnaqXmÄtoqXBrnoqXjazykyq]q(X       ÄeÅ¡tinaqX
+}q(XjmÃ©noqXAnnaqXmÄtoqXBrnoqXlanguageq]q(X       ÄeÅ¡tinaqX
                                                           angliÄtinaXPythonq       eXvÄq
 K▒u.
 ```
@@ -79,10 +79,10 @@ který se pro svou jednoduchost rozšířil na Internetu nejvíc:
 
 ```json
 {
-  "jméno": "Anna",
-  "město": "Brno",
-  "jazyky": ["čeština", "angličtina", "Python"],
-  "věk": 26
+  "name": "Anna",
+  "city": "Brno",
+  "language": ["czech", "english", "Python"],
+  "age": 26
 }
 ```
 
@@ -105,24 +105,23 @@ import json
 
 json_retezec = """
     {
-      "jméno": "Anna",
-      "město": "Brno",
-      "jazyky": ["čeština", "angličtina", "Python"],
-      "věk": 26
+      "name": "Anna",
+      "city": "Brno",
+      "language": ["czech", "english", "Python"],
+      "age": 26
     }
 """
 
 data = json.loads(json_retezec)
 print(data)
-print(data['město'])
+print(data['city'])
 ```
 
 A pak tu je metoda `dumps`, která naopak daná data zakóduje
 a vrátí řetězec:
 
 ```pycon
->>> print(json.dumps(data))
-{"v\u011bk": 26, "jm\u00e9no": "Anna", "jazyky": ["\u010de\u0161tina", "angli\u010dtina", "Python"], "m\u011bsto": "Brno"}
+{"name": "Anna", "city": "Brno", "language": ["czech", "english", "Python"], "age": 26}
 ```
 
 To, co vrátí jednoduché zavolání `dumps(data)` je vhodné pro počítačové
@@ -134,14 +133,14 @@ a `indent=2` (odsazení dvěma mezerami).
 ```pycon
 >>> print(json.dumps(data, ensure_ascii=False, indent=2))
 {
-  "věk": 26,
-  "jméno": "Anna",
-  "jazyky": [
-    "čeština",
-    "angličtina",
+  "age": 26,
+  "name": "Anna",
+  "language": [
+    "czech",
+    "english",
     "Python"
   ],
-  "město": "Brno"
+  "city": "Brno"
 }
 ```
 
