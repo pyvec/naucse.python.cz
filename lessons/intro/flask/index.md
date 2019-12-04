@@ -140,7 +140,7 @@ Můžete použít různá pravidla, např.:
  * `float` akceptuje i desetinná čísla s tečkou (a předá je jako `float`)
  * `path` akceptuje text i s lomítky
 
-Rout můžte definovat i víc pro jednu funkci.
+Rout můžete definovat i víc pro jednu funkci.
 Často se to používá s výchozí hodnotou argumentu:
 
 ```python
@@ -167,7 +167,7 @@ from flask import url_for
 
 @app.route('/url/')
 def show_url():
-    return url_for('profile', username='hroncok')
+    return url_for('profile', username='pylady')
 ```
 
 Tuto funkci jde použít jen uvnitř pohledové funkce,
@@ -176,9 +176,9 @@ můžete použít speciální kontext:
 
 ```pycon
 >>> with app.test_request_context():
-...     print(url_for('profile', username='hroncok'))
+...     print(url_for('profile', username='pylady'))
 ...
-/user/hroncok/
+/user/pylady/
 ```
 
 Možná si říkáte, proč tu URL prostě nevytvořit ručně.

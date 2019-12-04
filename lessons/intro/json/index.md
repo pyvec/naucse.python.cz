@@ -103,7 +103,7 @@ jehož metoda `loads` načte data z řetězce:
 ```python
 import json
 
-json_retezec = """
+json_string = """
     {
       "name": "Anna",
       "city": "Brno",
@@ -112,7 +112,7 @@ json_retezec = """
     }
 """
 
-data = json.loads(json_retezec)
+data = json.loads(json_string)
 print(data)
 print(data['city'])
 ```
