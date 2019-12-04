@@ -50,13 +50,13 @@ A potom v Pythonu zkus stáhnout nějakou stránku:
 import requests
 
 # stažení stránky
-stranka = requests.get('https://github.com')
+page = requests.get('https://github.com')
 
 # ověření, že dotaz proběhl v pořádku
-stranka.raise_for_status()
+page.raise_for_status()
 
 # vypsání obsahu
-print(stranka.text)
+print(page.text)
 ```
 
 Měl by se vypsat obsah stránky
@@ -76,14 +76,14 @@ Zkus, co dělá tento kód:
 ```python
 import requests
 
-with open('token.txt') as soubor:
-    token = soubor.read().strip()
+with open('token.txt') as file_:
+    token = file_.read().strip()
 
 headers = {'Authorization': 'token ' + token}
 
-stranka = requests.get('https://api.github.com/user', headers=headers)
-stranka.raise_for_status()
-print(stranka.text)
+page = requests.get('https://api.github.com/user', headers=headers)
+page.raise_for_status()
+print(page.text)
 ```
 
 Co se stalo? Tím, že jsi Githubu dal{{a}} svůj token
@@ -91,11 +91,11 @@ Co se stalo? Tím, že jsi Githubu dal{{a}} svůj token
 poznal, že jde dotaz od tebe a vrátil nějaké informace
 ve formátu JSON.
 
-Zkus řetězec `stranka.text` převést z JSON na slovník
+Zkus řetězec `page.text` převést z JSON na slovník
 a vypsat trochu srozumitelněji:
 
 ```python
-data = json.loads(stranka.text)
+data = json.loads(page.text)
 
 print(json.dumps(data, ensure_ascii=True, indent=2))
 ```
@@ -160,13 +160,13 @@ a `PUT` metodu zvolíš tak, že zavoláš místo `get` funkci `put`:
 ```python
 import requests
 
-with open('token.txt') as soubor:
-    token = soubor.read().strip()
+with open('token.txt') as file_:
+    token = file_.read().strip()
 
 headers = {'Authorization': 'token ' + token}
 
-stranka = requests.put('https://api.github.com/user/starred/pyvec/naucse.python.cz', headers=headers)
-stranka.raise_for_status()
+page = requests.put('https://api.github.com/user/starred/pyvec/naucse.python.cz', headers=headers)
+page.raise_for_status()
 ```
 
 Tenhle dotaz nevrátí žádný text, ale na
