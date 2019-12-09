@@ -79,7 +79,7 @@ Typ objektu umí zjistit funkce `type`:
 A co je to třída? Třída je *popis*, jak se všechny objekty
 daného typu chovají.
 
-Nepříklad `<class 'int'>` obsahuje všechno, co je společné všem celým číslům:
+Například `<class 'int'>` obsahuje všechno, co je společné všem celým číslům:
 že (a jak) se dají sčítat, jak takové číslo převést na řetězec, a tak dále.
 
 
@@ -138,8 +138,7 @@ class Kotatko:
 
 Tak jako se funkce definují pomocí `def`,
 třídy mají klíčové slovo `class`,
-za které napíšeš jméno třídy, dvojtečku,
-a pak odsazené tělo třídy.
+za které napíšeš jméno třídy, dvojtečku a pak odsazené tělo třídy.
 Podobně jako `def` dělá funkce, příkaz
 `class` udělá novou třídu a přiřadí ji
 do proměnné daného jména (tady `Kotatko`).
@@ -171,10 +170,10 @@ se koťátka chovají.
 je konkrétní objekt (angl. *instance*) té třídy:
 hodnota, která reprezentuje kotě.
 
-Když definuješ třídu (pomocí bloku `class`), neznamená to, že v tvém
+Když definuješ třídu (pomocí bloku `class`), neznamená to zatím, že v tvém
 programu je nějaké koťátko.
-Třída je jako recept nebo manuál: když si koupíš kuchařku, teoreticky víš
-jak upéct dort, jak bude takový dort vypadat a že se dá sníst.
+Třída je jako recept nebo manuál: když si koupíš kuchařku, budeš teoreticky
+vědět jak upéct dort, jak bude takový dort vypadat a že se dá sníst.
 Ale neznamená to ještě, že máš samotný dort!
 
 Konkrétní objekt vytvoříš až zavoláním třídy.
@@ -251,7 +250,7 @@ Když ji pak zavoláš (`mourek.zamnoukej()`),
 objekt `mourek` se předá funkci `zamnoukej` jako první argument, `self` .
 
 > [note]
-> Onen první argument metody můžešw teoreticky pojmenovat i jinak než `self`,
+> Onen první argument metody můžeš teoreticky pojmenovat i jinak než `self`,
 > ale když to uděláš, ostatní programátoři se na tebe budou koukat hodně divně.
 
 
@@ -286,8 +285,9 @@ Traceback (most recent call last):
 AttributeError: 'Kotatko' object has no attribute 'jmeno'
 ```
 
-Bylo by dobré zařídit, aby každé kotě muselo být pojmenované.
-Jméno potřebujeme předat už při vytváření kotěte, nějak takhle:
+Aby tahle chyba nemohla nastat, zařídíme, aby každé kotě *muselo* být
+pojmenované – a to už od okamžiku kdy vznikne.
+Jméno budeme zadávat už při vytváření kotěte, nějak takhle:
 
 ```python
 mourek = Kotatko(jmeno='Mourek')
@@ -320,6 +320,16 @@ mourek.zamnoukej()
 
 A teď už není možnost, jak vytvořit koťátko beze jména.
 Metoda `zamnoukej` bude vždycky fungovat.
+
+Jako u jiných funkcí je možné jméno koťátka zadat buď jako pojmenovaný
+argument, nebo jako poziční. Obojí funguje stejně:
+
+```
+mourek = Kotatko('Mourek')  # 'Mourek' je hodnota prvního argument pro __init__ (po self)
+micka = Kotatko(jmeno='Micka')  # 'Micka' je hodnota argumentu `jmeno`
+```
+
+### Metoda `__str__`
 
 Podobných „opodtržítkovaných“ (speciálních) metod je víc.
 Třeba `__str__` se volá, když je potřeba
