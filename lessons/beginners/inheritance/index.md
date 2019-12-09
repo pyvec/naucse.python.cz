@@ -31,7 +31,7 @@ class Stenatko:
 
 Většina kódu je stejná!
 Kdybys měla napsat i třídu pro kuřátka, kůzlátka,
-slůňátka a háďátka, bez Ctrl+C by to bylo docela nudné.
+slůňátka a háďátka, bez <kbd>Ctrl</kbd>+<kbd>C</kbd> by to bylo docela nudné.
 A protože jsou programátoři líní psát stejný kód
 několikrát (a hlavně ho potom udržovat), vymysleli
 mechanismus, jak se toho vyvarovat.
@@ -107,7 +107,7 @@ micka = Kotatko('Micka')
 micka.snez('granule')
 ```
 
-> [python]
+> [note]
 > Je to podobné jako když jsme minule přepisoval{{gnd('i', 'y', both='i')}}
 > atribut pomocí `micka.zamnoukej = 12345`.
 > Python atributy hledá napřed na samotném objektu,
@@ -260,7 +260,7 @@ for zviratko in zviratka:
     zviratko.snez('flákota')
 ```
 
-Jak tenhle příklad naznačuje, psát nadtřídy, ze kterých se dobře dědí,
+Jak tenhle příklad naznačuje, psát nadtřídy ze kterých se dobře dědí
 není jednoduché. Zvlášť to platí, kdyby se z nich mělo dědit v jiném
 programu, než kde je nadtřída.
 I z toho důvodu je dobré dědičnost používat hlavně v rámci svého kódu:
