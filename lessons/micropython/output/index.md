@@ -1,8 +1,7 @@
 ## Obvod
 
 Teď na chvíli necháme programování a postavíme si elektrický obvod.
-Vezmi si modrou svítivou diodu (LED, „světýlko”) a
-nepájivé pole („hloupou destičku”).
+Vezmi si modrou svítivou diodu (LED) a nepájivé pole.
 Zkusíme světýlko rozsvítit.
 
 LED rozsvítíš tak, že ji připojíš ke *zdroji napětí*, například k baterce.
@@ -20,10 +19,10 @@ Opačně dioda svítit nebude. Dobrá zpráva je, že
 když diodu otočíš špatně, nic se jí nestane.
 
 > [note]
-> Základní vlastnost *diody* je ta, že pustí
-> elektrický proud jen jedním směrem. Svítící dioda
-> – *angl. Light Emitting Diode, LED* – ještě k
-> tomu navíc svítí.
+> Základní vlastnost **diody** je ta, že pustí
+> elektrický proud jen jedním směrem. **Svítící** dioda
+> (angl. *Light Emitting Diode, LED*; českou hantýrkou „LEDka“) ještě k tomu
+> navíc svítí.
 
 Je potřeba rozpoznat rozdíl mezi nožičkami diody.
 *Katoda* (`-`) je ta kratší nožička.

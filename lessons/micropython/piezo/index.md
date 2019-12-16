@@ -32,3 +32,7 @@ Hz – [Hertz](https://en.wikipedia.org/wiki/Hertz) – je jednotka frekvence;
 
 Naprogramuj písničku! Potřebuješ-li víc not, pusť si [program](static/noty.py),
 který vypočítá další frekvence.
+
+> [note]
+> MicroPython umožňuje jako frekvence zadávat jen celá čísla, takže budeš
+> potřebovat hodnoty zaokrouhlit.

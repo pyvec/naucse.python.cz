@@ -60,3 +60,26 @@ kód do konzole zkopírovat odjinud.
 
 Proto má konzole MicroPythonu speciální vkládací mód, který automatické odsazování vypíná.
 Aktivuje se pomocí <kbd>Ctrl+E</kbd> a ukončuje se pomocí <kbd>Ctrl+D</kbd>.
+Zkus si to na něčem jednoduchém:
+
+```python
+if True:
+    print('Všechno funguje!')
+```
+
+* Kód napiš do textového editoru, označ a zkopíruj (např. <kbd>Ctrl+C</kbd>).
+
+* V terminálu MicroPythonu zmáčkni <kbd>Ctrl+E</kbd>. Objeví se:
+
+  ```plain
+  paste mode; Ctrl-C to cancel, Ctrl-D to finish
+  ===
+  ```
+
+* Vlož kód do terminálu (např. přes menu pod pravým tlačítkem myši,
+  <kbd>Ctrl+Shift+V</kbd>)
+
+* Jestli kód vypadá dobře, pomocí <kbd>Ctrl+D</kbd> ho spusť.
+
+* Když vložený kód nevypadá dobře, nesnaž se ho editovat.
+  Zruš vkládání pomocí <kbd>Ctrl+C</kbd> a zkopíruj celý kód znovu.

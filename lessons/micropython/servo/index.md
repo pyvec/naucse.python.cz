@@ -65,6 +65,7 @@ V tomhle případě je důležité:
 * Napětí baterie musí odpovídat tomu, co zvládne tvůj servomotor
 * Všechny připojené součástky musí mít propojenou zem (`GND` na destičce,
   hnědý drát servomotoru, `-` baterie).
+* `+` baterie naopak nesmí být připojeno k destičce.
 
 Zapojení pak bude následující:
 

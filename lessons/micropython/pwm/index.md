@@ -43,17 +43,11 @@ from time import sleep
 
 pin_diody = Pin(14, Pin.OUT)
 
-while True:
-    x = 0
-    while True:
-        x = x + 1
-        pin_diody.value(0)
-        sleep((100-x)/10000)
-        pin_diody.value(1)
-        sleep(x/10000)
-
-        if x > 100:
-            break
+for x in range(100):
+    pin_diody.value(0)
+    sleep((100-x)/10000)
+    pin_diody.value(1)
+    sleep(x/10000)
 ```
 
 Princip je úplně stejný, jen proměnná `x` se neustále mění a tím ovlivňuje

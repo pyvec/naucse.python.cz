@@ -8,7 +8,7 @@
 > Některé levnější modely používají převodník CH340G.
 > Který převodník máš se nejlíp dozvíš od toho, kdo ti destičku poskytl.
 > Ovladač k CH340G se dá dostat
-> [z tohoto blogu](https://iotta.cz/ovladace-pro-ch340g/).
+> [z blogu iotta.cz](https://iotta.cz/ovladace-pro-ch340g/).
 
 Po připojení destičky se Windows nejspíš pokusí nainstalovat ovladač.
 To je dobře.
