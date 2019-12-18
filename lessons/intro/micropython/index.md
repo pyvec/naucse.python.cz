@@ -232,7 +232,6 @@ Otevřete si stránku [micropython.org/webrepl](http://micropython.org/webrepl/)
 Poté se buď připojte k existující WiFi síti (Eduroam fungovat nebude) nebo použijte destičku jako samostatný *access point*:
 
 ```python
-
 # Existující síť:
 
 ESSID = ...
@@ -259,10 +258,13 @@ ap_if = network.WLAN(network.AP_IF)
 ap_if.active(True)
 ap_if.config(essid=ESSID, password=PASSWORD, authmode=network.AUTH_WEP, channel=CHANNEL)
 print('network config:', ap_if.ifconfig())
+```
 
-# Nastavení WebREPL:
+Nastavení WebREPL spusťte z interaktivní konzole:
 
-import webrepl_setup
+
+```pycon
+>>> import webrepl_setup
 ```
 
 S počítačem se připojte na stejnou síť a na stránce webrepl otevřené výše se připojte k IP vypsané z `ifconfig()`.
