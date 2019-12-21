@@ -221,6 +221,10 @@ Notebook toho umí opravdu hodně a také v něm budou napsány i materiály pro
 následující kapitoly, což nám umožní prokládat teorii praktickými
 příklady i s grafy a obrázky a zájemcům si vyzkoušet s příklady experimentovat.
 
+> Veškeré zdrojové kódy lekcí a připravená data jsou k dispozici v
+[GIT repozitáři](https://github.com/PyDataCZ/naucse.python.cz/tree/master/lessons/pydata).
+Odtud je možné stáhnout si notebooky jednotlivých lekcí a dle libosti experimentovat.
+
 Nicméně na vývoj klasických aplikací a obecně pro projekty se složitější strukturou je stále 
 lepší kód rozdělit do modulů a editovat ho ve vhodném textové editoru.
 Častou praxí je nejdříve v interaktivním prostředí notebooku rychle poskládat funkční
