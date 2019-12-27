@@ -97,7 +97,7 @@ bude si moci snadno spustit tvůj kód kousek po kousku a sledovat, co se v n�
 děje. Mimoto je v hlavní nabídce i možnost `Kernel` > `Restart & Run All`, která
 restartuje Python a následně spustí všechny buňky v dokumentu.
 
-Všimni si, jak buňky měni barvu. Pokud je okraj buňky zelený, je možné ji
+Všimni si, jak buňky mění barvu. Pokud je okraj buňky zelený, je možné ji
 editovat a pomocí šipek se pohybovat v kódu, který obsahuje. Pokud je modrý, dá
 se šipkami přecházet mezi jednotlivými buňkami. Z modrého do zeleného režimu
 se dostaneme klávesou `Enter`, případně kliknutím do buňky. Naopak ze zeleného
@@ -182,7 +182,7 @@ Příklady několika zápisů:
 
 Budeš-li vzorce potřebovat a tato notace je pro tebe nová, není třeba se učit
 vše kolem jazyka LaTeX, stačí ti jednoduchá pravidla pro zápis matematických
-vzorců. Pomůže ti např. [tato nápověda](https://cs.wikipedia.org/wiki/N%C3%A1pov%C4%9Bda:Matematick%C3%A9_vzorce/) z české wikipedie.
+vzorců. Pomůže ti např. [tato nápověda](https://cs.wikipedia.org/wiki/N%C3%A1pov%C4%9Bda:Matematick%C3%A9_vzorce) z české wikipedie.
 
 ## Další užitečné funkce
 
