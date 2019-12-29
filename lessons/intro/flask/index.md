@@ -12,9 +12,8 @@ Pro naše účely použijeme [Flask], protože je nejrychlejší na pochopení a
 nevyžaduje striktně použití [MVC] paradigmatu.
 
 [Django]: https://www.djangoproject.com/
-[Flask]: http://flask.pocoo.org/
+[Flask]: https://flask.palletsprojects.com
 [Pyramid]: http://www.pylonsproject.org/
-[Flask]: http://flask.pocoo.org/
 [MVC]: https://cs.wikipedia.org/wiki/Model-view-controller
 
 Flask
@@ -60,7 +59,7 @@ Na zmíněné adrese byste měli v prohlížeči vidět použitý text.
 
 Proměnná prostředí `FLASK_APP` říká Flasku, kde aplikaci najít.
 V daném souboru Flask hledá automaticky proměnnou jménem `app`.
-([Jde nastavit](http://flask.pocoo.org/docs/1.0/cli/) i jiná.)
+([Jde nastavit](https://flask.palletsprojects.com/en/1.1.x/cli/) i jiná.)
 Proměnná `FLASK_DEBUG` nastavuje ladícím režim, který si popíšeme za chvíli.
 
 V programu jsme jako `app` vytvořili flaskovou aplikaci.
@@ -89,7 +88,7 @@ def hello():
 
 Na adrese [`http://127.0.0.1:5000/hello/`][local-hello] pak uvidíte druhou stránku.
 
-[`@app.route`]: http://flask.pocoo.org/docs/1.0/api/#flask.Flask.route
+[`@app.route`]: https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.route
 [local-hello]: http://127.0.0.1:5000/hello/
 
 ### Ladící režim
@@ -117,7 +116,7 @@ jako `/user/hroncok/`, ale nemůžete při každé registraci nového uživatele
 přidávat novou funkci do kódu.
 Musíte použít [dynamické routy]:
 
-[dynamické routy]: http://flask.pocoo.org/docs/1.0/quickstart/#variable-rules
+[dynamické routy]: https://flask.palletsprojects.com/en/1.1.x/quickstart/#variable-rules
 
 ```python
 @app.route('/user/<username>/')
@@ -159,7 +158,7 @@ K tomu se používá funkce [`url_for()`], která jako první parametr bere jmé
 routy (neboli jméno funkce, která routu obsluhuje), a pak pojmenované argumenty
 pro pravidla v dynamické routě:
 
-[`url_for()`]: http://flask.pocoo.org/docs/1.0/api/#flask.url_for
+[`url_for()`]: https://flask.palletsprojects.com/en/1.1.x/api/#flask.url_for
 
 ```python
 from flask import url_for
@@ -257,7 +256,9 @@ který se s Flaskem a jinými frameworky pro Python používá často.
 Kompletní popis jazyka najdete v [dokumentaci][Jinja2], ale
 pro většinu stránek se obejdete s doplněním hodnoty (`{{ promenna }}`)
 a podmíněným obsahem (`{% if %}`) jako výše,
-případně s [cyklem][jinja-for]: `{% for %}`/`{% endfor %}`.
+případně s [cyklem][jinja-for]: `{% for %}`/`{% endfor %}`. Ve větších
+aplikacích se pak hodí použití `{% include ... %}`, `{% extends ... %}` 
+a případně také tvorba maker `{% macro ... %}`/`{% endmacro %}`.
 {% endraw %}
 
 Veškerý kontext (proměnné) do šablony musí přijít z volání `render_template()`.
@@ -265,8 +266,8 @@ Navíc můžete použít vybrané funkce, např. `url_for()`.
 (Jiné funkce známé z Pythonu ale použít nejdou – ač jsou podobné, je Jinja2
 jiný jazyk než Python.)
 
-[Jinja2]: http://jinja.pocoo.org/docs/2.10/templates/
-[jinja-for]: http://jinja.pocoo.org/docs/2.10/templates/#for
+[Jinja2]: https://jinja.palletsprojects.com/en/2.10.x/templates/
+[jinja-for]: https://jinja.palletsprojects.com/en/2.10.x/templates/#for
 
 #### Filtry
 
@@ -303,6 +304,7 @@ V šabloně `date_example.html` se pak filtr použije pomocí svislítka:
 ```
 {% endraw %}
 
+Pokud potřebujete velmi obecný filtr, je vhodné se podívat do [seznamu těch vestavěných](https://jinja.palletsprojects.com/en/2.10.x/templates/#builtin-filters).
 
 #### Escaping
 
@@ -336,7 +338,7 @@ To se dá zajistit dvěma způsoby. Nejjednodušší je vestavěný filtr `safe`
 ```
 {% endraw %}
 
-V Pythonu pak lze použít [jinja2.Markup](http://jinja.pocoo.org/docs/dev/api/#jinja2.Markup),
+V Pythonu pak lze použít [jinja2.Markup](https://jinja.palletsprojects.com/en/2.10.x/api/#jinja2.Markup),
 čímž se daný text označí jako „bezpečný”.
 
 ```python
@@ -373,7 +375,130 @@ V šabloně pak například:
 ```
 {% endraw %}
 
-### Vlastní podtřída Flask
+### Logování
+
+Při vytváření webové aplikace chcete často komunikovat nejen prostřednictvím 
+HTTP odpovědí na dotazy (ať už ve formě webové stránky, JSON odpovědi či jiného
+formatu), ale také vypisovat různé chybové, informační či ladící hlášky na
+straně serveru. Možností je použít například funkci `print`, ale ta není 
+dostatečně flexibilní. Brzy narazíte na problémy, jako že výstup není konzistentní 
+s jinými hláškami z Flasku, že pro různé typy výpisů, časová razítka, přesměrování 
+logu do souboru a další potřebujete vytvářet spoustu logiky kolem namísto vytváření 
+samotné webové aplikace.
+
+Řešením je použít standardní logovací modul [logging], který řeší vše potřebné 
+(úrovně zpráv, filtry, formátování časového razítka a dalších meta-informací o
+běhu programu) a výstup bude konzistentní s jinými aplikacemi (jiní správci 
+vaší webové aplikace pak nebudou z formátu výstupů zmatení). Protože používáme
+Flask a ten také [loguje tímto modulem](https://flask.palletsprojects.com/en/1.1.x/logging/),
+stačí použít předpřipravený `app.logger`.
+
+```python
+from flask import Flask
+
+app = Flask(__name__)
+app.logger.debug("I've just initialized the Flask app")
+
+@app.route('/')
+def index():
+    app.logger.warning('Someone is accessing the index page!')
+    return 'Index Page'
+```
+
+Ve výchozím nastavení se loguje pouze od úrovně upozornění výše (`warning`, 
+`error`, `critical`). Při spuštění aplikace v ladícím režimu se loguje vše
+(navíc i `debug` a `info`). Aktuální úroveň je možné také změnit pomocí metody
+`setLevel`, viz dokumentace modulu [logging].
+
+[logging]: https://docs.python.org/3/library/logging.html#module-logging
+
+### Větší Flask aplikace
+
+Flask je sice označován jako mikroframework, to ale neznamená, že jej nelze 
+použít na větší a složitější webové aplikace. Pokud chcete vytvářet vytvářet 
+aplikaci s databází a ORM modely, je nutné propojit Flask s dalšími knihovnami
+(například [flask-sqlalchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/), 
+nebo [flask-pymongo](https://flask-pymongo.readthedocs.io/en/latest/)).
+
+Jiné frameworky postavené nad [Model-View-Controller](https://cs.wikipedia.org/wiki/Model-view-controller)
+paradigmatem mají tyto vlastnosti již zabudovány v sobě (například [Django]).
+
+Následující sekce popisují některé zajímavé techniky, které se mohou u větších 
+a složitějších aplikací hodit.
+
+#### create_app factory
+
+Mimo vytváření Flask aplikace přímo v modulu, je možné aplikaci tvořit pomocí
+funkce, tzv. [`application_factory`](https://flask.palletsprojects.com/en/1.1.x/patterns/appfactories/), 
+standardně pojmenované `create_app`. Takový přístup má výhodu, že aplikace se 
+neinicializuje hned při importu modulu, ale až při zavolání funkce. Voláním funkce
+můžete navíc předat i konfigurační parametry (typicky cesta ke konfiguračnímu 
+souboru). Díky tomu lze snadněji vytvářet Flask aplikace s různými konfiguracemi
+pro testování nebo dokonce vytvářet více Flask aplikací v rámci jednoho Python skriptu.
+
+```python
+def create_app(config=None):
+    app = Flask(__name__)
+
+    app.config.from_pyfile(config or 'config.py')
+    app.config['the_answer'] = 42
+    app.secret_key = os.environ.get('MY_SECRET', None)
+
+    return app
+```
+
+#### Blueprint moduly
+
+Ve velkých webových aplikacích je již vhodné seskupovat jednotlivé pohledy do
+samostatných celků. K tomuto účelu slouží ve Flasku [blueprinty] (hezky česky 
+„modrotisk” nebo také [„modrák”](https://cs.wikipedia.org/wiki/Diazotypie)).
+Výhodou je, že můžete vytvořit blueprint (instanci
+třídy [Blueprint]) s několika views, vlastní `templates` složkou a dalším 
+nastavením nezávisle na tom, v jaké Flask aplikaci pak bude použitý. Takový 
+blueprint pak můžete využívat i v několika různých aplikacích a snadno tak
+dosáhnout znovupouželnosti.
+
+```python
+from flask import Blueprint
+
+auth = Blueprint('auth', __name__, template_folder='templates')
+
+@auth.route('/login')
+def login():
+    ...
+
+@auth.route('/logout')
+def logout():
+    ...
+
+@auth.app_template_filter('userlink')
+def user_link(username):
+    ...
+```
+
+Blueprint pak stačí ve Flask aplikaci [registrovat](https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.register_blueprint)
+a je jedno, zda ji vytváříte pomocí `create_app` nebo napřímo. Navíc můžete mimo 
+jiné přidat i prefix pro všechny cesty v blueprintu.
+
+```python
+from flask import Flask
+from auth.views import auth
+
+app = Flask(__name__)
+# this will create the /auth/login and /auth/logout endpoints
+app.register_blueprint(auth, url_prefix='/auth')
+```
+
+V případě použití `url_for` je třeba cesty z blueprintu namespacovat, např.:
+
+```python
+url_for('auth.login')
+```
+
+[blueprinty]: https://flask.palletsprojects.com/en/1.1.x/blueprints/
+[Blueprint]: https://flask.palletsprojects.com/en/1.1.x/api/#flask.Blueprint
+
+#### Vlastní podtřída Flask
 
 Třída `Flask` je uzpůsobena k tomu, aby bylo možné snadno rozšiřovat a přepisovat 
 výchozí chování. Mimo přidávání vlastních metod lze například měnit třídy, které 
@@ -417,7 +542,9 @@ def greetings_number():
 ### A další
 
 Flask umí i další věci – například zpracování formulářů, chybové stránky nebo
-přesměrování.
+přesměrování. Také existuje i řada [rozšíření](https://flask.palletsprojects.com/en/1.1.x/extensions/?highlight=extensions),
+které mohou ušetřit práci s běžnými úkony jako například správa uživatelů,
+ tvorba REST API nebo integrace s různými službami.
 
 Všechno to najdete
-[v dokumentaci](http://flask.pocoo.org/docs/1.0/quickstart/).
+[v dokumentaci](https://flask.palletsprojects.com/en/1.1.x/quickstart/).
