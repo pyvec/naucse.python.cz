@@ -22,7 +22,7 @@ dvojice = 'Pat', 'Mat'
 print(dvojice)
 ```
 
-Chovají skoro stejně jako seznamy, jen nejdou měnit.
+Chovají se skoro stejně jako seznamy, jen nejdou měnit.
 Nemají tedy metody jako `append` a `pop` a nedá se jim přiřazovat do prvků.
 Dají se ale použít v cyklu `for` a dají se z nich číst jednotlivé prvky.
 
