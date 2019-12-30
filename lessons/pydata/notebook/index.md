@@ -209,11 +209,11 @@ buňku místo jednoho řádku.
 
 Seznam všech speciálních příkazů lze získat pomocí `%lsmagic`.
 
-### Příkazy shellu
+### Příkazy z příkazové řádky
 
 V buňkách notebooku je možné velmi snadno spouštět i příkazy z příkazové řádky.
 Příkaz ke spuštění v příkazové řádce místo Pythonu stačí začít znakem vykřičníku
-(např.: `!ls`)
+(např.: `!whoami`)
 
 ## Pokračování
 
