@@ -14,7 +14,7 @@ Před sebou byste měli mít:
 
 Přichystejte si MicroUSB kabel. Pokud nemáte vlastní, několik jich můžeme zapůjčit.
 
-Obsah lekce vychází z tutoriálů pro PyLadies ([a](http://pyladies.cz/v1/s016-micropython/index.html), [b](https://github.com/stlk/micropython/tree/master/workshop)), na které se můžete podívat, pokud tu bude něco vysvětleno příliš rychle.
+Obsah lekce vychází z tutoriálů pro PyLadies ([a](https://naucse.python.cz/2019/brno-podzim-pondeli/sessions/micropython/), [b](https://github.com/stlk/micropython/tree/master/workshop)), na které se můžete podívat, pokud tu bude něco vysvětleno příliš rychle.
 
 
 ## Popis desky
@@ -29,7 +29,7 @@ V paměti je už nahraný firmware MicroPython; pojďme se k němu připojit.
 ## Drivery a připojení
 
 Postup připojení je jiný pro každý systém:
-* Linux: Driver už je nainstalovaný; nainstalujte `picocom`, přidejte se do skupiny jako `dialout` (Fedora, nové Ubuntu) nebo `uucp` (nějaký Debian) (správnou skupinu zjistíte pomocí `ls -l /dev/ttyUSB0`) a zadejte `picocom -b 115200 --flow n /dev/ttyUSB0`
+* Linux: Driver už je nainstalovaný; nainstalujte `picocom`, přidejte se do skupiny jako `dialout` (Fedora, nové Ubuntu) nebo `uucp` (Arch, některý Debian) (správnou skupinu zjistíte pomocí `ls -l /dev/ttyUSB0`) a zadejte `picocom -b 115200 --flow n /dev/ttyUSB0`.
 * Windows: Připojte se pomocí [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html) (`putty.exe`). Nastavení:
   * Session:Connection Type: Serial
   * Serial/Serial line: COM port (najdeš ve správci zařízení)
@@ -37,7 +37,7 @@ Postup připojení je jiný pro každý systém:
   * Serial/Flow Control: None
 * Mac: `screen /dev/tty.wchusbserial1420 115200`
 
-Kdyby byly pro Windows či Mac potřeba ovladače, dají se najít na [iotta.cz/ovladace-pro-ch340g](https://iotta.cz/ovladace-pro-ch340g/)
+Kdyby byly pro Windows či Mac potřeba ovladače, dají se najít na [stránkách výrobce](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers).
 
 Po připojení stiskněte tlačítko RST na desce. Měla by se objevit hlavička a nakonec známý pythonní prompt `>>>`.
 
@@ -51,6 +51,7 @@ Implementace MicroPython se chová téměř stejně jako CPython. Vyzkoušejte s
 >>> import math
 >>> math.pi
 >>> import random
+>>> random.randrange()
 ```
 
 Hlavní omezení MicroPythonu je to, že chybí většina standardní knihovny.
@@ -231,7 +232,6 @@ Otevřete si stránku [micropython.org/webrepl](http://micropython.org/webrepl/)
 Poté se buď připojte k existující WiFi síti (Eduroam fungovat nebude) nebo použijte destičku jako samostatný *access point*:
 
 ```python
-
 # Existující síť:
 
 ESSID = ...
@@ -258,10 +258,13 @@ ap_if = network.WLAN(network.AP_IF)
 ap_if.active(True)
 ap_if.config(essid=ESSID, password=PASSWORD, authmode=network.AUTH_WEP, channel=CHANNEL)
 print('network config:', ap_if.ifconfig())
+```
 
-# Nastavení WebREPL:
+Nastavení WebREPL spusťte z interaktivní konzole:
 
-import webrepl_setup
+
+```pycon
+>>> import webrepl_setup
 ```
 
 S počítačem se připojte na stejnou síť a na stránce webrepl otevřené výše se připojte k IP vypsané z `ifconfig()`.
