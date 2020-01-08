@@ -3,18 +3,18 @@
 
 Ukažme si pár základních funkcí, které Python nabízí.
 
-Tato kapitola ukazuje výběr z nástrojů, které ti Python nabízí.
+Tato kapitola ukazuje výběr z nástrojů, které jsou ti v Pythonu k dispozici.
 Tvůj cíl není naučit se vše nazpaměť, ale mít přehled o tom, co je zhruba
 možné.
 Detaily můžeš vždycky dohledat – ať už na taháku (které jsou, na rozdíl od
-školy, vždycky povoleny!), v těchto matreriálech, nebo v oficiální
+školy, vždycky povoleny!), v těchto materiálech, nebo v oficiální
 dokumentaci či jinde na Internetu.
 
 Můžeš si stáhnout i
-<a href="https://github.com/encukou/cheatsheets/raw/master/basic-functions/basic-functions-cs.pdf">tahák</a>,
+<a href="https://github.com/pyvec/cheatsheets/raw/master/basic-functions/basic-functions-cs.pdf">tahák</a>,
 který se rozdává na srazech.
-Doporučuji ho mít ze začátku při ruce.
-Když narazíš na úkol, který nevíš jak vyřešit, projdi si ho a zamysli se,
+Doporučuji mít ho ze začátku při ruce.
+Když narazíš na úkol, se kterým si nevíš rady, projdi si tahák a zamysli se,
 která z funkcí by se dala použít.
 
 
@@ -22,9 +22,9 @@ která z funkcí by se dala použít.
 
 Tyhle funkce už známe.
 `print` vypíše nepojmenované argumenty, oddělené mezerou.
-Pojmenovaný argument `end` určuje co se vypíše na konci (místo přechodu
+Pojmenovaný argument `end` určuje, co se vypíše na konci (místo přechodu
 na nový řádek);
-`sep` zase co se vypíše mezi jednotlivými argumenty (místo mezery).
+`sep` udává, co se vypíše mezi jednotlivými argumenty (místo mezery).
 
 > [note]
 > Příklad opět spusť ze souboru, ne interaktivně:
@@ -35,7 +35,7 @@ print(1, end=' ')
 print(2, 3, 4, sep=', ')
 ```
 
-Základní funkce na načtení vstupu, `input`,
+Základní funkce pro načtení vstupu, `input`,
 vypíše otázku, počká na text od uživatele a ten vrátí jako řetězec.
 
 ```python
@@ -97,7 +97,7 @@ když použiješ špatnou hodnotu, si řekneme později.
 
 ### Převádění a `input`
 
-Převádění typů se často používá při načítání vstupu, třeba jako:
+Převádění typů se často používá při načítání vstupu, třeba takto:
 
 ```python
 cislo = int(input('Zadej číslo: '))
