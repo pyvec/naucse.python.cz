@@ -101,7 +101,8 @@ pojmenuješ – tedy uložíš do vhodně pojmenované proměnné.
 Někdy se stane, že jednu šablonu potřebuješ použít vícekrát.
 Pak formátovací řetězec použít nemůžeš, protože se do něj proměnné doplňují
 automaticky a hned.
-Pro takové případy existuje metoda `format`:
+V takovém případě můžeš šablonu napsat do normálního řetězce (bez `f` na
+začátku) a použít metodu `format`:
 
 ```python
 sablona = 'Ahoj {jmeno}! Tvoje číslo {cislo}.'
