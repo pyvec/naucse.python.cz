@@ -136,19 +136,33 @@ Proto musíš předem – typicky na začátku souboru – říct, že je budeš
 To se dělá *naimportováním* z modulu `math`:
 
 ```python
-from math import sin, cos, tan, sqrt, floor, ceil
+from math import sqrt, floor, ceil
 ```
 
 Naimportované funkce pak můžeš použít:
 
 ```python
+sqrt(cislo)                 # druhá odmocnina
+
+floor(cislo)                # zaokrouhlení dolů
+ceil(cislo)                 # zaokrouhlení nahoru
+```
+
+Kdybys potřeboval{{a}} goniometrické funkce jako sinus, jskou k dispozici taky.
+Jen pozor na to, že počítají pro úhly v [radiánech].
+Hodnoty ve stupních je potřeba na radiány převést.
+
+[radiánech]: https://cs.wikipedia.org/wiki/Radi%C3%A1n
+
+```python
+from math import sin, cos, tan, degrees, radians
+
 sin(uhel)       # sinus
 cos(uhel)       # kosinus
 tan(uhel)       # tangens
-sqrt(cislo)     # druhá odmocnina
 
-floor(cislo)    # zaokrouhlení dolů
-ceil(cislo)     # zaokrouhlení nahoru
+degrees(uhel)   # převod z radiánů na stupně
+radians(uhel)   # převod ze stupňů na radiány
 ```
 
 > [warning] Import a pojmenování souborů
