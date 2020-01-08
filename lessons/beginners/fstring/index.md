@@ -1,6 +1,6 @@
 # Šablony (formátovací řetězce)
 
-Řekněme, že chceš vypsat určitou hodnotu uživatelovi s nějakou „omáčkou“ okolo.
+Řekněme, že chceš uživateli vypsat určitou hodnotu s nějakou „omáčkou“ okolo.
 Dá se na to použít `print()`, kterému můžeš předat „mix“ řetězců a čísel:
 
 ```pycon
@@ -56,7 +56,7 @@ Takovou šablonu můžeš použít jako *formátovací řetězec*
 (angl. [*formatted string literal*](https://docs.python.org/3.6/reference/lexical_analysis.html#formatted-string-literals),
 zkráceně *f-string*).
 Jako jakýkoli jiný řetězec ji vlož do uvozovek.
-A aby bylo jasné že jde o šablonu, před první uvozovky dej značku `f`.
+A aby bylo jasné, že jde o šablonu, před první uvozovky přidej navíc značku `f`.
 
 ```python
 f"Součet je {soucet}."
