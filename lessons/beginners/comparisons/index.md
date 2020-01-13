@@ -197,7 +197,7 @@ elif vek >= 0:
     print('Sunar už bohužel došel.')
 else:
     # Nenastala ani nedna ze situací výše – muselo to být záporné
-    print('Návštěvníky z budoucnosti tady nevidíme rádi.')
+    print('Pro návštěvy z budoucnosti bohužel nemáme nic v nabídce.')
 ```
 
 ## Zanořování
