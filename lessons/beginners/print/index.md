@@ -47,7 +47,7 @@ print(V míse je maso.)
 
 > [note] Řetězce
 > Proč jsou některé hodnoty v uvozovkách a některé ne?
-> Pokud chceme v Pythonu pracovat s textem, musíme ho obalit do uvozovek, aby Python
+> Pokud chceš v Pythonu pracovat s textem, musíš ho obalit do uvozovek, aby Python
 > věděl, že se k němu má chovat jinak než například k číslům.
 > Více se dozvíš později, zatím si zapamatuj, že se takovýto text označuje označuje v programovací
 > hantýrce jako `řetězec`.

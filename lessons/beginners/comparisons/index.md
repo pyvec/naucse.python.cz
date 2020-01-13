@@ -24,7 +24,7 @@ Přidáme-li jeden další (`//`), jsou to tyhle:
     <tr>
         <td><code>//</code>; <code>%</code></td>
         <td><code>7 // 2</code>; <code>7 % 2</code></td>
-        <td>Celočíselné dělení; zbytek po celočíselném dělení</td>
+        <td>Dělení se zbytkem (<em>celočíselné dělení</em>); zbytek po dělení</td>
     </tr>
     <tr>
         <td><code>**</code></td>
@@ -155,8 +155,13 @@ Potom následují příkazy, které se provedou, pokud je podmínka pravdivá.
 Všechny jsou odsazeny o čtyři mezery.<br>
 
 > [note]
-> Pro odsazení textu doprava stačí použít klávesu <kbd>Tab</kbd>.
-> Pro návrat odsazení zpátky poté kombinaci kláves <kbd>Shift</kbd>+<kbd>Tab</kbd>.
+> Čtyři mezery neznamenají, že musíš čtyřikrát zmáčknout mezerník!
+> K odsazení použij klávesu <kbd>Tab</kbd>, která vloží správný počet mezer.
+> (Pokud ne, nemáš správně nastavený editor – podívej se do lekce o instalaci.)
+> Pomocí <kbd>Shift</kbd>+<kbd>Tab</kbd> můžeš odsazení zase zmenšit.
+>
+> A ani <kbd>Tab</kbd> není vždycky potřeba.
+> Pokud napíšeš řádek s `if` bez chyby, některé editory za tebe další řádek odsadí automaticky.
 
 Po téhle části stačí napsat neodsazené `else:`, zase s dvojtečkou na konci,
 a odsazené příkazy, které se provedou v opačném případě.<br>
