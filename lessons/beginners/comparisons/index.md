@@ -153,13 +153,15 @@ což je výraz, podle kterého se budeme rozhodovat.
 Za podmínkou je dvojtečka.
 Potom následují příkazy, které se provedou, pokud je podmínka pravdivá.
 Všechny jsou odsazeny o čtyři mezery.<br>
+
+> [note]
+> Pro odsazení textu doprava stačí použít klávesu <kbd>Tab</kbd>.
+> Pro návrat odsazení zpátky poté kombinaci kláves <kbd>Shift</kbd>+<kbd>Tab</kbd>.
+
 Po téhle části stačí napsat neodsazené `else:`, zase s dvojtečkou na konci,
 a odsazené příkazy, které se provedou v opačném případě.<br>
 Potom můžeš psát příkazy, které se provedou vždycky – ty odsazené nebudou,
 podmíněná část programu už skončila.
-
-Pro odsazení textu doprava stačí použít klávesu <kbd>Tab</kbd>.
-Pro návrat odsazení zpátky poté kombinaci kláves <kbd>Shift</kbd>+<kbd>Tab</kbd>.
 
 > [style-note]
 > Vzato čistě technicky, odsazení nemusí být o čtyři mezery.
