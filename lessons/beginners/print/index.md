@@ -45,6 +45,12 @@ print('Máma má mísu')
 print(V míse je maso.)
 ```
 
+> [note] Řetězce
+> Proč jsou některé hodnoty v uvozovkách a některé ne?
+> Pokud chceme v Pythonu pracovat s textem, musíme ho obalit do uvozovek, aby Python
+> věděl, že se k němu má chovat jinak než například k číslům.
+> Více se dozvíš později, zatím si zapamatuj, že se takovýto text označuje označuje v programovací
+> hantýrce jako `řetězec`.
 
 ## Jak číst chyby
 
@@ -72,7 +78,7 @@ a nakonec oznámí <span class="err-exctype">druh chyby</span>
 a případně nějaké bližší upřesnění.
 
 > [note] Pro zvídavé
-> Jak se od téhle chyby liší ta, která nastane, když zkusíš sečíst číslo a text?
+> Jak se od téhle chyby liší ta, která nastane, když zkusíš sečíst číslo a řetězec?
 > Nebo když zkusíš dělit nulou?
 
 Chybové hlášky můžou být ze začátku těžko pochopitelné,
@@ -86,7 +92,7 @@ o pár řádků výš nebo níž:
 Python občas nesdílí lidské představy o tom, kde přesně chyba *je*.
 Ukáže jen, kde si jí sám *všimnul*.
 
-V našem případě je chyba v tom, že kolem textu *V míse je maso* nejsou uvozovky.
+V našem případě je chyba v tom, že kolem řetězce *V míse je maso* nejsou uvozovky.
 Přidej je a program znovu spusť.
 Jestli funguje, gratuluji!
 Jinak chybu opět oprav a opakuj, dokud to nebude fungovat :)
@@ -120,7 +126,7 @@ oddělených čárkou, hodnoty těchto výrazů se vypíšou.
 
 A co že je ten výraz?
 V našem programu máš několik příkladů:
-výraz je číslo, text nebo nějaká (třeba matematická) operace
+výraz je číslo, řetězec nebo nějaká (třeba matematická) operace
 složená z více výrazů.
 Třeba výraz `3 + 8` sčítá výrazy `3` a `8`.
 
