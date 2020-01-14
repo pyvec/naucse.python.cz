@@ -73,6 +73,16 @@ Vybereš-li editor, klikni na jeho jméno a dostaneš se na instrukce ke stažen
 a nastavení.
 (Na tuhle stránku se pak už nemusíš vracet.)
 
+Na kurzu budeme používat Mu editor
+
+* [Mu]({{ subpage_url('mu') }}) - jednoduchý editor určený pro začínající programátory.
+
+Nemáš-li už vlastní oblíbený editor, pro Windows a macOS
+doporučujeme *Atom* nebo *Visual Studio Code*:
+
+* [Atom]({{ subpage_url('atom') }}) – doporučený editor pro
+  Windows a macOS.
+  
 * [Visual Studio Code]({{ subpage_url('vscode') }}) – doporučený editor pro
   Windows a macOS (a vhodný i pro Linux).
   V poslední době je to asi nejpopulárnější editor kódu.
@@ -88,13 +98,12 @@ Nemáš-li ani jeden, vyber Visual Studio Code (viz výše).
 * [Gedit]({{ subpage_url('gedit') }}) – bývá na systémech s prostředím GNOME.
 * [Kate]({{ subpage_url('kate') }}) – bývá na systémech s prostředím KDE.
 
-Existují i jiné editory, na které máme návody
-nebo jsme je doporučovali ve starších verzích těchto materiálů.
-Pokud se jeden z nich rozhodneš použít, neuděláš chybu:
+Existují i jiné editory, na které máme návody:
 
-* [Atom]({{ subpage_url('atom') }}) – kvalitní editor s jednoduchým designem
-* [Notepad++]({{ subpage_url('notepad-plus-plus') }}) – nenáročný editor
-  pro Windows vhodný pro pomalejší počítače
+* [Notepad++]({{ subpage_url('notepad-plus-plus') }}) – editor doporučovaný
+  v předchozích verzích těchto materiálů.
+* [Ostatní]({{ subpage_url('others') }}) – máš-li jiný editor, zkontroluj
+  si že je správně nastaven.
 
 Máš-li už svůj oblíbený editor – Vim, Emacs, Geany, apod., použij ten:
 
