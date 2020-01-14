@@ -24,7 +24,7 @@ Přidáme-li jeden další (`//`), jsou to tyhle:
     <tr>
         <td><code>//</code>; <code>%</code></td>
         <td><code>7 // 2</code>; <code>7 % 2</code></td>
-        <td>Dělení se zbytkem (<em>celočíselné dělení</em>); zbytek</td>
+        <td>Dělení se zbytkem (<em>celočíselné dělení</em>); zbytek po dělení</td>
     </tr>
     <tr>
         <td><code>**</code></td>
@@ -130,7 +130,7 @@ když uživatel zadal kladné číslo.
     ```
 {% endfilter %}
 
-A nyní řekneme počítači, aby tuhle proměnnou použil.
+A nyní řekneme počítači, aby se na základě hodnoty této proměnné rozhodl, co má udělat.
 K tomu se používá dvojice příkazů `if` (*pokud*)
 a `else` (*jinak*).
 Nejlepší bude je ukázat na příkladu:
@@ -153,6 +153,16 @@ což je výraz, podle kterého se budeme rozhodovat.
 Za podmínkou je dvojtečka.
 Potom následují příkazy, které se provedou, pokud je podmínka pravdivá.
 Všechny jsou odsazeny o čtyři mezery.<br>
+
+> [note]
+> Čtyři mezery neznamenají, že musíš čtyřikrát zmáčknout mezerník!
+> K odsazení použij klávesu <kbd>Tab</kbd>, která vloží správný počet mezer.
+> (Pokud ne, nemáš správně nastavený editor – podívej se do lekce o instalaci.)
+> Pomocí <kbd>Shift</kbd>+<kbd>Tab</kbd> můžeš odsazení zase zmenšit.
+>
+> A ani <kbd>Tab</kbd> není vždycky potřeba.
+> Pokud napíšeš řádek s `if` bez chyby, některé editory za tebe další řádek odsadí automaticky.
+
 Po téhle části stačí napsat neodsazené `else:`, zase s dvojtečkou na konci,
 a odsazené příkazy, které se provedou v opačném případě.<br>
 Potom můžeš psát příkazy, které se provedou vždycky – ty odsazené nebudou,
@@ -203,7 +213,7 @@ else:
 ## Zanořování
 
 Příkazy `if` se dají *zanořovat* (angl. *nest*).
-V odsazeném (podmíněném) kousku může být další `if` s dalším odsazeným
+V odsazeném (podmíněném) bloku kódu může být další `if` s dalším odsazeným
 kódem.
 Třeba u tohoto programu, který rozdává nejapné rady do života:
 
@@ -217,7 +227,6 @@ if stastna == 'ano':
         print('Gratuluji!')
     else:
         print('Zkus míň utrácet.')
-
 else:
     # Tenhle kus kódu se provede, když není "šťastná"
     if bohata == 'ano':
