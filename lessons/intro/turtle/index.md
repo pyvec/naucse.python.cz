@@ -58,6 +58,10 @@ Zkus chvíli dávat želvě příkazy.
 Když se ti něco nelíbí, můžeš buď zavřít kreslící okno,
 nebo naimportovat a použít funkci `clear()`.
 
+Pokud je pro tebe těžké představit si kam se želva pomocí `left` a `right` otáčí 
+můžeš zkusit používat funkci `setheading`, které předáš absolutní úhel vůči "papíru":
+0° je doprava, 90° nahoru, 180° doleva, 270° dolu.  
+
 
 ## Želví program
 
