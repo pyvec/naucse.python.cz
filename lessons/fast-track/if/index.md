@@ -1,10 +1,13 @@
 # Podmínky
 
-Spoustu věcí v kódu chceme provádět, jen pokud jsou splněny určité podmínky.
-Proto má Python *podmíněné příkazy*.
+Spoustu věcí v kódu budeš chtít provádět,
+jen pokud jsou splněny určité podmínky.
+Na to má Python *podmíněné příkazy*.
 
-Zkusíme napsat program, který ověřuje tajné heslo.
-Tenhle program napíše `True`, když zadáš slovo `čokoláda`:
+Zkusíme teď postupně napsat program, který ověřuje tajné heslo.
+
+Pro začátek napiš program, který vypíše `True`, když zadáš slovo `čokoláda`.
+Když bude zadané heslo jiné, napíše `False`:
 
 ```python
 heslo = input('Zadej heslo: ')
@@ -33,7 +36,6 @@ Podmíněný příkaz začíná `if`, pokračuje podmínkou (třeba porovnáním
 a končí dvojtečkou.
 
 Po řádkem s `if` je příkaz *odsazený* – na začátku řádku jsou 4 mezery.
-
 Podle toho Python pozná, že tuhle část programu má provést,
 jen když je podmínka pravdivá.
 
@@ -43,12 +45,18 @@ Ulož a spusť:
 (venv) $ python python_intro.py
 Zadej heslo: čokoláda
 Správně! Můžeš vstoupit.
-```
-
-``` console
 (venv) $ python python_intro.py
 Zadej heslo: sezam
 ```
+
+### Odsazování
+
+To, že jsou na začátku řádku potřeba čtyři mezery, neznamená že musíš
+4× zmáčknout mezerník.
+Některé editory odsazují automaticky (pokud napíšeš řádek s `if` správně).
+Ve všech správně nastavených editorech ale lze odsadit pomocí klávesy
+<kbd>↹ Tab</kbd> a kombinace <kbd>⇧ Shift</kbd>+<kbd>↹ Tab</kbd> vrátí řádek o jednu úroveň odsazení zpátky.
+
 
 ## Jinak
 
@@ -74,14 +82,25 @@ else:
 
 Funuje to?
 
+``` console
+(venv) $ python python_intro.py
+Zadej heslo: čokoláda
+Správně! Můžeš vstoupit.
+(venv) $ python python_intro.py
+Zadej heslo: sezam
+POZOR! POZOR!
+NEOPRÁVNĚNÝ VSTUP!
+```
+
+
 ## Více možností
 
 Občas se stane, že se program musí rozhodnout mezi více možnostmi.
-K tomu slouží příkaz `elif`, zkratka znglického *else if* – „jinak, pokud“.
+K tomu slouží příkaz `elif` (zkratka znglického *else if* – „jinak, pokud“).
 
-Napišme program, který okomentuje hlasitost hudby:
+Třeba takovýmhle postupem se dá okomentovat hlasitost hudby:
 
-* Zeptá se na hlasitost, a odpověď uloží jako číslo.
+* Zeptej se na hlasitost, zapamatuj si číselnou odpověď.
 * Když je hlasitost do 20:
     * vypíše „Je to dost potichu.“
 * Jinak, když je hlasitost do 40:
@@ -95,7 +114,7 @@ Napišme program, který okomentuje hlasitost hudby:
 * Jinak:
     * vypíše „Krvácí mi uši!“
 
-V Pythonu:
+V Pythonu by se to zapsalo takto:
 
 ```python
 hlasitost = int(input('Jaká je nastavená hlasitost rádia? '))
@@ -121,7 +140,7 @@ Jako hudba v pozadí dobré.
 
 Všimni si, že se vybere vždycky jedna alternativa.
 Když zadáš `28`, Python se dostane k `hlasitost < 40`, vypíše
-příslušnou hlášku a další možnosti přeskočí.
+příslušnou hlášku a všechny další možnosti přeskočí.
 
 
 ## Shrnutí

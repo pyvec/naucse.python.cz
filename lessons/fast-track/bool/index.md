@@ -1,6 +1,6 @@
 # Porovnávání věcí
 
-Programátoři často porovnávají různé hodnoty. Pojďme se podívat, jak na to.
+Programátoři často porovnávají různé hodnoty. Pojďme se podívat jak na to.
 
 ``` pycon
 >>> 5 > 2
@@ -17,8 +17,8 @@ Když se Pythonu zeptáš, jestli je jedno číslo větší než druhé, odpoví
 Funguje to i se složitějšími výrazy:
 
 ``` pycon
->>> 5 > 2 * 2
-True
+>>> 5 > 3 * 2
+False
 ```
 
 „Větší než“ a „menší než“ jsou značky známé z matematiky.
@@ -85,12 +85,15 @@ True
 False
 >>> 3 > 2 or 2 < 1
 True
+>>> not 3 > 2
+False
 ```
 
 V Pythonu můžeš zkombinovat několik porovnání do jednoho!
 
 *   Pokud použiješ operátor `and`, obě strany musí být pravdivé, aby byl celý výraz pravdivý.
 *   Pokud použiješ operátor `or`, stačí aby jen jedna strana z porovnání byla pravdivá.
+*   Operátor `not` “obrátí” výsledek porovnání.
 
 
 ## Přítomnost
@@ -137,12 +140,21 @@ Stejně tak můžeš uložit i výsledek porovnání:
 False
 ```
 
+A všechno to můžeš použít v logických výrazech:
+
+``` pycon
+>>> a and True
+False
+```
+
+
 
 ## Shrnutí
 
 V této sekci ses dozvěděl{{a}}:
 
 *   V Pythonu můžeš **porovnávat** pomocí operátorů `>`, `>=`, `==` `<=`, `<`, `!=` a `in`
-*   Operátory `and` a `or` umí **zkombinovat** dvě porovnání.
+*   Operátory `and` a `or` umí **zkombinovat** dvě pravdivostní hodnoty.
+*   Operátor `not` umí **obrátit** pravdivostní hodnotu.
 *   **Boolean** (pravdivostní hodnota) je typ, který může mít jednu ze dvou
     hodnot: `True` (pravda) nebo `False` (nepravda).

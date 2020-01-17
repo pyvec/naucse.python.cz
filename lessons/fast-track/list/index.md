@@ -23,8 +23,8 @@ ulož si ho do proměnné:
 >>> loterie = [3, 42, 12, 19, 30, 59]
 ```
 
-Dobrá, máme seznam! Co s ním můžeme dělat?
-Podíváme se, kolik čísel v seznamu je.
+Tak, a máš seznam! Co s ním ale můžeš dělat?
+Podívej se, kolik čísel v seznamu je.
 Dá se na to použít funkce, kterou už znáš.
 Tipneš si, která to je?
 
@@ -239,7 +239,7 @@ K tomu slouží hodnota `remove`, která najde a odstraní danou hodnotu:
 Ze seznamu se dá kromě jednoho prvku vybrat i prvků několik – část seznamu,
 takzvaný *podseznam*.
 
-Pojďme si opět udělat delší seznam čísel:
+Udělej si opět delší seznam čísel:
 
 ``` pycon
 >>> cisla = ["První", "Druhý", "Třetí", "Čtvrtý"]
@@ -270,7 +270,7 @@ Vybráním podseznamu se seznam nemění, tak můžeš vybírat dál:
 []
 ```
 
-Budeš-li chtít vybrat prvky od začátku *do* některého prvku, dej dvojtečku
+Budeš-li chtít vybrat prvky od začátku *až po* některý prvek, dej dvojtečku
 *před* číslo prvku, který už ve výsledku nechceš
 
 
@@ -290,6 +290,9 @@ Poslední číslo má index -1, vyberu tedy prvky do -1:
 >>> cisla[:-1]
 ['První', 'Druhý', 'Třetí']
 ```
+
+Taky v zápisu pro vybrání všeho kromě posledního prvku vidíš smajlík?
+\[:-1]
 
 {% endfilter %}
 
@@ -326,16 +329,22 @@ Hranaté závorky fungují i u řetězců, kde vybírají písmenka:
 'oko'
 ```
 
-Představ si, že máš v proměnné `jmeno` ženské jméno jako `'Ola'`,
+Řetězce se ale nedají měnit: `del`, `sort` nebo `append` fungují jen
+na seznamech.
+
+Úkol: Představ si, že máš v proměnné `jmeno` ženské jméno jako `'Ola'`,
 `'Krystýna'` nebo `'Růžena'`.
 Jak z něj vytvoříš druhý pád (např. bez `'Růženy'`)?
 
 {% filter solution %}
-Vezmi jméno až po poslední písmeno a přidáš `'y'`. Například:
+Vezmi jméno až po poslední písmeno a přidej `'y'`. Například:
 ``` python
 >>> jmeno = 'Růžena'
 >>> jmeno[:-1] + 'y'
 'Růženy'
+>>> jmeno = 'Krystýna'
+>>> jmeno[:-1] + 'y'
+'Krystýny'
 ```
 {% endfilter %}
 

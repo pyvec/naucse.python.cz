@@ -1,21 +1,22 @@
 # Vlastní funkce
 
-Pamatuješ na funkce `len()` a `print()`?
+Pamatuješ na funkce `len()`, `print()` nebo `randrange()` z modulu `random`?
 Jsou jako kouzelná zaříkadla z knihy vázané v kůži: když víš jak se jmenují
 a umíš je správně {# XXX: <s>vyslovit</s> #}napsat, něco pro tebe udělají.
 
 Teď postoupíme na další úroveň: vymyslíme si vlastní zaříkadla!
 Jak? Budeme kombinovat příkazy, které už známe.
 
-Třeba funkce, která tě pozdraví, by měla:
+Třeba funkce, která tě pozdraví, by mohla:
 
 * Vypsat „ahoj!“
 * Vypsat „jak se máš?“
 
 Definice funkce v Pythonu začíná klíčovým slovem `def`,
 dále je uveden název a následují závorky (zatím prázdné).
-Pak je jako po `if` dvojtečka – a odsazené příkazy,
-které má funkce provést.
+Pak je jako po `if` dvojtečka a odsazené příkazy – tentokrát
+příkazy, které má funkce provést.
+Napiš to do programu:
 
 ```python
 def pozdrav():
@@ -23,14 +24,14 @@ def pozdrav():
     print('Jak se máš?')
 ```
 
-Naše první funkce je připravena!
+Tvoje první funkce je připravena!
 
 Když ale tenhle program spustíš, nic neudělá.
 To proto, že tohle je jen *definice* funkce.
 Python teď ví jak pozdravit – ale neřeklo se, že to má udělat!
 
 Na konec programu přidej volání.
-To už není součást funkce, ale pokračování samotného programu.
+To už *není součást funkce*, ale pokračování samotného programu.
 Proto nesmí být odsazené:
 
 ```python
@@ -53,6 +54,20 @@ pozdrav()
 pozdrav()
 ```
 
+{% filter solution %}
+Každé volání spustí tělo funkce znovu.
+
+``` console
+(venv) $ python python_intro.py
+Ahoj!
+Jak se máš?
+Ahoj!
+Jak se máš?
+Ahoj!
+Jak se máš?
+```
+{% endfilter %}
+
 Co se stane, když volání dáš *nad* definici funkce, místo na konec programu?
 
 ```python
@@ -70,7 +85,7 @@ Traceback (most recent call last):
 NameError: name 'pozdrav' is not defined
 ```
 
-Python si stěžuje na `NameError` – nezná nic jménem `pozdrav`.
+Python si postěžuje na `NameError` – nezná nic jménem `pozdrav`.
 
 Python totiž program čte odzhora dolů.
 Až příkazem `def` se „naučí" jak zdravit.
@@ -82,13 +97,12 @@ Předtím, než se k příkazu `def` dostane, funkce neexistuje.
 Tvoje funkce se dá volat jen jako `pozdrav()`.
 Funkce ale jako `len('slovo')` a `print(1 + 2)` umí navíc pracovat s hodnotou.
 
-Poďme napisať funkciu, ktorá ťa pozdraví menom.
+Poďme teraz napisať funkciu, ktorá ťa pozdraví menom.
 (Uľahčíme si to použitím jazyka, ktorý nepoužíva piaty pád.)
-{# XXX: Je to správně slovensky? #}
 
 ```python
 def pozdrav(meno):
-    print('Vitam ťa,', meno)
+    print('Vítam ťa,', meno)
 
 pozdrav('Ola')
 pozdrav('Soňa')
@@ -108,13 +122,19 @@ Zvládneš napsat program, který se zeptá na jméno a pak tě pozdraví?
 def pozdrav(meno):
     print('Vitam ťa,', meno)
 
-pozdrav(input('Jak se jmenuješ? '))
+pozdrav(input('Ako sa voláš? '))
 ```
 {% endfilter %}
 
 Co se stane, když funkci zavoláš bez hodnoty pro parametr?
 
 {% filter solution %}
+``` python
+def pozdrav(meno):
+    print('Vitam ťa,', meno)
+
+pozdrav()
+```
 ``` pycon
 Traceback (most recent call last):
   File "<stdin>", line 9, in <module>
@@ -150,9 +170,9 @@ delka = len('Ola')
 print(delka)        # napíše: 3
 ```
 
-Jak na to?
-Ve funkci můžeš použít příkaz `return`, který funkci okamžitě ukončí
-a vrátí danou hodnotu:
+Jak na to, kdybys takovou funkci chtěl{{a}} napsat?
+V definici funkce můžeš použít příkaz `return`.
+Ten funkci okamžitě ukončí a vrátí danou hodnotu:
 
 ```python
 def dvojnasobek(x):
@@ -161,7 +181,7 @@ def dvojnasobek(x):
 print(dvojnasobek(42))
 ```
 
-Zkus se zamyslet, jak napsat funkci, která pátý pád nějakého jména. Třeba:
+Zkus se zamyslet, jak napsat funkci, která vrátí pátý pád nějakého jména. Třeba:
 
 * `paty_pad('Ola')` → 'Olo'
 * `paty_pad('Soňa')` → 'Soňo'
@@ -188,9 +208,18 @@ def paty_pad(jmeno):
 ```
 
 Dokážeš změnit funkci `pozdrav`, aby zdravila v češtině?
+Můžeš na to použít funkci `paty_pad`.
 
 {% filter solution %}
 ``` python
+def paty_pad(jmeno):
+    if jmeno == 'Hubert':
+        return 'Huberte'
+    elif jmeno[-1] == 'a':
+        return jmeno[:-1] + 'o'
+    else:
+        return jmeno
+
 def pozdrav(jmeno):
     print('Vítam tě,', paty_pad(jmeno))
 

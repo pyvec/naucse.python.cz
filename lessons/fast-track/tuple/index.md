@@ -89,3 +89,23 @@ for vec, barva, misto in zip(veci, barvy, mista):
 
 V tomhle cyklu dostaneš napřed trojici prvních prvků ze všech tří seznamů,
 pak trojici všech druhých prvků, pak třetích, a tak dále.
+
+## Shrnutí
+
+Co ses dozvěděl{{a}} tentokrát?
+
+* Pomocí *<var>n</var>-tice* se dá spojit několik hodnot do jedné.
+* <var>N</var>-tice se dají rozbalit do několika proměnných.
+* Funkce `zip` vrací sekvenci <var>n</var>-tic, ve kterých jsou prvky
+  z několika seznamů.
+
+A je to.
+*Jsi naprosto skvěl{{gnd('ý', 'á')}}!*
+Tohle byla složitá lekce, takže bys na sebe měl{{a}} být hrd{{gnd('ý', 'á')}}.
+My jsme na tebe velmi hrdí za to, že ses dostal{{a}} tak daleko!
+
+Běž si krátce odpočinout – protáhnout se, projít se,
+zavřít oči – než se pustíš do další kapitoly. :)
+
+🧁
+

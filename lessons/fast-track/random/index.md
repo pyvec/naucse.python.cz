@@ -13,7 +13,7 @@ pomocí příkazu `import`:
 Neboli:
 
 * Z modulu `random` (který obsahuje funkce kolem náhodných hodnot)
-  zpřístupni funkci `randrange` (která umí vybírat náhodná čísla).
+  zpřístupni (`import`) funkci `randrange` (která umí vybírat náhodná čísla).
 * Vyber náhodné číslo ze šesti možností.
 
 Volání funkce `randrange` několikrát opakuj.
@@ -21,12 +21,13 @@ Jaká čísla můžeš dostat?
 
 {% filter solution %}
 Čísla od 0 do 5 – šestku ne.
-Programátoři totiž počítají od nuly, a když počítáš od nuly a chceš šest čísel, dostaneš se jen k pětce.
+Programátoři totiž počítají od nuly, a když počítáš šest čísel od nuly,
+dostaneš se jen k pětce.
 
-Můžeš ale napsat:
+Když budeš chtít „házet kostkou“ – vybírat čísla od 1 do 6 – můžeš napsat:
 ```pycon
 >>> from random import randrange
->>> print('Na kostce padlo', randrange(6) + 1)
+>>> randrange(6) + 1
 4
 ```
 {% endfilter %}

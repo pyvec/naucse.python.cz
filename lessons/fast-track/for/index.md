@@ -14,10 +14,10 @@ Udělej si seznam jmen:
 jmena = ['Rachel', 'Monica', 'Phoebe', 'Ola', 'Ty']
 ```
 
-Udělejme program, který:
+Se seznamem pak budeš chtít udělat tohle:
 
 * Pro každé jméno ze seznamu jmen:
-    * pozdraví daným jménem
+    * pozdrav daným jménem
 
 V Pythonu se takový *cyklus* – opakování „pro každý prvek seznamu“ – píše
 pomocí příkazu `for`:
@@ -92,17 +92,7 @@ Když počítáš od nuly a chceš pět čísel, skončíš u čtyřky.
 
 ## Shrnutí
 
-A je to.
-*Jsi naprosto skvěl{{gnd('ý', 'á')}}!*
-Tohle byla složitá lekce, takže bys na sebe měl{{a}} být hrd{{gnd('ý', 'á')}}.
-My jsme na tebe velmi hrdí za to, že ses dostal{{a}} tak daleko!
-
 Naučil{{a}} ses:
 
 *   **Cyklus** je způsob, jak opakovat nějaký postup několikrát po sobě
 *   `range` pomáhá když potřebuješ určitý konkrétní počet opakování.
-
-Můžeš si jít krátce odpočinout – protáhnout se, projít se,
-zavřít oči – než se pustíme do další kapitoly. :)
-
-🧁

@@ -74,12 +74,32 @@ Kolik je
 <math mode="display" style="display:inline-box;" xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mrow><mn>123</mn> + <mn>456</mn></mrow><mrow><mn>789</mn></mrow></mfrac></math>?
 #}
 
-> [style-note]
-> Mezery mezi čísly a znamínkem nejsou nutné: `4*5` i `4       * 5` dělá
-> to samé co `4 * 5`.
-> Je ale zvykem psát kolem operátoru jednu mezeru z každé strany – tak jako
-> v těchto materiálech.
-> Kód je pak čitelnější.
+## Chyby
+
+Někdy se stane, že zadáš něco špatně – tak, že tomu Python nebude rozumět.
+Třeba když omylem použiješ neexistující operátor `%%`, dostaneš
+jako odpověď *chybovou hlášku*:
+
+```python
+>>> 5 %% 2
+  File "<stdin>", line 1
+    5 %% 2
+       ^
+SyntaxError: invalid syntax
+```
+
+Stává se to dost často – začátečníkům i profesionálním programátorům.
+Chybových hlášek se nemusíš bát.
+I když je něco špatně, stačí na dalším řádku zadat opravený příkaz.
+
+V hlášce ti Python říká, že něco nepochopil nebo je něco jinak špatně.
+Snaží se co nejlíp naznačit, *co* a *kde* je špatně (ale je to jen hloupý
+stroj, tak mu to občas nevyjde).
+V chybové hlášce nahoře si všimni šipečky, `^`, která ukazuje na místo kde
+si Python chyby všiml.
+
+Orientace v chybových hláškách patří k základním schopnostem programátorů.
+Až příště nějakou chybu dostaneš, zkus se zamyslet co ti v ní Python chce říct.
 
 
 ### Shrnutí

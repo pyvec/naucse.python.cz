@@ -34,12 +34,28 @@ ale počítač je hloupé zařízení.
 'Já jsem Ola'
 ```
 
-Pozor na mezeru! Když zadáš `'Já jsem '+' Ola'`, spojí se ti dvě slova dohromady.
+Pozor na mezeru! Když zadáš `'Já jsem' + 'Ola'`, spojí se ti dvě slova dohromady.
 Počítač považuje i mezeru za *znak*; chová se k ní stejně jako k jakémukoli
 písmenku.
 Když nedáš mezeru do uvozovek, nebude součástí řetězce.
 
-Zkus si dát do uvozovek i mezeru samotnou:
+Mezery mezi řetězcem a operátorem (`+`) naopak nehrají roli.
+Všechny následující příkazy dělají to samé:
+
+``` pycon
+>>> 'Já jsem ' + 'Ola'
+'Já jsem Ola'
+>>> 'Já jsem '+'Ola'
+'Já jsem Ola'
+>>> 'Já jsem '                +     'Ola'
+'Já jsem Ola'
+```
+
+Je ale zvykem psát kolem operátoru jednu mezeru z každé strany – tak jako
+v těchto materiálech.
+Kód je pak čitelnější.
+
+Zkus si dát do uvozovek i mezeru samotnou – sečti tři řetězce:
 
 ``` pycon
 >>> 'Já jsem' + ' ' + 'Ola'
@@ -83,7 +99,8 @@ Proto jsou některé operace pojmenované slovně – třeba takzvané *funkce*.
 
 Chceš-li znát počet písmen ve svém jméně, zavolej funkci `len`.
 Napiš `len` (bez uvozovek), pak kulaté závorky, a do těch závorek
-své jméno jako řetězec (v uvozovkách):
+své jméno jako řetězec (v uvozovkách).
+Tím funkci `len` *zavoláš* na řetězec se svým jménem:
 
 ``` pycon
 >>> len('Ola')
@@ -91,13 +108,13 @@ své jméno jako řetězec (v uvozovkách):
 ```
 
 Existuje funkce `type`, která zjistí jestli je něco číslo nebo řetězec.
-Jak bych ji zavolal?
+Jak bys ji zavolal{{a}} na číslo `123` nebo řetězec `'abc'`?
 
 {% filter solution %}
 ``` pycon
 >>> type(123)
 <class 'int'>
->>> type('123')
+>>> type('abc')
 <class 'str'>
 ```
 {% endfilter %}
@@ -135,15 +152,15 @@ Volání funkce nebo metody můžeš použít jako jinou hodnotu.
 Nech Python spočítat matematický výraz `(1 + 3) / 2`:
 
 ```pycon
->>> (1 + 3) / 2
+>>> 8 / (1 + 3)
 2.0
 ```
 
 Python napřed sečte `1 + 3` a vyjde mu 4.
-Čtverku doplní místo `1 + 3` do původního příkladu, a dostane `4 / 2`.
+Čtverku doplní místo `1 + 3` do původního příkladu, a dostane `8 / 4`.
 To vydělí a dostane `2.0`.
 
-Neboli: `(1 + 3) / 2` = `4 / 2` = `2.0`
+Neboli: `8 / (1 + 3)` = `8 / 4` = `2.0`
 
 Zkus se zamyslet, jak Python zpracuje tyto výrazy:
 
@@ -158,13 +175,13 @@ Zkus se zamyslet, jak Python zpracuje tyto výrazy:
 ```
 
 ```pycon
->>> len('Ola'.upper())
-3
+>>> len('Ola' * 3)
+9
 ```
 
 ```pycon
->>> len('Ola' * 3)
-9
+>>> len('Ola'.upper())
+3
 ```
 
 {% filter solution() %}
@@ -172,9 +189,9 @@ Zkus se zamyslet, jak Python zpracuje tyto výrazy:
 
 `len('Ola') + 1` → `3 + 1` → `4`
 
-`len('Ola'.upper())` → `len('OLA')` → `3`
-
 `len('Ola' * 3)` → `len('OlaOlaOla')` → `9`
+
+`len('Ola'.upper())` → `len('OLA')` → `3`
 {% endfilter %}
 
 

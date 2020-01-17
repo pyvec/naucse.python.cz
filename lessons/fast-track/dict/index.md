@@ -1,13 +1,13 @@
 # Slovníky
 
 Jiný typ hodnot, které v sobě mohou obsahovat další hodnoty, je *slovník*.
-Pro příklad si představ překladový slovník, třeba tenhle česko-anglický:
+Představ si překladový slovník, třeba tenhle česko-anglický:
 
 * **Jablko**: Apple
 * **Knoflík**: Button
 * **Myš**: Mouse
 
-Slovník v Pythonu obsahuje záznamy, a každý záznam přiřazuje
+Slovník v Pythonu obsahuje *záznamy*, a každý záznam přiřazuje
 nějakému *klíči* nějakou *hodnotu*.
 V našem příkladu je klíči *Jablko* přiřazena hodnota *Apple*,
 klíči *Knoflík* náleží hodnota *Button*
@@ -19,7 +19,7 @@ V Pythonu by se takový slovník napsal následovně:
 >>> slovnik = {'Jablko': 'Apple', 'Knoflík': 'Button', 'Myš': 'Mouse'}
 ```
 
-Naše klíče a hodnoty jsou slova – krátké texty, tedy řetězce,
+Tyto klíče a hodnoty jsou slova – krátké texty, tedy řetězce,
 které je potřeba dát do uvozovek.
 Každý klíč je od své hodnoty oddělený dvojtečkou,
 jednotlivé dvojice se od sebe oddělují čárkou,
@@ -69,7 +69,7 @@ Nový záznam vytvoříš takhle:
 > podle abecedy.
 > Není to potřeba, počítač umí rychle vyhledávat i bez seřazení.
 
-Kdybys potřebovala{{a}} změnit už existující záznam, použij stejný příkaz.
+Kdybys potřeboval{{a}} změnit už existující záznam, použij stejný příkaz.
 K jednomu klíči může patřit jen jedna hodnota.
 
 ``` pycon
@@ -89,7 +89,7 @@ u seznamů příkazem `del`:
 {'Jablko': 'Apple', 'Knoflík': 'Button', 'Myš': 'Mouse'}
 ```
 
-A když budeš chtít zjistit, kolik je ve slovníku záznamů,
+A když budeš chtít zjistit kolik je ve slovníku záznamů,
 zeptáš se podobně jako na počet znaků řetězce nebo prvků seznamu.
 Použiješ funkci `len()`.
 
