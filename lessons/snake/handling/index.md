@@ -71,8 +71,9 @@ Zkontroluj, že to funguje.
 Když hráč zmáčkne šipku opačného směru, než se had právě plazí, had se otočí a 
 hlavou si narazí do krku.
 
-Z pohledu programu to opět dává smysl: políčko napravo od hlavy je plné,
-had na něj tedy nemůže vstoupit a hráč prohrává.
+Z pohledu programu to opět dává smysl: plazí-li se had doleva,
+políčko napravo od hlavy je plné.
+Když tedy had začne plazit doprava, narazí na políčko s hadem a hráč prohrává.
 Z pohledu hry (a biologie!) ale narážení do krku moc smyslu nedává.
 Lepší by bylo obrácení směru úplně ignorovat.
 
@@ -82,7 +83,7 @@ Když se plazí dolů, `(0, -1)`, tak naopak je nahoru, `(0, 1)`.
 Obecně, k (<var>x</var>, <var>y</var>) je opačný směr
 (-<var>x</var>, -<var>y</var>).
 
-Zatím ale pracujeme s celými <var>n</var>-ticemi, je potřeba obě
+Zatím ale pracujeme s celými <var>n</var>-ticemi, takže je potřeba obě
 na <var>x</var> a <var>y</var> „rozbalit“.
 Kód tedy bude vypadat takto:
 

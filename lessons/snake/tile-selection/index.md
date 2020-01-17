@@ -7,12 +7,12 @@ Jak na to?
 Podle čeho ho vybrat?
 
 Obrázky s kousky hada jsou pojmenovány
-<code><var>odkud</var>-</var>kam</var>.png</code>.
+<code><var>odkud</var>-<var>kam</var></code>.
 To není náhoda – ukazuje to, co potřebuješ vědět, abys mohl{{a}} ten správný
 kousek vybrat.
 
 Když máš hada podle následujícího obrázku, na políčko (3, 2) patří
-kousek, na kterém had „leze“ zleva nahoru – tedy `left-top.png`
+kousek, na kterém se had plazí zleva nahoru – tedy `snake_tiles['left-top']`
 
 {{ figure(
     img=static('tile-selection.svg'),
@@ -159,7 +159,7 @@ ani jedna z těch podmínek“?
 Taková situace ve hře nemůže nastat (nebo ano?), ale přesto je dobré ji
 podchytit a na konec postupu přidat třeba „Jinak je výsledek `'end'`”.
 
-To je složitější část řešení našeho problému.
+Vymyslet tenhle postup je složitější část řešení našeho problému.
 Zbytek je jen téměř doslovný překlad z češtiny do Pythonu:
 
 ```python
@@ -196,7 +196,7 @@ print('tohle by mělo být "end":', direction((3, 3), (80, 80)))
 ## Projít všechny souřadnice
 
 Teď se vraťme k prvnímu problému: jak projít všechny políčka hada,
-a u každého vědět předchozí a následující?
+a u každého zjisti políčko předchozí a následující?
 
 Protože rozdíl mezi souřadnicemi jako (1, 2) a (2, 2) není na první pohled
 moc čitelný, kousky hada si označím písmenky.
@@ -296,8 +296,9 @@ snake = [(1, 2), (2, 2), (3, 2), (3, 3), (3, 4), (3, 5), (4, 5)]
 for coords, prev, next in zip(snake, ['end'] + snake[:-1], snake[1:] + ['end']):
     before = direction(coords, prev)  # směr z aktuálního políčka na předchozí
     after = direction(coords, next)   # směr z aktuálního políčka na následující
-    print('na', coords, 'vykreslit:', before + '-' + after)
+    key = before + '-' + after
+    print('na', coords, 'vykreslit:', key)
 ```
 
 Jestli jsi {{gnd('došel', 'došla')}} až sem, doufám, že nebudeš mít příliš
-velké problmy s „transplantací“ tohoto kódu do tvojí hry.
+velké problémy s „transplantací“ tohoto kódu do svojí hry.

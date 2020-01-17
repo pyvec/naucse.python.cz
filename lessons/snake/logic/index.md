@@ -20,10 +20,27 @@ import pyglet
 
 TILE_SIZE = 64
 
-snake = [(1, 2), (2, 2), (3, 2), (3, 3), (3, 4), (3, 5), (4, 5)]
-food = [(2, 0), (5, 1), (1, 4)]
+class GameState:
+    def initialize(self):
+        self.snake = [(1, 2), (2, 2), (3, 2), (3, 3), (3, 4), (3, 5), (4, 5)]
+        self.food = [(2, 0), (5, 1), (1, 4)]
 
-red_image = pyglet.image.load('apple.png')
+    def draw(self):
+        for x, y in self.snake:
+            before = 'end'     # (Tady případně je nějaké
+            after = 'end'      #  složitější vybírání políčka)
+            key = before + '-' + after
+            snake_tiles[key].blit(x * TILE_SIZE, y * TILE_SIZE,
+                                  width=TILE_SIZE, height=TILE_SIZE)
+        for x, y in self.food:
+            apple_image.blit(x * TILE_SIZE, y * TILE_SIZE,
+                             width=TILE_SIZE, height=TILE_SIZE)
+
+state = GameState()
+state.initialize()
+
+apple_image = pyglet.image.load('apple.png')
+green_image = pyglet.image.load('green.png')
 snake_tiles = {}
 for start in ['bottom', 'end', 'left', 'right', 'top']:
     for end in ['bottom', 'end', 'left', 'right', 'top', 'dead', 'tongue']:
@@ -36,212 +53,60 @@ window = pyglet.window.Window()
 @window.event
 def on_draw():
     window.clear()
+    # Lepší vykreslování (pro nás zatím kouzelné zaříkadlo)
     pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
     pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
-    for x, y in snake:
-        before = 'end'     # (Tady případně je nějaké
-        after = 'end'      #  složitější vybírání políčka)
-        snake_tiles[before + '-' + after].blit(
-            x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
-    for x, y in food:
-        red_image.blit(
-            x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
+
+    state.draw()
 
 pyglet.app.run()
 ```
 
-Zkus těsně nad řádek `pyglet.app.run` doplnit funkci,
-která se bude volat každou šestinu vteřiny
-a přidá hadovi políčko navíc:
+Zkus teď doplnit do třídy `GameState` metodu, která
+přidá hadovi políčko navíc:
 
 ``` python
-def move(dt):
-    x, y = snake[-1]
-    new_x = x + 1
-    new_y = y
-    new_head = new_x, new_y
-    snake.append(new_head)
+    def move(self, dt):
+        x, y = snake[-1]
+        new_x = x + 1
+        new_y = y
+        new_head = new_x, new_y
+        snake.append(new_head)
+```
 
-pyglet.clock.schedule_interval(move, 1/6)
+A těsně nad řádek `pyglet.app.run` říct Pygletu, aby tuto funkci volal
+každou šestinu vteřiny:
+
+```python
+pyglet.clock.schedule_interval(state.move, 1/6)
 ```
 
 Funguje?
-Tak do téhle funkce ještě přidej `del snake[0]`, aby had nerostl donekonečna.
+Tak do té metody ještě přidej `del snake[0]`, aby had nerostl donekonečna.
 Víš co tenhle příkaz dělá? Jestli ne, koukni znovu na poznámky k seznamům!
 
-Zvládneš funkci upravit tak, aby had lezl nahoru?
+Zvládneš funkci upravit tak, aby se had plazil nahoru? Nebo dolů?
 
 Jestli ano, gratuluji!
-Zvývá směr hada ovládat šipkami na klávesnici, a většina hry bude hotová!
+Zbývá směr hada ovládat šipkami na klávesnici, a většina hry bude hotová!
 
-
-## Třída pro stav
-
-Než ale uděláme interaktivního hada, zkusíme trošku uklidit.
-Program se nám rozrůstá a za chvíli bude složité se v něm vyznat.
-
-Stav hry máme zatím ve dvou seznamech: `snake` a `food`.
-Časem ale bude podobných proměnných víc.
-
-Abychom je měli všechny pohromadě, vytvoříme pro stav hry *třídu*.
-
-{# XXX: More about classes #}
-
-Na všechno, co se ve hře může stát, nadefinujeme *metody*.
-Zatím budou dvě: začátek hry a pohyb hada.
-
-Na začátku hry se zavolá metoda `__init__`.
-Má trochu divné jméno se dvěma podtržítkama na každé straně.
-Podle toho Python ví, že tahle metoda je speciální a se má volat
-při vytvoření objektu.
-
-Metoda `__init__` nastaví celý stav hry jako *atributy*.
-Stav hry je všechno, co potřebujeme o hře vědět a může se to časem měnit.
-V našem případě to zatím budou souřadnice hada a jídla.
-
-Metoda `move`, kterou budeme volat při každém „tahu“ hry, je bude tyhle
-atributy měnit.
-
-Pro funkčnost, kterou zatím náš had umí, bude třída se stavem vypadat
-následovně.
-Přidej ji do programu hned za nastavení konstant.
-
-```python
-class State:
-    def __init__(self):
-        self.food = [(2, 0), (5, 1), (1, 4)]
-        self.snake = [(0, 0), (1, 0)]
-
-    def move(self):
-        old_x, old_y = self.snake[-1]
-        new_x = old_x + 1
-        new_y = old_y
-        new_head = new_x, new_y
-        self.snake.append(new_head)
-        del self.snake[0]
-```
-
-> [note]
-> Použij prosím pro třídu jméno `State` a i atributy pojmenuj podle
-> materiálů (`snake`, `food`, a později i další).
-> Bude se ti to hodit.
-
-Všimni si, že metody berou argument `self`.
-To označuje konkrétní objekt, stav hry se kterým metoda pracuje nebo
-který mění.
-Ke všem atributům přistupují pomocí tečky –
-<code>self.<var>jméno_atributu</var></code>.
-
-Tak, máme třídu se stavem.
-No jo, ale jak ji teď použít?
-
-Na to potřebuješ ještě několik změn:
-
-* Nastavování seznamů `snake` a `food` (mimo třídu) zruš; místo nich nastav
-  jedinou proměnnou `state` na nový stav:
-
-  ```python
-  state = State()
-  ```
-
-* Místo `snake` a `food` ve funkci `on_draw` použij `state.snake`
-  a `state.food` – atributy našeho stavu.
-
-  Všimni si že tady se nepoužívá `self`, což je jméno které používají jen
-  *metody* v rámci třídy.
-  Jinde musíš pojmenovat konkrétní objekt, se kterým pracujeme.
-
-* Funkci `move` přepiš tak, aby jen volala metodu `state.move`:
-
-  ```python
-  def move(dt):
-      state.move()
-  ```
-
-  Všimni si že ani tady se nepoužívá `self`.
-
-* Vykreslování hada z funkce `on_draw` přesuň do nové metody
-  `draw`:
-
-  ```python
-  class State:
-    ...
-
-    def draw(self):
-        for x, y in state.snake:
-            ...
-        for x, y in state.food:
-            ...
-  ...
-
-  @window.event
-  def on_draw():
-      window.clear()
-      pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
-      pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
-      state.draw()
-  ```
-
-  Všimni si že ani tady se nepoužívá `self`.
-
-Povedlo se? Funguje to jako předtím?
-Pro kontrolu můžeš svůj program porovnat s mým (ale nejde o jediné správné
-řešení):
+Pro kontrolu přikládám svoje řešení:
 
 {% filter solution %}
+V metodě `move` je potřeba jinak nastavit proměnné `new_x` a `new_y`:
+
+Pro pohyb nahoru:
+
 ```python
-import pyglet
+        new_x = old_x
+        new_y = old_y + 1
+```
 
-TILE_SIZE = 64
+A dolů:
 
-class State:
-    def __init__(self):
-        self.food = [(2, 0), (5, 1), (1, 4)]
-        self.snake = [(0, 0), (1, 0)]
-
-    def move(self):
-        old_x, old_y = self.snake[-1]
-        new_x = old_x + 1
-        new_y = old_y
-        new_head = new_x, new_y
-        self.snake.append(new_head)
-        del self.snake[0]
-
-    def draw(self):
-        for x, y in state.snake:
-            before = 'end'     # (Tady případně je nějaké
-            after = 'end'      #  složitější vybírání políčka)
-            snake_tiles[before + '-' + after].blit(
-                x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
-        for x, y in state.food:
-            red_image.blit(
-                x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
-
-red_image = pyglet.image.load('apple.png')
-snake_tiles = {}
-for start in ['bottom', 'end', 'left', 'right', 'top']:
-    for end in ['bottom', 'end', 'left', 'right', 'top', 'dead', 'tongue']:
-        key = start + '-' + end
-        image = pyglet.image.load('snake-tiles/' + key + '.png')
-        snake_tiles[key] = image
-
-window = pyglet.window.Window()
-
-state = State()
-
-@window.event
-def on_draw():
-    window.clear()
-    pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
-    pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
-    state.draw()
-
-def move(dt):
-    state.move()
-
-pyglet.clock.schedule_interval(move, 1/6)
-
-pyglet.app.run()
+```python
+        new_x = old_x
+        new_y = old_y - 1
 ```
 {% endfilter %}
 
@@ -250,27 +115,8 @@ pyglet.app.run()
 
 Nyní k onomu slíbenému ovládání. Respektive nejdřív k změnám směru.
 
-Had ze hry se plazí stále stejným směrem, dokud hráč nezmáckne klávesu.
-Had z naší ukázky se plazí doprava.
-Jestli jsi to ještě neudělal{{a}}, zkus zařídit, aby se místo toho
-plazil nahoru.
-
-{% filter solution %}
-Ve funkci `move` je potřeba jinak nastavit proměnné `new_x` a `new_y`:
-```python
-        new_x = old_x
-        new_y = old_y + 1
-```
-{% endfilter %}
-
-A co dolů?
-
-{% filter solution %}
-```python
-        new_x = old_x
-        new_y = old_y - 1
-```
-{% endfilter %}
+Had ze hry se plazí stále stejným směrem, dokud hráč nezmáčkne klávesu
+a směr nezmění.
 
 Aby si had „pamatoval“ kam se zrovna plazí, je potřeba mít směr jako součást
 stavu hry.
@@ -288,13 +134,13 @@ Asi nejpříhodnější řešení je uložit si o kolik políček se had má pos
 a to zvlášť v <var>x</var>-ovém a zvlášť v <var>y</var>-ovém směru.
 Čili jako dvojici:
 
-* `(1, 0)` = doprava (o jedno políčko v kladném <var>x</var>-ovém směru;
+* (`1, 0`) = doprava (o jedno políčko v kladném <var>x</var>-ovém směru;
    v <var>y</var>-ovém neposouvat)
-* `(-1, 0)` = doleva (o jedno políčko v záporném <var>x</var>-ovém směru)
-* `(0, 1)` = nahoru (+<var>y</var>)
-* `(0, -1)` = dolů (-<var>y</var>)
+* (`-1, 0`) = doleva (o jedno políčko v záporném <var>x</var>-ovém směru)
+* (`0, 1`) = nahoru (+<var>y</var>, ale v <var>x</var> neposouvat)
+* (`0, -1`) = dolů (-<var>y</var>)
 
-Nový atribut přidej do metody `__init__` ve stavu:
+Nový atribut přidej do metody `initialize`:
 
 ```python
         self.snake_direction = 0, 1
@@ -308,7 +154,7 @@ A v metodě `move` změň nastavování `new_x` a `new_y` podle nového atributu
         new_y = old_y + dir_y
 ```
 
-Směr hada teď můžeš měnit změnou `snake_direction` v `__init__`.
+Směr hada teď můžeš měnit změnou `snake_direction` v `initialize`.
 Funguje to? (Jestli ne, oprav to – a jestli to nejde, zavolej někoho na pomoc!)
 
 Nyní zbývá atribut `snake_direction` měnit, když uživatel něco stiskne na
@@ -327,9 +173,7 @@ def on_key_press(key_code, modifier):
     ...
 ```
 
-Druhý parametr nebude v naší hře potřeba, ale v hlavičce funkce musí být.
-
-Podle prvního ale nastav aktuální směr hada.
+Důležitý je ten první parametr. Podle něho nastavíš aktuální směr hada.
 Čísla kláves jsou definována v modulu [`pyglet.window.key`][key-constants]
 jako konstanty se jmény `LEFT`, `ENTER`, `Q` či `AMPERSAND` .
 My použijeme šipky – `LEFT`, `RIGHT`, `UP ` a `DOWN`:
@@ -347,11 +191,13 @@ def on_key_press(key_code, modifier):
         state.snake_direction = 0, 1
 ```
 
+Druhý parametr nebude v naší hře potřeba, ale v hlavičce funkce musí být.
+
 [key-constants]: https://pyglet.readthedocs.io/en/pyglet-1.3-maintenance/modules/window_key.html#key-constants
 
-Tuhle funkci je potřeba dát někam za nastavení `window` (aby byl k dispozici
-`window.event`) a před `pyglet.app.run()` (protože nastavovat ovládání až
-potom, co hra proběhne, je zbytečné).
+Funkci `on_key_press je potřeba dát někam za nastavení `window` (aby byl
+k dispozici `window.event`) a před `pyglet.app.run()` (protože nastavovat
+ovládání až potom, co hra proběhne, je zbytečné).
 Nejlepší je ji dát vedle jiné funkce s dekorátorem `@window.event`,
 aby byly pěkně pohromadě.
 
@@ -384,7 +230,7 @@ A co při takovém nárazu udělat?
 Pro začátek bude nejjednodušší ukončit hru.
 Na to má Python funkci `exit()`, která funguje podobně jako když v programu
 nastane chyba.
-Jen místo chybového výpisu ukáže daný text.
+Jen místo dlouhého chybového výpisu ukáže daný text.
 
 Ukončení programu není příliš příjemný způsob, jak říct hráčovi že prohrál.
 Za chvíli ale tuhle část předěláme, tak prozatím tenhle jednoduchý způsob postačí.
@@ -413,7 +259,7 @@ A tu zná Pyglet; třída se stavem by k okýnku neměla mít přístup!
 
 Na velikosti herní plochy závisí chování hry.
 Tahle informace tedy bude tedy muset být součást stavu.
-Pro začátek nějakou velikost – třeba 10×10 – nastav v `__init__`:
+Pro začátek nějakou velikost – třeba 10×10 – nastav v `initialize`:
 
 ```python
         self.width = 10
@@ -423,7 +269,7 @@ Pro začátek nějakou velikost – třeba 10×10 – nastav v `__init__`:
 A pak zařiď, aby po nárazu na neviditelnou stěnu kolem hřiště velkého
 10×10 políček hra skončila.
 Pořádně vyzkoušej všechny varianty – severní, jižní, východní i západní zeď.
-Had je virtuální, nemusíš se bát že mu z toho vyroste boule.
+Had je virtuální, nemusíš se bát že mu z narážení do zdí vyroste boule.
 
 {% filter solution %}
 ```python
@@ -449,7 +295,7 @@ Had je virtuální, nemusíš se bát že mu z toho vyroste boule.
 ```
 {% endfilter %}
 
-A pak v souboru se hrou hned po tom co vytvoříš stav (`state = State()`)
+A pak v souboru se hrou hned po tom co vytvoříš stav (`state = GameState()`)
 a okýnko (`window`) nastav *opravdovou* velikost.
 Použij celočíselné dělení, aby počet políček byl v celých číslech:
 
@@ -503,7 +349,7 @@ Náš had se plazí tak, že napřed vepředu povyroste (pomocí `append`)
 a potom se vzadu zmenší (pomocí `del self.snake[0]`).
 
 Aby tedy po snězení jídla vyrostl, stačí *přeskočit* ono zmenšování!
-Ono *přeskočit* znamená podmínit, pomocí `if`.
+A tím *přeskočit* myslím podmínit pomocí `if`.
 Logika jezení a zmenšování hada tedy bude:
 
 * Když had sní jídlo, jídlo zmizí. Had se nezmenší.
@@ -572,16 +418,18 @@ je potřeba přidat nové jídlo, a přidej tam následující řádek:
 ```
 
 Tahle metoda přidává jídlo na pozici (0, 0), tedy stále do stejného rohu.
-Bylo by ale fajn, kdyby se nové jídlo objevilo vždycky jinde,
+To je dobré tak akorát na… no, na to, aby sis ověřil{{a}} že se jídlo do
+seznamu opravdu přidává.
+Bylo by fajn, kdyby se nové jídlo objevilo vždycky jinde,
 na náhodném místě.
-Na to můžeme použít funkci `random.randrange`.
+Na to můžeš použít funkci `random.randrange`.
 Vzpomeň si, že volání `randrage(N)` vrátí náhodné celé číslo od
 0 do <var>N</var> - 1.
 
-Jaký rozsah čísel potřebujeme pro hadí jídlo?
+Jaký rozsah čísel potřebuješ pro hadí jídlo?
 
 Až na to přijdeš, zkus přidat náhodu do programu: jídlo by se mělo objevit
-na *úplně náhjodném* políčku na herní ploše.
+na *úplně náhodném* políčku na herní ploše.
 
 Nezapomeň na `import random` – to patří na úplný začátek souboru.
 Další změny ale už dělej jen v metodě `add_food`.
@@ -638,7 +486,7 @@ Jestli ti to funguje, ještě zařiď, aby na začátku hry bylo jídlo na náho
 pozicích.
 
 {% filter solution %}
-V metodě `__init__` se dá místo nastavení `self.food` na seznam s pozicemi
+V metodě `initialize` se dá místo nastavení `self.food` na seznam s pozicemi
 jídla napsat:
 ```python
         self.food = []
@@ -653,10 +501,10 @@ Pak budou na začátku hry na hada čekat dvě náhodná jídla.
 
 Had teď může narůst do obrovských rozměrů – a lze prohrát jen tím, že
 narazí do stěny.
-Zaříď teď, aby hra skončila i když narazí sám do sebe.
+Zaříď, aby hra skončila i když narazí sám do sebe.
 
 Jak na to?
-Do metody `move`, vedle kontrola vylezení z hrací plochy,
+Do metody `move`, vedle kontroly vylezení z hrací plochy,
 dej kód který udělá následující:
 
 * Pokud jsou souřadnice nové hlavy už součást hada:
@@ -683,7 +531,8 @@ dostal, aby se z ní mohl pro příště poučit.
 
 Aby to bylo možné, dáme do stavu hry další atribut: `alive`.
 Ten bude nastavený na `True`, dokud bude had žít.
-Když had narazí, nastaví se na `False`, a od té doby se už nebude pohybovat.
+Když had narazí, nastaví se `alive` na `False`, a od té doby se už had nebude 
+pohybovat.
 Je dobré i graficky ukázat, že hadovi není dobře – hráč pak spíš bude
 zpytovat svědomí.
 
@@ -713,8 +562,8 @@ kousky kódu, které prohru implementují:
 ```
 
 {% filter solution %}
-* „Prvotní nastavení atributu“ do metody `__init__`.
-* „Zastaveni hada“ místo všech výskytů `raise("Game Over")`.
+* „Prvotní nastavení atributu“ do metody `initialize`.
+* „Zastavení hada“ místo *všech* výskytů `raise("Game Over")`.
 * „Zabránění pohybu“ na úplný začátek metody `move` (příkaz `return`
   okamžitě ukončí provádění metody).
 * „Grafická indikace“ za sekci pro vybírání obrázku pro kousek
@@ -733,7 +582,8 @@ Dej si něco sladkého, zasloužíš si to.
 
 Tady je moje řešení.
 To se touhle dobou od toho tvého může dost lišit – to je úplně normální.
-(A nedívej se sem dokud hada nenaprogramuješ {{gnd('sám', 'sama')}},
+
+(Nedívej se sem dokud hada nenaprogramuješ {{gnd('sám', 'sama')}}.
 Chybami a neustálým zkoušením se člověk učí – a programátor zvlášť.
 Čtením už vyřešeného se učí hůř.)
 
@@ -742,14 +592,12 @@ Chybami a neustálým zkoušením se člověk učí – a programátor zvlášť
 
 ```python
 import random
-from pathlib import Path
-
 import pyglet
 
 TILE_SIZE = 64
 
-class State:
-    def __init__(self):
+class GameState:
+    def initialize(self):
         self.snake = [(0, 0), (1, 0)]
         self.snake_direction = 0, 1
         self.width = 10
@@ -758,6 +606,19 @@ class State:
         self.add_food()
         self.add_food()
         self.alive = True
+
+    def draw(self):
+        for x, y in self.snake:
+            before = 'end'     # (Tady případně je nějaké
+            after = 'end'      #  složitější vybírání políčka)
+            if after == 'end' and not state.alive:
+                after = 'dead'
+            key = before + '-' + after
+            snake_tiles[key].blit(x * TILE_SIZE, y * TILE_SIZE,
+                                  width=TILE_SIZE, height=TILE_SIZE)
+        for x, y in self.food:
+            apple_image.blit(
+                x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
 
     def move(self):
         if not self.alive:
@@ -798,7 +659,7 @@ class State:
                 self.food.append(position)
                 return
 
-red_image = pyglet.image.load('apple.png')
+apple_image = pyglet.image.load('apple.png')
 snake_tiles = {}
 for start in ['bottom', 'end', 'left', 'right', 'top']:
     for end in ['bottom', 'end', 'left', 'right', 'top', 'dead', 'tongue']:
@@ -808,7 +669,8 @@ for start in ['bottom', 'end', 'left', 'right', 'top']:
 
 window = pyglet.window.Window()
 
-state = State()
+state = GameState()
+state.initialize()
 state.width = window.width // TILE_SIZE
 state.height = window.height // TILE_SIZE
 
@@ -818,16 +680,7 @@ def on_draw():
     window.clear()
     pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
     pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
-    for x, y in state.snake:
-        before = 'end'     # (Tady případně je nějaké
-        after = 'end'      #  složitější vybírání políčka)
-        if after == 'end' and not state.alive:
-            after = 'dead'
-        snake_tiles[before + '-' + after].blit(
-            x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
-    for x, y in state.food:
-        red_image.blit(
-            x * TILE_SIZE, y * TILE_SIZE, width=TILE_SIZE, height=TILE_SIZE)
+    state.draw()
 
 
 @window.event
@@ -863,11 +716,6 @@ Zkus třeba následující rozšíření. Jsou seřazené zhruba podle složitos
 * Každých 30 vteřin hry přibude samo od sebe nové jídlo,
   takže jich pak bude na hrací ploše víc.
 
-* Hra se bude postupně zrychlovat.<br>
-  *(Na to je nejlepší předělat funkci `move`, aby *sama*
-  naplánovala, kdy se má příště zavolat. Volání `schedule_interval` tak už
-  nebude potřeba.)*
-
 * Když had vyleze ven z okýnka, místo konce hry se objeví na druhé straně.
   (Viz [návod](../toroid).)
 
@@ -876,3 +724,8 @@ Zkus třeba následující rozšíření. Jsou seřazené zhruba podle složitos
   *(Na to je nejlepší udělat novou třídu, `Snake`, a všechen stav hada
   přesunout ze `State` do ní. Ve `State` pak měj seznam hadů.
   Téhle změně je potřeba přizpůsobit celý zytek programu.)*
+
+* Hra se bude postupně zrychlovat.<br>
+  *(Na to je nejlepší předělat funkci `move`, aby *sama*
+  naplánovala, kdy se má příště zavolat. Volání `schedule_interval` tak už
+  nebude potřeba.)*
