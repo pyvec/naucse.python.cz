@@ -400,7 +400,7 @@ Běda ale těm, kdo opisují kód aniž by se mu snažili porozumět!
 Když už had umí jíst, je potřeba mu zajistit pravidelný přísun jídla.
 Nejlépe tak, že se každé snězené jídlo nahradí novým.
 
-Přidej do třídy `State` následující novou metodu, která umí přidat jídlo:
+Přidej do třídy `GameState` následující novou metodu, která umí přidat jídlo:
 
 ```python
     def add_food(self):
@@ -722,7 +722,7 @@ Zkus třeba následující rozšíření. Jsou seřazené zhruba podle složitos
 * Hadi budou dva; druhý se ovládá klávesami
   <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>.<br>
   *(Na to je nejlepší udělat novou třídu, `Snake`, a všechen stav hada
-  přesunout ze `State` do ní. Ve `State` pak měj seznam hadů.
+  přesunout ze `GameState` do ní. Ve `GameState` pak měj seznam hadů.
   Téhle změně je potřeba přizpůsobit celý zytek programu.)*
 
 * Hra se bude postupně zrychlovat.<br>
