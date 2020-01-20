@@ -3,7 +3,7 @@ click
 
 {% if var('mi-pyt') %}
 Nechme internety na chvíli být a pojďme se podívat na úplně jinou knihovnu,
-[click](http://click.pocoo.org/6/).
+[click](https://click.palletsprojects.com/en/7.x/).
 {% endif %}
 
 Knihovna `click` slouží k vytváření rozhraní pro příkazovou řádku
@@ -50,7 +50,7 @@ import click
 def hello(count, name):
     """Simple program that greets NAME for a total of COUNT times."""
     for x in range(count):
-        click.echo('Hello {}!'.format(name))
+        click.echo(f'Hello {name}!')
 
 if __name__ == '__main__':
     hello()
@@ -78,7 +78,7 @@ Když je soubor importován, tenhle blok se neprovede.
 Dekorátory `@click.option` a `@click.argument` pak přidávají přepínače
 a argumenty.
 
-*Přepínače* (angl. *options*), přidávané pomocí `option`, jsou nepovinné
+[*Přepínače*](https://click.palletsprojects.com/en/7.x/options/) (angl. *options*), přidávané pomocí `option`, jsou nepovinné
 parametry, kterými se nějak obměňuje chování programu.
 Pokud uživatel nějaký přepínač nezadá, použije se hodnota zadaná jako `default`
 (nebo `None`, když `default` chybí).
@@ -91,7 +91,8 @@ pro jednopísmenné zkratky, dvěma pomlčkami pro vícepísmenná jména.
 Jeden přepínač může mít i víc jmen.
 
 Speciální případ jsou booleovské přepínače, které mají jedno jméno
-pro `True` a jiné pro `False`.
+pro `True` a jiné pro `False`. Lze samozřejmě také vytvořit bezhodnotový
+přepínač pomocí `is_flag`.
 
 ```python
 import click
@@ -101,10 +102,14 @@ import click
               help='Name of the person to greet')
 @click.option('-c/-C', '--color/--no-color',
               help='Make the output colorful')
-def hello(name, color):
+@click.option('-v', '--verbose', is_flag=True,
+              help='More verbose output')
+def hello(name, color, verbose):
     if color:
         name = click.style(name, fg='blue')
-    click.echo('Hello {}!'.format(name))
+    click.echo(f'Hello {name}!')
+    if verbose:
+        click.echo('Nice to meet you.')
 
 if __name__ == '__main__':
     hello()
@@ -115,6 +120,9 @@ $ python hello.py
 Hello world!
 $ python hello.py --name Guido
 Hello Guido!
+$ python hello.py --name Jane -v
+Hello Jane!
+Nice to meet you.
 $ python hello.py -n 'Mr. Git'
 Hello Mr. Git!
 $ python hello.py --help
@@ -131,7 +139,7 @@ Přepínač `--help` přidává click sám.
 
 ## Argumenty
 
-Kromě přepínačů podporuje click i [*argumenty*](http://click.pocoo.org/6/arguments/).
+Kromě přepínačů podporuje click i [*argumenty*](https://click.palletsprojects.com/en/7.x/arguments/).
 Přepínače musí uživatel na řádce pojmenovat; argumenty se zadávají beze jména,
 ale záleží u nich na pořadí.
 Používají se ve dvou případech: pro povinné parametry a pro parametry, kterých
@@ -140,21 +148,21 @@ Na všechno ostatní radši použijte přepínače.
 
 Například příkaz `cd` potřebuje jeden argument: jméno adresáře,
 do kterého má přepnout.
-Jeho rozhraní by v Clicku vypadalo takto:
+Jeho rozhraní by v clicku vypadalo takto:
 
 ```python
 @click.command()
 @click.argument('directory')
 def cd(directory):
     """Change the current directory"""
-    click.echo('Changing to directory {}'.format(directory))
+    click.echo(f'Changing to directory {directory}')
 ```
 
 Proměnný počet argumentů se zadává pomocí `nargs=-1` (0 nebo víc argumentů)
 nebo `nargs=-1, required=True` (1 nebo víc).
 
 Například příkaz `mv` bere <var>N</var> souborů a adresář, kam je přesune.
-Takové rozhraní by v Clicku vypadalo následovně:
+Takové rozhraní by v clicku vypadalo následovně:
 
 ```python
 @click.command()
@@ -163,14 +171,14 @@ Takové rozhraní by v Clicku vypadalo následovně:
 def mv(source, destination):
     """Move any number of files to one destination"""
     for filename in source:
-        click.echo('Moving {} to {}'.format(filename, destination))
+        click.echo(f'Moving {filename} to {destination}')
 ```
 
 
 ## Soubory
 
 Má-li uživatel zadat jméno souboru, nepoužívejte řetězce, ale speciální typ
-[`click.File()`](http://click.pocoo.org/6/api/#click.File).
+[`click.File()`](https://click.palletsprojects.com/en/7.x/api/#click.File).
 Click za vás soubor automaticky otevře a zavře.
 Kromě toho podporuje unixovskou konvenci, že `-` znamená standardní
 vstup/výstup.
@@ -188,8 +196,40 @@ def cat(files):
         print(file.read(), end='')
 ```
 
-Existuje i varianta [`click.Path()`](http://click.pocoo.org/6/api/#click.Path),
-která soubor neotvírá. Pomocí ní jde např. zadat jméno adresáře.
+Existuje i varianta [`click.Path()`](https://click.palletsprojects.com/en/7.x/api/#click.Path),
+která soubor neotvírá. Pomocí ní jde např. zadat jméno adresáře. Click takto 
+poskytuje i jiné [další typy](https://click.palletsprojects.com/en/7.x/api/#types).
+
+
+## Validace vstupů
+
+Vstupy získané z přepínačů i argumentů lze ověřit pomocí 
+vlastních podmínek a podle toho naprogramovat chování včetně
+chybových hlášek. Click však opět nabízí pohodlnější způsob, 
+a to pomocí [`callback`](https://click.palletsprojects.com/en/7.x/options/#callbacks-for-validation).
+V rámci callback funkce můžete ověřit libovolně hodnotu a/nebo
+ji vhodně transformovat. Pokud hodnota neodpovídá požadavkům, 
+můžete použít vyjímku [`click.UsageError`](https://click.palletsprojects.com/en/7.x/api/#click.UsageError)
+nebo [`click.BadParameter`](https://click.palletsprojects.com/en/7.x/api/#click.BadParameter)
+(vztahuje-li se přímo ke konkrétnímu parametru). Click se pak 
+sám postará o případné ukončení programu s odpovídající chybovou
+hláškou a kódem.
+
+```python
+def validate_username(ctx, param, value):
+    if 2 <= len(value) <= 8 and re.match('^[a-zA-Z]+[0-9]*$', value):
+        return value.lower()
+    else:
+        raise click.BadParameter('not valid CTU username')
+
+@click.command()
+@click.option('-u', '--username', callback=validate_username)
+def email(username):
+    click.echo(f'{username}@fit.cvut.cz')
+
+if __name__ == '__main__':
+    email()
+```
 
 
 ## Podpříkazy
@@ -209,13 +249,13 @@ def git2():
 @git2.command()
 def commit():
     message = click.edit('Made some changes')
-    click.echo('Making commit with message: {}'.format(message))
+    click.echo(f'Making commit with message: {message}')
 
 @git2.command()
 @click.argument('files', nargs=-1)
 def add(files):
     for file in files:
-        click.echo('Adding {}'.format(file))
+        click.echo(f'Adding {file}')
 ```
 
 
@@ -227,5 +267,5 @@ abyste věděli, co od téhle knihovny očekávat.
 Click má velice dobrou [dokumentaci], ve které najdete detaily i všechny
 ostatní možnosti.
 
-[dokumentaci]: http://click.pocoo.org/6/
+[dokumentaci]: https://click.palletsprojects.com/en/7.x/
 

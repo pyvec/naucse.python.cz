@@ -18,12 +18,12 @@ Funguje? Doufám, že ano; za chvíli ho vylepšíme.
 
 ## Další příkazy
 
-Zkus do programu postupně, po jednom, přdávat další řádky.
+Zkus do programu postupně, po jednom, přidávat další řádky.
 Po přidání každého dalšího `print` program znovu spusť a vyzkoušej, jestli
 funguje.
 
 Abys nemusel{{a}} v příkazové řádce stále dokola psát `python printing.py`,
-zkusit zmáčknout na klávesnici šipku nahoru, <kbd>↑</kbd>.
+zkus zmáčknout na klávesnici šipku nahoru, <kbd>↑</kbd>.
 Vrátíš se tak k předchozímu příkazu, který stačí „odklepnout“ pomocí
 <kbd>Enter</kbd>.
 
@@ -45,6 +45,12 @@ print('Máma má mísu')
 print(V míse je maso.)
 ```
 
+> [note] Řetězce
+> Proč jsou některé hodnoty v uvozovkách a některé ne?
+> Pokud chceš v Pythonu pracovat s textem, musíš ho obalit do uvozovek, aby Python
+> věděl, že se k němu má chovat jinak než například k číslům.
+> Více se dozvíš později, zatím si zapamatuj, že se takovýto text označuje označuje v programovací
+> hantýrce jako `řetězec`.
 
 ## Jak číst chyby
 
@@ -86,7 +92,7 @@ o pár řádků výš nebo níž:
 Python občas nesdílí lidské představy o tom, kde přesně chyba *je*.
 Ukáže jen, kde si jí sám *všimnul*.
 
-V našem případě je chyba v tom, že kolem řetězce nejsou uvozovky.
+V našem případě je chyba v tom, že kolem řetězce *V míse je maso* nejsou uvozovky.
 Přidej je a program znovu spusť.
 Jestli funguje, gratuluji!
 Jinak chybu opět oprav a opakuj, dokud to nebude fungovat :)
@@ -122,14 +128,14 @@ A co že je ten výraz?
 V našem programu máš několik příkladů:
 výraz je číslo, řetězec nebo nějaká (třeba matematická) operace
 složená z více výrazů.
-Třeba výraz `3 + 8` sečítá výrazy `3` a `8`.
+Třeba výraz `3 + 8` sčítá výrazy `3` a `8`.
 
 V sekci o [proměnných]({{ lesson_url('beginners/variables') }}) se
 na výrazy a jejich hodnoty podíváme podrobněji.
 
 > [style-note] Typografická vsuvka
-> Všimni si stylu zápisu: jako v češtině se po otvírací závorce a za
-> ozavírací závorkou nepíše mezera; na rozdíl od češtiny ale mezera není
+> Všimni si stylu zápisu: jako v češtině se po otevírací závorce a před
+> uzavírací závorkou nepíše mezera; na rozdíl od češtiny ale mezera není
 > mezi `print` a závorkou.
 > ```python
 > print("Ahoj!")

@@ -259,8 +259,8 @@ ale pomocí argumentu `sep` se dá použít i něco jiného.
 print(1, 2, 3, 4, sep=', ')     # Místo mezery odděluj čárkou
 ```
 
-Dá změnit i to, co `print` udělá na konci výpisu.
-Normálně přejde na nový řádek, ale argumentem `sep` můžeš říct co se má vypsat 
+Dá se změnit i to, co `print` udělá na konci výpisu.
+Normálně přejde na nový řádek, ale argumentem `end` můžeš říct, co se má vypsat 
 *místo toho*.
 
 > [note]

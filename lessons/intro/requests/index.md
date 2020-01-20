@@ -210,3 +210,8 @@ Jelikož ostatní tento konfigurační soubor neuvidí,
 je vhodné jim vysvětlit, jak takový soubor (s jejich údaji) vytvořit.
 Můžete například vložit do gitu soubor `auth.cfg.sample`
 s vymyšlenými údaji, či příklad uvést v README.
+
+> [note]
+> ConfigParser změní velikost písmen klíčů z konfiguračního souboru na malá.
+> Pokud potřebujete, aby byly klíče přesně tak, jak jsou v souboru, musíte
+> před načtením nastavit `config.optionxform = str`.

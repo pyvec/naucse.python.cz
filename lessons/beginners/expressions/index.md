@@ -6,7 +6,7 @@ Jak to ale vlastně dělá?
 Jak se vyhodnocují výrazy?
 
 Pro základní výrazy je to tak, jak to možná znáš ze školy.
-U `3 * (5 + 2)`, nejdřív spočítáš to, co je v závorkách: `(5 + 2)` je `7`.
+U `3 * (5 + 2)` nejdřív spočítáš to, co je v závorkách: `(5 + 2)` je `7`.
 Výsledek dosadíš do původního výrazu místo závorky: `3 * 7`.
 Stejně fungují výrazy v Pythonu.
 
@@ -46,7 +46,7 @@ menších nebo vysvětlit pomocí komentáře.
 Je ale dobré mít povědomí o tom, jak složité výrazy „fungují“,
 aby ses jich nemusel{{a}} bát.
 Měl{{a}} bys být schopn{{gnd('ý', 'á')}} vysvětlit, co se stane,
-když se Pythonu zeptáš kolik je -<var>b</var> + (<var>b</var>² +
+když se Pythonu zeptáš, kolik je -<var>b</var> + (<var>b</var>² +
 4<var>a</var><var>c</var>)⁰·⁵ / (2<var>a</var>), abys pak věděl{{a}}, co za
 tebe Python dělá.
 
@@ -82,7 +82,7 @@ výrazy:
 strana = -5
 
 if strana <= 0:
-    print("Příliš")
+    print("Strana musí být kladná!")
 ```
 
 ```python
