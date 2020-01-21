@@ -11,8 +11,9 @@ Na základě povšimnutí jedné z vás jsme zjistili, že jsou problémy hned s
 ve Windows. Prosím, neinstaluj Python z Windows Store
 a neinstaluj Python 3.8, v obou případech není jednoduché zprovoznit Jupyter Notebook. Doporučujeme nainstalovat
 Python 3.7.6 [odtud](https://www.python.org/downloads/release/python-376/) (vyber "executable installer", ideálně verzi `x86-64`).
-Nezapomeň v první obrazovce instalátoru zaškrtnout, že chceš přidat Python do proměnné `PATH`. Pokud chceš (a víš, proč tak činíš), 
-s distribucí [miniconda](https://docs.conda.io/en/latest/miniconda.html) by také neměly být problémy.
+Nezapomeň v první obrazovce instalátoru zaškrtnout, že chceš přidat Python do proměnné `PATH`. Pokud chceš (a navíc víš proč), 
+s distribucí [miniconda](https://docs.conda.io/en/latest/miniconda.html) by také neměly být problémy
+(někteří z autorů ji používají).
 
 ## Adresář, vytvoření a aktivace virtuálního prostředí
 
