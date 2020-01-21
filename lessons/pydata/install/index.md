@@ -22,7 +22,7 @@ mohli pracovat s knihovnami a nástroji v něm nainstalovanými.
 Do příkazové řádky s aktivním virtuálním prostředím zadej následující příkaz:
 
 ```shell
-(venv)$ python -m pip install jupyter pandas matplotlib seaborn scipy scikit-learn
+(venv)$ python -m pip install jupyter pandas matplotlib requests seaborn scipy scikit-learn
 ```
 
 Tímto příkazem se do virtuálního prostředí nainstalovaly následující knihovny:
@@ -33,5 +33,6 @@ Tímto příkazem se do virtuálního prostředí nainstalovaly následující k
 * Seaborn - rozšíření pro Matplotlib, které umí vytvořit pokročilejší grafy
 * SciPy - švýcarský nůž pro věděcké výpočty a pokročilou matematiku
 * Scikit-learn - sbírka nejznámějších algoritmů pro strojové učení
+* Requests - knihovna pro práci s HTTP (webovými a API) požadavky
 
 V následující kapitole se podíváme na to, jak Jupyter spustit a jak s ním pracovat.
