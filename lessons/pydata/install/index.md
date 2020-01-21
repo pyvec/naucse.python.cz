@@ -3,7 +3,7 @@
 Instalace všeho potřebného není složitá a zabere jen chvíli. Pokud se během ní
 přeci jen něco pokazí, popros na Slacku nebo někoho zkušenějšího o radu.
 
-> Další kroky počítají s tím, že máš nainstalovaný a funkční Python 3.6, 3.7 nebo 3.8.
+> Další kroky počítají s tím, že máš nainstalovaný a funkční Python 3.6 nebo 3.7.
 Pokud ne, návod na instalaci máme k dispozici [v začátečnickém kurzu](https://naucse.python.cz/course/pyladies/sessions/install/).
 
 > **Upozornění:**
