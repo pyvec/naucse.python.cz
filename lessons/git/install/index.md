@@ -43,10 +43,11 @@ Dál pokračuj obecným [nastavením](#config) níže.
 
 Jdi na stránku [git-scm.org](https://git-scm.org), stáhni si
 Git a nainstaluj si ho.
-Při instalaci vyber tyto volby:
 
-* Run Git from the Windows Command Prompt
-* Checkout Windows-style, commit Unix-style line endings
+Při instalaci se ujisti, že jsou vybrány tyto volby:
+
+* Adjusting your PATH enviroment: Git from the command line and also from 3rd-party software
+* Configuring the line ending conversions: Checkout Windows-style, commit Unix-style line endings
 
 Ostatní možnosti neměň.
 

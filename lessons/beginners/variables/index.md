@@ -26,7 +26,7 @@ a obsah jako <var>S</var> = <var>a</var>².
 > na základy programování si vystačíme s matematickými
 > znalostmi ze základní školy.
 
-Výsledky by měl spočítat Python; číslo 1424 nebo 126736 do programu nepiš.<br>
+Výsledky by měl spočítat Python; číslo 1424 nebo 126736 přímo do programu nepiš.<br>
 Jestli si nevíš rady, podívej se na program <code>printing.py</code>
 z [lekce o `print`]({{ lesson_url('beginners/print') }}), kde jeden řádek dělá něco podobného.
 
@@ -38,9 +38,10 @@ spusť ho:
 * zadej `python ctverec.py`.
 
 Funguje? Jestli ne, oprav ho a zkus to znovu!
-Když už jsi v příkazové řádce ve správném adresáři, stačí zadat `python ctverec.py`.
-Abys to nemusel{{a}} celé psát, můžeš zkusit zmáčknout šipku nahoru,
-<kbd>↑</kbd>, a vrátit se tak k předchozímu příkazu.
+Když už jsi v příkazové řádce ve správném adresáři, spuštění znamená zadat
+znovu příkaz `python ctverec.py`.
+Abys to nemusel{{a}} celé psát, můžeš se k předchozímu příkazu vrátit
+pomocí šipky nahoru, <kbd>↑</kbd>.
 
 {% filter solution %}
     Program, který vypíše správný výsledek, může vypadat třeba takhle:
@@ -97,15 +98,15 @@ zásad: „neopakuj se“ (anglicky *Don't repeat yourself*, <abbr class="initia
 Když se někde opakuje stejná hodnota, stejný výraz
 nebo stejný kus kódu,
 {{ gnd('dobrý programátor', 'dobrá programátorka', both='dobrý programátor') }}
-ten kus programu pojmenuje
-a několikrát pak použije jen jméno.
+ten kus programu *pojmenuje*
+a dál pak používá jen jméno.
 Často se totiž stává, že je program potřeba změnit –
 buď je v něm chyba nebo se změní zadání.
 A potom je mnohem jednodušší změnu udělat jen na jednom místě.
 
 Kromě toho dobrá jména usnadňují čtení programu:
-`4 * strana` nepotřebuje komentář, ale
-u `4 * 183` není příliš jasné, co ta čísla znamenají.
+u `4 * 183` není moc jasné, co ta čísla znamenají.
+Výraz `4 * strana` je na tom mnohem líp.
 
 
 > [extra-activity]
@@ -166,12 +167,16 @@ zapsáno v programu, ale aby ho mohl uživatel zadat sám.
 Stejně jako když ses naučil{{a}} používat `print`
 i tady jen řeknu, že na to použijeme *funkce*.
 Detaily si vysvětlíme později;
-pro teď to budou kouzelná zaříkadla:
+pro teď to budou kouzelná zaříkadla.
 
-* Chceš-li načíst **řetězec** (text), použij:
+> [warning]
+> Pozor, záleží na typu hodnoty který chceš získat: text nebo číslo.
+> Vybírej pečlivě!
+
+* Chceš-li načíst **text**, použij:
 
   ```python
-  promenna = input('Zadej řetězec: ')
+  promenna = input('Zadej text: ')
   ```
 
 * Chceš-li načíst **celé číslo**, použij:
@@ -186,7 +191,7 @@ pro teď to budou kouzelná zaříkadla:
   promenna = float(input('Zadej číslo: '))
   ```
 
-Místo řetězce `'Zadej …'` se dá napsat i jiná výzva. 
+Místo textu `'Zadej …'` se dá napsat i jiná výzva. 
 A výsledek se samozřejmě dá uložit i do jiné proměnné než `promenna`.
 
 Hotový program může vypadat takto:

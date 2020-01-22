@@ -90,12 +90,12 @@ k přepnutí může dojít kdykoli,
 je tedy potřeba zamykat a složitě hledat málo časté chyby.
 
 Byly vyvinuty i knihovny pro *kooperativní* přepínání, založené na tzv.
-*futures* (které vysvětlíme vzápětí).
+*futures*.
 Nejznámější jsou [Twisted] a [Tornado].
 Obě jsou relativně staré (2002, resp. 2009), ale stále populární.
 
-Ačkoli byly Twisted, Tornado a podobné knihovny užitečné, jejich problém
-byl v tom, že má každá jiné API.
+Ačkoli byly Twisted, Tornado a podobné knihovny užitečné, měly zásadní problém
+v tom, že každá má jiné API.
 Vznikaly tak kolem nich ekosystémy vázané na konkrétní knihovnu:
 server napsaný pro Tornado se nedal použít pod Twisted a aplikace
 využívající Twisted nemohla využít knihovnu pro Tornado.
@@ -115,8 +115,12 @@ Podobně jako přístup k různým SQL databázím je v Pythonu standardizovaný
 v [PEP 249]) nebo je standardizované API webových serverů (WSGI, [PEP 3333]),
 tak vzniklo standardizované API pro kooperativní multitasking.
 Toto API je definováno v [PEP 3156] a jeho referenční implementace, `asyncio`,
-je od Pythonu 3.4 ve standardní knihovně.
-(Pro Python 3.3 se dá asyncio nainstalovat [pomocí `pip`][pypi-asyncio].)
+je ve standardní knihovně Pythonu.
+(Ne že by to zabránilo vzniku dalších asynchronních knihoven jako
+Curio a [Trio](https://trio.readthedocs.io/en/stable/tutorial.html).
+Ty ovšem spíš experimentují s novými paradigmaty a osvědčené principy se z nich
+postupně dostávají do `asyncio`.)
+
 Interně je `asyncio` postavené na konceptu *futures* inspirovaných Tornado/Twisted,
 ale jeho „hlavní“ API je postavené na *coroutines* podobných generátorům.
 
@@ -143,27 +147,52 @@ async def count(name, interval):
 
 
 loop = asyncio.get_event_loop()
-asyncio.ensure_future(count('Quick', 0.3))
-asyncio.ensure_future(count('Slow', 1))
-loop.run_forever()
+loop.run_until_complete(count('Counter', 1))
 loop.close()
 ```
 
 Co se tu děje?
-Příkazem `await asyncio.sleep(interval)` se asynchronní funkce zastaví
+Příkazem `await asyncio.sleep(interval)` se asynchronní funkce pozastaví
 (podobně jako generátor při `yield`) a předá kontrolu knihovně `asyncio`
 s informací že za daný čas by kontrolu chtěla zase zpátky.
 Než daný interval uplyne, `asyncio` může spouštět jiné úlohy;
-po jeho uplynutí naši čekající funkci „probudí“.
+po jeho uplynutí pozastavenou funkci „probudí“ a její algoritmus pokračuje dál.
 
-Spouštění a ukončení se dělá poněkud krkolomě.
-Pojďme se podívat co všechno se skrývá v posledních pěti příkazech.
+Když žádné jiné úlohy neexistují, je pomalé počítání trochu nudné.
+Zkuste proto spustit počítadla dvě.
+(Detaily funkce `ensure_future` a příkazu `await task` vysvětlíme níže.)
 
+```python
+import asyncio
+
+async def count(name, interval):
+    ...
+
+async def run_two_counters():
+    fast_task = asyncio.ensure_future(count('Fast', 0.3))
+    slow_task = asyncio.ensure_future(count('Slow', 1))
+    await fast_task
+    await slow_task
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(run_two_counters())
+loop.close()
+```
+
+Spouštění a ukončení – poslední tři řádky – je poněkud složité na zápis,
+ale typicky to v každém programu potřebujete napsat jen jednou.
+
+> [note]
+> V Pythonu verze 3.7 a vyšší lze ty tři poslední řádky nahradit jednodušším:
+>
+> ```python
+> asyncio.run(run_two_counters())
+> ```
 
 > [note]
 > V Pythonu verze 3.4 a nižší ještě neexistovala klíčová slova `async` a
-> `await`; asynchronní funkce byly opravdu implementovány jako generátory.
-> Máte-li starší verzi Pythonu, je potřeba místo:
+> `await`; asynchronní funkce byly implementovány jako generátory.
+> Ve starších verzích Pythonu bylo potřeba místo:
 >
 > ```python
 > async def ...:
@@ -178,8 +207,9 @@ Pojďme se podívat co všechno se skrývá v posledních pěti příkazech.
 >     yield from ...
 > ```
 >
-> Starý způsob zatím funguje i v novějším Pythonu, a dokonce se někdy objevuje
-> i v dokumentaci.
+> Starý způsob zatím funguje i v novějším Pythonu a dokonce se ještě někdy
+> objeví i v dokumentaci.
+> Od Pythonu 3.8 je ale *deprecated*.
 
 [greenlet]: https://greenlet.readthedocs.io/en/latest/
 [Tornado]: http://www.tornadoweb.org/en/stable/
@@ -195,150 +225,135 @@ Event Loop
 
 Knihovna `asyncio` nám dává k dispozici *smyčku událostí*, která se, podobně jako
 `app.exec` v Qt, stará o plánování jednotlivých úloh.
-Každé vlákno může mít vlastní smyčku událostí, kterou získáme pomocí
-`asyncio.get_event_loop` a pak ji můžeme spustit dvěma způsoby:
+Smyček událostí může být více.
+Tradiční způsob je, že každé vlákno může mít vlastní smyčku událostí,
+kterou získáme pomocí `asyncio.get_event_loop` a pak ji můžeme spustit dvěma
+způsoby:
 
 * `loop.run_forever()` spustí smyčku na tak dlouho, dokud jsou nějaké úlohy
   naplánovány (to trochu odporuje názvu, ale většinou se nestává, že by se
   úlohy „vyčerpaly“), nebo
 * `loop.run_until_complete(task)` – tahle funkce skončí hned, jakmile je hotová
   daná úloha, a vrátí její výsledek.
-* Od Pythonu 3.7 můžete použít jednoduché `asyncio.run(task)`, aniž byste museli
-  explicitně pracovat s určitou smyčkou událostí. Jedná se ale o API, které se
-  v budoucnu může změnit.
 
+Nakonec je smyčku potřeba uzavřít (`loop.close()`), což např. dá použitým
+knihovnám možnost korektně uzavřít zbylá síťová spojení.
 
-Futures
--------
-
-Jak už bylo řečeno, knihovna `asyncio` je uvnitř založená na *futures*.
-Copak to je?
-
-`Future` je objekt, který reprezentuje budoucí výsledek nějaké operace.
-Poté, co tato operace skončí, se výsledek dá zjistit pomocí metody `result()`;
-jestli je operace hotová se dá zjistit pomocí `done()`.
-`Future` je taková „krabička“ na vrácenou hodnotu – než tam něco
-tu hodnotu dá, musíme počkat; poté je hodnota stále k dispozici.
-Tohle čekání se dělá pomocí `await` (nebo `loop.run_until_complete`).
-
-```python
-import asyncio
-
-
-async def set_future(fut):
-    """Sets the value of a Future, after a delay"""
-    print('set_future: sleeping...')
-    await asyncio.sleep(1)
-    print('set_future: setting future')
-    fut.set_result(123)
-    print('set_future done.')
-
-
-async def get_future(fut):
-    """Receives the value of a Future, once it's ready"""
-    print('get_future: waiting for future...')
-    await fut
-    print('get_future: getting result')
-    result = fut.result()
-    print('get_future: done')
-    return result
-
-
-future = asyncio.Future()
-
-
-# Schedule the "set_future" task (explained later)
-asyncio.ensure_future(set_future(future))
-
-
-# Run the "get_future" coroutine until complete
-loop = asyncio.get_event_loop()
-result = loop.run_until_complete(get_future(future))
-loop.close()
-
-print('Result is', result)
-```
-
-Do `Future` se dá vložit i výjimka.
-To se využívá v případě, že úloha, která má `Future` naplnit, selže. 
-Metoda `result()` potom tuto výjimku způsobí v kódu, který by výsledek
-zpracovával.
-
-Na `Future` se navíc dají navázat funkce, které se zavolají, jakmile je
-výsledek k dispozici.
-Dá se tak implementovat *callback* styl programování (který možná znáte
-např. z Node.js). Pomocí *futures & callbacks* se před nástupem
-generátorů programovalo pro knihovny jako `Twisted`.
-
-Podobně jako `yield` se `await` dá použít jako výraz, jehož
-hodnota je výsledek dané `Future`.
-Funkci `get_future` z příkladu výše tak lze napsat stručněji:
-
-```python
-async def get_future(fut):
-    """Receives the value of a Future, once it's ready"""
-    return (await fut)
-```
-
-Další vlastnost `Future` je ta, že se dá „zrušit“: pomocí `Future.cancel()`
-signalizujeme úloze, která má připravit výsledek, že už ten výsledek
-nepotřebujeme.
-Po zrušení bude `result()` způsobovat `CancelledError`.
+Od Pythonu 3.7 můžete použít `asyncio.run(task)`, což vytvoří *novou*
+smyčku událostí, spustí v ní danou úlohu (pomocí `run_until_complete`)
+a zase ji zavře.
+Chcete-li ji použít (a tedy psát kód jen pro Python 3.7+), používejte pak všude
+místo `ensure_future` funkci `create_task`, která vás lépe ochrání před
+těžko nalezitelnými chybami.
 
 
 Async funkce a Task
 -------------------
 
-Používání `Future` (nebo *callback* funkcí) je poněkud těžkopádné.
-V `asyncio` se `Future` používají hlavně proto, že je na ně jednoduché
-navázat existující knihovny.
-Aplikační kód je ale lepší psát pomocí asynchronních funkcí, tak jako
-v příkladu výše.
+Smyčka událostí provádí úlohy a asynchronní funkce.
 
-Asynchronní funkce se dají kombinovat pomocí `await` podobně jako generátory
-pomocí `yield from`.
-Nevýhoda asynchronních funkcí spočívá v tom, že na každé zavolání takové funkce
-lze použít jen jeden `await`.
-Na rozdíl od `Future` se výsledek nikam neukládá;
-jen se po skončení jednou předá.
+Asynchronní funkce se definují pomocí `async def` a umožňují použít příkaz
+(nebo operátor) `await`, kterým se provádění funkce pozastaví a kontrola se
+předá jiným úlohám do doby, než nastane nějaká událost (např. uplynul časový
+intervaluj, jsou dostupná nová data ze socketu…).
+
+Pozastavení funguje podobně jako `yield` u generátoru.
+
+Zavoláním asynchronní funkce dostaneme *coroutine* pozastavenou na začátku
+těla funkce:
+
+```pycon
+>>> async def demo():
+...     print('Demo')
+...
+>>> coroutine = demo()
+>>> coroutine
+<coroutine object demo at 0x7fda8be22b90>
+```
+
+Naplánujeme-li provádění *coroutine* na smyčce událostí
+(např. pomocí `run_until_complete`), tělo funkce se začne vykonávat:
+
+```pycon
+>>> loop = asyncio.get_event_loop()
+>>> result = loop.run_until_complete(coroutine)
+Demo
+```
+
+V rámci jedné *coroutine* pak lze provedení jiné *coroutine* naplánovat
+a počkat na jejich skončení pomocí `await`.
+Jak `run_until_complete` tak `await` nám dají k dispozici návratovou hodnotu
+příslušné asynchronní funkce.
 
 ```python
 import asyncio
 
 async def add(a, b):
-    await asyncio.sleep(1)
+    await asyncio.sleep(1)  # schedule a "sleep" and wait for it to finish
     return a + b
 
 async def demo():
     coroutine = add(2, 3)
-    print('The result is:', (await coroutine))
-    print('The result is:', (await coroutine))  # chyba!
-
+    result = await coroutine  # schedule "add" and wait for it to finish
+    print('The result is:', result)
 
 loop = asyncio.get_event_loop()
 result = loop.run_until_complete(demo())
 loop.close()
 ```
 
-Tenhle problém můžeme vyřešit tak, že asynchronní funkci „zabalíme“ do `Future`.
-Na to ma dokonce `asyncio` speciální funkci `ensure_future`, která:
-
-* dostane-li asynchronní funkci, „zabalí“ ji do `Future`, a
-* výsledek přímo naplánuje na smyčce událostí, takže se asynchronní funkce
-  časem začne provádět.
+Nevýhoda čistých *coroutines* spočívá v tom, že na každé zavolání
+takové funkce lze použít jen jeden `await`.
+Výsledek se nikam neukládá, jen se po skončení jednou předá.
+Druhý `await` pro stejné zavolání asynchronní funkce skončí s chybou.
+Zkuste si to – v kódu výše přidejte daší řádek s `await coroutine`:
 
 ```python
-async def demo():
-    coroutine = asyncio.ensure_future(add(2, 3))
     print('The result is:', (await coroutine))
-    print('The result is:', (await coroutine))  # OK!
 ```
 
-> [note]
-> Výsledek `ensure_future` je speciální druh `Future` zvaný `Task`.
-> Ten má několik vlastností navíc, ale v podstatě ho zmiňujieme jen proto,
-> abyste věděli co `Task` znamená, až se vám objeví v chybové hlášce.
+Tenhle problém můžeme vyřešit tak, že asynchronní funkci „zabalíme“
+jako úlohu, *Task*.
+V Pythonu 3.7 se Task tvoří pomocí `asyncio.create_task`;
+pro kompatibilitu se staršími verzemi ale použijeme ekvivalentní
+`asyncio.ensure_future`.
+Task se chová stejně jako *coroutine* – lze použít v `await` nebo
+`run_until_complete`, ale navíc:
 
+* výsledek je k dispozici kdykoli po ukončení funkce (např. pro druhý `await`) a
+* úloha se naplánuje hned po zavolání `ensure_future`.
+
+Druhou vlastnost je lepší ukázat na příkladu:
+
+```python
+import asyncio
+
+async def print_and_wait():
+    print('Async function starting')
+    await asyncio.sleep(0.5)
+    print('Async function done')
+    return 'result'
+
+async def demo_coro():
+    coroutine = print_and_wait()
+    await asyncio.sleep(1)
+    print('Awaiting coroutine')
+    print(await coroutine)     # schedule coroutine and wait for it to finish
+
+async def demo_task():
+    task = asyncio.ensure_future(print_and_wait())  # schedule the task
+    await asyncio.sleep(1)
+    print('Awaiting task')
+    print(await task)  # task is finished at this point; retreive its result
+
+
+loop = asyncio.get_event_loop()
+print('Coroutine:')
+result = loop.run_until_complete(demo_coro())
+print('Task:')
+result = loop.run_until_complete(demo_task())
+loop.close()
+```
 
 Fan-Out a Fan-In
 ----------------
@@ -360,15 +375,24 @@ Tomuto rozdělení se říká *fan-out*.
 
 Opačná operace je *fan-in*, kdy několik úloh opět spojíme do jedné.
 Výše uvedený scraper může počkat, než jsou všechny stránky stažené –
-třeba pomocí jednoho `await` pro každý `Task`, po kterém může
-pokračovat zpracováním získaných dat.
+třeba pomocí jednoho `await` pro každý *Task* nebo asynchronní funkce
+[gather](https://docs.python.org/3/library/asyncio-task.html#asyncio.gather).
+Poté může pokračovat zpracováním získaných dat.
 
-Co se týče webového serveru, může se zdát, že tady není potřeba explicitně
-počkat na výsledek každého úkolu.
-Ale není to tak. I tady je poměrně důležité na každou úlohu nastartovanou
-pomocí `ensure_future` „počkat“ pomocí např. `await` – už jen proto, abychom
-zachytili případnou výjimku.
-Neuděláme-li to, `asyncio` bude vypisovat varovné hlášky.
+Počkáním na úlohu (pomocí `await`, `gather`, `run_until_complete` atp.)
+získáte její návratovou hodnotu.
+Ale na všechny úlohy, i na ty, které nic zajímavého nevrací, je důležité počkat.
+Neuděláte-li to, bude `asyncio` vypisovat varovné hlášky:
+
+```pycon
+>>> import asyncio
+>>> asyncio.sleep(1)  # no await
+>>> exit()
+sys:1: RuntimeWarning: coroutine 'sleep' was never awaited
+```
+
+Toto varování nikdy neignorujte. Kdyby váš program nedělal co má, spolu s
+varováním byste ignorovali výjimky v této *coroutine*.
 
 
 Asynchronní cykly a kontexty
@@ -403,12 +427,12 @@ V `asyncio` najdeme synchronizační mechanismy známé z vláknového programov
 Musíme-li použít blokující funkci, která např. komunikuje po síti bez `await` a která by
 tedy zablokovala i všechny ostatní úlohy, můžeme použít
 `loop.run_in_executor()`, a tím danou funkci zavolat ve vlákně nebo podprocesu, ale výsledek zpřístupnit
-pomocí `asyncio.Future`.
+jako objekt, na který lze počkat pomocí `await`.
 Použití je opět popsáno v [dokumentaci](https://docs.python.org/3/library/asyncio-eventloop.html#executor).
 
-Občas vás při programování s `asyncio` zaskočí zrádná chyba.
+Občas vás při programování s `asyncio` zaskočí zrádná chyba.
 V takových případech je dobré zapnout *debug* režim pomocí proměnné prostředí `PYTHONASYNCIODEBUG=1`.
-V tomto režimu asyncio upozorňuje na časté chyby, do některých chybových výpisů přidává informaci o tom,
+V tomto režimu `asyncio` upozorňuje na časté chyby, do některých chybových výpisů přidává informaci o tom,
 kde aktuální `Task` vznikl, apod.
 Více informací je zase v [dokumentaci](https://docs.python.org/3/library/asyncio-dev.html#asyncio-dev).
 

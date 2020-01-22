@@ -24,7 +24,7 @@ Přidáme-li jeden další (`//`), jsou to tyhle:
     <tr>
         <td><code>//</code>; <code>%</code></td>
         <td><code>7 // 2</code>; <code>7 % 2</code></td>
-        <td>Dělení se zbytkem (<em>celočíselné dělení</em>); zbytek</td>
+        <td>Dělení se zbytkem (<em>celočíselné dělení</em>); zbytek po dělení</td>
     </tr>
     <tr>
         <td><code>**</code></td>
@@ -130,7 +130,7 @@ když uživatel zadal kladné číslo.
     ```
 {% endfilter %}
 
-A nyní řekneme počítači, aby tuhle proměnnou použil.
+A nyní řekneme počítači, aby se na základě hodnoty této proměnné rozhodl, co má udělat.
 K tomu se používá dvojice příkazů `if` (*pokud*)
 a `else` (*jinak*).
 Nejlepší bude je ukázat na příkladu:
@@ -153,13 +153,23 @@ což je výraz, podle kterého se budeme rozhodovat.
 Za podmínkou je dvojtečka.
 Potom následují příkazy, které se provedou, pokud je podmínka pravdivá.
 Všechny jsou odsazeny o čtyři mezery.<br>
+
+> [note]
+> Čtyři mezery neznamenají, že musíš čtyřikrát zmáčknout mezerník!
+> K odsazení použij klávesu <kbd>Tab</kbd>, která vloží správný počet mezer.
+> (Pokud ne, nemáš správně nastavený editor – podívej se do lekce o instalaci.)
+> Pomocí <kbd>Shift</kbd>+<kbd>Tab</kbd> můžeš odsazení zase zmenšit.
+>
+> A ani <kbd>Tab</kbd> není vždycky potřeba.
+> Pokud napíšeš řádek s `if` bez chyby, některé editory za tebe další řádek odsadí automaticky.
+
 Po téhle části stačí napsat neodsazené `else:`, zase s dvojtečkou na konci,
 a odsazené příkazy, které se provedou v opačném případě.<br>
 Potom můžeš psát příkazy, které se provedou vždycky – ty odsazené nebudou,
 podmíněná část programu už skončila.
 
-> [note]
-> Čistě technicky, odsazení nemusí být o čtyři mezery.
+> [style-note]
+> Vzato čistě technicky, odsazení nemusí být o čtyři mezery.
 > Může být třeba o dvě nebo o jedenáct, nebo dokonce o tabulátor.
 > V rámci jednoho bloku musí být ale odsazení vždycky stejné,
 > takže když pak na jednom programu spolupracuje více lidí, musí se shodnout.
@@ -197,44 +207,30 @@ elif vek >= 0:
     print('Sunar už bohužel došel.')
 else:
     # Nenastala ani nedna ze situací výše – muselo to být záporné
-    print('Návštěvníky z budoucnosti tady nevidíme rádi.')
+    print('Pro návštěvy z budoucnosti bohužel nemáme nic v nabídce.')
 ```
 
-## Kámen nůžky papír
+## Zanořování
 
-Příkazy `if` se dají *zanořovat* (angl. *nest*):
-jeden může být vevniř ve druhém.
-Třeba takhle:
+Příkazy `if` se dají *zanořovat* (angl. *nest*).
+V odsazeném (podmíněném) bloku kódu může být další `if` s dalším odsazeným
+kódem.
+Třeba u tohoto programu, který rozdává nejapné rady do života:
 
 ```python
-tah_pocitace = 'kámen'
-tah_cloveka = input('kámen, nůžky, nebo papír? ')
+stastna = input('Jsi šťastná?')
+bohata = input('Jsi bohatá?')
 
-if tah_cloveka == 'kámen':
-    if tah_pocitace == 'kámen':
-        print('Plichta.')
-    elif tah_pocitace == 'nůžky':
-        print('Vyhrála jsi!')
-    elif tah_pocitace == 'papír':
-        print('Počítač vyhrál.')
-elif tah_cloveka == 'nůžky':
-    if tah_pocitace == 'kámen':
-        print('Počítač vyhrál.')
-    elif tah_pocitace == 'nůžky':
-        print('Plichta.')
-    elif tah_pocitace == 'papír':
-        print('Vyhrála jsi!')
-elif tah_cloveka == 'papír':
-    if tah_pocitace == 'kámen':
-        print('Vyhrála jsi!')
-    elif tah_pocitace == 'nůžky':
-        print('Počítač vyhrál.')
-    elif tah_pocitace == 'papír':
-        print('Plichta.')
+if stastna == 'ano':
+    # Tenhle kus kódu se provede, když je "šťastná"
+    if bohata == 'ano':
+        print('Gratuluji!')
+    else:
+        print('Zkus míň utrácet.')
 else:
-    print('Nerozumím.')
+    # Tenhle kus kódu se provede, když není "šťastná"
+    if bohata == 'ano':
+        print('Zkus se víc usmívat!')
+    else:
+        print('To je mi líto.')
 ```
-
-Vida, tvoje první hra!
-Jen je ještě potřeba před každým spuštěním přepsat řetězec na prvním řádku.
-Jak zařídit, aby počítač vybíral náhodně, to si povíme později.
