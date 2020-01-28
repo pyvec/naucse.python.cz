@@ -212,25 +212,39 @@ else:
 
 ## Zanořování
 
-Příkazy `if` se dají *zanořovat* (angl. *nest*).
-V odsazeném (podmíněném) bloku kódu může být další `if` s dalším odsazeným
-kódem.
-Třeba u tohoto programu, který rozdává nejapné rady do života:
+Příkazy `if` se dají *zanořovat* (angl. *nest*):
+jeden může být vevniř ve druhém.
+Třeba takhle:
 
 ```python
-stastna = input('Jsi šťastná?')
-bohata = input('Jsi bohatá?')
+tah_pocitace = 'kámen'
+tah_cloveka = input('kámen, nůžky, nebo papír? ')
 
-if stastna == 'ano':
-    # Tenhle kus kódu se provede, když je "šťastná"
-    if bohata == 'ano':
-        print('Gratuluji!')
-    else:
-        print('Zkus míň utrácet.')
+if tah_cloveka == 'kámen':
+    if tah_pocitace == 'kámen':
+        print('Plichta.')
+    elif tah_pocitace == 'nůžky':
+        print('Vyhrála jsi!')
+    elif tah_pocitace == 'papír':
+        print('Počítač vyhrál.')
+elif tah_cloveka == 'nůžky':
+    if tah_pocitace == 'kámen':
+        print('Počítač vyhrál.')
+    elif tah_pocitace == 'nůžky':
+        print('Plichta.')
+    elif tah_pocitace == 'papír':
+        print('Vyhrála jsi!')
+elif tah_cloveka == 'papír':
+    if tah_pocitace == 'kámen':
+        print('Vyhrála jsi!')
+    elif tah_pocitace == 'nůžky':
+        print('Počítač vyhrál.')
+    elif tah_pocitace == 'papír':
+        print('Plichta.')
 else:
-    # Tenhle kus kódu se provede, když není "šťastná"
-    if bohata == 'ano':
-        print('Zkus se víc usmívat!')
-    else:
-        print('To je mi líto.')
+    print('Nerozumím.')
 ```
+
+Vida, tvoje první hra!
+Jen je ještě potřeba před každým spuštěním přepsat řetězec na prvním řádku.
+Jak zařídit, aby počítač vybíral náhodně, to si povíme později.
