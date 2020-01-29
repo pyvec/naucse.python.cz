@@ -173,10 +173,10 @@ pro teď to budou kouzelná zaříkadla.
 > Pozor, záleží na typu hodnoty který chceš získat: text nebo číslo.
 > Vybírej pečlivě!
 
-* Chceš-li načíst **řetězec** (text), použij:
+* Chceš-li načíst **text**, použij:
 
   ```python
-  promenna = input('Zadej řetězec: ')
+  promenna = input('Zadej text: ')
   ```
 
 * Chceš-li načíst **celé číslo**, použij:
@@ -191,7 +191,7 @@ pro teď to budou kouzelná zaříkadla.
   promenna = float(input('Zadej číslo: '))
   ```
 
-Místo řetězce `'Zadej …'` se dá napsat i jiná výzva. 
+Místo textu `'Zadej …'` se dá napsat i jiná výzva. 
 A výsledek se samozřejmě dá uložit i do jiné proměnné než `promenna`.
 
 Hotový program může vypadat takto:

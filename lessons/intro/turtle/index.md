@@ -45,7 +45,7 @@ shape('turtle')
 Na ocase má připevněný štětec, kterým kreslí čáru.
 
 ```python
-from turtle import left, right
+from turtle import forward, left, right
 
 forward(50)
 left(60)
