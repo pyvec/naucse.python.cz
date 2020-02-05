@@ -120,6 +120,7 @@ Mezi ty nejdůležitější patří:
 * `Shift` + `v` vloží kopírovanou nebo vyjmutou buňku nad aktuální
 * `Ctrl` + `s` uloží dokument
 * `m` přepne buňku z pythonového kódu na text
+* `y` přepne buňku z textu zpět na pythonový kód
 
 **Nejdůležitější klávesová zkratka** je hned ta první - `h` - s její pomocí
 se totiž velice rychle dostanete k seznamu všech ostatních.
