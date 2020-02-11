@@ -1,16 +1,16 @@
 # Úvod do CSS
-V přechozí lekci jste si zkusily navrhnout webovou stránku jen pomocí HTML a asi jste zjistily, že taková stránka
+V přechozí lekci sis zkusila navrhnout webovou stránku jen pomocí HTML a&nbsp;asi jsi zjistila, že taková stránka
  vypadá dosti nevábně. Asi jako nevybarvené omalovánky. Ve světě webových stránek jsou právě Kaskádové styly (**CSS**)
   naše pastelky (**barvičky**).
   
   Špatnou zprávou je, že syntaxe **CSS** je rozdílná od HTML, takže si budeš muset v mozku vyčlenit další místo. Dobrou
-   zprávou je, že i **CSS** jde psát jako Python (Pythonic way), ale více až na konci lekci.
+   zprávou je, že i&nbsp;**CSS** jde psát jako Python (Pythonic way), ale více až na konci lekce.
     Teď se musíme naučit čísté **CSS**.
     
   Pro zopakování **CSS** znamená **Cascading Styles Sheets** (v češtině: Kaskádové styly).
   
  ## Aplikace CSS stylů
-  Máte napsanou HTML stránku a teď si asi říkáte, musím to celé přepisovat, když chci mít růžové pozadí a žluté písmo?
+  Máte napsanou HTML stránku a&nbsp;teď si asi říkáte, musím to celé přepisovat, když chci mít růžové pozadí a&nbsp;žluté písmo?
   Opověď zní, ano můžu, ale naštěstí nemusím. Existují tři způsoby jak dodat HTML stránce grafický styl:
   
   1. **Inline**: CSS styly jsou vložené přímo v HTML tagu zadané pomocí atributu **style**.
@@ -33,7 +33,7 @@ V přechozí lekci jste si zkusily navrhnout webovou stránku jen pomocí HTML a
                     color: red;
                 }
                 
-                a {
+                a&nbsp;{
                     color: orange;
                 }
                 
@@ -46,7 +46,7 @@ V přechozí lekci jste si zkusily navrhnout webovou stránku jen pomocí HTML a
         </html>
     ```
   3. **Externí CSS**: Poslední možností je uložit CSS jako externí soubor (přípona *.css). Vytvoř si soubor `styl.css`
-   a ulož ho do stejné složky, kde máš html soubor. Do souboru vlož jen vnitřek z předchozího příkladu:
+   a&nbsp;ulož ho do stejné složky, kde máš html soubor. Do souboru vlož jen vnitřek z předchozího příkladu:
    
    `styl.css`:
    
@@ -79,16 +79,16 @@ V přechozí lekci jste si zkusily navrhnout webovou stránku jen pomocí HTML a
    ```
 
    Odkaz na CSS obstaral tag `<link>`, který má dva atributy. Atribut **rel** udává vztah (relationship) mezi
-   současným HTML a odkazovaným dokumentem. Hodnotou _stylesheet_ říkáme, že má očekávat **css** soubor.
-    Atribut **href** (hypertext reference) odkazuje na umístění souboru, které může být relativní i absolutní. 
+   současným HTML a&nbsp;odkazovaným dokumentem. Hodnotou _stylesheet_ říkáme, že má očekávat **css** soubor.
+    Atribut **href** (hypertext reference) odkazuje na umístění souboru, které může být relativní i&nbsp;absolutní. 
 
 > [warning] Pozor!
 > Je dobrou praxí style do HTML nezadávat, tak abychom oddělili struktru dokumentu **HTML** od jeho stylu **CSS**.
 > Inline CSS používáme jen v případě pokud je důležité, aby byl text červený v každé šabloně.
 
 ## Syntaxe CSS
-Ve zkratce se syntaxe skládá ze **selektorů**, **vlastností** a **hodnot**. Výhodou je, že už známe Python, takže si
- můžeme pomoci jeho syntaxí. Představte si, že selektor je **slovník**, **vlastnost** je klíč a hodnota je **hodnota**.
+Ve zkratce se syntaxe skládá ze **selektorů**, **vlastností** a&nbsp;**hodnot**. Výhodou je, že už známe Python, takže si
+ můžeme pomoci jeho syntaxí. Představ si, že selektor je **slovník**, **vlastnost** je klíč a&nbsp;hodnota je **hodnota**.
  Definicí slovníku známe, ale co s tím, co kam ukládat? Vysvětlíme si to postupně na příkladu:
  
  ```css
@@ -98,23 +98,23 @@ body {
 }
 ```
 
-* **selektor**: Určuje, na který tag chceme aplikovat styl a můžeme si ho představit jako jméno proměnné slovníku. V 
+* **selektor**: Určuje, na který tag chceme aplikovat styl a&nbsp;můžeme si ho představit jako jméno proměnné slovníku. V 
 příkladu je to tag **body**. 
 
-* **vlastnost (property)**: Jak už název napovídá, říká nám kterou vlastnost daného tagu chceme měnit. V příkladu m
-áme vlastnosti dvě **font-size (velikost písma)** a **color (barvu písma)**. Když zůstaneme u Pythonu, tak můžeme
+* **vlastnost (property)**: Jak už název napovídá, říká nám kterou vlastnost daného tagu chceme měnit. V příkladu 
+máme vlastnosti dvě **font-size (velikost písma)** a&nbsp;**color (barvu písma)**. Když zůstaneme u&nbsp;Pythonu, tak můžeme
  vlastnost připodobnit ke klíči slovníku.
  
 * **hodnota (value)**: Hodnota je hodnota vlastnosti, je to trochu definice kruhem, ale snad je to zřejmé. Hodnotu
  stejně jako v Pythonu píšeme za dvojtečku.
  
 > [warning] Pozor!
-> Neberte příklad s Pythonem doslova, jednolivé páry vlastnost:hodnota se v CSS oddělují středníkem a středník musí
-> být i za poslední dvojicí. Stejně tak selektor se nepřiřazuje k "slovníku" znaménkem rovná se, ale jen mezerou.
+> Neberte příklad s Pythonem doslova, jednolivé páry vlastnost:hodnota se v CSS oddělují středníkem.
+> Stejně tak selektor se nepřiřazuje k "slovníku" znaménkem rovná se, ale jen mezerou.
 
 
 ### Jednotky délky
-Možná sis v předchozím příkladu všimla podivné jednoty u font-size **px**. *px* je jednotka pixelu. Co je to pixel?
+Možná sis v předchozím příkladu všimla podivné jednotky u&nbsp;font-size **px**. *px* je jednotka pixelu. Co je to pixel?
 Je to bod na tvé obrazovce, který může mít v jeden okamžik jen jednu barvu. Možná si vzpomínáš na pravěk počítačů,
  kdy obrázky vypadaly nějak takto:
 {{ figure(
@@ -123,9 +123,9 @@ Je to bod na tvé obrazovce, který může mít v jeden okamžik jen jednu barvu
 ) }} 
 
 Na srdíčku jsou vidět jednotlivé čtverečky. A jeden ten čtvereček je pixel. S dnešním _Ultra HD_ rozlišením už
- jednotlivé pixely(čtverečky) neuvidíš. 
+ jednotlivé pixely (čtverečky) neuvidíš. 
 
-A jaké jednotky délky můžeš používat? V CSS se dělí na absolutní a relativní. Pojdmě si napsat seznam:
+A jaké jednotky délky můžeš používat? V CSS se dělí na **absolutní** a&nbsp;**relativní**. Pojdmě si napsat seznam:
 
 * **absolutní**:
     * **cm**: centimetr
@@ -149,27 +149,32 @@ A jaké jednotky délky můžeš používat? V CSS se dělí na absolutní a rel
     
 ## Barvy
 Včelí medvídci ze známého večerníčku chtěli natírat svět nabílo (viz poznámka). Natírat svět jenom na bílo je nuda.
- CSS poskytuje 16&nbsp;777&nbsp;216 různých barev. A jak barvy zadávat, když jich je tolik?
+ CSS poskytuje **16&nbsp;777&nbsp;216** různých barev. A jak barvy zadávat, když jich je tolik?
 
 > [note]
-> Nás by tak nejvíce vábilo,
-> natírat celý svět na bílo.
-> Motýla i jeho larvu,
-> milujeme bílou barvu. Bílá, bílá, bílá, bílá,
-> komu by se nelíbila.
-> Bílá vrána, bílá noc,
-> bílé není nikdy moc."Čmeláci vy jste snad šílení,
-> okamžitě nechte bílení."
+> **Nás by tak nejvíce vábilo (Bílá)**  
+> Nás by tak nejvíce vábilo,  
+> natírat celý svět na bílo.  
+> Motýla i&nbsp;jeho larvu,  
+> milujeme bílou barvu. Bílá, bílá, bílá, bílá,  
+> komu by se nelíbila.  
+> Bílá vrána, bílá noc,  
+> bílé není nikdy moc."Čmeláci vy jste snad šílení,  
+> okamžitě nechte bílení." 
+>   
 >-- Zdeněk Svěrák
  
-Nemusíš se bát, že bys musela znát názvy všech barev. Pokud znáš anglický název barvy můžeš ho zkusit a pro ty jiné
+Nemusíš se bát, že bys musela znát názvy všech barev. Pokud znáš anglický název barvy můžeš ho zkusit a&nbsp;pro ty jiné
 barvy tu jsou číselné zápisy. Jak jinak, programátoři mají čísla rádi. Způsoby zadávání barev:
 
 1. **Slovně**: Barvu musíš zadávat anglickým názvem. Současné prohlížeče podporují
  [140 názvů barev](https://www.w3schools.com/colors/colors_names.asp).
 
-1. **RGB**:   RGB znamená Red - Green - Blue. To, že se dá každá barva složit kombinací červené, modré a zelené barvy
- si už asi někde slyšela. Podivej se ukázku a hned si řekneme více:
+2. **RGB**:   RGB znamená <span style="color:red">Red</span> - <span style="color:green">Green</span> - 
+<span style="color:blue">Blue</span>. To, že se dá každá barva složit kombinací
+ <span style="color:red">červené</span>, <span style="color:blue">modré</span> a
+ <span style="color:green">zelené</span> barvy
+ si už asi někde slyšela. Podivej se na ukázku a&nbsp;hned si řekneme více:
      ```css
         p {
             color:rgb(255,255,255);
@@ -179,25 +184,29 @@ barvy tu jsou číselné zápisy. Jak jinak, programátoři mají čísla rádi.
             color: rgb(100%,100%,100%);
         }
     ```
-  V našem příkladu jsme zadali, že všechny odstavce (**p**) budou mít bílou barvu a stejně tak všechny nadpisy
+  V našem příkladu jsme zadali, že všechny odstavce (**p**) budou mít bílou barvu a&nbsp;stejně tak všechny nadpisy
    (**h1**) budou mít také bílou barvu. Obsah každé složky barvy můžeme vkládat pomocí procent, to je asi z příkladu
-    zřejmé a pochopitelné. Ale co je za číslo **255**?
+    zřejmé a&nbsp;pochopitelné. Ale co je za číslo **255**?
     
-  Teď zase zpátky k matematice. Počítače pracují na principu **nul** a **jedniček**. Ano, týká se to i webových 
+  Teď zase zpátky k matematice. Počítače pracují na principu **nul** a&nbsp;**jedniček**. Ano, týká se to i&nbsp;webových 
   stránek. Pradávné počítače pracovali s osmibitovými procesory, což zjednodušeně znamená, že má 8 drátků, kam můžeme
    pouštět proud. Na každém drátku proud běží(1)/neběží(0). Tímto způsobem procesor umí pracovat s `2*2*2*2*2*2*2*2
     = 2^8 = 256` hodnotami. Historicky se ustanovilo, že **8 bitů** bude jeden **bajt**. A obřím skokem, počítačoví 
     inženýři prominou, se dostáváme k rgb.
      
- Matematiky a počítačové inženýry jsme odbyli, ale malíř by namítnul, že když smíchá **červenou**, **zelenou**
-  a **modrou** ve stejněm poměru, tak dostane **černou**. Jak to, že jsme dostali bílou? Důvod je takový, že my nemích
-  áme vodovky, ale světelné paprsky, které vytvářejí pixel. Takže když smícháš **červené**, **zelené** a **modré** 
-  světlo dostaneš světlo...**bílé**. 
+ Matematiky a&nbsp;počítačové inženýry jsme odbyli, ale malíř by namítnul, že když smíchá
+  <span style="color:red; font-weight: bold;">červenou</span>, <span style="color:green; font-weight: bold;">zelenou</span>
+  a&nbsp;<span style="color:blue; font-weight: bold;">modrou</span> ve stejném poměru, tak dostane **černou**. Jak to
+  , že jsme dostali bílou? Důvod je takový, že my
+   nemícháme vodovky, ale světelné paprsky, které vytvářejí pixel. Takže když smícháš 
+   <span style="color:red; font-weight: bold;">červené</span>,
+    <span style="color:green; font-weight: bold;">zelené</span> a&nbsp;
+    <span style="color:blue; font-weight: bold;">modré</span> světlo dostaneš světlo...
+    <span style="color:white; background-color: black">bílé</span>. 
   
-2. **Hexadecimální zápis**: Zdál se ti předchozí výklad o rgb, bitech a bajtech složitý. Jsi ráda, že už trošku
+3. **Hexadecimální zápis**: Zdál se ti předchozí výklad o rgb, bitech a&nbsp;bajtech složitý. Jsi ráda, že už trošku
  chápeš dvojkovou soustavu, tak věř, že to není všechno. Proč používat dvojkovou soustavu, když můžeme používat
   soustavu šestnáctkovou (hexadecimální). Proč by to někdo dělal? Programátoři jsou líní, to je často odpověd na
-<<<<<<< HEAD
    takové otázky. Výklad číselných soustav je mimo rozsah tohoto kurzu více se dozvíte na
     [wikipedii](https://cs.wikipedia.org/wiki/%C5%A0estn%C3%A1ctkov%C3%A1_soustava). A co ty barvy, jak je máme
      zapisovat?
@@ -217,11 +226,11 @@ barvy tu jsou číselné zápisy. Jak jinak, programátoři mají čísla rádi.
    
      Všechny barvy v příkladu jsou bílé. Hexadecimální zápis znovu využívá principu RGB. Znak `#` značí, že se jedna
      o hexadecimální zápis. První dvě číslice jsou <span style="color:red; font-weight: bold;">červená</span>,
-     prostřední dvě číslice jsou <span style="color:green; font-weight: bold;">zelená</span> a poslední 
-     dvě číslice jsou <span style="color:blue; font-weight: bold;">modrá</span>. 
+     prostřední dvě číslice jsou <span style="color:green; font-weight: bold;">zelená</span> a&nbsp;poslední 
+     dvě číslice jsou <span style="color:blue; font-weight: bold;">modré</span>. 
      
-4. **HSL**: HSL znamená hue (barva), saturation (nasycení) a lightness (světlost). Hue nabývá hodnot od 0 do 360 a
- obsahuje celou barevnou škálu. Saturation a lightness nabývají procentuálních hodnot 0 až 100.
+4. **HSL**: HSL znamená hue (barva), saturation (nasycení) a&nbsp;lightness (světlost). Hue nabývá hodnot od 0 do 360 a
+ obsahuje celou barevnou škálu. Saturation a&nbsp;lightness nabývají procentuálních hodnot 0 až 100.
  
 Zápis běžných barev:
 
@@ -239,9 +248,9 @@ Zápis běžných barev:
  
 > [note]
 >**Color picker**  
-> Teď už víš jak zapisovat barvy a co ty čísla a písmena znamenají. Nicméně dnesku už nikdo neskládá barvy pomocí 
+> Teď už víš jak zapisovat barvy a&nbsp;co ty čísla a&nbsp;písmena znamenají. Nicméně dnesku už nikdo neskládá barvy pomocí 
 >nějakých hodnot od oka, ale existují nástroje na výběr barev. Zkus googlit **color picker**. Samotný google má 
->aplikaci na výběr barev a měl by to být tvůj první výsledek vyhledávání.
+>aplikaci na výběr barev a&nbsp;měl by to být tvůj první výsledek vyhledávání.
 
 
 **background-color**  
@@ -257,7 +266,7 @@ p {
 
 ##Text
 Když se snažíš napsat nějaký dokument v textovém procesoru, tak nejčastěji budeš formátovat samotný text (velikost, 
-samotné písmo, zvýraznění textu atd.). Všechny tyto vlastnosti mají v CSS jméno a můžeme je libovolně konfigurovat.
+samotné písmo, zvýraznění textu atd.). Všechny tyto vlastnosti mají v CSS jméno a&nbsp;můžeme je libovolně konfigurovat.
 Vlastnosti textu v dokumentaci CSS nalezneš pod těmito prefixy: `font-`, `text-`, `letter-`. Tady si ukážeme ty 
 nejčastější:
 
@@ -306,7 +315,7 @@ nejčastější:
     }
   ```
   
-* **text-decoration**: nadtržení, podtržení a přeškrtnutí (<span style="text-decoration:overline">overline</span>,
+* **text-decoration**: nadtržení, podtržení a&nbsp;přeškrtnutí (<span style="text-decoration:overline">overline</span>,
 <span style="text-decoration:underline">underline</span>, <span style="text-decoration:line-through">line-through
 </span>):
   ```css
@@ -322,11 +331,11 @@ nejčastější:
     <br>
     <div style="text-align:justify;"><span style="font-weight:bold">justify:</span> Lorem ipsum dolor sit amet,
      consectetuer adipiscing elit. Aliquam in lorem sit amet leo accumsan lacinia. Fusce nibh. Nulla est.
-      Nullam at arcu a est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
+      Nullam at arcu a&nbsp;est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         Maecenas aliquet accumsan leo. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam eget nisl.
          Aliquam id dolor. Nulla non lectus sed nisl molestie malesuada. Donec quis nibh at felis congue commodo.
-          Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. </div>  
+          Curabitur ligula sapien, pulvinar a&nbsp;vestibulum quis, facilisis vel sapien. </div>  
 
     ```css
     body {
@@ -337,11 +346,11 @@ nejčastější:
 * **text-indent**: odsazení textu  
     <div style="text-indent:50px;"> Lorem ipsum dolor sit amet,
      consectetuer adipiscing elit. Aliquam in lorem sit amet leo accumsan lacinia. Fusce nibh. Nulla est.
-      Nullam at arcu a est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
+      Nullam at arcu a&nbsp;est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         Maecenas aliquet accumsan leo. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam eget nisl.
          Aliquam id dolor. Nulla non lectus sed nisl molestie malesuada. Donec quis nibh at felis congue commodo.
-          Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. </div>
+          Curabitur ligula sapien, pulvinar a&nbsp;vestibulum quis, facilisis vel sapien. </div>
 
     ```css
     p {
@@ -352,11 +361,11 @@ nejčastější:
 * **letter-spacing**: mezery mezi písmeny
     <div style="letter-spacing:3px;"> Lorem ipsum dolor sit amet,
      consectetuer adipiscing elit. Aliquam in lorem sit amet leo accumsan lacinia. Fusce nibh. Nulla est.
-      Nullam at arcu a est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
+      Nullam at arcu a&nbsp;est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         Maecenas aliquet accumsan leo. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam eget nisl.
          Aliquam id dolor. Nulla non lectus sed nisl molestie malesuada. Donec quis nibh at felis congue commodo.
-          Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. </div>
+          Curabitur ligula sapien, pulvinar a&nbsp;vestibulum quis, facilisis vel sapien. </div>
 
     ```css
     p {
@@ -367,11 +376,11 @@ nejčastější:
 * **word-spacing**: mezery mezi slovy
     <div style="word-spacing:2em;"> Lorem ipsum dolor sit amet,
      consectetuer adipiscing elit. Aliquam in lorem sit amet leo accumsan lacinia. Fusce nibh. Nulla est.
-      Nullam at arcu a est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
+      Nullam at arcu a&nbsp;est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         Maecenas aliquet accumsan leo. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam eget nisl.
          Aliquam id dolor. Nulla non lectus sed nisl molestie malesuada. Donec quis nibh at felis congue commodo.
-          Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. </div>
+          Curabitur ligula sapien, pulvinar a&nbsp;vestibulum quis, facilisis vel sapien. </div>
 
     ```css
     p {
@@ -382,11 +391,11 @@ nejčastější:
 * **line-height**: velikost řádku
     <div style="line-height:5.0;"> Lorem ipsum dolor sit amet,
      consectetuer adipiscing elit. Aliquam in lorem sit amet leo accumsan lacinia. Fusce nibh. Nulla est.
-      Nullam at arcu a est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
+      Nullam at arcu a&nbsp;est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         Maecenas aliquet accumsan leo. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam eget nisl.
          Aliquam id dolor. Nulla non lectus sed nisl molestie malesuada. Donec quis nibh at felis congue commodo.
-          Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. </div>
+          Curabitur ligula sapien, pulvinar a&nbsp;vestibulum quis, facilisis vel sapien. </div>
 
     ```css
     p {
@@ -430,8 +439,8 @@ Na příkladu to může vypadat takto:
     </body>
 </html>
 ```
-`margin` a `padding` se zadávají delkovými jednotkami. `border` je vlastnost, která spojuje tři vlastnosti dohromady
- `border-width`, `border-style` a `border-color`. Hodnoty pro `border-style` jsou: _solid, dotted, dashed, double
+`margin` a&nbsp;`padding` se zadávají delkovými jednotkami. `border` je vlastnost, která spojuje tři vlastnosti dohromady
+ `border-width`, `border-style` a&nbsp;`border-color`. Hodnoty pro `border-style` jsou: _solid, dotted, dashed, double
  , groove, ridge, inset, outset._
  
 ## Vše dohromady
@@ -458,8 +467,8 @@ Na příkladu to může vypadat takto:
 	<p>
 		Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam ornare wisi eu metus. Ut enim ad minim veniam,
 		quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis bibendum, lectus ut
-		viverra rhoncus, dolor nunc faucibus libero, eget facilisis enim ipsum id lacus. In enim a arcu imperdiet
-		malesuada. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias
+		viverra rhoncus, dolor nunc faucibus libero, eget facilisis enim ipsum id lacus. In enim a&nbsp;arcu imperdiet
+		malesuada. Itaque earum rerum hic tenetur a&nbsp;sapiente delectus, ut aut reiciendis voluptatibus maiores alias
 		consequatur aut perferendis doloribus asperiores repellat. Nulla pulvinar eleifend sem. Integer pellentesque
 		quam vel velit. Fusce nibh. Fusce tellus. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil
 		impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
@@ -479,7 +488,7 @@ Na příkladu to může vypadat takto:
 		mauris vel metus. Mauris dolor felis, sagittis at, luctus sed, aliquam non, tellus. Mauris tincidunt sem sed
 		arcu. Etiam commodo dui eget wisi. Maecenas fermentum, sem in pharetra pellentesque, <strong>turpis </strong>
 		volutpat ante,
-		in pharetra metus odio a lectus. Vestibulum fermentum tortor id mi. Etiam dui sem, fermentum vitae, sagittis id,
+		in pharetra metus odio a&nbsp;lectus. Vestibulum fermentum tortor id mi. Etiam dui sem, fermentum vitae, sagittis id,
 		malesuada in, quam. Aliquam erat volutpat. Etiam quis quam. Fusce dui leo, imperdiet in, aliquam sit amet,
 		feugiat eu, orci. Pellentesque pretium lectus id turpis. Etiam ligula pede, sagittis quis, interdum ultricies,
 		scelerisque eu. Duis bibendum, lectus ut viverra rhoncus, dolor nunc faucibus libero, eget facilisis enim ipsum
@@ -489,7 +498,7 @@ Na příkladu to může vypadat takto:
 
 	<h2>Úkoly tohoto kurzu</h2>
 	<ul>
-		<li>Naučit se HTML, CSS a pokročilé knihovny <strong
+		<li>Naučit se HTML, CSS a&nbsp;pokročilé knihovny <strong
 				style="color:#3e7bac; background-color: #ffe56b;">Pythonu</strong></li>
 		<li>
 			Výpis některých knihoven:
@@ -538,7 +547,7 @@ Na příkladu to může vypadat takto:
 	</table>
 
 	<h3>Formulář</h3>
-	<p><strong>Note:</strong> It looks the part, but won't do a damned thing.</p>
+	<p><strong>Note:</strong> It looks the part, but won't do a&nbsp;damned thing.</p>
 
 	<form action="" method="post">
 		<p>Celí jméno:</p>
@@ -656,19 +665,19 @@ em {
 ```
 
 ## Závěr
-V této hodině jsme nechtěli a ani nemohli obsáhnout všechny aspekty a zákoutí HTML a CSS a už vůbec ne celého
- webového vývoje. Cílem bylo tě seznámi s principy, které teď už ovládáš a můžeš se pokročilá témata sama doučit.
- Složité webové stránky se neobejdou bez JavaScriptu a serveru (backendu). Nicméně osobní webovou prezentaci si
-  dokážeš udělat právě jenom s HTML a CSS. Na začátku jsem sliboval, že ti úkážu jak zapisovat syntaxi CSS jednodušeji
+V této hodině jsme nechtěli a&nbsp;ani nemohli obsáhnout všechny aspekty a&nbsp;zákoutí HTML a&nbsp;CSS a&nbsp;už vůbec ne celého
+ webového vývoje. Cílem bylo seznámit tě s principy, které teď už ovládáš a&nbsp;můžeš se pokročilá témata sama doučit.
+ Složité webové stránky se neobejdou bez JavaScriptu a&nbsp;serveru (backendu). Nicméně osobní webovou prezentaci si
+  dokážeš udělat právě jenom s&nbsp;HTML a&nbsp;CSS. Na začátku jsem sliboval, že ti úkážu jak zapisovat syntaxi CSS jednodušeji
   tzv. **pythonic way**. Zkus se podívat na CSS preprocesor [Stylus](http://stylus-lang.com/).
   
 Spoustu užitečných informací o webovým vývoji nalezneš na stránkách [w3school.com](https://www.w3schools.com/)
    případně [mozilla developer](https://developer.mozilla.org/).
    
-Na stránkách w3school nalezneš i sekci [How To](https://www.w3schools.com/howto/default.asp) (jak na to), kde je
+Na stránkách w3school nalezneš i&nbsp;sekci [How To](https://www.w3schools.com/howto/default.asp) (jak na to), kde je
    obrovská databáze veškerých webových "vychytávek".
    
-Pokud to myslíš s tvorbou webových stránek vážně, tak je potřeba se naučit JavaScript a nějaký framework. Velmi
+Pokud to myslíš s tvorbou webových stránek vážně, tak je potřeba se naučit JavaScript a&nbsp;nějaký framework. Velmi
 populární pro začátek je framework [Bootstrap](https://getbootstrap.com/), který pochází od vývojářů twitteru.
 W3school vyvíjí vlastní framework [W3.CSS](https://www.w3schools.com/w3css/), který je pro začátek asi nejlepší volbou.
 
@@ -680,6 +689,3 @@ A pak jsou tady "_těžké váhy_" frontend frameworků, které stojí hlavně n
 Pro začátečníky se doporučuje **React** nebo **Vue**. **React** má nejširší základnu uživatelů, **Vue** je pro člověka,
  který v JS nemá pevné základy, jednodušší. Angular je momentálně na ústupu z důvodu jeho komplexnosti.
   
-=======
-   takové otázky. 
->>>>>>> 2020-praha-jaro-knihovny
