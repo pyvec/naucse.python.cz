@@ -197,6 +197,7 @@ barvy tu jsou číselné zápisy. Jak jinak, programátoři mají čísla rádi.
 2. **Hexadecimální zápis**: Zdál se ti předchozí výklad o rgb, bitech a bajtech složitý. Jsi ráda, že už trošku
  chápeš dvojkovou soustavu, tak věř, že to není všechno. Proč používat dvojkovou soustavu, když můžeme používat
   soustavu šestnáctkovou (hexadecimální). Proč by to někdo dělal? Programátoři jsou líní, to je často odpověd na
+<<<<<<< HEAD
    takové otázky. Výklad číselných soustav je mimo rozsah tohoto kurzu více se dozvíte na
     [wikipedii](https://cs.wikipedia.org/wiki/%C5%A0estn%C3%A1ctkov%C3%A1_soustava). A co ty barvy, jak je máme
      zapisovat?
@@ -679,3 +680,6 @@ A pak jsou tady "_těžké váhy_" frontend frameworků, které stojí hlavně n
 Pro začátečníky se doporučuje **React** nebo **Vue**. **React** má nejširší základnu uživatelů, **Vue** je pro člověka,
  který v JS nemá pevné základy, jednodušší. Angular je momentálně na ústupu z důvodu jeho komplexnosti.
   
+=======
+   takové otázky. 
+>>>>>>> 2020-praha-jaro-knihovny
