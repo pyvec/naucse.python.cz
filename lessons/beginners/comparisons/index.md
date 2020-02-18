@@ -53,12 +53,12 @@ nebo pusť `python` z příkazové řádky.)
     <tr>
         <td><code>&lt;</code>, <code>&gt;</code></td>
         <td><code>3 &lt; 5</code>, <code>3 &gt; 5</code></td>
-        <td>Větší než, menší než</td>
+        <td>Menší než, větší než</td>
     </tr>
     <tr>
         <td><code>&lt;=</code>, <code>&gt;=</code></td>
         <td><code>3 &lt;= 5</code>, <code>3 &gt;= 5</code></td>
-        <td>Větší nebo rovno, menší nebo rovno</td>
+        <td>Menší nebo rovno, větší nebo rovno</td>
     </tr>
 </table>
 
