@@ -103,7 +103,7 @@ Interaktivní zábavný git [tutoriál](https://learngitbranching.js.org/).
 
 Desktopová [aplikace](https://github.com/jlord/git-it-electron#what-to-install), která vás naučí používat Git (Jak ji nainstalovat je tam popsáno, kdybyste potřebovali pomoct, napište koučovi).
 
-Kdyby měl někdo rád kočičky, tak tady je pár nákresů, jak funguje [git purr](https://girliemac.com/blog/2017/12/26/git-purr/)
+Kdyby měl někdo rád kočičky, tak tady je pár nákresů, jak funguje [git purr](https://girliemac.com/blog/2017/12/26/git-purr/).
 
 
-A jedno na vysvětlení [githubu](https://www.youtube.com/watch?v=w3jLJU7DT5E)
+A jedno video na vysvětlení [githubu](https://www.youtube.com/watch?v=w3jLJU7DT5E).

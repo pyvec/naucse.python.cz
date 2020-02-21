@@ -1,6 +1,9 @@
-# Webová aplikace ve Flasku
+# Domácí projekty
 
 Naprogramuj jednoduchou webovou aplikaci pomocí frameworku Flask.
+
+# Webová aplikace ve Flasku
+
 Aplikace bude mít dva endpointy. První bude home page s uvítáním a návodem, co může uživatel na stránkách najít.
 Druhý bude poskytovat informace podle zadaného klíče.
 
@@ -35,3 +38,8 @@ Nezapomeň ošetřit situaci, kdy uživatel zadá klíč, který nebude ve slovn
 ### Odevzdání
 
 Řešení nezapomeň nahrát na github společně s JSONem s daty.
+
+
+# Bonusy
+
+Pojem, který by měly znát všechny vývojářky webových aplikací je [MVC pattern](https://www.tutorialspoint.com/mvc_framework/mvc_framework_introduction.htm). Co to znamená jsme lehle naťukli na lekci, kdy jste podle tohoto patternu psali svojí Flask aplikaci. Tady jsme mluvili o tom, že další webový framework Django používá MVT pattern a že jsou vlastně velmi podobné. Rozdíl mezi MVC a MVT najdete [zde](https://medium.com/shecodeafrica/understanding-the-mvc-pattern-in-django-edda05b9f43f).

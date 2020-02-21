@@ -8,6 +8,29 @@ Pojďme si ho nainstalovat a nastavit.
 
 Instalace je různá pro různé operační systémy, vyber ten svůj.
 
+## Windows
+
+Jdi na stránku [git-scm.org](https://git-scm.org), stáhni si
+Git a nainstaluj si ho.
+Při instalaci vyber tyto volby:
+
+* Run Git from the Windows Command Prompt
+* Checkout Windows-style, commit Unix-style line endings
+
+Ostatní možnosti neměň.
+
+Potom Gitu nastav editor.
+Máš-li otevřenou příkazovou řádku, zavři ji a otevři novou.
+(Instalace mění systémové nastavení, které se musí načíst znovu.)
+V nové příkazové řádce zadej:
+
+```console
+> git config --global core.editor notepad
+> git config --global format.commitMessageColumns 80
+> git config --global gui.encoding utf-8
+```
+
+A teď pokračuj v sekci [Nastavení](#config) níže – macOS přeskoč.
 
 ## Linux
 
@@ -37,31 +60,6 @@ $ git config --global core.editor nano
 ```
 
 Dál pokračuj obecným [nastavením](#config) níže.
-
-
-## Windows
-
-Jdi na stránku [git-scm.org](https://git-scm.org), stáhni si
-Git a nainstaluj si ho.
-Při instalaci vyber tyto volby:
-
-* Run Git from the Windows Command Prompt
-* Checkout Windows-style, commit Unix-style line endings
-
-Ostatní možnosti neměň.
-
-Potom Gitu nastav editor.
-Máš-li otevřenou příkazovou řádku, zavři ji a otevři novou.
-(Instalace mění systémové nastavení, které se musí načíst znovu.)
-V nové příkazové řádce zadej:
-
-```console
-> git config --global core.editor notepad
-> git config --global format.commitMessageColumns 80
-> git config --global gui.encoding utf-8
-```
-
-A teď pokračuj v sekci [Nastavení](#config) níže – macOS přeskoč.
 
 
 ## macOS
