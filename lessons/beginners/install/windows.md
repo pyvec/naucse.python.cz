@@ -1,51 +1,89 @@
 # Instalace Pythonu pro Windows
 
-Běž na [stahovací stránku Pythonu](https://www.python.org/downloads/)
-a stáhni si instalátor nejnovější stabilní verze Pythonu.
-Ověř si že je to verze **3.6.0 nebo novější** –
-verze 3.6.0 má jistá vylepšení, která budeme v tomto kurzu používat.
+Go to the [Pythonu webpage](https://www.python.org/downloads/)
+and download installer of the newest stable version of Python. For our course, please download version **3.8.1 or newer**.
 
-Jak poznat, který instalátor je ten pravý?
-Pokud má tvůj počítač 64bitovou verzi Windows,
-stáhni si *Windows x86-64 executable installer*.
-Pokud máš starší počítač s 32bitovými Windows,
-stáhni si *Windows x86 executable installer*.
-(Rozdíl je v *x86-64* versus *x86*.)
+How to recognise what installer is right for you?
+In case you have 64-bit version of the Windows, download *Windows x86-64 executable installer*.
+In case of 32-bit Windows, download *Windows x86 executable installer*.
+
+Test
 
 > [note]
-> Kde zjistíš, zda máš 32bitové nebo 64bitové Windows? Otevři nabídku
-> **Start**, vyhledat „Systém“ a otevřít **Systémové informace**.
-> Pokud máš novější počítač, téměř jistě budeš mít Windows 64bitové.
+> In case you are not sure whether you are using 32 or 64-bit Windows, open
+> **Start**, serch „System“ and open **System information**.
 >
 > {{ figure(
     img=static('windows_32v64-bit.png'),
     alt='Screenshot zjišťování verze systému',
 ) }}
 
-Stažený instalátor spusť.
-Na začátku instalace zaškrtni **Install launcher for all users**
-a také **Add Python to PATH**.
-Tyto volby ti zjednoduší vytvoření virtuálního prostředí.
+Then run installer.
+At the beginning of the installation process choose **Install launcher for all Users**
+and also **Add Python 3.8 to PATH**.
 
-(Jestli nemáš administrátorské oprávnění, volbu
-*Install launcher for all users* nezaškrtávej.)
+(In case you don't have admin account on your computer, don't check option
+*Install launcher for all Users* )
 
 {{ figure(
     img=static('windows_add_python_to_path.png'),
     alt='Screenshot instalace Pythonu',
 ) }}
 
-Pak zmáčkni **Install now** a dále se drž instrukcí.
+Press **Install now** and follow the instructions
 
-Máš-li otevřenou příkazovou řádku, po instalaci Pythonu ji zavři a otevři
-novou.
-Instalace mění systémové nastavení, které se musí načíst znovu.
 
-Pokud chceš nainstalovat doplňování příkazů v interaktivní příkazové řádce, nasinstalujte tuto funkcí pomocí následujících příkazů:
 
+## Vytvoření virtuálního prostředí
+
+<!-- Pozn. Tahle sekce je velice podobná pro Linux, Mac i Windows;
+     měníš-li ji, koukni se jestli není změna potřeba i jinde. -->
+
+{%- if var('pyladies') -%}
+{% set rootname = 'pyladies' %}
+{%- else -%}
+{% set rootname = 'naucse-python' %}
+{%- endif -%}
+
+Once the Python will be installed, please create virtuall environment.
+
+Choose the folder where you want to have files related to the Tieto Python Academy.
+It can be for example `C:\{{ rootname }}`.
+
+Open the command line({{ lesson_url('beginners/cmdline') }})
+and using `cd` switch to it.
+Create virtual environment:
+
+```dosvenv
+> py -3 -m venv venv
 ```
-pip install pyreadline
 
-pip install ipython[shell]
-```
+Directory <code><span class="pythondir">~/{{ rootname }}</span>\venv</code> were created,
 
+
+## Virtual environment activation
+
+You canenable the virtual environment like this:
+
+<div class="highlight">
+<pre><code><span class="gp">&gt;</span> <span class="pythondir">~/{{ rootname }}</span>\venv\Scripts\activate
+</code></pre></div>
+
+> [note]
+> Nezapomeň místo <span class="pythondir">~/{{ rootname }}</span> zadat
+> „svůj“ adresář!
+
+Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
+(před `>`) objevit slovo `(venv)`.
+Tak poznáš, že je virtuální prostředí *aktivní*.
+
+Tenhle příkaz si zapiš. Budeš ho muset zadat vždycky, když pustíš příkazovou řádku,
+než se pustíš do programování.
+{% if var('pyladies') -%}
+Máš-li vytištěné <a href="http://pyladies.cz/v1/s001-install/handout/handout.pdf">domácí projekty</a>,
+můžeš si ho poznačit tam :)
+{%- endif %}
+
+Zkusme teď nainstalovaný Python použít!
+To už bude stejné pro tebe i pro lidi na Linuxu a Macu.
+Sejdeme se na [další stránce]({{ lesson_url('beginners/first-steps') }}), kde uděláme první krůčky s Pythonem.
