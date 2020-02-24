@@ -146,7 +146,7 @@ na výrazy a jejich hodnoty podíváme podrobněji.
 > print(1, 2, 3)
 > ```
 >
-> Kolem operátorů jako `+` a `*` se obyčejně píše jedna mezera zleva a
+> Kolem operátorů jako `+` a `/` se obyčejně píše jedna mezera zleva a
 > jedna zprava. Někdy je ale přehlednější obě vynechat:
 > ```python
 > print(2 + 8)
