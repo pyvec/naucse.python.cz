@@ -1,40 +1,42 @@
-# Instalace Pythonu pro Windows
+# Python installation for Windows 
 
-Go to the [Pythonu webpage](https://www.python.org/downloads/)
-and download installer of the newest stable version of Python. For our course, please download version **3.8.1 or newer**.
+Go to [the Python website](https://www.python.org/downloads/) and 
+download the latest stable version of Python. From version 3.6.0.
+there are some enhancements for Windows so download only version
+ **3.6.0 and above**.
 
-How to recognise what installer is right for you?
-In case you have 64-bit version of the Windows, download *Windows x86-64 executable installer*.
-In case of 32-bit Windows, download *Windows x86 executable installer*.
+How to know which installer is the right one?
+If your computer has 64bit Windows then download *Windows x86-64 executable installer*.
+If your Windows is only 32bit download *Windows x86 executable installer*.
 
-Test
 
 > [note]
-> In case you are not sure whether you are using 32 or 64-bit Windows, open
-> **Start**, serch „System“ and open **System information**.
+> If you don't know what Windows version do you have just open **Start**, 
+> search **System** and open **System information**.
 >
 > {{ figure(
     img=static('windows_32v64-bit.png'),
-    alt='Screenshot zjišťování verze systému',
+    alt='Windows version',
 ) }}
 
-Then run installer.
-At the beginning of the installation process choose **Install launcher for all Users**
-and also **Add Python 3.8 to PATH**.
+Then you can run the installer.
+In the beginning check **Install launcher for all Users**
+and also **Add Python 3.6 to PATH**.
+This will make creating venv much easier.
 
-(In case you don't have admin account on your computer, don't check option
-*Install launcher for all Users* )
+(If you don't have admin rights don't check *Install launcher for all Users*.)
 
 {{ figure(
     img=static('windows_add_python_to_path.png'),
-    alt='Screenshot instalace Pythonu',
+    alt='Python installation',
 ) }}
 
-Press **Install now** and follow the instructions
+Then click **Install now** and follow the instructions.
+
+If you have your command line open, close it and open again.
 
 
-
-## Vytvoření virtuálního prostředí
+## Virtual environment creation
 
 <!-- Pozn. Tahle sekce je velice podobná pro Linux, Mac i Windows;
      měníš-li ji, koukni se jestli není změna potřeba i jinde. -->
@@ -70,20 +72,10 @@ You canenable the virtual environment like this:
 </code></pre></div>
 
 > [note]
-> Nezapomeň místo <span class="pythondir">~/{{ rootname }}</span> zadat
-> „svůj“ adresář!
+> Don't forgot to enter <span class="pythondir">~/{{ rootname }}</span>
+> your directory
 
-Po spuštění tohoto příkazu by se mělo na začátku příkazové řádky
-(před `>`) objevit slovo `(venv)`.
-Tak poznáš, že je virtuální prostředí *aktivní*.
+You should see
+(in front of `>`) you should see word `(venv)`.
+That mean that venv is *active*.
 
-Tenhle příkaz si zapiš. Budeš ho muset zadat vždycky, když pustíš příkazovou řádku,
-než se pustíš do programování.
-{% if var('pyladies') -%}
-Máš-li vytištěné <a href="http://pyladies.cz/v1/s001-install/handout/handout.pdf">domácí projekty</a>,
-můžeš si ho poznačit tam :)
-{%- endif %}
-
-Zkusme teď nainstalovaný Python použít!
-To už bude stejné pro tebe i pro lidi na Linuxu a Macu.
-Sejdeme se na [další stránce]({{ lesson_url('beginners/first-steps') }}), kde uděláme první krůčky s Pythonem.
