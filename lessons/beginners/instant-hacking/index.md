@@ -1,10 +1,8 @@
-## Interaktivní příkazová řádka Pythonu
+## Python Interactive Command Line
 
-Zkontroluj si, že máš aktivované virtuální prostředí (na začátku příkazové
-řádky ti svítí `(venv)`).
+Check, that you have  enabled`(venv)`).
 
-Je-li tomu tak, nezbývá než – konečně – pustit Python.
-K tomu použij příkaz `python`:
+If so, run command `python`:
 
 ``` plain
 (venv)$ python
@@ -14,41 +12,37 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 
-Zkus napsat do příkazového řádku příkaz:
-
+Try to enter following command:
 ```
 >>> print("Hello, world!")
 ```
 
-Když stiskneš Enter, měl by se ti objevit nýsledující výstup:
-
+In case you hit Enter, you should see following:
 ```
 Hello, world!
 >>>
 ```
 
-Pokud jste zvyklí z jiných programovacícj jazyků, že řádka musí být ukončena středníkem, pak v Pythonu to není zapotřebí.
-
-Toto značí příkazový řádek:
+In Python, this means new line:
 
 ```
 >>>
 ```
 
-Pokud do něj napíšeš řetězec v uvozovkách:
+In case you wrote text in quotation marks:
 
 ```
 >>> "Hello world!"
 ```
 
-dostaneš následující výstup:
 
+You will get following output:
 ```
 'Hello world!'
 >>>
 ```
 
-Pokud ale zkusíš napsat podobný příkaz:
+But if you will write command:
 
 ```
 >>> Have fun!
@@ -59,18 +53,18 @@ SyntaxError: invalid syntax
 >>>
 ```
 
-Obdržíš chybové hlášení, že Python interpret nerozumí příkazu.
+You will receive error message. Python doesn;t understand such command.
 
-### Čísla a výrazy
+### Numbers and expressions
 
-Zkus následující příkazy:
+Try commands:
 
 ```
 >>> 2 + 2
 4
 ```
 
-Výsledkem sčítání je celé číslo. Pokud budeme dělit, výsledkem bude číslo s pohyblivou čárkou (floating-point number).
+The result is an integer. If we want to divide, we will receive floating-point number.
 
 
 ```
@@ -80,7 +74,7 @@ Výsledkem sčítání je celé číslo. Pokud budeme dělit, výsledkem bude č
 1.0
 ```
 
-Pokud tě zajímá celočíselné dělení, zkus:
+Try also this:
 
 ```
 >>> 1 // 2
@@ -91,14 +85,14 @@ Pokud tě zajímá celočíselné dělení, zkus:
 2.0
 ```
 
-Operátor modulo:
+Modulo operator:
 
 ```
 >>> 1 % 2
 1
 ```
 
-Některé příklady celočíselného dělení a zbytku po celočíselném dělení:
+The rest after whole number division:
 
 ```
 >>> 10 // 3
@@ -111,7 +105,7 @@ Některé příklady celočíselného dělení a zbytku po celočíselném děle
 0
 ```
 
-Poslední operátor na který se podíváme je operátor exponenciální operátor:
+Exponent operator
 
 ```
 >>> 2 ** 3
@@ -190,9 +184,9 @@ print(3 * 3)
 9
 ```
 
-### Získání vstupu od uživatele
+### How to get input from the user
 
-Pokud potřebuješ v programu získat od uživatele nějakou vstupní hodnotu, můžeš použít funkci input.
+In case you want to get some input from the user, you can use input function.
 
 ```
 >>> input('Zadejte velikost vasich bot: ')
@@ -200,7 +194,7 @@ Zadejte velikost vasich bot: 45
 '45'
 ```
 
-Pomocí funce input můžeš přiřadit nejakou hodnotu do proměnné, například takto:
+You can assign output from input function to the variable:
 
 ```
 >>> x = input("x: ")
@@ -209,12 +203,7 @@ x: 45
 y: 23
 ```
 
-A nyní můžeš ověřit, že hodnoty byly přiřazeny proměnným x a y a můžeš je dále použít:
 
-```
->>> print(int(x) * int(y))
-1035
-```
 
 >[note]
 > Všimni si, že jsme uvnitř funkce print museli u proměnných x a y použít funkci *int()*.  Jedná se o tzn. přetypování, které jsme museli udělat, protože uživatel zadal hodnoty do proměnných x a y jako řetězce a ne jako čísla. Zkus si, co by se stalo, kdyby jsi přetypování neprovedl.
