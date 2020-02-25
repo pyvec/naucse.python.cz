@@ -3,77 +3,86 @@
 
 {% block install %}
 
-Editor {{ editor_name }}
-si stáhni z jeho [domovské stránky]({{ editor_url }})
-a nainstaluj.
+Download {{ editor_name }}
+from its [webpage]({{ editor_url }})
+and install it.
 
 {% endblock %}
 
-## Nastavení
+## Settings
 
 {% block setup %}
 
-(Tohle by nemělo být vidět)
 
 {% endblock %}
 
 
-## Nácvik odsazování
+## Indentation practice
 
-Jak už bylo zmíňeno, v Pythonu je důležité, kolika mezerami řádek začíná.
-Proto se nám bude hodit vědět, jak rychle odsazovat bloky textu.
-Pojďme si ukázat, jak na to.
+As we already mentioned it's important in Python by how much spaces
+is line indented. So we will have to learn to quickly indent block
+of text.
 
-Zkopíruj si do editoru tento text:
+First of all copy following text into your editor.
+
 
 ```
-Ofelie:
-Ach princi!
-Jak má se Vaše Výsost už tak dlouho?
-Hamlet:
-Děkují poníženě: skvěle, skvěle, skvěle.
-Ofelie:
-Mám od vás, princi, stále ještě dárky,
-Jež dávno toužím vrátit. Prosím vás,
-račte je přijmout teď.
-Hamlet:
-Kdo? Já? Já nikdy
-vám nedal nic.
-Ofelie:
-Dal, Výsosti. A spolu s dárky slova
-tak rozmilá, že každý z nich
-měl jejich vůni. Ta teď vyvanula,
-a tak je vracím. Dary nejbohatší
-se mění v trety, když se dárce mračí.
-Zde, Výsosti.
+OPHELIA:
+Good my lord,
+How does your honour for this many a day?
+HAMLET:
+I humbly thank you; well, well, well.
+OPHELIA:
+My lord, I have remembrances of yours,
+That I have longed long to re-deliver;
+I pray you, now receive them.
+HAMLET:
+No, not I;
+I never gave you aught.
+OPHELIA:
+My honour'd lord, you know right well you did;
+And, with them, words of so sweet breath composed
+As made the things more rich: their perfume lost,
+Take these again; for to the noble mind
+Rich gifts wax poor when givers prove unkind.
+There, my lord.
 ```
 
-<small>(úryvek ze hry Hamlet, napsal W. Shakespeare, překlad E. A. Saudek)</small>
+<small>Hamlet, W. Shakespeare</small>
 
 
-Tenhle text není moc přehledný, tak ho zkusíme poodsazovat, aby vypadal takhle:
+This text is not well-arranged so we will indent it like that:
 
 ```
-Ofelie:
-    Ach princi!
-    Jak má se Vaše Výsost už tak dlouho?
-Hamlet:
-    Děkují poníženě: skvěle, skvěle, skvěle.
-Ofelie:
-    Mám od vás, princi, stále ještě dárky,
-    Jež dávno toužím vrátit. Prosím vás,
-    račte je přijmout teď.
-atd.
+OPHELIA:
+    Good my lord,
+    How does your honour for this many a day?
+HAMLET:
+    I humbly thank you; well, well, well.
+OPHELIA:
+    My lord, I have remembrances of yours,
+    That I have longed long to re-deliver;
+    I pray you, now receive them.
+HAMLET:
+    No, not I;
+    I never gave you aught.
+OPHELIA:
+    My honour'd lord, you know right well you did;
+    And, with them, words of so sweet breath composed
+    As made the things more rich: their perfume lost,
+    Take these again; for to the noble mind
+    Rich gifts wax poor when givers prove unkind.
+    There, my lord.
 ```
 
-Abys odsadil{{a}} jeden řádek, nastav kurzor na začátek řádku a stiskni
-klávesu <kbd>Tab</kbd>.
-Každým stisknutím řádek odsadíš o 4 mezery.
+To indent one line set you coursor in the beginning of the line
+and press <kbd>Tab</kbd>.
+With every press you will indent the like by 4 spaces.
 
-Odsadíš-li moc, pomocí <kbd>Shift</kbd>+<kbd>Tab</kbd> odsazení zmenšíš.
+If you indent too much, press <kbd>Shift</kbd>+<kbd>Tab</kbd>.
 
-Chceš-li odsadit víc řádků najednou, všechny je vyber a stiskni <kbd>Tab</kbd>.
-I výběr můžeš „od-odsadit“ pomocí <kbd>Shift</kbd>+<kbd>Tab</kbd>.
+If you would want to indent more lines just highlight them and
+press <kbd>Tab</kbd>.
+For undo press <kbd>Shift</kbd>+<kbd>Tab</kbd>.
 
 
-A to je vše! Teď máš nejen nastavený editor, ale umíš ho i používat.

@@ -2,7 +2,7 @@
 
 {% block install %}
 
-Na Linuxu se {{ editor_name }} instaluje jako ostatní programy:
+Linux installation:
 
 Fedora
 :   ```console
@@ -14,9 +14,7 @@ Ubuntu
     $ sudo apt-get install {{ editor_cmd }}
     ```
 
-Používáš-li jiný Linux, předpokládám že programy instalovat umíš. :)
-
-Pro Windows a macOS se {{ editor_name }} dá stáhnout z [domovské stránky]({{ editor_url }}).
+For Windows and macOS you can probably download {{ editor_name }} from its [webpage]({{ editor_url }}).
 
 {% endblock %}
 

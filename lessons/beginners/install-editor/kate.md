@@ -8,30 +8,25 @@
 
 {% block setup %}
 
-Číslování řádků
-:   V menu Pohled<span class="en">/View</span> vyber
-    Ukazovat čísla řádek<span class="en">/Show Line Numbers</span>.
+Line numbers
+:   In menu View pick Show Line Numbers.
 
-Odsazování
-:   V Menu Nastavení<span class="en">/Settings</span> vyber
-    Nastavit 'Kate'<span class="en">/Configure Kate</span>.
+Indentation:
+:   In Settings choose Configure Kate
 
-    Tam v Úpravy<span class="en">/Editing</span> vyber
-    Odsazování<span class="en">/Indentation</span>.
+    Editing > Indentation
 
-    Tam nastav:
+    Now set here:
 
-    * Výchozí režim odsazení<span class="en">/Default indentation mode</span>: Python
-    * Odsazovat pomocí<span class="en">/Indent using</span>: Mezer<span class="en">/Spaces</span>
-    * Šířka tabulátoru<span class="en">/Tab Width</span>: 4 znaky
-    * Odsadit pomocí<span class="en">/Indentation width</span>: 4 znaky
-    * Klávesa Backspace zpětně odsazuje v úvodních mezerách<span class="en">/Backspace key in leading blank space unindents</span>
+    * Default indentation mode: Python
+    * Indent using: Spaces
+    * Tab Width: 4
+    * Indentation width: 4
+    * Backspace key in leading blank space unindents
 
-Obarvování
-:   Obarvování funguje automaticky, ale způsob obarvování se vybírá podle
-    koncovky souboru – např. `.py` pro Python.
+Colours:
+:   Colouring of code is automatic if you save the file with proper extension
+    – e. g. `.py` for Python.
 
-    Proto, jakmile v tomhle editoru vytvoříš nový soubor, měl{{a}} bys ho co
-    nejdřív uložit pod správným jménem.
-
+    So it's better if you save your file as early as possible.
 {% endblock %}

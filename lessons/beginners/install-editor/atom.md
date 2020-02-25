@@ -2,47 +2,39 @@
 {% set editor_url = 'https://atom.io' %}
 {% extends lesson.slug + '/_base.md' %}
 
-{% block name_gen %} Atomu {% endblock %}
+{% block name_gen %} Atom {% endblock %}
 
 {% block setup %}
 
-V Atomu se nemusí nic nastavovat, funguje „od výroby“ tak, jak má.
+You don't have to set up anything in Atom.
 
-Odsazování a obarvování bude fungovat správně jen v souborech s koncovkou `.py`
-(jako Python).
-V jiných programovacích jazycích se totiž odsazuje i obarvuje jinak.
+Indentation and colouring, how we want it, works only with files with `.py`
+extension.
 
-Proto jakmile v tomhle editoru vytvoříš nový soubor,
-měl{{a}} bys ho co nejdřív uložit pod správným jménem.
+So it's better if you save your file as early as possible.
 
-## Kontrola stylu zdrojového kódu
+## Code style
 
-Jedna věc nám v Atomu přeci jen chybí: plugin pro kontrolu správného
-stylu zdrojového kódu.
+There is just one thing missing in Atom: plug-in for checking
+code style
 
-Tak jako čeština má Python typografická pravidla.
-Například za čárkou se píše mezera, ale před ní ne.
-Jsou nepovinná, program bude fungovat i při jejich nedodržení,
-ale pomáhají psát přehledný kód, tak je dobré je dodržovat už od začátku.
-Pravidla pro Python jsou popsána v dokumentu
-[PEP8](https://www.python.org/dev/peps/pep-0008/).
+As every written language Python also has its typographic rules.
+You can find them here in [PEP8](https://www.python.org/dev/peps/pep-0008/) document.
 
-Aby sis je nemusel{{a}} všechny pamatovat, nainstaluj si plugin,
-který tě na jejich porušení upozorní.
+If you don't want to remember them just install plug-in which will always
+notice you if you violate some.
 
-Nejprve je potřeba si nainstalovat speciální knihovnu, která se o kontrolu
-dokáže postarat. Do příkazové řádky zadej následující:
+Firstly we will have to install special library which takes care of this.
+Write into your command line:
 
 ```console
 $ python -m pip install flake8
 ```
 
-A nyní si nainstaluj plugin do samotného editoru. V hlavní nabídce vyber
-„Soubor > Nastavení<span class="en">/File > Settings</span>“ a v nabídce
-uprostřed okna vyber poslední položku
-„Instalovat<span class="en">/Install</span>“. Do vyhledávacího pole zadej
-„linter-flake8“ a v seznamu nalezených pluginů klikni u položky stejného jména
-na tlačítko „Instalovat<span class="en">/Install</span>“. Bude ještě potřeba
-schválit instalaci všech závislostí, na které se Atom postupně zeptá.
+And now just install the plug-in.
+In the main menu choose "File > Settings" and click on "Install".
+Then search for "linter-flake8" and in the list click "Install" next to
+the "linter-flake8". You will be also asked for installation of every 
+dependency.
 
 {% endblock %}

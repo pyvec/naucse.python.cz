@@ -1,57 +1,30 @@
-# Instalace editoru
+# Editor installation
 
-Editor, program na úpravu textu, je základní pomůcka
-každého programátora,
-takže je dobré do něj investovat trochu času.
+An editor is a program for editing plain text. It is an essential tool for 
+every programmer.
 
-Je víceméně jedno, který programátorský editor budeš používat.
-Pokud už nějaký oblíbený máš, stačí ho jen nastavit;
-jestli ne, nějaký ti doporučíme.
-Pokud ale používáš Poznámkový blok (Notepad) z Windows,
-nebo TextEdit (editor předinstalovaný v macOS),
-nebude ti stačit.
-Stejně tak nejsou vhodné programy jako Word či Writer.
+It doesn't matter which editor you use, just don't use
+Notepad, TextEdit, Word, or Writer.
+If you already have some favourite, it will just need to be set up.
 
 
-## Co programátorský editor umí
+## What can editors for programmers do?
 
-Editor pro programátory nám umožňuje upravovat *prostý text* – písmenka.
-Na rozdíl od programů jako Word, Writer či Pages neumožňuje text *formátovat*,
-tedy dělat nadpisy, obarvovat, zvětšovat font, vkládat obrázky a podobně.
+Editors for programmers let us edit *plain text*. Unlike programs such as Word, 
+Writer, or Pages, it does not let us *format* text.
 
-Pomocí editoru budeme zadávat počítači příkazy, takže formátování nepotřebujeme.
-Porovnej {{ gnd('sám', 'sama') }}, jaký je rozdíl mezi následujícími příkazy
-pro někoho, kdo se jimi má řídit:
+Since we use the editor to enter commands for the computer, we do not need any formatting, 
+we just want to use some of their built-in tricks:
+* Multiple file support – useful for larger projects with multiple files
+* Line numbering – each line shows the number. Great for debugging
+* Offset – (indentation) Very important in Python.
+* Coloring – custom code highlighting helps with readability. 
 
-* Nakresli mi beránka!
-* <font color="green">Nakresli <big><big>mi</big> <u>beránka</u>!</big></font>
 
-To, že neumí formátování, neznamená že jsou naše editory úplně „hloupé“
-nástroje.
-Aby se nám programy upravovaly pohodlněji, mají několik vychytávek:
-
-Podpora více souborů
-:   Větší projekty sestávají z více souborů, které můžeš mít v editoru
-    otevřené všechny najednou.
-
-Číslování řádků
-:   Před každým řádkem se ukazuje číslo.
-    To se bude velice hodit, až Python bude nadávat, že chyba je na řádku 183. 
-
-Odsazování
-:   V Pythonu je důležité, kolika mezerami řádek začíná.
-    Správně nastavený editor nám odsazování značně zjednoduší.
-
-Obarvování
-:   Ačkoli nemůžeme u jednotlivých písmenek nastavovat barvu přímo, editor nám
-    obarvením může napovědět, jak našim instrukcím bude počítač rozumět.
-    Ale je to jenom nápověda:
-    programátor s jinak nastaveným editorem může mít stejný soubor obarvený
-    docela jinak.
 
 > [note]
 >
-> Pro ilustraci, takhle může v editoru vypadat kousek kódu:
+> That's what a piece of code looks like in the editor:
 >
 > ```python
 >     1  @app.route('/courses/<course:course>/')
@@ -67,51 +40,31 @@ Obarvování
 > ```
 
 
-## Volba a nastavení editoru
+## Choosing and setting up an editor
 
-Vybereš-li editor, klikni na jeho jméno a dostaneš se na instrukce ke stažení
-a nastavení.
-(Na tuhle stránku se pak už nemusíš vracet.)
+We recommend using *Atom* for now.
 
-Nemáš-li už vlastní oblíbený editor, pro Windows a macOS
-doporučujeme *Atom*:
+* [Atom]({{ subpage_url('atom') }}) 
 
-* [Atom]({{ subpage_url('atom') }}) – doporučený editor pro
-  Windows a macOS.
+You will already have some editor on Linux (but you can always download Atom).
+Just try to type into your command line `gedit` or `kate`, and if an editor 
+opens, that's your default Linux editor.
 
-Na Linuxu budeš mít pravděpodobně už nainstalovaný Gedit nebo Kate.
-Zkus se podívat do systémové nabídky, jestli jeden z nich máš (případně je
-spusť z příkazové řádky jako `gedit`, resp. `kate`).
-Pokud ano, klikni na odkaz níže a editor si nastav.
-Nemáš-li ani jeden, vyber třeba Gedit.
+* [Gedit]({{ subpage_url('gedit') }}) – GNOME.
+* [Kate]({{ subpage_url('kate') }}) – KDE.
 
-* [Gedit]({{ subpage_url('gedit') }}) – bývá na systémech s prostředím GNOME.
-* [Kate]({{ subpage_url('kate') }}) – bývá na systémech s prostředím KDE.
-
-Existují i jiné editory, na které máme návody:
-
-* [Notepad++]({{ subpage_url('notepad-plus-plus') }}) – editor doporučovaný
-  v předchozích verzích těchto materiálů.
-* [Ostatní]({{ subpage_url('others') }}) – máš-li jiný editor, zkontroluj
-  si že je správně nastaven.
 
 
 ### IDE
 
-Existují i složitější a mocnější editory, takzvané *IDE* (angl. *Integrated
-Development Environment*, integrované vývojové prostředí),
-třeba [PyCharm], [Eclipse] nebo [KDevelop].
-Umí spoustu pokročilých funkcí, které programátorům pomáhají:
-našeptávání, přejmenovávání, spouštění programů, správu virtuálních prostředí
-a podobně.
-Na začátek ale nejsou moc vhodné.
+Most Python programmers use complex and extremely powerful programs, so-called `IDEs` 
+(*Integrated Development Environments*),
+such as [PyCharm], [Eclipse] or [KDevelop].
+But they are not very suitable for beginners.
 
-Chceš-li takový editor přesto použít, měl{{a}} bys ho už poměrně dobře znát:
-vědět, co za tebe dělá editor a jak to spravit, až něco udělá špatně.
-{% if var('coach-present') -%}
-Koučové většinou znají jen jeden editor – ten, který používají –
-takže nemusí být schopní s pokročilým IDE rychle pomoct.
-{%- endif %}
+If you want to use an IDE, you should really know it well. And also keep in mind
+that every coach knows only that one IDE that they use most often, so they might not
+be able to help you with another.
 
 [PyCharm]: https://www.jetbrains.com/pycharm/
 [Eclipse]: https://eclipse.org/
