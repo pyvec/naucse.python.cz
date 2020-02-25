@@ -1,138 +1,130 @@
 # Git
 
-Další program, který budeme později potřebovat,
-nám později umožní (mimojiné) spolupracovat
-na vznikajících programech s ostatními.
-Jmenuje se Git.
-Pojďme si ho nainstalovat a nastavit.
+There is another program that we will install and that will later let us cooperate
+and develop programs together with other people. It's called Git.
+Let's install it and set it up.
 
-Instalace je různá pro různé operační systémy, vyber ten svůj.
+The installation procedure is different for different operating systems, so choose yours.
 
 
 ## Linux
 
-Instalaci na Linux zvládneme jedním příkazem:
+In Linux, we can install it with one command:
 
 **Fedora, RHEL**:
 
 ```console
-$ sudo dnf install git gitk git-gui nano
+$ sudo dnf install git git gui nano
 ```
 
 **Ubuntu, Debian**:
 
 ```console
-$ sudo apt-get install git gitk git-gui nano
+$ sudo apt-get install git git-gui nano
 ```
 
-U jiných Linuxů předpokládám, že instalovat umíš; nainstaluj si *git*,
-*gitk*, *git gui* a *nano*.
+If you are using some other distribution we expect that you already know
+how to install programs. Go ahead and install *git*, *gitk*, *git gui* and *nano*.
 
-Jestli máš nainstalováno, ještě nastav Gitu editor.
-Pokud nemáš rád{{a}} Vim (nebo nevíš co to je),
-zadej tento příkaz:
+After you have installed git, choose your Git editor.
+If you do not like Vim (or you do not know what it is)
+enter this command to choose a more user-friendly editor called Nano:
 
 ```console
-$ git config --global core.editor nano
+$ git config - global core.editor nano
 ```
 
-Dál pokračuj obecným [nastavením](#config) níže.
+Continue with the general [settings](#config) below.
 
 
 ## Windows
 
-Jdi na stránku [git-scm.org](https://git-scm.org), stáhni si
-Git a nainstaluj si ho.
-Při instalaci vyber tyto volby:
+Go to [git-scm.org](https://git-scm.org), download Git and install it.
+When installing, select these options:
 
 * Run Git from the Windows Command Prompt
 * Checkout Windows-style, commit Unix-style line endings
 
-Ostatní možnosti neměň.
+Do not change any other options.
 
-Potom Gitu nastav editor.
-Máš-li otevřenou příkazovou řádku, zavři ji a otevři novou.
-(Instalace mění systémové nastavení, které se musí načíst znovu.)
-V nové příkazové řádce zadej:
+Then set your Git editor.
+If you have a terminal window open, close it, and open a new one.
+(The installation changes system settings which have to be loaded again.)
+In the new command line, enter:
 
 ```console
-> git config --global core.editor notepad
+> git config - global core.editor notepad
 > git config --global format.commitMessageColumns 80
-> git config --global gui.encoding utf-8
+> git config - global gui.encoding utf-8
 ```
 
-A teď pokračuj v sekci [Nastavení](#config) níže – macOS přeskoč.
+Now go to [Settings](#config) below.
 
 
 ## macOS
 
-Spusť v příkazové řádce `git`.
-Je-li už nainstalovaný, dozvíš se, jak ho používat
-(výpis začíná `usage`).
-Jinak ho nainstaluj pomocí Homebrew:
+Try to run `git` on the command line.
+If it's already installed, it will show you how to use it.
+Otherwise, install it using Homebrew:
 
 ```console
 $ brew install git
 ```
 
-Nainstalovanému Gitu je ještě potřeba nastavit editor (zadej `nano`,
-i když sis v rámci instalace editoru nainstaloval{{a}} např. Atom).
-Dělá se to tímto příkazem:
+It is still necessary to set up your Git editor (enter `nano`,
+even if you installed for example Atom during the installation of the editor).
+You do that with this command:
 
 ```console
-$ git config --global core.editor nano
+$ git config - global core.editor nano
 ```
 
-Dál pokračuj obecným nastavením:
+Continue with the general settings:
 
 
 {{ anchor('config') }}
-## Nastavení
+## Settings
 
-Na projektu, který bude uložen v Gitu, může
-spolupracovat více lidí.
-Aby šlo dohledat, kdo udělal kterou změnu, je Gitu
-potřeba říct jméno a e-mail.
-Do příkazové řádky zadej následující příkazy, změň v nich ale
-jméno a adresu:
+Several people can collaborate in one project in Git.
+To track who make a specific change, we need to
+tell Git our name and e-mail.
+At the command prompt, enter the following commands, but change the
+name and address to yours:
 
 ```console
 $ git config --global user.name "Adéla Novotná"
-$ git config --global user.email adela.novotna@example.cz
+$ git config --global user.email adela.novotna@example.com
 ```
 
-Můžeš samozřejmě použít i přezdívku, nebo dokonce
-falešný e-mail, ale v takovém případě bude složitější se
-zapojit do týmových projektů.
-Každopádně, jméno i e-mail jdou kdykoli změnit
-tím, že konfigurační příkazy zadáš znovu.
+You can of course use a nickname or even
+fake email, but then it will be more complicated to
+engage in team projects.
+Anyway, your name and email can be changed at any time
+by typing the configuration commands again.
 
 > [note]
-> Pokud se bojíš spamu, neboj: nezačneš ho dostávat víc
-> než při normálním používání e-mailu.
-> Adresa se zobrazí jen lidem, kteří si stáhnou projekt,
-> do kterého jsi přispíval{{a}}.
-> Spammeři se většinou zaměřují na méně technicky zdatné
-> lidi, než jsou uživatelé Gitu. :)
+> If you are afraid of spam, do not worry.
+> Your e-mail address can be viewed only by people who download the project
+> to which you contributed.
+> Spammers mostly focus on less technically capable people than Git users. :)
 
-Dále si můžeš nastavit barevné výpisy – pokud si tedy
-(jako někteří autoři Gitu) nemyslíš, že příkazová
-řádka má být černobílá:
+You can also set up color listings - if you don't think
+(like some Git authors) that the command line should be black and white:
 
 ```console
 $ git config --global color.ui true
 ```
 
 > [note]
-> Spuštění `git config` nevypíše žádnou hlášku, že se operace povedla.
-> To je normální; stejně se chová spousta dalších příkazů, např. `cd`.
+> Running `git config` does not print any message that the operation was successful.
+> This is normal; many other commands behave like that, for example `cd`.
 >
-> Aktuální konfiguraci gitu si můžeš zkontrolovat příkazem:
+> You can check your current git configuration with the command:
 >
 > ```console
 > $ git config --global --list
 > user.name=Adéla Novotná
-> user.email=adela.novotna@example.cz
+> user.email=adela.novotna@example.com
 > ```
 
-A to je vše! Git máš nainstalovaný. Gratuluji!
+And that's all! You have installed Git. Congratulations!
