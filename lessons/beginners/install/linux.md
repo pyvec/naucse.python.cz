@@ -1,113 +1,73 @@
-# Instalace Pythonu na Linux
+# Python installation on Linux
 
-Nainstalovat Pyhon na Linux je většinou jednoduché.
-Jen existuje spousta druhů Linuxu a máme s ním největší zkušenosti,
-tak jsou tyhle instrukce trochu delší.
-Nezalekni se – většinu sekcí pravděpodobně přeskočíš. :)
+Installing Python on Linux is actually easy.
+The only difficult part could be that there are many distributions that
+needs different installation commands.
 
-## Instalace Pythonu 3
 
-Na Linuxu většinou Python 3 už bývá. Abys to zkontroloval{{a}}, spusť
-v [příkazové řádce]({{ lesson_url('beginners/cmdline') }}) příkaz:
+## Python 3
+
+First chech in your [command line]({{ lesson_url('beginners/cmdline') }})
+if you don't already have python3 installed:
 
 ```console
 $ python3 --version
 ```
+If there will appear "Python" and version number (e. g. `Python 3.5.2`)
+and the version is higher than 3.4 you are done here so continue with
+other section [`tkinter` check](#check-tkinter).
 
-Objeví-li se „Python“ a číslo verze (např. `Python 3.6.6`)
-a verze je 3.6 nebo vyšší, máš nainstalováno.
-Přejdi na další sekci, [kontrolu `tkinter`](#check-tkinter).
+If there will be "Python" and version lower than 3.3, ask coach.
 
-Objeví-li se „Python“ a verze 3.5 nebo nižší,
-{% if var('coach-present') -%}
-poraď se s koučem.
-{%- else -%}
-aktualizuj systém (nebo se poraď s někým, kdo to umí) a zkus to znovu.
-{%- endif %}
+If `bash: python3: command not found` or something similar will appear
+you will have to install Python3.
+Command depends on your distribution.
 
-Objeví-li se `bash: python3: command not found` nebo podobná chyba,
-doinstaluj Python.
-Konkrétní příkaz záleží na distribuci:
 
-* **Fedora**:
+* Fedora:
   {% filter markdown(inline=True) %}
   ```console
   $ sudo dnf install python3
   ```
   {% endfilter %}
-* **Ubuntu**:
+* Ubuntu:
   {% filter markdown(inline=True) %}
   ```console
   $ sudo apt-get install python3
   ```
   {% endfilter %}
 
-Používáš-li jinou distribuci, doufám, že instalovat programy už umíš.
+If you are using some other distribution we expect that you already know
+how to install programs. If not try to ask Google.
 
 
 {{ anchor('check-tkinter') }}
-## Kontrola Tkinter
+## Tkinter check
 
-Některé linuxové distribuce obsahují standardně jen část celkové funkčnosti
-Pythonu.
-Konkrétně knihovnu `tkinter` (která umožňuje např. kreslit „želví obrázky“)
-často musíme nainstalovat zvlášť.
-Abys zjistil{{a}}, jestli je už je nainstalovaná, zadej příkaz:
+Some Linux distros have just some parts of Python.
+Most of the time there is no `tkinter` module which will allow us to draw.
+So first you will have to check if you already have it or not.
 
 ```console
 $ python3 -m tkinter
 ```
 
-Objeví-li se okýnko, je všechno v pořádku.
-Zavři ho a přejdi na [doinstalování `virtualenv`](#install-virtualenv).
+If there will appear window everything is fine and you can continue with
+[`conda` instalation](#install-conda).
 
-Jestli ne, modul `tkinter` ještě nainstaluj:
+If not you will have to install `tkinter`:
 
-* **Fedora**:
+* Fedora:
   {% filter markdown(inline=True) %}
   ```console
   $ sudo dnf install python3-tkinter
   ```
   {% endfilter %}
 * **Ubuntu**:
-  {% filter markdown %}
+  {% filter markdown(inline=True) %}
   ```console
   $ sudo apt-get install python3-tk
   ```
   {% endfilter %}
 
-Používáš-li jinou distribuci, musíš si správné jméno balíčku najít na Internetu.
-
-{{ anchor('install-virtualenv') }}
-## Doinstalování Virtualenv
-
-Novější verze Pythonu mají zabudovaný nástroj `venv`, který použijeme níže.
-Starší verze ho ale nemají (a některé distribuce Linuxu ho dokonce z Pythonu
-vyřadily).
-Potřebuješ proto zjistit, jestli `venv` máš, a případně nainstalovat alternativu.
-
-Spusť v příkazové řádce příkaz:
-
-```console
-$ python3 -m ensurepip --version
-```
-
-Objeví-li se výpis začínající „pip“, máš funkční `venv` nainstalovaný.
-Zbytek této sekce můžeš přeskočit!
-
-Objeví-li se ale nápis `No module named ensurepip`, je potřeba doinstalovat
-alternativu, Virtualenv:
-
-<!-- na Fedoře se tohle nestává -->
-
-* **Ubuntu**:
-  {% filter markdown(inline=True) %}
-  ```console
-  $ sudo apt-get install python-virtualenv
-  ```
-  {% endfilter %}
-
-Používáš-li jinou distribuci, doufám, že instalovat programy už umíš.
-
-Instaluješ-li Virtualenv, **zapamatuj si**, že ho budeš muset použít později
-při vytváření virtuálního prostředí.
+If you have other distro check the package name on Google.
