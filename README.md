@@ -1,19 +1,17 @@
 # Nauč se Python
 
-Otevřené materiály pro výuku Pythonu – jak na organizovaných kurzech,
-tak pro samouky.
+Open material to learn Python - on courses we organize, but also for self-learners.
 
-Dostupné na [naucse.python.cz](https://naucse.python.cz).
+This is available at [naucse.python.cz](https://naucse.python.cz).
 
 
-## Instalace a spuštění
+## Installation and local deployment
 
-Chceš-li server spustit na svém počítači, např. proto, že se chceš zapojit
-do vývoje, je potřeba ho nejdřív nainstalovat:
+If you want to deploy this server locally, you'll need to:
 
-* (nepovinné) Vytvoř a aktivuj si [virtuální prostředí](https://naucse.python.cz/lessons/beginners/install/) v Pythonu 3.6.
-* Přepni se do adresáře s kódem projektu.
-* Nainstaluj závislosti:
+* Download and install the latest [Python](https://www.python.org/downloads/)
+* Clone or download this repository and go to this directory.
+* Install dependencies:
 
   * Linux/Mac:
 
@@ -29,23 +27,19 @@ do vývoje, je potřeba ho nejdřív nainstalovat:
     > pipenv install
     ```
 
-Nainstalovanou aplikaci spustíš následovně:
-
-* (nepovinné) Aktivuj si virtuální prostředí, máš-li ho vytvořené.
-* Spusť vývojový server:
+* (optional) activate the virtual environment with `pipenv shell`.
+* Start the development server:
   ```console
   $ pipenv run serve
   ```
-* Program vypíše adresu (např. `http://0.0.0.0:8003/`); tu navštiv v prohlížeči.
+* You can now access the server at `http://0.0.0.0:8003/`.
 
-Pokud chceš místo vývojového spuštění vygenerovat statické HTML soubory (např. pro nahrání na statický hosting):
+If you want to generate static HTML files instead of starting the development server (e.g. for static hosting):
 
-* Spusť freeze. Parametr `--serve` provede spuštění webserveru, pomocí kterého si lze vygenerované soubory prohlédnout:
   ```console
   $ PYTHONPATH=. pipenv run freeze --serve
   ```
-* HTML stránky jsou v adresáři `naucse/_build`.
-  Program vypíše adresu (např. `http://0.0.0.0:8000/`); tu navštiv v prohlížeči.
+* HTML pages have been generated in `naucse/_build`.
 
 ## Externí kurzy
 
@@ -54,8 +48,6 @@ Na naucse.python.cz jsou k dispozici i *externí* kurzy, které spravují více
 Proces vykreslování obsahu těchto kurzů jim dává velkou volnost: můžou převzít
 plnou kontrolu nad počítačem, na kterém `naucse` běží.
 Kvůli bezpečnosti je proto `naucse` ve výchozím nastavení neukazuje.
-
-
 
 ## Testy
 

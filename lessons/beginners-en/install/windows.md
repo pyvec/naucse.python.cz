@@ -37,8 +37,7 @@ If you have your command line open, close it and open again.
 
 ## conda installation
 
-For conda installation use [this link](https://conda.io/docs/user-guide/install/windows.html)
-and choose Anaconda.
+For conda installation use [this link](https://docs.conda.io/projects/conda/en/latest/user-guide/install/windows.html) and choose Anaconda.
 
 Then you have to add full path to C:\\.......\Continuum\anaconda3\Scripts (instead of
 dots there will be something different regarding where you installed it) to your 

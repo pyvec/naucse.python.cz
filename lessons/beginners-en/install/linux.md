@@ -41,42 +41,10 @@ If you are using some other distribution we expect that you already know
 how to install programs. If not try to ask Google.
 
 
-{{ anchor('check-tkinter') }}
-## Tkinter check
-
-Some Linux distros have just some parts of Python.
-Most of the time there is no `tkinter` module which will allow us to draw.
-So first you will have to check if you already have it or not.
-
-```console
-$ python3 -m tkinter
-```
-
-If there will appear window everything is fine and you can continue with
-[`conda` instalation](#install-conda).
-
-If not you will have to install `tkinter`:
-
-* Fedora:
-  {% filter markdown(inline=True) %}
-  ```console
-  $ sudo dnf install python3-tkinter
-  ```
-  {% endfilter %}
-* **Ubuntu**:
-  {% filter markdown(inline=True) %}
-  ```console
-  $ sudo apt-get install python3-tk
-  ```
-  {% endfilter %}
-
-If you have other distro check the package name on Google.
-
 {{ anchor('install-conda') }}
 ## conda installation
 
-For conda installation use [this link](https://conda.io/docs/user-guide/install/linux.html)
-and choose Anaconda.
+For conda installation use [this link](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html) and choose Anaconda.
 
 Then you have to add full path to /......./Continuum/anaconda3/Scripts (instead of
 dots there will be something different regarding where you installed it)

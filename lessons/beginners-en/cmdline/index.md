@@ -227,7 +227,7 @@ For that purpose, use `rm` or `rmdir`
 (*remove* or *remove directory*).
 
 > [warning] Warning!
-> The command line does not have a Recycle Bin! Everything will be deleted for good.
+> The command line does not have a Recycle Bin or an Undo button! Everything will be deleted for good.
 > Every time, make sure that you are deleting the right folder.
 
 In Unix, you have to write `rmdir -rv` (minus,`r`, `v`). The parameter deletes everything
@@ -312,8 +312,8 @@ There is a table of basic commands:
         <td><code>rm test.txt</code><br><code>del test.txt</code></td>
     </tr>
     <tr>
-        <td><code>rmdir /S</code></td>
         <td><code>rm -rv</code></td>
+        <td><code>rmdir /S</code></td>
         <td>delete a directory</td>
         <td><code>rm -rv testdir</code></td>
     </tr>
