@@ -105,10 +105,10 @@ V takovém případě můžeš šablonu napsat do normálního řetězce (bez `
 začátku) a použít metodu `format`:
 
 ```python
-sablona = 'Ahoj {jmeno}! Tvoje číslo {cislo}.'
-print(sablona.format(cislo=7, jmeno='Anežko'))
-print(sablona.format(cislo=42, jmeno='Elvíro'))
-print(sablona.format(cislo=3, jmeno='Viléme'))
+sablona = 'Ahoj {jmeno}! Tvoje číslo je {cislo}.'
+print(sablona.format(cislo=7, jmeno='Hynku'))
+print(sablona.format(cislo=42, jmeno='Viléme'))
+print(sablona.format(cislo=3, jmeno='Jarmilo'))
 ```
 
 Oproti formátovacím řetězcům umí `format` užitečnou zkratku: nepojmenované
