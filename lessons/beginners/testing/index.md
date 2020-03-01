@@ -272,7 +272,7 @@ def test_tah_na_prazdne_pole():
 
 ## Pozitivní a negativní testy
 
-Testům, které kontrolují že se program za správných podmínek chová správně,
+Testům, které kontrolují, že se program za správných podmínek chová správně,
 se říká *pozitivní testy*.
 Můžeš ale testovat i reakci programu na špatné nebo neočekávané podmínky.
 
