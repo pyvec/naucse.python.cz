@@ -36,10 +36,36 @@ while True:
 
 Program se dá přerušit zmáčknutím
 <kbd>Ctrl</kbd>+<kbd>C</kbd>.
+Tahle klávesová zkratka vyvolá v programu chybu
+a program se – jako po každé chybě – ukončí.
 
-> [note]
-> Tahle klávesová zkratka vyvolá v programu chybu
-> a program se – jako po každé chybě – ukončí.
+> [note] Pro macOS
+> I na Macu je to opravdu <kbd>Ctrl</kbd>+<kbd>C</kbd>, nikoli
+> <kbd>⌘ Cmd</kbd>+<kbd>C</kbd>.
+
+> [note] Pro ostatní systémy
+> <kbd>Ctrl</kbd>+<kbd>C</kbd> je velice stará zkratka, zavedená ještě před
+> grafickými programy které ji začaly používat pro kopírování.
+> Když dnes používáš textové programy v okýnku,
+> musíš pro kopírování použít složitější zkratky:
+>
+> * Kopírovat:
+>   <kbd>Shift</kbd>+<kbd>Ctrl</kbd>+<kbd>C</kbd> nebo
+>   <kbd>Ctrl</kbd>+<kbd>Insert</kbd>
+>
+> * Vložit:
+>   <kbd>Shift</kbd>+<kbd>Ctrl</kbd>+<kbd>V</kbd> nebo
+>   <kbd>Shift</kbd>+<kbd>Insert</kbd>
+>
+> Případně můžeš najít příslušné operace v menu.
+> Na Windows se menu skrývá pod ikonkou v levém horním rohu okýnka;
+> funkce pro kopírování jsou v podmenu Edit.
+> Na starších Windows tam najdeš i *Mark*, způsob jak označit text.
+>
+> A na Linuxu jde jen označit text a pak ho (bez <kbd>Ctrl</kbd>+<kbd>C</kbd>)
+> vložit prostředním tlačítkem myši.
+
+## Break
 
 A nakonec, existuje příkaz `break`, který z cyklu „vyskočí“:
 začnou se hned vykonávat příkazy za cyklem.
