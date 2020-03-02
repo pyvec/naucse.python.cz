@@ -44,6 +44,18 @@ Program se dá přerušit zmáčknutím
 A nakonec, existuje příkaz `break`, který z cyklu „vyskočí“:
 začnou se hned vykonávat příkazy za cyklem.
 
+Cyklus `while` se dívá na podmínku jen na začátku každého průchodu cyklem.
+Občas ale chceš podmínku uprostřed nebo na konci.
+Třeba „zubařský“ program výše by se dal napsat i takto:
+
+* Opakuj:
+  * Zeptej se na odpověd
+  * Je-li odpověď „Ááá“, zavtipkuj a ukonči cyklus
+  * Vynadej uživateli. (Sem se program dostane jen při špatné odpovědi.)
+* Dokonči operaci
+
+V překladu do Pythonu využiješ kombinace `if` a `break`:
+
 ```python
 while True:
     odpoved = input('Řekni Ááá! ')
