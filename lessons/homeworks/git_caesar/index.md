@@ -97,6 +97,20 @@ Už bylo zmíněno, že tento úkol bude vyžadovat větší úsílí. Nějaké 
 Kdyby ses přece jen zasekla, napiš koučovi.
 
 
+# Návod na odevzdání domácího úkolu
+
+* Přepni se na větev master `git checkout master`
+* Vytvoř si novou větev, kterou si pojmenuj nějak unikátně (např. piskvorky). Je lepší nepoužívat diakritiku a jako oddělovač používat podtržítko. `git branch piskvorky`
+* Přepni se do nové větve. `git checkout piskvorky`
+* Napiš úkol.
+* Přidej změny do stage a pak udělej commit. `git add piskvorky`,  `git commit -m 'Home work - game piskvorky.'`
+* Pushni větev do repozitáře na githubu. `git push origin piskvorky`
+* Udělej nový pull request. Návod v sekci Žádost o začlenění (pull request)
+* Pošli koučovi odkaz na pull request do slacku.
+* Potom, co ti kouč úkol schválí, udělej merge do master větve. Na stránce pull requestu v dolní části je zelené tlačíko `Merge pull request`. 
+* Stáhni si změny do lokálního repozitáře (ve tvém počítači) do větve master. `git checkout master`, `git pull origin master`
+* Pokud budeš v průběhu práce na domácích úkolu dělat změny v jiných souborech, přepni se nejdřív na větev master, udělej změny a commitni je a pak se vrať do větve s domácím úkolem.
+
 # Bonusy
 
 Interaktivní zábavný git [tutoriál](https://learngitbranching.js.org/).

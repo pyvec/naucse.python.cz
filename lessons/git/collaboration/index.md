@@ -86,6 +86,7 @@ a můžeš psát, kdy chyba nastává, co program dělá
 
 ## Návod na odevzdání domácího úkolu
 
+* Přepni se na větev master `git checkout master`
 * Vytvoř si novou větev, kterou si pojmenuj nějak unikátně (např. piskvorky). Je lepší nepoužívat diakritiku a jako oddělovač používat podtržítko. `git branch piskvorky`
 * Přepni se do nové větve. `git checkout piskvorky`
 * Napiš úkol.
