@@ -71,7 +71,7 @@ operační systém rovnou z DVD k vyzkoušení).
 
 V této části už je operační systém nainstalovaný,
  zbývá akorát provést posledních několik nastavení. To se děje formou průvodce
- kde je tlačítko *Další" vždy vpravo nahoře.
+ kde je tlačítko *Další* vždy vpravo nahoře.
 
 * **Soukromí**
   * Geolokační služby - můžeš klidně vypnout
