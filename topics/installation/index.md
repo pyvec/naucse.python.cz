@@ -57,25 +57,36 @@ operační systém rovnou z DVD k vyzkoušení - tu ale nyní nevyužijeme).
 ## Instalační obrazovky
 
 * **Výběr jazyka** - v levém panelu vyber *Čeština*, poté klepni na *Pokračovat*
-  ![][f-03]
+
+ ![][f-03]
+
 * **Přehled instalace** - instalátor potřebuje potvrdit kde se bude instalace
  provádět. Klepni na *Cíl instalace*, která ti nabídne dostupné pevné disky.
-  ![][f-04]
+
+ ![][f-04]
+
 * **Cíl instalace** - tady není potřeba nic měnit, vlevo nahoře najdeš tlačítko
 *Hotovo*, kterým obrazovku potvrdíš.
-  ![][f-05]
+
+ ![][f-05]
+
 * **Přehled instalace** - nyní už instalátor ví vše potřebné. Vpravo dole
  klepni na tlačítko *Spustit instalaci*. Od tohoto okamžiku se začne reálně
  zapisovat na vybraný pevný disk.
-  ![][f-06]
+ 
+ ![][f-06]
+
 * **Průběh instalace** - tento krok bude trvat nejdéle. V závislosti na
  rychlosti Tvého počítače to může být od minut po malé desítky minut.
  Nakonec se vpravo dole objeví tlačítko *Dokončit instalaci*. Tím dojde k 
  uzavření instalačního programu a je třeba provést restart.
-  ![][f-07]
+ 
+ ![][f-07]
+  
 * **Restart** - K tomu je potřeba kliknout na symbol ⏻ úplně vpravo nahoře,
  poté na další ⏻ a nakonec na tlačítko *Restart*.
-  ![][f-09]
+
+ ![][f-09]
 
 #### Dokončení instalace
 
@@ -87,9 +98,12 @@ V této části už je operační systém nainstalovaný,
   * Geolokační služby - můžeš klidně vypnout
   * Automatické hlášení problémů - můžeš nechat zapnuté
 
-  ![][f-11]
+ ![][f-11]
+  
 * **Účty online** - tento krok můžeš klidně přeskočit (a provést později)
-  ![][f-12]
+  
+ ![][f-12]
+  
 * **O vás** - je nejdůležitějším krokem. Tady doplň *Celé jméno* (diakritika
  nevadí) a především *Uživatelské jméno* (pouze znaky `a-z`, `_`, `-`, číslice
  ). To je nejdůležitější. Tím se budeš přihlašovat do systému. Oba údaje lze
@@ -97,10 +111,14 @@ V této části už je operační systém nainstalovaný,
  technicky vzato možná, jde o problematický úkon. Proto je velmi důležité si
  ho dobře rozmyslet hned na začátku. (*Celé jméno* slouží jen jako popiska
   k uživatelskému jménu.) Pokračuj tlačítkem *Další*.
-  ![][f-13]
+
+ ![][f-13]
+
  * **Nastavení hesla** - je heslo k uživatelskému jménu vyplněném v předchozím
  kroku. Heslo je potřeba zadat do obou polí stejné.
-  ![][f-14]
+
+ ![][f-14]
+  
  * **Připraveno k používání** - Výborně, všechno je již nastaveno a můžeš se
   pustit do objevování. Klepnutím na *Začít používat systém Fedora*
 
