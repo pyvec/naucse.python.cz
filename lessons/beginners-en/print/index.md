@@ -106,7 +106,7 @@ the lesson about [variables]({{ lesson_url('beginners/variables') }}).
 > print(1, 2, 3)
 > ```
 >
-> We can also write spaces around mathematical operators:
+> You should also write spaces around mathematical operators:
 > ```python
 > print(2 + 8)
 > print("One and a half is ", 1 + 1/2)

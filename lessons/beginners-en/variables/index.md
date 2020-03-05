@@ -112,7 +112,12 @@ the numbers mean.
 > is <var>o</var> = 2π<var>r</var>, the area is <var>S</var> = π<var>r</var>²
 > and π is approx. 3.1415926.
 >
+> Feel free to use more variables! It's a good practice to first calculate the result. Store it in a variable and then use it in a `print`.
+>
 > Name all variables appropriately.
+>
+> ### But wait, there's more
+> Python already has some variables (or constants) defined for you. You can put `from math import pi` in the beginning of your program. Now you have a variable `pi` available, which holds the value of π. What exactly is `from math import pi`? You'll learn that during one of the future lessons! 
 
 
 ## Comments

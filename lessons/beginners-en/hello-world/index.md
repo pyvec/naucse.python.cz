@@ -56,10 +56,11 @@ $ python hello.py
 > You have learned about the command line in 
 > a [previous lesson](../../beginners-en/cmdline/) which shows how to change the current directory 
 > using the `cd` command.
-> You know how to activate the virtual environment since the lesson about
+> Remember to activate your virtual environment, similarly as in lesson about
 > [Python installation](../../beginners-en/install/).
 
-Do you see the greeting? If you do, you just wrote your first Python program!
+
+After you run `python hello.py` you should see the program responding with `Hello world!`.
 
 If it does not work, make sure that:
 
@@ -73,12 +74,7 @@ If it does not work, make sure that:
   It is printed by the operating system after any program has finished.
   You type only: `python hello.py`.
 
-If it still does not work, ask 
-{% if var('coach-present') -%}
-your coach.
-{%- else -%}
-another developer. <!-- XXX: where to direct people? -->
-{% endif %}
+If it still does not work, ask your coach.
 
 
 > [style-note] Note about code style
