@@ -105,37 +105,69 @@ Všimni si, že `len` není metoda, ale funkce; píše se `len(r)`, ne `r.len()`
 Proč tomu tak je, to za nějakou dobu poznáš.
 
 
-## Cvičení
+## Cvičení: Záměna znaku
 
-Zkus napsat funkci `zamen(retezec, pozice, znak)`.
-
-Tato funkce vrátí řetězec, který má na dané pozici
-daný znak; jinak je stejný jako původní `retezec`. Například:
+Zkus napsat kód, který v daném slově zamění znak na dané pozici za jiný:
+například ze slova *ba**ň**ka* udělá záměnou znaku číslo 2 na „*j*“ slovo
+*ba**j**ka*:
 
 ```python
 # Zaměň znak číslo 2 ve slově "baňka" na "j"
-print(zamen('baňka', 2, 'j'))   # → bajka
+slovo = 'baňka'
+pozice = 2
+novy_znak = 'j'
 
-# A podobně:
-print(zamen('kočka', 1, 'a'))   # → kačka
-print(zamen('slůně', 1, 't'))   # → stůně
-print(zamen('kapka', 0, 'l'))   # → lapka
+... # dopiš kód, co vypíše "bajka"
 ```
+
+Stejný kód by měl fungovat i když změníš počáteční proměnné:
+
+```python
+slovo = 'kočka'
+pozice = 1
+novy_znak = 'a'
+
+# → kačka
+```
+
+```python
+slovo = 'slůně'
+pozice = 1
+novy_znak = 't'
+
+# → stůně
+```
+
+```python
+slovo = 'kapka'
+pozice = 0
+novy_znak = 'l'
+
+# → lapka
+```
+
 
 Pozor na to, že řetězce v Pythonu nelze měnit.
 Musíš vytvořit nový řetězec poskládaný z částí toho starého.
 
 {% filter solution %}
 ```python
-def zamen(retezec, pozice, znak):
-    """Zamění znak na dané pozici
+slovo = 'baňka'
+pozice = 2
+novy_znak = 'j'
 
-    Vrátí řetězec, který má na dané pozici daný znak;
-    jinak je stejný jako vstupní retezec
-    """
+zacatek = slovo[:pozice]
+konec = slovo[pozice + 1:]
+nove_slovo = zacatek + novy_znak + konec
 
-    zacatek = retezec[:pozice]
-    konec = retezec[pozice + 1:]
-    return zacatek + znak + konec
+print(nove_slovo)
 ```
+
+Nebo jednodušeji:
+
+```python
+nove_slovo = slovo[:pozice] + novy_znak + slovo[pozice + 1:]
+```
+
 {% endfilter %}
+
