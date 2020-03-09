@@ -18,7 +18,7 @@ Odevzdejte svému kouči řešení úkolu 13 a řešení Oko bere.
 Až doděláš všechny úkoly, přejdi v terminálu do složky `pyladies` a napiš následující příkazy:
   - `git add .`
   - `git commit -m "Pyladies lesson"`
-  - `git push origin master
+  - `git push origin master`
 
 # Bonusy
 
