@@ -21,7 +21,7 @@ Zkus si to:
 
 ```python
 oblibene_cislo = 7
-print(oblibena_barva)
+print(oblibene_cislo)
 
 oblibene_cislo = oblibene_cislo * 6
 print(oblibene_cislo)
