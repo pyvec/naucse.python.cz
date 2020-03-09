@@ -75,7 +75,7 @@ Podobně `4.0` a `4.000` jsou dva zápisy téhož čísla,
 tak `'slovo'` a `"slovo"` pro Python označuje stejnou
 hodnotu, skládající se ze stejných pěti písmen.
 
-Použité uvozovky nejsou součástí hodnoty – python si „nepamatuje“, jakým
+Použité uvozovky nejsou součástí hodnoty – Python si „nepamatuje“, jakým
 způsobem byl řetězec uvozen.
 Když má nějaký řetězec vypsat, jedny si k tomu vybere – většinou ty jednoduché:
 
@@ -284,10 +284,6 @@ několika mezerami.
 (V dokumentačních řetězcích tohle nevadí, tam se s odsazením počítá.)
 
 
-## Formátovací řetězce
-
-Tato sekce byla vyčleněna ven, viz [Formátovací řetězce](../fstring)
-
 ## Cvičení
 
 Jaká je délka těchto řetězců?
@@ -315,8 +311,6 @@ if True:
     print(len("""a
     b"""))
 
-{# 7, 8, 9, more #}
+{# 7, 8, 9, 10 #}
 print(len('C:\new_dir'))
-
-print(len(f'{print}'))
 ```

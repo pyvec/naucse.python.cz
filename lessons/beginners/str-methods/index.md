@@ -105,25 +105,6 @@ Všimni si, že `len` není metoda, ale funkce; píše se `len(r)`, ne `r.len()`
 Proč tomu tak je, to za nějakou dobu poznáš.
 
 
-## Metoda format
-
-Pro úplnost: občas uvidíš metodu `format`, která doplní do šablony
-podobné jako u formátovacích řetězců (`f'...'`).
-
-```python
-sablona = '{a}×{b} je {vysledek}'
-vypis = sablona.format(vysledek=3 * 4, a=3, b=4)
-print(vypis)
-```
-
-Funguje i zkrácený zápis, kdy necháš závorky prázdné a argumenty nepojmenuješ:
-
-```python
-vypis = 'Ahoj {}! Výsledek je {}.'.format('Elvíro', 7)
-print(vypis)
-```
-
-
 ## Cvičení
 
 Zkus napsat funkci `zamen(retezec, pozice, znak)`.

@@ -62,7 +62,8 @@ A aby bylo jasné, že jde o šablonu, před první uvozovky přidej navíc zna�
 f"Součet je {soucet}."
 ```
 
-Takový formátovací řetězec jde použít v Pythonu – jako jakýkoli jiný řetězec:
+Takový formátovací řetězec jde použít v Pythonu – jako jakýkoli jiný řetězec,
+s tím že jména v závorkách musí vždy odpovídat jménům proměnných:
 
 ```python
 soucet = 3 + 4
