@@ -42,11 +42,6 @@ Klikni na tlačitko „Nový“ a pokračuj podle obrázkového návodu:
     alt='Instalace VirtualBoxu – #5',
   ) }}
 
-  {{ figure(
-    img=static('vbox-06.png'),
-    alt='Instalace VirtualBoxu – #6',
-  ) }}
-
 5. Velikost souboru zvol 10GB; umístění nech výchozí:
 
   {{ figure(
