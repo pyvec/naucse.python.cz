@@ -2,7 +2,6 @@
 
 Odevzdejte svému kouči řešení úkolu 13 a řešení Oko bere.
 
-
 ## Oko bere
 
 * Začínáš s 0 body.
