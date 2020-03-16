@@ -1,6 +1,6 @@
 # Výpisy chyb ze zanořených funkcí
 
-Na začátku si ukážeme (nebo zopakujeme), jak Python vypíše chybu, která
+Teď si ukážeme (nebo zopakujeme), jak Python vypíše chybu, která
 nastane v zanořené funkci.
 
 Pročti si následující ukázkový příklad.

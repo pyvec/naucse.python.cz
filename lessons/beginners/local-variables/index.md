@@ -43,11 +43,41 @@ pro ni.
 Když funkce `nastav_x` skončí, proměnná `x` přestane existovat.
 
 
+## Skrývání detailů
+
+Podobně skončí s chybou i složitější program:
+
+```python
+def zamen(slovo, pozice, novy_znak):
+    "V daném slově zamění znak na dané pozici za daný nový znak"
+    zacatek = slovo[:pozice]
+    konec = slovo[pozice + 1:]
+    nove_slovo = zacatek + novy_znak + konec
+    return nove_slovo
+
+print(zamen('kočka', 1, 'a'))
+print(zamen('kačka', 2, 'p'))
+
+print(zacatek)  # NameError
+```
+
+Funkce `zamen` jsi napsal{{a}} proto, abys nemusel{{a}} pořád opakovat detaily
+záměny písmenka.
+Jakmile je jednu nadefinovaná, stačí ji zavolat. Důležité jsou jen jméno
+funkce, argumenty a návratová hodnota; na detaily kódu uvnitř můžeš zapomenout.
+A to i díky lokálním proměnným, které detaily ve vnitřku funkce trochu líp
+izolují od zbytku programu.
+
+Ještě lépe je to vidět u funkcí, které jsi nenapsal{{a}} {{gnd('sám', 'sama')}}.
+Jak divné by bylo, kdyby po každém zavolání `print` byla najednou nastavená
+proměnná `i`, kterou `print` náhodou používá při procházení svých argumentů!
+
+
 ## Přiřazení
 
 To, co dělá lokální proměnnou, je *přiřazení*.
 Porovnej `nastav_x` s příkladem na `obsah_kruhu` výše: rozdíl mezi `pi` a `x`
-je v tom, že do `x` funkce přiřazuje.
+je v tom, že do `x` se v rámci funkce funkce přiřazuje.
 
 Co je to přiřazení? Všechno, co *nastavuje* nějakou proměnnou. Například:
 * Klasika je přiřazovat pomocí `=`, např. `a = 3`.
@@ -93,7 +123,7 @@ Jmenují se stejně, ale jsou to dvě různé proměnné.
 ## Lokální nebo globální?
 
 Pojďme si to ukázat.
-Než spustíš tenhle program, zkus předpovědět, co bude dělat.
+Než spustíš tenhle program, zkus předpovědět co bude dělat.
 Pak ho pusť, a pokud dělal něco jiného, zkus vysvětlit proč.
 Pozor na chytáky!
 
