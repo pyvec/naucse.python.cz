@@ -1,4 +1,4 @@
-# Funkce
+# Definice funkcí
 [Dříve]({{ lesson_url('beginners/functions') }}) jsme
 volal{{gnd('i', 'y', both='i')}} funkce, které napsal někdo jiný:
 
@@ -8,20 +8,71 @@ print('Ahoj světe!')
 
 Dnes si ukážeme, jak psát funkce vlastní.
 
-Pokud umíš `if` a `for` – s jednořádkovou hlavičkou a odsazeným tělem příkazu –
-neměl by ti zápis funkce připadat nijak zvláštní:
+
+## K čemu jsou funkce?
+
+Často se stává, že kód, který dělá nějakou jednoduchou věc, není úplně
+jednoduchý.
+Jako příklad uvedu nám už známý kód, který v určitém řetězci zamění znak
+na dané pozici:
+
+```
+zacatek = slovo[:pozice]
+konec = slovo[pozice + 1:]
+nove_slovo = zacatek + novy_znak + konec
+```
+
+Z takového kódu není na první pohled jasné, co přesně dělá.
+Zvlášť když kód použiješ ve složitějším programu.
+
+Dá se to vyřešit komentářem: ten, kdo bude program číst, si může přečíst
+co to má dělat. Samotný složitější kód pak může ignorovat.
+
+```
+# Ve slově `slovo` zaměnit znak na pozici `pozice` za `novy_znak`;
+# výsledek bude v proměnné `nove_slovo`.
+zacatek = slovo[:pozice]
+konec = slovo[pozice + 1:]
+nove_slovo = zacatek + novy_znak + konec
+```
+
+Ještě lepší ale bude si vytvořit *funkci*, která tenhle složitější postup
+provede.
+Jakmile takovou funkci vytvoříš, ve složitějším programu pak můžeš místo kódu
+výše psát jen:
+
+```
+nove_slovo = zamen(slovo, pozice, novy_znak)
+```
+
+Podobně fungují funkce, které už znáš: můžeš zavolat `print(123)`, aniž bys
+potřeboval{{a}} znát jakékoli detaily postupu, kterým se číslo převede na
+jednotlivé číslice a ty se pak vykreslí na obrazovce.
+Nebo řekneš želvě `forward(100)` a nezatěžuješ se tím, jak si želva „pamatuje“
+svůj aktuální úhel natočení nebo jak se vlastně kreslí čára.
+
+Funkce umožňuje *pojmenovat* nějaký kousek programu, který se pak dá
+použít pomocí jména bez detailních znalosti toho, jak to vevnitř funguje.
+
+
+## Definice funkce
+
+Protože už znáš `if` a `for`, které mají jednořádkovou hlavičku a odsazené tělo
+příkazu, neměl by ti zápis funkce připadat příliš zvláštní:
 
 ```python
-def obvod_obdelnika(sirka, vyska):
-    "Vrátí obvod obdélníka daných rozměrů"
-    obvod = 2 * (sirka + vyska)
-    return obvod
+def zamen(slovo, pozice, novy_znak):
+    "V daném slově zamění znak na dané pozici za daný nový znak"
+    zacatek = slovo[:pozice]
+    konec = slovo[pozice + 1:]
+    nove_slovo = zacatek + novy_znak + konec
+    return nove_slovo
 
-print(obvod_obdelnika(4, 2))
+print(zamen('kočka', 1, 'a'))
+print(zamen('kačka', 2, 'p'))
 ```
 
 Jak to funguje?
-
 
 Funkce se *definuje* příkazem `def`, za nějž napíšeš jméno funkce,
 pak do závorky seznam *parametrů*, které funkce bere, a pak dvojtečku.
@@ -30,6 +81,28 @@ Potom následuje odsazené *tělo funkce* – příkazy, které funkce provádí
 Tělo může začít *dokumentačním řetězcem*, který popisuje, co funkce dělá.
 
 Příkazem `return` pak můžeš z funkce *vrátit* nějakou hodnotu.
+
+Při volání funkce se hodnoty, se kterými funkci
+zavoláš, přiřadí jednotlivým parametrům.
+Takže když zavoláš třeba `zamen('kočka', 1, 'a')`,
+můžeš si představit, že se provede toto:
+
+```python
+# Nastavení proměnných podle zadaných parametrů
+slovo = 'kočka'
+pozice = 1
+novy_znak = 'a'
+
+# Samotné tělo funkce
+zacatek = slovo[:pozice]
+konec = slovo[pozice + 1:]
+nove_slovo = zacatek + novy_znak + konec
+return nove_slovo
+```
+
+Už víš, že volání `zamen('kočka', 1, 'a')` je výraz.
+Aby ho Python vyhodnotil, udělá celý postup výše a jako hodnotu výrazu dosadí
+návratovou hodnotu – tedy to, co následuje po `return`.
 
 Tělo funkce může mít více příkazů – včetně podmínek, cyklů a podobně.
 Následující procedura třeba vypíše skóre daného hráče a k tomu hlášku:
@@ -54,27 +127,28 @@ napis_hlasku('Tvoje', 256)
 napis_hlasku('Protivníkovo', 5)
 ```
 
-Při volání funkce se hodnoty, se kterými funkci
-zavoláš, přiřadí jednotlivým parametrům.
-Takže když zavoláš třeba `napis_hlasku('Tvoje', 256)`,
-můžeš si představit, že funkce dělá následující:
+## Cvičení
 
+Zkus napsat funkci, která vrátí obsah obdélníka daných rozměrů.
+Příslušný vzoreček je <var>S</var> = <var>a</var>×<var>b</var>,
+kde <var>a</var> a <var>b</var> jsou délky stran.
+
+Funkci zavolej a výsledek vypiš.
+
+{% filter solution %}
 ```python
-# Nastavení proměnných podle parametrů
-nazev = 'Tvoje'
-skore = 256
+def obsah_obdelnika(a, b):
+    return a * b
 
-# Samotné tělo funkce
-print(nazev, 'skóre je', skore)
-if skore > 1000:
-    print('Světový rekord!')
-elif skore > 100:
-    ... # atd.
+print('Obsah obdélníka se stranami 3 cm a 5 cm je', obsah_obdelnika(3, 5), 'cm2')
 ```
-## Vracení
+{% endfilter %}
 
-Speciální příkaz `return`, který jde použít jenom ve funkcích,
-*ukončí* funkci a vrátí danou hodnotu ven z funkce.
+
+## Vracení ukončuje funkci
+
+Speciální příkaz `return`, který jde použít jenom ve funkcích, vrátí danou
+návratovou hodnotu ven z funkce a zároveň *ukončí* provádění funkce.
 
 Chová se tedy trochu jako `break`, jen místo cyklu opouští celou funkci.
 
@@ -116,29 +190,23 @@ else:
 > Stejně jako `if` nebo `break` je `return` *příkaz*, ne funkce.
 > Kolem „své“ hodnoty nepotřebuje závorky.
 
-Zkus napsat funkci, která vrátí obsah elipsy
-daných rozměrů.
-Příslušný vzoreček je <var>A</var> = π<var>a</var><var>b</var>,
-kde <var>a</var> a <var>b</var> jsou délky os.
 
-Funkci zavolej a výsledek vypiš.
+### Vrátit nebo vypsat?
 
-{% filter solution %}
+Podívejme se teď na následující program, který vypíše obsah elipsy:
+
 ```python
 from math import pi
 
 def obsah_elipsy(a, b):
     return pi * a * b
 
-print('Obsah elipsy s osami 3 cm a 5 cm je', obsah_elipsy(3, 5), 'cm2')
+print('Obsah elipsy s poloosami 3 a 5 je', obsah_elipsy(3, 5), 'cm2')
 ```
-{% endfilter %}
 
-
-### Vrátit nebo vypsat?
-
-Předchozí program se dá napsat i jako procedura, tedy funkce která nic nevrací.
-Výsledek může třeba vypsat na obrazovku:
+Takový program se teoreticky dá napsat i s procedurou, tedy funkcí která nic
+nevrací.
+Procedura může výsledek třeba vypsat na obrazovku:
 
 ```python
 from math import pi
@@ -152,7 +220,7 @@ obsah_elipsy(3, 5)
 Program takhle funguje, ale přichází o jednu z hlavních výhod funkcí:
 možnost vrácenou hodnotu použít i jinak jež jen v `print`.
 
-Funkci, která vrací výsledek, můžeš použít v dalších výpočtech:
+Funkci, která *vrací* výsledek, můžeš použít v dalších výpočtech:
 
 ```python
 def objem_eliptickeho_valce(a, b, vyska):
@@ -162,8 +230,10 @@ print(objem_eliptickeho_valce(3, 5, 3))
 ```
 
 ... ale s procedurou, která výsledek přímo vypíše, by to nešlo.
+Proto je dobré psát funkce, které spočítané hodnoty vrací,
+a zpracování výsledku (např. vypsání) nechat na kód mimo funkci.
 
-Další důvod, proč hodnoty spíš vracet než vypisovat, je ten, že jedna funkce se
+Další důvod proč hodnoty spíš vracet než vypisovat je ten, že jedna funkce se
 dá použít v různých situacích.
 Proceduru s `print` by nešlo rozumně použít tehdy, když nás příkazová
 řádka vůbec nezajímá – třeba v grafické hře, webové aplikaci, nebo pro ovládání
@@ -173,8 +243,8 @@ Podobně je to se vstupem: když použiju v rámci své funkce `input`, bude se
 moje funkce dát použít jen v situacích, kdy je u počítače klávesnice a za ní
 člověk.
 Proto je lepší funkcím potřebné informace předávat jako argumenty
-a `input` (nebo textové políčko či měření z čidla robota) nemít ve funkci,
-ale vně:
+a volání `input` (nebo čtení textového políčka či měření čidlem robota)
+nemít ve funkci, ale vně, v kódu který funkci volá:
 
 ```python
 from math import pi
@@ -191,7 +261,8 @@ print('Obsah je', obsah_elipsy(x, y))
 ```
 
 Samozřejmě existují výjimky: procedura která přímo vytváří textový výpis
-může používat `print`; funkce která načítá textové informace zase `input`.
+(např. tabulku) může používat `print`; funkce která načítá textové informace
+(jako `ano_nebo_ne` výše) zase `input`.
 Když ale funkce něco *počítá*, nebo když si nejsi jist{{gnd('ý', 'á')}},
 je dobré ve funkci `print` ani `input` nemít.
 
