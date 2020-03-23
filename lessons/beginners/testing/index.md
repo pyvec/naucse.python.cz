@@ -2,7 +2,7 @@
 
 Programátorská práce nespočívá jen v tom, program napsat.
 Důležité je si i ověřit, že opravdu funguje, a případně ho pak opravit.
-Ověřování, že program funguje, se říká *testování* (angl. *testing*).
+Tomu ověřování že program funguje se říká *testování* (angl. *testing*).
 
 Zatím jsi asi svoje programy testoval{{a}} tak, že jsi
 je zkusil{{a}} spustit, něco zadal{{a}} a podíval{{a}} se,
@@ -11,14 +11,14 @@ U větších programů, které budou mít více a více
 možností, ale bude těžší a těžší takhle zkontrolovat,
 jestli všechny ty možnosti fungují jak mají.
 
-Proto si programátoři často nezkouší programy „ručně“.
+Proto programátoři často nezkouší programy „ručně“.
 Píšou jiné programy, které jejich výtvory testují za ně.
 
 *Automatické testy* jsou funkce, které
 zkontrolují že program funguje správně.
 Spuštěním testů můžeš kdykoli ověřit, že kód funguje.
 Když v otestovaném kódu v budoucnu uděláš nějakou změnu,
-testy ověří, že jsi nerozbil{{a}} nic, co dříve fungovalo.
+testy ověří, že jsi nerozbil{{a}} nic co dříve fungovalo.
 
 
 ## Instalace knihovny pytest
@@ -38,17 +38,24 @@ Knihovny se instalují do aktivního virtuálního prostředí.
 Jak se dělá a spouští virtuální prostředí
 ses naučil{{a}} při [instalaci Pythonu]({{ lesson_url('beginners/install') }}),
 ale teprve teď to začíná být opravdu důležité.
-Ujisti se, že máš virtuální prostředí aktivované.
+Ujisti se, že máš virtuální prostředí aktivované – na začátku příkazové řádky
+máš `(venv)`.
 
 Potom zadej následující příkaz.
 (Je to příkaz příkazové řádky, podobně jako
 `cd` nebo `mkdir`; nezadávej ho do Pythonu.)
 
 > [warning] Opisuj opatrně!
-> Příkaz níže instaluje software z Internetu.
+> Příkaz níže instaluje software z internetu.
+> Nahrát takovou knihovnu na internet může kdokoli – hodný nebo zlý,
+> chytrý nebo hloupý.
 > Za knihovnu `pytest` autoři tohoto kurzu ručí.
-> Jiné knihovny ale můžou dělat neplechu nebo být dokonce „zavirované“.
+> Jiné knihovny ale můžou dělat neplechu nebo být dokonce „zavirované“;
+> už při instalaci můžou něco pokazit.
 > Dej si proto pozor a ve jménu `pytest` neudělej překlep!
+>
+> Nainstaluješ-li přesto omylem něco cos nechtěl{{a}}, dej co nejdřív vědět
+> zkušenějšímu programátorovi, aby zkontroloval jaký to mohlo mít efekt.
 
 ```console
 (venv)$ python -m pip install pytest
@@ -79,15 +86,12 @@ Potom zadej následující příkaz.
 
 Nejdříve si testování ukážeme na jednoduchém příkladu.
 Tady je funkce `secti`, která umí sečíst
-dvě čísla, a další funkce, která testuje, jestli se
-`secti` pro určité hodnoty
-chová správně.
+dvě čísla, a další funkce, která testuje jestli se
+`secti` pro určité hodnoty chová správně.
 
-Kód si opiš do souboru `test_secteni.py`,
-v novém prázdném adresáři.
-Pro `pytest` je (ve výchozím nastavení)
-důležité, aby jména jak souborů s testy, tak
-samotných testovacích funkcí, začínala na
+Kód si opiš do souboru `test_secteni.py` v novém prázdném adresáři.
+Jméno je důležité: `pytest` ve výchozím nastavení předpokládá,
+že jména jak souborů s testy tak samotných testovacích funkcí začínají na
 `test_`.
 
 ```python
@@ -184,44 +188,21 @@ Funkce `input` v testech nefunguje. Nemá koho by se zeptala; „za klávesnic�
 nemusí nikdo sedět.
 
 To může někdy „ztěžovat práci“. Ukážeme si to na složitějším projektu:
-na 1D piškvorkách.
+na Kámen-Nůžky-Papír.
 
-> [note]
-{% if var('coach-present') -%}
-> Nemáš-li hotové 1D piškvorky, následující sekce budou jen teorietické.
-{% endif -%}
-> Učíš-li se z domu, dodělej si Piškvorky než budeš pokračovat dál!
-> Zadání najdeš (prozatím)
-> v [projektech pro PyLadies](http://pyladies.cz/v1/s004-strings/handout/handout4.pdf)
-> na straně 2.
-
-Kód pro 1D Piškvorky může rámcově vypadat zhruba takto:
+Kód pro Kámen-Nůžky-Papír může, velice zjednodušeně, vypadat zhruba takto:
 
 ```python
 import random  # (příp. import jiných věci, které budou potřeba)
 
-def tah(pole, cislo_policka, symbol):
-    """Vrátí pole s daným symbolem umístěným na danou pozici"""
-    ...
+tah_pocitace = 'kámen'
+tah_hrace = input('Kam chceš hrát?')
 
-def tah_hrace(pole):
-    """Zeptá se hráče kam chce hrát a vrátí pole se zaznamenaným tahem"""
-    ...
-    input('Kam chceš hrát? ')
-    ...
+if tah_hrace == 'papír':
+    print('Vyhrál{{a}} jsi!')
+else:
+    print('Nevyhrál{{a}} jsi...')
 
-def piskvorky1d():
-    """Spustí hru
-
-    Vytvoří hrací pole a střídavě volá tah_hrace a tah_pocitace
-    dokud někdo nevyhraje"""
-    while ...:
-        ...
-        tah_hrace(...)
-        ...
-
-# Puštění hry!
-piskvorky1d()
 ```
 
 Když tenhle modul naimportuješ, Python v něm postupně, odshora dolů,
@@ -230,71 +211,113 @@ provede všechny příkazy.
 První příkaz, `import`, jen zpřístupní nějaké proměnné a funkce;
 je-li importovaný modul správně napsaný, nemá vedlejší účinek.
 Definice funkcí (příkazy `def` a všechno v nich) podobně jen definují funkce.
-Ale zavoláním funkce `piskvorky1d` se spustí hra:
-funkce `piskvorky1d` zavolá funkci `tah_hrace()` a ta zavolá `input()`.
+Ale zavoláním funkce `input` se spustí interakce: program potřebuje vstup
+od uživatele.
 
 Importuješ-li tenhle modul z testů, `input` selže a import se nepovede.
 
 > [note]
-> A kdybys modul importoval{{a}} odjinud – například bys chtěl{{a}} funkci
-> `tah` použít v nějaké jiné hře – uživatel si bude muset v rámci importu
-> zahrát Piškvorky!
+> A kdybys modul importoval{{a}} odjinud – například bys chtěl{{a}} tuhle
+> funkčnost použít v nějaké jiné hře – uživatel si bude muset v rámci importu
+> zahrát Kámen-Nůžky-Papír!
 
-Volání funkce `piskvorky1d` je vedlejší efekt, a je potřeba ho odstranit.
+Volání funkce `input` je vedlejší efekt.
+Je potřeba ho odstranit.
+Importovatelné moduly by měly pouze dát k dispozici nějaké funkce nebo hodnoty.
+Dej tedy hru do funkce:
+
+```python
+# knp.py -- importovatelný modul
+
+import random  # (příp. import jiných věci, které budou potřeba)
+
+def hrej_hru():
+    tah_pocitace = 'kámen'
+    tah_hrace = input('Kam chceš hrát?')
+
+    if tah_hrace == 'papír':
+        print('Vyhrál{{a}} jsi!')
+    else:
+        print('Nevyhrál{{a}} jsi...')
+
+```
+
 No jo, ale po takovém odstranění
 už nejde jednoduše spustit hra! Co s tím?
 
-Můžeš na to vytvořit nový modul.
-Pojmenuj ho `hra.py` a dej do něj jenom to odstraněné volání:
+Můžeš na to vytvořit nový modul, ve kterém bude jenom volání funkce:
 
 ```python
-import piskvorky
+# hra.py -- spouštěcí modul
 
-piskvorky.piskvorky1d()
+import knp
+
+knp.hrej_hru()
 ```
 
 Tenhle modul nebudeš moci testovat (protože nepřímo volá funkci `input`),
 ale můžeš ho spustit, když si budeš chtít zahrát.
 Protože k němu nemáš napsané testy, nepoznáš
 z nich, když se takový spouštěcí modul rozbije.
-Měl by být proto nejjednodušší – jeden import a jedno volání.
+Spouštěcí modul by proto měl být co nejjednodušší – jeden import a jedno volání.
 
 Původní modul teď můžeš importovat bez obav – ať už z testů nebo z jiných
 modulů.
-Test může vypadat třeba takhle:
+Pořád se ale, kvůli funkcím `input` a `print`, špatně testuje.
+Aby se testoval líp, můžeš kousek funkčnosti dát do jiné funkce:
 
 ```python
-import piskvorky
+# knp.py -- importovatelný modul
 
-def test_tah_na_prazdne_pole():
-    pole = piskvorky.tah_pocitace('--------------------')
-    assert len(pole) == 20
-    assert pole.count('x') == 1
-    assert pole.count('-') == 19
+import random  # (příp. import jiných věci, které budou potřeba)
+
+def vyhodnot(tah_pocitace, tah_hrace):
+    # (tady reálně bude spousta zanořených ifů)
+    if tah_hrace == 'papír':
+        return 'Vyhrál{{a}} jsi!'
+    else:
+        return 'Nevyhrál{{a}} jsi...'
+
+
+def hrej_hru():
+    tah_pocitace = 'kámen'
+    tah_hrace = input('Kam chceš hrát?')
+
+    vysledek = vyhodnot(tah_pocitace, tah_hrace)
+    print(vysledek)
+```
+
+Test pro funkci `vyhodnot` pak může vypadat třeba takhle:
+
+```python
+# test_knp.py -- testy
+
+import knp
+
+def test_vyhry():
+    assert vyhodnot('kámen', 'papír') == 'Vyhrál{{a}} jsi!'
+    assert vyhodnot('papír', 'nůžky') == 'Vyhrál{{a}} jsi!'
+    assert vyhodnot('nůžky', 'kámen') == 'Vyhrál{{a}} jsi!'
 ```
 
 ## Pozitivní a negativní testy
 
-Testům, které kontrolují že se program za správných podmínek chová správně,
-se říká *pozitivní testy*.
-Můžeš ale testovat i reakci programu na špatné nebo neočekávané podmínky.
+Test výše není úplný; splnila by ho i funkce jako:
+
+```python
+def vyhodnot(tah_pocitace, tah_hrace):
+    return 'Vyhrál{{a}} jsi!'
+```
+
+Kromě „pozitivních“ výsledků je potřeba kontrolovat i ty „negativní“:
+ať už očekávaný negativní výsledek (jako prohru nebo remízu)
+nebo reakci programu na špatné nebo neočekávané podmínky.
+
+Co třeba má dělat volání `vyhodnot(8, 'kukačka')`?
 
 Testy, které kontrolují reakci na „špatný“ vstup,
 se jmenují *negativní testy*.
-Můžou kontrolovat nějaký negativní výsledek (např.
-že volání jako <code>cislo_je_sude(7)</code> vrátí `False`),
-a nebo to, že nastane „rozumná“ výjimka.
-
-Například funkce `tah_pocitace` by měla způsobit
-chybu (třeba `ValueError`), když je herní pole už plné.
-
-> [note]
-> Vyvolat výjimku je mnohem lepší než alternativy, např. kdyby takové volání
-> „tiše“ – bez oznámení – zablokovalo celý program.
-> Když kód pak použiješ ve větším programu,
-> můžeš si být jistá, že při špatném volání
-> dostaneš srozumitelnou chybu – tedy takovou,
-> která se co nejsnadněji opravuje.
+Často kontrolují to, že nastane „rozumná“ výjimka.
 
 Na otestování výjimky použij příkaz `with` a funkci `raises` naimportovanou
 z modulu `pytest`.
@@ -303,12 +326,8 @@ teď stačí říct, že ověří, že odsazený blok kódu
 pod ním vyvolá danou výjimku:
 
 ```python
-import pytest
-
-import piskvorky
-
-def test_tah_chyba():
-    with pytest.raises(ValueError):
-        piskvorky.tah_pocitace('oxoxoxoxoxoxoxoxoxox')
+def test_spatneho_tahu():
+    """🤘 vs. 🖖 není správný vstup"""
+    with pytest.assert_raises(ValueError):
+        vyhodnot('metal', 'spock')
 ```
-

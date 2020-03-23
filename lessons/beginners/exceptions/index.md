@@ -3,7 +3,7 @@
 Pojďme si prohloubit znalosti o chybách, neboli odborně o *výjimkách*
 (angl. *exceptions*).
 
-Vezměme následující funkci:
+Vezmi následující funkci:
 
 ```python
 def nacti_cislo():
@@ -22,7 +22,7 @@ Traceback (most recent call last):
 ValueError: invalid literal for int() with base 10: 'cokolada'
 ```
 
-Program volá funkci `int()` pro neco, co nedává smysl jako číslo.
+Program volá funkci `int()` pro něco, co nedává smysl jako číslo.
 Co s tím má chudák funkce `int` dělat?
 Není žádná rozumná hodnota, kterou by mohla vrátit.
 Převádění tohoto textu na celé číslo nedává smysl.
@@ -48,6 +48,23 @@ Kde ale vzít funkci `obsahuje_jen_cislice`?
 Nechceme ji psát znovu – funkce `int` sama nejlíp pozná, co se dá převést na
 číslo a co ne.
 A dokonce nám to dá vědět – chybou, kterou můžeme *zachytit*.
+
+> [note]
+> Ono „obsahuje_jen_cislice“ v Pythonu existuje. Dokonce několikrát.
+> Místo řešení problému to ale spíš ilustruje, v čem problém spočívá:
+> * Řetězcová metoda `isnumeric` vrací `True` pokud řetězec obsahuje číslice:
+>   `'123'.isnumeric()` je pravda; ``'abc'.isnumeric()` nepravda.
+>   Problém je, že funkci `int` potřebuje jeden konkrétní druh číslic:
+>   pro řetězce jako `'½'` nebo `'௩三๓໓`' (trojka v tamilském, japonském,
+>   thajském nebo laoském písmu) platí `isnumeric`, ale `int` si na nich
+>   vyláme zuby stejně jako na `'abc'`.
+> * Řetězcová metoda `isdecimal` vrací `True` pokud řetězec obsahuje arabské
+>   číslice 0-9. To už je lepší, ale stejně to úplně nesedí: `int` si poradí
+>   s mezerou na začátku, např. s `' 3'`. Funkce `isnumeric` takový řetězec
+>   odmítne.
+>
+> Chceš-li se zeptat jestli funkce `int` umí daný řetězec převést na číslo,
+> nejlepší způsob jak to udělat je použít funkci `int`.
 
 
 ## Ošetření chyby
@@ -98,6 +115,9 @@ BaseException
       ╰── ValueError                špatná hodnota, např. int('xyz')
 ```
 
+Tohle si není potřeba pamatovat – druh chyby, kterou je potřeba zachytit,
+vždy najdeš v příslušné chybové hlášce.
+
 Když odchytáváš obecnou výjimku,
 chytnou se i všechny podřízené typy výjimek –
 například `except ArithmeticError:` zachytí i `ZeroDivisionError`.
@@ -110,21 +130,24 @@ Většinu chyb *není* potřeba ošetřovat.
 
 Nastane-li *nečekaná* situace, je téměř vždy
 mnohem lepší program ukončit, než se snažit
-pokračovat dál počítat se špatnými hodnotami.
+pokračovat dál a počítat se špatnými hodnotami.
 Navíc chybový výstup, který Python standardně
 připraví, může hodně ulehčit hledání chyby.
 
 Zachytávej tedy jenom ty chyby, které *očekáváš* – víš přesně, která chyba může
 nastat a proč, a máš možnost správně zareagovat.
 
-V našem příkladu to platí pro `ValueError` z funkce `int`.
+V našem příkladu to platí pro `ValueError` z funkce `int`: víš že uživatel
+nemusí vždy zadat číslo ve správném formátu a víš že správná
+reakce na tuhle situaci je problém vysvětlit a zeptat se znovu.
 
 Co ale dělat, kdyš uživatel chce ukončit program a zmáčkne
 <kbd>Ctrl</kbd>+<kbd>C</kbd>?
 Nebo když se mu porouchá klávesnice a selže funkce `input`?
-V obou případech je nejlepší reakce ukončit program a informovat
-programátora, že (a kde) je něco špatně.
-Neboli vypat chybovou hlášku – to, co se stane normálně, bez `try`.
+Nejlepší reakce na takovou nečekanou situaci ukončit program a informovat
+uživatele (nebo lépe, programátora), že (a kde) je něco špatně.
+Neboli vypsat chybovou hlášku.
+A to se stane normálně, bez `try`.
 
 
 ## Další přílohy k `try`
@@ -178,7 +201,7 @@ Měla by být použitelná ve všech případech výše – a v mnoha dalších
 
 Když někdo zavolá `obsah_ctverce(-5)`, *neexistuje* správný výsledek, který by
 funkce mohla vrátit.
-Místo vracení výsledku musí tato funkce *signalizovat chybu*.
+Místo vrácení výsledku musí tato funkce *signalizovat chybu*.
 S tou se pak může program, který `obsah_ctverce(-5)` zavolal,
 vypořádat – vynadat uživateli, zkalibrovat měřák, nebo, pokud na chybu není
 připravený, sám skončit s chybou (a upozornit tak programátora, že je něco
@@ -191,16 +214,16 @@ Za příkaz dáš druh výjimky a pak do závorek nějaký popis toho, co je šp
 ```python
 def obsah_ctverce(strana):
     if strana > 0:
-        return strana * strana
+        return strana ** 2
     else:
         raise ValueError(f'Strana musí být kladná, číslo {strana} kladné není!')
 ```
 
 Podobně jako `return`, i příkaz `raise` ukončí funkci.
-A nejen tu – pokud na tuhle konkrétní chybu program předem připravený,
+A nejen tu – pokud na tuhle konkrétní chybu není program předem připravený,
 ukončí se celý program.
 
-Ze začátku není příliš důležité dumat nad tím, který typ výjimky je ten
-správný.
+Ze začátku není u `raise` příliš důležité dumat nad tím, který typ výjimky je
+ten správný.
 Klidně „střílej od boku“.
 `ValueError` bývá často správná volba.
