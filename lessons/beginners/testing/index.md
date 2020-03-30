@@ -235,6 +235,7 @@ def hrej_hru():
     tah_pocitace = 'kámen'
     tah_hrace = input('Kam chceš hrát?')
 
+    # (tady reálně bude spousta zanořených ifů)
     if tah_hrace == 'papír':
         print('Vyhrál{{a}} jsi!')
     else:
@@ -287,7 +288,8 @@ def hrej_hru():
     print(vysledek)
 ```
 
-Test pro funkci `vyhodnot` pak může vypadat třeba takhle:
+A vida! Funkce `vyhodnot` teď neobsahuje ani `print` ani `input`.
+Půjde tedy docela jednoduše otestovat:
 
 ```python
 # test_knp.py -- testy
@@ -300,9 +302,16 @@ def test_vyhry():
     assert vyhodnot('nůžky', 'kámen') == 'Vyhrál{{a}} jsi!'
 ```
 
+Funkce `hrej_hru` ovšem tak dobře otestovat nejde.
+Musíš ji testovat ručně.
+Protože ale hlavní část programu (`vyhodnot`) jde pokrýt automatickými testy,
+ruční testování nemusí být tak důkladné.
+
+
 ## Pozitivní a negativní testy
 
-Test výše není úplný; splnila by ho i funkce jako:
+Test `test_vyhry`, ukázaný výše, není úplný.
+Splnila by ho i funkce jako:
 
 ```python
 def vyhodnot(tah_pocitace, tah_hrace):
@@ -321,7 +330,7 @@ se jmenují *negativní testy*.
 
 Na otestování výjimky použij příkaz `with` a funkci `raises` naimportovanou
 z modulu `pytest`.
-Jak příkaz `with` přesně funguje, se dozvíme později;
+Jak příkaz `with` přesně funguje, to se dozvíme později;
 teď stačí říct, že ověří, že odsazený blok kódu
 pod ním vyvolá danou výjimku:
 
