@@ -337,6 +337,6 @@ pod ním vyvolá danou výjimku:
 ```python
 def test_spatneho_tahu():
     """🤘 vs. 🖖 není správný vstup"""
-    with pytest.assert_raises(ValueError):
+    with pytest.raises(ValueError):
         vyhodnot('metal', 'spock')
 ```
