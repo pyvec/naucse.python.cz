@@ -23,8 +23,10 @@ print(dvojice)
 ```
 
 Chovají se skoro stejně jako seznamy, jen nejdou měnit.
-Nemají tedy metody jako `append` a `pop` a nedá se jim přiřazovat do prvků.
-Dají se ale použít v cyklu `for` a dají se z nich číst jednotlivé prvky.
+Nemají tedy metody jako `append` a `pop` a nedá se jim přiřazovat do prvků
+(např. `ntice[1] = 2`).
+Dají se ale použít v cyklu `for` a dají se z nich číst jednotlivé prvky
+(např. `print(ntice[1])`).
 
 ```python
 osoby = 'máma', 'teta', 'babička'
@@ -62,7 +64,7 @@ print(seznam_dvojic)
 
 <var>N</var>-tice se hodí, pokud chceš z funkce vrátit
 víc než jednu hodnotu.
-Když příkazu `return` oddělíš vracené hodnoty čárkou,
+Když u příkazu `return` použiješ vracených hodnoty oddělených čárkou,
 vypadá to, že vracíš několik hodnot, ale
 ve skutečnosti se vrací jen jedna <var>n</var>-tice.
 
@@ -122,6 +124,10 @@ nebo seznam karet v balíčku.
 Oproti tomu `for pozdrav in 'Ahoj', 'Hello', 'Hola', 'Hei', 'SYN':`
 používá <var>n</var>-tici.
 
+Když se počet prvků může v průběhu programu měnit, určitě sáhni po seznamu.
+Příklad budiž seznam přihlášených uživatelů, nevyřešených požadavků,
+karet v ruce nebo položek v inventáři.
+
 <var>N</var>-tice se často používají na hodnoty
 různých typů, kdy má každá „pozice”
 v <var>n</var>-tici úplně jiný význam.
@@ -133,12 +139,12 @@ prvkem se zapisují trochu divně a má to své důvody:
 může-li nastat situace, kdy takovou sekvenci budeš
 potřebovat, většinou je lepší sáhnout po seznamu.
 Například seznam hracích karet v ruce nebo
-seznam lidí aktuálně přihlášených do soutěže
-může být občas prázdný.
+seznam lidí aktuálně sledujících video může být občas prázdný.
 
 Seznamy i n-tice mají i technické limity:
-<var>n</var>-tice nejdou měnit a až se naučíme pracovat se slovníky,
-zjistíme že seznamy tam nepůjdou použít jako klíče.
+<var>n</var>-tice nejdou měnit a až se naučíš pracovat se slovníky,
+zjistíš že seznamy tam nepůjdou použít jako klíče.
+V takových případech je potřeba použít ten druhý typ sekvence.
 
-Často není úplně jasné, který typ použít
-– v takovém případě je to pravděpodobně jedno.
+Často není úplně jasné, který typ použít.
+V takovém případě je to pravděpodobně jedno.
