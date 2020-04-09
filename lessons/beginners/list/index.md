@@ -87,7 +87,7 @@ print(cisla[2:-3])
 ## Měnění seznamů
 
 Důležitá vlastnost seznamů, kterou nemají ani čísla, ani řetězce
-(a `True`/`False`/`None` už vůbec ne), je,
+(a `True`/`False`/`None` už vůbec ne) je,
 že seznamy se dají měnit.
 
 Čísla měnit nejdou – máš-li `a = 3` a
