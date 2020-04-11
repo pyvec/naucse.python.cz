@@ -184,52 +184,55 @@ finally:
 
 ## Úkol
 
-Doplň do geometrické kalkulačky (nebo 1-D piškvorek, máš-li je) ošetření chyby,
-která nastane když uživatel nezadá číslo.
+V domácím projektu jsme měli za úkol napsat program, který postupně načte od uživatele dvě čísla a jednoznakový řetězec – buď '+', '-', '*' nebo '/'. Program provede na číslech příslušnou operaci. Doplň program tak, aby možné chybové stavy byly ošetřeny výjimkami.
+
+> Možný chybový stav může být, když chce uživatel dělit nulou.
 
 {% filter solution %}
 
-Možné řešení pro geometrickou kalkulačku:
+Možné řešení:
 
 ```python
 
-while True:
-    try:
-        strana = float(input('Zadej stranu čtverce v centimetrech: '))
-    except ValueError:
-        print('To nebylo číslo!')
+try:
+    # Následující dvě řádky vyhodí ValueError pokud vstup není číslo
+    prvni_cislo = int(input("Zadej první číslo: "))
+    druhe_cislo = int(input("Zadej druhé číslo: "))
+
+    operand = input("A co s nimi mám udělat? * / + nebo -  ")
+
+    if operand == "+":
+        vysledek = prvni_cislo + druhe_cislo
+    elif operand == "-":
+        vysledek = prvni_cislo - druhe_cislo
+    elif operand == "*":
+        vysledek = prvni_cislo * druhe_cislo
+    elif operand == "/":
+        # Pokud je `druhe_cislo` nula, následující řádka vyhodí `ZeroDivisionError`
+        vysledek = prvni_cislo / druhe_cislo
     else:
-        if strana <= 0:
-            print('To nedává smysl!')
-        else:
-            break
+        # Vstupem je operand, se kterým neumíme počítat, nebo nějaký nesmysl
+        # S nesmyslem počítat také neumíme, takže vyhodíme `ArithmeticError`
+        # Volba výjimky je ale na nás, vhodný by mohl být i `SyntaxError`
+        raise ArithmeticError
 
-print('Obvod čtverce se stranou', strana, 'je', 4 * strana, 'cm')
-print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
+except ValueError:
+    # Zachytili jsme `ValueError` z načítání čísel
+    print("Jedno z čísel bylo špatně zadané. Musíš být pečlivější.")
+except ZeroDivisionError:
+    # Tady jsme zachytili dělení nulou
+    print("Nemůžeš dělit nulou!")
+except ArithmeticError:
+    # Tady jsme zachytili `ArithmeticError`, který program vyhodí
+    # v případě špatně zadaného operátoru
+    print("Tuhle operaci provést neumím.")
+else:
+    # Else větev ve spojení s `try` blokem proběhne pouze, pokud v `try` bloku
+    # nenastala žádná vyjímka
+    print(prvni_cislo, operand, druhe_cislo, "=", vysledek, sep=" ")
+finally:
+    # Tohle proběhne "nakonec", ať už k nějaké vyjímce došlo nebo ne
+    print("Děkuji za použití této skvělé kalkulačky")
 
-```
-
-Možné řešení pro 1-D piškvorky:
-
-```python
-def tah_hrace(pole):
-    while True:
-        try:
-            pozice = int(input('Kam chceš hrát? (0..19) '))
-        except ValueError:
-            print('To není číslo!')
-        else:
-            if pozice < 0 or pozice >= len(pole):
-                print('Nemůžeš hrát venku z pole!')
-            elif pole[pozice] != '-':
-                print('Tam není volno!')
-            else:
-                break
-
-    pole = pole[:pozice] + 'o' + pole[pozice + 1:]
-    return pole
-
-
-print(tah_hrace('-x----'))
 ```
 {% endfilter %}
