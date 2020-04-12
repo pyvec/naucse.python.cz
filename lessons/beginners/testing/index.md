@@ -180,79 +180,85 @@ Co to znamená pro nás?
 Funkce `input` v testech nefunguje. Nemá koho by se zeptala; „za klávesnicí“
 nemusí nikdo sedět.
 
-To může někdy „ztěžovat práci“. Ukážeme si to na složitějším projektu:
-na 1D piškvorkách.
+To může někdy „ztěžovat práci“. Ukážeme si to na naší konzolové kalkulačce.
 
-> [note]
-{% if var('coach-present') -%}
-> Nemáš-li hotové 1D piškvorky, následující sekce budou jen teorietické.
-{% endif -%}
-> Učíš-li se z domu, dodělej si Piškvorky než budeš pokračovat dál!
-> Zadání najdeš (prozatím)
-> v [projektech pro PyLadies](http://pyladies.cz/v1/s004-strings/handout/handout4.pdf)
-> na straně 2.
-
-Kód pro 1D Piškvorky může rámcově vypadat zhruba takto:
+Kód pro kalkulačku si uložíme jako `kalkulacka.py` a může rámcově vypadat zhruba takto:
 
 ```python
-import random  # (příp. import jiných věci, které budou potřeba)
+# pokud potřebuji importovat jiné moduly, importují se vždy na začátku
 
-def tah(pole, cislo_policka, symbol):
-    """Vrátí pole s daným symbolem umístěným na danou pozici"""
+def secti(prvni_cislo, druhe_cislo):
+    """Vrátí součet dvou čísel."""
     ...
 
-def tah_hrace(pole):
-    """Zeptá se hráče kam chce hrát a vrátí pole se zaznamenaným tahem"""
-    ...
-    input('Kam chceš hrát? ')
+def odecti(prvni_cislo, druhe_cislo):
+    """Vrátí rozdíl prvního a druhého čísla."""
     ...
 
-def piskvorky1d():
-    """Spustí hru
+def vynasob(prvni_cislo, druhe_cislo):
+    """Vrátí součin dvou čísel."""
+    ...
 
-    Vytvoří hrací pole a střídavě volá tah_hrace a tah_pocitace
-    dokud někdo nevyhraje"""
-    while ...:
-        ...
-        tah_hrace(...)
-        ...
+def vydel(prvni_cislo, druhe_cislo):
+    """Vrátí podíl prvního a druhého čísla."""
+    ...
 
-# Puštění hry!
-piskvorky1d()
+def nacti_operand():
+    """Načte od uživatele operand."""
+    ...
+    operand = input("Zadej operaci, + - * /")
+    ...
+
+def nacti_cislo(vyzva_uzivateli):
+    """Zobrazí výzvu uživateli, načte od něj vstup a ten vrátí jako celé číslo."""
+    ...
+    cislo = input(vyzva_uzivateli)
+    ...
+
+def kalkulacka():
+    """Spustí kalkulačku
+
+    Od uživatele načte čísla, požadovanou operaci a vypíše výsledek."""
+    ...
+    prvni_cislo = nacti_cislo("Zadej první číslo")
+    druhe_cislo = nacti_cislo("Zadej druhé číslo")
+    operand = nacti_operand()
+    ...
+
+# Puštění kalkulačky!
+kalkulacka()
 ```
 
 Když tenhle modul naimportuješ, Python v něm postupně, odshora dolů,
 provede všechny příkazy.
 
-První příkaz, `import`, jen zpřístupní nějaké proměnné a funkce;
-je-li importovaný modul správně napsaný, nemá vedlejší účinek.
-Definice funkcí (příkazy `def` a všechno v nich) podobně jen definují funkce.
-Ale zavoláním funkce `piskvorky1d` se spustí hra:
-funkce `piskvorky1d` zavolá funkci `tah_hrace()` a ta zavolá `input()`.
+Definice funkcí (příkazy `def` a všechno v nich) jen definují funkce.
+Ale zavoláním funkce `kalkulacka` se spustí hra:
+funkce `kalkulacka` zavolá funkce `nacti_cislo()`  a `nacti_operand`, které zavolají `input()`.
 
 Importuješ-li tenhle modul z testů, `input` selže a import se nepovede.
 
 > [note]
 > A kdybys modul importoval{{a}} odjinud – například bys chtěl{{a}} funkci
-> `tah` použít v nějaké jiné hře – uživatel si bude muset v rámci importu
-> zahrát Piškvorky!
+> `secti` použít v nějakém jiném programu – uživatel si bude muset v rámci importu
+> nechat něco vypočítat!
 
-Volání funkce `piskvorky1d` je vedlejší efekt, a je potřeba ho odstranit.
+Volání funkce `kalkulacka` je __vedlejší efekt__, a je potřeba ho odstranit.
 No jo, ale po takovém odstranění
 už nejde jednoduše spustit hra! Co s tím?
 
 Můžeš na to vytvořit nový modul.
-Pojmenuj ho `hra.py` a dej do něj jenom to odstraněné volání:
+Pojmenuj ho `vypocet.py` a dej do něj jenom to odstraněné volání:
 
 ```python
-import piskvorky
+import kalkulacka
 
-piskvorky.piskvorky1d()
+kalkulacka.kalkulacka()
 ```
 
 Tenhle modul nebudeš moci testovat (protože nepřímo volá funkci `input`),
-ale můžeš ho spustit, když si budeš chtít zahrát.
-Protože k němu nemáš napsané testy, nepoznáš
+ale můžeš ho spustit, když si budeš chtít nechat něco spočítat.
+Protože k němu ale nemáš napsané testy, nepoznáš
 z nich, když se takový spouštěcí modul rozbije.
 Měl by být proto nejjednodušší – jeden import a jedno volání.
 
@@ -261,14 +267,15 @@ modulů.
 Test může vypadat třeba takhle:
 
 ```python
-import piskvorky
+import kalkulacka
 
-def test_tah_na_prazdne_pole():
-    pole = piskvorky.tah_pocitace('--------------------')
-    assert len(pole) == 20
-    assert pole.count('x') == 1
-    assert pole.count('-') == 19
+def test_secti():
+    assert secti(1, 2) == 3
+    assert secti(-1, -2) == -3
+    assert secti(-1, 1) == 0
 ```
+
+Asi těžko otestujeme všechny možné součty, proto je potřeba zvolit vhodná testovací data. U takových dat bychom si měli být jisti výsledkem (např. jsme si jisti, že 1 + 2 je opravdu 3) a zároveň by měly pokrýt i podmínky, kdy je větší pravděpodobnost, že se něco "rozbije" (např. sčítání záporných čísel).
 
 ## Pozitivní a negativní testy
 
@@ -279,11 +286,11 @@ Můžeš ale testovat i reakci programu na špatné nebo neočekávané podmínk
 Testy, které kontrolují reakci na „špatný“ vstup,
 se jmenují *negativní testy*.
 Můžou kontrolovat nějaký negativní výsledek (např.
-že volání jako <code>cislo_je_sude(7)</code> vrátí `False`),
+že volání jako <code>secti(1, 2)</code> vrátí `4`),
 a nebo to, že nastane „rozumná“ výjimka.
 
-Například funkce `tah_pocitace` by měla způsobit
-chybu (třeba `ValueError`), když je herní pole už plné.
+Například funkce `vydel` by měla způsobit
+chybu (třeba `ZeroDivisionError`), když se pokusím dělit nulou.
 
 > [note]
 > Vyvolat výjimku je mnohem lepší než alternativy, např. kdyby takové volání
@@ -302,10 +309,10 @@ pod ním vyvolá danou výjimku:
 ```python
 import pytest
 
-import piskvorky
+import kalkulacka
 
-def test_tah_chyba():
-    with pytest.raises(ValueError):
-        piskvorky.tah_pocitace('oxoxoxoxoxoxoxoxoxox')
+def test_vydel():
+    with pytest.raises(ZeroDivisionError):
+        kalkulacka.vydel(1, 0)
 ```
 
