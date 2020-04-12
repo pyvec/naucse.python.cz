@@ -66,7 +66,7 @@ Ladící výpisy také mohou prozradit citlivá data, tedy data, se kterými sic
 
 ## Logování
 
-Abychom neustále nemuseli myslet na mazání ladících printů a při každé chybě je vracet zase zpět, nabízí se zapisovat zprávy do souboru, tzv. __logu__. To nám umožňuje i výpisy uchovávat a vrátit se k nim, když problém zjistíme později.Nebo nám je může uživatel snadno zaslat a my vidíme, co se u uživatele dělo. Python nám za tímto účelem poskytuje šikovný modul `logging`, který se za nás postará o zapisování do souboru. Zároveň mu můžeme říct, aby nám ukládal zprávy jen důležité zprávy a zbytek ignoroval.
+Abychom neustále nemuseli myslet na mazání ladících printů a při každé chybě je vracet zase zpět, nabízí se zapisovat zprávy do souboru, tzv. __logu__. To nám umožňuje i výpisy uchovávat a vrátit se k nim, když problém zjistíme později. Nebo nám je může uživatel snadno zaslat a my vidíme, co se u uživatele dělo. Python nám za tímto účelem poskytuje šikovný modul `logging`, který se za nás postará o zapisování do souboru. Zároveň mu můžeme říct, aby nám ukládal jen důležité zprávy a zbytek ignoroval.
 
 Pojďme se podívat na možnou důležitost (__level__) zpráv a na co se daná důležistost (__level__) hodí.
 
@@ -119,7 +119,7 @@ import logging
 logging.basicConfig(filename='log_test.log',level=logging.DEBUG)
 
 # zaznamenávání ladících výpisů s příslušným levelem (důležitostí)
-logging.critical"Tohle je závažná chyba. Program ti nefunguje.")
+logging.critical("Tohle je závažná chyba. Program ti nefunguje.")
 logging.error("Kvůli chybě se nedala dokončit operace.")
 logging.warning("Je možné, že se ti za chvíli něco rozbije.")
 logging.info("Funguju na pohodu!")
