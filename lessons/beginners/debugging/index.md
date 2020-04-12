@@ -133,11 +133,15 @@ Všechny výpisy bychom měli vidět v souboru `log_test.log`, protože `level` 
 ## Debugger
 
 Ačkoliv jsou ladící výpisy užitečné, někdy je potřeba se uchýlit k sofistikovanějšímu nástroji. Ukažme si tedy, jak funguje debugovací nástroj v MuCode.
+Většina debugovacích nástrojů v jiných editorech funguje velmi podobně a existuje 
+i způsob, jak použít debugovací nástroj bez editoru [pdb](https://docs.python.org/3/library/pdb.html). 
 
-Nejprve je třeba vybrat tzv. __breakpoint__, to je místo v kódu, které označíme a po spuštění programu v debugovacím nástroji se tam
+Nejprve je třeba vybrat tzv. __breakpoint__, to je místo v kódu, které označíme 
+a po spuštění programu v debugovacím nástroji se tam
 program zastaví a nechá nás prohlédnout si, co se děje. V Mu se
-__breakpoint__ nastaví kliknutím napravo od čísla řádku, měla by se objevit velká červená značka. Pozor ne na všechny řádky kódu jde umístnit
-breakpoint. Breakpointů lze rozmístnit více, podle toho, které části programu nás zajímají.
+__breakpoint__ nastaví kliknutím napravo od čísla řádku, měla by se objevit velká 
+červená značka. Pozor ne na každou řádku kódu jde breakpoint umístnit. Breakpointů 
+lze rozmístnit více, podle toho, které části programu nás zajímají.
 
 {{ figure(img=static('1_set_breakpoint_hit_debug.png'), alt="Mu breakpoint") }}
 
@@ -146,4 +150,11 @@ Ve chvíli, kdy dorazí k prvnímu brakpointu, se zastaví a my si můžeme proh
 obsah proměnných, program krokovat (tj. vykonávat řádek po řádku) nebo ho nechat 
 doběhnout do konce nebo dalšího breakpointu.
 
-{{ figure(img=static('2_profit.png'), alt="Mu breakpoint") }}
+{{ figure(img=static('2_profit.png'), alt="Mu debug") }}
+
+Takto můžeme snadno sledovat, co přesně program dělá: jak se mění obsah proměnných,
+jak a proč se program rozhoduje v podmínkách i jak probíhají cykly. Ovšem pozor
+občas se může stát, že se program chová při debugování trochu jinak než v "ostrém"
+provozu. V některých složitějších programech zase není možné se na některá místa 
+programu debugovacím nástrojem  dostat. A samozřejmě těžko můžeme debugger použít 
+přímo u uživatele. Proto je důležité ovládat všechny techniky hledání chyb.
