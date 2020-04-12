@@ -133,3 +133,17 @@ Všechny výpisy bychom měli vidět v souboru `log_test.log`, protože `level` 
 ## Debugger
 
 Ačkoliv jsou ladící výpisy užitečné, někdy je potřeba se uchýlit k sofistikovanějšímu nástroji. Ukažme si tedy, jak funguje debugovací nástroj v MuCode.
+
+Nejprve je třeba vybrat tzv. __breakpoint__, to je místo v kódu, které označíme a po spuštění programu v debugovacím nástroji se tam
+program zastaví a nechá nás prohlédnout si, co se děje. V Mu se
+__breakpoint__ nastaví kliknutím napravo od čísla řádku, měla by se objevit velká červená značka. Pozor ne na všechny řádky kódu jde umístnit
+breakpoint. Breakpointů lze rozmístnit více, podle toho, které části programu nás zajímají.
+
+{{ figure(img=static('1_set_breakpoint_hit_debug.png'), alt="Mu breakpoint") }}
+
+Po označení všech breakpointů stačí kliknout na tlačítko Debug a program se spustí.
+Ve chvíli, kdy dorazí k prvnímu brakpointu, se zastaví a my si můžeme prohlédnout
+obsah proměnných, program krokovat (tj. vykonávat řádek po řádku) nebo ho nechat 
+doběhnout do konce nebo dalšího breakpointu.
+
+{{ figure(img=static('2_profit.png'), alt="Mu breakpoint") }}
