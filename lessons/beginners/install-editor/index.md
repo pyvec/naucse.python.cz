@@ -77,8 +77,8 @@ Na kurzu budeme používat Mu editor
 
 * [Mu]({{ subpage_url('mu') }}) - jednoduchý editor určený pro začínající programátory.
 
-Nemáš-li už vlastní oblíbený editor, pro Windows a macOS
-doporučujeme *Atom* nebo *Visual Studio Code*:
+Nemáš-li už vlastní oblíbený editor, ale chceš zkusit něco jiného, 
+pro Windows a macOS doporučujeme *Atom* nebo *Visual Studio Code*:
 
 * [Atom]({{ subpage_url('atom') }}) – doporučený editor pro
   Windows a macOS.
