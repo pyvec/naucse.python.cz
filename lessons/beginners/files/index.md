@@ -1,7 +1,7 @@
 # Soubory
 
-Dnes se podíváme na to, jak v Pythonu číst z
-(a pak i zapisovat do) souborů.
+Dnes se podíváme na to, jak v Pythonu číst ze souborů
+(a pak i jak do nich zapisovat).
 
 Vytvoř si v editoru soubor `basnicka.txt` a napiš do něj libovolnou básničku.
 Soubor ulož.
@@ -42,7 +42,7 @@ Co se tu děje?
 Tak jako `int()` vrací čísla a `input()` řetězce, funkce
 `open()` vrací hodnotu, která představuje *otevřený soubor*.
 Tahle hodnota má vlastní metody.
-Tady používáme metodu `read()`, která
+Tady používáš metodu `read()`, která
 najednou přečte celý obsah souboru a vrátí ho jako řetězec.
 Nakonec metoda `close()` otevřený soubor zase zavře.
 
@@ -87,8 +87,8 @@ V naprosté většině případů je pro otevírání souborů nejlepší použ�
 
 ## Iterace nad soubory
 
-Otevřené soubory se dají použít s příkazem `for`,
-stejně jako např. řetězce či `range`.
+Otevřené soubory jsou iterovatelné – dají se, stejně jako např. řetězce či
+`range`, použít s příkazem `for`.
 Tak jako `for i in range(...)` poskytuje za sebou jdoucí čísla a
 `for znak in 'abcd'` poskytuje jednotlivé znaky řetězce, `for radek in soubor`
 bude v proměnné `radek` poskytovat jednotlivé *řádky* čtené ze souboru.
@@ -154,7 +154,7 @@ print('Jak se ti líbí?')
 
 Soubory se v Pythonu dají i zapisovat.
 Pro zápis soubor otevři s pojmenovaným
-argumentem `mode='w'` (z angl. *mode*, mód a *write*, psát).
+argumentem `mode='w'` (z angl. *mode*, mód a * **w**rite*, psát).
 
 Pokud soubor už existuje, otevřením s `mode='w'` se veškerý jeho obsah smaže.
 Po zavření tak v souboru bude jen to, co do něj ve svém programu zapíšeš.

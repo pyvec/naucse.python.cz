@@ -18,6 +18,7 @@ Spousta těchto typů umí něco navíc: zjistit jestli obsahují nějaký prvek
 Nic z toho ale není potřeba, aby byl objekt iterovatelný.
 
 Podívejme se na dva další iterovatelné objekty: `enumerate` a `zip`.
+Oba jsou sekvence vytvořené z jiných, jednodušších sekvencí.
 
 
 ## Enumerate: očíslování sekvence
@@ -59,9 +60,23 @@ for dvojice in enumerate(trpaslici):
 Objekt, který funkce `enumerate` vrací, je *iterátor dvojic* – sekvence,
 jejíž prvky jsou dvojice.
 
+Sekvence `enumerate` toho „umí“ ještě míň než seznam nebo `range`.
+Nejde z ní ani vybírat prvky, o metodách jako `append` ani nemluvě:
+
+```pycon
+>>> enumerate(trpaslici)[3]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'enumerate' object is not subscriptable
+```
+
+Když budeš od sekvence `enumerate` chtít něco víc než iterování,
+převeď ji na seznam.
+
+
 ## Rozbalování v cyklu for
 
-Cyklus `for` umíme rozepsat: opakuje se v něm nastavení proměnné (které dělá
+Cyklus `for` umíš rozepsat: opakuje se v něm nastavení proměnné (které dělá
 `for` za tebe), pak tělo cyklu, a znovu nastavení proměnné, tělo cyklu, atd.
 Pro „trpasličí“ cyklus to je:
 
@@ -155,11 +170,11 @@ for index, den in enumerate(dny, start=1):
 Další iterátor <var>n</var>-tic je funkce `zip`, která umí projít dvě sekvence
 naráz.
 
-Řekněme že máš seznam věcí a k nim příslušných barev:
+Řekněme že máš seznam věcí a druhý seznam, ve kterém jsou barvy těch věcí:
 
 ``` python
-veci = ['tráva', 'slunce', 'mrkev', 'řeka']
-barvy = ['zelená', 'žluté', 'oranžová', 'modrá']
+veci = ['tráva', 'slunce', 'mrkev', 'list']
+barvy = ['zelená', 'žluté', 'oranžová', 'zelený']
 ```
 
 Když na ně zavoláš `zip`, dostaneš iterátor, který (podobně jako `enumerate`
@@ -179,7 +194,7 @@ Po převedení na seznam se ale ukáže seznam odpovídajících si dvojic:
 
 ```pycon
 >>> list(zip(veci, barvy))
-[('tráva', 'zelená'), ('slunce', 'žluté'), ('mrkev', 'oranžová'), ('řeka', 'modrá')]
+[('tráva', 'zelená'), ('slunce', 'žluté'), ('mrkev', 'oranžová'), ('list', 'zelený')]
 ```
 
 Takové dvojice jsou připravené na to, že je rozbalíš v cyklu `for`:
@@ -194,9 +209,9 @@ V následujícím případě vznikne iterátor čtveřic (věc, barva,
 místo, číslo):
 
 ```python
-veci = ['tráva', 'slunce', 'mrkev', 'řeka']
-barvy = ['zelená', 'žluté', 'oranžová', 'modrá']
-mista = ['na zemi', 'nahoře', 'na talíři', 'za zídkou']
+veci = ['tráva', 'slunce', 'mrkev', 'list']
+barvy = ['zelená', 'žluté', 'oranžová', 'zelený']
+mista = ['na zemi', 'nahoře', 'na talíři', 'na stromě']
 cisla = range(4)
 
 for vec, barva, misto, cislo in zip(veci, barvy, mista, cisla):
@@ -209,8 +224,8 @@ for vec, barva, misto, cislo in zip(veci, barvy, mista, cisla):
 Jak se `zip` chová, když dostane seznamy různých délek?
 
 ```python
-veci = ['tráva', 'slunce', 'mrkev', 'řeka', 'myšlenka', 'spravedlnost']
-barvy = ['zelená', 'žluté', 'oranžová', 'modrá']
+veci = ['tráva', 'slunce', 'mrkev', 'list', 'myšlenka', 'spravedlnost']
+barvy = ['zelená', 'žluté', 'oranžová', 'zelený']
 for vec, barva in zip(veci, barvy):
     print(f"{vec} je {barva}")
 ```

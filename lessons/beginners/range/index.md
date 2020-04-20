@@ -46,13 +46,27 @@ range(0, 10000)
 [0, 1, 2, 3, ..., 9999]
 ```
 
-Kdybys zkusil{{a}} třeba `list(range(1000000000000000000))`, počítači
+Kdybys zkusil{{a}} třeba `list(range(1000000000000000))`, počítači
 dojde paměť.
-Miliarda čísel se tam prostě nevejde.
+Biliarda čísel se tam prostě nevejde.
 Python vyhodí výjimku  `MemoryError`.
-Se samotným `range(1000000000000000000)` ale není problém.
-S konceptem čísel od 0 do miliardy se počítač vypořádá, i když si je neumí
-„zapamatovat“ všechny *najednou*.
+
+
+> [warning]
+> Pokud máš na počítači v jiném okně neuloženou práci, radši `list(range(...))`
+> s hodně vysokými čísly nezkoušej.
+>
+> U absurdně vysokého čísla jako `1000000000000000` Python předem ví,
+> že mu paměť dojde, a tak ohlásí chybu ještě než se bude snažit seznam vytvořit.
+> U trochu menšího čísla (např. `1000000000`, ale na každém počítači je to
+> jinak) se může stát, že se Python pokusí seznam začít tvořit, zaplní přitom
+> většinu dostupné paměti a počítač „zamrzne“.
+> V závislosti na systému se pak třeba může stát že reakce na
+> <kbd>Ctrl</kbd>+<kbd>C</kbd> bude trvat hodně dlouho.
+
+Se samotným `range(1000000000000000)` ale není problém.
+S konceptem *všech čísel od 0 do biliardy* se počítač vypořádá, i když si je
+neumí „zapamatovat“ všechny *najednou*.
 
 Je spousta věcí, které Python umí s `range` udělat, aniž by potřeboval
 „spočítat“ každé z čísel.
@@ -93,6 +107,25 @@ True
 23
 ```
 
-Objekt `range` ale nejde měnit – metody jako `zajimava_cisla.sort()`,
-`zajimava_cisla.pop()` fungovat nebudou.
+Objekt `range` ale nejde měnit – mazání prvků nebo metody jako
+`zajimava_cisla.sort()`, `zajimava_cisla.pop()` fungovat nebudou.
 
+> [note] Proč ne?
+> Když máš objekt jako `range(8, 10000, 3)`, osmdesátý prvek je jen trocha
+> matematiky: spočítáš `8 + 3 * 80` a zkontroluješ že to nepřesáhlo `10000`.
+> Podobně je to s ostatními sekvencemi „všech <var>X</var>-tých čísel od
+> <var>A</var> do <var>B</var>“, tedy s ostatními `range`.
+>
+> Kdyby ale šlo udělat něco jako:
+>
+> ```python
+> sekvence = range(8, 10000, 3)
+> del sekvence[10]
+> sekvence.insert(103, 'ježek')
+> ```
+>
+> … jde najednou o mnohem složitější koncept, kde se N-tý prvek hledá mnohem
+> hůř. Už to není jednoduchá sekvence čísel – už to není `range`, ale spíš
+> seznam jakýchkoli hodnot.
+
+Pokud budeš něco co `range` neumí potřebovat, převeď `range` na seznam.
