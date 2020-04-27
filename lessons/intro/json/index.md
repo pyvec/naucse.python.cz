@@ -2,7 +2,8 @@
 
 V Pythonu informace spravuješ v seznamech, slovnících a jiných datových
 strukturách.
-Vytvoř si nějaký slovník plný seznamů, řetězců a čísel. Třeba:
+Když si vytvoříš nějaký slovník slovník plný seznamů, řetězců a čísel,
+můžeš s ním v Pythonu dál pracovat. Třeba:
 
 ```python
 data = {
@@ -14,8 +15,8 @@ data = {
 data['jazyky'].append('Python')
 ```
 
-Taková data nejdou přímo zapsat na disk nebo přenést přes Internet.
-Python si je „pamatuje“ tak, aby s nimi mohl jednoduše pracovat;
+Taková data ale nejdou přímo zapsat na disk nebo přenést přes Internet.
+Python si je „pamatuje“ tak, aby s nimi mohl jednoduše pracovat;
 když Python vypneš, stuktura informací se ztratí.
 
 Abys mohl{{a}} informace zapsat, uložit nebo dokonce přenést na jiný počítač,
@@ -26,15 +27,108 @@ musíš je *zakódovat* – převést na řetězec.
 > Doopravdy se do souborů zapisují (a po síti posílají)
 > sekvence *bytů* (čísel od 0 do 255).
 > Python řetězce na byty ale převádí automaticky (pomocí kódování
-> `UTF-8`, nastaveného pomocí `encoding='utf-8'`).
-> Vystačíme si proto s převáděním na řetězce.
+> `UTF-8`, nastaveného pomocí `encoding='utf-8'`.
+> Vystačíme si proto s převáděním na řetězce, se kterými – na rozdíl od bytů
+> – už umíš pracovat.
+
+
+## Typy
+
+Když budeš informace ukládat nebo posílat po internetu,
+je dobré zařídit, aby je uměly přečít i jiné programy než ten tvůj.
+A ty jiné programy nemusí být napsané v Pythonu.
+
+Ostatní jazyky často neumí přímopracovat s pythonními hodnotami – seznamy,
+slovníky, `range`, nebo funkcemi.
+Budeš-li se chtít s takovými programy „domluvit” –
+předat jim nějaké informace ke zpracování
+nebo od nich dostat výsledky –
+musíš informace předávat v nějaké zjednodušené podobě.
+
+Většina programovacích jazyků má nějaká čísla, nějaký druh seznamů,
+nějakou odrůdu řetězců a nějakou variaci na slovníky
+(nebo několik způsobů jak slovníky vytvořit).
+Dále má spousta jazyků způsob, jak zapsat
+`True`, `False` a `None`.
+
+Tyhle základní typy většinou stačí na předání
+jakékoli informace v rozumně čitelné podobě,
+i když ne ve všech jazycích mají přesné ekvivalenty
+(třeba Python má dva základní druhy čísel – `int` a `float`).
+Často se proto v komunikaci omezíme na ně.
+
+
+## Kódování
+
+Existuje spousta způsobů, jak zakódovat data do textu.
+Každý způsob se snaží najít vhodnou rovnováhu mezi
+čitelností pro lidi/počítače, délkou zápisu,
+bezpečností, možnostmi a rozšiřitelností.
+Už známe syntaxi Pythonu; která jak už název napovídá, funguje jen pro Python:
+
+```python
+{
+    'jméno': 'Anna',
+    'město': 'Brno',
+    'jazyky': ['čeština', 'angličtina', 'Python'],
+    'věk': 26,
+}
+```
+
+Jiný způsob zápisu dat je třeba [YAML](http://www.yaml.org/):
+
+```yaml
+jméno: Anna
+město: Brno
+jazyky:
+  - čeština
+  - angličtina
+  - Python
+věk: 26
+```
+
+Nebo třeba [Bencode](http://en.wikipedia.org/wiki/Bencode):
+
+```plain
+d6:jazykyl9:čeština11:angličtina6:Pythone4:věki26e6:město4:Brno6:jméno4:Annae
+```
+
+Existují i netextové formáty, jako
+[Pickle 3](https://docs.python.org/3/library/pickle.html).
+Převedením do textu bys dostal{{a}} „guláš“ jako:
+
+```plain
+}q(XjmÃ©noqXAnnaqXmÄtoqXBrnoqXjazykyq]q(X       ÄeÅ¡tinaqX
+                                                          angliÄtinaXPythonq       eXvÄq
+K▒u.
+```
+
+A nakonec uvedu [JSON](http://json.org/)
+(z angl. *Javascript Object Notation* „zápis Javascriptových objektů”),
+který se pro svou jednoduchost rozšířil na Internetu nejvíc:
+
+```json
+{
+  "jméno": "Anna",
+  "město": "Brno",
+  "jazyky": ["čeština", "angličtina", "Python"],
+  "věk": 26
+}
+```
+
+> [note]
+> Pozor na to, že ačkoli JSON vypadá podobně jako zápis
+> v Pythonu, je to jiný formát s vlastními pravidly.
+> Nezaměňuj je!
+>
+> Aspoň ze začátku nedoporučuji JSON psát ručně;
+> nech na počítači, aby dal na správné místo správné
+> čárky a uvozovky.
 
 
 ## JSON
 
-Způsobů, jak převést informace na text (a zpátky), je celá řada;
-každý má své pro a proti.
-Na Internetu je nejpopulárnější *JSON*, na který se dnes zaměříme.
+Pojďme se zaměřit na populární JSON; práce s ostatními formáty funguje podobně.
 
 K zakódování dat do textu použij funkci `dumps` z modulu `json`
 (který je potřeba naimportovat).
@@ -52,7 +146,7 @@ počítačové zpracování než k tomu, aby ho četl člověk.
 Zapiš tenhle řetězec do souboru:
 
 ```python
-with open('data.json') as soubor:
+with open('data.json', 'w') as soubor:
     print(kod, file=soubor)
 ```
 
@@ -60,7 +154,7 @@ Jinde – třeba v jiném programu, nebo dokonce na jiném počítači, pokud t
 soubor zkopíruješ – můžeš pak řetězec s kódem načíst:
 
 ```python
-with open('data.json', 'rb') as soubor:
+with open('data.json') as soubor:
     kod = soubor.read()
 ```
 
