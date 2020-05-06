@@ -40,7 +40,7 @@ Pro přehlednost si tyto skupiny označíme písmenky:
 * 7 sloupečků `A`-`G`, kde hráč může s kartami manipulovat.
 
 Prvotní rozdání karet spočívá v tom, že rozdáš karty do 7 sloupečků.
-Nerozdané karty zůstanou v balíčku `U`; ostatní místa na karty budou prázdné:
+Nerozdané karty zůstanou v balíčku `U`; ostatní místa na karty budou prázdná:
 
 {{ figure(img=static('game.png'), alt="Ukázka sloupečků") }}
 

@@ -26,7 +26,7 @@ ale logikou hry.
 
 ## Pasiáns
 
-*Klondike Solitaire* je [Pasiáns](https://cs.wikipedia.org/wiki/Pasi%C3%A1ns)
+*Klondike Solitaire* je [pasiáns](https://cs.wikipedia.org/wiki/Pasi%C3%A1ns)
 – karetní hra pro jednoho hráče.
 Tyto hry obecně fungují takto:
 
@@ -43,7 +43,7 @@ Základní věci, které je potřeba počítač „naučit“, jsou:
 * Co je to *karta*?
 * Co je to *balíček*?
 
-Odpovědí na tyhle otázky bude spousta vysvětlování a taky několik Pythonních
+Odpovědí na tyhle otázky bude spousta vysvětlování a taky několik pythonních
 funkcí, které použiješ i ve zbytku hry.
 
 Tady bych rád podotknul, že tyhle materiály ukazují předem vyzkoušený způsob,
@@ -125,7 +125,7 @@ Jako seznam by to mohlo být:
 
 ### Seznamy a <var>n</var>-tice
 
-Na balíčckích a kartách je vidět rozdíl v použití seznamů a <var>n</var>-tic:
+Na balíčcích a kartách je vidět rozdíl v použití seznamů a <var>n</var>-tic:
 
 * <var>N</var>-tice má pevně dané <var>N</var>: karta je trojice, ne čtveřice
   ani dvojice.
@@ -314,7 +314,7 @@ Například:
 ```
 
 Jak na to?
-Vytváření celého řetězce najednouby bylo složité, ale lze si to rozdělit
+Vytváření celého řetězce najednou by bylo složité, ale lze si to rozdělit
 na kroky, které už znáš:
 
 * Vytvoř prázdný seznam.

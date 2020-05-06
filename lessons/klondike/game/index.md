@@ -58,7 +58,7 @@ Ve výpisu butou pojmenované A-Z:
 
 Těchto 13 pojmenovaných seznamů reprezentuje celý stav rozehrané hry.
 Hru proto budeme reprezentovat slovníkem, kde klíče budou písmenka
-a hodloty pak jednotlivé seznamy.
+a hodnoty pak jednotlivé seznamy.
 
 Následující funkce takovou hru vytvoří:
 
