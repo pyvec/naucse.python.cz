@@ -18,7 +18,7 @@ Funguje? Doufám, že ano; za chvíli ho vylepšíme.
 
 ## Další příkazy
 
-Zkus do programu postupně, po jednom, přdávat další řádky.
+Zkus do programu postupně, po jednom, přidávat další řádky.
 Po přidání každého dalšího `print` program znovu spusť a vyzkoušej, jestli
 funguje.
 
@@ -84,7 +84,7 @@ můžeš se podívat na tento řádek a zkusit chybu najít.
 Když chyba není na daném řádku, může být ještě
 o pár řádků výš nebo níž:
 Python občas nesdílí lidské představy o tom, kde přesně chyba *je*.
-Ukáže jen kde si jí sám *všimnul*.
+Ukáže jen, kde si jí sám *všimnul*.
 
 V našem případě je chyba v tom, že kolem řetězce nejsou uvozovky.
 Přidej je a program znovu spusť.
@@ -128,7 +128,7 @@ V sekci o [proměnných]({{ lesson_url('beginners/variables') }}) se
 na výrazy a jejich hodnoty podíváme podrobněji.
 
 > [style-note] Typografická vsuvka
-> Všimni si stylu zápisu: jako v češtině se po otvírací závorce a za
+> Všimni si stylu zápisu: jako v češtině se po otevírací závorce a za
 > ozavírací závorkou nepíše mezera; na rozdíl od češtiny ale mezera není
 > mezi `print` a závorkou.
 > ```python
