@@ -79,7 +79,8 @@ Některé příklady populárních open-source projektů:
 * [Mozilla Firefox](https://github.com/mozilla/gecko-dev),
   [Chromium](https://chromium.googlesource.com/chromium/src.git)
   (prohlížeče)
-* [Atom](https://github.com/atom/atom),
+* [VS Code - OSS](https://github.com/Microsoft/vscode),
+  [Atom](https://github.com/atom/atom),
   [gedit](https://github.com/GNOME/gedit)
   (textové editory)
 * [CPython](https://github.com/python/cpython)
