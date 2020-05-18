@@ -136,10 +136,10 @@ Příkazu musíš dát jméno větve, kterou chceš sloučit.
 ␛[36m$␛[0m git checkout master
 Switched to branch 'master'
 ␛[36m$␛[0m git merge doplneni-jmena
-Updating e929fb0..c982a81
+Updating 1fcd654..5c9bf93
 Fast-forward
- basnicka.txt | 6 ␛[32m+++++␛[m␛[31m-␛[m
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ basnicka.txt | 3 ␛[32m+++␛[m
+ 1 file changed, 3 insertions(+)
 ```
 
 Sloučeno! Ono „`Fast-forward`” znamená, že
@@ -182,9 +182,9 @@ pracovat dál.
 
 ```ansi
 ␛[36m$␛[0m git branch -d doplneni-autora
-Deleted branch doplneni-autora (was 0e213cd).
+Deleted branch doplneni-autora (was f1cd9be).
 ␛[36m$␛[0m git branch -d doplneni-jmena
-Deleted branch doplneni-jmena (was c982a81).
+Deleted branch doplneni-jmena (was 5c9bf93).
 ␛[36m$␛[0m git branch
 * ␛[32mmaster␛[m
 ```

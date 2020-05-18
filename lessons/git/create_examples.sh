@@ -13,7 +13,7 @@ export second_msg='
 Rozdělení dlouhých řádků
 
 Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
-takhle se to líp čte. (Ale, co si budeme povídat, hlavní 
+takhle se to líp čte. (Ale, co si budeme povídat, hlavní
 důvod je ukázat co dělá git diff.)
 '
 
