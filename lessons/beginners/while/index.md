@@ -2,11 +2,11 @@
 
 Kromě cyklu `for` máme ještě druhý typ cyklu: `while` (angl. *dokud*).
 Na rozdíl od `for`, kde *předem známe počet opakování*,
-se while používá když cyklus závisí na nějaké podmínce.
+se while používá, když cyklus závisí na nějaké podmínce.
 Tělo cyklu se opakuje, dokud je podmínka splněna.
 Zkus si naprogramovat následující postup pro zubaře:
 
-* Řekni, aby pacient řekl „Ááá“ a počkej na odpověď
+* Řekni, aby pacient řekl „Ááá“, a počkej na odpověď
 * Dokud pacient *ne*řekl „Ááá“:
   * Vynadej pacientovi
   * Znovu počkej na odpověď
