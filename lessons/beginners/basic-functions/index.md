@@ -148,7 +148,7 @@ floor(cislo)                # zaokrouhlení dolů
 ceil(cislo)                 # zaokrouhlení nahoru
 ```
 
-Kdybys potřeboval{{a}} goniometrické funkce jako sinus, jskou k dispozici taky.
+Kdybys potřeboval{{a}} goniometrické funkce jako sinus, jsou k dispozici taky.
 Jen pozor na to, že počítají pro úhly v [radiánech].
 Hodnoty ve stupních je potřeba na radiány převést.
 
