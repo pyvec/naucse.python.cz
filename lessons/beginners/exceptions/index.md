@@ -12,7 +12,7 @@ def nacti_cislo():
 ```
 
 Když uživatel nezadá číslice, ale třeba text `cokolada`,
-nastene výjimka jménem `ValueError` (chyba hodnoty) a Python vypíše
+nastane výjimka jménem `ValueError` (chyba hodnoty) a Python vypíše
 odpovídající chybovou hlášku.
 
 ```pycon
@@ -30,7 +30,7 @@ Převádění tohoto textu na celé číslo nedává smysl.
 Až funkce `nacti_cislo` nejlíp „ví“, co se má stát, když uživatel nezadá
 číslice.
 Stačí se uživatele zeptat znovu!
-Kdybychom měli funkci, která zjistí jestli jsou v řetězci jen číslice,
+Kdybys měl{{a}} funkci, která zjistí jestli jsou v řetězci jen číslice,
 mohlo by to fungovat nějak takhle:
 
 ```python
@@ -45,9 +45,9 @@ def nacti_cislo():
 ```
 
 Kde ale vzít funkci `obsahuje_jen_cislice`?
-Nechceme ji psát znovu – funkce `int` sama nejlíp pozná, co se dá převést na
+Nemá smysl ji psát znovu – funkce `int` sama nejlíp pozná, co se dá převést na
 číslo a co ne.
-A dokonce nám to dá vědět – chybou, kterou můžeme *zachytit*.
+A dokonce nám to dá vědět – chybou, kterou můžeš *zachytit*.
 
 > [note]
 > Ono „obsahuje_jen_cislice“ v Pythonu existuje. Dokonce několikrát.
@@ -60,11 +60,11 @@ A dokonce nám to dá vědět – chybou, kterou můžeme *zachytit*.
 >   vyláme zuby stejně jako na `'abc'`.
 > * Řetězcová metoda `isdecimal` vrací `True` pokud řetězec obsahuje arabské
 >   číslice 0-9. To už je lepší, ale stejně to úplně nesedí: `int` si poradí
->   s mezerou na začátku, např. s `' 3'`. Funkce `isnumeric` takový řetězec
+>   s mezerou na začátku, např. s `' 3'`, ale funkce `isdecimal` takový řetězec
 >   odmítne.
 >
-> Chceš-li se zeptat jestli funkce `int` umí daný řetězec převést na číslo,
-> nejlepší způsob jak to udělat je použít funkci `int`.
+> Chceš-li zjistit jestli funkce `int` umí daný řetězec převést na číslo,
+> nejlepší je použít přímo funkci `int`.
 
 
 ## Ošetření chyby
@@ -83,7 +83,7 @@ def nacti_cislo():
 
 Jak to funguje?
 Příkazy v bloku uvozeném příkazem `try` se normálně provádějí, ale když
-nastane uvedená výjimka, Python přeskočí zbytek bloky `try` a provede všechno 
+nastane uvedená výjimka, Python přeskočí zbytek bloku `try` a provede všechno 
 v bloku `except`.
 Pokud výjimka nenastala, přeskočí se celý blok `except`.
 
@@ -135,7 +135,7 @@ Navíc chybový výstup, který Python standardně
 připraví, může hodně ulehčit hledání chyby.
 
 Zachytávej tedy jenom ty chyby, které *očekáváš* – víš přesně, která chyba může
-nastat a proč, a máš možnost správně zareagovat.
+nastat a proč; máš možnost správně zareagovat.
 
 V našem příkladu to platí pro `ValueError` z funkce `int`: víš že uživatel
 nemusí vždy zadat číslo ve správném formátu a víš že správná
