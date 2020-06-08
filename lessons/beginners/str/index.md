@@ -37,7 +37,7 @@ Takový znak může být písmenko (např. `A`) nebo číslice (`3`),
 ale i jiný symbol (`!`).
 
 Každý řetězec má určitý počet znaků.
-Kolik, to nám umí říct funkce `len()`.
+Kolik, to zjistíš pomocí funkce `len()`.
 Třeba řetězec `Ahoj!` má znaků pět:
 
 ```pycon
@@ -77,7 +77,8 @@ hodnotu, skládající se ze stejných pěti písmen.
 
 Použité uvozovky nejsou součástí hodnoty – python si „nepamatuje“, jakým
 způsobem byl řetězec uvozen.
-Když má nějaký řetězec vypsat, jedny si k tomu vybere – většinou ty jednoduché:
+Když má nějaký řetězec vypsat s uvozovkami, jedny si k tomu vybere – většinou
+ty jednoduché:
 
 ```pycon
 >>> "python"
@@ -101,11 +102,9 @@ Občas se stane, že v rámci textu potřebuješ použít samotnou uvozovku (neb
 apostrof).
 Pak musíš „kolem“ řetězce použít tu druhou:
 
-```pycon
->>> len('Zpívala si: "Tralala!"')
-22
->>> len("Byl to Goa'uld, parazit z planety P3X-888")
-41
+```python
+print('Zpívala si: "Tralala!"')
+print("Byl to Goa'uld, parazit z planety P3X-888")
 ```
 
 Když v rámci textu použiješ stejnou uvozovku jako „kolem něj“, tak bude Python
@@ -151,12 +150,12 @@ Vtom vnuk křik': "Hleď!"
 Ve výsledném řetězci pak ovšem žádné zpětné lomítko *není*.
 Sekvence `\'` je jen způsob, jak v Pythonu zadat `'` – jediný znak.
 Tomu je celkem důležité porozumět.
-Zkus si, jestli zvládneš předpovědět výsledek těchto příkazů:
+Zkus si, jestli zvládneš předpovědět výsledek těchto výrazů:
 
-```python
-print(".\".")
-len(".\".")
-".\"."  # (v interaktivním režimu)
+```pycon
+>>> print(".\".")
+>>> len(".\".")
+>>> ".\"."
 ```
 
 {% filter solution %}
@@ -187,7 +186,7 @@ a       b
 Se zpětným lomítkem se dá zadat jakýkoli znak – včetně *emoji* – podle jména
 (`\N{…}`) nebo identifikačního čísla (`\x..`, `\u....`, `\U........`)
 standardu Unicode.
-Stačí přesné jméno nebo číslo znát (nebo dohledat).
+Stačí přesné jméno nebo číslo znát (nebo třeba dohledat na internetu).
 V následujících řetězcích jsou takové znaky pro přehlednost mezi dvěma
 pomlčkami `-`. Délka každého řetězce je tedy celkem 3:
 
@@ -205,8 +204,6 @@ pomlčkami `-`. Délka každého řetězce je tedy celkem 3:
 >>> print('-\U0001F0BD-')
 -🂽-
 ```
-
-Jména a čísla se dají dohledat na internetu.
 
 
 ### Zpětné lomítko
