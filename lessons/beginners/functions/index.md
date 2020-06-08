@@ -79,7 +79,7 @@ print(delka)
 ```
 
 To `len` je *funkce* (angl. *function*).
-Jak se takové funkce požívají?
+Jak se takové funkce používají?
 
 K tomu, abys funkci mohl{{a}} použít, potřebuješ znát její
 *jméno* – tady `len`.
@@ -283,8 +283,8 @@ Výraz `len(s)` je *volání funkce*, ale `len` bez závorek označuje
 
 Výsledek `len(s)` je číslo; `len` je funkce.
 
-Čísla můžeš sečítat, můžeš tedy napsat `len(s) + 1`.
-Funkce ale sečítat nejde – `len + 1` nedává smysl.
+Čísla můžeš sčítat, můžeš tedy napsat `len(s) + 1`.
+Funkce ale sčítat nejde – `len + 1` nedává smysl.
 
 Často se ale stane, že závorky prostě zapomeneš.
 Zkus si, co dělají následující příklady, a pozorně si přečti výsledky
