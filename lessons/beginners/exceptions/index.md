@@ -53,7 +53,7 @@ A dokonce nám to dá vědět – chybou, kterou můžeš *zachytit*.
 > Ono „obsahuje_jen_cislice“ v Pythonu existuje. Dokonce několikrát.
 > Místo řešení problému to ale spíš ilustruje, v čem problém spočívá:
 > * Řetězcová metoda `isnumeric` vrací `True` pokud řetězec obsahuje číslice:
->   `'123'.isnumeric()` je pravda; ``'abc'.isnumeric()` nepravda.
+>   `'123'.isnumeric()` je pravda; `'abc'.isnumeric()` nepravda.
 >   Problém je, že funkci `int` potřebuje jeden konkrétní druh číslic:
 >   pro řetězce jako `'½'` nebo `'௩三๓໓`' (trojka v tamilském, japonském,
 >   thajském nebo laoském písmu) platí `isnumeric`, ale `int` si na nich

@@ -29,7 +29,7 @@ def ukaz_priklad():
 ukaz_priklad()                      # řádek 16
 ```
 
-Co se stane, ktyž tohle pustíš?
+Co se stane, když tohle pustíš?
 
 ```pycon
 Traceback (most recent call last):
@@ -68,4 +68,4 @@ hlášení chyb stejně.
 Až takovou složitou hlášku uvidíš, nepanikař!
 Python se snaží co nejvíc napovědět a usnadnit ti chybu najít a opravit.
 Sice stroze a anglicky, ale snaží.
-Vyjdi mu vstříc a nauč tyhle se hlášky číst.
+Vyjdi mu vstříc a nauč se tyhle hlášky číst.
