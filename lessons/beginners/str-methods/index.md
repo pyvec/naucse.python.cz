@@ -61,6 +61,7 @@ print(retezec)
 >
 > To je obecná vlastnost řetězců v Pythonu: jednou existující řetězec se už
 > nedá změnit, dá se jen vytvořit nějaký odvozený.
+> S touto vlastností už ses mohl{{a}} setkat při psaní funkce `zamen`.
 
 
 ### Iniciály
