@@ -170,7 +170,7 @@ Zkus si, jestli zvládneš předpovědět výsledek těchto výrazů:
 {% endfilter %}
 
 
-Znaků, které se zadávají sekvencí se zpětným lomítkem je více.
+Znaků, které se zadávají sekvencí se zpětným lomítkem, je více.
 Jedna ze zajímavějších je `\t`, představující tabulátor – jediný znak, který
 se, když ho vypíšeš, „roztáhne“ na víc mezer.
 
@@ -240,7 +240,7 @@ Co se stalo?
 ```
 
 Ono `\n` do řetězce vloží znak nového řádku.
-Ten při výpisu ukončí stávající řádek a přede na nový – ale jinak se chová
+Ten při výpisu ukončí stávající řádek a přejde na nový – ale jinak se chová
 jako jakýkoli jiný znak:
 
 ```pycon
