@@ -209,7 +209,7 @@ exitonclick()
 Tolik kódu! Tohle musí jít nějak zjednodušit!
 
 Jde.
-Pojďme se naučit jak v Pythonu nějakou činnost opakovat.
+Pojďme se naučit, jak v Pythonu nějakou činnost opakovat.
 
 
 ## Jak opakovat – a neopakovat *se*
