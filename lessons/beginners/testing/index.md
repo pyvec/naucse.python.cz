@@ -195,7 +195,7 @@ na 1D piškvorkách.
 Kód pro 1D Piškvorky může rámcově vypadat zhruba takto:
 
 ```python
-import random  # (příp. import jiných věci, které budou potřeba)
+import random  # (příp. import jiných věcí, které budou potřeba)
 
 def tah(pole, cislo_policka, symbol):
     """Vrátí pole s daným symbolem umístěným na danou pozici"""
