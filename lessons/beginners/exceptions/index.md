@@ -1,70 +1,98 @@
 # Výjimky
 
-O [chybových výpisech]({{ lesson_url('beginners/print') }}) už v tomto
-kurzu byla zmínka: Python si postěžuje, řekne, kde je chyba, a ukončí program.
-O chybách se toho ale dá říct mnohem víc.
+Pojďme si prohloubit znalosti o chybách, neboli odborně o *výjimkách*
+(angl. *exceptions*).
 
-
-## Výpisy chyb
-
-Na začátku si ukážeme (nebo zopakujeme), jak Python vypíše chybu, která
-nastane v zanořené funkci:
+Vezmi následující funkci:
 
 ```python
-def vnejsi_funkce():
-    return vnitrni_funkce(0)
-
-def vnitrni_funkce(delitel):
-    return 1 / delitel
-
-print(vnejsi_funkce())
+def nacti_cislo():
+    odpoved = input('Zadej číslo: ')
+    return int(odpoved)
 ```
 
-<!-- XXX: Highlight the line numbers -->
+Když uživatel nezadá číslice, ale třeba text `cokolada`,
+nastane výjimka jménem `ValueError` (chyba hodnoty) a Python vypíše
+odpovídající chybovou hlášku.
 
 ```pycon
-Traceback (most recent call last):          
-  File "/tmp/ukazka.py", line 7, in <module>
-    print(vnejsi_funkce())
-  File "/tmp/ukazka.py", line 2, in vnejsi_funkce
-    return vnitrni_funkce(0)
-  File "/tmp/ukazka.py", line 5, in vnitrni_funkce
-    return 1 / delitel
-ZeroDivisionError: division by zero
+Traceback (most recent call last):
+  File "ukazka.py", line 3, in nacti_cislo
+    cislo = int(odpoved)
+ValueError: invalid literal for int() with base 10: 'cokolada'
 ```
 
-Všimni si, že každá funkce, jejíž volání vedlo k chybě, je uvedena ve výpisu.
-Skutečná chyba (tedy místo, které musíme opravit)
-je pravděpodobně poblíž některého z těchto volání.
-V našem případě bychom asi neměl{{gnd('i', 'y', both='i')}} volat
-`vnitrni_funkce` s argumentem `0`.
-A nebo by `vnitrni_funkce` měla být na nulu
-připravená a dělat v tomto případě něco jiného.
+Program volá funkci `int()` pro něco, co nedává smysl jako číslo.
+Co s tím má chudák funkce `int` dělat?
+Není žádná rozumná hodnota, kterou by mohla vrátit.
+Převádění tohoto textu na celé číslo nedává smysl.
 
-Python nemůže vědět, na kterém místě by se chyba měla opravit, a tak ukáže vše.
-Ve složitějších programech se to bude hodit.
-
-
-## Vyvolání chyby
-
-Chybu neboli *výjimku* (angl. *exception*) můžeš vyvolat i {{gnd('sám', 'sama')}},
-pomocí příkazu `raise`.
-Za příkaz dáš jméno výjimky a pak do závorek nějaký popis toho, co je špatně.
+Až funkce `nacti_cislo` nejlíp „ví“, co se má stát, když uživatel nezadá
+číslice.
+Stačí se uživatele zeptat znovu!
+Kdybys měl{{a}} funkci, která zjistí jestli jsou v řetězci jen číslice,
+mohlo by to fungovat nějak takhle:
 
 ```python
-VELIKOST_POLE = 20
-
-def over_cislo(cislo):
-    if 0 <= cislo < VELIKOST_POLE:
-        print('OK!')
-    else:
-        raise ValueError('Čislo {n} není v poli!'.format(n=cislo))
+def nacti_cislo():
+    while True:
+        odpoved = input('Zadej číslo: ')
+        if obsahuje_jen_cislice(odpoved):
+            return int(odpoved)  # máme výsledek, funkce končí
+        else:
+            print('To nebylo číslo!')
+            # ... a zeptáme se znovu -- cyklus `while` pokračuje
 ```
 
-Všechny typy výjimek, které jsou zabudované
-v Pythonu, jsou popsané [v dokumentaci](https://docs.python.org/3.2/library/exceptions.html#exception-hierarchy).
+Kde ale vzít funkci `obsahuje_jen_cislice`?
+Nemá smysl ji psát znovu – funkce `int` sama nejlíp pozná, co se dá převést na
+číslo a co ne.
+A dokonce nám to dá vědět – chybou, kterou můžeš *zachytit*.
 
-Pro nás jsou (nebo budou) důležité tyto:
+> [note]
+> Ono „obsahuje_jen_cislice“ v Pythonu existuje. Dokonce několikrát.
+> Místo řešení problému to ale spíš ilustruje, v čem problém spočívá:
+> * Řetězcová metoda `isnumeric` vrací `True` pokud řetězec obsahuje číslice:
+>   `'123'.isnumeric()` je pravda; `'abc'.isnumeric()` nepravda.
+>   Problém je, že funkci `int` potřebuje jeden konkrétní druh číslic:
+>   pro řetězce jako `'½'` nebo `'௩三๓໓`' (trojka v tamilském, japonském,
+>   thajském nebo laoském písmu) platí `isnumeric`, ale `int` si na nich
+>   vyláme zuby stejně jako na `'abc'`.
+> * Řetězcová metoda `isdecimal` vrací `True` pokud řetězec obsahuje arabské
+>   číslice 0-9. To už je lepší, ale stejně to úplně nesedí: `int` si poradí
+>   s mezerou na začátku, např. s `' 3'`, ale funkce `isdecimal` takový řetězec
+>   odmítne.
+>
+> Chceš-li zjistit jestli funkce `int` umí daný řetězec převést na číslo,
+> nejlepší je použít přímo funkci `int`.
+
+
+## Ošetření chyby
+
+Pro zachycení chyby má Python příkaz `try`/`except`.
+
+```python
+def nacti_cislo():
+    while True:
+        odpoved = input('Zadej číslo: ')
+        try:
+            return int(odpoved)
+        except ValueError:
+            print('To nebylo číslo!')
+```
+
+Jak to funguje?
+Příkazy v bloku uvozeném příkazem `try` se normálně provádějí, ale když
+nastane uvedená výjimka, Python přeskočí zbytek bloku `try` a provede všechno 
+v bloku `except`.
+Pokud výjimka nenastala, přeskočí se celý blok `except`.
+
+
+## Druhy chyb
+
+A co je to `ValueError`? To je typ chyby.
+Podobných typů je spousta.
+Všechny jsou popsané [v dokumentaci](https://docs.python.org/3/library/exceptions.html#exception-hierarchy); pro nás jsou (nebo budou) důležité tyto:
 
 ```plain
 BaseException
@@ -74,86 +102,57 @@ BaseException
       ├── ArithmeticError
       │    ╰── ZeroDivisionError    dělení nulou
       ├── AssertionError            nepovedený příkaz `assert`
-      ├── AttributeError            neexistující atribut, např. 'abc'.len
+      ├── AttributeError            neexistující atribut/metoda, např. 'abc'.len
       ├── ImportError               nepovedený import
       ├── LookupError
       │    ╰── IndexError           neexistující index, např. 'abc'[999]
       ├── NameError                 použití neexistujícího jména proměnné
       │    ╰── UnboundLocalError    použití proměnné, která ještě nebyla nastavená
-      ├── SyntaxError               špatná syntaxe – program je nečitelný/nepoužitelný
+      ├── SyntaxError               špatná syntaxe, program je nečitelný/nepoužitelný
       │    ╰── IndentationError     špatné odsazení
-      │         ╰── TabError        kombinování mezer a tabulátorů
+      │         ╰── TabError        kombinování mezer a tabulátorů v odsazení
       ├── TypeError                 špatný typ, např. len(9)
       ╰── ValueError                špatná hodnota, např. int('xyz')
 ```
 
-
-## Ošetření chyby
-
-A proč jich je tolik druhů?
-Abys je mohl{{a}} chytat!
-Následující funkce je připravená na to, že
-funkce `int` může selhat, pokud uživatel nezadá číslo:
-
-```python
-def nacti_cislo():
-    odpoved = input('Zadej číslo: ')
-    try:
-        cislo = int(odpoved)
-    except ValueError:
-        print('To nebylo číslo! Pokračuji s nulou.')
-        cislo = 0
-    return cislo
-```
-
-Jak to funguje?
-Příkazy v bloku uvozeném příkazem `try` se normálně provádějí, ale když
-nastane uvedená výjimka, Python místo ukončení programu provede
-všechno v bloku `except`.
-Když výjimka nenastane, blok `except` se přeskočí.
+Tohle si není potřeba pamatovat – druh chyby, kterou je potřeba zachytit,
+vždy najdeš v příslušné chybové hlášce.
 
 Když odchytáváš obecnou výjimku,
 chytnou se i všechny podřízené typy výjimek –
 například `except ArithmeticError:` zachytí i `ZeroDivisionError`.
-A `except Exception:` zachytí všechny
-výjimky, které běžně chceš zachytit.
+A `except Exception:` zachytí *všechny* výjimky, které běžně chceš zachytit.
 
 
 ## Nechytej je všechny!
 
-Většinu chyb ale není potřeba ošetřovat.
+Většinu chyb *není* potřeba ošetřovat.
 
-Nastane-li nečekaná situace, je téměř vždy
-*mnohem* lepší program ukončit, než se snažit
-pokračovat dál počítat se špatnými hodnotami.
+Nastane-li *nečekaná* situace, je téměř vždy
+mnohem lepší program ukončit, než se snažit
+pokračovat dál a počítat se špatnými hodnotami.
 Navíc chybový výstup, který Python standardně
 připraví, může hodně ulehčit hledání chyby.
 
-„Ošetřování” chyb jako `KeyboardInterrupt`
-je ještě horší: může způsobit, že program nepůjde
-ukončit, když bude potřeba.
+Zachytávej tedy jenom ty chyby, které *očekáváš* – víš přesně, která chyba může
+nastat a proč; máš možnost správně zareagovat.
 
-Příkaz `try/except` proto používej
-jen v situacích, kdy výjimku očekáváš – víš přesně, která chyba může
-nastat a proč, a máš možnost ji opravit.
-Pro nás to typicky bude načítání vstupu od uživatele.
-Po špatném pokusu o zadání je dobré se ptát znovu, dokud uživatel nezadá
-něco smysluplného:
+V našem příkladu to platí pro `ValueError` z funkce `int`: víš že uživatel
+nemusí vždy zadat číslo ve správném formátu a víš že správná
+reakce na tuhle situaci je problém vysvětlit a zeptat se znovu.
 
-```python
-def nacti_cislo():
-    while True:
-        odpoved = input('Zadej číslo: ')
-        try:
-            return int(odpoved)
-        except ValueError:
-            print('To nebylo číslo! Zkus to znovu.')
-```
+Co ale dělat, kdyš uživatel chce ukončit program a zmáčkne
+<kbd>Ctrl</kbd>+<kbd>C</kbd>?
+Nebo když se mu porouchá klávesnice a selže funkce `input`?
+Nejlepší reakce na takovou nečekanou situaci ukončit program a informovat
+uživatele (nebo lépe, programátora), že (a kde) je něco špatně.
+Neboli vypsat chybovou hlášku.
+A to se stane normálně, bez `try`.
 
 
 ## Další přílohy k `try`
 
-Kromě `except` existují dva jiné bloky,
+Pro úplnost: kromě `except` existují dva jiné bloky,
 které můžeš „přilepit“ k `try`, a to `else` a `finally`.
 První se provede, když v `try` bloku
 žádná chyba nenastane; druhý se provede vždy – ať
@@ -182,54 +181,49 @@ finally:
 ```
 
 
-## Úkol
 
-Doplň do geometrické kalkulačky (nebo 1-D piškvorek, máš-li je) ošetření chyby,
-která nastane když uživatel nezadá číslo.
+## Vyvolání chyby
 
-{% filter solution %}
+Občas se stane, že výjimku budeš potřebovat vyvolat {{gnd('sám', 'sama')}}.
 
-Možné řešení pro geometrickou kalkulačku:
+Často se to stává když píšeš nějakou obecnou funkci.
+Třeba funkci na výpočet obsahu čtverce.
+Co se stane, když někdo zavolá `obsah_ctverce(-5)`?
+
+* Zadal-li ono `-5` uživatel, je potřeba mu vynadat a zeptat se znovu.
+* Naměřil-li `-5` nějaký robotický aparát, je potřeba ho líp zkalibrovat.
+* Vyšel-li čtverec se stranou `-5` v nějakém výpočtu, je nejspíš potřeba opravit
+  chybu v tom výpočtu.
+
+Samotná funkce `obsah_ctverce` ale „neví“, proč ji někdo volá.
+Jejím úkolem je jen něco spočítat.
+Měla by být použitelná ve všech případech výše – a v mnoha dalších.
+
+Když někdo zavolá `obsah_ctverce(-5)`, *neexistuje* správný výsledek, který by
+funkce mohla vrátit.
+Místo vrácení výsledku musí tato funkce *signalizovat chybu*.
+S tou se pak může program, který `obsah_ctverce(-5)` zavolal,
+vypořádat – vynadat uživateli, zkalibrovat měřák, nebo, pokud na chybu není
+připravený, sám skončit s chybou (a upozornit tak programátora, že je něco
+špatně).
+
+Jak na to prakticky?
+Chybu můžeš vyvolat pomocí příkazu `raise`.
+Za příkaz dáš druh výjimky a pak do závorek nějaký popis toho, co je špatně.
 
 ```python
-
-while True:
-    try:
-        strana = float(input('Zadej stranu čtverce v centimetrech: '))
-    except ValueError:
-        print('To nebylo číslo!')
+def obsah_ctverce(strana):
+    if strana > 0:
+        return strana ** 2
     else:
-        if strana <= 0:
-            print('To nedává smysl!')
-        else:
-            break
-
-print('Obvod čtverce se stranou', strana, 'je', 4 * strana, 'cm')
-print('Obsah čtverce se stranou', strana, 'je', strana * strana, 'cm2')
-
+        raise ValueError(f'Strana musí být kladná, číslo {strana} kladné není!')
 ```
 
-Možné řešení pro 1-D piškvorky:
+Podobně jako `return`, i příkaz `raise` ukončí funkci.
+A nejen tu – pokud na tuhle konkrétní chybu není program předem připravený,
+ukončí se celý program.
 
-```python
-def tah_hrace(pole):
-    while True:
-        try:
-            pozice = int(input('Kam chceš hrát? (0..19) '))
-        except ValueError:
-            print('To není číslo!')
-        else:
-            if pozice < 0 or pozice >= len(pole):
-                print('Nemůžeš hrát venku z pole!')
-            elif pole[pozice] != '-':
-                print('Tam není volno!')
-            else:
-                break
-
-    pole = pole[:pozice] + 'o' + pole[pozice + 1:]
-    return pole
-
-
-print(tah_hrace('-x----'))
-```
-{% endfilter %}
+Ze začátku není u `raise` příliš důležité dumat nad tím, který typ výjimky je
+ten správný.
+Klidně „střílej od boku“.
+`ValueError` bývá často správná volba.
