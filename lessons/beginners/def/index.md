@@ -62,7 +62,7 @@ příkazu, neměl by ti zápis funkce připadat příliš zvláštní:
 
 ```python
 def zamen(slovo, pozice, novy_znak):
-    "V daném slově zamění znak na dané pozici za daný nový znak"
+    """V daném slově zamění znak na dané pozici za daný nový znak."""
     zacatek = slovo[:pozice]
     konec = slovo[pozice + 1:]
     nove_slovo = zacatek + novy_znak + konec
@@ -78,7 +78,11 @@ Funkce se *definuje* příkazem `def`, za nějž napíšeš jméno funkce,
 pak do závorky seznam *parametrů*, které funkce bere, a pak dvojtečku.
 
 Potom následuje odsazené *tělo funkce* – příkazy, které funkce provádí.
-Tělo může začít *dokumentačním řetězcem*, který popisuje, co funkce dělá.
+
+Tělo může začít *dokumentačním řetězcem* (angl. *docstring*), který popisuje
+co funkce dělá.
+To může být jakýkoli řetězec, ale tradičně se uvozuje třemi uvozovkami
+(i v případě že je jen jednořádkový).
 
 Příkazem `return` pak můžeš z funkce *vrátit* nějakou hodnotu.
 
@@ -109,7 +113,7 @@ Následující procedura třeba vypíše skóre daného hráče a k tomu hláš
 
 ```python
 def napis_hlasku(nazev, skore):
-    "Popíše skóre. Název má být přivlastňovací přídavné jméno."
+    """Popíše skóre. Název má být přivlastňovací přídavné jméno."""
 
     print(nazev, 'skóre je', skore)
     if skore > 1000:
@@ -169,7 +173,7 @@ Třeba, chceš-li odpověď „ano“ nebo „ne“:
 
 ```python
 def ano_nebo_ne(otazka):
-    "Vrátí True nebo False podle odpovědi uživatele"
+     """Vrátí True nebo False podle odpovědi uživatele"""
     while True:
         odpoved = input(otazka)
         if odpoved == 'ano':
@@ -277,7 +281,7 @@ a znamená „nic“.
 
 ```python
 def nic():
-    "Tahle funkce nic nedělá"
+     """Tahle funkce nic nedělá """
 
 print(nic())
 ```
