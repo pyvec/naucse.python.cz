@@ -103,7 +103,7 @@ Kdyby ses přece jen zasekla, napiš koučovi.
 * Vytvoř si novou větev, kterou si pojmenuj nějak unikátně (např. piskvorky). Je lepší nepoužívat diakritiku a jako oddělovač používat podtržítko. `git branch piskvorky`
 * Přepni se do nové větve. `git checkout piskvorky`
 * Napiš úkol.
-* Přidej změny do stage a pak udělej commit. `git add piskvorky`,  `git commit -m 'Home work - game piskvorky.'`
+* Přidej změny do stage a pak udělej commit. `git add piskvorky.py`,  `git commit -m 'Home work - game piskvorky.'`
 * Pushni větev do repozitáře na githubu. `git push origin piskvorky`
 * Udělej nový pull request. Návod v sekci Žádost o začlenění (pull request)
 * Pošli koučovi odkaz na pull request do slacku.
