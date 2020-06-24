@@ -1,28 +1,33 @@
 # Ignorování souborů
 
-Často se stává, že některé soubory v repozitáři nechceš.
-Takových souborů jsou tři hlavní druhy:
+Často se stává, že některé soubory v repozitáři nechceš.<br>
+Soubory, kteréme nechceme zahrnout do repozitáře (chceme je ignorovat) rozdělujeme na tři hlavní druhy:
 
-Pomocné soubory nástrojů
-:   Python občas sám od sebe vytváří adresář `__pycache__` s pomocnými soubory.
+**1. Pomocné soubory nástrojů:**<br>
+    Python občas sám od sebe vytváří adresář `__pycache__` s pomocnými soubory.
     Některé počítače vytváří skryté soubory s názvy jako
     `.Thumbnails`, `.DS_Store` nebo `Thumbs.db`.
     Takové věci v repozitáři nemají co dělat – je
     dobrým zvykem do Gitu nedávat nic, co jde vytvořit automaticky.
 
-Výstup programu
-:   Píšeš-li program, který kreslí obrázky, většinou chceš v repozitáři
-    jen samotný program.
-    Obrázky si může pomocí programu každý vytvořit sám.
+**2. Výstup programu:**<br>
+    Představ si, že napíšeš program, jehož výstupem je nakreslený obrázek nebo vytvořený graf.
+    Takto generované soubory v repozitáři většinou nechceš, protože sledování změn v těchto souborech je zbytečné.
+    Většinou chceš v repozitáři jen samotný program.
+    Obrázky si může pomocí programu, každý vytvořit sám.
 
-Osobní soubory
-:   Občas se stane, že v adresáři s repozitářem máš soubor s osobními
-    poznámkami nebo třeba s heslem.
+**3. Osobní soubory:**<br>
+    Občas se stane, že v adresáři s repozitářem máš soubor s osobními
+    poznámkami, ale i třeba také i s heslem nebo API klíčem.
     Zbytek repozitáře plánuješ zveřejnit, ale tyto soubory by měly zůstat
-    jen ve tvé kopii.
+    jen ve tvé kopii a v bezpečí. Nechceme, aby někdo znal naše heslo.
+    Hesla a podobné citlivé informace se doporučuje mít ve vedlejším
+    souboru a automaticky tyto soubory ignorovat.
+    Jakmile je napíšete přímo do programu lehce na to můžete
+    zapomenout a omylem je poslat např. na GitHub.
 
-Adresář s virtuálním prostředím
-:   Jistě už sis zvykl{{a}} na virtuální prostředí.
+**Adresář s virtuálním prostředím - typ osobního souboru:**<br>
+    Jistě už sis zvykl{{a}} na virtuální prostředí.
     Adresář s ním se může jmenovat různě, v začátečnickém kurzu používáš název `venv`.
     Není dobré tento adresář dávat do Gitu,
     protože je jednoduché jej vždy vytvořit znovu
@@ -31,7 +36,7 @@ Adresář s virtuálním prostředím
     prostředí nebylo vždy na úplně stejném místě.
     Virtuální prostředí z adresáře `/home/helena/projektABC/venv`
     nebude fungovat z adresáře `C:\Users\Helena\projektABC\venv`,
-    ale ani z `/home/mirka/projektABC/venv`.
+    ale ani z `/home/mirka/projektABC/venv`. Ten
 
 My budeme chtít Git nastavit tak, aby tyto soubory ignoroval: aby
 `git status` neukazoval červeně, že ještě nejsou v repozitáři.
@@ -212,11 +217,16 @@ Některé programy automaticky vytvářejí pomocné soubory.
 Často to dělají správci souborů (často `.Thumbnails` na Linuxu,
 `.DS_Store` na Macu nebo `Thumbs.db` na Windows).
 Některé editory si taky nechávají na disku nastavení.
+Jedná se vlastně o soubory, které váš počítač automaticky
+vytváří při založení každého nového projektu.
 
 Podobné soubory se dají dát do `.gitignore`.
 Je ale lepší si je dát do osobního nastavení, protože ostatní lidé,
 kteří na projektu můžou spolupracovat, nemusí používat stejný systém
-a programy.
+a programy. Mimo jiné, pokud takové soubory jednou nastavíte
+k ignorování, tak při založení nového projektu už to dělat nemusíte.
+Git si toto nastavení (tvé osobní nastavení) bude pamatovat
+ze své configurace, jak je ukázáno níže.
 
 > [note]
 > Pokud si můžeš být jist{{gnd('ý', 'á')}}, že ostatní budou používat právě
@@ -237,7 +247,7 @@ Autofile.tmp
 Potom řekni Gitu, kde tento soubor najít:
 
 ```ansi
-␛[36m$␛[0m git config --global core.excludesfile /tmp/tmp.1spGPvBL5W/.gitignore_global
+␛[36m$␛[0m git config --global core.excludesfile /home/user_1/Documents/.gitignore_global
 ```
 
 A měl by být ignorován:
