@@ -362,10 +362,9 @@ class Cat:
     def eat(self, food):
         if not self.is_alive():
             print("It is pointless to feed dead cat!")
-            return
         if food == "fish" and self.number_of_lives < 9:
             self.number_of_lives += 1
-            print("Cat ate fish and gained one.")
+            print("Cat ate fish and gained one life.")
         else:
             print("Cat is eating.")
 ```
