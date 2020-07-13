@@ -64,13 +64,13 @@ print(zacatek)  # NameError
 Funkce `zamen` jsi napsal{{a}} proto, abys nemusel{{a}} pořád opakovat detaily
 záměny písmenka.
 Jakmile je jednu nadefinovaná, stačí ji zavolat. Důležité jsou jen jméno
-funkce, argumenty a návratová hodnota; na detaily kódu uvnitř můžeš zapomenout.
+funkce, parametry a návratová hodnota; na detaily kódu uvnitř můžeš zapomenout.
 A to i díky lokálním proměnným, které detaily ve vnitřku funkce trochu líp
 izolují od zbytku programu.
 
 Ještě lépe je to vidět u funkcí, které jsi nenapsal{{a}} {{gnd('sám', 'sama')}}.
 Jak divné by bylo, kdyby po každém zavolání `print` byla najednou nastavená
-proměnná `i`, kterou `print` náhodou používá při procházení svých argumentů!
+proměnná `i`, kterou `print` náhodou používá při procházení svých parametrů!
 
 
 ## Přiřazení
@@ -178,7 +178,7 @@ Zkus odpovědět na tyto otázky:
 
 Pravidla pro lokální proměnné jsou pro začátečníky jednou z nejzvláštnějších
 věcí v Pythonu.
-Jsou ale užitečná – umožňují některé užitečné techniky, např. rekurzi.
+Jsou ale přínosná – umožňují některé užitečné techniky, např. rekurzi.
 
 Jestli ti to celé připadá složité, dá se tomu zatím vyhnout dodržováním jednoho
 pravidla:

@@ -52,7 +52,7 @@ Nebo řekneš želvě `forward(100)` a nezatěžuješ se tím, jak si želva „
 svůj aktuální úhel natočení nebo jak se vlastně kreslí čára.
 
 Funkce umožňuje *pojmenovat* nějaký kousek programu, který se pak dá
-použít pomocí jména bez detailních znalosti toho, jak to vevnitř funguje.
+použít pomocí jména bez detailních znalostí toho, jak to vevnitř funguje.
 
 
 ## Definice funkce
@@ -208,7 +208,7 @@ def obsah_elipsy(a, b):
 print('Obsah elipsy s poloosami 3 a 5 je', obsah_elipsy(3, 5), 'cm2')
 ```
 
-Takový program se teoreticky dá napsat i s procedurou, tedy funkcí která nic
+Takový program se teoreticky dá napsat i s procedurou, tedy funkcí, která nic
 nevrací.
 Procedura může výsledek třeba vypsat na obrazovku:
 
@@ -248,7 +248,7 @@ moje funkce dát použít jen v situacích, kdy je u počítače klávesnice a z
 člověk.
 Proto je lepší funkcím potřebné informace předávat jako argumenty
 a volání `input` (nebo čtení textového políčka či měření čidlem robota)
-nemít ve funkci, ale vně, v kódu který funkci volá:
+nemít ve funkci, ale vně, v kódu, který funkci volá:
 
 ```python
 from math import pi
@@ -264,9 +264,9 @@ y = float(input('Zadej délku poloosy 2: '))
 print('Obsah je', obsah_elipsy(x, y))
 ```
 
-Samozřejmě existují výjimky: procedura která přímo vytváří textový výpis
-(např. tabulku) může používat `print`; funkce která načítá textové informace
-(jako `ano_nebo_ne` výše) zase `input`.
+Samozřejmě existují výjimky: procedura, která přímo vytváří textový výpis
+(např. tabulku), může používat `print`; funkce, která načítá textové informace
+(jako `ano_nebo_ne` výše), zase `input`.
 Když ale funkce něco *počítá*, nebo když si nejsi jist{{gnd('ý', 'á')}},
 je dobré ve funkci `print` ani `input` nemít.
 
