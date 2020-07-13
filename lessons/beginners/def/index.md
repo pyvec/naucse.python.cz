@@ -92,7 +92,7 @@ Takže když zavoláš třeba `zamen('kočka', 1, 'a')`,
 můžeš si představit, že se provede toto:
 
 ```python
-# Nastavení proměnných podle zadaných parametrů
+# Nastavení proměnných podle zadaných argumentů
 slovo = 'kočka'
 pozice = 1
 novy_znak = 'a'

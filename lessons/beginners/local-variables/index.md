@@ -160,7 +160,7 @@ Zkus odpovědět na tyto otázky:
   Tady byl chyták: příkaz `a = a + 3` nemá žádný smysl;
   do `a` se sice uloží větší číslo, ale vzápětí funkce `obsah_elipsy` skončí
   a její lokální proměnná `a` přestane existovat.
-* Proměnná `b` je jenom lokální – jako argument funkce `obsah_elipsy`.
+* Proměnná `b` je jenom lokální – jako parametr funkce `obsah_elipsy`.
 * Proměnná `obsah_elipsy` je globální (a je v ní funkce).
 
 > [note] A pro úplnost
