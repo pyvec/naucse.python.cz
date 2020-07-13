@@ -16,7 +16,7 @@ jednoduchý.
 Jako příklad uvedu nám už známý kód, který v určitém řetězci zamění znak
 na dané pozici:
 
-```
+```python
 zacatek = slovo[:pozice]
 konec = slovo[pozice + 1:]
 nove_slovo = zacatek + novy_znak + konec
@@ -28,7 +28,7 @@ Zvlášť když kód použiješ ve složitějším programu.
 Dá se to vyřešit komentářem: ten, kdo bude program číst, si může přečíst
 co to má dělat. Samotný složitější kód pak může ignorovat.
 
-```
+```python
 # Ve slově `slovo` zaměnit znak na pozici `pozice` za `novy_znak`;
 # výsledek bude v proměnné `nove_slovo`.
 zacatek = slovo[:pozice]
@@ -41,7 +41,7 @@ provede.
 Jakmile takovou funkci vytvoříš, ve složitějším programu pak můžeš místo kódu
 výše psát jen:
 
-```
+```python
 nove_slovo = zamen(slovo, pozice, novy_znak)
 ```
 
