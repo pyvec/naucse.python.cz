@@ -18,7 +18,7 @@ print(obsah_kruhu(100))
 
 Jinak je tomu ale v případě, kdy proměnnou nastavíš *uvnitř* funkce.
 
-Všechny argumenty a všechny proměnné, do kterých funkce přiřazuje,
+Všechny parametry a všechny proměnné, do kterých funkce přiřazuje,
 jsou *úplně nové* proměnné, které nemají nic
 společného s tím, co je „venku“ kolem funkce.
 
@@ -81,7 +81,7 @@ je v tom, že do `x` se v rámci funkce funkce přiřazuje.
 
 Co je to přiřazení? Všechno, co *nastavuje* nějakou proměnnou. Například:
 * Klasika je přiřazovat pomocí `=`, např. `a = 3`.
-* Argumenty funkce: funkce `def nastav_x(hodnota)` přiřadí do `hodnota`,
+* Parametry funkce: funkce `def nastav_x(hodnota)` přiřadí do `hodnota`,
 * Cyklus `for x in ...:` přiřazuje do proměnné `x`.
 * Pro úplnost, příkazy `def x(...):`, `import x` a `from ... import x` taky
   přiřazují do `x` – ale ve funkcích se moc nepoužívají.
