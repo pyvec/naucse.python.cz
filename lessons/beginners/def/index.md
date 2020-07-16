@@ -167,8 +167,8 @@ y = float(input('Zadej délku poloosy 2: '))
 print('Obsah je', obsah_elipsy(x, y))
 ```
 
-Samozřejmě existují výjimky: funkce která přímo vytváří textový výpis,
-může používat `print`; funkce která načítá textové informace zase `input`.
+Samozřejmě existují výjimky: funkce, která přímo vytváří textový výpis,
+může používat `print`; funkce, která načítá textové informace zase `input`.
 Když ale funkce něco počítá, je dobré v ní `print` ani `input` nemít.
 
 
