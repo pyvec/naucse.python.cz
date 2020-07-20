@@ -75,9 +75,9 @@ nepředvídatelně a tudíž nebezpečně.
 Jinými slovy: když se dva moduly importují navzájem,
 nemusí to fungovat podle očekávání.
 
-Téhle situaci se budeme chtít vyvarovat.
+Téhle situaci se budeš chtít vyvarovat.
 
-Jak na to? Máme dvě možnosti.
+Jak na to? Máš dvě možnosti.
 
 
 ## Organizace modulů podle závislostí

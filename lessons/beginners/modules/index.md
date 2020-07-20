@@ -47,7 +47,7 @@ print(math.cos(math.pi))
 A teď to hlavní!
 Můžeš vytvořit vlastní importovatelný modul
 a to jen tak, že uděláš pythonní soubor.
-Funkce, které v něm nadefinuješ, a proměnné,
+Funkce, které v něm nadefinuješ, a globální proměnné,
 které v něm nastavíš, pak budou k dispozici tam, kde modul naimportuješ.
 
 Zkus si to!
@@ -101,7 +101,8 @@ Zkus si to – na konci `louka.py` dopiš:
 print('Louka je zelená!')
 ```
 
-A pak spusť `python` (máš-li ho už spuštěný, ukonči a spusť znovu), a zadej:
+Spusť `python` (máš-li ho už spuštěný, ukonči a spusť znovu)
+a zadej v něm:
 
 ```pycon
 >>> print('První import:')
@@ -112,12 +113,14 @@ A pak spusť `python` (máš-li ho už spuštěný, ukonči a spusť znovu), a z
 
 Výpis se objeví jen poprvé.
 
-Když takhle modul při importu „něco dělá“ (něco vypíše na obrazovku,
-zapíše do souboru, na něco se zeptá uživatele atp.), říká se,
-že má *vedlejší efekt* (angl. *side effect*).
+Když takhle modul při importu „dělá“ něco víc, než jen nastavuje proměnné
+a funkce, říká se, že má *vedlejší efekt* (angl. *side effect*).
+Vedlejší efekt může být vypsání něčeho na obrazovku nebo do souboru,
+vykreslení okýnka na obrazovku, otázka na uživatele pomocí `input`, atp.
+
 V modulech připravených na importování se vedlejším efektům vyhýbáme:
 úloha takového modulu je dát k dispozici *funkce*, které něco dělají,
-ne to udělat za nás.
+ne to udělat přímo.
 Všimni si například, že `import turtle` neukáže okýnko – to se objeví až po
 zavolání `turtle.forward()`.
 
@@ -126,9 +129,7 @@ Příkaz `print` proto radši z modulu zase smaž.
 
 ## Adresář pro každý projekt
 
-Od teď budeme občas psát větší projekty,
+Od teď budeš občas psát větší projekty,
 které budou obsahovat více souvisejících souborů.
-Je dobré pro každý takový projekt udělat
-zvláštní adresář.
-
-(A to samozřejmě znamená i zvláštní gitový repozitář.)
+Pro každý takový projekt si udělej zvláštní adresář.
+Lépe se pak vyznáš v tom, ke kterému projektu který soubor patří.
