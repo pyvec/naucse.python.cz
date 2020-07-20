@@ -47,8 +47,8 @@ print(math.cos(math.pi))
 A teď to hlavní!
 Můžeš vytvořit vlastní importovatelný modul
 a to jen tak, že uděláš pythonní soubor.
-Funkce které v něm nadefinuješ a globální proměnné
-které v něm nastavíš pak budou k dispozici tam, kde modul naimportuješ.
+Funkce, které v něm nadefinuješ, a globální proměnné,
+které v něm nastavíš, pak budou k dispozici tam, kde modul naimportuješ.
 
 Zkus si to!
 Vytvoř soubor `louka.py` a do něj napiš:

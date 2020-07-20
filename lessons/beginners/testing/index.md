@@ -9,13 +9,13 @@ je zkusil{{a}} spustit, něco zadal{{a}} a podíval{{a}} se,
 jestli jsou výsledky v pořádku.
 U větších programů, které budou mít více a více
 možností, ale bude těžší a těžší takhle zkontrolovat,
-jestli všechny ty možnosti fungují jak mají.
+jestli všechny ty možnosti fungují, jak mají.
 
 Proto si programátoři často nezkouší programy „ručně“.
 Píšou jiné programy, které jejich výtvory testují za ně.
 
 *Automatické testy* jsou funkce, které
-zkontrolují že program funguje správně.
+zkontrolují, že program funguje správně.
 Spuštěním testů můžeš kdykoli ověřit, že kód funguje.
 Když v otestovaném kódu v budoucnu uděláš nějakou změnu,
 testy ověří, že jsi nerozbil{{a}} nic, co dříve fungovalo.
@@ -101,7 +101,7 @@ def test_secti():
 Co se v té testovací funkci děje?
 
 Příkaz `assert` vyhodnotí výraz za ním a pokud výsledek není pravdivý,
-vyvolá výjimku která způsobí že test selže.
+vyvolá výjimku, která způsobí, že test selže.
 Můžeš si představit, že `assert a == b` dělá následující:
 
 ```python
@@ -140,7 +140,7 @@ test_secteni.py::test_secti PASSED                                       [100%]
 ```
 
 Tento příkaz projde zadaný soubor, zavolá v něm všechny funkce,
-jejichž jméno začíná na `test_`, a ověří že nevyvolají žádnou
+jejichž jméno začíná na `test_`, a ověří, že nevyvolají žádnou
 výjimku – typicky výjimku z příkazu `assert`.
 Pokud výjimka nastane, dá to `pytest` velice červeně
 najevo a přidá několik informací, které můžou
@@ -311,4 +311,3 @@ def test_tah_chyba():
     with pytest.raises(ValueError):
         piskvorky.tah_pocitace('oxoxoxoxoxoxoxoxoxox')
 ```
-
