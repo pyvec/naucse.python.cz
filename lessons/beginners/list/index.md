@@ -73,7 +73,7 @@ Metoda `upper()` vytvoří a vrátí *nový* řetězec `'ŽANETA'`.
 Výsledná hodnota se ale v našem programu nevyužije – Python ji vypočítá,
 ale pak na ni „zapomene“.
 
-Oprava je snadná: výsledek uložit do proměnné.
+Oprava je snadná: výsledek si ulož do proměnné.
 Často budeš chtít takový výsledek uložit zpátky do původní proměnné:
 
 ```python
@@ -176,7 +176,7 @@ print(zviratka[2])
 ```
 
 Hranatými závorkami můžeš získat i podseznam.
-[Diagram z materiálů k řetězcům]({{ lesson_url('beginners/str')}}#slicing-diagram)
+[Diagram z materiálů k řetězcům]({{ lesson_url('beginners/str-index-slice')}}#slicing-diagram)
 ukazuje, jak u takového „sekání” číslovat:
 funguje to stejně, jen místo menšího řetězce dostaneš menší seznam.
 
@@ -282,7 +282,7 @@ Operátor `<` definuje i jak přesně `sort` řadí: čísla podle velikosti;
 velká písmena za malá, česká až za anglická, atd.
 
 Metoda `sort` zná pojmenovaný argument
-`reverse`. Pokud ho nastavíš na *True*, řadí se „naopak”.
+`reverse`. Pokud ho nastavíš na *True*, řadí se naopak.
 
 ```python
 seznam = [4, 7, 8, 3, 5, 2, 4, 8, 5]
@@ -328,7 +328,7 @@ print(melodie.index('DE'))
 
 ## Seznam jako podmínka
 
-Seznam můžeš použít v příkazu `if` (nebo `while`) jako podmínka,
+Seznam můžeš použít v příkazu `if` (nebo `while`) jako podmínku,
 která platí, když v tom seznamu něco je.
 Jinými slovy, `seznam` je tu „zkratka“ pro `len(seznam) > 0`.
 
@@ -349,7 +349,7 @@ celá čísla a `str` na řetězce,
 funkce `list` převádí na seznam.
 Jako argument jí můžeš předat jakoukoli hodnotu,
 kterou umí zpracovat příkaz `for`.
-Z řetězců udělá seznam znaků, z `range` udělá seznam čísel.
+Z řetězce udělá seznam znaků, z `range` udělá seznam čísel.
 
 ```python
 abeceda = list('abcdefghijklmnopqrstuvwxyz')
