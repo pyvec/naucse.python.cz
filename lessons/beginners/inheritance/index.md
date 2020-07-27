@@ -9,10 +9,10 @@ class Kotatko:
         self.jmeno = jmeno
 
     def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi chutná!")
 
     def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 ```
 
 Zkus si udělat podobnou třídu pro štěňátka:
@@ -23,10 +23,10 @@ class Stenatko:
         self.jmeno = jmeno
 
     def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi chutná!")
 
     def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
+        print(f"{self.jmeno}: Haf!")
 ```
 
 Většina kódu je stejná!
@@ -48,17 +48,17 @@ class Zviratko:
         self.jmeno = jmeno
 
     def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi chutná!")
 
 
 class Kotatko(Zviratko):
     def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 
 
 class Stenatko(Zviratko):
     def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
+        print(f"{self.jmeno}: Haf!")
 
 
 micka = Kotatko('Micka')
@@ -100,7 +100,7 @@ podtřídy:
 ```python
 class Kotatko(Zviratko):
     def snez(self, jidlo):
-        print("{}: {} mi vůbec nechutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi vůbec nechutná!")
 
 
 micka = Kotatko('Micka')
@@ -123,7 +123,7 @@ Třeba takhle:
 ```python
 class Kotatko(Zviratko):
     def snez(self, jidlo):
-        print("({} na {} chvíli fascinovaně kouká)".format(self.jmeno, jidlo))
+        print(f"({self.jmeno} na {jidlo} chvíli fascinovaně kouká)")
         super().snez(jidlo)
 
 
@@ -172,17 +172,17 @@ class Zviratko:
         self.jmeno = jmeno
 
     def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi chutná!")
 
 
 class Kotatko(Zviratko):
     def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 
 
 class Stenatko(Zviratko):
     def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
+        print(f"{self.jmeno}: Haf!")
 #}
 zviratka = [Kotatko('Micka'), Stenatko('Azorek')]
 
@@ -240,17 +240,17 @@ class Zviratko:
         self.jmeno = jmeno
 
     def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi chutná!")
 
 
 class Kotatko(Zviratko):
     def udelej_zvuk(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 
 
 class Stenatko(Zviratko):
     def udelej_zvuk(self):
-        print("{}: Haf!".format(self.jmeno))
+        print(f"{self.jmeno}: Haf!")
 
 
 zviratka = [Kotatko('Micka'), Stenatko('Azorek')]

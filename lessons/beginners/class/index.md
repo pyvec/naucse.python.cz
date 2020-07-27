@@ -233,7 +233,7 @@ a dostat se tak ke jménu daného koťátka:
 ```python
 class Kotatko:
     def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 
 mourek = Kotatko()
 mourek.jmeno = 'Mourek'
@@ -262,10 +262,10 @@ Třeba:
 ```python
 class Kotatko:
     def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 
     def snez(self, jidlo):
-        print("{}: Mňau mňau! {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: Mňau mňau! {jidlo} mi chutná!")
 
 mourek = Kotatko()
 mourek.jmeno = 'Mourek'
@@ -308,10 +308,10 @@ class Kotatko:
         self.jmeno = jmeno
 
     def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 
     def snez(self, jidlo):
-        print("{}: Mňau mňau! {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: Mňau mňau! {jidlo} mi chutná!")
 
 mourek = Kotatko('Mourek')
 mourek.zamnoukej()
@@ -340,13 +340,13 @@ class Kotatko:
         self.jmeno = jmeno
 
     def __str__(self):
-        return '<Kotatko jmenem {}>'.format(self.jmeno)
+        return f'<Kotatko jmenem {self.jmeno}>'
 
     def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 
     def snez(self, jidlo):
-        print("{}: Mňau mňau! {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: Mňau mňau! {jidlo} mi chutná!")
 
 mourek = Kotatko('Mourek')
 print(mourek)
