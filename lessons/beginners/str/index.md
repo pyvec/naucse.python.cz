@@ -265,22 +265,21 @@ Co se stalo?
 Prase kozu potrkalo!'''
 ```
 
-Víceřádkové řetězce se často používají jako dokumentační řetězce funkcí:
-
-```python
-def vynasob(a, b):
-    """Vynásobí argumenty a vrátí výsledek.
-
-    Oba argumenty by měly být čísla.
-    """
-
-    return a * b
-```
-
 Pozor na to, že pokud je tenhle řetězec
 v odsazeném kódu, každý jeho řádek bude začínat
 několika mezerami.
 (V dokumentačních řetězcích tohle nevadí, tam se s odsazením počítá.)
+
+```python
+cislo = 4
+
+if cislo > 0:
+    print("""
+        Výsledek porovnání:
+
+        Číslo je kladné.
+    """)
+```
 
 
 ## Cvičení

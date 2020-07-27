@@ -160,15 +160,34 @@ abys v tom měl{{a}} lepší přehled:
 
 ## Cvičení
 
-Zkus napsat funkci `zamen(retezec, pozice, znak)`.
-
-Tato funkce vrátí řetězec, který má na dané pozici
-daný znak; jinak je stejný jako původní `retezec`. Například:
+Zkus napsat program `zamen.py`, který umí zaměnit jedno písmeno ve slově za
+jiné. Například:
 
 ```python
-# Zaměň třetí znak ve slově "čokoláda"
-print(zamen('čokoláda', 3, 'u'))   # → čokuláda
+slovo = input('Slovo: ')
+pozice = int(input('Které písmeno zaměnit (od nuly)? '))
+novy_znak = input('Nové písmeno: ')
+
+... # sem doplň kód
+
+print(nove_slovo)
 ```
+
+Příklad použití:
+
+<pre>
+Slovo: <strong>čokoláda</strong>
+Které písmeno zaměnit (od nuly)? <strong>3</strong>
+Nové písmeno: <strong>u</strong>
+<strong>čokuláda</strong>
+</pre>
+
+<pre>
+Slovo: <strong>kočka</strong>
+Které písmeno zaměnit (od nuly)? <strong>1</strong>
+Nové písmeno: <strong>a</strong>
+<strong>kačka</strong>
+</pre>
 
 Pozor na to, že řetězce v Pythonu nelze měnit.
 Nemůžeš v existujícím řetězci zaměnit jeden znak za jiný;
@@ -176,13 +195,14 @@ musíš vytvořit nový řetězec poskládaný z částí toho starého.
 
 {% filter solution %}
 ```python
-def zamen(retezec, pozice, znak):
-    """Zamění znak na dané pozici
+slovo = input('Slovo: ')
+pozice = int(input('Které písmeno zaměnit (od nuly)? '))
+novy_znak = input('Nové písmeno: ')
 
-    Vrátí řetězec, který má na dané pozici daný znak;
-    jinak je stejný jako vstupní retezec
-    """
+zacatek_slova = slovo[:pozice]
+konec_slova = slovo[pozice + 1:]
+nove_slovo = zacatek_slova + novy_znak + konec_slova
 
-    return retezec[:pozice] + znak + retezec[pozice + 1:]
+print(nove_slovo)
 ```
 {% endfilter %}
