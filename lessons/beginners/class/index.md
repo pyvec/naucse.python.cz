@@ -185,7 +185,7 @@ Mňau!
 ## Atributy
 
 Objekty vytvořené z „vlastních“ tříd mají funkčnost, kterou třídy jako `str`
-nedovolují: možnost si definovat vlastní
+nedovolují: máš možnost si definovat vlastní
 *atributy* – informace, které se uloží k danému objektu.
 Atributy se označují tak, že mezi hodnotu a jméno
 jejího atributu napíšeš tečku:
@@ -285,23 +285,22 @@ Traceback (most recent call last):
 AttributeError: 'Kotatko' object has no attribute 'jmeno'
 ```
 
-Aby tahle chyba nemohla nastat, zařídíme, aby každé kotě *muselo* být
+Aby tahle chyba nemohla nastat, můžeš zařídit, aby každé kotě *muselo* být
 pojmenované – a to už od okamžiku kdy vznikne.
-Jméno budeme zadávat už při vytváření kotěte, nějak takhle:
+Jméno pak budeš zadávat už při vytváření kotěte, nějak takhle:
 
 ```python
 mourek = Kotatko(jmeno='Mourek')
 ```
 
-To ale zatím nefunguje; musíme na to třídu `Kotatko` připravit.
+To ale zatím nefunguje; musíš na to třídu `Kotatko` připravit.
 
-Použijeme na to speciální metodu,
-která se jmenuje `__init__` (dvě podtržítka,
+Použij na to speciální metodu, která se jmenuje `__init__` (dvě podtržítka,
 `init`, dvě podtržítka).
 To „opodtržítkování“ znamená, že tohle jméno je nějakým způsobem speciální.
 Metodu `__init__` totiž Python zavolá
 automaticky, když vytvoří nový objekt.
-Dá se tedy napsat:
+Můžeš se tedy napsat:
 
 ```python
 class Kotatko:
@@ -332,7 +331,7 @@ micka = Kotatko(jmeno='Micka')  # 'Micka' je hodnota argumentu `jmeno`
 ### Metoda `__str__`
 
 Podobných „opodtržítkovaných“ (speciálních) metod je víc.
-Třeba `__str__` se volá, když je potřeba
+Třeba metodu `__str__` Python zavolá, když je potřeba
 převést objekt na řetězec:
 
 ```python

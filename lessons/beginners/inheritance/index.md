@@ -1,7 +1,7 @@
 # Dědičnost
 
-Minule jsme probral{{gnd('i', 'y', both='i')}} třídy – jako příklad jsme si
-ukázal{{gnd('i', 'y', both='i')}} třídu pro koťátka:
+Minule jsme probrali třídy.
+Jako příklad jsme si ukázali třídu pro koťátka:
 
 ```python
 class Kotatko:
