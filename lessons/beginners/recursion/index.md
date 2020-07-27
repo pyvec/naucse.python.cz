@@ -57,7 +57,7 @@ verze Pythonu je vypíšou jen třikrát.
 Jak rekurzi využít v praxi?
 Jeden způsob je si počítat, kolikrát se ještě „zanořit“.
 
-Představ si potapěče, který prozkoumává mořské hlubiny následujícím způsobem:
+Představ si potápěče, který prozkoumává mořské hlubiny následujícím způsobem:
 
 * Jak *„prozkoumat moře“* v určité hloubce:
   * Porozhlédnu se kolem
@@ -71,7 +71,7 @@ Neboli v Pythonu:
 
 ```python
 def pruzkum(hloubka):
-    print(f'Zkoumám v hloubce {hloubka} m')
+    print(f'Rozhlížím se v hloubce {hloubka} m')
 
     if hloubka >= 30:
         print('Už toho bylo dost!')
@@ -109,7 +109,7 @@ pruzkum(0)
 # Lokální proměnné
 
 Na předchozím příkladu je vidět zajímavé chování lokálních proměnných.
-Když je potapěč „na dně“, jakou hodnotu má proměnná *hloubka*?
+Když je potápěč „na dně“, jakou hodnotu má proměnná *hloubka*?
 
 Tahle otázka je chyták. *Která* proměnná `hloubka`?
 Když je program „na dně“, existují čtyři *různé* lokální proměnné `hloubka`:
@@ -117,7 +117,7 @@ každé zanoření, každé zavolání funkce `pruzkum`, má vlastní proměnnou
 
 Podobně jako když máš globální a lokální proměnnou stejného jména,
 každá funkce „vidí“ jen tu svoji proměnnou.
-Ale když se potapěč vynoří a volání funkce se ukončí, tato proměnná
+Ale když se potápěč vynoří a volání funkce se ukončí, tato proměnná
 přestane existovat.
 A „volající“ funkce vidí svoji proměnnou, ve které je stále původní hodnota.
 

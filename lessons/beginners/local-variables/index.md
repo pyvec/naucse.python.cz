@@ -77,7 +77,7 @@ proměnná `i`, kterou `print` náhodou používá při procházení svých para
 
 To, co dělá lokální proměnnou, je *přiřazení*.
 Porovnej `nastav_x` s příkladem na `obsah_kruhu` výše: rozdíl mezi `pi` a `x`
-je v tom, že do `x` se v rámci funkce funkce přiřazuje.
+je v tom, že do `x` se v rámci funkce přiřazuje.
 
 Co je to přiřazení? Všechno, co *nastavuje* nějakou proměnnou. Například:
 * Klasika je přiřazovat pomocí `=`, např. `a = 3`.
