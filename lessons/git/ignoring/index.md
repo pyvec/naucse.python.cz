@@ -14,7 +14,7 @@ Souborů, které nechceš zahrnout do repozitáře (chceš je ignorovat) jsou t�
     Představ si, že napíšeš program, jehož výstupem je nakreslený obrázek nebo vytvořený graf.
     Takto generované soubory v repozitáři většinou nechceš, protože sledování změn v těchto souborech je zbytečné.
     Většinou chceš v repozitáři jen samotný program.
-    Obrázky si může pomocí programu, každý vytvořit sám.
+    Obrázky si může pomocí programu každý vytvořit sám.
 
 **3. Osobní soubory:**<br>
     Občas se stane, že v adresáři s repozitářem máš soubor s osobními
