@@ -1,7 +1,7 @@
 # Ignorování souborů
 
 Často se stává, že některé soubory v repozitáři nechceš.<br>
-Soubory, kteréme nechceme zahrnout do repozitáře (chceme je ignorovat) rozdělujeme na tři hlavní druhy:
+Souborů, které nechceš zahrnout do repozitáře (chceš je ignorovat) jsou tři hlavní druhy:
 
 **1. Pomocné soubory nástrojů:**<br>
     Python občas sám od sebe vytváří adresář `__pycache__` s pomocnými soubory.
