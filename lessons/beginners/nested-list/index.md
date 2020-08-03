@@ -1,6 +1,6 @@
 # Vnořené seznamy
 
-Seznam může obsahovat jakýkoli typ hodnot: čísla, řetězce, a tak dále:
+Seznam může obsahovat jakýkoli typ hodnot: čísla, řetězce a tak dále:
 
 ```python
 prvocisla = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]

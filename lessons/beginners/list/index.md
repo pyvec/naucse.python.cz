@@ -71,7 +71,7 @@ print(kamaradka)
 Proměnná `kamaradka` obsahuje řetězec `'Žaneta'` (který se už nedá změnit).
 Metoda `upper()` vytvoří a vrátí *nový* řetězec `'ŽANETA'`.
 Výsledná hodnota se ale v našem programu nevyužije – Python ji vypočítá,
-ale pak na ni „zapomene“.
+ale pak ji „zapomene“.
 
 Oprava je snadná: výsledek si ulož do proměnné.
 Často budeš chtít takový výsledek uložit zpátky do původní proměnné:
@@ -80,7 +80,7 @@ Oprava je snadná: výsledek si ulož do proměnné.
 kamaradka = kamaradka.upper()
 ```
 
-Tímto přiřazením Python „zapomene“ na původní hodnotu,
+Tímto přiřazením Python „zapomene“ původní hodnotu,
 a od tohoto příkazu dál bude proměnná `kamaradka` označovat nový řetězec.
 
 Podobně by se dala proměnná přenastavit na jakoukoli jinou hodnotu:
@@ -113,7 +113,7 @@ seznam, se kterým pracuje. Vyzkoušej si to:
 ```
 
 Všimni si, že proměnná `zviratka` se nastavuje jen na začátku.
-V rámci celého běhu programu výše existuje je jen jeden seznam.
+V rámci celého běhu programu výše existuje jen jeden seznam.
 Na začátku má tři prvky, pak mu jeden přibude, ale stále je to jeden a ten
 samý seznam.
 
@@ -190,7 +190,7 @@ to neprojeví.
 
 ### Měnění prvků
 
-Na rozdíl od řetězců (které se nedají měnit) můžeš u existujících seznamů
+Na rozdíl od řetězců (které se měnit nedají) můžeš u existujících seznamů
 nastavovat konkrétní prvky – a to tak, že do prvku přiřadíš jako by to byla
 proměnná:
 
@@ -206,7 +206,7 @@ co přiřadíš.
 
 ```python
 zviratka = ['pes', 'kočka', 'králík', 'had', 'andulka']
-print([1:-1])
+print(zviratka[1:-1])
 zviratka[1:-1] = ['koťátko', 'králíček', 'hádě']
 print(zviratka)
 ```
@@ -220,11 +220,11 @@ seznamu nebo některé prvky úplně odstranit:
 zviratka = ['pes', 'kočka', 'králík']
 zviratka[1:-1] = ['had', 'ještěrka', 'drak']
 print(zviratka)
-cisla[1:-1] = []
+zviratka[1:-1] = []
 print(zviratka)
 ```
 
-Tenhle zápis pro mazání prvků je ale docela nepřehledný
+Tenhle zápis pro mazání prvků je ale docela nepřehledný.
 Proto na to existuje zvláštní příkaz jménem `del`.
 Jak už jeho název (z angl. *delete*, smazat)
 napovídá, smaže, co mu přijde pod ruku – jednotlivé
@@ -247,7 +247,7 @@ print(zviratka)
 ```
 
 Na mazání prvků můžeš použít i metody zmíněné výše:
-* `pop` odstraní *a vrátí* poslední prvek v seznamu,
+* `pop` odstraní poslední prvek v seznamu a *vrátí* ho,
 * `remove` najde v seznamu první výskyt daného prvku a odstraní ho,
 * `clear` vyprázdní celý seznam.
 
@@ -266,7 +266,7 @@ print(balicek)
 
 ## Řazení
 
-Metoda `sort` seřadí prvky seznamu .
+Metoda `sort` seřadí prvky seznamu.
 
 ```python
 seznam = [4, 7, 8, 3, 5, 2, 4, 8, 5]
@@ -425,7 +425,7 @@ print(slova)
 ```
 
 Metoda `split` umí brát i argument.
-Pokud ho předáš řetězec „rozseká” daným oddělovačem
+Pokud ho předáš, řetězec „rozseká” daným oddělovačem
 (místo mezer a nových řádků).
 Takže když máš nějaká data oddělená čárkami,
 použíj `split` s čárkou:

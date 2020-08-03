@@ -77,7 +77,7 @@ převeď ji na seznam.
 ## Rozbalování v cyklu for
 
 Cyklus `for` umíš rozepsat: opakuje se v něm nastavení proměnné (které dělá
-`for` za tebe), pak tělo cyklu, a znovu nastavení proměnné, tělo cyklu, atd.
+`for` za tebe), pak tělo cyklu, a znovu nastavení proměnné, tělo cyklu atd.
 Pro „trpasličí“ cyklus to je:
 
 ```python
@@ -120,7 +120,7 @@ for index, trpaslik in enumerate(trpaslici):
     print(f'Na pozici {index} je {trpaslik}!')
 ```
 
-Tohle je docela častẙ způsob práce s *iterátorem n-tic* – máš-li sekvenci,
+Tohle je docela častý způsob práce s *iterátorem n-tic* – máš-li sekvenci,
 jejíž prvky jsou <var>n</var>-tice, můžeš jednotlivé součásti <var>n</var>-tice
 rozbalit přímo v hlavičce `for` cyklu.
 
@@ -257,4 +257,3 @@ for vec, barva in zip_longest(veci, barvy):
         barva = 'bez barvy'
     print(f"{vec} je {barva}")
 ```
-

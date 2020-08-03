@@ -64,7 +64,7 @@ print(seznam_dvojic)
 
 <var>N</var>-tice se hodí, pokud chceš z funkce vrátit
 víc než jednu hodnotu.
-Když u příkazu `return` použiješ vracených hodnoty oddělených čárkou,
+Když u příkazu `return` použiješ několik hodnot oddělených čárkou,
 vypadá to, že vracíš několik hodnot, ale
 ve skutečnosti se vrací jen jedna <var>n</var>-tice.
 

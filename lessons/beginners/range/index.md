@@ -128,4 +128,4 @@ Objekt `range` ale nejde měnit – mazání prvků nebo metody jako
 > hůř. Už to není jednoduchá sekvence čísel – už to není `range`, ale spíš
 > seznam jakýchkoli hodnot.
 
-Pokud budeš něco co `range` neumí potřebovat, převeď `range` na seznam.
+Pokud budeš něco, co `range` neumí, potřebovat, převeď `range` na seznam.
