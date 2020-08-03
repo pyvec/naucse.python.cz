@@ -86,15 +86,14 @@ Jak se na to dívá Git?
 ␛[36m$␛[0m git status
 On branch master
 
-Initial commit
+No commits yet
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-
-        ␛[31mAutofile.tmp␛[m
-        ␛[31mobrazek.ps␛[m
-        ␛[31mobrazek.py␛[m
-        ␛[31mpoznamky.txt␛[m
+	␛[31mAutofile.tmp␛[m
+	␛[31mobrazek.ps␛[m
+	␛[31mobrazek.py␛[m
+	␛[31mpoznamky.txt␛[m
 
 nothing added to commit but untracked files present (use "git add" to track)
 ```
@@ -129,15 +128,14 @@ Pak se podívej na `git status`. Obrázek už by ve výpisu neměl být!
 ␛[36m$␛[0m git status
 On branch master
 
-Initial commit
+No commits yet
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-
-        ␛[31m.gitignore␛[m
-        ␛[31mAutofile.tmp␛[m
-        ␛[31mobrazek.py␛[m
-        ␛[31mpoznamky.txt␛[m
+	␛[31m.gitignore␛[m
+	␛[31mAutofile.tmp␛[m
+	␛[31mobrazek.py␛[m
+	␛[31mpoznamky.txt␛[m
 
 nothing added to commit but untracked files present (use "git add" to track)
 ```
@@ -149,19 +147,17 @@ Nový soubor `.gitignore` přidej do repozitáře společně se samotným progra
 ␛[36m$␛[0m git status
 On branch master
 
-Initial commit
+No commits yet
 
 Changes to be committed:
   (use "git rm --cached <file>..." to unstage)
-
-        ␛[32mnew file:   .gitignore␛[m
-        ␛[32mnew file:   obrazek.py␛[m
+	␛[32mnew file:   .gitignore␛[m
+	␛[32mnew file:   obrazek.py␛[m
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-
-        ␛[31mAutofile.tmp␛[m
-        ␛[31mpoznamky.txt␛[m
+	␛[31mAutofile.tmp␛[m
+	␛[31mpoznamky.txt␛[m
 ```
 
 Když uděláš `git commit` a repozitář nasdílíš s ostatními, všichni dostanou
@@ -196,18 +192,16 @@ A po uložení budou poznámky ignorovány!
 ␛[36m$␛[0m git status
 On branch master
 
-Initial commit
+No commits yet
 
 Changes to be committed:
   (use "git rm --cached <file>..." to unstage)
-
-        ␛[32mnew file:   .gitignore␛[m
-        ␛[32mnew file:   obrazek.py␛[m
+	␛[32mnew file:   .gitignore␛[m
+	␛[32mnew file:   obrazek.py␛[m
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-
-        ␛[31mAutofile.tmp␛[m
+	␛[31mAutofile.tmp␛[m
 ```
 
 ## Další haraburdí
@@ -250,13 +244,12 @@ A měl by být ignorován:
 ␛[36m$␛[0m git status
 On branch master
 
-Initial commit
+No commits yet
 
 Changes to be committed:
   (use "git rm --cached <file>..." to unstage)
-
-        ␛[32mnew file:   .gitignore␛[m
-        ␛[32mnew file:   obrazek.py␛[m
+	␛[32mnew file:   .gitignore␛[m
+	␛[32mnew file:   obrazek.py␛[m
 ```
 
 
