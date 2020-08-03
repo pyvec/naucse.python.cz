@@ -170,7 +170,7 @@ se koťátka chovají.
 je konkrétní objekt (angl. *instance*) té třídy:
 hodnota, která reprezentuje kotě.
 
-Když definuješ třídu (pomocí bloku `class`), neznamená to zatím, že v tvém
+Když definuješ třídu (pomocí bloku `class`), neznamená to zatím, že ve tvém
 programu je nějaké koťátko.
 Třída je jako recept nebo manuál: když si koupíš kuchařku, budeš teoreticky
 vědět jak upéct dort, jak bude takový dort vypadat a že se dá sníst.
@@ -247,7 +247,7 @@ micka.zamnoukej()
 
 Co se stalo? Výraz `mourek.zamnoukej` udělá *metodu*.
 Když ji pak zavoláš (`mourek.zamnoukej()`),
-objekt `mourek` se předá funkci `zamnoukej` jako první argument, `self` .
+objekt `mourek` se předá funkci `zamnoukej` jako první argument, `self`.
 
 > [note]
 > Onen první argument metody můžeš teoreticky pojmenovat i jinak než `self`,
@@ -300,7 +300,7 @@ Použij na to speciální metodu, která se jmenuje `__init__` (dvě podtržítk
 To „opodtržítkování“ znamená, že tohle jméno je nějakým způsobem speciální.
 Metodu `__init__` totiž Python zavolá
 automaticky, když vytvoří nový objekt.
-Můžeš se tedy napsat:
+Můžeš tedy napsat:
 
 ```python
 class Kotatko:
