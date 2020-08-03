@@ -200,13 +200,13 @@ Spousta míst na Internetu (blogy, zpravodajství, e-shopy) funguje tak, že
 vybraná skupina lidí, „editorů“, má právo měnit obsah, jak se jim líbí.
 Takovým editorům musí správce projektu věřit, než jim přístup povolí.
 
-S Gitem se používá trožku jiný mechanismus:
+S Gitem se používá trošku jiný mechanismus:
 změny nahraješ do *vlastního* sdíleného
 repozitáře, který máš právo měnit jen ty.
 Majiteli původního projektu pak napíšeš
 žádost o začlenění těch změn (angl. *pull request*).
 Může to být třeba mail se slovy „Hele, na té a té
-adrese mám nějaké změny, které by se ti mohli hodit!
+adrese mám nějaké změny, které by se ti mohly hodit!
 Přidej je do svého projektu!”
 
 Výhoda je v tom, že se do projektu – pokud je
@@ -244,7 +244,7 @@ adresa by měla být něco jako
 > Třetí kopii repozitáře pak máš u sebe na počítači.
 > K té se dostaneš jen ty.
 >
-> Z „hlavní“ verze si stáhnout práci ostatních členů týmu;
+> Z „hlavní“ verze si stáhneš práci ostatních členů týmu;
 > do *tvého* prokejtu na GitHubu dáváš své změny, aby je ostatní mohli
 > schválit a začlenit do „hlavní“ verze.
 >
@@ -466,4 +466,3 @@ Chceš-li si o licencích přečíst něco víc, odkážu tě na
 [choosealicense.com](http://choosealicense.com/),
 případně [creativecommons.org](http://creativecommons.org/choose/)
 a [opensource.org](https://opensource.org/licenses).
-
