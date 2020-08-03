@@ -80,7 +80,7 @@ nothing to commit (create/copy files and use "git add" to track)
 ```
 
 *„On branch master”* říká něco o větvích, k tomu se vrátíme později.
-*„Initial commit”* říká, že zatím nemáš uloženou žádnou revizi.
+*„No commits yet”* říká, že zatím nemáš uloženou žádnou revizi.
 A *„nothing to commit”* říká, že je adresář
 prázdný – nejsou tu žádné soubory k verzování.
 
