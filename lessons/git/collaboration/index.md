@@ -1,4 +1,4 @@
-{% set coach_username = var('coach-username') or 'encukou' %}
+{% set coach_username = var('coach-username') or 'naucse' %}
 
 # Spolupráce
 
@@ -6,7 +6,7 @@
 Víc hlav víc ví, a tak je dobré si na projekt vytvořit tým.
 
 Každý člen týmu potřebuje mít přístup k práci ostatních.
-K tomu se dá použít Git: někde na internetu si zařídíme *sdílený repozitář*,
+K tomu se dá použít Git: někde na internetu si zařídí *sdílený repozitář*,
 se kterým se všichni budou synchronizovat.
 
 > [note] Pro samostudium
@@ -19,8 +19,8 @@ se kterým se všichni budou synchronizovat.
 > [note] Pro kouče
 > Udělej na GitHubu repozitář jménem `prezencka` a dej do
 > něj soubor se svým jménem. Příklad je na
-> [encukou/prezencka](https://github.com/encukou/prezencka).
-> Nasdílej s účastnicemi příkaz na jeho naklonování (přes https).
+> [naucse/prezencka](https://github.com/naucse/prezencka).
+> Nasdílej s účastníky příkaz na jeho naklonování (přes https).
 
 
 ## Open Source
@@ -79,7 +79,8 @@ Některé příklady populárních open-source projektů:
 * [Mozilla Firefox](https://github.com/mozilla/gecko-dev),
   [Chromium](https://chromium.googlesource.com/chromium/src.git)
   (prohlížeče)
-* [Atom](https://github.com/atom/atom),
+* [VS Code - OSS](https://github.com/Microsoft/vscode),
+  [Atom](https://github.com/atom/atom),
   [gedit](https://github.com/GNOME/gedit)
   (textové editory)
 * [CPython](https://github.com/python/cpython)
@@ -154,12 +155,40 @@ a zkus se podívat na historii (`gitk` nebo `git log`).
 Možná je krátká, ale hlavně, že nějaká je.
 Máš na počítači kopii projektu, který založil někdo jiný!
 
+Jak už napovídá název repozitáře, tvůj příspěvek do tohoto projektu bude
+zápis do prezenčky: konkrétně přidání souboru s tvým jménem.
+Jméno je to proto, aby nedocházelo ke kolizím: potřebujeme, aby příspěvky od
+všech lidí, kteří prochází tenhle kurz, byly jiné.
+
+Tvůj příspěvek bude ovšem veřejně vystaven na internetu.
+Pokud nechceš vystavovat svoje občanské jméno, použij místo něj klidně
+přezdívku, oblíbené jídlo nebo pár náhodných písmen. Ale:
+* když budeš pojmenovávat soubor, buď originální, aby nedošlo ke konfliktům, a
+* nesdílej nic, co nemáš právo sdílet (např. texty moderních písní).
+
+
+## Vytvoření větve
+
+Pomocí `git branch` zjisti, na jaké jsi aktuálně větvi.
+Měla by to být větev `master`.
+
+Tuhle „základní“ větev je dobré používat jen na revize, na kterých se už
+shodl celý tým.
+Proto když chceš do projektu přispět, jako první krok si pro svůj příspěvek
+udělej novou větev a přepni se do ní.
+Například pomocí:
+
+```console
+$ git branch pridani-jmena
+$ git checkout pridani-jmena
+```
+
 
 ## Posílání změn <small>(<code>git push</code>)</small>
 
 Teď se do projektu zapoj.
-Přidej soubor se svým jménem (nebo přezdívkou)
-a dej ho do gitu (`git add jmeno.txt`, `git commit`).
+Přidej soubor pojmenovaný podle tvého jména (nebo přezdívky)
+a dej ho do gitu (<code>git add <var>...</var></code>; <code>git commit</code>).
 
 Teď zbývá „jen” změnu začlenit do původního sdíleného repozitáře.
 To ale není jen tak: repozitář, který jsi
@@ -167,16 +196,17 @@ naklonoval{{a}}, patří koučovi. A tomu by se asi
 nelíbilo, kdyby kdokoliv na Internetu mohl přijít
 a nahrát mu do repozitáře změny.
 
-Spousta míst na Internetu funguje tak, že vybraná
-skupina lidí má „přístup”: můžou dělat změny,
-jak se jim líbí.
+Spousta míst na Internetu (blogy, zpravodajství, e-shopy) funguje tak, že
+vybraná skupina lidí, „editorů“, má právo měnit obsah, jak se jim líbí.
+Takovým editorům musí správce projektu věřit, než jim přístup povolí.
 
-S Gitem se používá jiný přístup:
+S Gitem se používá trošku jiný mechanismus:
 změny nahraješ do *vlastního* sdíleného
-repozitáře a majiteli původního projektu napíšeš
+repozitáře, který máš právo měnit jen ty.
+Majiteli původního projektu pak napíšeš
 žádost o začlenění těch změn (angl. *pull request*).
 Může to být třeba mail se slovy „Hele, na té a té
-adrese mám nějaké změny, které by se ti mohli hodit!
+adrese mám nějaké změny, které by se ti mohly hodit!
 Přidej je do svého projektu!”
 
 Výhoda je v tom, že se do projektu – pokud je
@@ -184,12 +214,12 @@ veřejný – může zapojit kdokoliv. Nemusíš se
 předem ptát, nemusíš dokazovat že jsi důvěryhodná
 osoba, stačí něco změnit a poslat.
 Jestli se změna bude autorům projektu líbit nebo
-ne, to už je jiná věc. Ale záleží hlavně na samotné
-změně, ne na tom, kdo ji udělal.
+ne, to už je jiná věc – ale můžou posuzovat samotnou
+změnu, ne důvěryhodnost jejího autora.
 
-Služba [github.com](https://github.com/)
-ti umožňuje si udělat vlastní sdílený repozitář a zjednodušuje
-začleňování změn (místo posílání mailů stačí
+Služby jako [github.com](https://github.com/)
+ti umožňují si udělat vlastní sdílený repozitář (který bude k dispozici na
+internetu) a zjednodušují začleňování změn (místo posílání mailů stačí
 zmáčknout tlačítko). Pojďme se podívat, jak na to.
 
 Přihlaš se na GitHub a pak zajdi na adresu
@@ -204,12 +234,20 @@ adresa by měla být něco jako
 > Kdybys měl{{a}} v různých kopiích repozitáře zmatek,
 > přijde vhod malé vysvětlení: jedna kopie je původní
 > projekt na GitHubu, kam správce projektu dává
-> aktuální „oficiální verzi“. Další kopie na GitHubu
+> aktuální „oficiální“ nebo „hlavní“ verzi. Další kopie na GitHubu
 > je „tvoje“ a můžeš si do ní nahrát co chceš
 > (nejčastěji v ní ale zveřejňuješ změny, které můžou
-> být užitečné pro ostatní). A třetí kopii repozitáře
-> máš u sebe na počítači.
-
+> být užitečné pro ostatní).
+> Tyhle dvě  kopie existují na serverech GitHubu a jsou volně dostupné
+> přes internet.
+>
+> Třetí kopii repozitáře pak máš u sebe na počítači.
+> K té se dostaneš jen ty.
+>
+> Z „hlavní“ verze si stáhneš práci ostatních členů týmu;
+> do *tvého* prokejtu na GitHubu dáváš své změny, aby je ostatní mohli
+> schválit a začlenit do „hlavní“ verze.
+>
 > {{ figure(
     img=static('gh-workflow-diagram.svg'),
     alt='Diagram tří repozitářů'
@@ -256,12 +294,12 @@ Pak už můžeš změny nahrávat pomocí:
 
 
 <div class="highlight codehilite">
-<pre><code><span class="gp">$</span> git push <i>tvojejmeno</i> master
+<pre><code><span class="gp">$</span> git push <i>tvojejmeno</i> pridani-jmena
 </code></pre></div>
 
 což znamená: pošli na adresu uloženou pod zkratkou
 <code><i>tvojejmeno</i></code>
-větev `master`.
+větev `pridani-jmena`.
 
 Funguje? Podívej se na
 <code>https://github.com/<i>tvojejmeno</i>/prezencka</code>
@@ -300,6 +338,13 @@ o tom, jak je ještě vylepšit.
 > To může trvat i pár dní; kdyby to bylo přes týden,
 > tak se na stránce *pull requestu* zkus připomenout.
 
+U přidání jména do prezenčky se to asi nestane, ale kdybys potřeboval{{a}}
+na změně před začleněním ještě trochu zapracovat (třeba i po
+pár dnech diskuse), nebyl by to problém.
+Přepni se na svém počítači do větve `pridani-jmena`, udělej další revize,
+a pomocí <code>git push <i>tvojejmeno</i> pridani-jmena</code>
+*pull request* aktualizuj.
+
 
 ## Aktualizace <small>(<code>git pull</code>)</small>
 
@@ -307,11 +352,18 @@ Když budou tvé změny – a změny od ostatních –
 začleněné, můžeš si aktualizovat lokální repozitář. (To je ten,
 který máš u sebe na počítači.)
 
+Nejdřív se přepni zpět do větve `master`.
+Teď už nebudeš pracovat na `pridani-jmena`; tahle větev už je odeslaná.
+
 To se dělá příkazem
 `git pull origin master` (stáhni změny
 z větve „master” z adresy pod zkratkou „origin”).
 Pomocí `gitk --all` nebo `git log`
 se můžeš podívat, jak se projekt mezitím vyvinul.
+
+Tohle `git pull` je dobré provést vždycky předtím, než začneš pracovat na
+nové změně/větvi.
+Zaručíš tím, že projekt, který měníš, je „čerstvý“.
 
 Gratuluji! Právě jsi {{gnd('prošel', 'prošla')}} „kolečkem“,
 které většina programátorů dělá denně: udělání nějaké změny,
@@ -358,19 +410,18 @@ Do tohoto souboru patří mj.:
 
 README by mělo být členěné a jeho přečtení by nemělo zabrat uživateli hodinu,
 většinou stačí krátké úderné informace s případným odkazem někam dál.
-Není tedy například potřeba vysvětlovat v každém projektu,
-jak se instaluje Python.
-Stačí říct, že Python je potřeba (a v jaká verze)
+Nemusíš tedy například vysvětlovat v každém projektu, jak se instaluje Python.
+Stačí říct, že Python je potřeba (a v jaké verzi)
 a odkázat uživatele na patřičný návod.
 Je také třeba brát v úvahu, kdo bude README číst.
-Píšete-li program pro jiné vývojářky a vývojáře,
-často není třeba zabrušovat do velikých detailů.
+Píšeš-li program pro jiné vývojářky a vývojáře,
+často nemusíš zabrušovat do detailů.
 
 GitHub (a spousty jiných podobných služeb) umožňuje pro README použít nějaký
 značkovací jazyk, například [Markdown](https://cs.wikipedia.org/wiki/Markdown).
 Je možné pak používat nadpisy, obrázky apod.
 
-V neposlední řadě – aby se do projektu mohl zapojit
+A v neposlední řadě: aby se do projektu mohl zapojit
 kdokoli z celého světa, bývají open-source projekty v angličtině.
 Jména proměnných, komentáře, dokumentace – všechno
 je primárně v anglické verzi.
@@ -384,8 +435,10 @@ to bude velice složité.
 Aby sdílení fungovalo i pro právní stránce,
 nestačí když nahraješ kus kódu na Internet.
 Musíš taky oficiálně oznámit, že si s ním ostatní můžou hrát.
-Bez *licence* totiž nemá nikdo právo tvůj
-program ani používat, natož vylepšovat.
+Na svůj kód totiž máš autorské právo, podle kterého ostatní nesmí tvůj program
+používat, natož vylepšovat, dokud jim to nepovolíš.
+Pro formální udělení tohohle povolení se používají *licence*, které píšou
+právníci.
 
 Problematika licencí může být, bohužel, docela složitá.
 Když to ale zjednodušíme na minimum, budeš
@@ -407,9 +460,9 @@ licenci [MIT](https://choosealicense.com/licenses/mit/).
 
 Kód se nejčastěji licencuje tak, že text licence
 dáš do souboru jménem `LICENSE` a přidáš do Gitu.
+Je dobré licenci zmínit i v souboru `README`.
 
 Chceš-li si o licencích přečíst něco víc, odkážu tě na
 [choosealicense.com](http://choosealicense.com/),
 případně [creativecommons.org](http://creativecommons.org/choose/)
 a [opensource.org](https://opensource.org/licenses).
-

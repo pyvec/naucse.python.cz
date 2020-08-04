@@ -4,26 +4,30 @@
 Takových souborů jsou tři hlavní druhy:
 
 Pomocné soubory nástrojů
-:   Python občas sám od sebe vytváří adresář `__pycache__` s pomocnými soubory.
+:   Python občas „sám od sebe“ vytváří adresář `__pycache__` s pomocnými
+    soubory, aby zrychlil importování modulů.
     Některé počítače vytváří skryté soubory s názvy jako
     `.Thumbnails`, `.DS_Store` nebo `Thumbs.db`.
     Takové věci v repozitáři nemají co dělat – je
     dobrým zvykem do Gitu nedávat nic, co jde vytvořit automaticky.
 
-Výstup programu
+Výstup programu a nastavení
 :   Píšeš-li program, který kreslí obrázky, většinou chceš v repozitáři
     jen samotný program.
     Obrázky si může pomocí programu každý vytvořit sám.
+:   Podobně fungují soubory s heslem: pokud program potřebuje heslo
+    např. k nějaké webové službě, ale svoje heslo nechceš dávat veřejně
+    k dispozici, musí si každý vytvořit soubor s heslem sám.
 
 Osobní soubory
 :   Občas se stane, že v adresáři s repozitářem máš soubor s osobními
-    poznámkami nebo třeba s heslem.
+    poznámkami.
     Zbytek repozitáře plánuješ zveřejnit, ale tyto soubory by měly zůstat
-    jen ve tvé kopii.
+    jen ve tvé kopii. A to včetně informace o tom, že takové soubory máš.
 
 Adresář s virtuálním prostředím
 :   Jistě už sis zvykl{{a}} na virtuální prostředí.
-    Adresář s ním se může jmenovat různě, v začátečnickém kurzu používáš název `venv`.
+    Adresář s ním se může jmenovat různě, v začátečnickém kurzu používáme název `venv`.
     Není dobré tento adresář dávat do Gitu,
     protože je jednoduché jej vždy vytvořit znovu
     a pokud na projektu spolupracuje více lidí
@@ -82,15 +86,14 @@ Jak se na to dívá Git?
 ␛[36m$␛[0m git status
 On branch master
 
-Initial commit
+No commits yet
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-
-        ␛[31mAutofile.tmp␛[m
-        ␛[31mobrazek.ps␛[m
-        ␛[31mobrazek.py␛[m
-        ␛[31mpoznamky.txt␛[m
+	␛[31mAutofile.tmp␛[m
+	␛[31mobrazek.ps␛[m
+	␛[31mobrazek.py␛[m
+	␛[31mpoznamky.txt␛[m
 
 nothing added to commit but untracked files present (use "git add" to track)
 ```
@@ -107,7 +110,7 @@ lepší schraňovat jinde než v Gitu).
 Zároveň víš, že každý, kdo s repozitářem bude pracovat, pravděpodobně
 tenhle soubor vytvoří.
 Bylo by tedy dobré říct *všem* lidem, kteří se k repozitáři dostanou, že tento
-soubor nechceš.
+soubor do Gitu nepatří.
 To se dělá záznamem ve speciálním souboru v repozitáři.
 
 Udělej soubor s názvem `.gitignore`.
@@ -125,40 +128,36 @@ Pak se podívej na `git status`. Obrázek už by ve výpisu neměl být!
 ␛[36m$␛[0m git status
 On branch master
 
-Initial commit
+No commits yet
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-
-        ␛[31m.gitignore␛[m
-        ␛[31mAutofile.tmp␛[m
-        ␛[31mobrazek.py␛[m
-        ␛[31mpoznamky.txt␛[m
+	␛[31m.gitignore␛[m
+	␛[31mAutofile.tmp␛[m
+	␛[31mobrazek.py␛[m
+	␛[31mpoznamky.txt␛[m
 
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 
-Nový soubor `.gitignore` (a samotný program) potřebujeme přidat do repozitáře.
-Udělej to, pomocí `git add`:
+Nový soubor `.gitignore` přidej do repozitáře společně se samotným programem:
 
 ```ansi
 ␛[36m$␛[0m git add .gitignore obrazek.py
 ␛[36m$␛[0m git status
 On branch master
 
-Initial commit
+No commits yet
 
 Changes to be committed:
   (use "git rm --cached <file>..." to unstage)
-
-        ␛[32mnew file:   .gitignore␛[m
-        ␛[32mnew file:   obrazek.py␛[m
+	␛[32mnew file:   .gitignore␛[m
+	␛[32mnew file:   obrazek.py␛[m
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-
-        ␛[31mAutofile.tmp␛[m
-        ␛[31mpoznamky.txt␛[m
+	␛[31mAutofile.tmp␛[m
+	␛[31mpoznamky.txt␛[m
 ```
 
 Když uděláš `git commit` a repozitář nasdílíš s ostatními, všichni dostanou
@@ -173,10 +172,11 @@ Soubor `poznamky.txt` se taky dá zařadit do `.gitignore`, ale moc se tam nehod
 Existuje jen u tebe; není důvod předpokládat, že si někdo jiný vytvoří
 soubor se stejným jménem.
 
-Dejme ho tedy do souboru, který se nebude šířit s repozitářem.
+Dej ho tedy do souboru, který se nebude šířit s repozitářem.
 Tento soubor je `.git/info/exclude`.
 (Může být trochu složité ho najít, protože adresář `.git` je skrytý. 
-Nevidíš–li ho, napiš okýnku pro otevření souboru `.git` a dostaneš se do něj.)
+Nevidíš–li ho, napiš v editoru do okýnka pro otevření souboru `.git` a dostaneš
+se do něj.)
 
 Soubory v adresáři `.git` bys neměl{{a}} měnit, protože se tak dá přijít
 o historii projektu.
@@ -192,18 +192,16 @@ A po uložení budou poznámky ignorovány!
 ␛[36m$␛[0m git status
 On branch master
 
-Initial commit
+No commits yet
 
 Changes to be committed:
   (use "git rm --cached <file>..." to unstage)
-
-        ␛[32mnew file:   .gitignore␛[m
-        ␛[32mnew file:   obrazek.py␛[m
+	␛[32mnew file:   .gitignore␛[m
+	␛[32mnew file:   obrazek.py␛[m
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-
-        ␛[31mAutofile.tmp␛[m
+	␛[31mAutofile.tmp␛[m
 ```
 
 ## Další haraburdí
@@ -246,13 +244,12 @@ A měl by být ignorován:
 ␛[36m$␛[0m git status
 On branch master
 
-Initial commit
+No commits yet
 
 Changes to be committed:
   (use "git rm --cached <file>..." to unstage)
-
-        ␛[32mnew file:   .gitignore␛[m
-        ␛[32mnew file:   obrazek.py␛[m
+	␛[32mnew file:   .gitignore␛[m
+	␛[32mnew file:   obrazek.py␛[m
 ```
 
 
@@ -303,7 +300,8 @@ Doporučuji si před použitím téhle zkratky zkontrolovat `git status`, aby si
 ověřil{{a}}, že nepřidáváš nic, co nechceš.
 
 Taky doporučuji si nastavit Git, aby se v editoru, kam píšeš popisek revize,
-ukazovala poznámka s tím, co vlastně v nové revizi bude:
+ukazovala poznámka s tím, co vlastně v nové revizi bude.
+Uvidíš tak něco jako `git status` vždy, když začneš psát popisek k revizi:
 
 ```console
 $ git config --global commit.verbose 1

@@ -63,7 +63,7 @@ Switched to branch 'doplneni-autora'
 ```
 
 Tak. Teď jsi „ve” větvi `doplneni-autora`.
-Doplň nějaké jméno do souboru `basnicka.txt`,
+Doplň nějaké jméno na začátek souboru `basnicka.txt`,
 a pomocí `git add` a `git commit` udělej novou revizi.
 Pak koukni na `gitk --all`, jak to vypadá:
 
@@ -93,7 +93,8 @@ Switched to branch 'doplneni-jmena'
   master␛[m
 ```
 
-Doplň do souboru jméno básně a pomocí
+Doplň jméno básně na začátek souboru (tedy na stejné místo,
+jako je v druhé větvi název) a pomocí
 `git add`, `git commit` ulož revizi.
 Všechno zkontroluj přes `gitk --all`.
 
@@ -125,7 +126,8 @@ zpátky do `master`. Podívejme se jak na to.
 
 Nedávalo by smysl historii projektu rozdvojovat,
 kdyby pak jednotlivé větve nešly zase sloučit dohromady.
-Naštěstí je v Gitu slučování poměrně jednoduché.
+V Gitu je většinou slučování poměrně jednoduché, ale tento příklad schválně
+ukazuje nejsložitější variantu, která může nastat.
 
 Přepni se zpátky na `master`
 a použij příkaz `git merge`, který
@@ -136,10 +138,10 @@ Příkazu musíš dát jméno větve, kterou chceš sloučit.
 ␛[36m$␛[0m git checkout master
 Switched to branch 'master'
 ␛[36m$␛[0m git merge doplneni-jmena
-Updating e929fb0..c982a81
+Updating 1fcd654..5c9bf93
 Fast-forward
- basnicka.txt | 6 ␛[32m+++++␛[m␛[31m-␛[m
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ basnicka.txt | 3 ␛[32m+++␛[m
+ 1 file changed, 3 insertions(+)
 ```
 
 Sloučeno! Ono „`Fast-forward`” znamená, že
@@ -148,25 +150,82 @@ vlastně nebylo co slučovat – jen se do větve
 Zkontroluj v `gitk --all`, jak to vypadá.
 
 A pak zkus sloučit i druhou větev: `git merge doplneni-autora`.
-Tady to bude složitější: Může se stát, že změny nepůjdou
+Tady to bude složitější: pravděpodobně se stane, že změny nepůjdou
 automaticky sloučit a ve výstupu se objeví hláška
-`merge conflict` (slučovací konflikt).
-V tom případě se na soubor podívej v editoru: objeví
-se v něm obsah z obou konfliktních verzí,
-společně se značkami, které upozorňují na místo
-kde konflikt nastal.
-Soubor uprav ho tak, jak by měl vypadat, ulož a zadej
-`git commit`.
- 
-Ať nastal konflikt nebo ne, vytvoří se „slučovací revize“
-(angl. *merge commit*), které – jako každé revizi – můžeš dát popisek.
+`merge conflict` (slučovací konflikt):
 
 ```ansi
 ␛[36m$␛[0m git merge doplneni-autora
 Auto-merging basnicka.txt
-Merge made by the 'recursive' strategy.
- basnicka.txt | 2 ␛[32m++␛[m
- 1 file changed, 2 insertions(+)
+CONFLICT (content): Merge conflict in basnicka.txt
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+> [note] A když ne?
+> Jestli se konflikt neobjevil, Git změny sloučil sám.
+> Gratuluji! Zbytek téhle sekce bude jen teoretický; vrať se sem, až se ti
+> někdy „podaří“ konflikt udělat.
+
+Když nastane konflikt, `git status` ukáže „both modified“ – tedy že byl soubor
+změněný v obou slučovaných větvích:
+
+```ansi
+␛[36m$␛[0m git status
+On branch master
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+	␛[31mboth modified:   basnicka.txt␛[m
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+V tom případě se na soubor podívej v editoru: objeví
+se v něm obsah z obou konfliktních verzí,
+společně se značkami `<<<<<<<`, `=======` a `>>>>>>>`, které upozorňují na
+místo kde konflikt nastal.
+
+Značky ukáže i příkaz `git diff`, jehož výstup je teď trošku složitější:
+
+```ansi
+␛[36m$␛[0m git diff
+␛[1mdiff --cc basnicka.txt␛[m
+␛[1mindex bc7a2de,88e7ea5..0000000␛[m
+␛[1m--- a/basnicka.txt␛[m
+␛[1m+++ b/basnicka.txt␛[m
+␛[36m@@@ -1,4 -1,4 +1,8 @@@␛[m
+␛[32m++<<<<<<< HEAD␛[m
+␛[32m +Holka Modrooká␛[m
+␛[32m++=======␛[m
+␛[32m+ (Lidová)␛[m
+␛[32m++>>>>>>> doplneni-autora␛[m
+  ␛[m
+  Holka modrooká␛[m
+  Nesedávej u potoka␛[m
+```
+
+Konflikty a značky, které můžou být nepřehledné, ukazuje Git ze stejného důvodu
+jako Python chybové hlášky: tedy aby ti co nejvíce pomohl.
+Git je jen „hloupý“ nástroj a s konfliktem si neporadí sám, ale snaží se
+ti řešení konfliktu co nejvíc usnadnit.
+
+Proto hlavně nepanikař!
+Soubor otevři v editoru a uprav **tak, jak by měl vypadat**.
+Značky jako `<<<<<<<` smaž; řádky poskládej tak, jak by měly jít za sebou.
+(A pracuješ-li na kódu, spusť testy a ověř, jestli všechno stále funguje.)
+
+Pak soubor ulož a zadej `git commit`.
+ 
+Ať nastal konflikt nebo ne, vytvoří se „slučovací revize“
+(angl. *merge commit*), které – jako každé revizi – můžeš dát popisek.
+Tentokrát je popisek už předvyplněný; chceš-li nějaký jiný, nahraď ho.
+
+```ansi
+␛[36m$␛[0m git add basnicka.txt
+␛[36m$␛[0m git commit
+[master 884b30a] Merge branch 'doplneni-autora'
 ```
 
 Povedlo se?
@@ -181,10 +240,10 @@ změny jsou v `master` a nemá na nich cenu
 pracovat dál.
 
 ```ansi
-␛[36m$␛[0m git branch -d doplneni-autora
-Deleted branch doplneni-autora (was 0e213cd).
-␛[36m$␛[0m git branch -d doplneni-jmena
-Deleted branch doplneni-jmena (was c982a81).
+␛[36m$␛[0m git branch --delete doplneni-autora
+Deleted branch doplneni-autora (was f1cd9be).
+␛[36m$␛[0m git branch --delete doplneni-jmena
+Deleted branch doplneni-jmena (was 5c9bf93).
 ␛[36m$␛[0m git branch
 * ␛[32mmaster␛[m
 ```
