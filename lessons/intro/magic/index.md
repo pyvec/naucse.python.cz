@@ -304,7 +304,7 @@ Je magický v obou významech – většina lidí ho používá, ačkoli nemá t
 Pomocí tečky zapisujeme tři operace: čtení atributu (`print(foo.bar)`), zapisování (`foo.bar = 3`) a mazání (`del foo.bar`).
 Tady se zaměříme hlavně na nejmagičtější z nich, čtení.
 
-Kdykoli atribut čteme pomocí tečky, hledá se několika místech:
+Kdykoli atribut čteme pomocí tečky, hledá se na několika místech:
 
 * na samotné instanci objektu,
 * pokud se tam nenajde, tak na třídě,
@@ -342,7 +342,7 @@ palette = Palette()
 print(palette.dark_red)
 ```
 
-(Předpokládám že znáte funkci `getattr`; kdyby ne: `getattr(foo, "bar")` dělá totéž co `foo.bar` – jen je jméno atributu předáno jako řetězec, takže může být např. v proměnné. Podobně existují `setattr(instance, attr_name, new_value)` a `delattr(setattr(instance, attr_name)`.)
+(Předpokládám že znáte funkci `getattr`; kdyby ne: `getattr(foo, "bar")` dělá totéž co `foo.bar` – jen je jméno atributu předáno jako řetězec, takže může být např. v proměnné. Podobně existují `setattr(instance, attr_name, new_value)` a `delattr(instance, attr_name)`.)
 
 Metoda `__getattr__` je většinou tak trochu kanón na vrabce: ve většině případů nepotřebujeme nastavit chování *všech* neexistujících atributů, ale jenom jednoho nebo několika konkrétních.
 Například máme třídu pro 2D bod s atributy `x` a `y` a potřebujeme i atribut pro dvojici `(x, y)`.
