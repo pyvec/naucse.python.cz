@@ -1,6 +1,6 @@
 # Dekorátory
 
-V této lekci se nebude věnovat žádné externí knihovně. Místo toho se seznámíme
+V této lekci se nebudeme věnovat žádné externí knihovně. Místo toho se seznámíme
 s jednou vlastností Pythonu, kterou knihovny často využívají, a která obvykle
 vypadá trochu magicky.
 
