@@ -41,7 +41,7 @@ Roku 1985 publikoval
 [GNU Manifesto](https://www.gnu.org/gnu/manifesto.en.html),
 kde vysvětlil, proč hodlá vytvořit operační systém s otevřeným kódem a
 odstartoval tak hnutí svobodného softwaru.
-To prosazuje 4 následujících svobod (převzato
+To prosazuje 4 následující svobody (převzato
 z [Wikipedie](https://cs.wikipedia.org/wiki/Svobodn%C3%BD_software)):
 
 <ol start="0">
@@ -245,7 +245,7 @@ adresa by měla být něco jako
 > K té se dostaneš jen ty.
 >
 > Z „hlavní“ verze si stáhneš práci ostatních členů týmu;
-> do *tvého* prokejtu na GitHubu dáváš své změny, aby je ostatní mohli
+> do *tvého* projektu na GitHubu dáváš své změny, aby je ostatní mohli
 > schválit a začlenit do „hlavní“ verze.
 >
 > {{ figure(
