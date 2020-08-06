@@ -34,7 +34,7 @@ se teď seznámíme.
 > Budeme hodně pracovat s příkazovou řádkou.
 > Jestli se s ní ještě nekamarádíš, koukni se na
 > [úvod]({{ lesson_url('beginners/cmdline') }}).
-> 
+>
 > Nezapomeň: `$` na začátku se nepíše;
 > je tu proto, aby šlo poznat že jde o příkaz.
 
@@ -235,7 +235,7 @@ s nějakým <span class="green">obsahem</span>.
 > > set LC_ALL=C.UTF-8
 > ```
 >
-> Tento příkaz nastaví aktuální terminál: když si ovevřeš nové okno
+> Tento příkaz nastaví aktuální terminál: když si otevřeš nové okno
 > s příkazovou řádkou, bude ho potřeba zadat znovu.
 
 
@@ -362,7 +362,7 @@ Author: Adéla Novotná <adela.novotna@example.cz>
 Date:   Mon May 18 16:18:40 2020 +0200
 
     Rozdělení dlouhých řádků
-    
+
     Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
     takhle se to líp čte. (Ale, co si budeme povídat, hlavní
     důvod je ukázat co dělá git diff.)
@@ -409,7 +409,7 @@ Author: Adéla Novotná <adela.novotna@example.cz>
 Date:   Mon May 18 16:18:40 2020 +0200
 
     Rozdělení dlouhých řádků
-    
+
     Verše básně se většinou píšou na jednotlivé řádky. Myslím, že
     takhle se to líp čte. (Ale, co si budeme povídat, hlavní
     důvod je ukázat co dělá git diff.)
