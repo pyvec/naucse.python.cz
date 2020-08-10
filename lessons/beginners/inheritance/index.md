@@ -1,7 +1,7 @@
 # Dědičnost
 
-Minule jsme probral{{gnd('i', 'y', both='i')}} třídy – jako příklad jsme si
-ukázal{{gnd('i', 'y', both='i')}} třídu pro koťátka:
+Minule jsme probrali třídy.
+Jako příklad jsme si ukázali třídu pro koťátka:
 
 ```python
 class Kotatko:
@@ -9,10 +9,10 @@ class Kotatko:
         self.jmeno = jmeno
 
     def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi chutná!")
 
     def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 ```
 
 Zkus si udělat podobnou třídu pro štěňátka:
@@ -23,25 +23,24 @@ class Stenatko:
         self.jmeno = jmeno
 
     def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi chutná!")
 
     def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
+        print(f"{self.jmeno}: Haf!")
 ```
 
 Většina kódu je stejná!
 Kdybys měla napsat i třídu pro kuřátka, kůzlátka,
-slůňátka a háďátka, bez Ctrl+C by to bylo docela nudné.
+slůňátka a háďátka, bez <kbd>Ctrl</kbd>+<kbd>C</kbd> by to bylo docela nudné.
 A protože jsou programátoři líní psát stejný kód
 několikrát (a hlavně ho potom udržovat), vymysleli
-mechanismus, jak se toho vyvarovat. Jak?
+mechanismus, jak se toho vyvarovat.
 
 Koťátka i štěňátka jsou zvířátka.
 Můžeš si vytvořit třídu společnou pro všechna
 zvířátka a do ní napsat všechno, co je společné.
-Ve třídách pro jednotlivé druhy zvířat pak zbude jen
-to, co se liší.
-V Pythonu se to dělá takto:
+Ve třídách pro jednotlivé druhy zvířat pak zbude jen to, co se liší.
+V Pythonu se to dělá takto:
 
 ```python
 class Zviratko:
@@ -49,17 +48,17 @@ class Zviratko:
         self.jmeno = jmeno
 
     def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi chutná!")
 
 
 class Kotatko(Zviratko):
     def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 
 
 class Stenatko(Zviratko):
     def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
+        print(f"{self.jmeno}: Haf!")
 
 
 micka = Kotatko('Micka')
@@ -89,8 +88,7 @@ Když potom Python hledá nějakou metodu
 a nenajde ji přímo ve třídě daného objektu (u nás
 `Kotatko`), podívá se do nadtřídy.
 Takže všechno, co je definované pro
-`Zviratko`, platí i pro koťátka.
-Pokud to tedy výslovně nezměníš.
+`Zviratko`, platí i pro koťátka – dokud to výslovně nezměníš.
 
 
 ## Přepisování metod a `super()`
@@ -102,14 +100,14 @@ podtřídy:
 ```python
 class Kotatko(Zviratko):
     def snez(self, jidlo):
-        print("{}: {} mi vůbec nechutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi vůbec nechutná!")
 
 
 micka = Kotatko('Micka')
 micka.snez('granule')
 ```
 
-> [python]
+> [note]
 > Je to podobné jako když jsme minule přepisoval{{gnd('i', 'y', both='i')}}
 > atribut pomocí `micka.zamnoukej = 12345`.
 > Python atributy hledá napřed na samotném objektu,
@@ -125,7 +123,7 @@ Třeba takhle:
 ```python
 class Kotatko(Zviratko):
     def snez(self, jidlo):
-        print("({} na {} chvíli fascinovaně kouká)".format(self.jmeno, jidlo))
+        print(f"({self.jmeno} na {jidlo} chvíli fascinovaně kouká)")
         super().snez(jidlo)
 
 
@@ -160,32 +158,32 @@ Dokonce se to dělá poměrně často!
 
 Programátoři nezavedli dědičnost jen proto, že jsou
 líní a nechtějí psát dvakrát stejný kód.
-To je sice dobrý důvod, ale nadtřídy mají ještě jednu
-důležitou vlastnost: když víme, že každé
+To je sice dobrý důvod, ale nadtřídy mají jednu
+důležitější vlastnost. Když víš, že každé
 `Kotatko` nebo `Stenatko`
 nebo jakákoli jiná podtřída je zvířátko,
-můžeme si udělat seznam zvířátek s tím,
-že nám pak bude jedno, jaká přesně zvířátka to jsou:
+můžeš si udělat seznam zvířátek s tím,
+že pak bude jedno, jaká přesně zvířátka to jsou:
 
-{# XXX: last 4 lines are new and should be highlighted #}
 ```python
+{# XXX: perhaps put these definitions back, but highlight the 4 lines below?
 class Zviratko:
     def __init__(self, jmeno):
         self.jmeno = jmeno
 
     def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi chutná!")
 
 
 class Kotatko(Zviratko):
     def zamnoukej(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 
 
 class Stenatko(Zviratko):
     def zastekej(self):
-        print("{}: Haf!".format(self.jmeno))
-
+        print(f"{self.jmeno}: Haf!")
+#}
 zviratka = [Kotatko('Micka'), Stenatko('Azorek')]
 
 for zviratko in zviratka:
@@ -210,7 +208,7 @@ protože každé koťátko *je* zvířátko.
 > V takovém případě dědičnost nepoužívej.
 > I když jak auto tak volant se dají „otočit doprava”,
 > u každého to znamená něco jiného – a určitě nejde auto
-> použít kdekoli, kde bych chtěl{{a}} použít volant.
+> použít kdekoli, kde bys chtěl{{a}} použít volant.
 > Takže v tomto případě je lepší si říct „každé auto
 > *má* volant”, stejně jako „každé kotě
 > *má* jméno”, udělat dvě nezávislé třídy a napsat něco jako:
@@ -242,17 +240,17 @@ class Zviratko:
         self.jmeno = jmeno
 
     def snez(self, jidlo):
-        print("{}: {} mi chutná!".format(self.jmeno, jidlo))
+        print(f"{self.jmeno}: {jidlo} mi chutná!")
 
 
 class Kotatko(Zviratko):
     def udelej_zvuk(self):
-        print("{}: Mňau!".format(self.jmeno))
+        print(f"{self.jmeno}: Mňau!")
 
 
 class Stenatko(Zviratko):
     def udelej_zvuk(self):
-        print("{}: Haf!".format(self.jmeno))
+        print(f"{self.jmeno}: Haf!")
 
 
 zviratka = [Kotatko('Micka'), Stenatko('Azorek')]
@@ -262,7 +260,7 @@ for zviratko in zviratka:
     zviratko.snez('flákota')
 ```
 
-Jak tenhle příklad naznačuje, psát nadtřídy, ze kterých se dobře dědí,
+Jak tenhle příklad naznačuje, psát nadtřídy ze kterých se dobře dědí
 není jednoduché. Zvlášť to platí, kdyby se z nich mělo dědit v jiném
 programu, než kde je nadtřída.
 I z toho důvodu je dobré dědičnost používat hlavně v rámci svého kódu:
@@ -272,5 +270,3 @@ z ní dědit má.
 
 A to je zatím o třídách vše. Už toho víš dost na to,
 aby sis napsal{{a}} vlastní zoo :)
-
-Nebo [hru](../../projects/asteroids/)?
