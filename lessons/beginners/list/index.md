@@ -395,7 +395,7 @@ Podobným způsobem získáš seznam seznam `matka`, `babička`, `prababička`,
 ```python
 predkove = ['matka']
 for pocet_pra in range(10):
-    predkove.append('pra' * pocet_pra + 'babička')
+    predkove.append(('pra' * pocet_pra) + 'babička')
 print(predkove)
 ```
 
