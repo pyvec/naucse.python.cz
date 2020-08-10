@@ -152,7 +152,7 @@ aby se nepletly s „normálními“ hodnotami.
 > důvodů – původně to byly opravdu funkce.
 
 V těle třídy můžeš definovat metody, které vypadají
-úplně jako funkce – jen mají první argument `self`.
+úplně jako funkce – jen mají první parametr `self`.
 Ten si ale vysvětlíme později – napřed zkus zamňoukat:
 
 ```python
