@@ -328,8 +328,8 @@ opakování může pomoct.
 Začneme s jednoduchým programem, který udělá HTTP požadavek.
 
 > [note]
-> Následující příklady používají knihovnu *requests*. Nainstaluj si ji, pokud ji
-> ve virtuálním prostředí ještě nemáš.
+> Následující příklady používají knihovnu *requests*. Nainstalujte si ji, pokud ji
+> ve virtuálním prostředí ještě nemáte.
 
 ```python
 import requests
