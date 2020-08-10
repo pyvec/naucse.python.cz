@@ -34,7 +34,7 @@ for zviratko in zviratka:
 Seznamy se v programech vyskytují často:
 soubor se dá načíst jako seznam řetězců s jednotlivými řádky,
 seznam řetězců jako `'7♥'` a `'K♣'` může posloužit jako balíček karet,
-matematika je plná číselných řad, každá online služba má seznam uživatelů.
+matematika je plná číselných řad, e-shopy pracují se seznamy zboží.
 
 Hodnoty v seznamu můžou být jakéhokoli typu:
 
@@ -71,7 +71,7 @@ print(kamaradka)
 Proměnná `kamaradka` obsahuje řetězec `'Žaneta'` (který se už nedá změnit).
 Metoda `upper()` vytvoří a vrátí *nový* řetězec `'ŽANETA'`.
 Výsledná hodnota se ale v našem programu nevyužije – Python ji vypočítá,
-ale pak ji „zapomene“.
+ale pak ji „zahodí“.
 
 Oprava je snadná: výsledek si ulož do proměnné.
 Často budeš chtít takový výsledek uložit zpátky do původní proměnné:
@@ -80,7 +80,7 @@ Oprava je snadná: výsledek si ulož do proměnné.
 kamaradka = kamaradka.upper()
 ```
 
-Tímto přiřazením Python „zapomene“ původní hodnotu,
+Tímto přiřazením Python „zahodí“ původní hodnotu,
 a od tohoto příkazu dál bude proměnná `kamaradka` označovat nový řetězec.
 
 Podobně by se dala proměnná přenastavit na jakoukoli jinou hodnotu:
@@ -184,7 +184,7 @@ funguje to stejně, jen místo menšího řetězce dostaneš menší seznam.
 print(zviratka[2:-3])
 ```
 
-„Sekáním“ vzniká nový seznam – když pak ten původní změníš, v podseznamu se
+„Sekáním“ vzniká nový seznam – když pak ten původní změníš, v novém menším seznamu se
 to neprojeví.
 
 
