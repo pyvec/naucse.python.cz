@@ -318,7 +318,7 @@ Poslední tři se ale přece jen chovají kapku jinak:
 u řetězců pracují s *podřetězci*,
 u seznamů jen s *jednotlivými* prvky.
 Takže ačkoliv melodie výše obsahuje prvky
-`'D'` a `'E'` vedle sebe, `'DE'` v seznamu není:
+`'D'` a `'E'` vedle sebe, `'DE'` ani `['D', 'E']` v seznamu není:
 
 ```python
 print('DE' in melodie)
