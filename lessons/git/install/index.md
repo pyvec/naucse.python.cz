@@ -73,7 +73,7 @@ Je-li už nainstalovaný, dozvíš se, jak ho používat
 Jinak ho nainstaluj pomocí Homebrew:
 
 ```console
-$ brew install git
+$ brew install git git-gui
 ```
 
 Nainstalovanému Gitu je ještě potřeba nastavit editor (zadej `nano`,
