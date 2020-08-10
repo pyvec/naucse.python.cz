@@ -405,10 +405,30 @@ zavolej `append` pro všechny kombinace barev a hodnot:
 ```python
 balicek = []
 for barva in '♠', '♥', '♦', '♣':
-    for hodnota in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
-        balicek.append(str(hodnota) + barva)
+    for hodnota in ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']:
+        balicek.append(hodnota + barva)
 print(balicek)
 ```
+
+> [note] Jde to líp?
+> Psát do programu výčet po sobě jdoucích čísel,
+> `'2', '3', '4', '5', '6', '7', '8', '9', '10'`,
+> není ideální – na takovou otročinu přece máme počítače!
+> Zkus čísla dostat pomocí `range`.
+> Ale pozor, není to úplně přímočaré:
+>
+> * Jaké argumenty dáš funkci `range`, abys dostal{{a}} čísla od 2 do 10?
+> * Funkce `range` vrací sekvenci, která ale není seznam.
+>   Abys ji mohl{{a}} spojit se seznamem `['J', 'Q', 'K', 'A']`, budeš ji muset
+>   na seznam převést: `list(range(...))`
+> * Abys mohl{{a}} čísla z `range` připojit k řetězci jako `♠`, budeš muset
+>   každou hodnotu před použitím převést na řetězec: `str(hodnota)`.
+>
+> Bonus: Jaký je nejkratší zápis, kterým můžeš zadat seznam
+> `['J', 'Q', 'K', 'A']`?
+>
+> Řešení najdeš v textu o kousek níže.
+
 
 ## Seznamy a řetězce
 
@@ -458,9 +478,12 @@ Seznam změní „na místě“ a nic nevrací (podobně jako metoda `sort`).
 ```python
 import random
 
+ciselne_hodnoty = list(range(2, 11))
+pismenne_hodnoty = list('JQKA')
+
 balicek = []
 for barva in '♠', '♥', '♦', '♣':
-    for hodnota in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
+    for hodnota in ciselne_hodnoty + pismenne_hodnoty:
         balicek.append(str(hodnota) + barva)
 print(balicek)
 
