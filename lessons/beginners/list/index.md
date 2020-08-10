@@ -277,12 +277,12 @@ print(seznam)
 Aby se daly seřadit, musí být prvky seznamu vzájemně
 *porovnatelné* – konktrétně na ně musí fungovat operátor `<`.
 Seznam s mixem čísel a řetězců tedy seřadit nepůjde.
-Operátor `<` definuje i jak přesně `sort` řadí: čísla podle velikosti;
-řetězce podle speciální „abecedy” která řadí
+Operátor `<` definuje i jak přesně `sort` řadí: čísla vzestupně podle
+velikosti; řetězce podle speciální „abecedy” která řadí
 velká písmena za malá, česká až za anglická, atd.
 
-Metoda `sort` zná pojmenovaný argument
-`reverse`. Pokud ho nastavíš na *True*, řadí se naopak.
+Metoda `sort` zná pojmenovaný argument `reverse`.
+Pokud ho nastavíš na *True*, řadí se naopak – od největšího prvku po nejmenší.
 
 ```python
 seznam = [4, 7, 8, 3, 5, 2, 4, 8, 5]
