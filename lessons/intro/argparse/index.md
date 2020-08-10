@@ -10,9 +10,8 @@ případů bohatě poslouží a každý s Pythonem ji má k dispozici bez nutnos
 ## Argumenty příkazové řádky
 
 `argparse` není ve standardní knihovně jediným nástrojem na zpracování argumentů příkazové řádky.
-Mezi jeho hlavní „konkurenty“ patří: [os.environ], [optparse] — předchůdce `argparse` — a [getopt].
+Mezi jeho hlavní „konkurenty“ patří: [optparse] — předchůdce `argparse` — a [getopt].
 
-[os.environ]: https://docs.python.org/3/library/os.html#os.environ
 [optparse]: https://docs.python.org/3/library/optparse.html
 [getopt]: https://docs.python.org/3/library/getopt.html
 
@@ -26,8 +25,8 @@ for index, argument in enumerate(sys.argv):
 ```
 
 ```console
-$ python3 test_sys.py ahoj "ja jsem" argument
-Argument číslo 0 je: test_sys.py
+$ python sys_module.py ahoj "ja jsem" argument
+Argument číslo 0 je: sys_module.py
 Argument číslo 1 je: ahoj
 Argument číslo 2 je: ja jsem
 Argument číslo 3 je: argument
@@ -41,7 +40,7 @@ více různými způsoby. Ten úplně nejzákladnější sestává z následují
 
 1. Vytvoříme si instanci třídy `ArgumentParser`.
 2. Parseru přidáváme argumenty, které bude umět zpracovat.
-3. Necháme parser pracovat s tím, co nám přišlo z příkazové řádky.
+3. Necháme parser zpracovat to, co nám přišlo z příkazové řádky.
 
 ```python
 import argparse
