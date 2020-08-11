@@ -22,7 +22,7 @@ $ python -m pip install click colorama
 ## Argumenty příkazové řádky
 
 Nástroje na zpracování argumentů z CLI jsou i přímo ve standardní knihovně,
-a dokonce jich není málo: [os.environ], [argparse], [optparse], [getopt].
+a dokonce jich není málo: [sys.argv], [argparse], [optparse], [getopt].
 S knihovnou `click` je ale práce mnohem příjemnější a výsledky většinou
 lépe odpovídají zavedeným konvencím.
 
@@ -32,7 +32,7 @@ lépe odpovídají zavedeným konvencím.
 > Máte-li existující rozhraní, které chcete jen převést do Pythonu,
 > click nejspíš nebude nejlepší volba.
 
-[os.environ]: https://docs.python.org/3/library/os.html#os.environ
+[sys.argv]: https://docs.python.org/3/library/sys.html#sys.argv
 [argparse]: https://docs.python.org/3/library/argparse.html
 [optparse]: https://docs.python.org/3/library/optparse.html
 [getopt]: https://docs.python.org/3/library/getopt.html
