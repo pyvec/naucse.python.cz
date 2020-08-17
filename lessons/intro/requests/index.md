@@ -1,31 +1,27 @@
-requests
+Requests
 ========
 
-Knihoven pro práci s HTTP požadavky (klienty) je celá řada a některé z nich jsou
-součástí standardní knihovny Pythonu. V různých tutorialech se můžete
-setkat nejčastěji s těmito zástupci:
+Knihoven pro HTTP klienty (tedy “programy, které stahují webové stránky“)
+je celá řada.
+Jedna z nich, [`urllib.request`], je dokonce součástí standardní knihovny Pythonu.
+Pokud tedy budete chtít HTTP používat a seznam závislostí
+svého projektu nemůžete rozšířit o další knihovnu, jde to.
 
-* [`urllib`](https://docs.python.org/2/library/urllib.html) a [`urllib2`] ve standardní knihovně Pythonu 2
-* [`urllib`] — nástupce výše zmíněných ve standardní knihovně Pythonu 3 sdružující několik modulů v jednom balíčku
-* [`urllib3`] — nízkoúrovňová knihovna kompatibilní s Pythonem 2.7 a 3.5+ tvořící základ pro `requests` a vylepšující výše zmíněné
-* [`requests`] — knihovna s rozhraním pro lidi (*HTTP for Humans™*) a jednoduchým použitím, se kterou budeme dnes pracovat
-* [`urllib5`] — vtípek o zvyšování čísla v názvu `urllib`
+Mnohem snáze se vám ale bude pracovat s knihovnou [Requests],
+která má mnohem “lidštější” rozhraní a používá se mnohem jednodušeji.
+Rozdíl je největší u pokročilejších vlastností
+jako *cookies*, autentizace nebo sdílení spojení (*Keep-alive*),
+které s Requests zvládnete i bez detailních znalostí protokolu HTTP.
 
-[`urllib2`]: https://docs.python.org/2/library/urllib2.html
-[`urllib`]: https://docs.python.org/3/library/urllib.html
-[`urllib3`]: https://urllib3.readthedocs.io/en/latest/
-[`requests`]: https://requests.readthedocs.io/en/master/
-[`urllib5`]: https://pypi.org/project/urllib5/
+Dokonce i v dokumentaci modulu `urllib` se píše:
+*The [Requests package][Requests] is recommended for a higher-level HTTP
+client interface.*
+Zaměříme se tedy na Requests hned od začátku.
 
-Někdy můžete být v pokušení poradit si jen se standardní knihovnou
-a nerozšiřovat seznam závislostí svého projektu o další knihovnu.
-To je bezesporu možné, ale pokud potřebujete pracovat s pokročilejšími
-vlastnostmi protokolu HTTP jako jsou Cookies, autentizace nebo sezení, bude
-se vám s `requests` pracovat mnohem snáze.
+[`urllib.request`]: https://docs.python.org/3/library/urllib.request.html#module-urllib.request
+[Requests]: https://requests.readthedocs.io/en/master/
 
-Dokonce i v dokumentaci modulů standardní knihovny se píše: *The Requests package is recommended for a higher-level HTTP client interface.*
-
-`requests` se instaluje standardním způsobem:
+Knihovna Requests se instaluje standardním způsobem:
 
 ```console
 $ python -m pip install requests
