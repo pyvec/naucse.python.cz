@@ -64,7 +64,7 @@ print(     'moje praprapraprababička'     )
 ```
 
 Kdyby sis někdy prioritou nebyl{{a}} jist{{gnd('ý', 'á')}},
-přidej do výtrazu závorky, ať je to jasnější.
+přidej do výrazu závorky, ať je to jasnější.
 Jak tobě tak ostatním, kteří budou kód číst.
 
 
