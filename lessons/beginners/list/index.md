@@ -143,7 +143,7 @@ Všechny udělají změny přímo v daném seznamu a (kromě `pop`) vrací `Non
 
 * `extend()` přidá více prvků najednou,
 * `insert()` přidá prvek na danou pozici,
-* `pop()` odebere *a vrátí* poslední prvek,
+* `pop()` odebere poslední prvek a *vrátí ho* (jako návratovou hodnotu),
 * `remove()` odstraní první výskyt daného prvku,
 * `sort()` seznam seřadí (řetězce podle “abecedy”, čísla vzestupně),
 * `reverse()` obrátí pořadí prvků,
