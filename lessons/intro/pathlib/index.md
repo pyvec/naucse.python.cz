@@ -23,7 +23,7 @@ Když ale potřebuješ s cestami k souborům pracovat víc,
 řetězce jsou docela nepohodlné.
 A navíc je problém pamatovat na všechny různé případy, které můžou nastat.
 
-Zkus pro příkad napsat funkce, které dostanou cestu k souboru a:
+Zkus pro příklad napsat funkce, které dostanou cestu k souboru a:
 
 * `vrat_casti` rozdělí cestu na jednotlivé adresáře (a vrátí je jako seznam),
 * `vrat_priponu` vrátí příponu souboru.
@@ -126,7 +126,7 @@ takže následující bude fungovat na všech systémech:
 PosixPath('/home/janca/Documents')
 ```
 
-Už při vytvoření cesty se tato *normalizuje*, zjednoduší bez změny významu.
+Už při vytvoření cesty se takto *normalizuje*, zjednoduší bez změny významu.
 Víc lomítek za sebou se spojí do jednoho, zbytečné adresáře nebo lomítka na
 konci se vynechají.
 
@@ -403,7 +403,7 @@ cesta.write_text('Holka modrooká\nNesedávej u potoka!')
 {#
 ## Zpátky na stromy... tedy řetězce
 
-Ve většině případů jde Path použít tam, kde se cesta dá zadat jako řetězec. Na ale vždy – pathlib existuje teprve od roku 2014, a některé Pythonní knihovny stále ještě vyžadují řetězce.
+Ve většině případů jde Path použít tam, kde se cesta dá zadat jako řetězec. Ne ale vždy – pathlib existuje teprve od roku 2014, a některé Pythonní knihovny stále ještě vyžadují řetězce.
 
 Jedna z výjimek je IPython.display.Image, která umí v Notebooku vykreslit obrázek.
 
@@ -501,7 +501,7 @@ V šabloně můžeš použít `*`, které odpovídá 0 a více písmenům
  PosixPath('soubory/hraz.jpeg')]
 ```
 
-… nebo ?, což odpovídá jednomu písmenu:
+… nebo `?`, což odpovídá jednomu písmenu:
 
 ```pycon
 >>> # Slovo na čtyři, první je `h` a třetí `a`
@@ -560,7 +560,7 @@ S pomocí ** se často hledají soubory s danou příponou:
 Adresáře, podadresáře a soubory v nich tvoří strukturu, na kterou se často
 používají rekurzivní funkce.
 
-Tady je funkce `vypis_soubory`, která ypíše všechny soubory v daném adresáři.
+Tady je funkce `vypis_soubory`, která vypíše všechny soubory v daném adresáři.
 Před každé jméno dá odrážku `-`, aby to líp vypadalo:
 
 ```python
