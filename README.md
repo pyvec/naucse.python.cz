@@ -36,7 +36,7 @@ Nainstalovanou aplikaci spustíš následovně:
   ```console
   $ pipenv run serve
   ```
-* Program vypíše adresu (např. `http://0.0.0.0:8003/`); tu navštiv v prohlížeči.
+* Program vypíše adresu (např. `http://0.0.0.0:8003/`); tu navštiv v prohlížeči. Pokud tato adresa nefunguje, zkus `http://127.0.0.1:8003/`.
 
 Pokud chceš místo vývojového spuštění vygenerovat statické HTML soubory (např. pro nahrání na statický hosting):
 
