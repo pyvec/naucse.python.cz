@@ -204,7 +204,7 @@ v malé bublině u aktivní buňky.
 Příkazy začínající znakem procenta mají v notebooku speciální význam. Například
 `%time` dokáže změřit a zobrazit, jak dlouho trvalo vykonání kódu napsaného na řádku bezprostředně za tímto příkazem.
 
-Speciální příkazy začínající dvěmi procenty (např.: `%%time`) pak mají efekt na celou
+Speciální příkazy začínající dvěma procenty (např.: `%%time`) pak mají efekt na celou
 buňku místo jednoho řádku.
 
 Seznam všech speciálních příkazů lze získat pomocí `%lsmagic`.
@@ -226,6 +226,6 @@ příklady i s grafy a obrázky a zájemcům si vyzkoušet s příklady experime
 Odtud je možné stáhnout si notebooky jednotlivých lekcí a dle libosti experimentovat.
 
 Nicméně na vývoj klasických aplikací a obecně pro projekty se složitější strukturou je stále 
-lepší kód rozdělit do modulů a editovat ho ve vhodném textové editoru.
+lepší kód rozdělit do modulů a editovat ho ve vhodném textovém editoru.
 Častou praxí je nejdříve v interaktivním prostředí notebooku rychle poskládat funkční
 prototyp a následně jej přetvořit v klasickou aplikaci.
