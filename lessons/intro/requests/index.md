@@ -1,12 +1,27 @@
-requests
+Requests
 ========
 
-Knihovna requests je určená pro HTTP požadavky (klienty).
-Přestože vytvářet HTTP požadavky jde i bez requests, pomocí standardní knihovny
-Pythonu, requests mají mnohem lidštější rozhraní a používají se mnohem
-jednodušeji.
+Knihoven pro HTTP klienty (tedy “programy, které stahují webové stránky“)
+je celá řada.
+Jedna z nich, [`urllib.request`], je dokonce součástí standardní knihovny Pythonu.
+Pokud tedy budete chtít HTTP používat a seznam závislostí
+svého projektu nemůžete rozšířit o další knihovnu, jde to.
 
-Instaluje se standardním způsobem:
+Mnohem snáze se vám ale bude pracovat s knihovnou [Requests],
+která má mnohem “lidštější” rozhraní a používá se mnohem jednodušeji.
+Rozdíl je největší u pokročilejších vlastností
+jako *cookies*, autentizace nebo sdílení spojení (*Keep-alive*),
+které s Requests zvládnete i bez detailních znalostí protokolu HTTP.
+
+Dokonce i v dokumentaci modulu `urllib` se píše:
+*The [Requests package][Requests] is recommended for a higher-level HTTP
+client interface.*
+Zaměříme se tedy na Requests hned od začátku.
+
+[`urllib.request`]: https://docs.python.org/3/library/urllib.request.html#module-urllib.request
+[Requests]: https://requests.readthedocs.io/en/master/
+
+Knihovna Requests se instaluje standardním způsobem:
 
 ```console
 $ python -m pip install requests
