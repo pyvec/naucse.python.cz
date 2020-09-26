@@ -154,7 +154,7 @@ většinou nenarazíš).
 A navíc je omezen i obsah – jméno souboru nesmí obsahovat:
 
 * na Unixu oddělovač adresářů `/` ani speciální nulový znak,
-* na windows oddělovač `\`, znaky `<>:"/|?*` ani speciální znaky (např.
+* na Windows oddělovač `\`, znaky `<>:"/|?*` ani speciální znaky (např.
   tabulátor, znak nového řádku).
 
 Nedoporučuji s názvy příliš experimentovat, protože některé validní znaky
