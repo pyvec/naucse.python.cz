@@ -56,6 +56,44 @@ plnou kontrolu nad počítačem, na kterém `naucse` běží.
 Kvůli bezpečnosti je proto `naucse` ve výchozím nastavení neukazuje.
 
 
+## In English
+
+##Learn Python
+
+Open materials for teaching Python - both in organized courses and for self-study.
+Available at naucse.python.cz.
+
+##Installation and startup
+
+If you want to run the server on your computer, for example, because you want to participate in development, you need to install it first:
+(optional) Create and activate a virtual environment in Python 3.6.
+
+Switch to the directory with the project code.
+
+Install dependencies:
+
+Linux / Mac:
+
+$ python3 -m pip install pipenv
+$ pipenv install
+Windows:
+
+> py -3 -m pip install pipenv
+> pipenv install
+To start the installed application:
+
+(optional) Activate the virtual environment, if you have one.
+Start the development server:
+$ pipenv run serve
+The program prints the address (eg http://0.0.0.0:8003/); visit here in the browser.
+If you want to generate static HTML files instead of the development run (eg for uploading to static hosting):
+
+Run freeze. The --serve parameter starts the webserver, which can be used to view the generated files:
+$ PYTHONPATH =. pipenv run freeze --serve
+The HTML pages are in the naucse / _build directory. The program prints the address (eg http://0.0.0.0:8000/); visit here in the browser.
+External courses
+External courses available by more or less trustworthy people are also available at naucse.python.cz. The process of rendering the content of these courses gives them a lot of freedom: they can take full control of the computer on which the naucse is running. Therefore, for security reasons, naucse does not show by default.
+
 ## Licence
 
 Kód je k dispozici pod licencí MIT, viz soubor [LICENSE.MIT].
