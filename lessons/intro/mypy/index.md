@@ -339,7 +339,7 @@ say_hello({"Susan": 32, "Carol": 25})
 > anotací se nezdá být úplně praktické. Proto vznikl [PEP 585], který pro složitější
 > struktury v typových anotacích umožní použít názvy tříd dostupné přímo v Pythonu.
 > Toto je již implementováno v Pythonu od verze 3.9.0, ale mypy tento zápis ještě nepodporuje.
-> Brzy si tedy i u složitějších anotací (např.: `argument: dict[str: list[int]]`) vystačíme
+> Brzy si tedy i u složitějších anotací (např.: `argument: dict[str, list[int]]`) vystačíme
 > bez importů z modulu `typing`
 
 [PEP 585]: https://www.python.org/dev/peps/pep-0585/
