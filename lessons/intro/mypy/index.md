@@ -376,7 +376,7 @@ def pow(base: int, exp: int = None) -> int:
     else:
         return base ** 2
 
-def hello(name: str):
+def hello(name: str) -> str:
     return "Hello {}!".format(name)
 
 result = pow(5, 3)
