@@ -364,7 +364,7 @@ případě by psaní `Union[str, None]` bylo příliš zdlouhavé a modul `typin
 proto obsahuje `Optional`. `Optional[str]` a `Union[str, None]` jsou naprosto identické definice.
 
 V příkladu výše je navíc zápis `exp: int = None` díky výchozí hodnotě
-argumentu exp automaticky konvertován na `Optional[int]`.
+argumentu exp nastavené na `None` konvertován na `Optional[int]` automaticky.
 
 `mypy` umí samozřejmě kontrolovat nejen konstanty, ale i návratové hodnoty
 funkcí předané jako argument jiné funkci.
