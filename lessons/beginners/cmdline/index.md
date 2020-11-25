@@ -335,6 +335,12 @@ Tady je tabulka základních příkazů, se kterými si zatím vystačíme:
         <td><code>rm test.txt</code><br><code>del test.txt</code></td>
     </tr>
     <tr>
+        <td><code>rm -r</code></td>
+        <td><code>rmdir /S</code></td>
+        <td>smazání adresáře</td>
+        <td><code>rm -r test</code><br><code>rmdir /S test</code></td>
+    </tr>
+    <tr>
         <td><code>exit</code></td>
         <td><code>exit</code></td>
         <td>ukončení</td>
