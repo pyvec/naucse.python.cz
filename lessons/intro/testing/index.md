@@ -540,7 +540,7 @@ Při práci s webovými API často létají vzduchem citlivé údaje jako tokeny
 Vyvstávají dvě otázky:
 
  1. Jak umožnit spuštění testů bez vlastního tokenu?
- 2. Jak citlivé údaje skrýt v kazetách a nedávat je do do gitu?
+ 2. Jak citlivé údaje skrýt v kazetách a nedávat je do gitu?
 
 Na obě otázky se pokusím odpovědět jedním okomentovaným kódem:
 
@@ -639,7 +639,7 @@ Proto nelze použít přímo `response.text`; text dostaneme pomocí
 Testování aplikací v clicku
 ---------------------------
 
-Podobně funguje [testování aplikací v clikcu](http://click.pocoo.org/6/testing/).
+Podobně funguje [testování aplikací v clicku](http://click.pocoo.org/6/testing/).
 Click obsahuje třídu `CliRunner`, která pomáhá s testováním:
 
 ```python
