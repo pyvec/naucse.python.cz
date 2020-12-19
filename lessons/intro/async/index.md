@@ -3,10 +3,10 @@ Ve cvičení použijeme ukázku z PyQt5.
 Máte-li ještě virtualenv s nainstalovaným PyQt, použijte ho, případně ho
 podle [lekce o PyQt] nainstalujte znovu.
 
-K PyQt si přiinstalujte knihovnu `quamash`:
+K PyQt si přiinstalujte knihovnu `asyncqt`:
 
 ```console
-$ python -m pip install quamash
+$ python -m pip install asyncqt
 ```
 
 Nejde-li to, nevadí – nezbytné dnes PyQt nebude.
