@@ -3,10 +3,10 @@ Ve cvičení použijeme ukázku z PyQt5.
 Máte-li ještě virtualenv s nainstalovaným PyQt, použijte ho, případně ho
 podle [lekce o PyQt] nainstalujte znovu.
 
-K PyQt si přiinstalujte knihovnu `quamash`:
+K PyQt si přiinstalujte knihovnu `asyncqt`:
 
 ```console
-$ python -m pip install quamash
+$ python -m pip install asyncqt
 ```
 
 Nejde-li to, nevadí – nezbytné dnes PyQt nebude.
@@ -447,18 +447,18 @@ Samotné `asyncio` je jen jedna z mnoha implementací tohoto rozhraní.
 Zajímavá je například knihovna [uvloop], která je asi 2-4× rychlejší než `asyncio`
 (ale má závislosti, které se pro součást standardní knihovny nehodí).
 
-Další zajímavá implementace je [Quamash], která pod standardním `asyncio` API používá
+Další zajímavá implementace je [asyncqt], která pod standardním `asyncio` API používá
 smyčku událostí z Qt.
 Umožňuje tak efektivně zpracovávat Qt události zároveň s asynchronními funkcemi
 známými z `asyncio`.
 
-*Event loop* z `quamash` je potřeba na začátku programu naimportovat a nastavit
+*Event loop* z `asyncqt` je potřeba na začátku programu naimportovat a nastavit
 jako hlavní smyčku událostí, a poté ji, místo Qt-ovského `app.exec()`, spustit.
 Jednotlivé asynchronní funkce se pak používají jako v čistém `asyncio`:
 pomocí `asyncio.ensure_future`, `await`, atd.
 
 [uvloop]: https://pypi.org/project/uvloop/
-[Quamash]: https://pypi.org/project/Quamash/
+[asyncqt]: https://pypi.org/project/asyncqt/
 
 Ukázka:
 
@@ -466,7 +466,7 @@ Ukázka:
 import asyncio
 
 from PyQt5 import QtGui, QtWidgets
-from quamash import QEventLoop
+from asyncqt import QEventLoop
 
 app = QtWidgets.QApplication([])
 loop = QEventLoop(app)
