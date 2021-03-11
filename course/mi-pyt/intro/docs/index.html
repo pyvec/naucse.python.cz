@@ -1,0 +1,546 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                MI-PYT: Dokumentace
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/docs/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/course/mi-pyt/">MI-PYT</a>
+
+> <a href="/course/mi-pyt/sessions/docs/">Dokumentace – Sphinx</a>
+
+> <a href="/course/mi-pyt/intro/docs/">Dokumentace</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Dokumentace</h1>
+<p>Jednou ze zásadních součástí každého kvalitního Python projektu je dokumentace.
+Protože chceme, abyste vytvářeli kvalitní projekty, podíváme se tedy i na
+dokumentaci.</p>
+<h2>Sphinx</h2>
+<p>Nejpoužívanějším nástrojem na vytváření dokumentace Python projektů je <a href="http://www.sphinx-doc.org/">Sphinx</a>.
+Když jste se dívali do dokumentace Flasku, requests, clicku, flexmocku, pytestu,
+betamaxu či Pythonu samotného, viděli jste dokumentaci vytvořenou ve Sphinxu.</p>
+<p>Pro vytvoření základní kostry dokumentace se používá jednoduchý průvodce,
+<code>sphinx-quickstart</code>.</p>
+<p>Postupujte podle následující ukázky. Jsou v ní zobrazeny jen věci,
+kde nestačí nechat výchozí hodnota; u ostatních otázek (dostanete-li je)
+stačí výchozí hodnotu potvrdit (<kbd>Enter</kbd>).</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> . __venv__/bin/activate
+<span style="color: #00aaaa">(__venv__) $</span> python -m pip install sphinx
+<span style="color: #00aaaa">(__venv__) $</span> mkdir docs
+<span style="color: #00aaaa">(__venv__) $</span> cd docs
+<span style="color: #00aaaa">(__venv__) $</span> sphinx-quickstart
+<span style="font-weight: bold">Welcome to the Sphinx 1.8.1 quickstart utility.</span>
+
+Please enter values for the following settings (just press Enter to
+accept a default value, if one is given in brackets).
+
+<span style="font-weight: bold">Selected root path: .</span>
+
+You have two options for placing the build directory for Sphinx output.
+Either, you use a directory "_build" within the root path, or you separate
+"source" and "build" directories within the root path.
+<span style="color: #E850A8">&gt; Separate source and build directories (y/n) [n]: </span>
+
+The project name will occur in several places in the built documentation.
+<span style="color: #E850A8">&gt; Project name: </span>coolthing
+<span style="color: #E850A8">&gt; Author name(s): </span>Pythonista Dokumentarista
+<span style="color: #E850A8">&gt; Project release []: </span> 0.1
+
+...
+
+<span style="font-weight: bold">Finished: An initial directory structure has been created.</span></code></pre></div><p>Průvodce vytvoří ve složce <code>docs</code> několik souborů:</p>
+<ul>
+<li><code>conf.py</code> – konfigurační soubor,</li>
+<li><code>index.rst</code> – vlastní text dokumantace,</li>
+<li><code>Makefile</code>, <code>make.bat</code> – spouštěcí soubory,</li>
+<li><code>_static</code> –  adresář na obrázky, CSS apod.,</li>
+<li><code>_templates</code> – Adresář na vlastní šablony,</li>
+<li><code>_build</code> – adresář pro výstup, tedy hotovou dokumentaci.</li>
+</ul>
+<p>Do gitu patří všechny nyní vytvořené soubory, kromě složky <code>docs/_build</code>,
+která by měla být ignorována.</p>
+<p>Zatím se nebudeme zabývat obsahem těchto souborů, ale zkusíme základní kostru
+dokumentace sestavit do HTML.</p>
+<div class="admonition note"><p>Sphinx umí generovat dokumentaci ve více formátech (LaTeX,
+manuálové stránky atd.), pro nás bude podstatné především HTML.</p>
+</div><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span> <span class="gp">$ </span>make html
+<span class="go">...</span>
+<span class="go">The HTML pages are in _build/html.</span>
+</pre></div><p>Ve zmíněné složce byste měli najít <code>index.html</code>, ten si můžete prohlédnout
+v prohlížeči.</p>
+<h2>Textový obsah v dokumentaci</h2>
+<p>Text dokumentace začíná v souboru <code>index.rst</code> a píše se ve značkovacím formátu
+<a href="http://www.sphinx-doc.org/en/stable/rest.html">reStructuredText</a> neboli rst.
+Ten se od Markdownu liší v syntaxi, která je komplikovanější na
+psaní, ale umožňuje dělat komplexnější věci.</p>
+<div class="admonition note"><p>Dokumentaci <a href="https://www.sphinx-doc.org/en/master/usage/markdown.html">lze psát i ve formátu Markdown</a>,
+ale tato možnost je poměrně nová.
+Jazyk Markdown nebyl navržen pro složitější strukturované texty
+a nepodporuje přímo všechny možnosti, které Sphinx nabízí.
+V dokumentaci se tak dočtete, jak chybějící možnosti doplnit
+<a href="https://recommonmark.readthedocs.io/en/latest/auto_structify.html#embed-restructuredtext">vložením reStructuredText do Markdownového dokumentu</a>.
+My budeme používat reStructuredText.</p>
+</div><p>Pro přehled o tom, co reStructuredText umí a jakou má syntaxi,
+můžete použít <a href="http://www.sphinx-doc.org/en/stable/rest.html">přehled</a> z dokumentace Sphinxu, případně <a href="https://github.com/ralsina/rst-cheatsheet">tahák</a>.</p>
+<p>V <code>index.rst</code> je seznam kapitol:</p>
+<div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">toctree</span><span class="p">::</span>
+   <span class="nc">:maxdepth:</span> 2
+   <span class="nc">:caption:</span> Contents:
+</pre></div><p>Tam můžete přidat další kapitoly:</p>
+<div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">toctree</span><span class="p">::</span>
+   <span class="nc">:maxdepth:</span> 2
+   <span class="nc">:caption:</span> Contents:
+
+   intro
+   tutorial/foo
+   tutorial/bar
+<span class="cp">   ...</span>
+</pre></div><p>Soubory s kapitolami je třeba vytvořit ve složce <code>docs</code> s příponou <code>.rst</code>
+(např. <code>tutorial/foo.rst</code>).
+Text lze pak přidávat samozřejmě do těchto souborů i do
+<code>index.rst</code>.</p>
+<p>Chcete-li odkazovat na některou sekci, označíme si ji pomocí <code>.. _label:</code>:</p>
+<div class="highlight"><pre><span></span><span class="p">..</span> <span class="nt">_my-reference-label:</span>
+
+<span class="gh">Section to cross-reference</span>
+<span class="gh">--------------------------</span>
+
+This is the text of the section.
+</pre></div><p>Poté na ni lze odkazovat odkudkoli z dokumentace pomocí
+<a href="http://www.sphinx-doc.org/en/master/markup/inline.html#role-ref">konstrukce ref</a>:</p>
+<div class="highlight"><pre><span></span>It refers to the section itself, see <span class="na">:ref:</span><span class="nv">`my-reference-label`</span>.
+It could refer to a different section as well :)
+</pre></div><h2>Co do dokumentace psát</h2>
+<p>Teď, když víte jak něco napsat, pojďme si povědět <em>co</em> vlastně psát.
+K čemu dokumentace vlastně je?</p>
+<p>Dobrá dokumentace vysvětluje, proč a jak by váš projekt měl někdo používat.
+Jak říká Eric Holscher v <a href="http://www.writethedocs.org/guide/writing/beginners-guide-to-docs/">jedné své prezentaci</a>,</p>
+<blockquote><p>Když lidi neví, že váš projekt existuje,<br>
+nebudou ho používat.<br>
+Když lidi nepřijdou na to, jak váš projekt nainstalovat,<br>
+nebudou ho používat.<br>
+Když lidi nepřijdou na to, jak váš projekt použít,<br>
+nebudou ho používat.<br></p>
+</blockquote>
+<p>Pokud pracujete v malém týmu, teoreticky jde to všechno kolegům prostě říct,
+ale potom se musíte spoléhat na to, že to nezapomenete (a neodejdete z týmu).
+Mnohem lepší je dokumentaci sepsat co nejdřív, dokud máte všechno čerstvě
+v hlavě.</p>
+<p>Nechce-li se vám nastavovat Sphinx, můžete informace napsat aspoň do malého
+README. Ale i tam by měl být stejný druh informací jako ve „velké“ dokumentaci.</p>
+<p>Na první stránce dokumentace (nebo v README) typicky najdeme:</p>
+<ul>
+<li>krátký text o tom, co projekt dělá;</li>
+<li>ukázku – u knihovny příklad kódu, u aplikace screenshot, u webové aplikace
+odkaz na běžící instanci;</li>
+<li>návod na instalaci;</li>
+<li>odkazy na zbytek dokumentace;</li>
+<li>odkazy pro přispěvatele – kde je repozitář, kde nahlásit chybu;</li>
+<li>licenci.</li>
+</ul>
+<p>Delší dokumentace knihoven pak většinou obsahuje:</p>
+<ul>
+<li>tutoriál – návod, který uživatele provede použitím a možnostmi knihovny;</li>
+<li>popis architektury, návrhu, použitých konceptů;</li>
+<li>dokumentaci API – popis všech veřejných modulů, tříd, funkcí a podobně;</li>
+<li>podrobný návod jak přispívat.</li>
+</ul>
+<h2>Nastavení a rozšíření</h2>
+<p>Průvodce <code>sphinx-quickstart</code> generuje soubor s nastavením, <code>conf.py</code>,
+ve kterém můžete měnit nastavení Sphinxu a jeho rozšíření, včetně detailů
+jako jméno a verze projektu.</p>
+<p>Průvodce automaticky aktivuje tři rozšíření, která jsou obecně užitečná.
+To se ale může v jiných verzích Sphinxu měnit, proto teď nastavení
+zkontrolujte a případně rozšíření doplňte:</p>
+<div class="highlight"><pre><span></span><span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'sphinx.ext.autodoc'</span><span class="p">,</span>
+    <span class="s1">'sphinx.ext.doctest'</span><span class="p">,</span>
+    <span class="s1">'sphinx.ext.intersphinx'</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div><h2>doctest</h2>
+<p><code>doctest</code> je modul ze standardní knihovny, který najde v dokumentaci bloky kódu
+a otestuje, jestli odpovídají ukázanému výstupu.
+Rozšíření <code>sphinx.ext.doctest</code> integruje <code>doctest</code> do dokumentů
+ve formátu reStructuredText.</p>
+<p>Pro nás to bude způsob, jak testovat <em>dokumentaci</em> – tedy jestli jsou ukázky
+kódu v ní stále platné.
+Dá se sice použít i k testování samotného kódu, ale na to existují
+<a href="/course/mi-pyt/intro/testing/">lepší nástroje</a>.</p>
+<p>Můžete to dělat dvěma způsoby. První je mít v dokumentaci
+příklad vypadající jako interaktivní konzole.
+Takový příklad nemusí být odsazený ani ničím uvozený; stačí <code>&gt;&gt;&gt;</code> na začátku.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="go">2</span>
+</pre></div><p>Doctest v tomto případě otestuje, že vše funguje, jak má.
+V tomto případě se provede součet a zkontroluje se, zda výsledek je 2.</p>
+<p>Druhý způsob je mít v dokumentaci nejdříve kód:</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">)</span>
+</pre></div><p>A dále někde jinde výstup volání:</p>
+<div class="highlight"><pre><span></span><span class="n">foo</span>
+</pre></div><p>K tomu všemu složí několik direktiv:</p>
+<h3>.. testsetup::</h3>
+<p>Direktiva pro potřebný kód, který se musí provést, aby příklad fungoval, ale
+nebude v dokumentaci zobrazen (např. kód pro vytvoření falešného objektu,
+import...).</p>
+<h3>.. testcleanup::</h3>
+<p>Podobná direktiva jako <code>.. testsetup::</code> provedená po skončení testů.
+V dokumentaci nebude kód zobrazen.</p>
+<h3>.. doctest::</h3>
+<p>Test s interaktivní konzolí. V dokumentaci bude zobrazen, pokud nepoužijete flag
+<code>:hide:</code>.</p>
+<h3>.. testcode::</h3>
+<p>Kód testu bez interaktivní konzole, co chcete kontrolovat, musíte dát na
+standardní výstup. V dokumentaci bude zobrazen, pokud nepoužijete flag
+<code>:hide:</code>.</p>
+<h3>.. testoutput::</h3>
+<p>Výstup posledního testcode bloku. V dokumentaci bude kód zobrazen, pokud
+nepoužijete flag <code>:hide:</code>.</p>
+<h3>Kompletní příklad</h3>
+<p>Zde můžete vidět výše zmíněné direktivy použité dohromady.
+Jedná se o umělý příklad, kdy použitou třídu připravíme v direktivě <code>testsetup</code>.
+V praxi pak doctestem testujeme, jestli naše dokumentace odpovídá chování
+naší implementace, třídu <code>Parrot</code> bychom tedy odněkud naimportovali.</p>
+<div class="highlight"><pre><span></span><span class="gh">The parrot module</span>
+<span class="gh">=================</span>
+
+<span class="p">..</span> <span class="ow">testsetup</span><span class="p">::</span>
+
+   class Parrot:
+       def voom(self, voltage):
+           print('This parrot wouldn\'t voom if you put {} volts through it!'.format(voltage))
+
+       def die(self):
+           return 'RIP'
+
+
+   parrot = Parrot()
+
+The parrot module is a module about parrots.
+
+Doctest example:
+
+<span class="p">..</span> <span class="ow">doctest</span><span class="p">::</span>
+
+   &gt;&gt;&gt; parrot.voom(3000)
+   This parrot wouldn't voom if you put 3000 volts through it!
+
+Test-Output example:
+
+<span class="p">..</span> <span class="ow">testcode</span><span class="p">::</span>
+
+   parrot.voom(3000)
+
+This would output:
+
+<span class="p">..</span> <span class="ow">testoutput</span><span class="p">::</span>
+
+   This parrot wouldn't voom if you put 3000 volts through it!
+
+You can use other values:
+
+<span class="p">..</span> <span class="ow">testcode</span><span class="p">::</span>
+
+   parrot.voom(230)
+
+<span class="p">..</span> <span class="ow">testoutput</span><span class="p">::</span>
+   <span class="nc">:hide:</span>
+
+   This parrot wouldn't voom if you put 230 volts through it!
+
+
+<span class="p">..</span> <span class="ow">testcleanup</span><span class="p">::</span>
+
+   parrot.die()
+</pre></div><p>Testy se také dají např. zařazovat do skupin. Více najdete
+v <a href="http://www.sphinx-doc.org/en/master/ext/doctest.html">dokumentaci</a>.</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span> <span class="gp">$ </span>make doctest
+<span class="go">...</span>
+<span class="go">Document: intro</span>
+<span class="go">---------------</span>
+<span class="go">1 items passed all tests:</span>
+<span class="go">   3 tests in default</span>
+<span class="go">3 tests in 1 items.</span>
+<span class="go">3 passed and 0 failed.</span>
+<span class="go">Test passed.</span>
+<span class="go">1 items passed all tests:</span>
+<span class="go">   1 tests in default (cleanup code)</span>
+<span class="go">1 tests in 1 items.</span>
+<span class="go">1 passed and 0 failed.</span>
+<span class="go">Test passed.</span>
+
+<span class="go">Doctest summary</span>
+<span class="go">===============</span>
+<span class="go">    3 tests</span>
+<span class="go">    0 failures in tests</span>
+<span class="go">    0 failures in setup code</span>
+<span class="go">    0 failures in cleanup code</span>
+<span class="go">...</span>
+</pre></div><h3>Import z vlastního kódu</h3>
+<p>Pokud nemáte nainstalovaný vlastní balíček a budete z něj chtít v doctestu
+importovat, pravděpodobně dostanete <code>ImportError</code>.
+V takovém případě pomůže drobná editace na začátku <code>conf.py</code>.
+Musíte přidat adresář, ze kterého lze váš kód importovat, do <code>sys.path</code>.
+Pokud jste postupovali podle návodu výše, máte dokumentaci v adresáři <code>docs</code>,
+je tedy potřeba přidat nadřazený adresář (<code>..</code>):</p>
+<div class="highlight"><pre><span></span><span class="c1"># -- Path setup --------------------------------------------------------------</span>
+
+<span class="c1"># If extensions (or modules to document with autodoc) are in another directory,</span>
+<span class="c1"># add these directories to sys.path here. If the directory is relative to the</span>
+<span class="c1"># documentation root, use os.path.abspath to make it absolute, like shown here.</span>
+<span class="c1">#</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">'..'</span><span class="p">))</span>
+</pre></div><h3>Travis CI</h3>
+<p>Neexistuje zatím unifikovaný způsob, jak specifikovat závislosti pro sestavení
+dokumentace. Proto, pokud chcete mít nějaký jednoduchý způsob, jak pouštět
+doctesty na Travisu, vytvořte například soubor <code>docs/requirements.txt</code>
+a do něj dejte závislosti potřebné pro sestavení dokumentace.
+Je na vás, jestli tam budou pouze extra závislosti oproti těm v <code>setup.py</code>
+(většinou pouze <code>sphinx</code>), nebo všechny závislosti, aby šel použít soubor
+samostatně.</p>
+<p>Poté na Travisu můžete udělat něco jako:</p>
+<div class="highlight"><pre><span></span><span class="nt">language</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">python</span>
+<span class="nt">python</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="s">'3.7'</span>
+<span class="nt">install</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python setup.py install</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pip install -r docs/requirements.txt</span>
+<span class="nt">script</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python setup.py test --addopts -v</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cd docs &amp;&amp; make doctest</span>
+</pre></div><div class="admonition note"><p>Chcete-li jít s dobou, můžete vyzkoušet strukturovaný způsob závislostí
+pro vývoj pomocí <em>extras</em>. Aktuálně pro to neexistuje standard,
+ale vypadá to, že následující způsob je nejlepší kandidát na
+standardizaci.</p>
+<p>Do <code>setup.py</code> přidejte:</p>
+<div class="highlight"><pre><span></span><span class="n">extras_require</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">'dev'</span><span class="p">:</span>  <span class="p">[</span><span class="s2">"sphinx"</span><span class="p">],</span>
+<span class="p">}</span>
+</pre></div><p>Projekt pak lze nainstalovat pomocí <code>.[dev]</code> (tedy jméno balíčku a za ním
+jméno <em>extras</em> v hranatých závorkách):</p>
+<div class="highlight"><pre><code>install:
+- python -m pip install .[dev]</code></pre></div></div><h2>autodoc</h2>
+<p>Pro dokumentaci API lze použít <code>sphinx.ext.autodoc</code>, další rozšíření Sphinxu,
+které průvodce přidává automaticky.</p>
+<div class="admonition note"><p>Nemáte-li toto rozšíření povolené, přidejte jej do <code>conf.py</code>:</p>
+<div class="highlight"><pre><span></span><span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'sphinx.ext.autodoc'</span><span class="p">,</span>
+    <span class="s1">'sphinx.ext.doctest'</span><span class="p">,</span>
+    <span class="s1">'sphinx.ext.intersphinx'</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div></div><p>Rozšíření <code>autodoc</code> se používá takto:</p>
+<div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">automodule</span><span class="p">::</span> mymodule
+   <span class="nc">:members:</span>
+</pre></div><p>Tento příklad na dané místo vygeneruje dokumentaci složenou z dokumentačních
+řetězců jednotlivých funkcí, tříd a metod v modulu <code>mymodule</code>.</p>
+<p>Pokud chcete selektivně vybrat, dokumentaci čeho chcete generovat,
+můžete použít i
+<a href="http://www.sphinx-doc.org/en/master/ext/autodoc.html#directive-automodule">jiné direktivy</a>.</p>
+<p>Pro vygenerování hezké struktury si můžete pomoci příkazem <code>sphinx-apidoc</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span> <span class="gp">$ </span>sphinx-apidoc -o docs mymodule
+</pre></div><p>V dokumentačních řetězcích samozřejmě můžete použít <a href="http://www.sphinx-doc.org/en/stable/rest.html">reStructuredText</a> a je to
+dokonce žádoucí.</p>
+<p>Zde je ukázka z betamaxu (<em>Copyright 2013 Ian Cordasco</em>):</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Betamax</span><span class="p">:</span>
+
+    <span class="sd">"""This object contains the main API of the request-vcr library.</span>
+
+<span class="sd">    This object is entirely a context manager so all you have to do is:</span>
+
+<span class="sd">    .. code::</span>
+
+<span class="sd">        s = requests.Session()</span>
+<span class="sd">        with Betamax(s) as vcr:</span>
+<span class="sd">            vcr.use_cassette('example')</span>
+<span class="sd">            r = s.get('https://httpbin.org/get')</span>
+
+<span class="sd">    Or more concisely, you can do:</span>
+
+<span class="sd">    .. code::</span>
+
+<span class="sd">        s = requests.Session()</span>
+<span class="sd">        with Betamax(s).use_cassette('example') as vcr:</span>
+<span class="sd">            r = s.get('https://httpbin.org/get')</span>
+
+<span class="sd">    This object allows for the user to specify the cassette library directory</span>
+<span class="sd">    and default cassette options.</span>
+
+<span class="sd">    .. code::</span>
+
+<span class="sd">        s = requests.Session()</span>
+<span class="sd">        with Betamax(s, cassette_library_dir='tests/cassettes') as vcr:</span>
+<span class="sd">            vcr.use_cassette('example')</span>
+<span class="sd">            r = s.get('https://httpbin.org/get')</span>
+
+<span class="sd">        with Betamax(s, default_cassette_options={</span>
+<span class="sd">                're_record_interval': 1000</span>
+<span class="sd">                }) as vcr:</span>
+<span class="sd">            vcr.use_cassette('example')</span>
+<span class="sd">            r = s.get('https://httpbin.org/get')</span>
+<span class="sd">    """</span>
+</pre></div><p>Existují různé způsoby, jak dokumentovat argumenty, návratové hodnoty apod.
+Zvídavým studentům doporučujeme podívat se na rozšíření <a href="http://www.sphinx-doc.org/en/master/ext/napoleon.html">Napoleon</a>.</p>
+<h2>Odkazy na třídy a moduly</h2>
+<p>Máte-li zdokumentovaný modul, funkci, třídu, metodu apod., je možné na ni
+odkázat pomocí konstrukce <code>:mod:</code>, <code>:func:</code>, <code>:class:</code>, <code>:meth:</code> a dalších
+ze Sphinxové <a href="http://www.sphinx-doc.org/en/master/domains.html#cross-referencing-python-objects">domény Python</a>:</p>
+<div class="highlight"><pre><span></span>To test the parrot's electrical resistance, use <span class="na">:meth:</span><span class="nv">`parrot.voom()`</span>.
+</pre></div><p>V této části dokumentace Sphinxu též najdete způsob, jak dokumentovat API
+bez použití <code>autodoc</code>.</p>
+<p>Všechny zdokumentované objekty se automaticky přidávají do rejstříku.
+Chcete-li do rejstříku přidat něco navíc, použijte direktivu <a href="http://www.sphinx-doc.org/en/master/markup/misc.html#index-generating-markup">index</a>.</p>
+<h2>README.rst</h2>
+<p>Když už se stejně zabýváme <a href="http://www.sphinx-doc.org/en/stable/rest.html">reStructuredText</a>em, je dobré váš README přepsat
+nebo převést do stejného formátu. Na PyPI pak bude váš projekt vypadat lépe.</p>
+<p>Při přejmenování na <code>README.rst</code> dejte pozor na patřičné změny v <code>setup.py</code>.</p>
+<h2>Read the Docs</h2>
+<p>Pokud svůj repositář na GitHubu změníte na veřejný, můžete využít službu
+<a href="https://readthedocs.org/">Read the Docs</a> k hostování dokumentace ve Sphinxu.
+Dokumentace se sestaví při každém pushnutí na GitHub.</p>
+<p>Pokud Read the Docs použijete, nezapomeňte na dokumentaci odkázat
+z <code>README.rst</code>.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/course/mi-pyt/sessions/docs/">↑ <span class="d-none d-sm-inline">Lekce: Dokumentace – Sphinx</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/course/mi-pyt/sessions/docs/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/master/lessons/intro/docs/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Miro Hrončok, Petr Viktorin a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

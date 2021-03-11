@@ -1,0 +1,661 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: EDA - Testování statistických hypotéz a p-value
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-ostrava-jaro/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-ostrava-jaro/sessions/eda6/">EDA — Testování a význam statistických hypotéz</a>
+
+> <a href="/2020/pydata-ostrava-jaro/pydata/hypotheses/">EDA - Testování statistických hypotéz a p-value</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>EDA - Testování statistických hypotéz</h1>
+<p>V minulých lekcích EDA jsme se hodně soustředili na zpracování dat a jejich vizualizaci a když už jsme zavadili o nějakou tu statistiku, řešili jsme ji převážně intuicí. Takový přístup funguje vcelku dobře, dokud je naše analýza jen povrchovým zkoumáním a nepotřebujeme své výsledky někde oficiálně publikovat nebo o ně opřít nějaká závažná rozhodnutí.</p>
+<p>Když už se ale rozhodneme podrobit naše domněnky důkladnějšímu zkoumání, nevyhneme se statistickým testům.</p>
+<h2>Statistické testy</h2>
+<p>Statistických testů existuje obrovská spousta a každý je dobrý na něco jiného. Situace je ještě složitější v tom, že na ověření jedné skutečnosti je možné použít hned několik testů, které se mezi sebou liší jen málo, a vybrat ten správný je samo o sobě celkem komplikované.</p>
+<p>Vzpomínáš ještě na normální rozdělení pravděpodobnosti z minulých lekcí? Že ho nějaká proměnná může mít tě napadne hned, když uvidíš histogram tvaru zvonu. Jenže to je pouhá intuice a podpořit či vyvrátit tento pocit lze mnoha různými statistickými testy. Testy se navíc neomezují jen na složitý vzorec s číselným výsledkem. Pojďme si vzít test normality jako ukázkový příklad.</p>
+<h3>Jen trošku lepší intuice</h3>
+<p>Chceme-li naši intuici jen trošku vylepšit a podpořit, můžeme využít pro přibližný test normality pár jednoduchých pravidel:</p>
+<ul>
+<li>Průměr a medián by se neměli lišit o více jak 10 %</li>
+<li>Mělo by platit <a href="https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule">pravidlo 68-95-99.7</a></li>
+<li>… a další</li>
+</ul>
+<p>Je to stále ale jen lepší intuice.</p>
+<h3>Grafické testy</h3>
+<p>Nejsnáze představitelný grafický test normality spočívá v proložení histogramu křivkou obkreslující ideální normální rozložení (Gaussova křivka). Pokud zkoumaný histogram perfektně kopíruje ideální stav, není dále nad čím přemýšlet.</p>
+<p>Krabicový graf také pomůže. Pokud má zkoumaná proměnná normální rozložení pravděpodobnosti, bude její vyjádření v krabicovém grafu symetrické, průměr a medián budou stejné a uprostřed grafu a bude zde minimum odlehlých měření.</p>
+<p>Drobet složitější grafickou metodou mohou být <a href="https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot">Q-Q</a> nebo <a href="https://en.wikipedia.org/wiki/P%E2%80%93P_plot">P-P</a> grafy, kde rovná diagonální čára znamená perfektní shodu ideálního rozdělení s tím zkoumaným.</p>
+<h3>Početní testy</h3>
+<p>No a nakonec je tady samozřejmě řada početních testů, které k ověření normality přistupují po svém. A není jich málo. Tak například:</p>
+<ul>
+<li>D'Agostino's K-squared test,</li>
+<li>Jarque–Bera test,</li>
+<li>Anderson–Darling test,</li>
+<li>Cramér–von Mises criterion,</li>
+<li>Kolmogorov–Smirnov,</li>
+<li>Lilliefors test,</li>
+<li>Shapiro–Wilk test a</li>
+<li>Pearson's chi-squared test.</li>
+</ul>
+<p>Často se ale používá jen omezená množina testů a další se hledají, až když se jedná o nějaký velmi specifický případ.</p>
+<p>Vypočíst statistický test není s pomocí mocných knihoven problém. Je ale třeba na začátku stanovit několik věcí, nastavit to správné očekávání, vybrat ten správný test a umět interpretovat jeho výsledky. Jednou ze základních věcí jsou nulová a alternativní hypotéza.</p>
+<h2>Nulová a alternativní hypotéza</h2>
+<p>Statistická hypotéza je určitá domněnka (předpoklad) o jakékoli vlastnosti základního souboru. Pokud řekneme „základní soubor má normální rozdělení“, je to jen naše domněnka, protože neznáme všechny prvky základního souboru. Proto každé tvrzení (hypotézu) o ZS musíme testovat. Teprve na základě testu, který vychází z naměřených (výběrových) dat můžeme rozhodnout, zda tuto domněnku (hypotézu) můžeme považovat za platnou nebo za neplatnou. Pro každý test musíme formulovat nulovou a alternativní hypotézu. Testovaná hypotéza se nazývá nulová hypotéza (H0). Předpokládáme, že platí, pokud nemáme k dispozici dostatečný statistický důkaz její neplatnosti. Pokud zamítneme platnost nulové hypotézy, předpokládáme, že platí alternativní hypotéza (HA). H0 a HA musí být formulovány tak, aby nebyla možná žádná „třetí možnost“. Buď platí H0 nebo HA, nic dalšího není možné.</p>
+<blockquote><p>Není třeba si s tím lámat hlavu. Na internetu je spousta návodů na tvorbu nulových hypotéz a každý statistický test má nějakou svou standardní nulovou hypotézu.</p>
+</blockquote>
+<p>Pro náš test normality tedy nulová hypotéza bude:</p>
+<p>H0: <em>Zkoumané rozdělení pravděpodobnosti má normálního rozdělení</em></p>
+<p>K nulové hypotéze existuje hypotéza alternativní, která nejčastěji říká v podstatě opak. V našem případě tedy bude:</p>
+<p>HA: <em>Zkoumané rozdělení pravděpodobnosti je odlišné od normálního rozdělení</em></p>
+<h2>p-value</h2>
+<p>Samotný výsledek statistického testu není dostačující. Vezměme například korelaci. Pokud budeme mít jen 10 záznamů, bude pravděpodobnost, že se vysoká korelace objeví jen náhodou, daleko větší, než když budeme mít záznamů 1000. Menší datová sada je i v tomto případě více náchylná na výskyt náhodných jevů a vztahů. A s tímto nám pomůže právě p-value, která nám výsledek statistického testu doplní o informaci, zda a jak moc je možné mu věřit.</p>
+<p>Čím menší je p-value, tím menší je pravděpodobnost, že se zkoumaný jev (H0) v dané míře objeví jen náhodou. p-value u předchozího příkladu bude tedy daleko větší u datové sady s deseti záznamy, protože tam se vysoká korelace může daleko snáze objevit jen náhodou, zatímco u tisíce záznamů je pravděpodobnost takové náhody daleko menší.</p>
+<p>p-value nám hlavně pomůže rozhodnout, zda zamítneme nulovou hypotézu, či nikoli. K tomu si ale musíme pro p-value stanovit nějakou hranici a to ještě před provedením testu samotného. Této hranici se říká hladina významnosti a označuje se řeckým písmenem α. Nejběžněji používanou hladinou významnosti pro p-value je 0,05. Pokud bude výsledná p-value menší, efekt se v datech může vyskytovat náhodou a my můžeme zamítnout nulovou hypotézu a podpořit hypotézu alternativní. Pokud bude p-value naopak větší, je pravděpodobnější, že data daný jev opravdu reprezentují a nulová hypotéza zůstane platná.</p>
+<p>Pozor na to, že zde není žádná šedá zóna. Jakmile si hladinu významnosti stanovíme, je výsledek buď černý nebo bíly, buď ano nebo ne. Nic mezi tím. Ani kdyby p-value vyšla jen o 0,01 vyšší než je naše α.</p>
+<p>Hladina významnosti pro p-value se samozřejmě dá nastavit i jinak. Pokud je pravděpodobnost výskytu zkoumaného jevu velmi malá, hladina významnosti se často snižuje. Například v CERNu při hledání velmi vzácného Higgsova bosonu měli hladinu významnosti nastavenu na 3×10⁻⁷. Naopak, pokud je pravděpodobnost, že se zkoumaný jen objeví náhodou, vysoká, může se hladina významnosti vyšplhat až na 0,1.</p>
+<p>Pro naši potřebu testu normality s náhodnými daty si necháme α = 0,05.</p>
+<p>Teď už víme vše potřebné a můžeme se pustit do testování.</p>
+<h2>Test normality</h2>
+<p>V prvním pokusu si vygenerujeme náhodná data přibližně odpovídající normálnímu rozložení a zkusíme je otestovat Shapiro–Wilk testem.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">shapiro</span>
+
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>S pomocí numpy vygenerujeme seznam tisíce čísel s normálním rozdělením pravděpodobnosti, průměrem 10 a směrodatnou odchylkou 2.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tisic_cisel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro zobrazení jednoduchého histogramu můžeme použít matplotlib přímo a obejít se bez pandasu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">tisic_cisel</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">shapiro</span><span class="p">(</span><span class="n">tisic_cisel</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(0.9974613189697266, 0.12187974900007248)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>První číslo je výsledek samotného testu. Hodnota velmi blízko jedné naznačuje, že distribuce našich náhodně generovaných čísel je velmi podobná normálnímu rozdělení.</p>
+<p>Druhé číslo je p-value. p-value je daleko vyšší než naše α = 0,05 a tak nemůžeme zamítnout nulovou hypotézu, že se rozdělení našich dat neliší od normálního rozdělení. H0 je tedy přijata a můžeme prohlásit, že náše data pocházejí z normálního rozdělení.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Pearsonův korelační koeficient</h2>
+<p>V druhém statistickém testu se vrátíme k datům o výdělku a zdravém stravování zaměstnanců a pokusíme se znovu ověřit korelaci mezi výší výdělku a délkou praxe.</p>
+<p>Nulová hypotéza v tomto případě bude: <em>Neexistuje statisticky významný vztah mezi mzdou a délkou praxe v oboru.</em>
+Alternativní hypotéza bude přesný opak: <em>Existuje statisticky významný vztah mezi mzdou a délkou praxe v oboru.</em></p>
+<p>Protože nemáme žádné další vodítka pro určení správné hladiny významnosti k zamítnutí nulové hypotézy, ponecháme si ji na hodnotě 0,05.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">pearsonr</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"../multivariate/static/salary.csv"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>age</th>
+      <th>healthy_eating</th>
+      <th>active_lifestyle</th>
+      <th>salary</th>
+      <th>months_of_exp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1000.000000</td>
+      <td>1000.000000</td>
+      <td>1000.000000</td>
+      <td>1000.000000</td>
+      <td>1000.00000</td>
+      <td>1000.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>499.500000</td>
+      <td>41.155000</td>
+      <td>4.944000</td>
+      <td>5.683000</td>
+      <td>2227.46100</td>
+      <td>175.388000</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>288.819436</td>
+      <td>13.462995</td>
+      <td>2.013186</td>
+      <td>2.048587</td>
+      <td>1080.20976</td>
+      <td>96.778311</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>0.000000</td>
+      <td>18.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>553.00000</td>
+      <td>3.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>249.750000</td>
+      <td>30.000000</td>
+      <td>4.000000</td>
+      <td>4.000000</td>
+      <td>1360.00000</td>
+      <td>101.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>499.500000</td>
+      <td>41.000000</td>
+      <td>5.000000</td>
+      <td>6.000000</td>
+      <td>2174.00000</td>
+      <td>173.000000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>749.250000</td>
+      <td>53.000000</td>
+      <td>6.000000</td>
+      <td>7.000000</td>
+      <td>2993.75000</td>
+      <td>248.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>999.000000</td>
+      <td>64.000000</td>
+      <td>10.000000</td>
+      <td>10.000000</td>
+      <td>5550.00000</td>
+      <td>360.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>age</th>
+      <th>healthy_eating</th>
+      <th>active_lifestyle</th>
+      <th>salary</th>
+      <th>months_of_exp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>id</th>
+      <td>1.000000</td>
+      <td>-0.033595</td>
+      <td>-0.004993</td>
+      <td>0.028897</td>
+      <td>-0.012048</td>
+      <td>0.000071</td>
+    </tr>
+    <tr>
+      <th>age</th>
+      <td>-0.033595</td>
+      <td>1.000000</td>
+      <td>-0.014969</td>
+      <td>0.148267</td>
+      <td>-0.072231</td>
+      <td>-0.058026</td>
+    </tr>
+    <tr>
+      <th>healthy_eating</th>
+      <td>-0.004993</td>
+      <td>-0.014969</td>
+      <td>1.000000</td>
+      <td>0.031613</td>
+      <td>0.858405</td>
+      <td>0.700612</td>
+    </tr>
+    <tr>
+      <th>active_lifestyle</th>
+      <td>0.028897</td>
+      <td>0.148267</td>
+      <td>0.031613</td>
+      <td>1.000000</td>
+      <td>-0.323575</td>
+      <td>-0.225714</td>
+    </tr>
+    <tr>
+      <th>salary</th>
+      <td>-0.012048</td>
+      <td>-0.072231</td>
+      <td>0.858405</td>
+      <td>-0.323575</td>
+      <td>1.000000</td>
+      <td>0.799953</td>
+    </tr>
+    <tr>
+      <th>months_of_exp</th>
+      <td>0.000071</td>
+      <td>-0.058026</td>
+      <td>0.700612</td>
+      <td>-0.225714</td>
+      <td>0.799953</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pearsonr</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">salary</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">months_of_exp</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(0.7999528408949278, 1.37822950311405e-223)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Výsledek testu obsahuje jako první číslo samotný korelační koeficient, který je shodný s tím, co nám nabídnul pandas v přehledové tabulce. Druhé číslo je p-value, která je v tomto případě o hodně menší než námi stanovená α = 0,05 a tak můžeme zamítnout nulovou hypotézu a podpořit hypotézu alternativní. Mezi mzdou a délkou praxe v oboru tedy existuje statisticky významná korelace.</p>
+<h2>Rady na závěr</h2>
+<p>Důležité je nenechat se odradit zdánlivou složitostí a brát statistické testy jako dobrou pomůcku pro ověřování hypotéz, které při analýze vyvstanou. Skoro každý statistický test má také svou stránku na Wikipedii, kde je vše podrobně vysvětleno a není tak ani třeba si lámat hlavu s vymýšlením nulové a alternativní hypotézy. Při použití je také dobré si ověřit, zda test klade nějaké podmínky na testovaná data (velikost populace, rozdělení pravděpodobnosti atp.).</p>
+<h2>Čas na hraní</h2>
+<p>Pokud stále ještě analyzuješ vlastní data, může být dobré se v analýze vrátit k některým zajímavým výsledkům a zkusit je podpořit vhodným statistickým testem.</p>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-ostrava-jaro/sessions/eda6/">↑ <span class="d-none d-sm-inline">Lekce: EDA — Testování a význam statistických hypotéz</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-ostrava-jaro/sessions/eda6/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2020-pydata-ostrava-jaro/lessons/pydata/hypotheses/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Lumír Balhar, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

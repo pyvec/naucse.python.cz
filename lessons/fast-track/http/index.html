@@ -1,0 +1,246 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                HTTP – Jak funguje Internet
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>HTTP – Jak funguje Internet</h1>
+<p>Než začneme pracovat s internetem – ať už tvorbou vlastních stránek, nebo
+komunikací s existujícími službami, pojďme si přiblížit, co vlastně ten
+internet je a jak funguje.</p>
+<p>Internet je celosvětová síť počítačů.
+Je to spousta laptopů, stolních počítačů, malých blikajících krabiček
+i obrovských blikajících skříní, které jsou navzájem propojeny pomocí
+kabelů (nebo i bezdrátově).</p>
+<p>Samozřejmě není každé zařízení propojené s každým jiným zařízením – tolik
+kabelů by se na Zemi těžko vešlo.
+Spousta zařízení – hlavně tzv. <em>routery</em> a <em>switche</em> – ale umí přeposílat
+zprávy mezi sebou tak, že každý počítač může komunikovat s každým
+jiným počítačem.
+(Aspoň teoreticky – reálně je komunikace omezená např. kvůli bezpečnosti.)</p>
+<p>Funguje to podobně jako pošta: když pošlu balíček z Brna do Melbourne,
+nedostane se tam přímo.
+Balíček poputuje třeba vlakem do Prahy, pak letadlem do hlavní pošty
+v Austrálii a odtud náklaďákem do Melbourne, kde ho doručovatel donese až
+k domu příjemce.
+A k naplánování celé téhle cesty stačí napsat na obálku krátkou adresu.</p>
+<p>Podobně cestují informace v internetu: z laptopu přes Wi-Fi do <em>routeru</em>,
+odtud kabelem k poskytovateli připojení, tlustším kabelem do české
+„páteřní sítě“, podmořským kabelem třeba do Ameriky… a nakonec k počítači,
+se kterým jsem chtěl komunikovat.</p>
+<p>Většinou můj laptop takhle komunikuje se <em>serverem</em>, počítačem, který
+se stará o sdělování informací.
+Každou webovou stránku spravuje takový server.</p>
+<p><a id="url-anatomy"></a></p>
+<h2>Webové adresy</h2>
+<p>Jak taková komunikace vypadá si ukážeme na příkladu –
+co se stane, když do prohlížeče zadám tuhle adresu:</p>
+<div class="highlight"><pre><code>http://naucse.python.cz/lessons/fast-track/http/</code></pre></div><p>Taková webová adresa – technicky zvaná URL (<em>Uniform Resource Locator</em>,
+„jednotná adresa zdroje“) přesně určuje, jak se má prohlížeč dostat
+k informacím, které má zobrazit.</p>
+<p><span class="figure"><a href="/lessons/fast-track/http/static/url-anatomy.svg"><img src="/lessons/fast-track/http/static/url-anatomy.svg" alt="http://naucse.python.cz/lessons/fast-track/http/"></a></span></p>
+<p>Začátek adresy, <code>http://</code>, je jméno <em>protokolu</em> (angl. <em>protocol name</em>).
+Protokol určuje způsob, <em>jak</em> se k daným informacím dostat.
+Protokolů existuje spousta, každý funguje trochu jinak a každý se používá
+na něco jiného:
+SMTP a POP pro e-mail, FTP pro přenos souborů, SSH pro ovládání počítačů.
+My se teď ale zaměříme na HTTP, který se typicky používá pro webové stránky.</p>
+<p>Další část adresy, <code>naucse.python.cz</code>, je <em>jméno serveru</em> (angl. <em>server name</em>).
+Říká, <em>kde</em> prohlížeč najde dané informace.</p>
+<p>Jméno serveru je jako poštovní adresa – existuje počítač, který se jmenuje
+<code>naucse.python.cz</code>, a každý internetový „pošťák“ ví, komu přeposlat zprávu,
+aby se k tomuto počítači nakonec dostala.</p>
+<div class="admonition note"><p>„Skutečná“ adresa počítače, tzv. IP adresa, je číselná – například
+<code>151.101.37.147</code> nebo <code>2a04:4e42:9::403</code>.
+Existuje ale systém, jak jméno serveru na takovou <em>IP adresu</em> přeložit.
+Tenhle systém se jmenuje DNS a – abychom zůstali u přirovnání k poště –
+funguje podobně jako seznamy poštovních směrovacích čísel.</p>
+</div><p>Poslední část URL, <code>/lessons/fast-track/http/</code>, je <em>cesta</em> (angl. <em>path</em>).
+Říká, <em>co</em> chceme od serveru dostat: jméno konkrétní webové stránky.</p>
+<p>U jednodušších stránek to může být přímo jméno souboru, který má server
+uložený na disku – proto spousta adres na Webu končí příponou <code>.html</code>.</p>
+<h2>Požadavek a odpověď</h2>
+<p>K získání požadované stránky prohlížeč vytvoří <em>požadavek</em> (angl. <em>request</em>)
+– zprávu „Pošli mi prosím stránku <code>/lessons/fast-track/http/</code>“ – a pošle ho
+serveru <code>naucse.python.cz</code>.</p>
+<p>Server požadavek dostane a vrátí <em>odpověď</em> (angl. <em>response</em>) – zprávu
+s obsahem dané stránky.
+Obsah je často webová stránka v jazyce HTML, který popisuje co na stránce je,
+kde jsou nadpisy a kde odstavce, jak má stránka vypadat, a tak dále.
+Ale v odpovědi může být místo stránky i cokoli jiného – obrázek, video, nebo
+jiná data.</p>
+<p>Veškerá komunikace přes HTTP funguje právě takto: pošle se požadavek
+a přijde na něj odpověď.</p>
+<p>A jak tyhle zprávy vypadají?
+Požadavek nějak takhle:</p>
+<div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/lessons/fast-track/install/</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">*/*</span>
+<span class="na">Accept-Encoding</span><span class="o">:</span> <span class="l">gzip, deflate</span>
+<span class="na">Connection</span><span class="o">:</span> <span class="l">keep-alive</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">naucse.python.cz</span>
+<span class="na">User-Agent</span><span class="o">:</span> <span class="l">Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0</span>
+</pre></div><p>První řádek říká serveru: prosím, pošli mi (<code>GET</code>) stránku
+<code>/lessons/fast-track/install/</code> s použitím protokolu <code>HTTP</code> verze <code>1.1</code>.
+Další řádky jsou <em>hlavičky</em> (angl. <em>headers</em>).
+Říkají například kdo se ptá (<code>User-Agent</code>) a jaký obsah očekává (<code>Accept</code>).
+Většina hlaviček je nepovinná.</p>
+<p>Odpověď pak může vypadat takto:</p>
+<div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Cache-Control</span><span class="o">:</span> <span class="l">max-age=600</span>
+<span class="na">Connection</span><span class="o">:</span> <span class="l">keep-alive</span>
+<span class="na">Content-Encoding</span><span class="o">:</span> <span class="l">gzip</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">3127</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/html; charset=utf-8</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Tue, 20 Feb 2018 15:51:24 GMT</span>
+<span class="na">Last-Modified</span><span class="o">:</span> <span class="l">Tue, 20 Feb 2018 15:20:08 GMT</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">GitHub.com</span>
+
+<span class="cp">&lt;!doctype html&gt;</span>
+  <span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">"cs"</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">"utf-8"</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">"viewport"</span> <span class="na">content</span><span class="o">=</span><span class="s">"width=device-width, initial-scale=1, shrink-to-fit=no"</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>
+                Python a jeho knihovny: HTTP – Jak funguje Internet
+…
+</pre></div><p>První řádek říká: používáme protokol <code>HTTP</code> verze <code>1.1</code>,
+a všechno je v pořádku (<code>200 OK</code>).
+Kromě <code>200</code> existují i další <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">stavové kódy</a> (angl. <em>status codes</em>).
+Známý je např. <code>404</code> „nenalezeno“.</p>
+<p>Následují opět hlavičky – např. kdo odpovídá (<code>Server</code>), kdy byla stránka
+naposledy změněna (<code>Last-Modified</code>) a jak je odpověď zakódovaná:
+<code>Content-Type: text/html</code> říká, že je to stránka v jazyce HTML.</p>
+<p>Hlavičky jsou ukončené volným řádkem, po kterém následuje samotný obsah
+odpovědi ve zmíněném jazyce HTML.</p>
+<h2>HTTP Metody</h2>
+<p>Komunikace ukázaná výše používala metodu <code>GET</code>, která slouží ke <em>čtení</em>
+informací.
+Když se takto prohlížeč na nějakou stránku zeptá, nic se na serveru nezmění.
+Prohlížeč si takovou stránku – nebo třeba obrázek či video – může dočasně
+uložit, a když bude potřeba znovu, použít uloženou verzi.</p>
+<p>Některými požadavky ale stav serveru mění: například se přihlásí uživatel,
+nakoupí zboží v e-shopu nebo odešle zpráva do diskuse.
+Tyto požadavky používají místo <code>GET</code> jinou <em>metodu</em> (angl. <em>method</em>).
+Co přesně která metoda na jaké adrese dělá, to záleží na autorovi stránek.
+Často se používají tyto metody:</p>
+<ul>
+<li><code>GET</code> načte informace,</li>
+<li><code>POST</code> pošle na server informace, např. z formuláře, s cílem něco
+změnit nebo nastavit,</li>
+<li><code>PUT</code> přidá novou stránku (nebo jiný objekt),</li>
+<li><code>DELETE</code> něco smaže.</li>
+</ul>
+<p>Seznam všech metod je ve
+<a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">specifikaci</a>.</p>
+<p>U složitějších požadavků se dají na server poslat i informace:
+webové formuláře se odesílají požadavkem, který používá metodu <code>POST</code>
+a vyplněné informace k dotazu „přilepí“ za hlavičky – stejným způsobem, jako se
+v odpovědi posílá HTML stránka.</p>
+
+
+        </div>
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/master/lessons/fast-track/http/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro naucse.python.cz napsal Petr Viktorin, 2018.</p>
+    
+        <p>Inspirováno tutoriálem <a href="https://tutorial.djangogirls.org/en/how_the_internet_works/">Django Girls</a></p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

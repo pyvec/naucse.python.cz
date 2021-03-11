@@ -1,0 +1,351 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                MI-PYT: MicroPython
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/micropython/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/course/mi-pyt/">MI-PYT</a>
+
+> <a href="/course/mi-pyt/sessions/upy/">MicroPython</a>
+
+> <a href="/course/mi-pyt/intro/micropython/">MicroPython</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>MicroPython (na ESP8266/NodeMCU)</h1>
+<p>(Tato lekce bohužel, na rozdíl od předchozích, nejde jen tak vyzkoušet z domu – je potřeba speciální hardware.)</p>
+<p>Dnes si ukážeme, jak lze Python použít na malých/vestavěných zařízeních.</p>
+<p>Před sebou byste měli mít:</p>
+<ul>
+<li>vývojovou desku <em>NodeMCU</em>,</li>
+<li>modrou LED,</li>
+<li>pásek s RGB LED moduly,</li>
+<li>několik drátků,</li>
+<li>malé nepájivé pole.</li>
+</ul>
+<p>Přichystejte si MicroUSB kabel. Pokud nemáte vlastní, několik jich můžeme zapůjčit.</p>
+<p>Obsah lekce vychází z tutoriálů pro PyLadies (<a href="https://naucse.python.cz/2019/brno-podzim-pondeli/sessions/micropython/">a</a>, <a href="https://github.com/stlk/micropython/tree/master/workshop">b</a>), na které se můžete podívat, pokud tu bude něco vysvětleno příliš rychle.</p>
+<h2>Popis desky</h2>
+<p>V posledních letech se dá za relativně málo peněz pořídit počítač dost „velký” na to, aby se na něm dal spustit MicroPython – speciální implementace Pythonu pro prostředí s omezenou pamětí.
+NodeMCU, které budeme používat my, obsahuje čip ESP8266, čip navržený jako ovladač WiFi k vestavěným systémům (např. k Arduinu).
+Kromě samotného čipu a flash paměti, které se skrývají v oplechované krabičce, je na desce převodník napětí z 5 V (USB) na 3,3 V a datový převodník z USB na sériový protokol a jednotlivé piny procesoru jsou vyvedeny na „nožičky” desky.</p>
+<p>V paměti je už nahraný firmware MicroPython; pojďme se k němu připojit.</p>
+<h2>Drivery a připojení</h2>
+<p>Postup připojení je jiný pro každý systém:</p>
+<ul>
+<li>Linux: Driver už je nainstalovaný; nainstalujte <code>picocom</code>, přidejte se do skupiny jako <code>dialout</code> (Fedora, nové Ubuntu) nebo <code>uucp</code> (Arch, některý Debian) (správnou skupinu zjistíte pomocí <code>ls -l /dev/ttyUSB0</code>) a zadejte <code>picocom -b 115200 --flow n /dev/ttyUSB0</code>.</li>
+<li>Windows: Připojte se pomocí <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">PuTTY</a> (<code>putty.exe</code>). Nastavení:<ul>
+<li>Session:Connection Type: Serial</li>
+<li>Serial/Serial line: COM port (najdeš ve správci zařízení)</li>
+<li>Serial/Speed: 115200</li>
+<li>Serial/Flow Control: None</li>
+</ul>
+</li>
+<li>Mac: <code>screen /dev/tty.wchusbserial1420 115200</code></li>
+</ul>
+<p>Kdyby byly pro Windows či Mac potřeba ovladače, dají se najít na <a href="https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers">stránkách výrobce</a>.</p>
+<p>Po připojení stiskněte tlačítko RST na desce. Měla by se objevit hlavička a nakonec známý pythonní prompt <code>&gt;&gt;&gt;</code>.</p>
+<h2>MicroPython</h2>
+<p>Implementace MicroPython se chová téměř stejně jako CPython. Vyzkoušejte si ale některé rozdíly (porovnejte výstup MicroPythonu a Pythonu 3 na počítači):</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">math</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">random</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">()</span>
+</pre></div><p>Hlavní omezení MicroPythonu je to, že chybí většina standardní knihovny.
+Některé části (např <code>math</code>) jsou k dispozici, spousta ne.
+Několik funkcí je na nestandardních místech se změněným rozhraním, např. generátor náhodných čísel:</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">urandom</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">urandom</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="mi">61</span>
+</pre></div><h2>Vstup a výstup</h2>
+<p>Co má MicroPython navíc je přístup k hardwaru.
+Zkusme zjistit hodnotu pinu 0, který je na NodeMCU normálně HIGH (3,3 V) a je spojen se zemí přes tlačítko FLASH.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span>
+<span class="n">pin</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">IN</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pin</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+</pre></div><p>API MicroPythonu často používá metody tam, kde bychom čekali atributy, proto ne <code>pin.value</code> ale <code>pin.value()</code>.</p>
+<p>Konstanta <code>Pin.IN</code> konfiguruje daný pin pro čtení.
+Zkusme si i zápis: zapojte stranu desky s piny D0-D8 do nepájivého pole a mezi piny <code>D5</code> a <code>G</code> zapojte diodu.
+Následující kód diodu rozsvítí:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span>
+<span class="n">pin</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">pin</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div><p>Pro zhasnutí zadejte <code>pin.value(0)</code>. (Opět jde o volání metody, není to <code>pin.value = 0</code>.)</p>
+<p><code>Pin(14)</code> odpovídá pinu označenému <code>D5</code> – číslování, které používá procesor (a MicroPython), se bohužel liší od toho, které používá deska.
+Odpovídající si označení lze zjistit z <a href="https://pyvec.github.io/cheatsheets/micropython/nodemcu-cs.pdf">taháku</a>.</p>
+<p>Zkuste zajistit, aby dioda svítila, právě pokud je stisknuté tlačítko FLASH.</p>
+<h2>Ovládání konzole</h2>
+<p>Pravděpodobně jste si všimli, že konzole MicroPythonu automaticky odsazuje.
+To je pro malé programy pohodlné, ale umí to i znepříjemnit život – hlavně když chceme kód do konzole vložit.</p>
+<p>Proto má konzole MicroPythonu speciální vkládací mód, který automatické odsazování vypíná.
+Aktivuje se pomocí <kbd>Ctrl+E</kbd> a ukončuje se pomocí <kbd>Ctrl+D</kbd>.</p>
+<p>Existuje ale i nástroj jménem <code>ampy</code>, který umožňuje pustit předpřipravený skript.
+Instaluje se jako <code>adafruit-ampy</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python -m pip install adafruit-ampy
+</pre></div><p>Po nainstalování vypněte existující připojení k desce (picocom/screen/PuTTY),
+napište skript a spusťte ho pomocí příkazu <code>run</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ampy -p PORT run script.py
+</pre></div><p>Kde <code>PORT</code> je stejný port jako výše – např. <code>/dev/ttyUSB0</code> na Linuxu, <code>COM3</code> na Windows.
+Pro více informací můžete nepřekvapivě použít příkaz <code>ampy --help</code>.</p>
+<p>Od teď doporučuji psát kód vedle do editoru a spouštět jej pomocí <code>ampy run</code>.</p>
+<p>Zkuste pomocí funkce <code>time.sleep</code> (která v MicroPythonu k dispozici je) diodou blikat v pravidelných intervalech.</p>
+<h2>Blikání</h2>
+<p>Na pravidelné blikání, technicky řečeno <em>pulzně-šířkovou modulaci</em> (angl. <em>Pulse Width Modulation</em>)
+má MicroPython třídu <code>PWM</code>, které se dá nastavit frekvence (<code>freq</code>) v Hz a střída (<code>duty</code>) od 0 do 1024:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span><span class="p">,</span> <span class="n">PWM</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+
+<span class="n">led_pin</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">pwm</span> <span class="o">=</span> <span class="n">PWM</span><span class="p">(</span><span class="n">led_pin</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">duty</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span>
+</pre></div><p>Výsledný signál – čtvercová vlna – lze použít pro ovládání
+LED (střída určuje intenzitu světla), bzučáků (frekvence určuje výšku tónu),
+servomotorků (délka signálu určuje úhel otočení), atd.</p>
+<h2>LED pásek WS2812</h2>
+<p>Na destičku se dá připojit spousta různých komponent. Jen je vždy potřeba ověřit v <a href="http://docs.micropython.org/en/latest/esp8266/">dokumentaci</a>, že existuje knihovna pro daný protokol na MicroPython <em>pro ESP8266</em>.
+Časté protokoly jsou <a href="http://docs.micropython.org/en/latest/esp8266/library/machine.I2C.html#machine-i2c">I2C</a>, <a href="http://docs.micropython.org/en/latest/esp8266/esp8266/quickref.html#onewire-driver">OneWire</a>, či <a href="http://docs.micropython.org/en/latest/esp8266/esp8266/quickref.html#software-spi-bus">SPI</a>.</p>
+<p>My připojíme pásek s moduly WS2812.
+Každý modul obsahuje tři LED a čip, který umožňuje celý pásek ovládat jedním datovým pinem.
+Používá vlastní protokol, který je v MicroPythonu pro ESP8266 implementován pod jménem <code>NeoPixel</code>.</p>
+<p>Zapojení:</p>
+<ul>
+<li><code>GND</code> - <code>G</code></li>
+<li><code>DI</code> (data in) - <code>D4</code></li>
+<li><code>+5V</code> - <code>VU</code></li>
+</ul>
+<p>Kód:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span>
+<span class="kn">from</span> <span class="nn">neopixel</span> <span class="kn">import</span> <span class="n">NeoPixel</span>
+
+<span class="n">NUM_LEDS</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">pin</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">np</span> <span class="o">=</span> <span class="n">NeoPixel</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="n">NUM_LEDS</span><span class="p">)</span>
+<span class="n">np</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
+</pre></div><p>Co znamenají čísla 0 a 255 na posledním řádku, jistě zjistíte experimentálně.</p>
+<h2>Flashování</h2>
+<p>Na našich destičkách je MicroPython už nahraný, ale kdybyste si koupili vlastní NodeMCU nebo chtěli firmware aktualizovat, budete ho potřebovat umět nahrát.</p>
+<p>K tomu je potřeba nástroj <code>esptool</code>, který se dá nainstalovat pomocí:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python -m pip install esptool
+</pre></div><p>Po instalaci esptool si stáhněte nejnovější stabilní firmware pro ESP8266 z <a href="http://micropython.org/download#esp8266">micropython.org/download</a> a zadejte:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>esptool.py --port /dev/ttyUSB0 --baud <span class="m">460800</span> write_flash <span class="m">0</span> esp8266-20161110-v1.8.6.bin
+</pre></div><p>Hodnotu pro <code>--port</code> opět doplňte podle svého systému – např. <code>/dev/tty.wchusbserial1420</code> na Macu, <code>COM3</code> na Windows.</p>
+<div class="admonition note"><p>Destiček s čipem ESP8266 se vyrábí celá řada různých typů a některé mohou
+potřebovat odlišné nastavení při flashování.
+Popis všech možností nastavení je k nalezení v <a href="https://github.com/espressif/esptool#usage">dokumentaci k esptool</a>.</p>
+</div><p>Je-li na desce nahraný MicroPython, tento příkaz by měl fungovat. U jiného firmware, (případně u poškozeného MicroPythonu), je potřeba při zapojování destičky do USB držet tlačítko FLASH.</p>
+<h2>Souborový systém</h2>
+<p>MicroPython pro ESP8266 obsahuje souborový systém nad flash pamětí,
+se kterým pracují standardní pythonní funkce jako <code>open</code> a <code>os.listdir</code>.
+Nahrajete-li soubor s příponou <code>.py</code>, lze jej pak v kódu importovat.</p>
+<p>Existuje-li soubor <code>main.py</code>, naimportuje se automaticky po zapnutí (či resetu)
+zařízení.
+Není ho pak potřeba připojovat k počítači – stačí powerbanka nebo 3,3V zdroj.</p>
+<p>Pro nahrání souborů do zařízení můžete použít příkaz <code>ampy put</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ampy -p PORT put main.py
+</pre></div><h2>WebREPL</h2>
+<p>ESP8266 byl původně navržen i jako čip pro WiFi a i s MicroPythonem se umí připojit k síti.
+Dokonce se přes WiFi dá i ovládat.</p>
+<p>Otevřete si stránku <a href="http://micropython.org/webrepl/">micropython.org/webrepl</a>, přes kterou budete po připojení s destičkou komunikovat.</p>
+<p>Poté se buď připojte k existující WiFi síti (Eduroam fungovat nebude) nebo použijte destičku jako samostatný <em>access point</em>:</p>
+<div class="highlight"><pre><span></span><span class="c1"># Existující síť:</span>
+
+<span class="n">ESSID</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">PASSWORD</span> <span class="o">=</span> <span class="o">...</span>
+
+<span class="kn">import</span> <span class="nn">network</span>
+<span class="n">wlan</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">WLAN</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">STA_IF</span><span class="p">)</span>
+<span class="n">wlan</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">wlan</span><span class="o">.</span><span class="n">isconnected</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'connecting to network...'</span><span class="p">)</span>
+    <span class="n">wlan</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">ESSID</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">)</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">wlan</span><span class="o">.</span><span class="n">isconnected</span><span class="p">():</span>
+        <span class="k">pass</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'network config:'</span><span class="p">,</span> <span class="n">wlan</span><span class="o">.</span><span class="n">ifconfig</span><span class="p">())</span>
+
+<span class="c1"># AP:</span>
+
+<span class="n">ESSID</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">PASSWORD</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">CHANNEL</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="kn">import</span> <span class="nn">network</span>
+<span class="n">ap_if</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">WLAN</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">AP_IF</span><span class="p">)</span>
+<span class="n">ap_if</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ap_if</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">essid</span><span class="o">=</span><span class="n">ESSID</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">PASSWORD</span><span class="p">,</span> <span class="n">authmode</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">AUTH_WEP</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">CHANNEL</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'network config:'</span><span class="p">,</span> <span class="n">ap_if</span><span class="o">.</span><span class="n">ifconfig</span><span class="p">())</span>
+</pre></div><p>Nastavení WebREPL spusťte z interaktivní konzole:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">webrepl_setup</span>
+</pre></div><p>S počítačem se připojte na stejnou síť a na stránce webrepl otevřené výše se připojte k IP vypsané z <code>ifconfig()</code>.
+Měli byste dostat konzoli, jako přes USB.
+Pomocí WebREPL lze nejen zadávat interaktivní příkazy, ale i nahrávat soubory.</p>
+<h2>Komunikace</h2>
+<p>Pro komunikaci po síti můžete použít nízkoúrovňovou knihovnu <code>socket</code>,
+nebo protokol pro „internet of things“ (jako MQTT), ale
+MicroPython pro ESP8266 má zabudouvanou i knihovnu pro HTTP:
+ořezanou verzi známých Requests.
+Následující kód stáhne data ze stránky
+<a href="http://api.thingspeak.com/channels/1417/field/2/last.txt">api.thingspeak.com/channels/1417/field/2/last.txt</a>,
+kde se objevuje poslední barva tweetnutá s hashtagem <code>#cheerlights</code>.</p>
+<p>Výslednou hodnotu lze použít jako barvu modul v LED pásku.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">urequests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'http://api.thingspeak.com/channels/1417/field/2/last.txt'</span>
+
+<span class="k">def</span> <span class="nf">download_color</span><span class="p">():</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">urequests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="k">if</span> <span class="n">text</span> <span class="ow">and</span> <span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'#'</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span>
+
+        <span class="n">red</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="n">green</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="n">blue</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">color</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">red</span><span class="p">,</span> <span class="n">green</span><span class="p">,</span> <span class="n">blue</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+</pre></div><p>Opravdové projekty používají lehčí protokoly než HTTP, například MQTT.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/course/mi-pyt/sessions/upy/">↑ <span class="d-none d-sm-inline">Lekce: MicroPython</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/course/mi-pyt/sessions/upy/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/master/lessons/intro/micropython/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Petr Viktorin, Miro Hrončok a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

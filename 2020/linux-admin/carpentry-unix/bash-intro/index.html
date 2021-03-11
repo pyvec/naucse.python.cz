@@ -1,0 +1,316 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Bash – Úvod
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/shell-1/">Bash I</a>
+
+> <a href="/2020/linux-admin/carpentry-unix/bash-intro/">Bash – Úvod</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Bash</h1>
+<p>První krok na cestě za porozuměním Linuxu bude práce s příkazovou řádkou;
+konkrétně <em>shellem</em>.
+Nejdřív si ale přibližme, co to vlastně je.</p>
+<h2>Trocha kontextu, názvosloví a historie</h2>
+<h3>Jádro a GNU/Linux</h3>
+<p>Technicky vzato, <a href="https://www.linuxfoundation.org/projects/linux/">Linux</a>
+je název <em>jádra</em> operačního systému.
+Jádro (angl. <em>kernel</em>) je ta část, která zařizuje aby ostatní programy mohly
+běžet, a zajišťuje a „moderuje“ přístup ke sdíleným zařízením – procesoru,
+paměti, klávesnici, obrazovce, atd.</p>
+<p>Jádro samo o sobě je nepoužitelné: podobně jako k motoru auta je potřeba mít
+volant, kola a karoserii, tak k jádru operačního systému potřebujeme
+programy jako shell (a samozřejmě fyzický počítač).</p>
+<p>To, čím se „náš“ Linux liší od jiných systémů používající Linuxové jádro
+(jako Android a spousta „chytrých“ zařízení) jsou třeba příkazy jako <code>cd</code>
+a <code>mkdir</code>, které zadáváme do příkazové řádky.
+Ty – nebo aspoň jejich nejpoužívanější verze – jsou vyvíjeny jako součást
+projektu <a href="https://www.gnu.org/">GNU</a>.
+Chceme-li tedy být korektní, budeme našemu systému říkat GNU/Linux.</p>
+<h3>Shell</h3>
+<p>Slovo <em>shell</em> znamená v angličtině <em>skořápka</em>, např. ořechu – tedy „obal“
+kolem jádra.
+Je to program, který na <em>základě přání uživatele spouští ostatní programy</em>.
+Tedy: zjistí, jaký program chce uživatel spustit, a řekne jádru aby ho spustil.</p>
+<p>U systémů jako MS Windows nebo macOS je shell „grafický“ a zakomponovaný do
+systému, takže ho jako uživatel nemůžeme „oddělit“ od jádra.</p>
+<p>I Linuxové systémy mají grafické shelly: jeden příklad je
+<a href="https://wiki.gnome.org/Projects/GnomeShell">GNOME Shell</a>,
+který se „stará” o to, co je na obrazovce „kolem“ okýnek.
+Má i jiné funkce – např. ukazuje čas nebo tě umí odhlásit — ale jeho hlavní
+úkol je pouštět jiné programy.</p>
+<div class="admonition note"><p>GNOME Shell je jen jedna část prostředí GNOME; v rámci tohoto projektu
+se kromě shellu vyvíjí např. správce souborů
+<a href="https://wiki.gnome.org/Apps/Files"><em>Files</em> (<code>nautilus</code>)</a>,
+terminál <a href="https://wiki.gnome.org/Apps/Terminal"><code>gnome-terminal</code></a>,
+nebo textový editor <a href="https://wiki.gnome.org/Apps/Gedit"><code>gedit</code></a>.</p>
+</div><p>Původní <em>shelly</em> ale byly textové: než počítače uměly vykreslovat okýnka,
+když ještě komunikovaly přes psací stroj a tiskárnu, byl <em>shell</em> program,
+který se zeptal jaký program spustit, spustil ho, a po skončení se zeptal
+znovu.
+Existují samozřejmě i jiné shellové příkazy, ale většinou tu půjde právě
+o spouštění dalších programů.</p>
+<p>Shell, který budeme používat my, je
+<a href="https://www.gnu.org/software/bash/">GNU Bash</a>.
+Jeho první verze vyšla v roce 1989 a je z velké části kompatibilní
+s původním <code>sh</code> z r. 1979.
+Nemá vychytávky novějších shellů jako <a href="http://fishshell.com/"><code>fish</code></a> nebo
+<a href="https://xon.sh/"><code>xonsh</code></a>, ale je dost dobrý na to, aby byl stále
+nejpopulárnější – najdete ho téměř na každém „linuxovém“ počítači (a dokonce
+i na macOS), většinou jako výchozí volbu.</p>
+<h3>Terminál</h3>
+<p>Samotný textový <em>shell</em> neumí vykreslovat písmenka – to dělá jiný program,
+ať už teletypová tiskárna ze sedmdesátých let nebo grafické okýnko, kterému
+se říká <a href="https://cs.wikipedia.org/wiki/Emul%C3%A1tor_termin%C3%A1lu"><em>emulátor terminálu</em></a>
+nebo jen “terminál” či „okýnko s příkazovou řádkou“.
+V prostředí GNOME použijeme program <em>Terminál</em>.
+Jeho funkcí je předávat písmenka napsaná na klávesnici určitému programu,
+a vykreslovat to, co tento program chce vypsat.</p>
+<p>Když Terminál spustíš, spustí se „v něm“ Bash.</p>
+<h3>Proč text?</h3>
+<p>Proč ovládat počítač textově – psát příkazy na klávesnici místo klikání myší?</p>
+<p>Je to složitější na naučení: příkazy si typicky musíš pamatovat nebo dohledat,
+místo toho abys je našla v menu.
+Ale jakmile to zvládneš, je textové ovládání často rychlejší.
+Poslední příkaz zopakuješ pomocí <kbd>↑</kbd><kbd>Enter</kbd>.
+Když si několik příkazů zaznamenáš v souboru, můžeš je rovnou zkopírovat
+do shellu.
+A z takového souboru s příkazy není daleko ke <em>skriptu</em>, kdy sadu příkazů
+pojmenuješ a můžeš ji spouštět jako jediný příkaz – podobně jako funkci
+v Pythonu.
+A to i s parametry, takže až budeš potřebovat zkopírovat třetí řádek z každého
+z tisíce souborů, nebo pondělí provést analýzu aktoálního počasí, začne se ti
+znalost Bashe vyplácet.</p>
+<p>A až se ztratíš, můžeme ti mnohem lépe pomoct stylem „co vypíše příkaz
+<code>foobar status</code>?“ místo „klikni na zelené tlačítko vpravo dole (kdo ví co je
+ne něm napsáno v češtině) a pošli mi screenshot“.</p>
+<p>A až budeš spravovat <em>microservices</em> v <em>cloudu</em>, nebo <em>clustery</em>
+v superpočítačovém centru, bude tvá klávesnice mnohem ošoupanější než myš.</p>
+<p>Pojďme začít.</p>
+<h2>Pouštění příkazů</h2>
+<p>Když Bash pustíš, ukáže se ti <em>prompt</em> neboli <em>výzva</em> – Bash se ptá na další
+příkaz.</p>
+<div class="highlight"><pre><span></span><span class="gp">$
+</span></pre></div><p>Bash většinou používá <code>$</code>, i když se dá nastavit i jiný symbol.
+Před dolarem jsou většinou nějaké další informace, typicky aktuální adresář
+a jméno uživatele.</p>
+<p>Důležité je, že prompt není součást příkazu: když uvidíš ukázku příkazu,
+dolar nepíšeš ty, vždy píšeš až to za ním.
+Stejně tak nepíšeš výstup – typicky to, co je na řádcích za příkazem.</p>
+<p>Zkus si zadat příkaz <code>ls</code> (zkratka z angl. <em>list</em>), který vypíše obsah
+aktuálního adresáře. Zadej <kbd>l</kbd><kbd>s</kbd><kbd>Enter</kbd>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls
+<span class="go">Dokumenty  Obrázky  Stažené  Veřejné</span>
+<span class="go">Hudba      Plocha   Šablony  Videa</span>
+</pre></div><h2>Nenalezený příkaz</h2>
+<p>Když Bash nenajde program který by měl spustit, vypíše chybovou hlášku:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>lss
+<span class="go">bash: lss: Příkaz nebyl nenalezen...</span>
+<span class="go">Podobný příkaz je: 'ls'</span>
+</pre></div><p>To se stane, když uděláš překlep nebo když daný program není nainstalovaný.
+Některé systémy umí v rámci chybové hlášky i napovědět podobný příkaz
+(jako výše), nebo doporučit instalaci:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>blender
+<span class="go">bash: blender: Příkaz nebyl nenalezen...</span>
+<span class="go">Nainstalovat balíček „blender“, který poskytuje příkaz „blender“? [N/y]</span>
+</pre></div><p>Občas se stane, že hledání podobného příkazu trvá příliš dlouho.
+Zastavit ho můžeš pomocí <kbd>Ctrl</kbd>+<kbd>C</kbd>.</p>
+<h2>Složitější programy</h2>
+<p>Většina tohoto kurzu bude o spouštění malých prográmků, které umí jen jednu
+věc, a o tom jak je spojovat dohromady.
+Ale Bash umí pouštět jakýkoli program, který máš nainstalovaný.
+Zkus si:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>firefox
+<span class="gp">$ </span>gedit
+<span class="gp">$ </span>nautilus
+</pre></div><p>Kdyby některý z těchto programů nepustil po zavření zpátky k příkazové řádce,
+zavři ho pomocí <kbd>Ctrl</kbd>+<kbd>C</kbd>.</p>
+<p>Některé grafické programy tě zpátky sice pustí, ale pak do ní píšou hlášky.
+Doporučuji proto teď terminálové okno zavřít a otevřít nové.</p>
+<h2>Nela a medúzy</h2>
+<p>Jako příklad pro použití Bashe si projdeme kurz od <em>The Carpentries</em>
+– organizaci, která učí vědce.
+Jejich příklad je praktický; možná ne pro tebe, ale úkoly které by byly
+praktické pro všechny se hledají špatně, a hry jako v začátečnickém kurzu
+Pythonu se k Bashi moc nehodí.</p>
+<p>Tady je příběh:</p>
+<p>Nela Nemo, mořská bioložka, se právě vrátila z šestiměsíční výpravy
+na severní Tichý oceán, kde studovala měkké organismy
+v <a href="https://cs.wikipedia.org/wiki/Velk%C3%A1_tichomo%C5%99sk%C3%A1_odpadkov%C3%A1_skvrna">Tichomořské odpadkové skvrně</a>.
+Nasbírala 150 vzorků, ve kterých její zařízení měřilo relativní zastoupení
+300 proteinů.
+Teď má 1500 souborů, které musí zpracovat speciální programem <code>goostats</code>,
+který kdysi napsal někdo z její univerzity.
+A samozřejmě musí o výsledcích napsat článek.
+Do konce měsíce.</p>
+<p>Kdyby <code>goostats</code> pouštěla ručně, klikáním, musela by ho 1500× otevřít
+a vybrat soubor.
+To by jí zabralo as 12 hodin čistého času, kdyby přitom neudělala chybu
+– nemluvě o dopadech na její karpální tunel.
+A tak radši tuhle práci zautomatizuje pomocí Bashe a bude se soustředit
+na ten článek.</p>
+<p>V dalších lekcích se zaměříme na to, jak to Nela může zautomatizovat.
+Přesněji řečeno, jak pustit program <code>goostats</code> na každý z tisíců souboru.</p>
+<p>Vzniklý skript pak navíc půjde použít znovu, až Nela nasbírá víc dat.</p>
+<p>K tomuto příběhu se váže sada souborů.
+Stáhni si <a href="/2020/linux-admin/carpentry-unix/bash-intro/static/data-shell.zip">archiv</a> do svého adresáře <code>Dokumenty</code>.
+A potom ho rozbal. To se dělá následovně:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> Dokumenty
+<span class="gp">$ </span>unzip data-shell.zip
+<span class="gp">$ </span><span class="nb">cd</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/shell-1/">↑ <span class="d-none d-sm-inline">Lekce: Bash I</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/carpentry-unix/filedir/"><span class="d-none d-sm-inline">Navigace v souborech a adresářích</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/carpentry-unix/bash-intro/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Petr Viktorin a Karolina Surma, 2020</p>
+    
+        <p>založeno na kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, 2016–2018 Software Carpentry Foundation, 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

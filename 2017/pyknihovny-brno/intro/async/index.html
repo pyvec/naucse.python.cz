@@ -1,0 +1,535 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Python a jeho knihovny: AsyncIO
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/async/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2017/pyknihovny-brno/">Python a jeho knihovny</a>
+
+> <a href="/2017/pyknihovny-brno/sessions/async/">Generátory a AsyncIO</a>
+
+> <a href="/2017/pyknihovny-brno/intro/async/">AsyncIO</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <p>Ve cvičení použijeme ukázku z PyQt5.
+Máte-li ještě virtualenv s nainstalovaným PyQt, použijte ho, případně ho
+podle <a href="/2017/pyknihovny-brno/intro/pyqt/">lekce o PyQt</a> nainstalujte znovu.</p>
+<p>K PyQt si přiinstalujte knihovnu <code>quamash</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python -m pip install quamash
+</pre></div><p>Nejde-li to, nevadí – nezbytné dnes PyQt nebude.</p>
+<p>Navíc si nainstalujte knihovnu <code>aiohttp</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python -m pip install aiohttp
+</pre></div><hr>
+<h1>AsyncIO</h1>
+<p>Pojďme si povídat o souběžnosti – možnostech, jak nechat počítač dělat víc
+úloh věcí najednou.</p>
+<p>Jak jsme si řekli v <a href="/2017/pyknihovny-brno/intro/cython/">lekci o C API</a>, Python má globální zámek, takže pythonní kód
+může běžet jen v jednom vlákně najednou.
+Taky jsme si řekli, že to většinou příliš nevadí: typický síťový nebo GUI program
+stráví hodně času čekáním na události (odpověď z internetu, kliknutí myší atp.)
+a u tohoto čekání není potřeba držet zámek zamčený.</p>
+<p>Servery typicky při zpracovávání požadavku stráví <em>většinu</em> času síťovou komunikací.
+Proto se často spouští několik vláken nebo přímo procesů najednou, aby se mohl vytížit
+procesor.
+Při velkém množství vláken ale nastanou dva problémy.
+První je, že vláken nemůže být neomezeně mnoho.
+Každé vlákno potřebuje vlastní <em>stack</em>, tj. poměrně velkou část paměti; a počet vláken
+bývá omezen i jinak (na Linuxu je globální limit počtu procesů, do kterého se počítají
+i jednotlivá vlákna – viz <code>cat /proc/sys/kernel/threads-max</code>).
+Druhý problém je, že přepnutí z jednoho vlákna do druhého se může stát <em>kdykoli</em>.
+Ověřit si, že je na to program připravený, je poměrně složité a na zajištění
+správné funkčnosti je potřeba zamykání či jiné techniky. Ty bývají relativně
+pomalé, a tak se jim programátoři snaží vyhnout.
+A chyby vzniklé nesprávným ošetřením přepínání vláken bývají složité na odhalení
+a vyřešení.</p>
+<p>Vlákna jsou příklad <em>preemptivního multitaskingu</em>, kdy operační systém rozhoduje,
+kdy přepne z jednoho vlákna do druhého, a tuto změnu si prakticky vynutí.
+Jednotlivá vlákna se s tím musí vyrovnat.
+Alternativou je <em>kooperativní multitasking</em>, kdy se jednotlivé úlohy umí <em>samy</em> vzdát
+procesorového času, když např. čekají na síťovou komunikaci.
+Programátor tak ví, že dokud takto nepředá kontrolu ostatním úlohám, žádná jiná
+úloha mu pod rukama nemůže měnit stav procesu.
+Na druhou stranu je ale potřeba dostatečně často kontrolu předávat, aby se všechny
+úlohy dostaly ke slovu.
+Tuto techniku tak nemůže používat operační systém, pod kterým můžou běžet i špatně
+napsané programy. V rámci jednoho procesu se to ale dá s úspěchem využít.</p>
+<h2>Souběžnost v Pythonu</h2>
+<p>V Pythonu existovala a existuje řada knihoven, které nám umožňují „dělat více
+věcí zároveň“.
+Pro preemptivní multitasking jsou tu <code>threading</code>, tedy podpora pro vlákna,
+a <code>multiprocessing</code>, tedy způsob jak spustit nový pythonní proces,
+ve kterém se provede určitá funkce
+(přičemž vstup a výstup se předává serializovaný přes <em>pipes</em>).</p>
+<p>Další knihovna, kterou lze z PyPI nainstalovat, je <a href="https://greenlet.readthedocs.io/en/latest/">greenlet</a>.
+Ta nám dává k dispozici tzv. <em>mikro-vlákna</em>,
+která se mezi sebou přepínají v rámci jednoho procesu.
+Na rozdíl od systémových vláken nepotřebují tolik paměti navíc, ale
+stále jde (alespoň z pohledu programátora) o <em>preemptivní</em> strategii:
+k přepnutí může dojít kdykoli,
+je tedy potřeba zamykat a složitě hledat málo časté chyby.</p>
+<p>Byly vyvinuty i knihovny pro <em>kooperativní</em> přepínání, založené na tzv.
+<em>futures</em> (které vysvětlíme vzápětí).
+Nejznámější jsou <a href="https://twistedmatrix.com/trac/">Twisted</a> a <a href="http://www.tornadoweb.org/en/stable/">Tornado</a>.
+Obě jsou relativně staré (2002, resp. 2009), ale stále populární.</p>
+<p>Ačkoli byly Twisted, Tornado a podobné knihovny užitečné, jejich problém
+byl v tom, že má každá jiné API.
+Vznikaly tak kolem nich ekosystémy vázané na konkrétní knihovnu:
+server napsaný pro Tornado se nedal použít pod Twisted a aplikace
+využívající Twisted nemohla využít knihovnu pro Tornado.</p>
+<p>Jak to vyřešit?</p>
+<h2>Jeden standard</h2>
+<p><img src="https://imgs.xkcd.com/comics/standards.png" alt="xkcd 927"></p>
+<p><em>Komiks <a href="https://xkcd.com/927/">xkcd</a>, © Randall Munroe, <a href="https://creativecommons.org/licenses/by-nc/2.5/">CC-BY-NC</a></em></p>
+<p>Podobně jako přístup k různým SQL databázím je v Pythonu standardizovaný
+(knihovny pro SQLite, Postgres, MySQL atd. všechny podporují API definované
+v <a href="https://www.python.org/dev/peps/pep-0249/">PEP 249</a>) nebo je standardizované API webových serverů (WSGI, <a href="https://www.python.org/dev/peps/pep-3333/">PEP 3333</a>),
+tak vzniklo standardizované API pro kooperativní multitasking.
+Toto API je definováno v <a href="https://www.python.org/dev/peps/pep-3156/">PEP 3156</a> a jeho referenční implementace, <code>asyncio</code>,
+je od Pythonu 3.4 ve standardní knihovně.
+(Pro Python 3.3 se dá asyncio nainstalovat <a href="https://pypi.org/project/asyncio/">pomocí <code>pip</code></a>.)
+Interně je <code>asyncio</code> postavené na konceptu <em>futures</em> inspirovaných Tornado/Twisted,
+ale jeho „hlavní“ API je postavené na <em>coroutines</em> podobných generátorům.</p>
+<p>Od Pythonu verze 3.5 používá <code>asyncio</code> místo „normálních“ generátorů
+speciální syntaxi, která umožňuje kombinovat asynchronní funkce s příkazy
+<code>for</code> a <code>with</code> nebo i <code>yield</code>.
+Tuto syntaxi použijeme i tady; máte-li starší Python, podívejte se na potřebné změny uvedené níže.</p>
+<p>Jak vypadá taková asynchronní funkce?
+Definuje se pomocí <code>async def</code> místo <code>def</code>, a může používat příkaz <code>await</code>.</p>
+<p>Ukažme si to na příkladu:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+    <span class="sd">"""Prints numbers from 0 in regular intervals"""</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">'counts'</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="n">count</span><span class="p">(</span><span class="s1">'Quick'</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">))</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="n">count</span><span class="p">(</span><span class="s1">'Slow'</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div><p>Co se tu děje?
+Příkazem <code>await asyncio.sleep(interval)</code> se asynchronní funkce zastaví
+(podobně jako generátor při <code>yield</code>) a předá kontrolu knihovně <code>asyncio</code>
+s informací že za daný čas by kontrolu chtěla zase zpátky.
+Než daný interval uplyne, <code>asyncio</code> může spouštět jiné úlohy;
+po jeho uplynutí naši čekající funkci „probudí“.</p>
+<p>Spouštění a ukončení se dělá poněkud krkolomě.
+Pojďme se podívat co všechno se skrývá v posledních pěti příkazech.</p>
+<div class="admonition note"><p>V Pythonu verze 3.4 a nižší ještě neexistovala klíčová slova <code>async</code> a
+<code>await</code>; asynchronní funkce byly opravdu implementovány jako generátory.
+Máte-li starší verzi Pythonu, je potřeba místo:</p>
+<div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="o">...</span><span class="p">:</span>
+    <span class="k">await</span> <span class="o">...</span>
+</pre></div><p>psát:</p>
+<div class="highlight"><pre><span></span><span class="nd">@asyncio</span><span class="o">.</span><span class="n">coroutine</span>
+<span class="k">def</span> <span class="o">...</span><span class="p">:</span>
+    <span class="k">yield from</span> <span class="o">...</span>
+</pre></div><p>Starý způsob zatím funguje i v novějším Pythonu, a dokonce se někdy objevuje
+i v dokumentaci.</p>
+</div><h2>Event Loop</h2>
+<p>Knihovna <code>asyncio</code> nám dává k dispozici <em>smyčku událostí</em>, která se, podobně jako
+<code>app.exec</code> v Qt, stará o plánování jednotlivých úloh.
+Každé vlákno může mít vlastní smyčku událostí, kterou získáme pomocí
+<code>asyncio.get_event_loop</code> a pak ji můžeme spustit dvěma způsoby:</p>
+<ul>
+<li><code>loop.run_forever()</code> spustí smyčku na tak dlouho, dokud jsou nějaké úlohy
+naplánovány (to trochu odporuje názvu, ale většinou se nestává, že by se
+úlohy „vyčerpaly“), nebo</li>
+<li><code>loop.run_until_complete(task)</code> – tahle funkce skončí hned, jakmile je hotová
+daná úloha, a vrátí její výsledek.</li>
+</ul>
+<h2>Futures</h2>
+<p>Jak už bylo řečeno, knihovna <code>asyncio</code> je uvnitř založená na <em>futures</em>.
+Copak to je?</p>
+<p><code>Future</code> je objekt, který reprezentuje budoucí výsledek nějaké operace.
+Poté, co tato operace skončí, se výsledek dá zjistit pomocí metody <code>result()</code>;
+jestli je operace hotová se dá zjistit pomocí <code>done()</code>.
+<code>Future</code> je taková „krabička“ na vrácenou hodnotu – než tam něco
+tu hodnotu dá, musíme počkat; poté je hodnota stále k dispozici.
+Tohle čekání se dělá pomocí <code>await</code> (nebo <code>loop.run_until_complete</code>).</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">set_future</span><span class="p">(</span><span class="n">fut</span><span class="p">):</span>
+    <span class="sd">"""Sets the value of a Future, after a delay"""</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'set_future: sleeping...'</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'set_future: setting future'</span><span class="p">)</span>
+    <span class="n">fut</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'set_future done.'</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_future</span><span class="p">(</span><span class="n">fut</span><span class="p">):</span>
+    <span class="sd">"""Receives the value of a Future, once it's ready"""</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'get_future: waiting for future...'</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">fut</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'get_future: getting result'</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">fut</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'get_future: done'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="n">future</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">()</span>
+
+
+<span class="c1"># Schedule the "set_future" task (explained later)</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="n">set_future</span><span class="p">(</span><span class="n">future</span><span class="p">))</span>
+
+
+<span class="c1"># Run the "get_future" coroutine until complete</span>
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">get_future</span><span class="p">(</span><span class="n">future</span><span class="p">))</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Result is'</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div><p>Do <code>Future</code> se dá vložit i výjimka.
+To se využíá v případě že úloha, která má <code>Future</code> naplnit, selže. 
+Metoda <code>result()</code> potom tuto výjimku způsobí v kódu, který by výsledek
+zpracovával.</p>
+<p>Na <code>Future</code> se navíc dají navázat funkce, které se zavolají, jakmile je
+výsledek k dispozici.
+Dá se tak implementovat <em>callback</em> styl programování (který možná znáte
+např. z Node.js). Pomocí <em>futures &amp; callbacks</em> se před nástupem
+generátorů programovalo pro knihovny jako <code>Twisted</code>.</p>
+<p>Podobně jako <code>yield</code> se <code>await</code> dá použít jako výraz, jehož
+hodnota je výsledek dané <code>Future</code>.
+Funkci <code>get_future</code> z příkladu výše tak lze napsat stručněji:</p>
+<div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">get_future</span><span class="p">(</span><span class="n">fut</span><span class="p">):</span>
+    <span class="sd">"""Receives the value of a Future, once it's ready"""</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">await</span> <span class="n">fut</span><span class="p">)</span>
+</pre></div><p>Další vlastnost <code>Future</code> je ta, že se dá „zrušit“: pomocí <code>Future.cancel()</code>
+signalizujeme úloze, která má připravit výsledek, že už ten výsledek
+nepotřebujeme.
+Po zrušení bude <code>result()</code> způsobovat <code>CancelledError</code>.</p>
+<h2>Async funkce a Task</h2>
+<p>Používání <code>Future</code> (nebo <em>callback</em> funkcí) je poněkud těžkopádné.
+V <code>asyncio</code> se <code>Future</code> používají hlavně proto, že je na ně jednoduché
+navázat existující knihovny.
+Aplikační kód je ale lepší psát pomocí asynchronních funkcí, tak jako
+v příkladu výše.</p>
+<p>Asynchronní funkce se dají kombinovat pomocí <code>await</code> podobně jako generátory
+pomocí <code>yield from</code>.
+Nevýhoda asynchronních funkcí spočívá v tom, že na každé zavolání takové funkce
+lze použít jen jeden <code>await</code>.
+Na rozdíl od <code>Future</code> se výsledek nikam neukládá;
+jen se po skončení jednou předá.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">demo</span><span class="p">():</span>
+    <span class="n">coroutine</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'The result is:'</span><span class="p">,</span> <span class="p">(</span><span class="k">await</span> <span class="n">coroutine</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'The result is:'</span><span class="p">,</span> <span class="p">(</span><span class="k">await</span> <span class="n">coroutine</span><span class="p">))</span>  <span class="c1"># chyba!</span>
+
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">demo</span><span class="p">())</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div><p>Tenhle problém můžeme vyřešit tak, že asynchronní funkci „zabalíme“ do <code>Future</code>.
+Na to ma dokonce <code>asyncio</code> speciální funkci <code>ensure_future</code>, která:</p>
+<ul>
+<li>dostane-li asynchronní funkci, „zabalí“ ji do <code>Future</code>, a</li>
+<li>výsledek přímo naplánuje na smyčce událostí, takže se asynchronní funkce
+časem začne provádět.</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">demo</span><span class="p">():</span>
+    <span class="n">coroutine</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'The result is:'</span><span class="p">,</span> <span class="p">(</span><span class="k">await</span> <span class="n">coroutine</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'The result is:'</span><span class="p">,</span> <span class="p">(</span><span class="k">await</span> <span class="n">coroutine</span><span class="p">))</span>  <span class="c1"># OK!</span>
+</pre></div><div class="admonition note"><p>Výsledek <code>ensure_future</code> je speciální druh <code>Future</code> zvaný <code>Task</code>.
+Ten má několik vlastností navíc, ale v podstatě ho zmiňujieme jen proto,
+abyste věděli co <code>Task</code> znamená, až se vám objeví v chybové hlášce.</p>
+</div><h2>Fan-Out a Fan-In</h2>
+<p>S pomocí asynchronních funkcí můžeme nad našimi programy přemýšlet tak,
+jako by to byly „normální“ procedurálně zapsané algoritmy: máme jedno
+„vlákno“, které se provádí od začátku do konce, jen na některých místech
+(označených <code>await</code>) se provádění přeruší a zatímco náš kód čeká na výsledek
+nějaké operace, může se spustit jiný kus kódu.
+Funkce, na které je takto potřeba čekat, bývají v dokumentaci patřičně
+označeny (v síťovém programování je to většinou čtení ze socketů nebo inicializace
+či ukončení serveru).</p>
+<p>Pomocí <code>ensure_future</code> a <code>await</code> můžeme k tomu dělat něco navíc:
+rozdělit běh našeho programu na víc úloh, které se budou vykonávat „souběžně“ –
+například autor scraperu chce stáhnout několik stránek najednou
+nebo server souběžně odpovídá na několik požadavků.
+Tomuto rozdělení se říká <em>fan-out</em>.</p>
+<p>Opačná operace je <em>fan-in</em>, kdy několik úloh opět spojíme do jedné.
+Výše uvedený scraper může počkat, než jsou všechny stránky stažené –
+třeba pomocí jednoho <code>await</code> pro každý <code>Task</code>, po kterém může
+pokračovat zpracováním získaných dat.</p>
+<p>Co se týče webového serveru, může se zdát, že tady není potřeba explicitně
+počkat na výsledek každého úkolu.
+Ale není to tak. I tady je poměrně důležité na každou úlohu nastartovanou
+pomocí <code>ensure_future</code> „počkat“ pomocí např. <code>await</code> – už jen proto, abychom
+zachytili případnou výjimku.
+Neuděláme-li to, <code>asyncio</code> bude vypisovat varovné hlášky.</p>
+<h2>Asynchronní cykly a kontexty</h2>
+<p>Až budete používat některé „asynchronní“ knihovny, setkáte se pravděpodobně se dvěma
+novými konstrukcemi: <code>async for</code> a <code>async with</code>.</p>
+<p>Fungují jako jejich „ne-<code>async</code>“ varianty, jen na začátku a konci každé iterace (resp.
+na začátku a konci bloku) můžou přerušit vykonávání funkce – podobně jako <code>await</code>.</p>
+<p>Typický příklad je u databází: začátek a konec transakce i získávání jednotlivých
+řádků pravděpodobně potřebují komunikaci po síti, takže hypotetická databázová
+knihovna by se mohla používat nějak takto:</p>
+<div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">database</span><span class="o">.</span><span class="n">transaction_context</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">database</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">'UPDATE ...'</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="p">(</span><span class="k">await</span> <span class="n">database</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">'SELECT ...'</span><span class="p">)):</span>
+        <span class="n">handle</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</pre></div><h2>A další</h2>
+<p>Nakonec několik tipů, o kterých je dobré vědět.</p>
+<p>V <code>asyncio</code> najdeme synchronizační mechanismy známé z vláknového programování, např.
+<code>Lock</code> a <code>Semaphore</code> – viz <a href="https://docs.python.org/3/library/asyncio-sync.html">dokumentace</a>.</p>
+<p>Musíme-li použít blokující funkci, která např. komunikuje po síti bez <code>await</code> a která by
+tedy zablokovala i všechny ostatní úlohy, můžeme použít
+<code>loop.run_in_executor()</code>, a tím danou funkci zavolat ve vlákně nebo podprocesu, ale výsledek zpřístupnit
+pomocí <code>asyncio.Future</code>.
+Použití je opět popsáno v <a href="https://docs.python.org/3/library/asyncio-eventloop.html#executor">dokumentaci</a>.</p>
+<p>Občas vás při programování s <code>asyncio</code> zaskočí zrádná chyba.
+V takových případech je dobré zapnout <em>debug</em> režim pomocí proměnné prostředí <code>PYTHONASYNCIODEBUG=1</code>.
+V tomto režimu asyncio upozorňuje na časté chyby, do některých chybových výpisů přidává informaci o tom,
+kde aktuální <code>Task</code> vznikl, apod.
+Více informací je zase v <a href="https://docs.python.org/3/library/asyncio-dev.html#asyncio-dev">dokumentaci</a>.</p>
+<h2>Alternativní smyčky událostí</h2>
+<p>Jak bylo zmíněno na začátku, hlavní cíl <code>asyncio</code> je definovat společné rozhraní
+pro různé asynchronní knihovny, aby bylo možné např. kombinovat knihovny pro
+Tornado se smyčkou událostí v Twisted.
+Samotné <code>asyncio</code> je jen jedna z mnoha implementací tohoto rozhraní.
+Zajímavá je například knihovna <a href="https://pypi.org/project/uvloop/">uvloop</a>, která je asi 2-4× rychlejší než <code>asyncio</code>
+(ale má závislosti, které se pro součást standardní knihovny nehodí).</p>
+<p>Další zajímavá implementace je <a href="https://pypi.org/project/Quamash/">Quamash</a>, která pod standardním <code>asyncio</code> API používá
+smyčku událostí z Qt.
+Umožňuje tak efektivně zpracovávat Qt události zároveň s asynchronními funkcemi
+známými z <code>asyncio</code>.</p>
+<p><em>Event loop</em> z <code>quamash</code> je potřeba na začátku programu naimportovat a nastavit
+jako hlavní smyčku událostí, a poté ji, místo Qt-ovského <code>app.exec()</code>, spustit.
+Jednotlivé asynchronní funkce se pak používají jako v čistém <code>asyncio</code>:
+pomocí <code>asyncio.ensure_future</code>, <code>await</code>, atd.</p>
+<p>Ukázka:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">quamash</span> <span class="kn">import</span> <span class="n">QEventLoop</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>
+<span class="n">loop</span> <span class="o">=</span> <span class="n">QEventLoop</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+
+<span class="n">display</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLCDNumber</span><span class="p">()</span>
+<span class="n">display</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">'Stopwatch'</span><span class="p">)</span>
+
+<span class="n">display</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">update_time</span><span class="p">():</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">display</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="n">update_time</span><span class="p">())</span>
+
+<span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+</pre></div><h2>Komunikace</h2>
+<p>Ono <code>io</code> v <code>asyncio</code> naznačuje, že je tato knihovna dělaná především na
+vstup a výstup – konkrétně na komunikaci přes síť (případně s jinými procesy).</p>
+<p>Ke komunikaci používá <code>asyncio</code> tři úrovně abstrakce: <code>Transport</code>, <code>Protocol</code>
+a <code>Stream</code>.
+V krátkosti si je tu popíšeme; detaily pak najdete v dokumentaci (je pro nás
+totiž mnohem důležitější abyste pochopili principy, než abyste uměli konkrétní
+API, které lze dohledat v dokumentaci).</p>
+<p>Transporty a protokoly jsou postaveny na konceptech knihovny <code>Twisted</code>.</p>
+<p><code>Transport</code> zajišťuje samotné posílání bajtů mezi počítači (transportní vrstvu), kdežto
+<code>Protocol</code> implementuje nějaký aplikační protokol.
+<code>Transport</code> většinou nepíšeme sami, použijeme existující.
+V <code>asyncio</code> jsou zabudované transporty pro TCP, UDP a SSL.
+<code>Protocol</code> je pak použit pro implementaci konkrétních protokolů jako
+<code>HTTP</code>, <code>FTP</code> a podobně.
+V dokumentaci najdete podrobnější popis včetně <a href="https://docs.python.org/3/library/asyncio-protocol.html#tcp-echo-server-protocol">příkladů</a>.</p>
+<p>Kromě toho existuje i „Stream API“ založené na asynchronních funkcích.
+Většinou platí, že operace <em>otevření</em>, <em>čtení</em>, <em>flush</em> a <em>zavření</em> Streamu
+jsou asynchronní funkce (v dokumentaci označované jako <em>coroutines</em>), a je
+tedy nutné je použít s <code>await</code>; oproti tomu <em>zápis</em> asynchronní není – data
+se uloží do bufferu a pošlou se, až to bude možné.</p>
+<p>Typicky ale místo čistého <code>asyncio</code> použijeme existující knihovnu.
+Tady je příklad z knihovny <code>aiohttp</code>, která implementuje server a klienta
+pro HTTP:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">aiohttp</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="c1"># Use a a session</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="p">:</span>
+
+        <span class="c1"># Get the response (acts somewhat like a file; needs to be closed)</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+
+            <span class="c1"># Fetch the whole text</span>
+            <span class="n">html</span> <span class="o">=</span> <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">main</span><span class="p">(</span><span class="s1">'http://python.cz'</span><span class="p">))</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/intro/async/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2017/pyknihovny-brno/sessions/async/">↑ <span class="d-none d-sm-inline">Lekce: Generátory a AsyncIO</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2017/pyknihovny-brno/sessions/async/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2017-pyknihovny-brno/lessons/intro/async/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Petr Viktorin, Miro Hrončok a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

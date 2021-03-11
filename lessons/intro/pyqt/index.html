@@ -1,0 +1,672 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                GUI v Pythonu
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>GUI v Pythonu: PyQt5</h1>
+<p>Způsobů, jak dělat v Pythonu aplikace s GUI, je mnoho. Dá se použít zabudovaný, ale ošklivý Tkinter, nebo nějaký externí framework.</p>
+<p>V tomto cvičení budeme používat framework Qt, protože je multiplatformní, používá se i v jiných oblastech, než je Python,
+je dostatečně robustní a dá se na většinu systémů nainstalovat bez větších problémů.</p>
+<p>Pomocí aplikace Qt Designer se dá navíc základní kostra GUI poměrně jednoduše <em>naklikat</em>, takže není nutné psát layout aplikace v kódu.</p>
+<h2>Instalace</h2>
+<p>Na tomto cvičení budete potřebovat balíček PyQt5 a aplikaci Qt5 Designer.
+Pokud budete používat svůj počítač, prosíme vás o instalaci již předem, na cvičení toho bude opravdu hodně a nemůžeme si dovolit plýtvat časem.</p>
+<h3>PyQt5</h3>
+<p>Pokud máte Python alespoň 3.5 a jednu z platforem, pro které je připraven <a href="https://pypi.org/project/PyQt5/">wheel na PyPI</a>, stačí udělat:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span> <span class="gp">$ </span>python -m pip install --upgrade pip
+<span class="gp gp-VirtualEnv">(__venv__)</span> <span class="gp">$ </span>python -m pip install PyQt5
+</pre></div><p>Pro starší verzi Pythonu nebo 32bitový Linux to ale nebude fungovat.
+V takovém případě můžete PyQt5 zkusit najít v balíčkovacím systému vaší distribuce (např. balíček <code>python3-qt5</code> ve Fedoře nebo <code>python3-pyqt5</code> v Debianu).
+Virtualenv pak může vytvořit s přepínačem <code>--system-site-packages</code>, který zajistí, že i z virtualenvu uvidíte PyQt5 nainstalované z distribučního balíčku.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python3 -m venv --system-site-packages __venv__
+</pre></div><p>Pokud nic z toho nepomůže, můžete zkusit přeložit PyQt5 ze <a href="https://www.riverbankcomputing.com/software/pyqt/download5">zdrojových souborů</a>
+(<a href="http://pyqt.sourceforge.net/Docs/PyQt5/installation.html#building-and-installing-from-source">návod</a>).</p>
+<p><em>První aplikace</em> níže by vám měla fungovat.</p>
+<div class="admonition note"><p>Pokud narazíte na chybu <code>Could not find or load the Qt platform plugin "xcb"</code>, podívejte se do <a href="https://github.com/cvut/MI-PYT/issues/57">naší issue</a>.</p>
+</div><h3>Qt5 Designer</h3>
+<p>Na Linuxu najdete Qt5 Designer v balíčkách, třeba <code>qt5-designer</code> na Fedoře nebo <code>qttools5-dev-tools</code> na Debianu.</p>
+<p>Na Windows (i na Macu) si můžete <a href="https://www.qt.io/download-open-source/#section-2">stáhnout</a> instalátor Qt 5, který (doufáme) nainstaluje i Designer.</p>
+<p>Pokud používáte na Macu <code>homebrew</code>, můžete to udělat i takto:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>brew install qt5
+<span class="gp">$ </span>brew linkapps qt5
+</pre></div><p>Existují i Python wheely <a href="https://pypi.python.org/pypi/pyqt5-tools">pyqt5-tools</a> pro Windows obsahující Qt5 Designer.
+Ten je pak potřeba pro spuštění dohledat v nainstalované lokaci.</p>
+<h3>NumPy</h3>
+<p>Do virtuálního prostředí s PyQt5 si nainstalujte i NumPy:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python -m pip install numpy
+</pre></div><h2>První aplikace</h2>
+<p>Napište si první aplikaci, ať vidíte, jak kód v PyQt vypadá.
+Detaily toho, jak to funguje, si ukážeme později.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>
+
+<span class="n">button</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">"Click to Exit"</span><span class="p">)</span>
+<span class="n">button</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">"Goodbye World"</span><span class="p">)</span>
+<span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">quit</span><span class="p">)</span>
+
+<span class="n">button</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+</pre></div><h2>O Qt, PyQt a PySide</h2>
+<p><a href="https://www.qt.io/">Qt</a> je aplikační framework napsaný v C++, který zjednodušuje psaní multiplatformních aplikací (od počítačů s Linuxem, Mac OS či Windows po různá vestavěná zařízení).</p>
+<p><a href="https://riverbankcomputing.com/software/pyqt">PyQt</a> je knihovna, která umožňuje použít Qt z Pythonu.
+Na rozdíl od samotného Qt je licencovaná pod <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU GPL v3</a>, která (stručně řečeno) vyžaduje, aby programy napsané s použitím PyQt byly šířeny pod stejnou licencí a se zdrojovým kódem.
+Tedy: kdokoliv, kdo dostane kopii programu, musí mít možnost dostat odpovídající zdrojový kód a má možnost tento kód dál šířit pod stejnou licencí.</p>
+<p>Pokud by se vám tato licence nelíbila, je možnost použít <a href="https://wiki.qt.io/PySide">PySide</a>, které má permisivnější licenci a téměř stejné API jako PyQt, ale není tak stabilní.</p>
+<h3>Moduly Qt</h3>
+<p>Qt je rozděleno na několik tzv. <a href="http://doc.qt.io/qt-5/qtmodules.html">modulů</a>.
+Pro grafická uživatelská rozhraní (GUI), kterými se budeme zabývat, použijeme hlavně <a href="http://doc.qt.io/qt-5/qtgui-index.html">QtGui</a> a <a href="http://doc.qt.io/qt-5/qtwidgets-index.html">QtWidgets</a>.</p>
+<p>Dále je tu modul <a href="http://doc.qt.io/qt-5/qtcore-index.html">QtCore</a>, který obsahuje mj. základní datové typy jako QString a QList (které PyQt
+automaticky převádí na pythonní ekvivalenty a zpět) nebo třeba <a href="http://doc.qt.io/qt-5/qrect.html">QRect</a> – abstraktní obdélník.</p>
+<p>Další moduly jsou nadstavby od <a href="http://doc.qt.io/qt-5/qtsvg-index.html">vykreslování SVG</a> nebo <a href="http://doc.qt.io/qt-5/qtmultimedia-index.html">práci s multimédii</a> (které se můžou hodit) po
+třeba práci s <a href="http://doc.qt.io/qt-5/qtsql-index.html">SQL</a> a <a href="http://doc.qt.io/qt-5/qtxml-index.html">XML</a> nebo <a href="http://doc.qt.io/qt-5/qtnetwork-index.html">síťovou komunikaci</a>, kde je pro Python pohodlnější použít jiné knihovny.</p>
+<h2>Specifika PyQt</h2>
+<p>Ačkoli se Qt dá použít z Pythonu, bohužel zjistíte, že ne všechno funguje a vypadá tak, jako kdyby to byla knihovna od základů napsaná pro Python.
+Tady jsou některé zvláštnosti, na které se můžete připravit.</p>
+<h3>Jména a dokumentace</h3>
+<p>Qt pojmenovává funkce, metody a atributy konvencí <code>camelCase</code>, místo pythonistického <code>snake_case</code>.
+PyQt tuto konvenci nemění: je užitečnější používat identická jména, a kromě toho knihovna PyQt vznikla ještě před PEP 8.</p>
+<p>Hledáte-li dokumentaci, doporučuji zadat do vyhledávače <code>qt5 &lt;hledaný objekt&gt;</code>.
+Dostanete se tak na dokumentaci pro C++ (např. <a href="http://doc.qt.io/qt-5/qobject.html">QObject</a>).
+Hledáte-li <code>pyqt5 &lt;hledaný objekt&gt;</code>, dostanete se k dokumentaci pro Python, která ale většinou obsahuje doslova to samé
+co verze pro C++ (např. <a href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtcore/qobject.html">pro QObject</a>).
+Občas však můžete narazit na nekompletní dokumentaci (např. <a href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qabstractbutton.html">pro QAbstractButton</a>).</p>
+<p>Rozdíly mezi C a pythonní verzí jsou většinou intuitivní (např. None místo NULL), ale jsou popsány
+v <a href="http://pyqt.sourceforge.net/Docs/PyQt5/index.html">dokumentaci PyQt</a>.</p>
+<h3>Atributy</h3>
+<p>Qt zásadně používá pro přístup k atributům objektů funkce.
+Funkce pro čtení se typicky jmenuje podle atributu, funkce pro nastavení má předponu <code>set</code>.
+Namísto pythonního <code>c = obj.color</code> a <code>obj.color = ...</code> tedy použijeme <code>c = obj.color()</code> a <code>obj.setColor(...)</code>.</p>
+<h3>Správa paměti</h3>
+<p>Python a C++/Qt mají, bohužel, rozdílný přístup ke správě paměti.
+Python používá <em>reference counting</em> a <em>garbage collection</em>.
+C++ má objekty s destruktory, což Qt zjednodušuje (alespoň pro C++) <em>stromem vlastnictví</em>.</p>
+<p>Základní třída v Qt, ze které dědí téměř všechny ostatní, je QObject.
+Ten má seznam potomků (children), o které se „stará“, a když uvolníme rodiče, uvolní se rekurzivně i všichni potomci.
+Z Pythonu pak můžeme dostat chybu <code>wrapped C/C++ object has been deleted</code>.
+Jinak ale kombinace QObject a pythonních objektů funguje dobře.</p>
+<p>Větší problémy můžou nastat s pomocnými objekty, které nedědí z QObject a nemají potřebné „dynamické“ vlastnosti.
+Takový objekt doporučujeme používat jen v rámci jedné funkce (t.j. neukládat si ho jinde), pokud si nejste jistí že
+ho „nevlastníte“ i ve smyslu C++/Qt.</p>
+<p>Občas se stane, že program spadne pro chybu jako nepovolený přístup do paměti.
+Bez hlubší znalosti Qt a PyQt se taková chyba odstraňuje poměrně těžko, ale vaše znalosti C++ (z jiných kurzů)
+a CPython C API (z <a href="/lessons/intro/cython/">minula</a>) vám v tom pomůžou.
+Doporučujeme dělat malé commity a psát jednoduchý kód.</p>
+<h3>Smyčka událostí, signály a sloty</h3>
+<p>Qt funguje na principu smyčky událostí (event loop).
+Metoda <code>QApplication.exec</code> obsahuje v podstatě nekonečnou smyčku, která čeká na externí <em>události</em> (klik myši,
+žádost OS o vykreslení okna atd.) a na jejich základě volá příslušné funkce – ať už interní
+nebo námi definované.</p>
+<p>Pro komunikaci mezi objekty v rámci aplikace pak Qt používá mechanismus <em>signálů a slotů</em> (variantu <em>observer pattern</em>).
+Signál je vyslán (<em>emitted</em>) při události jako kliknutí na tlačítko, výběr položky z menu, zavření okna atp.
+K signálu může být připojeno několik slotů, což jsou funkce, které se po vyslání signálu zavolají.
+Kód, který vysílá signál, obecně neví o tom, kolik slotů je připojeno (a jsou-li nějaké).</p>
+<p>V C++ jsou signály a sloty vždy staticky nadefinované na nějaké třídě, která dědí z <code>QObject</code>.
+V PyQt takto musí být nadefinovány jen signály; za slot poslouží jakákoli pythonní funkce.</p>
+<p>V příkladu výše jsme připojili signál <code>clicked</code> tlačítka na slot <code>quit</code> aplikace.
+Stejně bychom mohli připojit jakoukoli funkci/metodu, která bere správný počet argumentů – v následujícím případě nula:</p>
+<div class="highlight"><pre><span></span>    <span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">'Exiting program'</span><span class="p">))</span>
+</pre></div><p>V C++ je časté přetěžování funkcí (včetně signálů), což Pythonistům občas ztěžuje život.
+PyQt většinou automaticky vybere variantu signálu podle připojené funkce, ale ne vždy je to možné.</p>
+<p>Ukažme si to na následujícím kódu, který napojuje funkci <code>print</code> na dvě varianty signálu <a href="http://doc.qt.io/qt-5/qcombobox.html#activated">QComboBox.activated</a>.
+Ten se vyšle při výběru položky ze seznamu buď jako <code>QComboBox.activated[int]</code>, kdy předává index vybrané položky,
+nebo jako <code>QComboBox.activated[str]</code>, kdy předává text položky:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>
+
+<span class="c1"># QComboBox - políčko pro výběr z několika možností</span>
+<span class="n">box</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">()</span>
+<span class="n">box</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s1">'First Option'</span><span class="p">)</span>
+<span class="n">box</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s1">'Second Option'</span><span class="p">)</span>
+
+<span class="c1"># Základní varianta napojí na activated[int]</span>
+<span class="n">box</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
+
+<span class="c1"># Výběr varianty signálu pomocí hranatých závorek</span>
+<span class="n">box</span><span class="o">.</span><span class="n">activated</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
+<span class="n">box</span><span class="o">.</span><span class="n">activated</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
+
+<span class="n">box</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+</pre></div><h2>Skládání GUI</h2>
+<p>Základní způsob, jak v Qt vytvářet grafické rozhraní, je skládání funkčních prvků (<em>widgets</em>) do
+hierarchie oken, skupin a panelů.</p>
+<p>Základní třída pro funkční prvky, <a href="http://doc.qt.io/qt-5/qwidget.html">QWidget</a>, dědí z už zmíněného <code>QObject</code>.
+Každý QObject může obsahovat potomky (children), a v případě QWidget se potomci vykreslují
+jako součást svého rodiče.
+Navíc může mít každý widget tzv. <em>layout</em>, který určuje pozici a velikost widgetů, které jsou
+do něj přidané.</p>
+<p>Ukažme to v kódu:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>
+
+<span class="c1"># Hlavní okno</span>
+<span class="n">main</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+<span class="n">main</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">'Hello Qt'</span><span class="p">)</span>
+
+<span class="c1"># Layout pro hlavní okno</span>
+<span class="n">layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+<span class="n">main</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+
+<span class="c1"># Nápis</span>
+<span class="n">label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="s1">'Click the button to change me'</span><span class="p">)</span>
+<span class="c1"># Přidáním do layoutu se nápis automaticky stane potomkem hlavního okna</span>
+<span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+<span class="c1"># Tlačítko</span>
+<span class="n">button</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s1">'Click me'</span><span class="p">)</span>
+<span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+
+<span class="c1"># Funkcionalita</span>
+<span class="k">def</span> <span class="nf">change_label</span><span class="p">():</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">'Good job. +100 points.'</span><span class="p">)</span>
+
+<span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">change_label</span><span class="p">)</span>
+
+<span class="c1"># Spuštění</span>
+<span class="n">main</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+</pre></div><p>Zabudovaných <a href="http://doc.qt.io/qt-5/layout.html#horizontal-vertical-grid-and-form-layouts">layoutů</a> i <a href="https://doc.qt.io/qt-5/gallery.html">widgetů</a> existuje spousta, jednodušší
+programy stačí „poskládat“ z nich a napojit je na logiku.
+Pro složitější programy jsou pak možnosti, jak si widgety přizpůsobit.</p>
+<h2>Qt Designer</h2>
+<p>Na tomto cvičení si připravíme aplikaci pro editaci dlaždicových map (<em>tile maps</em>)
+– obrázků složených z omezené nabídky čtverečků („dlaždic“),
+známých mj. ze <a href="https://www.google.cz/search?q=game+boy+overworld+map&amp;tbm=isch">starých her</a>.</p>
+<p>Aplikace bude mít část s mapou, paletu pro výběr dlaždice ke kreslení a navíc
+menu a panel nástrojů pro akce jako ukládání a otevírání souborů:</p>
+<p><img src="/lessons/intro/pyqt/static/basic-screenshot.png" alt="Obrázek aplikace"></p>
+<p>Vytvářet GUI v kódu je poměrně neefektivní, a tak existuje nástroj, kde si okna můžeme „naklikat“.
+Jmenuje se Qt Designer a měli byste ho mít nainstalovaný.
+Na školních počítačích se spouští příkazem <code>designer -qt=5</code>.</p>
+<p>Spustíme Designer a vytvoříme v něm nové <em>Main Window</em>.
+Do něj si z palety přidáme <em>Scroll Area</em> a doprava vedle něj <em>List Widget</em>.
+Poté aplikujeme layout: na volnou plochu okna klikneme pravým tlačítkem a vybereme <em>Lay Out ‣ Horizontally</em>.
+(Dá se to udělat i tlačítkem v liště.)</p>
+<p>Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> lze zkontrolovat, jak okno vypadá a jak reaguje na změny velikosti.</p>
+<p>Potom přidáme položku do menu: místo <em>Type Here</em> napíšeme <em>Map</em> a pod něj podobně přidáme položky <em>New</em> a <em>Quit</em>.</p>
+<p>V panelu <em>Property Editor</em> jde měnit vlastnosti jednotlivých prvků.
+U skrolovacího okna nastavíme <em>objectName</em> na <em>scrollArea</em>.
+U <em>ListWidget</em> nastavíme <em>objectName</em> na <em>palette</em> a <em>sizePolicy ‣ Horizontal</em> na <em>Preferred</em>.
+V panelu <em>ActionEditor</em> najdeme položky pro <em>New</em> a <em>Quit</em> a nastavíme jim <em>objectName</em> na <em>actionNew</em>, resp. <em>actionQuit</em>.</p>
+<p>Potom přes pravé tlačítko na nevyužité ploše okna přidáme lištu nástrojů (<em>Add Toolbar</em>) a z panelu
+<em>Action Editor</em> do něj akci <em>actionQuit</em> přetáhneme.</p>
+<p>Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> opět zkontrolujeme, jak okno vypadá a jak po nastavení <em>sizePolicy</em> reaguje na změny velikosti.</p>
+<p>V Designeru jde i napojovat signály. V panelu <em>Signal/Slot Editor</em> přidáme tento řádek:</p>
+<ul>
+<li>Sender: <code>actionQuit</code></li>
+<li>Signal: <code>triggered()</code></li>
+<li>Receiver: <code>MainWindow</code></li>
+<li>Slot: <code>close()</code></li>
+</ul>
+<p>Pomocí <kbd>Ctrl</kbd>+<kbd>R</kbd> jde ověřit, že zavírání okna funguje.</p>
+<p>Návrh okna uložíme do souboru <code>mainwindow.ui</code>.</p>
+<p>Soubor s návrhem jde převést na pythonní zdrojový soubor pomocí programu <code>pyuic5</code> nebo
+ho vždy načíst přímo z programu.
+My použijeme druhou variantu, je však dobré o <code>pyuic5</code> vědět, kdybyste někdy potřebovali
+základ pro vytváření UI v kódu (např. na vytvoření sady několika podobných tlačítek v cyklu).</p>
+<p>Načíst <code>.ui</code> soubor z programu do předpřipraveného okna <code>QMainWindow</code> lze pomocí funkce <a href="http://pyqt.sourceforge.net/Docs/PyQt5/designer.html#the-uic-module">uic.loadUi</a>:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">uic</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>
+
+    <span class="n">window</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'mainwindow.ui'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">uic</span><span class="o">.</span><span class="n">loadUi</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+
+    <span class="n">window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+
+<span class="n">main</span><span class="p">()</span>
+</pre></div><h2>Vlastní widget - Grid</h2>
+<p>Qt neobsahuje předpřipravený widget na dlaždicové mapy. Musíme si tedy vyrobit vlastní.</p>
+<p>Mapu budeme reprezentovat jako NumPy matici (viz <a href="/lessons/intro/numpy/">lekce o NumPy</a>).
+Zatím budeme používat dva druhy dlaždic: trávu (v matici reprezentovanou jako 0) a zeď (-1).</p>
+<p>Velikost widgetu se zadává v pixelech. Musíme ho udělat dostatečně velký, aby se do něj vešla všechna políčka mapy.
+Velikost jednoho políčka v pixelech zvolíme pro jednoduchost konstantou.</p>
+<p>Souřadnice v Qt jsou v pixelech ve formě <code>(x, y)</code> – klasicky jak jsme zvyklí, <code>x</code> je horizontální souřadnice –
+kdežto matice je uložená po políčkách <code>(řádek, sloupec)</code>.
+Abychom se v tom neztratili, je dobré hned ze začátku udělat funkce pro převod mezi souřadnými systémy
+a důsledně rozlišovat <code>(x, y)</code> vs. <code>(row, column)</code>.</p>
+<div class="highlight"><pre><span></span><span class="n">CELL_SIZE</span> <span class="o">=</span> <span class="mi">32</span>
+
+
+<span class="k">def</span> <span class="nf">pixels_to_logical</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">y</span> <span class="o">//</span> <span class="n">CELL_SIZE</span><span class="p">,</span> <span class="n">x</span> <span class="o">//</span> <span class="n">CELL_SIZE</span>
+
+
+<span class="k">def</span> <span class="nf">logical_to_pixels</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">column</span> <span class="o">*</span> <span class="n">CELL_SIZE</span><span class="p">,</span> <span class="n">row</span> <span class="o">*</span> <span class="n">CELL_SIZE</span>
+
+
+<span class="k">class</span> <span class="nc">GridWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>  <span class="c1"># musíme zavolat konstruktor předka</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">array</span>
+        <span class="c1"># nastavíme velikost podle velikosti matice, jinak je náš widget příliš malý</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">logical_to_pixels</span><span class="p">(</span><span class="o">*</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMinimumSize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMaximumSize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
+</pre></div><p><code>GridWidget</code> vložíme do <code>QScrollArea</code>, kterou jsme si vytvořili v Qt Designeru:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+
+    <span class="o">...</span>
+
+    <span class="c1"># mapa zatím nadefinovaná rovnou v kódu</span>
+    <span class="n">array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+    <span class="n">array</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># nějaká zeď</span>
+
+    <span class="c1"># získáme oblast s posuvníky z Qt Designeru</span>
+    <span class="n">scroll_area</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">,</span> <span class="s1">'scrollArea'</span><span class="p">)</span>
+
+    <span class="c1"># dáme do ní náš grid</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">GridWidget</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+    <span class="n">scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+
+    <span class="o">...</span>
+</pre></div><p>Po spuštění aplikace zatím nic nového neuvidíte, maximálně se trochu změní posuvníky.
+Potřebujeme ještě zařídit, aby se data z matice vykreslovala do gridu.
+Nejlepší je vykreslovat, kdykoliv nás OS (nebo Qt) vyzve, že potřebuje kus okna překreslit:
+při prvním zobrazení, odminimalizování okna, ukázání nové části mapy přes scrollování.
+Také je zbytečné vykreslovat obrázky mimo oblast, kterou je vidět na obrazovce.</p>
+<p>K tomuto účelu nám poslouží událost (<em>event</em>).
+Jak bylo řečeno v úvodu, na rozdíl od signálů a slotů, které zajišťují komunikaci v rámci aplikace,
+události vznikají mimo aplikaci.
+Jde například o kliknutí myší (<a href="http://doc.qt.io/qt-5/qwidget.html#mousePressEvent">mouse*Event</a>), vstup z klávesnice (<a href="http://doc.qt.io/qt-5/qwidget.html#keyPressEvent">key*Event</a>)
+nebo žádost OS o překreslení okna (<a href="http://doc.qt.io/qt-5/qwidget.html#paintEvent">paintEvent</a>).
+Na poslední jmenovanou událost, <code>paintEvent</code>, teď budeme reagovat.</p>
+<p>Události se obsluhují předefinováním příslušné metody, která jako argument bere objekt popisující
+danou událost.</p>
+<p>V rámci reakce na událost <code>paintEvent</code> můžeme používat <a href="http://doc.qt.io/qt-5/qpainter.html">QPainter</a>, objekt, který generalizuje kreslení
+na různé „povrchy“ jako widgety, obrázky, nebo i instrukce pro tiskárnu.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">uic</span>
+
+
+<span class="k">class</span> <span class="nc">GridWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span>  <span class="c1"># získáme informace o překreslované oblasti</span>
+
+        <span class="c1"># zjistíme, jakou oblast naší matice to představuje</span>
+        <span class="c1"># nesmíme se přitom dostat z matice ven</span>
+        <span class="n">row_min</span><span class="p">,</span> <span class="n">col_min</span> <span class="o">=</span> <span class="n">pixels_to_logical</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">(),</span> <span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">())</span>
+        <span class="n">row_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">row_min</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">col_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">col_min</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">row_max</span><span class="p">,</span> <span class="n">col_max</span> <span class="o">=</span> <span class="n">pixels_to_logical</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">right</span><span class="p">(),</span> <span class="n">rect</span><span class="o">.</span><span class="n">bottom</span><span class="p">())</span>
+        <span class="n">row_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">row_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">col_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">col_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">painter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># budeme kreslit</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">row_min</span><span class="p">,</span> <span class="n">row_max</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">col_min</span><span class="p">,</span> <span class="n">col_max</span><span class="p">):</span>
+                <span class="c1"># získáme čtvereček, který budeme vybarvovat</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">logical_to_pixels</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+                <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRectF</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">CELL_SIZE</span><span class="p">,</span> <span class="n">CELL_SIZE</span><span class="p">)</span>
+
+                <span class="c1"># šedá pro zdi, zelená pro trávu</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">115</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">115</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+                <span class="c1"># vyplníme čtvereček barvou</span>
+                <span class="n">painter</span><span class="o">.</span><span class="n">fillRect</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QBrush</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+</pre></div><p>Nyní by již mapa měla být v okně vidět barevně.</p>
+<h3>Obrázky</h3>
+<p>Protože barvičky jsou příliš nudné, přidáme do mapového widgetu obrázky.</p>
+<p>Veškerou, ke cvičení i k úkolu potřebnou, grafiku najdete na <a href="https://github.com/pyvec/naucse.python.cz/tree/master/lessons/intro/pyqt/static/pics">GitHubu</a>.
+Je k dispozici pod public domain (tj. „dělej si s tím, co chceš“), pochází ze studia <a href="http://kenney.nl/">Kenney</a>
+a je (společně se další volně licencovanou grafikou) ke stažení z <a href="http://opengameart.org/users/kenney">OpenGameArt.org</a>.</p>
+<p>Zatím budeme potřebovat jen dva obrázky:</p>
+<ul>
+<li><a href="/lessons/intro/pyqt/static/pics/grass.svg">grass.svg</a></li>
+<li><a href="/lessons/intro/pyqt/static/pics/wall.svg">wall.svg</a></li>
+</ul>
+<p>Nejprve si načteme SVG soubory jako objekty <code>QSvgRenderer</code>:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtSvg</span><span class="p">,</span> <span class="n">uic</span>
+
+<span class="n">SVG_GRASS</span> <span class="o">=</span> <span class="n">QtSvg</span><span class="o">.</span><span class="n">QSvgRenderer</span><span class="p">(</span><span class="s1">'grass.svg'</span><span class="p">)</span>
+<span class="n">SVG_WALL</span> <span class="o">=</span> <span class="n">QtSvg</span><span class="o">.</span><span class="n">QSvgRenderer</span><span class="p">(</span><span class="s1">'wall.svg'</span><span class="p">)</span>
+</pre></div><p>A poté je na správných místech vyrendrujeme:</p>
+<div class="highlight"><pre><span></span>                <span class="o">...</span>
+                <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRectF</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">CELL_SIZE</span><span class="p">,</span> <span class="n">CELL_SIZE</span><span class="p">)</span>
+
+                <span class="c1"># podkladová barva pod poloprůhledné obrázky</span>
+                <span class="n">white</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+                <span class="n">painter</span><span class="o">.</span><span class="n">fillRect</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QBrush</span><span class="p">(</span><span class="n">white</span><span class="p">))</span>
+
+                <span class="c1"># trávu dáme všude, protože i zdi stojí na trávě</span>
+                <span class="n">SVG_GRASS</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">rect</span><span class="p">)</span>
+
+                <span class="c1"># zdi dáme jen tam, kam patří</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">SVG_WALL</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">rect</span><span class="p">)</span>
+</pre></div><h2>Model/View</h2>
+<p>Nyní trochu odbočíme a povíme si krátce o dalším podsystému Qt: o modelech.</p>
+<p>Qt obsahuje framework, který mapuje informace do podoby tabulek, seznamů nebo obecných stromů.
+Vzniklé modely se potom dají zobrazit ve specializovaných widgetech.
+Samotná data můžou být uložena kdekoli – v paměti, SQL databázi, souborech a podobně.
+Dokonce nemusí být všechna dostupná: existuje vestavěný model pro souborový systém,
+který se dá zobrazit aniž by se procházely všechny soubory.
+Když je informace potřeba, model se postará o její načtení.
+Pomocí modelů a modelových widgetů lze informace i měnit, a pokud je model
+zobrazen ve více widgetech zároveň, změny se projeví ve všech.</p>
+<p>Obecné modely je bohužel relativně obtížné implementovat v Pythonu, protože používají třídy,
+které nedědí z QObject, takže je potřeba sledovat, jestli je „vlastní“ Python nebo C++.
+Naštěstí ale existují widgety se zabudovanými modely, které obsahují i samotná data.
+Tyto modely je složitější napojit na existující aplikační logiku, ale pro většinu účelů postačí.</p>
+<p>O obecných modelech si můžete přečíst v <a href="http://doc.qt.io/qt-5/model-view-programming.html">dokumentaci</a>.</p>
+<h2>QListWidget - Paleta</h2>
+<p>Jeden z widgetů se zabudovaným modelem je <code>QListWidget</code>, který umí spravovat a zobrazovat
+nějaký seznam.
+My jsme si v Qt Designeru připravili <code>QListWidget</code> s názvem <code>palette</code>, který použijeme
+jako paletu jednotlivých dílků, které budeme moci vkládat do mapy.
+Položky se do tohoto modelu přidávají následovně:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="o">...</span>
+
+    <span class="c1"># získáme paletu vytvořenou v Qt Designeru</span>
+    <span class="n">palette</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">,</span> <span class="s1">'palette'</span><span class="p">)</span>
+
+    <span class="n">item</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">(</span><span class="s1">'Grass'</span><span class="p">)</span>  <span class="c1"># vytvoříme položku</span>
+    <span class="n">icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">'grass.svg'</span><span class="p">)</span>  <span class="c1"># ikonu</span>
+    <span class="n">item</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>  <span class="c1"># přiřadíme ikonu položce</span>
+    <span class="n">palette</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>  <span class="c1"># přidáme položku do palety</span>
+</pre></div><p>Stejným způsobem lze do palety přidat další položky: kromě trávy budeme na toto
+cvičení potřebovat i stěnu.
+Protože v úkolu bude položek více, je lepší si na to vytvořit funkci či metodu.
+To necháme na vás.</p>
+<p>Zatím jsme vytvořili paletu, ve které uživatel může položky vybírat.
+Výběr položky aktivuje signál <code>itemSelectionChanged</code>, na který můžeme
+navázat volání funkce.
+(Pokud bychom měli pod kontrolou třídu widgetu, jako tomu je u třídy <code>Grid</code>,
+mohli bychom místo toho i předefinovat metodu <code>itemSelectionChanged()</code>.)</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">item_activated</span><span class="p">():</span>
+        <span class="sd">"""Tato funkce se zavolá, když uživatel zvolí položku"""</span>
+
+        <span class="c1"># Položek může obecně být vybráno víc, ale v našem seznamu je to</span>
+        <span class="c1"># zakázáno (v Designeru selectionMode=SingleSelection).</span>
+        <span class="c1"># Projdeme "všechny vybrané položky", i když víme že bude max. jedna.</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">palette</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">():</span>
+            <span class="n">row_num</span> <span class="o">=</span> <span class="n">palette</span><span class="o">.</span><span class="n">indexFromItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">row_num</span><span class="p">)</span>
+
+    <span class="n">palette</span><span class="o">.</span><span class="n">itemSelectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">item_activated</span><span class="p">)</span>
+</pre></div><p>Nyní, když uživatel zvolí položku, vypíše se do konzole její pořadí.
+Nás by ale spíš zajímalo, jak bude tato položka reprezentována v matici s mapou.
+K položce v paletě můžeme uložit informace pomocí <code>item.setData(&lt;role&gt;, &lt;data&gt;)</code>.
+Rolí pro informace je <a href="http://doc.qt.io/qt-5/qt.html#ItemDataRole-enum">spousta</a> a několik z nich Qt používá pro vykreslování.
+Pro vlastní data můžeme použít <code>QtCore.Qt.UserRole</code>.
+V případě potřeby ukládat více dat můžeme dále zvolit <code>QtCore.Qt.UserRole + 1</code> atd.
+Pro případ, že budeme potřebovat rolí víc, je dobré si je vhodně pojmenovat.</p>
+<div class="highlight"><pre><span></span><span class="n">VALUE_ROLE</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">palette</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>  <span class="c1"># přidáme položku do palety</span>
+    <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">VALUE_ROLE</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># přiřadíme jí data</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">item_activated</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">palette</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">VALUE_ROLE</span><span class="p">))</span>  <span class="c1"># čteme data stejné role z položky</span>
+</pre></div><p>Nyní byste měli mít v paletě trávu a stěnu s patřičnými čísly (<code>0</code> a <code>-1</code>), které se vypisují do konzole při zvolení položky.</p>
+<p>Nakonec si číslo místo vypisování uložíme do gridu, abychom ho mohli později použít.</p>
+<div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">item_activated</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">palette</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">():</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">VALUE_ROLE</span><span class="p">)</span>
+</pre></div><h2>Klikání do gridu</h2>
+<p>Nyní nezbývá nic jiného, než pomocí klikání nanášet zvolené dílky do mapy.
+K tomu opět použijeme událost, tentokrát událost kliknutí, tedy <code>mousePressEvent</code>.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">GridWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="c1"># převedeme klik na souřadnice matice</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="o">=</span> <span class="n">pixels_to_logical</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span><span class="p">())</span>
+
+        <span class="c1"># Pokud jsme v matici, aktualizujeme data</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">row</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">column</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span>
+
+            <span class="c1"># tímto zajistíme překreslení widgetu v místě změny:</span>
+            <span class="c1"># (pro Python 3.4 a nižší volejte jen self.update() bez argumentů)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">*</span><span class="n">logical_to_pixels</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">),</span> <span class="n">CELL_SIZE</span><span class="p">,</span> <span class="n">CELL_SIZE</span><span class="p">)</span>
+</pre></div><div class="admonition note"><p>Zde víme, že kliknutí může změnit vykreslenou mapu pouze v místě kliknutí.
+Pokud by ale kliknutí na určité políčko mohlo změnit obsah mapy někde jinde,
+je lepší zavolat <code>self.update()</code> bez argumentů a říct tak systému, že se má překreslit celý widget.</p>
+</div><p>Protože po spuštění aplikace není zvolena žádná položka a <code>self.selected</code> není definován, je rozumné prostě nějakou položku zvolit:</p>
+<div class="highlight"><pre><span></span><span class="c1"># Za přidáním položek do palety a napojení signálu</span>
+<span class="n">palette</span><span class="o">.</span><span class="n">setCurrentRow</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div><h3>Více tlačítek myši</h3>
+<p>Můžete si vyzkoušet, že se mapa mění při použití jakéhokoliv tlačítka myši.
+Je to proto, že <code>mousePressEvent</code> se stane, kdykoli na widgetu stiskneme libovolné tlačítko.
+Pokud bychom chtěli řešit pouze levé (primární) tlačítko, můžeme zjistit, které tlačítko událost vyvolalo:</p>
+<div class="highlight"><pre><span></span>            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">*</span><span class="n">logical_to_pixels</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">),</span> <span class="n">CELL_SIZE</span><span class="p">,</span> <span class="n">CELL_SIZE</span><span class="p">)</span>
+</pre></div><p>Na pravé tlačítko myši můžeme namapovat funkci mazání:</p>
+<div class="highlight"><pre><span></span>            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">RightButton</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div><h3>Tažení myši</h3>
+<p>Pro splnění úkolu bude stačit objekty mazat a klást pomocí klikání na jednotlivá políčka.
+Pokud však chcete poskytnout uživateli větší komfort, prozkoumejte další <a href="http://doc.qt.io/qt-5/qwidget.html">události</a>
+a můžete políčka nanášet/mazat i při kliknutí a táhnutí.
+(Možná tu narazíte na problém, kdy se při příliš rychlém pohybu myši generují události
+pro body příliš daleko od sebe.
+Když program nestíhá, OS nebo Qt spojuje víc událostí pohybu myši dohromady a posílá
+jen jednu poslední.
+Jednotlivé body můžete spojit čárou pomocí knihovny <a href="https://pypi.org/project/bresenham/">bresenham</a>.)</p>
+<h2>Menu a modální dialog</h2>
+<p>Naše aplikace bude umět vytvořit novou, prázdnou mapu.
+Ukážeme si, jak vytvořit modální dialog pro volby (šířka a výška nové mapy).
+„Modální dialog“ znamená okno, které musí uživatel zavřít, než může pracovat se zbytkem aplikace.</p>
+<p>Layout okna nejprve naklikáme v Qt Designeru:</p>
+<ol>
+<li>Po spuštění zvolíme <em>Dialog with Buttons Bottom</em> a <em>Create</em>.</li>
+<li>Přes pravé tlačítko pro dialog zvolíme <em>Lay Out ‣ Vertically</em>.</li>
+<li>Nad tlačítka <em>Cancel</em> a <em>OK</em> přetáhneme z <em>Widet Box</em> <em>Form Layout</em> (layouty lze takto přímo vnořovat).</li>
+<li>Do něj přetáhneme postupně dvakrát <em>Label</em> a <em>Spin Box</em>, abychom vytvořili formulář.</li>
+<li>Přejmenujeme v panelu <em>Property Editor</em> jednotlivé přidané položky tak, aby dávaly v kódu smysl (<code>widthBox</code>, <code>heightBox</code>).</li>
+<li>Poklikáním na <em>Labely</em> změníme jejich text.</li>
+<li>Nastavíme v panelu <em>Property Editor</em> rozumné limity a výchozí hodnoty pro <em>Spin Boxy</em>.</li>
+<li>Okno případně zmenšíme, aby nebylo zbytečně velké.</li>
+<li>V menu zvolíme <em>Edit ‣ Edit Buddies</em> a táhnutím z <em>Labelu</em> na <em>Spin Box</em> nastavíme, ke kterému prvku se <em>Label</em> vztahuje.</li>
+<li>V menu zvolíme <em>Edit ‣ Edit Tab Order</em> a zkontrolujeme, že pořadí, ve kterém bude prvky vybírat klávesa <code>Tab</code>, je rozumné.</li>
+<li>Můžeme se vrátit zpět na <em>Edit ‣ Edit Widgets</em>.</li>
+<li>Dialog uložíme jako <code>newmaze.ui</code>.</li>
+</ol>
+<p>Poté připravíme funkci pro zobrazení dialogu a pro jeho vyhodnocení:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">new_dialog</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
+    <span class="c1"># Vytvoříme nový dialog.</span>
+    <span class="c1"># V dokumentaci mají dialogy jako argument `this`;</span>
+    <span class="c1"># jde o "nadřazené" okno.</span>
+    <span class="n">dialog</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+
+    <span class="c1"># Načteme layout z Qt Designeru.</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'newmaze.ui'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">uic</span><span class="o">.</span><span class="n">loadUi</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dialog</span><span class="p">)</span>
+
+    <span class="c1"># Zobrazíme dialog.</span>
+    <span class="c1"># Funkce exec zajistí modalitu (tzn. nejde ovládat zbytek aplikace,</span>
+    <span class="c1"># dokud je dialog zobrazen) a vrátí se až potom, co uživatel dialog zavře.</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+
+    <span class="c1"># Výsledná hodnota odpovídá tlačítku/způsobu, kterým uživatel dialog zavřel.</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Rejected</span><span class="p">:</span>
+        <span class="c1"># Dialog uživatel zavřel nebo klikl na Cancel.</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Načtení hodnot ze SpinBoxů</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">,</span> <span class="s1">'widthBox'</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">,</span> <span class="s1">'heightBox'</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+
+    <span class="c1"># Vytvoření nové mapy</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+
+    <span class="c1"># Mapa může být jinak velká, tak musíme změnit velikost Gridu;</span>
+    <span class="c1"># (tento kód používáme i jinde, měli bychom si na to udělat funkci!)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">logical_to_pixels</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">setMinimumSize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">setMaximumSize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="c1"># Překreslení celého Gridu</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="o">...</span>
+
+
+     <span class="c1"># Napojení signálu actionNew.triggered</span>
+
+    <span class="n">action</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAction</span><span class="p">,</span> <span class="s1">'actionNew'</span><span class="p">)</span>
+    <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">new_dialog</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">grid</span><span class="p">))</span>
+</pre></div><p>Další dialogy, které budeme potřebovat, jsou tak rozšířené (a mezi jednotlivými platformami tak různé),
+že je Qt má předpřipravené.
+Jsou to dialogy pro ukázání hlášky, výběr souboru, barvy nebo fontu nebo pro nastavení tisku.</p>
+<p>Tyto předpřipravené dialogy mají typicky statické metody, které dialog vytvoří a přímo zavolají
+<code>exec()</code> a vrátí výsledek.</p>
+<p>Pro splnění úkolu (dalších položek v menu) se vám můžou hodit tyto dialogy:</p>
+<ul>
+<li><a href="http://doc.qt.io/qt-5/qfiledialog.html#getOpenFileName">QtWidgets.QFileDialog.getOpenFileName</a></li>
+<li><a href="http://doc.qt.io/qt-5/qfiledialog.html#getSaveFileName">QtWidgets.QFileDialog.getSaveFileName</a></li>
+<li><a href="http://doc.qt.io/qt-5/qmessagebox.html#critical">QtWidgets.QMessageBox.critical</a></li>
+<li><a href="http://doc.qt.io/qt-5/qmessagebox.html#about">QtWidgets.QMessageBox.about</a><ul>
+<li>Tip: Do <em>QMessageBoxu</em> jde dávat i HTML (ale v řetězci s ním nesmí být zalomeny řádky, jinak to nefunguje)</li>
+<li>Tip: Když hlavnímu oknu aplikace nastavíte ikonu (<code>setWindowIcon(icon)</code>), v <em>About</em> dialogu bude automaticky vidět</li>
+</ul>
+</li>
+</ul>
+<h2>Třída pro GUI aplikace</h2>
+<p>Funkce <code>main</code> se nám pomalu rozrůstá a další funkce, které volá, musí být buď definované v ní (jako <code>item_activated</code>)
+nebo musí brát relativně hodně argumentů (jako <code>new_dialog</code>).
+Abychom si zjednodušili práci, můžeme logiku místo do funkce dát do třídy, ve které si důležité prvky
+uložíme do atributů (<code>self.grid</code>, <code>self.window</code>, <code>self.app</code> atd.).
+Doporučujeme udělat přípravu v <code>__init__</code> a volání <code>window.show()</code> a <code>return app.exec()</code> dát do metody <code>run</code>.</p>
+<p>A to je zatím vše!
+Další vylepšení budete mít za úkol – nebo si aplikaci přetvořte podle svého uvážení.</p>
+
+
+        </div>
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/master/lessons/intro/pyqt/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Petr Viktorin, Miro Hrončok a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

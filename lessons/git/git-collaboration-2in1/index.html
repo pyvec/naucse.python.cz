@@ -1,0 +1,339 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Spolupráce a Git
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Spolupráce a Git</h1>
+<p>„Opravdové” programy zřídka vznikají prací jednoho člověka. Víc hlav víc ví, a tak je dobré si na projekt vytvořit tým.
+Každý člen týmu potřebuje mít přístup k práci ostatních. Jak ale zařídit to, aby několik lidí mohlo najednou upravovat
+stejné části (soubory) programu?</p>
+<p>Určitě jste někdy použili nějaký nástroj na sdílení souborů jako je Dropbox nebo OneDrive. 
+Tyto nástroje se většinou moc neumí vyrovnat s tím, když se změní jeden soubor najednou na dvou počítačích.
+Většinou vytvoří 2 konfliktní kopie a je na uživatelích, aby našli v souborech změny a spojili je.</p>
+<p>Takový způsob práce není ve velkém projektu s mnoha programátory udržitelný. 
+Kód je většinou v mnoha souborech a přidání jedné nové funkcionality může vyžadovat změnu ve více souborech. 
+Jen si představte jakou paseku by nadělalo pět programátorů v jedné Dropbox složce.</p>
+<p>Zdrojový kód se dá poměrně dobře sdílet a přepoužívat, pokud je napsaný podle určitých pravidel. 
+Spolupráce a sdílení kódu je spjato s programováním od nepaměti, už od prvních počítačů.
+Tohle přepoužívání se postupně vyvinulo do fenoménu <em>open-source</em> a <em>svobodného softwaru</em>.</p>
+<p>Dnes si vyzkoušíme, jak spolupracovat s mnoha programátory na jednom projektu pomocí verzovacího nástroje <em>Git</em> a služby <em>GitHub</em>.</p>
+<h2>Git a GitHub</h2>
+<p>Představte si, že jste už napsali větší Python program, který je už kvůli složitosti a velikosti rozdělen do více souborů.
+Takové složce s kódem říkáme repozitář.
+Git je program, který se stará o to, abyste ve složce mohli dělat různé experimenty a vrátit se třeba ke starým verzím.
+Každá verze má ale popis, který jste jí sami dali, takže slouží i jako dobrá dokumentace projektu.</p>
+<p>A co víc – Git vám dovoluje sdílet kód s ostatními programátory.
+Spousta míst na Internetu funguje tak, že vybraná skupina lidí má „přístup”: můžou dělat změny, jak se jim líbí.
+S Gitem se používá jiný model: změny nahrajeme do vlastního sdíleného repozitáře 
+a majiteli původního projektu napíšeme žádost o začlenění těch změn (angl. pull request). 
+Může to být třeba mail se slovy „Hele, na té a té adrese mám nějaké změny, které by se ti mohly hodit! Přidej je do svého projektu!”</p>
+<p>Výhoda je v tom, že se do projektu ‒ pokud je veřejný ‒ může zapojit kdokoliv. 
+Přispěvatel se nemusí předem ptát, nemusí dokazovat že je důvěryhodná osoba, stačí něco změnit a poslat. 
+Jestli se změna bude autorům projektu líbit nebo ne, to už je jiná věc. 
+Ale záleží hlavně na samotné změně, ne na tom, kdo ji udělal.
+Většina projektů v README obsahuje návod, jak do projektu přispět (angl. Contribution Guidelines).
+Zkuste se po nich podívat, ušetříte práci sobě i autorům.</p>
+<p>Služba <a href="https://github.com">GitHub</a> umožňuje vytvořit si vlastní sdílený gitový repozitář a zjednodušuje začleňování změn 
+(místo posílání mailů stačí zmáčknout tlačítko).</p>
+<p>Podobných služeb existuje víc (např. bitbucket.org, gitlab.com). Všechny fungují podobně; GitHub je momentálně nejpopulárnější.</p>
+<p>Kdybyste měli v různých kopiích repozitáře zmatek, přijde vhod malé vysvětlení: jedna kopie je původní projekt na GitHubu, 
+kam správce projektu dává aktuální „oficiální verzi”.
+Další kopie na GitHubu je „vaše” a můžete si do ní nahrát cokoliv
+(nejčastěji se v ní ale zveřejňují změny, které můžou být užitečné pro ostatní).
+A třetí kopii repozitáře máte u sebe na počítači.</p>
+<p><img src="/lessons/git/git-collaboration-2in1/static/gh-workflow-diagram.svg" alt="Git workflow"></p>
+<h3>Práce s lokálním repozitářem</h3>
+<p>Než budeme schopní poslat nějaké změny k začlenění do našeho vybraného projektu, musíme se naučit, jak se s Gitem pracuje.
+Co je to vlastně ten zmíněný <em>repozitář</em>? Můžeme ho vytvořit z jakéhokoliv adresáře na disku, kde máme uložené soubory, 
+jen Gitu řekneme, že z něj chceme ten repozitář udělat. To má za následek:</p>
+<ol>
+<li>Git bude sledovat změny, které ve složce uděláme.</li>
+<li>Budeme schopni vytvořit verzi tohoto adresáře, ke které se můžeme kdykoliv vrátit.</li>
+<li>Můžeme nastavit vzdálené repozitáře, kam chceme změny nahrávat nebo naopak stahovat změny od jiných lidí. </li>
+</ol>
+<div class="admonition note"><p class="admonition-title">Pozor</p>
+<p>Budeme hodně pracovat s příkazovou řádkou. Jestli se s ní ještě nekamarádíš, koukni se na <a href="/lessons/beginners/cmdline/">úvod</a>.
+Nezapomeň: $ na začátku se nepíše; je tu proto, aby šlo poznat, že jde o příkaz.</p>
+</div><p>Naším dnešním cílem je ale přispět do projektu, který založil někdo jiný. Proto použijeme příkaz <code>git clone</code> ke stažení vzdáleného repozitáře.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git clone https://github.com/asgeirrr/prezencka
+</pre></div><p>V aktuálním adresáři se nám vytvořil podadresář <code>prezencka</code>, který obsahuje všechny soubory, které vidíme ve webovém rozhraní na <a href="https://github.com/asgeirrr/prezencka">GitHubu</a>.</p>
+<h4>Stav repozitáře (<code>git status</code>)</h4>
+<p>Velmi často potřebujeme zjistit současný stav repozitáře. Navigujte v příkazové řádce do adresáře <code>prezencka</code> a zadejte <code>git status</code>. Git nám odpoví:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git status
+<span class="go">On branch master</span>
+<span class="go">Your branch is up-to-date with 'origin/master'.</span>
+<span class="go">nothing to commit, working tree clean</span>
+</pre></div><p>Git nám v tuto chvíli poskytl 3 informace:</p>
+<ol>
+<li>Že jsme na větvi <code>master</code>. Git umožňuje pracovat na více věcích současně pomocí tzv. <em>větví</em> mezi kterými můžeme přepínat. Pak se na na disku „objeví” verze souborů v dané větvi. My si dnes vystačíme s jednou hlavní větví, která se tradičně jmenuje <code>master</code>.</li>
+<li>Že naše větev <code>master</code> je aktuální vůči větvi na vzdáleném repozitáři (origin) na GitHubu.</li>
+<li>Že jsme neudělali žádné změny oproti poslední verzi souborů, což je pravda.</li>
+</ol>
+<h4>První revize (<code>git commit</code>)</h4>
+<p>Už jsme několikrát zmínili, že Git je verzovací systém. Jak že to ale soubory verzuje? 
+V podstatě mu musíme dát příkaz, aby zmrazil současný stav repozitáře, tzv. vytvořit <em>revizi</em>.
+Pak můžeme dělat další změny, ale už vždy budeme schopni se k této revizi vrátit.</p>
+<p>Přidejte do adresáře <code>prezencka</code> soubor <code>vase_jmeno.txt</code>, např. tedy <code>magdalena_rettigova.txt</code>
+a do něj napište svoje současné povolání nebo cokoliv jiného.
+Zkontrolujte současný stav repozitáře pomocí <code>git status</code>: Git oznámí, že v adresáři je soubor, o kterém ještě „neví“.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git status
+<span class="go">On branch master</span>
+<span class="go">Your branch is up-to-date with 'origin/master'.</span>
+<span class="go">Untracked files:</span>
+<span class="go">  (use "git add &lt;file&gt;..." to include in what will be committed)</span>
+
+<span class="go">      magdalena_rettigova.txt</span>
+
+<span class="go">nothing added to commit but untracked files present (use "git add" to track)</span>
+</pre></div><p>U každého nového souboru musíme Gitu říct, že chceme jeho obsah sledovat. Proveďte to se svým souborem:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git add magdalena_rettigova.txt
+</pre></div><p>a znovu zkontrolujte stav repozitáře:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git status
+<span class="go">On branch master</span>
+<span class="go">Your branch is up-to-date with 'origin/master'.</span>
+<span class="go">Changes to be committed:</span>
+<span class="go">  (use "git reset HEAD &lt;file&gt;..." to unstage)</span>
+
+<span class="go">        new file:   magdalena_rettigova.txt</span>
+</pre></div><p>To, co je zelené („changes to be committed“), se přidá do další revize (angl. commit), kterou vytvoříme. Pojďme tedy vytvořit revizi:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git commit
+</pre></div><p>Po zadání tohoto příkazu se otevře editor, do kterého je nutné napsat výstižný popis změn, 
+abyste vy i ostatní programátoři věděli, co tahle revize obsahuje za změny.
+Např. tedy <code>Přidáno mé jméno a povolání</code>. Předvyplněné řádky začínající # můžeme nechat být
+(nebo vymazat, podle chuti – Git je ignoruje).
+Pak soubor uložíme a zavřeme editor.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git status
+<span class="go">On branch master</span>
+<span class="go">Your branch is ahead of 'origin/master' by 1 commit.</span>
+<span class="go">  (use "git push" to publish your local commits)</span>
+<span class="go">nothing to commit, working tree clean</span>
+</pre></div><p>Pro lepší pochopení, co dělají jednotlivé příkazy a v jakém stavu můžou být soubory/změny, přikládáme tento diagram:</p>
+<p><img src="/lessons/git/git-collaboration-2in1/static/diagram.png" alt="Git workflow"></p>
+<h4>Log (<code>git log</code>)</h4>
+<p>Teď, když za sebou máme první revizi, podívejme se, jak vypadá historie repozitáře, do kterého chceme přispívat.
+K tomu můžeme použít příkaz <code>git log</code>, jako první uvidíme naši poslední změnu a další jsou změny od jiných autorů,
+na které navazujeme.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git log
+<span class="go">commit 0bdfbb2a2398fea179395a8dd303e9f672ef4dca</span>
+<span class="go">Author: Magdalena Dobromila &lt;magdalena@rettigova.cz&gt;</span>
+<span class="go">Date:   Tue Mar 28 19:27:08 2017 +0200</span>
+
+<span class="go">    Přidáno mé jméno a povolání</span>
+
+<span class="go">commit 0f305972803131cb6c8637359fee8ede3005bba6</span>
+<span class="go">Merge: effa89b 175f4cc</span>
+<span class="go">Author: Oskar Hollmann &lt;oskar@hollmann.me&gt;</span>
+<span class="go">Date:   Tue Nov 8 20:17:00 2016 +0100</span>
+
+<span class="go">    Merge pull request #1 from muzikovam/master</span>
+
+<span class="go">    Tady mas jmeno</span>
+</pre></div><p>V logu se pohybujeme šipkami a když z něj chceme vyskočit zpět, stiskneme <code>q</code> jako quit.
+Příkaz <code>git log</code> má mnoho přepínačů, přehlednější historii změn můžeme získat pomocí <code>git log --oneline --graph --decorate</code>.</p>
+<h2>Open-source a Free software</h2>
+<p>Dejme si menší pauzu na zažití základní práce s lokálním repozitářem.
+Nejde mluvit o Gitu a spolupráci a nezastavit se chvíli u otevřeného zdrojového kódu.
+První kód vznikal v akademické sféře, kde byl zcela přirozeně sdílen, jako je to s poznatky mezi vědci běžné.
+50. a 60. léta byla obdobím velké kreativity, kdy vzniklo mnoho z konceptů a technologií, které dnes používáme.
+Pak se začalo programování postupně komercializovat a firmy začaly zdrojový kód skrývat jako konkurenční výhodu.
+Do té doby víceméně jednolitá komunita programátorů byla nucena se rozdělit.</p>
+<p>Některým programátorům tohle skrývání kódu hluboce vadilo až roku 1985 publikoval 
+<a href="https://en.wikipedia.org/wiki/Richard_Stallman">Richard Stallman</a> GNU Manifesto,
+kde vysvětlil, proč hodlá vytvořit operační systém s otevřeným kódem a odstartoval tak hnutí svobodného softwaru.
+To prosazuje 4 následujících svobody (převzato z <a href="https://cs.wikipedia.org/wiki/Svobodn%C3%BD_software">Wikipedie</a>):</p>
+<ol>
+<li>svoboda používat program za jakýmkoliv účelem,</li>
+<li>svoboda studovat, jak program pracuje a možnost přizpůsobit ho svým potřebám,</li>
+<li>svoboda redistribuovat kopie programu,</li>
+<li>svoboda vylepšovat program a zveřejňovat zlepšení, aby z nich mohla mít prospěch celá komunita.</li>
+</ol>
+<p>Dnes je spousta projektů s otevřeným zdrojovým kódem dostupných na Internetu a každý je používáme. 
+Jejich další sdílení je upraveno jednou z licencí, které tyto základní svobody zaručují.</p>
+<div class="admonition note"><p class="admonition-title">Pozor</p>
+<p>Termíny <strong>open-source</strong> a <strong>free software</strong> nejsou zcela zaměnitelné, ale pro naše účely je zatím můžeme chápat jako synonyma.</p>
+</div><p>Spoustu open-source projektů najdete právě na GitHubu. Ne všechny jsou v Pythonu. Ne všechny jsou kvalitní –
+protože si každý může zveřejnit co chce, na GitHubu se válí spousta nedodělků, opuštěných nápadů a nepodařených experimentů. 
+A bohužel, ne všechny projekty mají přátelské autory.</p>
+<p>Na druhou stranu ale open-source programy mají svoje výhody: nejenom se z nich může kdokoli učit, 
+ale každý může i zkontrolovat, jestli dělají to, co dělat mají.
+Populární open-source programy nás například pravděpodobně nebudou špehovat (tj. hlásit autorovi, co na počítači děláme), 
+ani většinou neobsahují reklamy: kdyby to dělaly, najde se někdo kdo tyhle „funkce” odstraní 
+a lidé časem začnou používat opravenou verzi.</p>
+<p>Některé příklady populárních open-source projektů:</p>
+<ul>
+<li>Mozilla Firefox, Chromium (prohlížeče)</li>
+<li>Atom, gedit (textové editory)</li>
+<li>CPython (jazyk Python)</li>
+<li>Linux, Android (jádra operačních systémů)</li>
+<li>Pytest (pythonní knihovna na testování)</li>
+<li>Django, Flask, Requests (webové knihovny pro Python)</li>
+<li>NumPy, Jupyter, Matplotlib (pythonní knihovny pro vědce a analytiky)</li>
+<li>Materiály k tomuto kurzu</li>
+</ul>
+<p>A jak vidno z posledního příkladu, nejen softwarové projekty se dají vést takhle veřejně. Tento kurz vychází z principů open source: 
+všechno know-how je sdílené a budeme rádi, když se zapojíte.</p>
+<p>Pokud vás tato problematika zajímá, doporučujeme krátkou knihu <a href="https://www.root.cz/knihy/katedrala-a-trziste/">Katedrála a tržiště</a>, která nabízí srovnání open-source s tradičním vývojem softwaru za zavřenými dveřmi.</p>
+<p>Pokud budete někdy začínat nový projekt a budete chtít, aby z něj měl prospěch někdo další,
+stojí za to uvolnit ho pod svobodnou licencí a dát třeba právě na GitHub.
+Licence projektu většinou najdete v souboru <code>LICENCE</code>. 
+Na kód neuvolněný pod svobodnou licencí se automaticky vztahuje copyright a ostatní ho nemohou volně sdílet.</p>
+<p>Informace o open-source licencích najdete např. na <a href="https://choosealicense.com">choosealicence.com</a>, případně <a href="https://creativecommons.org">creativecommons.org</a> a <a href="https://opensource.org">opensource.org</a>.</p>
+<h2>Spolupráce na projektu</h2>
+<p>Nyní se posuneme ke sdílení revize, kterou jsme vytvořili, a ke stažení revizí od ostatních přispěvatelů.</p>
+<h3>Posílání změn (<code>git push</code>)</h3>
+<p>Nyní stačí požádat autora projektu, aby naše změny začlenil do repozitáře na GitHubu 
+a všichni uživatelé projektu, na kterém pracujeme, budou mít užitek z našich změn.
+Nemáme ale do původního repozitáře práva na zápis, musíme tedy poslat změny nejprve do naší kopie repozitáře,
+vizte obrázek na začátku.</p>
+<p>Udělejte si účet na GitHubu (jestli ho ještě nemáte) a pak jděte na adresu <a href="https://github.com/asgeirrr/prezencka/">prezencky</a>,
+kterou jste použili pro <code>git clone</code>. 
+Vpravo nahoře je tlačítko „Fork”, klikněte na něj. Tím se na GitHubu vytvoří vaše kopie repozitáře:
+adresa by měla být něco jako <code>https://github.com/tvojejmeno/prezencka</code>.</p>
+<p>A teď, jak nahrát změny z našeho počítače na GitHub? Git si u každého repozitáře na našem počítači pamatuje adresy, 
+odkud se dají stahovat a kam se dají posílat změny. 
+Seznam těchto adres nám ukáže příkaz <code>git remote -v</code>. Třeba:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git remote -v
+<span class="go">origin  https://github.com/asgeirrr/prezencka (fetch)</span>
+<span class="go">origin  https://github.com/asgeirrr/prezencka (push)</span>
+</pre></div><p>Tenhle výstup znamená, že pod zkratkou <em>origin</em> se schovává adresa, ze které jsme repozitář naklonovali.</p>
+<p>Přidejme si podobnou zkratku pro vlastní repozitář na GitHubu. Můžeme ho pojmenovat např. <em>moje</em>
+nebo svým uživatelským jménem na GitHubu,
+aby nám bylo jasné, že je to ten náš, do kterého můžeme nahrávat změny.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git remote add tvojejmeno https://github.com/tvojejmeno/prezencka
+</pre></div><p>Zkontrolujme, že se nám to povedlo:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git remote -v
+<span class="go">origin  https://github.com/asgeirrr/prezencka (fetch)</span>
+<span class="go">origin  https://github.com/asgeirrr/prezencka (push)</span>
+<span class="go">tvojejmeno  https://github.com/tvojejmeno/prezencka (fetch)</span>
+<span class="go">tvojejmeno  https://github.com/tvojejmeno/prezencka (push)</span>
+</pre></div><p>Tolik k nastavení ‒ <code>git remote add</code> stačí udělat jednou pro každý repozitář. Pak už můžeme změny nahrávat pomocí:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git push tvojejmeno master
+</pre></div><p>což znamená: pošli na adresu uloženou pod zkratkou <code>tvojejmeno</code> větev <code>master</code>.</p>
+<p>Funguje? Můžeme se podívat na <code>https://github.com/tvojejmeno/prezencka</code> v prohlížeči a ujistit se, že tam změny jsou.</p>
+<h3>Žádost o začlenění (pull request)</h3>
+<p>Teď zbývá požádat autory původního projektu, aby změny z tvého sdíleného repozitáře přidali do svojí kopie. 
+GitHub na to má vlastní mechanismus zvaný <em>pull request</em> (žádost o začlenění).</p>
+<p>Na stránce původního projektu (na adrese, kterou jsme použili na začátku pro <code>git clone</code>)
+by mělo být oznámení o nově nahrané větvi s velkým zeleným tlačítkem <code>Compare &amp; pull request</code>. 
+Po kliknutí na tlačítko můžeme doplnit popis toho, co tahle změna obnáší, a pak zmáčkneme další tlačítko.</p>
+<p>Hotovo; teď je na autorech projektu, aby se na změny podívali a přijali ‒ nebo začali diskusi o tom, jak ji ještě vylepšit.
+(Diskutovat se dá na stránce pull requestu nebo přes mail.)</p>
+<div class="admonition note"><p class="admonition-title">Poznámka</p>
+<p>Procházíte-li materiály z domu, musíte počkat, než si někdo žádosti všimne a začlení ji.
+To může trvat i pár dní; kdyby to bylo přes týden, tak se zkuste se ozvat znovu.</p>
+</div><h3>Aktualizace (<code>git pull</code>)</h3>
+<p>Když budou změny od všech účastníků začleněné, můžeme si aktualizovat repozitář, který máme u sebe na počítači. Příkaz</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git pull origin master
+</pre></div><p>stáhne změny z větve „master” z adresy pod zkratkou „origin”.
+Pomocí <code>git log</code> se můžeme podívat, jak se projekt mezitím vyvinul.</p>
+<p>Kruh se uzavřel, jsme schopni začlenit do projektu vlastní změny a naopak si stáhnout změny od ostatních. 
+Až příště uvidíte chyby v materiálech nebo nešikovnou formulaci, zkuste to opravit a udělat pull request.</p>
+<p>Git je velké téma a mohli bychom probírat větvení nebo řešení konfliktů a spoustu dalšího,
+ale nechme si to na pokračovací srazy nebo workshop.</p>
+
+
+        </div>
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/master/lessons/git/git-collaboration-2in1/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies CZ napsali Petr Viktorin a Oskar Hollman, 2015-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

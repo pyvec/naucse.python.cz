@@ -1,0 +1,378 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Funkce
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/beginners/functions/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/brno-podzim-pondeli/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/brno-podzim-pondeli/sessions/cycles/">Funkce a cykly</a>
+
+> <a href="/2019/brno-podzim-pondeli/beginners/functions/">Funkce</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Funkce</h1>
+<p>Známe spoustu matematických operací, které se zapisují pomocí symbolů – třeba
+plus a minus.
+Python se snaží používat stejné symboly jako matematici:</p>
+<ul>
+<li>3 + 4</li>
+<li><var>a</var> - <var>b</var></li>
+</ul>
+<p>S násobením a dělením už je to složitější.
+Matematický zápis se na běžné klávesnici nedá napsat:</p>
+<ul>
+<li>3 · 4</li>
+<li>¾</li>
+</ul>
+<p>V Pythonu si ale pořád vystačíme se symbolem, byť trochu jiným – <code>*</code>, <code>/</code>.</p>
+<p>Matematici ale píšou na papír, a tak si můžou dovolit vymýšlet stále
+zajímavější klikyháky, které se pak na klávesnici píšou stále hůř:</p>
+<ul>
+<li><var>x</var>²</li>
+<li><var>x</var> ≤ <var>y</var></li>
+<li>sin θ</li>
+<li>Γ(<var>x</var>)</li>
+<li>∫<var>x</var></li>
+<li>|<var>s</var>|</li>
+<li>⌊<var>x</var>⌋</li>
+<li><var>a</var> ★ <var>b</var></li>
+<li><var>a</var> ⨁ <var>b</var></li>
+</ul>
+<p>Ne že by neexistovaly programovací jazyky,
+na které je potřeba speciální klávesnice.
+Třeba program v jazyce APL laik jednoduše ani nenapíše, ani nepřečte:</p>
+<p><!--z http://catpad.net/michael/apl/ --></p>
+<div class="highlight"><pre><code>⍎’⎕’,∈Nρ⊂S←’←⎕←(3=T)∨M∧2=T←⊃+/(V⌽”⊂M),(V⊖”⊂M),(V,⌽V)⌽”(V,V←1¯1)⊖”⊂M’</code></pre></div><p>Expert v APL může být vysoce produktivní, ale Python se zaměřuje spíš na to,
+aby se dal snadno naučit.
+A tak používá symboly jen pro ty nejčastější operace.
+Operátorů, které využívají symboly, je tak málo, že už jich zhruba půlku znáš!</p>
+<div class="admonition note"><p>Pro zajímavost, tady jsou všechny – i ty co ještě neznáš:</p>
+<div>
+    <code>==</code> <code>!=</code>
+    <code>&lt;</code> <code>&gt;</code>
+    <code>&lt;=</code> <code>&gt;=</code>
+    <code class="text-muted">:=</code>
+    <code class="text-muted">|</code> <code class="text-muted">^</code>
+    <code class="text-muted">&amp;</code>
+    <code class="text-muted">&lt;&lt;</code> <code class="text-muted">&gt;&gt;</code>
+    <code>+</code> <code>-</code>
+    <code>*</code> <code class="text-muted">@</code> <code>/</code>
+    <code>//</code> <code>%</code>
+    <code class="text-muted">~</code>
+    <code>**</code>
+    <code class="text-muted">[ ]</code> <code class="text-muted">( )</code>
+    <code class="text-muted">{ }</code>
+    <code class="text-muted">.</code>
+</div></div><p>Všechno ostatní vyjádříme slovně.</p>
+<h2>Délka řetězce</h2>
+<p>Jedna operace, na kterou v Pythonu není symbol, je zjištění délky řetězce.
+Místo symbolu má název.
+Jmenuje se <code>len</code> (z angl. <em>length</em>, délka), a používá se takto:</p>
+<div class="highlight"><pre><span></span><span class="n">slovo</span> <span class="o">=</span> <span class="s1">'Ahoj'</span>
+<span class="n">delka</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">slovo</span><span class="p">)</span>      <span class="c1"># Vypočítání délky</span>
+<span class="k">print</span><span class="p">(</span><span class="n">delka</span><span class="p">)</span>
+</pre></div><p>To <code>len</code> je <em>funkce</em> (angl. <em>function</em>).
+Jak se takové funkce požívají?</p>
+<p>K tomu, abys funkci mohla použít, potřebuješ znát její
+<em>jméno</em> – tady <code>len</code>.
+Za jméno funkce patří závorky,
+do nichž uzavřeš <em>argument</em> (neboli <em>vstup</em>) funkce.
+To je informace, se kterou bude funkce
+pracovat – třeba <code>len</code> ze svého argumentu vypočítá délku.</p>
+<p>Celému výrazu <code>len(slovo)</code> se říká <em>volání funkce</em> (angl. <em>function call</em>).
+Jeho výsledek, takzvaná <em>návratová</em> hodnota
+(angl. <em>return value</em>) se dá třeba přiřadit do proměnné.</p>
+<p><span class="figure"><a href="/2019/brno-podzim-pondeli/beginners/functions/static/call-anatomy.svg"><img src="/2019/brno-podzim-pondeli/beginners/functions/static/call-anatomy.svg" alt="Diagram volání funkce"></a></span></p>
+<div class="admonition note"><p class="admonition-title">Pro matematičky</p>
+<p>Máš-li ráda matematiku, dej pozor!
+Funkce v Pythonu je něco jiného než funkce v matematice,
+i když se stejně jmenují a podobně zapisují.
+Pythonní funkce může např. mít pro stejný argument různé hodnoty.</p>
+</div><h3>Volání funkce jako výraz</h3>
+<p>Vzpomínáš si, jak Python vyhodnocuje výrazy?</p>
+<div class="highlight"><pre><span></span><span class="n">vysledek</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+<span class="c1">#              ╰──┬──╯</span>
+<span class="n">vysledek</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span>    <span class="mi">7</span>
+<span class="c1">#          ╰─┬────╯</span>
+<span class="n">vysledek</span> <span class="o">=</span>  <span class="mi">21</span>
+</pre></div><p>Volání funkce je taky výraz.
+Stejně jako <code>a + b</code> je výraz, který něco udělá podle hodnot <code>a</code> a <code>b</code>
+a výsledek dá k dispozici, <code>len(slovo)</code> je výraz, který něco udělá
+podle hodnoty <code>slovo</code> a výsledek dá k dispozici.</p>
+<p>Vždycky, když Python při vyhodnocování narazí na jméno funkce se závorkami,
+funkci <em>zavolá</em>, zjistí výsledek a dosadí ho:</p>
+<div class="highlight"><pre><span></span><span class="n">vysledek</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="s2">"Ahoj!"</span><span class="p">)</span>
+<span class="c1">#          ╰────┬─────╯</span>
+<span class="n">vysledek</span> <span class="o">=</span>      <span class="mi">5</span>
+</pre></div><p>Volání funkce můžeš kombinovat s jinými výrazy, třeba se součtem:</p>
+<div class="highlight"><pre><span></span><span class="n">delka</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="s1">'Ahoj'</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s1">'!'</span><span class="p">)</span>
+<span class="c1">#        ╰──┬─────╯    ╰─┬───╯</span>
+<span class="n">delka</span> <span class="o">=</span>     <span class="mi">4</span>       <span class="o">+</span>    <span class="mi">1</span>
+<span class="c1">#           ╰───────┬────╯</span>
+<span class="n">delka</span> <span class="o">=</span>             <span class="mi">5</span>
+</pre></div><p>Nebo v podmínce ifu – třeba u:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="s1">'Ahoj!'</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'pozdrav je krátký'</span><span class="p">)</span>
+</pre></div><p>… se za <code>len('Ahoj!') &lt;= 3</code> nakonec dosadí nepravda (<code>False</code>):</p>
+<div class="highlight"><pre><span></span>   <span class="nb">len</span><span class="p">(</span><span class="s1">'Ahoj!'</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span>
+<span class="c1">#  ╰─────┬────╯</span>
+         <span class="mi">5</span>      <span class="o">&lt;=</span> <span class="mi">3</span>
+<span class="c1">#        ╰──────┬──╯</span>
+              <span class="bp">False</span>
+</pre></div><p>Volání funkce můžeš použít i jako argument pro jinou funkci:</p>
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="s1">'Ahoj'</span><span class="p">))</span>
+<span class="c1">#     ╰────┬────╯</span>
+<span class="k">print</span><span class="p">(</span>     <span class="mi">4</span>     <span class="p">)</span>   <span class="c1"># vypíše 4</span>
+</pre></div><p>Nebo to zkombinovat dohromady:</p>
+<div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="s1">'Ahoj'</span><span class="p">)</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span>
+<span class="c1">#     ╰────┬────╯   |</span>
+<span class="k">print</span><span class="p">(</span>     <span class="mi">4</span>      <span class="o">+</span> <span class="mi">5</span><span class="p">)</span>
+<span class="c1">#          ╰───┬────╯</span>
+<span class="k">print</span><span class="p">(</span>         <span class="mi">9</span>     <span class="p">)</span>
+</pre></div><p>… a podobně.</p>
+<h3>Procedury</h3>
+<p>Možná sis všimla, že jednu funkci už voláš déle: <code>print("Ahoj!")</code>
+je taky volání funkce.
+Stejně jako <code>len</code> dostává <code>print</code> v závorkách argument – hodnotu, se
+kterou pracuje.
+Liší se ale návratovou hodnotou.</p>
+<p>Funkce <code>print</code> sice něco <em>udělá</em> – vypíše text
+na obrazovku – ale nevrátí žádný smysluplný výsledek, který by zbytek programu
+mohl dál zpracovat.</p>
+<p>Funkcím, které nic nevrací (jen něco udělají) se občas říká <em>procedury</em>.
+V Pythonu není hranice mezi „normální“ funkcí a procedurou příliš ostrá,
+ale přesto se hodí tento koncept znát.
+Pár příkladů:</p>
+<ul>
+<li>Funkce, která vybere náhodné číslo, je „normální“.
+Svůj výsledek vrátí; program s ním může dál pracovat.</li>
+<li>Funkce, která vykreslí na obrazovku kolečko, je <em>procedura</em>.
+Žádnou zajímavou hodnotu programu nevrací.</li>
+<li>Funkce, která spočítá průměrný věk obyvatelstva podle informací ze sčítání
+lidu je „normální“. Svůj výsledek vrátí a program s ním může dál pracovat.</li>
+<li>Funkce, která přehraje písničku reproduktorem, je <em>procedura</em>.
+Nic zajímavého programu nevrací.</li>
+</ul>
+<div class="admonition note"><p>Na rozdíl od ostatních termínů, které se tu učíš, není
+„procedura“ v Pythonu zavedený pojem.
+Je vypůjčený z jazyka Pascal.
+Kdybys o něm diskutovala s nějakým zkušeným programátorem,
+odkaž ho prosím na tyto materiály.</p>
+</div><h2>Argumenty</h2>
+<p>Argument je to, co funkci dáš k dispozici. Hodnota, se kterou funkce pracuje.
+Chceš-li délku řetězce <code>Ahoj!</code>, použiješ funkci <code>len</code> která umí vypočítat
+délku <em>jakéhokoli</em> řetězce a jako argument, v závorkách, jí dáš tu svoji
+konkrétní hodnotu: <code>len('Ahoj!')</code>.</p>
+<p>Podobně funkce <code>print</code> umí vypsat jakoukoli hodnotu.
+Tu, kterou má vypsat ve tvém konkrétním případě, jí předáš jako argument.</p>
+<p>Některým funkcím můžeš předat i více argumentů.
+Třeba zrovna funkci <code>print</code>, která všechny své argumenty vypíše na řádek.
+Jednotlivé argumenty se oddělují čárkami:</p>
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">"Jedna plus dva je"</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div><p>Některé funkce nepotřebují žádný argument.
+Příkladem je zase <code>print</code>.
+Je ale nutné použít závorky – i když jsou prázdné.
+Hádej, co tohle volání udělá?</p>
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">()</span>
+</pre></div><div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-podzim-pondeli/beginners/functions/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Funkce <code>print</code> zavolaná bez argumentů napíše prázdný řádek.</p>
+    </div>
+</div><h3>Pojmenované argumenty</h3>
+<p>Některé funkce umí pracovat i s <em>pojmenovanými</em> argumenty.
+Píšou se podobně jako přiřazení do proměnné,
+s rovnítkem, ale uvnitř závorek.</p>
+<p>Třeba funkce <code>print</code> při výpisu odděluje jednotlivé argumenty mezerou,
+ale pomocí argumentu <code>sep</code> se dá použít i něco jiného.</p>
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">', '</span><span class="p">)</span>     <span class="c1"># Místo mezery odděluj čárkou</span>
+</pre></div><p>Dá změnit i to, co <code>print</code> udělá na konci výpisu.
+Normálně přejde na nový řádek, ale argumentem <code>sep</code> můžeš říct co se má vypsat 
+<em>místo toho</em>.</p>
+<div class="admonition note"><p>Tenhle příklad je potřeba napsat do souboru; v interaktivní konzoli
+nebude výstup vypadat tak, jak má.</p>
+</div><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">'1 + 2'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">' '</span><span class="p">)</span>     <span class="c1"># Místo přechodu na nový řádek jen napiš mezeru</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'='</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">' '</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">'!'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">()</span>
+</pre></div><h3>Funkce je potřeba volat</h3>
+<p>Pozor na to, že když nenapíšeš závorky, funkce se nezavolá!
+Výraz <code>len(s)</code> je <em>volání funkce</em>, ale <code>len</code> bez závorek označuje
+<em>funkci samotnou</em>.</p>
+<p>Výsledek <code>len(s)</code> je číslo; <code>len</code> je funkce.</p>
+<p>Čísla můžeš sečítat, můžeš tedy napsat <code>len(s) + 1</code>.
+Funkce ale sečítat nejde – <code>len + 1</code> nedává smysl.</p>
+<p>Často se ale stane, že závorky prostě zapomeneš.
+Zkus si, co dělají následující příklady, a pozorně si přečti výsledky
+a chybové hlášky, abys pak podobné chyby poznala:</p>
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="s1">'a'</span><span class="p">))</span>     <span class="c1"># Volání funkce (a vypsání výsledku)</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>          <span class="c1"># Vypsání samotné funkce</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>      <span class="c1"># Sečtení funkce a čísla</span>
+</pre></div><h2>Přehled funkcí</h2>
+<p>A jaké funkce můžeš, kromě <code>len</code> a <code>print</code>, použít?
+Přehled těch základních najdeš v <a href="/2019/brno-podzim-pondeli/beginners/basic-functions/">následující lekci</a>.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/beginners/functions/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-podzim-pondeli/beginners/expressions/">← <span class="d-none d-sm-inline">Vyhodnocování výrazů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-podzim-pondeli/sessions/cycles/">↑ <span class="d-none d-sm-inline">Lekce: Funkce a cykly</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/brno-podzim-pondeli/beginners/basic-functions/"><span class="d-none d-sm-inline">Užitečné funkce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-brno-podzim-pondeli/lessons/beginners/functions/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2014-2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

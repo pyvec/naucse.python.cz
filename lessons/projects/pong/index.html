@@ -1,0 +1,611 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Praktické cvičení: Pong
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Pong</h1>
+<div style="text-align:center;">
+    <img src="/lessons/projects/pong/static/pong.png" alt="">
+</div><p>Dnes si prohloubíme znalosti programování grafických aplikací,
+které jsme získali na <a href="/lessons/intro/pyglet/">lekci o Pygletu</a>,
+na reálném problému.</p>
+<p>Naprogramujeme si s pomocí knihovny Pyglet
+jednu z prvních videoher, <a href="https://en.wikipedia.org/wiki/Pong">Pong</a>.
+Pong vydala společnost <a href="https://en.wikipedia.org/wiki/Atari,_Inc.">Atari</a>
+jako svůj první titul v roce 1972 a odstartovala tak boom herního průmyslu.</p>
+<p>Na Youtube se můžeš podívat na
+<a href="https://www.youtube.com/watch?v=fiShX2pTz9A">video, které ukazuje jak se Pong hraje</a>.</p>
+<h2>Konstanty a stav hry</h2>
+<p>Hra Pong má jednoduchá pravidla. Musíme je ale umět
+vyjádřit v Pythonu a to není úplně jednoduché.
+Pojdmě si srovnat v hlavě, co ve hře máme.</p>
+<ul>
+<li>Hrací pole ve tvaru obdélníku s půlící čárou.</li>
+<li>Míček létající určitou rychlostí po hracím poli.</li>
+<li>Dvě pálky pohybující se vertikálně na krajích pole.</li>
+<li>Dvě počítadla skóre.</li>
+</ul>
+<p>Hra bude pro 2 hráče, nebudeme programovat chování počítače.
+Každý z hráčů může ovládat svou pálku stiskem kláves.
+Jeden hráč šipkou nahoru a šipkou dolů a druhý hráč klávesami <kbd>W</kbd>
+a <kbd>S</kbd>.</p>
+<p>Stav hry dokážeme v Pythonu vyjádřit pomocí proměnných
+a konstant. To dává smysl, protože některé
+věci se ve hře mění (poloha pálek, poloha míčku, rychlost míčku, skóre)
+a některé ne (velikost hrací plochy, velikost pálek a
+míčku, poloha a velikost počítadel skóre).
+Ze složitějších datových struktur použijeme seznam
+(list, ten už známe) a množinu (set), která je velmi podobná
+matematické množině. Zjednodušeně je to seznam, který se
+nestará o pořadí a stejné prvky v něm mohou být právě jednou.</p>
+<p>Možná přemýšlíš nad tím, v jakých jednotkách můžeme měřit
+vzdálenost a rychlost v takovéto hře na počítači.
+Na obrazovce je nešikovné měřit vzdálenost např.
+v centimetrech. Nicméně každá obrazovka se skládá
+z jednotlivých svítících bodů tzn. <em>pixelů</em>.
+V grafické aplikaci jako je Pong můžeme tedy měřit
+vzdálenost dvou míst na obrazovce jako počet pixelů
+mezi těmito dvěma místy. Souřadný systém Pygletu
+je založený právě na pixelech, přičemž pixel se
+souřadnicemi [0, 0] je na obrazovce vlevo dole.
+Rychlost můžeme jednoduše měřit v pixelech za sekundu.</p>
+<p>Založte si nový skript. Společně nadefinujeme <em>konstanty</em>, které
+budeme v tvorbě hry potřebovat. Normálně bychom
+definovali konstanty postupně, až bychom je potřebovali,
+ale pro jednoduchost to udělejme společně a najednou.
+Ukážeme si na tom, jak začít převádět problém z reálného
+světa do Pythonu.</p>
+<div class="highlight"><pre><span></span><span class="c1"># Velikost okna (v pixelech)</span>
+<span class="n">SIRKA</span> <span class="o">=</span> <span class="mi">900</span>
+<span class="n">VYSKA</span> <span class="o">=</span> <span class="mi">600</span>
+
+<span class="n">VELIKOST_MICE</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">TLOUSTKA_PALKY</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">DELKA_PALKY</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">RYCHLOST</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># v pixelech za sekundu</span>
+<span class="n">RYCHLOST_PALKY</span> <span class="o">=</span> <span class="n">RYCHLOST</span> <span class="o">*</span> <span class="mf">1.5</span>  <span class="c1"># taky v pixelech za sekundu</span>
+
+<span class="n">DELKA_PULICI_CARKY</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">VELIKOST_FONTU</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">ODSAZENI_TEXTU</span> <span class="o">=</span> <span class="mi">30</span>
+</pre></div><p>Nyní nadefinujeme <em>proměnné</em> potřebné v naší hře: poloha míčku, poloha pálek,
+rychlost míče, stisknuté klávesy a skóre obou hráčů.
+Budou to globální proměnné, za což by nás profesionální
+programátor pokáral, ale nám to v tuhle chvíli ulehčí
+práci.</p>
+<div class="highlight"><pre><span></span><span class="n">pozice_palek</span> <span class="o">=</span> <span class="p">[</span><span class="n">VYSKA</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">VYSKA</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>  <span class="c1"># vertikalni pozice dvou palek</span>
+<span class="n">pozice_mice</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># x, y souradnice micku -- nastavene v reset()</span>
+<span class="n">rychlost_mice</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># x, y slozky rychlosti micku -- nastavene v reset()</span>
+<span class="n">stisknute_klavesy</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># sada stisknutych klaves</span>
+<span class="n">skore</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># skore dvou hracu</span>
+</pre></div><h2>Vykreslení hrací plochy</h2>
+<p>Nejprve si v Pygletu otevřeme okno velikosti hrací plochy.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="o">...</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">SIRKA</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">VYSKA</span><span class="p">)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># vse je nastaveno, at zacne hra</span>
+</pre></div><p>Než začneme dělat interaktivní část hry reagující na vstupy
+od uživatele, je třeba umět vůbec vykreslit prvky na hrací
+ploše. Podobně jako jsme v lekci o Pygletu měli funkci
+<code>vykresli()</code>, která vykreslila hada, budeme mít
+v Pongu funkci stejného jména, která vykreslí prvky na hrací
+ploše.</p>
+<p>Většina z tvarů jsou obdélníky, takže nejprve
+navrhněme funkci <code>nakresli_obdelnik</code>, která
+dostane čtveřici souřadnic a pomocí modulu <code>gl</code>
+z Pygletu vykreslí čtverec pomocí 2 trojúhelníků.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyglet</span> <span class="kn">import</span> <span class="n">gl</span>
+<span class="o">...</span>
+<span class="k">def</span> <span class="nf">nakresli_obdelnik</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">):</span>
+    <span class="sd">"""Nakresli obdelnik na dane souradnice</span>
+
+<span class="sd">    Nazorny diagram::</span>
+
+<span class="sd">         y2 - +-----+</span>
+<span class="sd">              |/////|</span>
+<span class="sd">         y1 - +-----+</span>
+<span class="sd">              :     :</span>
+<span class="sd">             x1    x2</span>
+<span class="sd">    """</span>
+    <span class="c1"># Tady pouzijeme volani OpenGL, ktere je pro nas zatim asi nejjednodussi</span>
+    <span class="c1"># na pouziti</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glBegin</span><span class="p">(</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_TRIANGLE_FAN</span><span class="p">)</span>   <span class="c1"># zacni kreslit spojene trojuhelniky</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glVertex2f</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y1</span><span class="p">))</span>  <span class="c1"># vrchol A</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glVertex2f</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y2</span><span class="p">))</span>  <span class="c1"># vrchol B</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glVertex2f</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y2</span><span class="p">))</span>  <span class="c1"># vrchol C, nakresli trojuhelnik ABC</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glVertex2f</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y1</span><span class="p">))</span>  <span class="c1"># vrchol D, nakresli trojuhelnik BCD</span>
+    <span class="c1"># dalsi souradnice E by nakreslila trojuhelnik CDE, atd.</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glEnd</span><span class="p">()</span>  <span class="c1"># ukonci kresleni trojuhelniku</span>
+</pre></div><p>Teď začneme pracovat na funkci <code>vykresli()</code>
+Nejprve ji vytvoř prázdnou a zaregistruj ji
+v Pygletu na událost <code>on_draw</code>, jak jsme to
+dělali v lekci o Pygletu. To znamená, že se tato funkce
+zavolá pokaždé, když Pyglet překreslí okno. Pokud se
+mezitím např. změnila poloha míčku, funkce ho vykreslí
+o kousek jinde. Tím vlastně vytváříme dynamiku hry.
+Analogicky jsme to dělali s hadem, tady máme jen víc
+grafických prvků.</p>
+<div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="k">def</span> <span class="nf">vykresli</span><span class="p">():</span>
+    <span class="sd">"""Vykresli stav hry"""</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glClear</span><span class="p">(</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_COLOR_BUFFER_BIT</span><span class="p">)</span>  <span class="c1"># smaz obsah okna (vybarvi na cerno)</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glColor3f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># nastav barvu kresleni na bilou</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">SIRKA</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">VYSKA</span><span class="p">)</span>
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span>
+    <span class="n">on_draw</span><span class="o">=</span><span class="n">vykresli</span><span class="p">,</span>  <span class="c1"># na vykresleni okna pouzij funkci `vykresli`</span>
+<span class="p">)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># vse je nastaveno, at zacne hra</span>
+</pre></div><p>Zatím máme v těle funkce jen volání, která vyčistí
+plochu, do které kreslíme a nastaví barvu kreslení na bílou.</p>
+<p>Teď zkus sám/sama do funkce <code>vykresli()</code> přidat
+vykreslení <code>míčku</code> na správné pozici,
+kterou získáš z příslušné globální proměnné. Míček je
+v našem případě jen malý čtvereček jehož velikost
+máme uloženou v konstantě.</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/lessons/projects/pong/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">vykresli</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="c1"># Vykresleni micku</span>
+    <span class="n">nakresli_obdelnik</span><span class="p">(</span>
+        <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">VELIKOST_MICE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">VELIKOST_MICE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">VELIKOST_MICE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">VELIKOST_MICE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Po míčku zkus vykreslit obě <em>pálky</em>.
+V proměnné <code>pozice_palek</code> máme vertikální
+polohu první a druhé pálky, ale horizontální poloha je
+konstantní. Jaké souřadnice musíš předat funkci
+<code>nakresli_obdelnik</code>, aby se pálka vykreslila
+správně a na správném místě? Princip určení souřadnic
+je podobný jako u vykreslení míčku.</p>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/lessons/projects/pong/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">vykresli</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="c1"># palky - udelame si seznam souradnic palek a pro kazdou dvojici souradnic</span>
+    <span class="c1"># v tom seznamu palku vykreslime</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pozice_palek</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">SIRKA</span><span class="p">,</span> <span class="n">pozice_palek</span><span class="p">[</span><span class="mi">1</span><span class="p">])]:</span>
+        <span class="n">nakresli_obdelnik</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">-</span> <span class="n">TLOUSTKA_PALKY</span><span class="p">,</span>
+            <span class="n">y</span> <span class="o">-</span> <span class="n">DELKA_PALKY</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">x</span> <span class="o">+</span> <span class="n">TLOUSTKA_PALKY</span><span class="p">,</span>
+            <span class="n">y</span> <span class="o">+</span> <span class="n">DELKA_PALKY</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Přehlednosti hry pomůže <em>půlící čára</em>
+uprostřed. Jak ji ale namalovat?
+Nebudeme vymýšlet zbytečné složitosti.
+Namalujme ji jako sérii obdélníčků táhnoucích se odshora
+dolů. Chce to jen vygenerovat seznam souřadnic,
+které budou mít dostatečné rozestupy, a na každé
+z nich vykreslit obdélníček. Kterou funkci z Pythonu
+bys použila na získání tohoto seznamu souřadnic?</p>
+<div class="solution" id="solution-2">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/lessons/projects/pong/index/solutions/2/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">vykresli</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="c1"># prerusovana pulici cara - slozena ze spousty malych obdelnicku</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">DELKA_PULICI_CARKY</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">VYSKA</span><span class="p">,</span> <span class="n">DELKA_PULICI_CARKY</span> <span class="o">*</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">nakresli_obdelnik</span><span class="p">(</span>
+            <span class="n">SIRKA</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">y</span><span class="p">,</span>
+            <span class="n">SIRKA</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">y</span> <span class="o">+</span> <span class="n">DELKA_PULICI_CARKY</span>
+        <span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Co nám ještě chybí? <em>Počítadlo skóre</em> pro oba hráče.
+K tomu se musíme naučit vykreslovat v Pygletu text.
+V Pygletu je modul <code>text</code>, který obsahuje
+objekt <code>Label</code> (Nápis). Ten se hodí k vykreslení hodnoty
+skóre. Objekt musíme nejdřív vytvořit. To uděláme
+kulatými závorkami za jménem objektu, jako bychom
+volali funkci, a uložíme si ho do proměnné:
+<code>napis = Label()</code>. Normálně bychom objekt
+vytvořili jen jednou a pak měnili jeho hodnotu, ale
+pro jednoduchost vytvoříme vždy nový a celé to zabalíme
+do funkce. V jejím závěru musíme na nadpisu zavolat
+metodu <code>draw()</code>, jinak se nápis nevykreslí.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">nakresli_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">pozice_x</span><span class="p">):</span>
+    <span class="sd">"""Nakresli dany text na danou pozici</span>
+
+<span class="sd">    Argument ``pozice_x`` muze byt "left" nebo "right", udava na kterou stranu</span>
+<span class="sd">    bude text zarovnany</span>
+<span class="sd">    """</span>
+    <span class="n">napis</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">,</span>
+        <span class="n">font_size</span><span class="o">=</span><span class="n">VELIKOST_FONTU</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="n">pozice_x</span>
+    <span class="p">)</span>
+    <span class="n">napis</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div><p>Teď zkus tuto funkci použít ve funkci <code>vykresli()</code>
+k nakreslení skóre. K určení pozice textu použij
+konstanty SIRKA, VYSKA, ODSAZENI_TEXTU a VELIKOST_FONTU.</p>
+<div class="solution" id="solution-3">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/lessons/projects/pong/index/solutions/3/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">vykresli</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="c1"># A nakonec vypiseme skore obou hracu</span>
+    <span class="n">nakresli_text</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">skore</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">ODSAZENI_TEXTU</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">VYSKA</span> <span class="o">-</span> <span class="n">ODSAZENI_TEXTU</span> <span class="o">-</span> <span class="n">VELIKOST_FONTU</span><span class="p">,</span>
+        <span class="n">pozice_x</span><span class="o">=</span><span class="s1">'left'</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">nakresli_text</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">skore</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">SIRKA</span> <span class="o">-</span> <span class="n">ODSAZENI_TEXTU</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">VYSKA</span> <span class="o">-</span> <span class="n">ODSAZENI_TEXTU</span> <span class="o">-</span> <span class="n">VELIKOST_FONTU</span><span class="p">,</span>
+        <span class="n">pozice_x</span><span class="o">=</span><span class="s1">'right'</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Hurá, teď už máme vykreslené hrací pole. Pojďme ho rozhýbat.</p>
+<h2>Dynamika hry</h2>
+<p>Teď to začne být zajímavé. Nejdřív rozhýbeme pálky,
+protože je to jednodušší, pak míček.</p>
+<h3>Vstup od uživatele</h3>
+<p>Potřebujeme pohybovat s pálkami podle vstupu od uživatele.
+Dokud bude uživatel držet např. klávesu <kbd>S</kbd>, levá pálka
+pojede dolů.
+V Pygletu jsme se naučili pracovat s událostí
+<code>on_text</code>, ta nám ale v tomto případě nebude stačit.
+K realizaci pohybu pálek budeme potřebovat 2 typy událostí,
+které ještě neznáme - <code>on_key_press</code> a <code>on_key_release</code>.</p>
+<p>Pyglet zavolá funkci registrovanou na událost <code>on_key_press</code>
+stejně jako při vykreslování okna zavolal funkci <code>vykresli()</code>,
+zaregistrovanou na události <code>on_draw</code>.
+Přidáme právě stisknutou klávesu do množiny stisknutých
+kláves v globální proměnné <code>stisknute_klavesy</code>
+jako <var>n</var>-tici <code>(směr, číslo pálky)</code>, např. tedy
+<code>('nahoru', 0)</code>, což bude vyjadřovat, že levá pálka má jet nahoru.
+Při události <code>on_key_release</code> odebereme právě
+stisknutou klávesu z množiny <code>stisknute_klavesy</code>.
+Tím zajistíme, že v daný okamžik bude množina <code>stisknute_klavesy</code>
+obsahovat všechny klávesy, které uživatel drží, a budeme
+podle toho moct pohnout s pálkami.</p>
+<p>Troufneš si napsat funkce <code>stisk_klavesy(symbol, modifikatory)</code>
+a <code>pusteni_klavesy(symbol, modifikatory)</code>?
+Poznamenejme, že do množiny <code>stisknute_klavesy</code>
+můžeš přidat prvek metodou <code>add(prvek)</code> a pak
+odebrat metodou <code>discard(prvek)</code>. Obě berou jako
+argument prvek, který se má přidat nebo odstranit,
+v našem případě konkrétní <var>n</var>-tici.</p>
+<p>Budeš potřebovat zjistit, kterou klávesu uživatel stisknul.
+Kód stisknuté klávesy předá Pyglet našim funkcím
+v argumentu <code>symbol</code>. Je to ale nic neříkající
+číslo. Z <code>pyglet.window</code> můžeš naimportovat
+modul <code>key</code>, který obsahuje konstanty jednotlivých
+kláves. Můžeš pak porovnat, zda symbol odpovídá např.
+klávese <kbd>↑</kbd> jako <code>symbol == key.UP</code>.</p>
+<div class="solution" id="solution-4">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/lessons/projects/pong/index/solutions/4/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyglet.window</span> <span class="kn">import</span> <span class="n">key</span>
+<span class="o">...</span>
+<span class="k">def</span> <span class="nf">stisk_klavesy</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">modifikatory</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">W</span><span class="p">:</span>
+        <span class="n">stisknute_klavesy</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s1">'nahoru'</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">S</span><span class="p">:</span>
+        <span class="n">stisknute_klavesy</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s1">'dolu'</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+        <span class="n">stisknute_klavesy</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s1">'nahoru'</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+        <span class="n">stisknute_klavesy</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s1">'dolu'</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">pusteni_klavesy</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">modifikatory</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">W</span><span class="p">:</span>
+        <span class="n">stisknute_klavesy</span><span class="o">.</span><span class="n">discard</span><span class="p">((</span><span class="s1">'nahoru'</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">S</span><span class="p">:</span>
+        <span class="n">stisknute_klavesy</span><span class="o">.</span><span class="n">discard</span><span class="p">((</span><span class="s1">'dolu'</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+        <span class="n">stisknute_klavesy</span><span class="o">.</span><span class="n">discard</span><span class="p">((</span><span class="s1">'nahoru'</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+        <span class="n">stisknute_klavesy</span><span class="o">.</span><span class="n">discard</span><span class="p">((</span><span class="s1">'dolu'</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="o">...</span>
+</pre></div>
+    </div>
+</div><div class="admonition note"><p>Proč vlastně používáme k odebrání <var>n</var>-tice metodu
+<code>discard()</code> místo metody <code>remove()</code>,
+kterou známe ze seznamů a množiny ji také mají?
+Nezpůsobí totiž chybu, když se pokusíme odebrat
+prvek, který v množině není. To by se mohlo stát,
+kdyby uživatel stiskl jednu z funkčních kláves
+a teprve pak se přepnul do našeho okna a pak jí
+pustil.</p>
+</div><p>Zaregistruj si obě funkce na příslušné události:</p>
+<div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">SIRKA</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">VYSKA</span><span class="p">)</span>
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span>
+    <span class="n">on_draw</span><span class="o">=</span><span class="n">vykresli</span><span class="p">,</span>  <span class="c1"># na vykresleni okna pouzij funkci `vykresli`</span>
+    <span class="n">on_key_press</span><span class="o">=</span><span class="n">stisk_klavesy</span><span class="p">,</span>
+    <span class="n">on_key_release</span><span class="o">=</span><span class="n">pusteni_klavesy</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><h3>Pohyb pálek</h3>
+<p>Když už jsme dokázali zpracovat vstup od uživatele,
+můžeme podle něj pohnout s pálkami.
+Pohyb předmětů budeme provádět ve funkci <code>obnov_stav(dt)</code>,
+která bude registrována na tik hodin v Pygletu.
+Argument <code>dt</code> je čas od posledního zavolání funkce Pygletem.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">obnov_stav</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">cislo_palky</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># pohyb podle klaves (viz funkce `stisk_klavesy`)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">'nahoru'</span><span class="p">,</span> <span class="n">cislo_palky</span><span class="p">)</span> <span class="ow">in</span> <span class="n">stisknute_klavesy</span><span class="p">:</span>
+            <span class="n">pozice_palek</span><span class="p">[</span><span class="n">cislo_palky</span><span class="p">]</span> <span class="o">+=</span> <span class="n">RYCHLOST_PALKY</span> <span class="o">*</span> <span class="n">dt</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">'dolu'</span><span class="p">,</span> <span class="n">cislo_palky</span><span class="p">)</span> <span class="ow">in</span> <span class="n">stisknute_klavesy</span><span class="p">:</span>
+            <span class="n">pozice_palek</span><span class="p">[</span><span class="n">cislo_palky</span><span class="p">]</span> <span class="o">-=</span> <span class="n">RYCHLOST_PALKY</span> <span class="o">*</span> <span class="n">dt</span>
+
+        <span class="c1"># dolni zarazka - kdyz je palka prilis dole, nastavime ji na minimum</span>
+        <span class="k">if</span> <span class="n">pozice_palek</span><span class="p">[</span><span class="n">cislo_palky</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">DELKA_PALKY</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">pozice_palek</span><span class="p">[</span><span class="n">cislo_palky</span><span class="p">]</span> <span class="o">=</span> <span class="n">DELKA_PALKY</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="c1"># horni zarazka - kdyz je palka prilis nahore, nastavime ji na maximum</span>
+        <span class="k">if</span> <span class="n">pozice_palek</span><span class="p">[</span><span class="n">cislo_palky</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">VYSKA</span> <span class="o">-</span> <span class="n">DELKA_PALKY</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">pozice_palek</span><span class="p">[</span><span class="n">cislo_palky</span><span class="p">]</span> <span class="o">=</span> <span class="n">VYSKA</span> <span class="o">-</span> <span class="n">DELKA_PALKY</span> <span class="o">/</span> <span class="mi">2</span>
+</pre></div><p>Podívejme se na tento kus kódu. Procházíme
+v cyklu obě pálky a ptáme se, zda je v množině
+stisknutých kláves <var>n</var>-tice reprezentující
+pohyb dané pálky nahoru nebo dolů.
+Když ano, <em>pohneme pálkou</em> v daném směru
+(přičteme nebo odečteme od vertikální polohy pálky
+změnu polohy, což je čas od posledního zavolání,
+který známe, vynásobený rychlostí pálky nastavené
+v konstantě).</p>
+<p>V druhé části musíme zajistit, aby pálka <em>nevyjela</em>
+z hracího pole. Z minulých hrátek s hadem víme,
+že to se může stát velmi snadno. Pálku malujeme kolem
+jejího středu, což znamená, že když se pálka přiblíží na
+na <var>y</var>-ovou pozici <code>DELKA_PALKY / 2</code>, začíná
+překračovat dolní hranici hracího pole. V tom případě
+její pozici zafixujeme na nejnižší možné souřadnici.
+Analogicky to provedeme, když se blíží hornímu okraji.</p>
+<p>Zaregistruj vytvořenou funkci na tik hodin jako</p>
+<div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="n">obnov_stav</span><span class="p">)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>a podívej se na výsledek.</p>
+<h3>Rozehrání</h3>
+<p>Než začneme míček odrážet od stěn, musíme ho nejprve
+uvést do pohybu. Vystřelíme ho ze středu hrací plochy
+do náhodného směru. Toto se také stane v momentě, kdy
+jeden z hráčů skóruje a hra se rozehrává znovu.
+Proto tohle rozehrání zabalíme do funkce <code>reset()</code>.
+Zavolejte ji, než se spustí hra.</p>
+<p>Jak bude tato funkce vypadat?
+Nejprve přesuň míček do středu hrací plochy nastavením
+proměnné <code>pozice_mice</code>. Potom je třeba
+simulovat hod mincí pomocí volání funkce
+<code>random.randint(0, 1)</code>. Tím rozhodneme, zda
+se míček rozletí doprava nebo doleva.
+Míček rozpohybujeme horizontálním směrem přičtením
+požadované rychlosti k <code>rychlost_mice[0]</code>.
+Ve vertikálním směru <code>rychlost_mice[1]</code>
+se bude míček pohybovat zcela náhodně přičtením
+náhodné rychlosti.</p>
+<div class="solution" id="solution-5">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/lessons/projects/pong/index/solutions/5/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="o">...</span>
+<span class="k">def</span> <span class="nf">reset</span><span class="p">():</span>
+    <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">SIRKA</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">VYSKA</span> <span class="o">//</span> <span class="mi">2</span>
+
+    <span class="c1"># x-ova rychlost - bud vpravo, nebo vlevo</span>
+    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">RYCHLOST</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">RYCHLOST</span>
+    <span class="c1"># y-ova rychlost - uplne nahodna</span>
+    <span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">RYCHLOST</span>
+
+<span class="c1"># nastavit vychozi stav pro start hry</span>
+<span class="n">reset</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><p>Nic se zatím ale nestane, protože funkce
+<code>obnov_stav(dt)</code> zatím nepracuje
+se změnou rychlosti. Musíme v ní tedy nastavit proměnnou
+<code>poloha_micku</code> podle současné rychlosti míčku
+a času uplynulého od posledního zavolání funkce podle
+fyzikálního vztahu <var>s</var> = <var>v</var> <var>t</var>, tedy že dráha
+je rovna rychlosti vynásobené časem. Přidej tedy do
+funkce <code>obnov_stav(dt)</code> následující kód:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">obnov_stav</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="c1"># POHYB MICKU</span>
+    <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">dt</span>
+    <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">dt</span>
+</pre></div><p>Zkus, co se teď stane při spuštění hry.
+Míček by měl vyletět pokaždé do jiného směru.</p>
+<h3>Odrážení míčku</h3>
+<p>Míček nám teď nekontrolovaně vyletí z hřiště.
+Musíme tedy zařídit, aby se odrážel od stěn.
+Jelikož úhel dopadu se rovná úhlu odrazu,
+stačí otočit znaménko <var>y</var>-ové složky rychlosti.
+Do funkce <code>obnov_stav(dt)</code> musíme
+přidat kontroly na polohu míčku a případně
+změnit jeho směr, pokud je moc nízko nebo moc vysoko.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">obnov_stav</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="c1"># Odraz micku od sten</span>
+    <span class="k">if</span> <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">VELIKOST_MICE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">VYSKA</span> <span class="o">-</span> <span class="n">VELIKOST_MICE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div><p>Teď nám zbývá odraz od pálky, případně resetování
+hry, pokud míček padne mimo pálku jednoho hráče a
+ten druhý tak získá bod. Opět tedy budeme přidávat
+kód do funkce <code>obnov_stav(dt)</code>.</p>
+<p>Prvním krokem je poznamenání mezí na <var>y</var>-ové ose,
+kde se musí míček nacházet, aby byl úspěšně odražen –
+to je mezi horním a dolním koncem pálky:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">obnov_stav</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="n">palka_min</span> <span class="o">=</span> <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">VELIKOST_MICE</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">DELKA_PALKY</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">palka_max</span> <span class="o">=</span> <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">VELIKOST_MICE</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">DELKA_PALKY</span> <span class="o">/</span> <span class="mi">2</span>
+</pre></div><p>Nyní když míček narazí do pravé nebo levé stěny
+se umíme zeptat, zda je pálka na správné pozici
+a my máme <code>odrazit</code> míček nebo zda hráč
+prohrál kolo a my máme přičíst jeho soupeři bod a
+<code>restartovat hru</code>.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">obnov_stav</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="c1"># odrazeni vlevo</span>
+    <span class="k">if</span> <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">TLOUSTKA_PALKY</span> <span class="o">+</span> <span class="n">VELIKOST_MICE</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">palka_min</span> <span class="o">&lt;</span> <span class="n">pozice_palek</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">palka_max</span><span class="p">:</span>
+            <span class="c1"># palka je na spravnem miste, odrazime micek</span>
+            <span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># palka je jinde nez ma byt, hrac prohral</span>
+            <span class="n">skore</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">reset</span><span class="p">()</span>
+
+    <span class="c1"># odrazeni vpravo</span>
+    <span class="k">if</span> <span class="n">pozice_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">SIRKA</span> <span class="o">-</span> <span class="p">(</span><span class="n">TLOUSTKA_PALKY</span> <span class="o">+</span> <span class="n">VELIKOST_MICE</span> <span class="o">/</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">palka_min</span> <span class="o">&lt;</span> <span class="n">pozice_palek</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">palka_max</span><span class="p">:</span>
+            <span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">rychlost_mice</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">skore</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">reset</span><span class="p">()</span>
+</pre></div><h2>Závěr</h2>
+<p>Hurá, prokousali jsme se k zdárnému konci Pongu!
+Máš teď plně funkční interaktivní grafickou
+hru zakládající se na reálné předloze. :)</p>
+
+
+        </div>
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/master/lessons/projects/pong/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Praha napsal Oskar Hollmann s použitím kódu Petra Viktorina, 2016.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
