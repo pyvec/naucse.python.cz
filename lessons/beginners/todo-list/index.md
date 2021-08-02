@@ -58,7 +58,7 @@ Není určená na výpis pro uživatele, ale pro ladění programu.
 ```python
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.exc.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
