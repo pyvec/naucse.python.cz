@@ -4,7 +4,7 @@ Nainstaluj si nástroj [Homebrew](http://brew.sh), který řeší a zjednodušuj
 instalaci aplikací a knihoven, které budeme potřebovat pro programování.
 Jak na to?
 
-Spusť v [příkazové řádce]({{ lesson_url('beginners/cmdline') }}) příkaz:
+Spusť v příkazové řádce příkaz:
 
 ```console
 $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
