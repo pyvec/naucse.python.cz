@@ -12,12 +12,12 @@ Pokud zrovna danou verzi Pythonu nainstalovanou nemáš, můžeš postupovat pod
 Druhá věc, kterou budeš potřebovat, je Git – pokud nemáš ten, můžeš postupovat podle [návodu na instalaci Gitu]({{lesson_url("git/install")}}).
 
 Poslední věc, kterou potřebuješ, už není žádný program, ale pár schopností.
-Je potřeba, aby jsi uměl{{a}} pracovat s příkazovou řádkou (terminálem) a s Gitem.
+Je potřeba, abys uměl{{a}} pracovat s příkazovou řádkou (terminálem) a s Gitem.
 Vše potřebné si můžeš připomenout v [návodu na používání terminálu]({{lesson_url("beginners/cmdline")}}), respektive v [návodu na používání Gitu]({{lesson_url("git/git-collaboration-2in1")}}).
 
 ## Instalace
 
-Nauč se Python používá k definici závislostí Pipenv, který si nejspíš budeš muset doinstalovat. 
+Nauč se Python používá k definici závislostí Pipenv, který si nejspíš budeš muset doinstalovat.
 Postupovat můžeš podle [návodu na instalaci Pipenvu][pipenv-install].
 
 [pipenv-install]: https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv

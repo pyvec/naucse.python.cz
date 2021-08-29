@@ -4,7 +4,7 @@ Teď, když už máš lokální instalaci aplikace Nauč se Python, můžeš za�
 
 První věc, kterou musíš udělat, je vybrat si identifikátor kurzu, pod kterým bude kurz uložený.
 Tento identifikátor také bude ve všech adresách, které se budou týkat tohoto kurzu.
-Identifikátor se může skládat pouze z malých alfanumerických znaků a spojovníků (`-`) a musí být uníkátní, alespoň v daném roce.
+Identifikátor se může skládat pouze z malých alfanumerických znaků a spojovníků (`-`) a musí být unikátní, alespoň v daném roce.
 Jak zjistit, jestli už identifikátor existuje? Podívej se do složky `runs` a pak dále do složky, která odpovídá roku, ve kterém tvůj kurz začíná.
 
 > [note] Jak vybrat identifikátor?
