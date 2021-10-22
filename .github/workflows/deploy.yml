@@ -1,0 +1,47 @@
+name: Deploy
+
+concurrency:
+  group: deployment
+  cancel-in-progress: false
+
+on:
+  push:
+    branches:
+      - master
+  # API call (from hooks)
+  repository_dispatch:
+    types: [Redeploy]
+  # Manual dispatch using GitHub UI
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Print source of the trigger
+        if: github.event_name == 'repository_dispatch'
+        run: echo ${{ github.event.client_payload.message }}
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip pipenv setuptools wheel
+          pipenv install --deploy --dev
+      - name: Set environment variables
+        run: |
+          export REPO_URL=${{ github.server_url }}/${{ github.repository }}
+          echo ${REPO_URL}
+          echo "NAUCSE_MAIN_REPO_URL=${REPO_URL}" >> $GITHUB_ENV
+          export BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          echo ${BRANCH_NAME}
+          echo "NAUCSE_MAIN_REPO_BRANCH=${BRANCH_NAME}" >> $GITHUB_ENV
+          pipenv graph
+      - name: Build
+        run: |
+          pipenv run naucse freeze --verbose
+      - name: Deploy
+        run: |
+          pipenv run naucse deploy --push --no-freeze
