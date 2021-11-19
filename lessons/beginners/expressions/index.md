@@ -37,7 +37,40 @@ vysledek =    9    / 4
 vysledek =        2.25
 ```
 
-Funguje to i u složitých výrazů.
+
+## Priorita operátorů
+
+Operátory mají v Pythonu prioritu, podobně jako v matematice:
+když nejsou ve výrazu závorky, `*` se provádí před `+`.
+
+Je přitom jedno, jestli máš ve výrazu čísla (kde `*` násobí a `+` sečítá)
+nebo třeba řetězce (kde `*` opakuje a `+` spojuje):
+
+```python
+print(2 + 3 * 5)
+#         ╰─┬─╯
+print(2 +  15  )
+#     ╰───┬──╯
+print(   17    )
+
+
+print('moje ' +   'pra' * 4    + 'babička')
+#                 ╰────┬───╯
+print('moje ' + 'prapraprapra' + 'babička')
+#     ╰───────────┬──────────╯
+print(   'moje prapraprapra'   + 'babička')
+#        ╰───────────────┬───────────────╯
+print(     'moje praprapraprababička'     )
+```
+
+Kdyby sis někdy prioritou nebyl{{a}} jist{{gnd('ý', 'á')}},
+přidej do výrazu závorky, ať je to jasnější.
+Jak tobě tak ostatním, kteří budou kód číst.
+
+
+## Složité výrazy
+
+Vyhodnocování funguje stejným způsobem i u složitých výrazů.
 Python se složitými výrazy nemá problém.
 Jen člověk, který program čte či píše, se v nich může lehce ztratit.
 Když opravdu potřebuješ napsat složitý výraz, je dobré jej rozdělit na několik
@@ -72,6 +105,9 @@ x = -5 +                            1.75
 #   ╰──────────────┬───────────────────╯
 x =              -3.25
 ```
+
+
+## Výrazy jsou všude
 
 Výrazy se používají na více místech Pythonu než jen v přiřazování
 do proměnných.
