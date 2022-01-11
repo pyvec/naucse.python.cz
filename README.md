@@ -11,30 +11,36 @@ Dostupné na [naucse.python.cz](https://naucse.python.cz).
 Chceš-li server spustit na svém počítači, např. proto, že se chceš zapojit
 do vývoje, je potřeba ho nejdřív nainstalovat:
 
-* (nepovinné) Vytvoř a aktivuj si [virtuální prostředí](https://naucse.python.cz/lessons/beginners/install/) v Pythonu 3.6.
 * Přepni se do adresáře s kódem projektu.
-* Nainstaluj závislosti:
+* Nainstaluj `poetry`. Můžeš instalovat podle [oficiálního návodu](https://python-poetry.org/docs/#installation), nebo:
 
-  * Linux/Mac:
+  * Vytvoř a aktivuj si [virtuální prostředí](https://naucse.python.cz/lessons/beginners/install/) v Pythonu 3.9+.
+
+  * Linux/MacOS:
 
     ```console
-    $ python3 -m pip install pipenv
-    $ pipenv install
+    $ python3 -m pip install poetry
     ```
 
   * Windows:
 
     ```doscon
-    > py -3 -m pip install pipenv
-    > pipenv install
+    > py -3 -m pip install poetry
     ```
+
+* Vytvoř si prostředí a nainstaluj závislosti:
+
+    ```console
+    $ poetry install
+    ```
+
 
 Nainstalovanou aplikaci spustíš následovně:
 
-* (nepovinné) Aktivuj si virtuální prostředí, máš-li ho vytvořené.
+* Aktivuj si virtuální prostředí, máš-li ho vytvořené.
 * Spusť vývojový server:
   ```console
-  $ pipenv run serve
+  $ poetry run python -m naucse serve
   ```
 * Program vypíše adresu (např. `http://127.0.0.1:8003/`); tu navštiv v prohlížeči.
 
@@ -42,18 +48,10 @@ Pokud chceš místo vývojového spuštění vygenerovat statické HTML soubory 
 
 * Spusť freeze. Parametr `--serve` provede spuštění webserveru, pomocí kterého si lze vygenerované soubory prohlédnout:
   ```console
-  $ PYTHONPATH=. pipenv run freeze --serve
+  $ poetry run python -m naucse freeze --path=_build
   ```
-* HTML stránky jsou v adresáři `naucse/_build`.
+* HTML stránky jsou v adresáři `_build`.
   Program vypíše adresu (např. `http://0.0.0.0:8000/`); tu navštiv v prohlížeči.
-
-## Externí kurzy
-
-Na naucse.python.cz jsou k dispozici i *externí* kurzy, které spravují více
-či méně důvěryhodní lidé.
-Proces vykreslování obsahu těchto kurzů jim dává velkou volnost: můžou převzít
-plnou kontrolu nad počítačem, na kterém `naucse` běží.
-Kvůli bezpečnosti je proto `naucse` ve výchozím nastavení neukazuje.
 
 
 ## Licence
