@@ -1,0 +1,180 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Vrátit nebo vypsat?
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1 id="vratit_nebo_vypsat">Vrátit nebo vypsat?
+<a href="#vratit_nebo_vypsat" class="header-link">#</a>
+</h1>
+<p>Podívejme se teď na následující program, který vypíše obsah elipsy:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span>
+
+<span class="k">def</span> <span class="nf">obsah_elipsy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Obsah elipsy s poloosami 3 a 5 je'</span><span class="p">,</span> <span class="n">obsah_elipsy</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">'cm2'</span><span class="p">)</span>
+</pre></div><p>Takový program se teoreticky dá napsat i s procedurou, tedy funkcí, která nic
+nevrací.
+Procedura může výsledek třeba vypsat na obrazovku:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span>
+
+<span class="k">def</span> <span class="nf">obsah_elipsy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Obsah je'</span><span class="p">,</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span>  <span class="c1"># Pozor, `print` místo `return`!</span>
+
+<span class="n">obsah_elipsy</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div><p>Program takhle funguje, ale přichází o jednu z hlavních výhod funkcí:
+možnost vrácenou hodnotu použít i jinak než jen v <code>print</code>.</p>
+<p>Funkci, která <em>vrací</em> výsledek, můžeš použít v dalších výpočtech:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">objem_eliptickeho_valce</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">vyska</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">obsah_elipsy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">vyska</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">objem_eliptickeho_valce</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div><p>... ale s procedurou, která výsledek přímo vypíše, by to nešlo.
+Proto je dobré psát funkce, které spočítané hodnoty vrací,
+a zpracování výsledku (např. vypsání) nechat na kód mimo funkci.</p>
+<p>Další důvod, proč hodnoty spíš vracet než vypisovat je ten, že jedna funkce se
+dá použít v různých situacích.
+Proceduru s <code>print</code> by nešlo rozumně použít tehdy, když nás příkazová
+řádka vůbec nezajímá – třeba v grafické hře, webové aplikaci nebo pro ovládání
+robota.</p>
+<p>Podobně je to se vstupem: když použiju v rámci své funkce <code>input</code>, bude se
+moje funkce dát použít jen v situacích, kdy je u počítače klávesnice a za ní
+člověk.
+Proto je lepší funkcím potřebné informace předávat jako argumenty
+a volání <code>input</code> (nebo čtení textového políčka či měření čidlem robota)
+nemít ve funkci, ale vně, v kódu, který funkci volá:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span>
+
+<span class="k">def</span> <span class="nf">obsah_elipsy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Vrátí obsah elipsy s poloosami daných délek"""</span>
+    <span class="c1"># Jen samotný výpočet:</span>
+    <span class="k">return</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+<span class="c1"># print a input jsou "venku":</span>
+<span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">'Zadej délku poloosy 1: '</span><span class="p">))</span>
+<span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">'Zadej délku poloosy 2: '</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Obsah je'</span><span class="p">,</span> <span class="n">obsah_elipsy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+</pre></div><p>Samozřejmě existují výjimky: procedura, která přímo vytváří textový výpis
+(např. tabulku), může používat <code>print</code>; funkce, která načítá textové informace
+(jako <code>ano_nebo_ne</code> výše), zase <code>input</code>.
+Když ale funkce něco <em>počítá</em>, nebo když si nejsi jistý/á,
+je dobré ve funkci <code>print</code> ani <code>input</code> nemít.</p>
+<h2 id="none">None
+<a href="#none" class="header-link">#</a>
+</h2>
+<p>Když funkce neskončí příkazem <code>return</code>,
+automaticky se vrátí hodnota <code>None</code>.</p>
+<p>Je to hodnota zabudovaná přímo do Pythonu, podobně jako <code>True</code> nebo <code>False</code>,
+a znamená „nic“.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">nic</span><span class="p">():</span>
+<span class="w">     </span><span class="sd">"""Tahle funkce nic nedělá """</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">nic</span><span class="p">())</span>
+</pre></div><p>Procedury v Pythonu vracejí právě toto „nic“.</p>
+
+
+        </div>
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse-python/blob/main/lessons/beginners/prefer-return/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2014-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,353 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Beginners course PyLadies: Exceptions
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/pyladies-en-prague/">Beginners course PyLadies</a>
+
+> <a href="/2018/pyladies-en-prague/sessions/tests/">Testing</a>
+
+> <a href="/2018/pyladies-en-prague/beginners-en/exceptions/">Exceptions</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Exceptions</h1>
+<p>We have already talked about <a href="/2018/pyladies-en-prague/beginners/print/">error messages</a>: 
+Python complains, tells us where the error (line) is, and terminates the program.
+But there is much more that we can learn about error messages (a.k.a <em>exceptions</em>).</p>
+<h2>Printing errors:</h2>
+<p>In the beginning we will repeat how Python prints an error which is in a nested function.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">out_func</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">in_func</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">in_func</span><span class="p">(</span><span class="n">divisor</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">divisor</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">out_func</span><span class="p">())</span>
+</pre></div><!-- XXX: Highlight the line numbers -->
+
+<div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):          </span>
+  File <span class="nb">"/tmp/example.py"</span>, line <span class="m">7</span>, in <span class="n">&lt;module&gt;</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">out_func</span><span class="p">())</span>
+  File <span class="nb">"/tmp/example.py"</span>, line <span class="m">2</span>, in <span class="n">out_func</span>
+    <span class="k">return</span> <span class="n">in_func</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+  File <span class="nb">"/tmp/example.py"</span>, line <span class="m">5</span>, in <span class="n">in_func</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">divisor</span>
+<span class="gr">ZeroDivisionError</span>: <span class="n">division by zero</span>
+</pre></div><p>You notice that every function call that led to the error is listed here.
+The actuall error is probably somewhere near that function call.
+In our case it's easy. We shouldn't call <code>in_func</code> with argument <code>0</code>.
+Or, the <code>in_function</code> must be written to handle the case that the divisor can be <code>0</code>
+and it should do something else than try to devide by zero.</p>
+<p>Python can't know where the error is that needs to be fixed, so it shows
+you everything in the error message.
+This will be very useful in more complex programs.</p>
+<h2>Raising an error</h2>
+<p>An error, or more precisely an <em>exception</em>, can be also invoked by the command <code>raise</code>.
+After that command, write the name of the exception and some
+information about what went wrong in parentheses.</p>
+<div class="highlight"><pre><span></span><span class="n">LIST_SIZE</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="k">def</span> <span class="nf">verify_number</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="n">LIST_SIZE</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">'OK!'</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'The number {n} is not in the list!'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">number</span><span class="p">))</span>
+</pre></div><p>All types of built-in exceptions are
+<a href="https://docs.python.org/3/library/exceptions.html">here</a>, including their hierarchy.</p>
+<p>These exceptions are important to us now:</p>
+<div class="highlight"><pre><code>BaseException
+ ├── SystemExit                     raised by function exit()
+ ├── KeyboardInterrupt              raised after pressing Ctrl+C
+ ╰── Exception
+      ├── ArithmeticError
+      │    ╰── ZeroDivisionError    zero division
+      ├── AssertionError            command `assert` failed
+      ├── AttributeError            non-existing attribute, e.g. 'abc'.len
+      ├── ImportError               failed import
+      ├── LookupError
+      │    ╰── IndexError           non-existing index, e.g. 'abc'[999]
+      ├── NameError                 used a non-existing variable name
+      │    ╰── UnboundLocalError    used a variable that wasn't initiated
+      ├── SyntaxError               wrong syntax – program is unreadable/unusable
+      │    ╰── IndentationError     wrong indentation
+      │         ╰── TabError        combination of tabs and spaces
+      ├── TypeError                 wrong type, e.g. len(9)
+      ╰── ValueError                wrong value, e.g. int('xyz')</code></pre></div><h2>Handling Exceptions</h2>
+<p>And why are there so many?
+So you can catch them! :)
+In the following function, the <code>int</code> function can 
+fail when something other than a
+number is given to it. It needs to be prepared for
+that kind of situation with a <code>try/except</code> block. (You also
+commonly hear this called a <code>try/catch</code> block -- mostly in other
+programming languages).</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_number</span><span class="p">():</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">'Enter some number: '</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">'That was not a number! I will continue with 0'</span><span class="p">)</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">number</span>
+</pre></div><p>So how does this work?
+Python runs the commands within the <code>try</code> block, but if the error occurs
+that you mentioned after <code>except</code>, Python won't terminate the program, instead, it will
+run all the commands in the exception block.
+If there's no error, the except block will be skipped.</p>
+<p>When you catch a general exception, Python also catches
+exceptions that are related to it (in the diagram, they are listed as child entries) -- 
+e.g. <code>except ArithmeticError:</code> will also catch <code>ZeroDivisionError</code>.
+And <code>except Exception:</code> will catch all usual exceptions.</p>
+<h2>Don't catch'em all!</h2>
+<p>There is no need to catch most of the errors.</p>
+<p>If any unexpected error happens 
+it's always <em>much</em> better to terminate the program
+than to continue with wrong values.
+In addition, Python's standard error output will make it
+really easy for you to find the error.</p>
+<p>For example, catching the exception <code>KeyboardInterrupt</code>
+could have the side effect that the program couldn't be terminated if we needed to
+(with shortcut <kbd>Ctrl</kbd>+<kbd>C</kbd>).</p>
+<p>Use the command <code>try/except</code> only in situations when you
+expect some exception -- when you know exactly what could happen
+and why, and you have the option to correct it -- in the
+except block.
+A typical example would be reading input from a user. If the user 
+enters gibberish, it's better to ask again until the
+user enters something meaningful:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">retrieve_number</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="n">answer</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">"Type a number: "</span><span class="p">)</span>
+<span class="gp">... </span>            <span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>                    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+<span class="gp">... </span>            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+<span class="gp">... </span>                    <span class="k">print</span><span class="p">(</span><span class="s2">"This is not a number. Try again"</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">retrieve_number</span><span class="p">())</span>
+<span class="go">Type a number: twenty</span>
+<span class="go">This is not a number. Try again</span>
+<span class="go">Type a number: 20</span>
+<span class="go">20</span>
+</pre></div><h2>Other clauses</h2>
+<p>Additionally to <code>except</code>, there are two more clauses - blocks that can 
+be used with <code>try</code>, and these are <code>else</code> and <code>finally</code>.
+The first one will be run if exception in the <code>try</code> block didn't happen.
+And <code>finally</code> runs every time.</p>
+<p>You can also have several <code>except</code> blocks. Only one of them will be triggered -- 
+the first one that can handle the raised exception.</p>
+<div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">do_something</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"This will be printed if there's a ValueError."</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"This will be printed if there's a NameError."</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"This will be printed if there's some other exception."</span><span class="p">)</span>
+    <span class="c1"># (apart from SystemExit a KeyboardInterrupt, we don't want to catch those)</span>
+<span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"This will never be printed"</span><span class="p">)</span>
+    <span class="c1"># ("except Exception" above already caught the TypeError)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"This will be printed if there's no error in try block"</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"This will always be printed; even if there's e.g. a 'return' in the 'try' block."</span><span class="p">)</span>
+</pre></div><h2>Task</h2>
+<p>Let's add exception handling to our calculator (or to 1-D ticktactoe, if you have it)<br>
+if the user doesn't enter a number in the input.</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/pyladies-en-prague/beginners-en/exceptions/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Possible solution for the calculator:</p>
+<div class="highlight"><pre><span></span><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">side</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">'Enter the side of a square in centimeters: '</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">'That was not a number!'</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">side</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">'That does not make sense!'</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">"The perimeter of a square with a side of"</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span><span class="s2">"cm is "</span><span class="p">,</span> <span class="n">side</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span><span class="s2">"cm."</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">"The area of a square with a side of"</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span><span class="s2">"cm is"</span><span class="p">,</span> <span class="n">side</span> <span class="o">*</span> <span class="n">side</span><span class="p">,</span> <span class="s2">"cm2."</span><span class="p">)</span>
+</pre></div><p>Possible solution for 1-D ticktactoe:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_number</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">'Which position do you want to fill? (0..19) '</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">'This is not a number!'</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">position</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">'You can not play outside the field!'</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">field</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">'-'</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">'That position is not free!'</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+
+    <span class="n">field</span> <span class="o">=</span> <span class="n">field</span><span class="p">[:</span><span class="n">position</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'o'</span> <span class="o">+</span> <span class="n">field</span><span class="p">[</span><span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">field</span>
+
+
+<span class="k">print</span><span class="p">(</span><span class="n">player_move</span><span class="p">(</span><span class="s1">'-x----'</span><span class="p">))</span>
+</pre></div>
+    </div>
+</div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/pyladies-en-prague/sessions/tests/">↑ <span class="d-none d-sm-inline">Lekce: Testing</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/pyladies-en-prague/beginners-en/modules/"><span class="d-none d-sm-inline">Modules</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-pyladies-en-prague/lessons/beginners-en/exceptions/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Translated by Marketa Muzikova</p>
+    
+        <p>Originally written by Petr Viktorin, 2014-2017 for <a href="https://naucse.python.cz/course/pyladies/beginners/exceptions/">PyLadies CZ</a>.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

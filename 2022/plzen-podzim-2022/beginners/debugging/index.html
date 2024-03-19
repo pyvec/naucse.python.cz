@@ -1,0 +1,297 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Hledání chyb
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2022/plzen-podzim-2022/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2022/plzen-podzim-2022/sessions/test/">Testování</a>
+
+> <a href="/2022/plzen-podzim-2022/beginners/debugging/">Hledání chyb</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1 id="hledani_chyb">Hledání chyb
+<a href="#header-hledani_chyb" class="header-link">#</a>
+</h1>
+<p>Jednou z klíčových vlastností vývojáře je umět najít a opravit defekt v programu. V programátorské hantýrce se tento proces nazývá jako <em>debugging</em>. Takový defekt (<strong>bug</strong>) totiž nutně nemusí být na první pohled vidět, dokonce nám ani nemusí způsobit výjimku, ale způsobí, že se náš program za určitých podmínek začne chovat nestandardně. Nestandardní chování programu pak může mít různě závažné důsledky.</p>
+<p>Typický postup při debuggingu je následující:</p>
+<ol>
+<li><strong>Zjistím</strong>, že v programu mám bug.</li>
+<li><strong>Najdu</strong>, na kterém místě v programu se bug nachází.</li>
+<li><strong>Opravím</strong> bug.</li>
+<li><strong>Otestuji</strong>, že program již funguje správně.</li>
+</ol>
+<p>Jeden z prvních nástrojů, který nám pomohl identifikovat, co máme v programu špatně, byla nezachycená výjimka a její popisná zpráva. <a href="/2022/plzen-podzim-2022/beginners/print/">Jak číst chyby</a> jsme probírali již v první lekci.</p>
+<h2 id="ladici_vypisy">Ladící výpisy
+<a href="#header-ladici_vypisy" class="header-link">#</a>
+</h2>
+<p>Další nástroj, se kterým jsi už určitě sama debuggovala, je funkce <code>print</code>. Funkce <code>print</code> je jednoduchá a rychlá metoda, jak získat náhled do toho, co se v programu děje. Tomuto vypisování dodatečných informací se říká <em>ladící výpisy</em>. Ty slouží čistě k tomu, aby nám umožnily pochopit kde přesně bug je a čím je způsoben. Obzvláště pokud je pro ladící výpisy použita funkce <code>print</code>, tyto výpisy by měly být odstraněny před používáním programu uživatelem. Zprávy z ladících výpisů nejsou pro běžného uživatele přínosné a tím pádem zhoršují použitelnost a čitelnost výstupu programu.
+Ukažme si to na následujícím programu, který od uživatele načte číslo, přičte k němu jedničku, vynásobí výsledek dvěmi a nakonec od něj odečte pětku. Výsledek vypíše uživateli.</p>
+<div class="highlight"><pre><span></span><span class="n">cislo</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">"Zadej číslo:"</span><span class="p">))</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="n">cislo</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="n">cislo</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="n">cislo</span> <span class="o">-</span> <span class="mi">5</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Výsledek je:"</span><span class="p">,</span> <span class="n">cislo</span><span class="p">)</span>
+</pre></div><p>Jak možná vidíš výpočet neprobíhá úplně správně. Pojďme si to odladit ladícím výpisem.</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Načítám číslo od uživatele"</span><span class="p">)</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">"Zadej číslo:"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Zadané čislo je:"</span><span class="p">,</span> <span class="n">cislo</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Přičítám jedničku"</span><span class="p">)</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="n">cislo</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Po přičtení jedničky je hodnota:"</span><span class="p">,</span> <span class="n">cislo</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Násobím dvěmi"</span><span class="p">)</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="n">cislo</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Po vynásobení dvěmi je hodnota:"</span><span class="p">,</span> <span class="n">cislo</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Odečítám pětku"</span><span class="p">)</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="n">cislo</span> <span class="o">-</span> <span class="mi">5</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Po odečtení 5 je výsledek:"</span><span class="p">,</span> <span class="n">cislo</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Výsledek je:"</span><span class="p">,</span> <span class="n">cislo</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Konec programu"</span><span class="p">)</span>
+</pre></div><p>Pro číslo <code>5</code> získáme následující výstup:</p>
+<div class="highlight"><pre><code>Načítám číslo od uživatele
+Zadej číslo:5
+Zadané čislo je: 5
+Přičítám jedničku
+Po přičtení jedničky je hodnota: 6
+Násobím dvěmi
+Po vynásobení dvěmi je hodnota: 36
+Odečítám pětku
+Po odečtení 5 je výsledek: 31
+Výsledek je: 31 .
+Konec programu</code></pre></div><p>Z výpisu lze sice poznat, že chyba je v násobení dvěmi, nicméně program v takovém stavu nemůžu předat uživateli. Uživatele zajímá pouze výsledek a nikoliv mezivýpočty. To pro uživatele představuje zbytečné informace, ve kterých musí výsledek hledat.</p>
+<p>Ladící výpisy také mohou prozradit citlivá data, tedy data, se kterými sice náš program potřebuje pracovat, ale uživateli by je prozradit neměl a proto musíme dávat pozor, abychom je důkladně promazali.</p>
+<h2 id="logovani">Logování
+<a href="#header-logovani" class="header-link">#</a>
+</h2>
+<p>Abychom neustále nemuseli myslet na mazání ladících printů a při každé chybě je vracet zase zpět, nabízí se zapisovat zprávy do souboru, tzv. <strong>logu</strong>. To nám umožňuje i výpisy uchovávat a vrátit se k nim, když problém zjistíme později. Nebo nám je může uživatel snadno zaslat a my vidíme, co se u uživatele dělo. Python nám za tímto účelem poskytuje šikovný modul <code>logging</code>, který se za nás postará o zapisování do souboru. Zároveň mu můžeme říct, aby nám ukládal jen důležité zprávy a zbytek ignoroval.</p>
+<p>Pojďme se podívat na možnou důležitost (<strong>level</strong>) zpráv a na co se daná důležistost (<strong>level</strong>) hodí.</p>
+<ul>
+<li><strong>CRITICAL</strong> = závažná chyba v programu, program dále nemusí fungovat</li>
+<li><strong>ERROR</strong> = kvůli závažnější chybě program nemohl dokončit některou operaci</li>
+<li><strong>WARNING</strong> = oznámení, že se děje něco, kvůli čemu program může přestat fungovat (např. dochází místo na disku), program ale doposud funguje dle očekávání</li>
+<li><strong>INFO</strong> = potvrzení, že program funguje dle očekávání</li>
+<li><strong>DEBUG</strong> = detailní informace o tom, co se v programu děje, potřebné pro diagnostiku problémů</li>
+</ul>
+<p>Důležitost je seřazena od nejvyšší po nejnižší.</p>
+<p>Základní použití tohoto modulu vypadá takto:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c1"># nastavení logging modulu</span>
+<span class="c1"># filename nám udává cestu k souboru, do kterého chceme zapisovat</span>
+<span class="c1"># level nám udává jak důležité zprávy chceme logovat, udává se jako logging.LEVEL, pozor - není to string</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">'podivny_vypocet.log'</span><span class="p">,</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Načítám číslo od uživatele"</span><span class="p">)</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">"Zadej číslo:"</span><span class="p">))</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Zadané čislo je: </span><span class="si">{</span><span class="n">cislo</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Přičítám jedničku"</span><span class="p">)</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="n">cislo</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Po přičtení jedničky je hodnota: </span><span class="si">{</span><span class="n">cislo</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Násobím dvěmi"</span><span class="p">)</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="n">cislo</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Po vynásobení dvěmi je hodnota: </span><span class="si">{</span><span class="n">cislo</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Odečítám pětku"</span><span class="p">)</span>
+<span class="n">cislo</span> <span class="o">=</span> <span class="n">cislo</span> <span class="o">-</span> <span class="mi">5</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Po odečtení 5 je výsledek: </span><span class="si">{</span><span class="n">cislo</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Výsledek je: </span><span class="si">{</span><span class="n">cislo</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Konec programu"</span><span class="p">)</span>
+</pre></div><p>Výstup z programu do konzole je pouze oznámení výsledku, veškeré ostatní výpisy se nachází v souboru <code>podivny_vypocet.log</code>, který se nachází v adresáři, ze kterého jsme program pustili.</p>
+<p>Jak je vidět z programu, pokud chci zaznamenat zprávu pomocí modulu <code>logging</code> musím na to použít funkci modulu. Možné funkce jsou vidět v následující ukázce:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">'log_test.log'</span><span class="p">,</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<span class="c1"># zaznamenávání ladících výpisů s příslušným levelem (důležitostí)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">"Tohle je závažná chyba. Program ti nefunguje."</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Kvůli chybě se nedala dokončit operace."</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Je možné, že se ti za chvíli něco rozbije."</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Funguju na pohodu!"</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Tohle jsou podrobné informace důležité pro ladění programu."</span><span class="p">)</span>
+</pre></div><p>Všechny výpisy bychom měli vidět v souboru <code>log_test.log</code>, protože <code>level</code> máme nastavený na <code>logging.DEBUG</code>, který je nejnižší (s nejnižší důležitostí). Kromě nastaveného levelu se totiž logují i všechny levely vyšší (důležitější) a to jsou u nastavení <code>DEBUG</code> všechny. Pokud změníme <code>level</code> na <code>INFO</code> výpis z <code>logging.debug</code> už neuvidíme.</p>
+<blockquote><p>Logování je důležité, ale je to jedna z věcí, na kterou je potřeba cit, který si člověk osvojí až praxí. Loguj moc a tvé logy budou nečitelné, loguj málo a informace budou nedostatečné. Nicméně si nedělej hlavu, pokud zrovna nevíš co použít za level, nebo co vlastně logovat. Prostě loguj.</p>
+</blockquote>
+<h2 id="debugger">Debugger
+<a href="#header-debugger" class="header-link">#</a>
+</h2>
+<p>Ačkoliv jsou ladící výpisy užitečné, někdy je potřeba se uchýlit k sofistikovanějšímu nástroji. Ukažme si tedy, jak funguje debugovací nástroj v MuCode.
+Většina debugovacích nástrojů v jiných editorech funguje velmi podobně a existuje 
+i způsob, jak použít debugovací nástroj bez editoru <a href="https://docs.python.org/3/library/pdb.html">pdb</a>.</p>
+<p>Nejprve je třeba vybrat tzv. <strong>breakpoint</strong>, to je místo v kódu, které označíme 
+a po spuštění programu v debugovacím nástroji se tam
+program zastaví a nechá nás prohlédnout si, co se děje. V Mu se
+<strong>breakpoint</strong> nastaví kliknutím napravo od čísla řádku, měla by se objevit velká 
+červená značka. Pozor ne na každou řádku kódu jde breakpoint umístnit. Breakpointů 
+lze rozmístnit více, podle toho, které části programu nás zajímají.</p>
+<p><span class="figure"><a href="/2022/plzen-podzim-2022/beginners/debugging/static/1_set_breakpoint_hit_debug.png"><img src="/2022/plzen-podzim-2022/beginners/debugging/static/1_set_breakpoint_hit_debug.png" alt="Mu breakpoint"></a></span></p>
+<p>Po označení všech breakpointů stačí kliknout na tlačítko Debug a program se spustí.
+Ve chvíli, kdy dorazí k prvnímu brakpointu, se zastaví a my si můžeme prohlédnout
+obsah proměnných, program krokovat (tj. vykonávat řádek po řádku) nebo ho nechat 
+doběhnout do konce nebo dalšího breakpointu.</p>
+<p><span class="figure"><a href="/2022/plzen-podzim-2022/beginners/debugging/static/2_profit.png"><img src="/2022/plzen-podzim-2022/beginners/debugging/static/2_profit.png" alt="Mu debug"></a></span></p>
+<p>Takto můžeme snadno sledovat, co přesně program dělá: jak se mění obsah proměnných,
+jak a proč se program rozhoduje v podmínkách i jak probíhají cykly. Ovšem pozor
+občas se může stát, že se program chová při debugování trochu jinak než v "ostrém"
+provozu. V některých složitějších programech zase není možné se na některá místa 
+programu debugovacím nástrojem  dostat. A samozřejmě těžko můžeme debugger použít 
+přímo u uživatele. Proto je důležité ovládat všechny techniky hledání chyb.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2022/plzen-podzim-2022/beginners/modules/">← <span class="d-none d-sm-inline">Moduly</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2022/plzen-podzim-2022/sessions/test/">↑ <span class="d-none d-sm-inline">Lekce: Testování</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2022/plzen-podzim-2022/beginners/testing/"><span class="d-none d-sm-inline">Testování</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyladies-pilsen/naucse-python/blob/main/lessons/beginners/debugging/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Plzeň napsal Ondřej Kopáček, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
