@@ -1,0 +1,1436 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Knihovna Scikit-learn
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-praha-podzim/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-praha-podzim/sessions/ml2/">Strojové učení - knihovna scikit-learn, workflow procesu učení</a>
+
+> <a href="/2020/pydata-praha-podzim/pydata/scikitlearn_api/">Knihovna Scikit-learn</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Knihovna Scikit-learn, přehled užitečných funkcí</h1>
+<p>V předešlé hodině jsme se vyhýbali programování, jak jen se to dalo. Teď už si ale chceš také sama vše vyzkoušet.
+Abys mohla úlohu rozmyšlenou v domácím úkolu naprogramovat, projdeme si nejdůležitější funkce, které budeš potřebovat.</p>
+<p>Především budeme používat knihovnu <a href="https://scikit-learn.org">Sciki-learn</a> a samozrejmě také pandas. 
+Potřebné věci projdeme na příkladu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Načtení a příprava dat</h2>
+<p>Na začátku vždy bude potřeba připravit data. Čištění dat a použití knihovny pandas už bys měla ovládat, 
+zaměříme se jen na věci, které jsou specifické pro strojové učení.</p>
+<p>Načíst data tedy umíš.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_platy</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"static/salaries.csv"</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">df_platy</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rank</th>
+      <th>discipline</th>
+      <th>yrs.since.phd</th>
+      <th>yrs.service</th>
+      <th>sex</th>
+      <th>salary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>50</th>
+      <td>AsstProf</td>
+      <td>B</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Male</td>
+      <td>70768</td>
+    </tr>
+    <tr>
+      <th>150</th>
+      <td>AsstProf</td>
+      <td>B</td>
+      <td>4</td>
+      <td>3</td>
+      <td>Male</td>
+      <td>95079</td>
+    </tr>
+    <tr>
+      <th>100</th>
+      <td>Prof</td>
+      <td>B</td>
+      <td>41</td>
+      <td>26</td>
+      <td>Male</td>
+      <td>106689</td>
+    </tr>
+    <tr>
+      <th>103</th>
+      <td>Prof</td>
+      <td>B</td>
+      <td>16</td>
+      <td>5</td>
+      <td>Male</td>
+      <td>153303</td>
+    </tr>
+    <tr>
+      <th>129</th>
+      <td>Prof</td>
+      <td>A</td>
+      <td>32</td>
+      <td>30</td>
+      <td>Male</td>
+      <td>113278</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Prof</td>
+      <td>B</td>
+      <td>20</td>
+      <td>16</td>
+      <td>Male</td>
+      <td>173200</td>
+    </tr>
+    <tr>
+      <th>78</th>
+      <td>Prof</td>
+      <td>B</td>
+      <td>26</td>
+      <td>19</td>
+      <td>Male</td>
+      <td>193000</td>
+    </tr>
+    <tr>
+      <th>182</th>
+      <td>Prof</td>
+      <td>B</td>
+      <td>18</td>
+      <td>5</td>
+      <td>Male</td>
+      <td>141136</td>
+    </tr>
+    <tr>
+      <th>140</th>
+      <td>Prof</td>
+      <td>A</td>
+      <td>21</td>
+      <td>18</td>
+      <td>Male</td>
+      <td>152664</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>Prof</td>
+      <td>B</td>
+      <td>20</td>
+      <td>4</td>
+      <td>Male</td>
+      <td>132261</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro predikci použijeme jako příznaky <code>rank</code>, <code>discipline</code>, <code>yrs.since.phd</code>, <code>yrs.service</code> a <code>sex</code>, 
+predikovat budeme hodnotu <code>salary</code>.</p>
+<p>Pro učení potřebujeme všechny hondoty převést na čísla (<code>float</code>). Pokud by data obsahovala chybějící
+hodnoty, nejjednodušší řešení je takové řádky zahodit. (Bonus: pokud bys měla data s větším množstvím
+chybějících hodnot, podívej se na možnosti <a href="https://scikit-learn.org/stable/modules/classes.html#module-sklearn.impute">sklearn.impute</a>)</p>
+<p>Důležité je vypořádat se s kategorickými hodnotami. Sloupce obsahující hodnoty typu Boolean nebo dvě hodnoty (např. muž/žena), lze snadno převést na hodnoty $[0,1]$.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_platy</span> <span class="o">=</span> <span class="n">df_platy</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="s2">"Male"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Female"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+<span class="n">df_platy</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rank</th>
+      <th>discipline</th>
+      <th>yrs.since.phd</th>
+      <th>yrs.service</th>
+      <th>sex</th>
+      <th>salary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>119</th>
+      <td>AsstProf</td>
+      <td>A</td>
+      <td>4</td>
+      <td>1</td>
+      <td>0</td>
+      <td>72500</td>
+    </tr>
+    <tr>
+      <th>103</th>
+      <td>Prof</td>
+      <td>B</td>
+      <td>16</td>
+      <td>5</td>
+      <td>0</td>
+      <td>153303</td>
+    </tr>
+    <tr>
+      <th>153</th>
+      <td>Prof</td>
+      <td>B</td>
+      <td>21</td>
+      <td>9</td>
+      <td>0</td>
+      <td>111168</td>
+    </tr>
+    <tr>
+      <th>160</th>
+      <td>Prof</td>
+      <td>B</td>
+      <td>15</td>
+      <td>16</td>
+      <td>0</td>
+      <td>137167</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>Prof</td>
+      <td>B</td>
+      <td>30</td>
+      <td>14</td>
+      <td>0</td>
+      <td>102235</td>
+    </tr>
+    <tr>
+      <th>114</th>
+      <td>Prof</td>
+      <td>A</td>
+      <td>37</td>
+      <td>37</td>
+      <td>0</td>
+      <td>104279</td>
+    </tr>
+    <tr>
+      <th>130</th>
+      <td>AsstProf</td>
+      <td>A</td>
+      <td>4</td>
+      <td>2</td>
+      <td>0</td>
+      <td>73000</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>AsstProf</td>
+      <td>B</td>
+      <td>5</td>
+      <td>3</td>
+      <td>0</td>
+      <td>82379</td>
+    </tr>
+    <tr>
+      <th>187</th>
+      <td>AssocProf</td>
+      <td>B</td>
+      <td>13</td>
+      <td>10</td>
+      <td>1</td>
+      <td>103750</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>AsstProf</td>
+      <td>B</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>78000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro kategorické proměnné s více možnostmi použijeme tzv. <em>onehot encoding</em>.</p>
+<p>Např. sloupec <code>rank</code> obsahuje hodnoty <code>Prof</code>, <code>AsstProf</code> a <code>AssocProf</code>. K zakódování pomocí onehot encoding potřebujeme tři sloupce:</p>
+<table>
+<thead><tr>
+<th>Původní hodnota</th>
+<th>Kód </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prof</td>
+<td>1 0 0</td>
+</tr>
+<tr>
+<td>AsstProf</td>
+<td>0 1 0 </td>
+</tr>
+<tr>
+<td>AssocProf</td>
+<td>0 0 1  </td>
+</tr>
+</tbody>
+</table>
+<p>Knihovna Scikitlearn nabízí <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html#sklearn.preprocessing.OneHotEncoder">sklearn.preprocessing.OneHotEncoder</a>, při práci s pandas však můžeme použít rovnou metodu <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.get_dummies.html">get_dummies</a>. (Pozn. <em>dummies</em> proto, že nám přibudou pomocné proměnné (sloupce), které se označují jako <em>dummy variables</em>.)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_platy</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df_platy</span><span class="p">)</span>
+<span class="n">df_platy</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>yrs.since.phd</th>
+      <th>yrs.service</th>
+      <th>sex</th>
+      <th>salary</th>
+      <th>rank_AssocProf</th>
+      <th>rank_AsstProf</th>
+      <th>rank_Prof</th>
+      <th>discipline_A</th>
+      <th>discipline_B</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>19</td>
+      <td>18</td>
+      <td>0</td>
+      <td>139750</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>20</td>
+      <td>16</td>
+      <td>0</td>
+      <td>173200</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>3</td>
+      <td>0</td>
+      <td>79750</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>45</td>
+      <td>39</td>
+      <td>0</td>
+      <td>115000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>40</td>
+      <td>41</td>
+      <td>0</td>
+      <td>141500</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>194</th>
+      <td>19</td>
+      <td>19</td>
+      <td>0</td>
+      <td>86250</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>195</th>
+      <td>48</td>
+      <td>53</td>
+      <td>0</td>
+      <td>90000</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>196</th>
+      <td>9</td>
+      <td>7</td>
+      <td>0</td>
+      <td>113600</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>197</th>
+      <td>4</td>
+      <td>4</td>
+      <td>0</td>
+      <td>92700</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>198</th>
+      <td>4</td>
+      <td>4</td>
+      <td>0</td>
+      <td>92000</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>198 rows × 9 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Poslední krok předzpracování bývá přeškálování hodnot. Není to vždy nutné, ale některým modelům to může pomoci.
+Využijeme <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler">StandardScaler</a>.</p>
+<p>StandardScaler nám hodnoty přeškáluje, aby zhruba odpovídaly normálnímu rozdělení. Některé algoritmy to předpokládají. Může se pak např. stát, že příznak (sloupeček), která má výrazně větší rozptyl než ostatní, je brán jako významnější.</p>
+<p>(Pozn.: vytvoříme zvlášť objekt na transformaci odezvy. Ten se nám bude později hodit, až budeme chtít z odezvy modelu vidět, jaká je opravdová hodnota platu. Tedy zkonvertovat predikované hodnoty zpět na hodnotu platu.).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">StandardScaler</span> 
+
+<span class="n">priznaky_ke_konverzi</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"yrs.since.phd"</span><span class="p">,</span> <span class="s2">"yrs.service"</span><span class="p">]</span>
+<span class="n">odezva</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"salary"</span><span class="p">]</span>
+
+<span class="n">transformace</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">df_platy</span><span class="p">[</span><span class="n">priznaky_ke_konverzi</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformace</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df_platy</span><span class="p">[</span><span class="n">priznaky_ke_konverzi</span><span class="p">])</span>
+
+<span class="n">transformace_odezva</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">df_platy</span><span class="p">[</span><span class="n">odezva</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformace_odezva</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df_platy</span><span class="p">[</span><span class="n">odezva</span><span class="p">])</span>
+
+<span class="n">df_platy</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>yrs.since.phd</th>
+      <th>yrs.service</th>
+      <th>sex</th>
+      <th>salary</th>
+      <th>rank_AssocProf</th>
+      <th>rank_AsstProf</th>
+      <th>rank_Prof</th>
+      <th>discipline_A</th>
+      <th>discipline_B</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>173</th>
+      <td>1.452382</td>
+      <td>0.740846</td>
+      <td>0</td>
+      <td>-0.628349</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>166</th>
+      <td>0.147832</td>
+      <td>-0.604140</td>
+      <td>0</td>
+      <td>-0.182518</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>171</th>
+      <td>-1.156717</td>
+      <td>-0.856325</td>
+      <td>0</td>
+      <td>-0.696208</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>160</th>
+      <td>-0.341373</td>
+      <td>0.068353</td>
+      <td>0</td>
+      <td>0.913211</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>108</th>
+      <td>-0.749045</td>
+      <td>-0.604140</td>
+      <td>0</td>
+      <td>-0.998438</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>0.229367</td>
+      <td>0.488661</td>
+      <td>0</td>
+      <td>1.564231</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>-0.096771</td>
+      <td>0.236476</td>
+      <td>1</td>
+      <td>0.627096</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>1.370847</td>
+      <td>1.329278</td>
+      <td>0</td>
+      <td>-0.298478</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>163</th>
+      <td>0.229367</td>
+      <td>-0.688202</td>
+      <td>0</td>
+      <td>-0.441062</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>92</th>
+      <td>-0.749045</td>
+      <td>-0.688202</td>
+      <td>0</td>
+      <td>-0.209213</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Vytvoření trénovací a testovací množiny</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V teorii strojového učení se vstupy modelu (příznaky, vstupní proměnné) typicky označují písmenem <code>X</code> a výstupy písmenem <code>y</code>. Řada programátorů toto používá i k označování proměnných v kódu. 
+<code>X</code> představuje <em>matici</em> (neboli tabulku), kde každý řádek odpovídá jednomu datovému vzorku a každý sloupec jednomu příznaku (vstupní proměnné). <code>y</code> je vektor, neboli jeden sloupec s odezvou.</p>
+<p>Na vyzobnutí odezvy se výborně hodí metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.pop.html">pop</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">df_platy</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"salary"</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df_platy</span> 
+
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Index(['yrs.since.phd', 'yrs.service', 'sex', 'rank_AssocProf',
+       'rank_AsstProf', 'rank_Prof', 'discipline_A', 'discipline_B'],
+      dtype='object')
+salary
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zbývá data rozdělit na trénovací a testovací. K tomu slouží metoda <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html?highlight=train%20test%20split#sklearn.model_selection.train_test_split">train_test_split</a>. 
+Data nám rozdělí náhodně na trénovací a testovací sadu. Velikost testovací množiny můžeme specifikovat parametrem <code>test_size</code>, jeho defaultní hodnota je <code>0.25</code>, t. j. 25%.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span> 
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Modely</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Můžeme přejít k samotnému učení. Vybereme si model. Přehled modelů najdeš v sekci <a href="https://scikit-learn.org/stable/supervised_learning.html#supervised-learning">Supervised learnig</a>.</p>
+<p>Na regresi můžeš použít:</p>
+<ul>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html">LinearRegression</a></p>
+</li>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lasso.html#sklearn.linear_model.Lasso">Lasso</a></p>
+<ul>
+<li>hyperparametry: <ul>
+<li>alpha, float, default=1.0 </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html#sklearn.svm.SVR">SVR</a></p>
+<ul>
+<li>hyperparametry:<ul>
+<li>kernel, default rbf, one of ‘linear’, ‘poly’, ‘rbf’, ‘sigmoid’</li>
+<li>C, float, optional (default=1.0)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Na klasifikační úlohy (ke kterým se dostaneme v této hodině) využiješ:</p>
+<ul>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html#sklearn.tree.DecisionTreeClassifier">DecisionTreeClassifier</a></p>
+</li>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier">RandomForestClassifier</a></p>
+<ul>
+<li>hyperparametry:<ul>
+<li>n_estimators, integer, optional (default=100)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html#sklearn.svm.SVC">SVC</a></p>
+<ul>
+<li>hyperparametry:<ul>
+<li>C, float, optional (default=1.0)</li>
+<li>kernelstring, optional (default=’rbf’)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Vytvoříme instanci vybraného modelu (jde nám teď jen o způsob použití knihovny, vezmeme nejjednodušší lineární regresi):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Trénování</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Model natrénujeme na trénovací množině:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>LinearRegression(copy_X=True, fit_intercept=True, n_jobs=None, normalize=False)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Predikce</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Natrénovaný model typicky chceme použít k ohodnocení nějakých nových datových vzorků, k tomu máme metodu <code>predict</code>. Zavolejme ji jak na trénovací, tak na testovací data.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train_predikce</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">test_predikce</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pozor, k učení jsme použili transformované hodnoty odezvy. Zajímají-li nás skutečné hodnoty platů, 
+musíme i predikované hodnoty transformovat zpět.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># vypišme prvních deset tetovacích vzorků a jejich predikce</span>
+<span class="n">odezva</span> <span class="o">=</span> <span class="n">transformace_odezva</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">test_predikce</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"odezva modelu    predicke platu"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"</span><span class="si">{test_predikce[i]:&gt;10.2f}</span><span class="s2">         </span><span class="si">{odezva[i]:&gt;10.2f}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>odezva modelu    predicke platu
+      0.21          117006.29
+     -0.85           86951.88
+      0.90          136709.42
+      0.76          132913.21
+      0.89          136613.06
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Evaluace modelu</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Můžeme využít funkci <code>score</code>, která nám vrátí hodnotu $R^2$ metriky:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"R2 na trénovací množině: "</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"R2 na testovací množině: "</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>R2 na trénovací množině:  0.5872756463658342
+R2 na testovací množině:  0.2974785311663938
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Funkce pro všechny možné metriky najdeš v <a href="https://scikit-learn.org/stable/modules/classes.html?highlight=sklearn%20metrics#module-sklearn.metrics">sklearn.metrics</a>.
+                                                            (nyní nás zajímají <a href="https://scikit-learn.org/stable/modules/classes.html?highlight=sklearn%20metrics#module-sklearn.metrics">regresní metriky</a>)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
+
+<span class="n">MAE_train</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">train_predikce</span><span class="p">)</span>
+<span class="n">MAE_test</span>  <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predikce</span><span class="p">)</span>
+<span class="n">MSE_train</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">train_predikce</span><span class="p">)</span> 
+<span class="n">MSE_test</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predikce</span><span class="p">)</span>
+<span class="n">R2_train</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">train_predikce</span><span class="p">)</span>
+<span class="n">R2_test</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predikce</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Trénovací data  Testovací data"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"MAE </span><span class="si">{MAE_train:&gt;10.3f}</span><span class="s2"> </span><span class="si">{MAE_test:&gt;10.3f}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"MAE </span><span class="si">{MAE_train:&gt;10.3f}</span><span class="s2"> </span><span class="si">{MAE_test:&gt;10.3f}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Trénovací data  Testovací data
+MAE      0.464      0.591
+MAE      0.464      0.591
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
+
+<span class="n">MAE_train</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">train_predikce</span><span class="p">)</span>
+<span class="n">MAE_test</span>  <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predikce</span><span class="p">)</span>
+<span class="n">MSE_train</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">train_predikce</span><span class="p">)</span> 
+<span class="n">MSE_test</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predikce</span><span class="p">)</span>
+<span class="n">R2_train</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">train_predikce</span><span class="p">)</span>
+<span class="n">R2_test</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predikce</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"     Trénovací data  Testovací data"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"MAE </span><span class="si">{MAE_train:&gt;15.3f}</span><span class="s2"> </span><span class="si">{MAE_test:&gt;15.3f}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"MSE </span><span class="si">{MAE_train:&gt;15.3f}</span><span class="s2"> </span><span class="si">{MAE_test:&gt;15.3f}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"R2  </span><span class="si">{MAE_train:&gt;15.3f}</span><span class="s2"> </span><span class="si">{MAE_test:&gt;15.3f}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>     Trénovací data  Testovací data
+MAE           0.464           0.591
+MSE           0.464           0.591
+R2            0.464           0.591
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Uložení modelu</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Někdy si potřebujeme naučený model uchovat na další použití. Model lze uložit do souboru a zase načíst pomocí <code>pickle</code>.
+Kujme pikle:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pickle</span> 
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"model.pickle"</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">soubor</span><span class="p">)</span>
+
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"model.pickle"</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor</span><span class="p">:</span>
+    <span class="n">staronovy_model</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">soubor</span><span class="p">)</span>
+
+<span class="n">staronovy_model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.2974785311663938</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pozn.: Bohužel mám poměrně bohaté špatné zkušenosti z načítáním modelů uložených před delším časem
+(bývá problém načíst model uložený ve starší verzi Scikit-learn ve verzi novější).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Bonusy:</h3>
+<ul>
+<li><p>volba vhodného modelu a jeho hyper-parametrů se skrývá pod klíčovým slovem <strong>model selection</strong>. Knihovna Scikit-learn obsahuje různé pomůcky k ulehčení toho výběru. Přesahuje to ale rámec tohoto kurzu, narazíš-li na to toho téma při samostudiu, pročti si <a href="https://scikit-learn.org/stable/modules/classes.html?highlight=model%20selection#module-sklearn.model_selection">sklear.model_selection</a>.</p>
+</li>
+<li><p>v příkladu výše jsme použili různé transformace nad daty a pak teprve tvorbu modelu. Až budeš v těchto věcech zběhlejší, bude se ti hodit propojit tyto věci dohromady. K tomu slouží tzv. <a href="https://scikit-learn.org/stable/modules/classes.html?highlight=pipeline#module-sklearn.pipeline">pipeline</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-praha-podzim/sessions/ml2/">↑ <span class="d-none d-sm-inline">Lekce: Strojové učení - knihovna scikit-learn, workflow procesu učení</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-praha-podzim/pydata/homework_revisited/"><span class="d-none d-sm-inline">Implementace úlohy z domácího úkolu</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyDataCZ/naucse.python.cz/blob/praha-podzim2020/lessons/pydata/scikitlearn_api/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Petra Vidnerová, Roman Diba, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

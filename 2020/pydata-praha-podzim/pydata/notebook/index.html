@@ -1,0 +1,337 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Základy práce s Jupyter Notebookem
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-praha-podzim/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-praha-podzim/sessions/eda1/">Představení, Jupyter notebook, základy pandas</a>
+
+> <a href="/2020/pydata-praha-podzim/pydata/notebook/">Základy práce s Jupyter Notebookem</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Jupyter Notebook intro</h1>
+<p>Jupyter Notebook je webový editor sloužící k vytváření komplexních dokumentů,
+které mohou mimo strukturovaného textu a obrázků obsahovat také
+kód (<a href="https://github.com/jupyter/jupyter/wiki/Jupyter-kernels">nejen v Pythonu</a>),
+grafy, matematické vzorce (LaTeX) a další interaktivní prvky.</p>
+<p>Z jiného pohledu se jedná o velmi praktickou konzoli pro Python, kde je veškerá
+historie uložena a dá se k ní vrátit nebo ji změnit, a tím ovlivnit zbytek
+výpočtů.</p>
+<p>Jupyter Notebook se hodí všude tam, kde potřebuješ ihned vidět výsledky
+své práce či postupovat krok za krokem, předat někomu komplexní program spolu
+s vizualizacemi a výsledky, připravit si prezentaci či datovou analýzu atp.</p>
+<h2>Spuštění</h2>
+<p>Po úspěšné instalaci lze Jupyter Notebook spustit v aktivním virtuálním prostředí
+jednoduchým příkazem:</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span>$ jupyter notebook
+</pre></div><p>Pokud ti tento příkaz nefunguje, vyzkoušej následující:</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span>$ python -m notebook
+</pre></div><p>Po spuštění Notebooku se automaticky spustí i webový prohlížeč, ve kterém se
+ti editor zobrazí.</p>
+<blockquote><p>Notebook pracuje vždy v té složce, ve které byl spuštěn, proto je rozumné
+přejít před jeho spuštěním do složky, ve které chceš mít výsledné dokumenty
+uloženy.</p>
+</blockquote>
+<p><img src="/2020/pydata-praha-podzim/pydata/notebook/static/jupyter_notebook_home.png" alt="Notebook UI"></p>
+<p>Na první obrazovce vidíš obsah složky, ve které je Notebook spuštěn. Jakmile
+budeš mít nějaké dokumenty vytvořeny, objeví se zde a budeš se k nim moci vrátit
+a pokračovat v práci.</p>
+<p>Nový dokument vytvoříš tak, že si vpravo nahoře klikneš na <code>New</code> &gt; <code>Python 3</code>.
+Touto volbou vybereš Python 3 jako jazyk, který budeš v rámci dokumentu používat.
+Notebook jich zvládne daleko více, a tak si na své přijdou úplně všichni.</p>
+<h2>Uživatelské rozhraní</h2>
+<p><img src="/2020/pydata-praha-podzim/pydata/notebook/static/jupyter_notebook_new.png" alt="Notebook UI"></p>
+<p>Notebook nemá nijak složité rozhraní. Na prvním řádku najdeš informaci o názvu
+dokumentu a posledním uložení, pod tím pak ovládací prvky a hlavní nabídku.
+Ještě kousek níže pak prázdnou buňku čekající na první obsah.</p>
+<p>Vpravo vedle nápisu „Python 3“ je malé, ale užitečné kolečko. Pokud nám během práce
+zčerná, znamená to, že je Python zaneprázdněn vykonáváním našich příkazů a je
+třeba počkat, až jejich provádění dokončí, anebo, pokud jsi například omylem
+vytvořil nekonečný cyklus, že je třeba Python (neboli kernel) restartovat.</p>
+<h2>Základní použití</h2>
+<p>Jako první krok si nový dokument přejmenuj. Klikni na prvním řádku na nápis
+„Untitled“ a zvol si nějaké smysluplné jméno.</p>
+<p>Teď zkus do první buňky napsat nějaký příkaz v Pythonu a stisknout klávesovou
+zkratku <code>Shift</code> + <code>Enter</code>.</p>
+<blockquote><p>Do jedné buňky lze zapsat libovolně velký kus kódu i s prázdnými řádky, proto
+se k jeho spuštění musí místo pouhého Enteru použít klávesová zkratka.
+Smysluplnější je ale dělit kód po menších částech, aby se dal lépe kontrolovat.</p>
+</blockquote>
+<p><img src="/2020/pydata-praha-podzim/pydata/notebook/static/first_command.png" alt="první příkaz"></p>
+<p>Podobně můžeš pokračovat i dále. Vždy do buňky vložíš nějaký kód a pak jej
+spustíš. Pokud buňka obsahuje nějaký výstup nebo něco vrací, ukáže se výsledek
+po spuštění buňky hned pod ní. Pro výstup to ale platí, jen pokud je na posledním
+řádku buňky, zatímco <code>print</code> může být v buňce kdekoli.</p>
+<p><img src="/2020/pydata-praha-podzim/pydata/notebook/static/outputs.png" alt="ukázka výstupů"></p>
+<p>Funguje to jako klasický program, takže záleží na pořadí v jakém se jednotlivé
+buňky provedly. Musíš například nejdříve uložit nějaký obsah do proměnné, než ji
+budeš moci použít. Tohle pravidlo je důležité mít na paměti, protože buňky
+v Notebooku se dají spouštět nezávisle na sobě v libovolném pořadí. V jakém
+pořadí k jejich spuštění došlo, se dá zjistit z čísel, která se po spuštění
+objeví  v hranatých závorkách vlevo od buňky. Pokud se po spuštění místo čísla objeví <code>*</code>, znamená to, že
+Python pracuje a na výsledek si budeme muset chvilku počkat.</p>
+<p>Takhle to může vypadat, pokud se správné pořadí nedodrží:</p>
+<p><img src="/2020/pydata-praha-podzim/pydata/notebook/static/wrong_order.png" alt="špatné pořadí spuštění buňek"></p>
+<blockquote><p>I když to není nutnost, bývá zvykem psát dokumenty v Notebooku tak, aby se
+buňky daly spustit v pořadí, ve kterém jdou za sebou. Když jej pak někomu pošleš,
+bude si moci snadno spustit tvůj kód kousek po kousku a sledovat, co se v něm
+děje. Mimoto je v hlavní nabídce i možnost <code>Kernel</code> &gt; <code>Restart &amp; Run All</code>, která
+restartuje Python a následně spustí všechny buňky v dokumentu.</p>
+</blockquote>
+<p>Všimni si, jak buňky mění barvu. Pokud je okraj buňky zelený, je možné ji
+editovat a pomocí šipek se pohybovat v kódu, který obsahuje. Pokud je modrý, dá
+se šipkami přecházet mezi jednotlivými buňkami. Z modrého do zeleného režimu
+se dostaneme klávesou <code>Enter</code>, případně kliknutím do buňky. Naopak ze zeleného
+do modrého režimu pomocí klávesy <code>Esc</code>.</p>
+<p>Pro ovládání Notebooku je dobré se naučit klávesové zkratky, které práci s ním
+usnadní a zrychlí. Jejich seznam je možné zobrazit pomocí klávesy <code>h</code>.</p>
+<blockquote><p>Klávesové zkratky se používají v modrém režimu, jinak bychom místo
+speciálních akcí psali jednotlivé znaky do buněk.</p>
+</blockquote>
+<p>Mezi ty nejdůležitější patří:</p>
+<ul>
+<li><code>h</code> zobrazí nápovědu</li>
+<li><code>a</code> vloží novou buňku nad aktuální</li>
+<li><code>b</code> vloží buňku pod aktuální</li>
+<li><code>x</code> vyjme buňku</li>
+<li><code>c</code> kopíruje buňku</li>
+<li><code>v</code> vloží kopírovanou nebo vyjmutou buňku pod aktuální</li>
+<li><code>Shift</code> + <code>v</code> vloží kopírovanou nebo vyjmutou buňku nad aktuální</li>
+<li><code>Ctrl</code> + <code>s</code> uloží dokument</li>
+<li><code>m</code> přepne buňku z pythonového kódu na text</li>
+</ul>
+<p><strong>Nejdůležitější klávesová zkratka</strong> je hned ta první - <code>h</code> - s její pomocí
+se totiž velice rychle dostanete k seznamu všech ostatních.</p>
+<h2>Typy obsahu</h2>
+<p>Základním typem buňky je buňka s kódem, která umí úplně vše, co z Pythonu
+už znáš.</p>
+<p><img src="/2020/pydata-praha-podzim/pydata/notebook/static/python_example.png" alt="příklady v Pythonu"></p>
+<h3>Text</h3>
+<p>Stiskem klávesy <code>m</code> (v modrém režimu) můžeme buňku přepnout z režimu pythonového
+kódu do režimu textu, který nám umožní dokumenty obohatit o spoustu různého obsahu.
+Že je buňka v textovém režimu, poznáme podle toho, že nalevo od ní už nebude modré
+označení <code>In [ ]</code>. Zatímco u buňek s Pythonem se nám po spuštění programu výsledek
+vypíše pod buňku, textová buňka se po spuštění pouze vykreslí ve formě textu.</p>
+<h3>Markdown</h3>
+<p>Obyčejný text by sám o sobě nebyl tak zajímavý a k přehlednosti nepřispěje o nic
+více než obyčejný komentář. Proto máme možnost jej formátovat a do jisté míry
+tak upravit jeho vzhled, ale hlavně strukturu. K formátování se používá
+značkovací jazyk <a href="https://cs.wikipedia.org/wiki/Markdown">Markdown</a>. Markdown
+umožňuje formátovat text pomocí obyčejných znaků.</p>
+<p>Například:</p>
+<ul>
+<li>Text začínající <code>#</code> se po spuštění buňky stane automaticky nadpisem první
+úrovně. <code>##</code> pak udělají druhou úroveň atd.</li>
+<li>Když text uvodíme hvězdičkami – <code>*třeba takto*</code> – bude napsán <em>kurzivou</em>.
+Dvojice hvězdiček na každé straně pak udělá text <strong>tučný</strong>.</li>
+<li>Když bude několik řádků začínat hvězdičkou, stane se z nich seznam s odrážkami.
+Když na začátku použijeme čísla, bude seznam číslovaný.</li>
+<li>Odkazy vypadají takto: <code>[text odkazu](cesta či URL adresa)</code> – do hranatých
+závorek na začátek se napíše text odkazu a do kulatých závorek pak cesta k cíli
+či URL adresa.</li>
+<li>Obrázky vypadají téměř stejně jako odkazy, jen mají na začátku před první
+hranatou závorkou vykřičník: <code>![logo pythonu](static/python_logo.png)</code></li>
+</ul>
+<p>Tímto způsobem jednoduše formátovaný text by mohl vypadat následovně:</p>
+<p><img src="/2020/pydata-praha-podzim/pydata/notebook/static/markdown_source.png" alt="markdown source"></p>
+<p>Výsledek takového formátování pak může po spuštění buněk vypadat například
+takto:</p>
+<p><img src="/2020/pydata-praha-podzim/pydata/notebook/static/markdown.png" alt="markdown"></p>
+<h3>Matematické vzorce</h3>
+<p>Pokud znáš notaci matematických formulí, která se používá v jazyce LaTeX, můžeš
+ji používat i v textu v notebooku. Latexovou formuli stačí začít a ukončit
+pomocí <code>$</code> (případně <code>$$</code>).</p>
+<p>Příklady několika zápisů:</p>
+<p><img src="/2020/pydata-praha-podzim/pydata/notebook/static/latex_examples.png" alt="latex examples"></p>
+<p>Budeš-li vzorce potřebovat a tato notace je pro tebe nová, není třeba se učit
+vše kolem jazyka LaTeX, stačí ti jednoduchá pravidla pro zápis matematických
+vzorců. Pomůže ti např. <a href="https://cs.wikipedia.org/wiki/N%C3%A1pov%C4%9Bda:Matematick%C3%A9_vzorce">tato nápověda</a> z české wikipedie.</p>
+<h2>Další užitečné funkce</h2>
+<p>Notebook má celou řadu vymožeností, které nám ulehčí práci s ním.</p>
+<h3>Nápověda</h3>
+<p>Když za název funkce (místo kulatých závorek) nebo modulu napíšeš otazník
+(např.: <code>print?</code>), objeví se ti po spuštění takové buňky nápověda. Ta je navíc
+zobrazena mimo hlavní dokument, a tak nepřekáží v další práci a může zůstat
+otevřená déle.</p>
+<p>Kratší nápovědu (tzv. dokumentační řetězec) je možné zobrazit během psaní kódu pomocí
+klávesové zkratky <code>Shift</code> + <code>Tab</code>. Ta zobrazí dokumentační řetězec dané funkce
+v malé bublině u aktivní buňky.</p>
+<h3>Speciální příkazy</h3>
+<p>Příkazy začínající znakem procenta mají v notebooku speciální význam. Například
+<code>%time</code> dokáže změřit a zobrazit, jak dlouho trvalo vykonání kódu napsaného na řádku bezprostředně za tímto příkazem.</p>
+<p>Speciální příkazy začínající dvěma procenty (např.: <code>%%time</code>) pak mají efekt na celou
+buňku místo jednoho řádku.</p>
+<p>Seznam všech speciálních příkazů lze získat pomocí <code>%lsmagic</code>.</p>
+<h3>Příkazy z příkazové řádky</h3>
+<p>V buňkách notebooku je možné velmi snadno spouštět i příkazy z příkazové řádky.
+Příkaz ke spuštění v příkazové řádce místo Pythonu stačí začít znakem vykřičníku
+(např.: <code>!whoami</code>)</p>
+<h2>Pokračování</h2>
+<p>Notebook toho umí opravdu hodně a také v něm budou napsány i materiály pro
+následující kapitoly, což nám umožní prokládat teorii praktickými
+příklady i s grafy a obrázky a zájemcům si vyzkoušet s příklady experimentovat.</p>
+<blockquote><p>Veškeré zdrojové kódy lekcí a připravená data jsou k dispozici v
+<a href="https://github.com/PyDataCZ/naucse.python.cz/tree/master/lessons/pydata">GIT repozitáři</a>.
+Odtud je možné stáhnout si notebooky jednotlivých lekcí a dle libosti experimentovat.</p>
+</blockquote>
+<p>Nicméně na vývoj klasických aplikací a obecně pro projekty se složitější strukturou je stále 
+lepší kód rozdělit do modulů a editovat ho ve vhodném textovém editoru.
+Častou praxí je nejdříve v interaktivním prostředí notebooku rychle poskládat funkční
+prototyp a následně jej přetvořit v klasickou aplikaci.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-praha-podzim/pydata/install/">← <span class="d-none d-sm-inline">Instalace knihoven a nástrojů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-praha-podzim/sessions/eda1/">↑ <span class="d-none d-sm-inline">Lekce: Představení, Jupyter notebook, základy pandas</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-praha-podzim/pydata/pandas_core/"><span class="d-none d-sm-inline">Knihovna pandas a základní manipulace s tabulkovými daty</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyDataCZ/naucse.python.cz/blob/praha-podzim2020/lessons/pydata/notebook/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Lumír Balhar, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

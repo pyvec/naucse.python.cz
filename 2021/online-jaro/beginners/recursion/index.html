@@ -1,0 +1,314 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Týmový začátečnický kurz Pythonu: Rekurze
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/beginners/recursion/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/online-jaro/">Týmový začátečnický kurz Pythonu</a>
+
+> <a href="/2021/online-jaro/sessions/def/">Vlastní funkce</a>
+
+> <a href="/2021/online-jaro/beginners/recursion/">Rekurze</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Rekurze</h1>
+<p><em>Rekurze</em> (angl. <em>recursion</em>) je programátorská technika,
+kdy funkce volá sebe sama.</p>
+<p>Jednoduchá rekurze skončí nekonečným voláním.
+Zkus zadat tento program:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">rekurzivni_funkce</span><span class="p">():</span>
+    <span class="n">vysledek</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">rekurzivni_funkce</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">vysledek</span>
+
+<span class="n">rekurzivni_funkce</span><span class="p">()</span>
+</pre></div><p>Jak to funguje?</p>
+<ul>
+<li>Python si nadefinuje funkci <code>rekurzivni_funkce</code></li>
+<li>Zavolá funkci <code>rekurzivni_funkce</code>:<ul>
+<li>Vypočítá výsledek</li>
+<li>Zavolá funkci <code>rekurzivni_funkce</code>:<ul>
+<li>Vypočítá výsledek</li>
+<li>Zavolá funkci <code>rekurzivni_funkce</code>:<ul>
+<li>Vypočítá výsledek</li>
+<li>Zavolá funkci <code>rekurzivni_funkce</code>:<ul>
+<li>Vypočítá výsledek</li>
+<li>Zavolá funkci <code>rekurzivni_funkce</code>:<ul>
+<li>...<ul>
+<li><em> ...
+   </em> po stovkách opakování si Python všimne, že tohle asi
+     nikam nevede, a skončí s chybou.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Tomu odpovídá chybová hláška:</p>
+<div class="highlight"><pre><code>Traceback (most recent call last):
+  File "/tmp/ukazka.py", line 4, in &lt;module&gt;
+    rekurzivni_funkce()
+  File "/tmp/ukazka.py", line 2, in rekurzivni_funkce
+    return rekurzivni_funkce()
+  File "/tmp/ukazka.py", line 2, in rekurzivni_funkce
+    return rekurzivni_funkce()
+  File "/tmp/ukazka.py", line 2, in rekurzivni_funkce
+    return rekurzivni_funkce()
+  [Previous line repeated 996 more times]
+RecursionError: maximum recursion depth exceeded</code></pre></div><p>Hláška je zkrácená – dva řádky by se správně měly opakovat 999×, ale novější
+verze Pythonu je vypíšou jen třikrát.</p>
+<h1>Kontrolované zanoření</h1>
+<p>Jak rekurzi využít v praxi?
+Jeden způsob je si počítat, kolikrát se ještě „zanořit“.</p>
+<p>Představ si potápěče, který prozkoumává mořské hlubiny následujícím způsobem:</p>
+<ul>
+<li>Jak <em>„prozkoumat moře“</em> v určité hloubce:<ul>
+<li>Porozhlédnu se kolem</li>
+<li>Jsem-li už teď moc hluboko, kašlu na to; nebudu prozkoumávat dál.</li>
+<li>Jinak:<ul>
+<li>Zanořím se o 10 m níž</li>
+<li><em>Prozkoumám moře</em> v nové hloubce</li>
+<li>Zase se o 10 m vynořím</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Neboli v Pythonu:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pruzkum</span><span class="p">(</span><span class="n">hloubka</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Rozhlížím se v hloubce </span><span class="si">{</span><span class="n">hloubka</span><span class="si">}</span><span class="s1"> m'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">hloubka</span> <span class="o">&gt;=</span> <span class="mi">30</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Už toho bylo dost!'</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Zanořuju se (z </span><span class="si">{</span><span class="n">hloubka</span><span class="si">}</span><span class="s1"> m)'</span><span class="p">)</span>
+
+        <span class="n">pruzkum</span><span class="p">(</span><span class="n">hloubka</span> <span class="o">+</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Vynořuju se (na </span><span class="si">{</span><span class="n">hloubka</span><span class="si">}</span><span class="s1"> m)'</span><span class="p">)</span>
+
+<span class="n">pruzkum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div><ul>
+<li>Python si nadefinuje funkci <code>pruzkum</code></li>
+<li>Zavolá funkci <code>pruzkum</code> s hloubkou 0:<ul>
+<li>Vypíše <code>Rozhlížím se v hloubce 0 m</code></li>
+<li>Zkontroluje, že <code>0 ≥ 30</code> (což neplatí)</li>
+<li>Vypíše <code>Zanořuju se (z 0 m)</code></li>
+<li>Zavolá funkci <code>pruzkum</code> s hloubkou 10 m:<ul>
+<li>Vypíše <code>Rozhlížím se v hloubce 10 m</code></li>
+<li>Zkontroluje, že <code>10 ≥ 30</code> (což neplatí)</li>
+<li>Vypíše <code>Zanořuju se (na 10 m)</code></li>
+<li>Zavolá funkci <code>pruzkum</code> s hloubkou 20 m:<ul>
+<li>Zkontroluje, že <code>20 ≥ 30</code> (což neplatí)</li>
+<li>Vypíše <code>Zanořuju se (na 20 m)</code><ul>
+<li>Zavolá funkci <code>pruzkum</code> s hloubkou 30 m:<ul>
+<li>Zkontroluje, že <code>30 ≥ 30</code> (což platí! konečně!)<ul>
+<li><em> Vypíše <code>Už toho bylo dost!</code></em> a skončí</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Vypíše <code>Vynořuju se (na 20 m)</code></li>
+</ul>
+</li>
+<li>Vypíše <code>Vynořuju se (na 10 m)</code></li>
+</ul>
+</li>
+<li>Vypíše <code>Vynořuju se (na 0 m)</code></li>
+</ul>
+</li>
+</ul>
+<h1>Lokální proměnné</h1>
+<p>Na předchozím příkladu je vidět zajímavé chování lokálních proměnných.
+Když je potápěč „na dně“, jakou hodnotu má proměnná <em>hloubka</em>?</p>
+<p>Tahle otázka je chyták. <em>Která</em> proměnná <code>hloubka</code>?
+Když je program „na dně“, existují čtyři <em>různé</em> lokální proměnné <code>hloubka</code>:
+každé zanoření, každé zavolání funkce <code>pruzkum</code>, má vlastní proměnnou.</p>
+<p>Podobně jako když máš globální a lokální proměnnou stejného jména,
+každá funkce „vidí“ jen tu svoji proměnnou.
+Ale když se potápěč vynoří a volání funkce se ukončí, tato proměnná
+přestane existovat.
+A „volající“ funkce vidí svoji proměnnou, ve které je stále původní hodnota.</p>
+<h1>Pro matematiky</h1>
+<div class="admonition note"><p>Nemáš-li rád/a matematiku, tuhle sekci přeskoč!</p>
+</div><p>Rekurzivní algoritmy mají původ v matematice. Faktoriál <var>x</var>, neboli
+součin všech  čísel od 1 do <var>x</var>, zapsaný jako <var>x</var>!,
+matematici definují takto:</p>
+<ul>
+<li>0! = 1</li>
+<li>Pro kladná <var>x</var> je <var>x</var>! = <var>x</var> · (<var>x</var> - 1)!</li>
+</ul>
+<p>Neboli v Pythonu:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">factorial</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/online-jaro/beginners/local-variables/">← <span class="d-none d-sm-inline">Lokální proměnné</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/online-jaro/sessions/def/">↑ <span class="d-none d-sm-inline">Lekce: Vlastní funkce</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/online-jaro/sessions/def/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/naucse.python.cz/blob/beginners-2021/lessons/beginners/recursion/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
