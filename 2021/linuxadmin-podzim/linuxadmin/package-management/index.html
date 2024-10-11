@@ -1,0 +1,623 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Instalace balíčků
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+        .lesson-content table {
+    margin-left: 1em
+    }
+.lesson-content tr {
+    vertical-align: top
+    }
+.lesson-content td, .lesson-content th {
+    padding-right: 0.5em
+    }
+.lesson-content tr:hover {
+    background-color: rgba(0, 0, 0, 0.1)
+    }
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/review/">Instalace balíčků</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/package-management/">Instalace balíčků</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Instalace balíčků</h1>
+<p>Jakým způsobem instaluješ software na linuxovém systému?</p>
+<p>Pravděpodobně máš k dispozici grafický program, kde si můžeš dostupné programy prohlédnout, přečíst jejich popisky, kouknout na obrázky, jak vypadají, a zakliknout tlačítko "Instaluj".
+Grafický instalátor se postará o vše potřebné a zpřístupní ti ikonku nového programu v nabídce aplikací.</p>
+<p>My se ale dnes podíváme hlouběji, na systémy, díky kterým můžeš instalovat balíčky jednotným způsobem.</p>
+<h2>Balíčkovací systémy</h2>
+<p>Linuxové systémy používají takzvané <em>balíčkovací systémy</em> (angl. <em>package managers</em>).
+Filozofie pod nimi je přímočará - je to vlastně o tom, že stáhneš archiv
+a rozbalíš si ho na disk podobně jak ZIP-ový adresář.
+Balíček může obsahovat příkazy (soubory v <code>/usr/bin</code>), konfiguraci (soubory
+v <code>/etc</code>), knihovny (soubory), manuálové stránky (taky soubory) a tak dále.</p>
+<p>Některé věci, např. vytvoření uživatele, nelze přes soubory; balíčky proto
+můžou obsahovat malé programy – skriptlety – které podobné věci při instalaci
+zajistí.</p>
+<p>Kromě souborů a skriptletů balíček obsahuje <em>metadata</em> jako např.:</p>
+<ul>
+<li>jméno balíčku</li>
+<li>verzi balíčku</li>
+<li>závislosti (ang. <em>dependencies</em>) - co všechno je potřeba, aby mohl balíček fungovat</li>
+</ul>
+<p>Pokud si stáhneš kupříkladu textový editor, bude potřebovat knihovnu na vykreslení okének.
+Tu knihovnu musíš mít nainstalovanou, aby editor fungoval.
+Grafická knihovna pak potřebuje např. standardní knihovnu jazyka C atd.
+Instalace jednoho balíčku tak často znamená, že musíš instalovat mnohem víc
+balíčků - ten “hlavní” a všechny ostatní, na kterých závisí.</p>
+<p>Podobná situace nastane při odinstalování: kromě „hlavního“ odinstalovaného
+programu se smažou i dalśi balíčky, které nebudou potřeba.</p>
+<h2>Dva systémy</h2>
+<p>Hodně systémů používá balíčkovací nástroje dva.
+Jeden základní zvládá samotnou instalaci a odinstalaci, plus zjišťování
+a kontrolu toho, co je zrovna nainstalováno.
+Neřeší ale stahování balíčků z internetu.
+Na Fedoře je to <code>rpm</code>.
+Pokud máš nějaký balíček už stažený a řekneš <code>rpm</code>, aby ho nainstaloval,
+můžeš dostat odpověď: <em>nenainstaluji ho, protože potřebuje k svému běhu ještě
+5 dalších, které nainstalované nejsou</em>.
+Je na tobě, abys tyto chybějící závislosti vyřešila.
+A protože tohle uživatelé nechtějí dělat sami,
+vznikly nadstavby, které navíc řeší stahování balíčků a všech jejich závislostí.
+To umí ve Fedoře DNF.</p>
+<p>Když instaluješ pomocí <code>dnf</code>, zadáš jméno balíčku který chceš a dostaneš
+odpověď jako: <em>OK, ale potřebuješ ještě dalších 5 balíčků, zde máš seznam.
+Všechny je stáhnu a nainstaluju.</em></p>
+<p>Kromě DNF existují i další takové nadstavby: <em>Gnome Software</em> je grafická
+aplikace, který instaluje další grafické aplikace.
+Nenajdeš v něm tedy <code>bash</code> nebo <code>tree</code>.
+Podobně jako <code>dnf</code> stahuje a instaluje včetně závislostí.</p>
+<p>Volba balíčkovacího systému se v různých Linuxových distribucích liší.
+Často to je jedna z mála částí systému, které nejdou snadno vyměnit za jinou.
+Tady je malý přehled:</p>
+<table>
+<thead><tr>
+<th>Distro</th>
+<th>Základní systém</th>
+<th>Nadstavby</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fedora</td>
+<td>RPM</td>
+<td>DNF; yum</td>
+</tr>
+<tr>
+<td>Debian &amp; Ubuntu</td>
+<td>APT</td>
+<td>aptitude; Synaptic; APT</td>
+</tr>
+<tr>
+<td>Arch Linx</td>
+<td>pacman</td>
+<td>pacman</td>
+</tr>
+<tr>
+<td>OpenSUSE</td>
+<td>RPM</td>
+<td>YaST</td>
+</tr>
+</tbody>
+</table>
+<p>Tyto balíčkovací nástroje spravují samotný operační systém:
+vše od jádra přes shell až po „uživatelské“ aplikace.
+Instalují software ke kterému mají přístup všichni uživatelé systému;
+potřebují tedy superuživatelské oprávnění.</p>
+<div class="admonition note"><p>Existují i balíčkovací nástroje které nespravují samotný systém.
+Ty umožňují přiinstalovat software „navíc“, často jen pro konkrétního
+uživatele.
+Tyhle nástroje jsou často spjaté s určitým jazykem (<code>pip</code> pro Python,
+<code>npm</code> pro JavaScript, <code>cargo</code> pro Rust); některé existují jen pro konkrétní
+operační systém (Chocolatey pro Windows, Google Play Store a F-Droid pro
+Android); některé jsou univerzálnější (Nix, Conda, Homebrew, Flatpak, Snap).</p>
+</div><p>Máme nainstalovanou Fedoru; pojďme se tedy podívat na RPM a DNF.
+Nástroje ostatních systémů vesměs umí stené základní operace,
+ale příkazy budou vdy vypadat trošku jinak.</p>
+<h2>RPM – informace o balíčcích</h2>
+<p>Pomocí <code>rpm -q</code> (z angl. <em>query</em>, dotaz) se zeptáš na informace o balíčku,
+který máš nainstalovaný.
+Samotným přepínačem <code>-q</code> dostaneš aktuálně nainstalovanou verzi:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q bash
+<span class="go">bash-5.1.0-2.fc34.x86_64</span>
+<span class="gp">$ </span>rpm -q python3
+<span class="go">python3-3.9.7-1.fc34.x86_64</span>
+<span class="gp">$ </span>rpm -q gnome-terminal
+<span class="go">gnome-terminal-3.40.3-1.fc34.x86_64</span>
+</pre></div><div class="admonition note"><p>V některých případech může být nainstalovaných verzí víc, např.
+u jádra systému:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q kernel
+<span class="go">kernel-5.11.12-300.fc34.x86_64</span>
+<span class="go">kernel-5.14.16-201.fc34.x86_64</span>
+</pre></div><p>Kdyby „poslední“ verze byla špatná – nepodařilo by se s ní zapnout
+systém – můžeš pořád použít tu předchozí a systém spravit.
+U většiny balíčků lze mít nainstalovanou jen jednu verzi.</p>
+</div><p>Příkaz <code>rpm -q -l bash</code> (<code>l</code> z angl. <em>list</em>, vyjmenovat) zobrazí všechny
+soubory které balíček obsahuje.
+Vyzkoušej si to: zjistíš že seznam těch souborů je celkem dlouhý.
+Najdeš mezi nimi samotný příkaz – soubor <code>/usr/bin/bash</code>,
+ale např. i soubory v <code>/etc/skel</code> - to je adresář,
+který se zkopíruje do adresářů všech nově vytvořených uživatelů.
+Nový uživatel tedy v domovském adresáři bude mít <code>.bashrc</code>, <code>.bash_logout</code>
+atd.</p>
+<p>Příkaz <code>rpm -q --requires bash</code> vypíše závislosti – to co <code>bash</code> potřebuje,
+aby mohl být nainstalován:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q --requires bash
+<span class="go">/usr/bin/sh</span>
+<span class="go">config(bash) = 5.1.0-2.fc34</span>
+<span class="go">filesystem &gt;= 3</span>
+<span class="go">libc.so.6()(64bit)</span>
+<span class="go">libc.so.6(GLIBC_2.11)(64bit)</span>
+<span class="go">libc.so.6(GLIBC_2.14)(64bit)</span>
+<span class="go">libc.so.6(GLIBC_2.15)(64bit)</span>
+<span class="go">[...]</span>
+<span class="go">rpmlib(PayloadFilesHavePrefix) &lt;= 4.0-1</span>
+<span class="go">rpmlib(PayloadIsZstd) &lt;= 5.4.18-1</span>
+<span class="go">rtld(GNU_HASH)</span>
+</pre></div><p>Nejde jen obalíčky, ale i o jiné vlastnosti systému:</p>
+<ul>
+<li>potřebuje příkaz <code>sh</code>, tedy soubor <code>/usr/bin/sh</code></li>
+<li>konfiguraci <code>config(bash)</code> v konkrétní verzi</li>
+<li>souborový systém (balíček <code>filesystem</code>) v konkrétní minimální verzi</li>
+<li>knihovnu C (<code>libc</code>) pro konkrétní procesor (<code>64bit</code>) s vlastnostmi
+z konkrétních verzí</li>
+<li>určité vlastnosti balíčkovacího systému (<code>rpmlib</code>)</li>
+</ul>
+<p>Kromě <code>filesystem</code> tohle nejsou přímo jména balíčků, ale soubory
+a „popisky“ vlastností, které musí systém splňovat.</p>
+<ul>
+<li><code>bash</code> nebo <code>filesystem</code> je jméno balíčku.</li>
+<li><code>bash-5.1.0-2.fc34.x86_64</code> je jméno konkrétního balíčku v jedné konkrétní
+verzi. Když napíšeš jen <code>bash</code>, RPM to pochopí jako právě nainstalovanou
+verzi Bashe – tenhle dlouhý řetězec.</li>
+<li><code>filesystem &gt;= 3</code> říká, že balíček <code>filesystem</code> musí být ve verzi <code>3</code>
+nebo vyšší. Pomocí <code>rpm -q filesystem</code> si můžeš ověřit, že tohle je splněno.</li>
+<li><code>/usr/bin/sh</code> je soubor – stejně jako jakákoli jiná závislost která
+obsahuje lomítko.</li>
+<li><code>libc.so.6()(64bit)</code> je „virtuální závislost“ – něco, co musí poskytnout
+nějaký jiný balíček. Není to ale přímo jméno balíčku.</li>
+</ul>
+<p>Příkaz <code>rpm -q --provides bash</code> vypíše „virtuální závislosti“,
+které ostatním balíčkům poskytuje <code>bash</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q --provides bash
+<span class="go">/bin/bash</span>
+<span class="go">/bin/sh</span>
+<span class="go">bash = 5.1.0-2.fc34</span>
+<span class="go">bash(x86-64) = 5.1.0-2.fc34</span>
+<span class="go">config(bash) = 5.1.0-2.fc34</span>
+</pre></div><div class="admonition note"><p>Konfiguraci <code>config(bash)</code> Bash potřebuje (<code>--requires</code>), ale zároveň
+si ji poskytuje (<code>--provides</code>).
+To je normální.</p>
+</div><p>Když chceš zjistit, který balíček poskytuje některou závislost,
+můžeš použít přepínač <code>--whatprovides</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q --whatprovides <span class="s1">'libc.so.6()(64bit)'</span>
+<span class="go">glibc-2.33-20.fc34.x86_64</span>
+</pre></div><p><code>libc.so.6()(64bit)</code>, tedy standardní knihovnu jazyka C,
+poskytuje balíček <code>glibc</code>.
+A které balíčky tuhle věc potřebují?
+Ty vypíše přepínač <code>--whatrequires</code>, a je jich hodně:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q --whatrequires <span class="s1">'libc.so.6()(64bit)'</span>
+<span class="go">[...]</span>
+<span class="gp">$ </span>rpm -q --whatrequires <span class="s1">'libc.so.6()(64bit)'</span> <span class="p">|</span> wc -l
+</pre></div><h2>Informace o Pythonu</h2>
+<p>Balíček s Pythonem se na Fedoře jmenuje <code>python3</code>.
+Zkus se podívat, jaké soubory obsahuje:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -ql python3
+<span class="go">/usr/bin/pydoc</span>
+<span class="go">/usr/bin/pydoc3</span>
+<span class="go">/usr/bin/pydoc3.9</span>
+<span class="go">/usr/bin/python3</span>
+<span class="go">/usr/bin/python3.9</span>
+<span class="go">/usr/lib/.build-id</span>
+<span class="go">/usr/lib/.build-id/f4</span>
+<span class="go">/usr/lib/.build-id/f4/aa4b6fb3d014792f7a0be4ed6cbdd514c32d9e</span>
+<span class="go">/usr/share/doc/python3</span>
+<span class="go">/usr/share/doc/python3/README.rst</span>
+<span class="go">/usr/share/man/man1/python3.1.gz</span>
+<span class="go">/usr/share/man/man1/python3.9.1.gz</span>
+</pre></div><p>To je docela málo!
+Hlavní část Pythonu – standardní knihovna – je totiž „schovaná“ v jedné ze
+závislostí:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q --requires python3
+<span class="go">libc.so.6()(64bit)</span>
+<span class="go">libc.so.6(GLIBC_2.2.5)(64bit)</span>
+<span class="go">libpython3.9.so.1.0()(64bit)</span>
+<span class="go">python3-libs(x86-64) = 3.9.7-1.fc34</span>
+<span class="go">rpmlib(CompressedFileNames) &lt;= 3.0.4-1</span>
+<span class="go">rpmlib(FileDigests) &lt;= 4.6.0-1</span>
+<span class="go">rpmlib(PayloadFilesHavePrefix) &lt;= 4.0-1</span>
+<span class="go">rpmlib(PayloadIsZstd) &lt;= 5.4.18-1</span>
+<span class="go">rtld(GNU_HASH)</span>
+</pre></div><p>Je to <code>python3-libs(x86-64)</code>.</p>
+<p>Když chceš zjistit, který balíček tuhle poskytuje,
+můžeš použít přepínač <code>--whatprovides</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q --whatprovides <span class="s1">'python3-libs(x86-64)'</span>
+<span class="go">python3-libs-3.9.7-1.fc34.x86_64</span>
+</pre></div><p>A opravdu, balíček <code>python3-libs</code> verze <code>3.9.7-1.fc34.x86_64</code>
+poskytuje závislost <code>python3-libs(x86-64)</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q --provides python3-libs-3.9.7-1.fc34.x86_64
+<span class="go">bundled(libmpdec) = 2.5.0</span>
+<span class="go">bundled(mpdecimal) = 2.5.0</span>
+<span class="go">libpython3.9.so.1.0()(64bit)</span>
+<span class="go">libpython3.so()(64bit)</span>
+<span class="go">python-libs = 3.9.7-1.fc34</span>
+<span class="go">python3-libs = 3.9.7-1.fc34</span>
+<span class="go">python3-libs(x86-64) = 3.9.7-1.fc34</span>
+<span class="go">python3.9-libs = 3.9.7-1.fc34</span>
+</pre></div><p>A pomocí <code>rpm -q -l python3-libs</code> můžeš zobrazit soubory v tomto balíčku.
+Tentokrát je jich několik tisíc.</p>
+<h2>Repozitář</h2>
+<p>Příkaz <code>rpm</code> nekomunikuje po internetu.
+Neumí tedy prohledávat balíčky které ještě nemáš nainstalované
+nebo zjišťovat, jestli u některých z nich není k dispozici nová verze.</p>
+<p>Takž můžeš zjistit, jak se jmenuje balíček s příkazem <code>bash</code> nebo <code>cat</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q --whatprovides /usr/bin/bash
+<span class="go">bash-5.1.0-2.fc34.x86_64</span>
+<span class="gp">$ </span>rpm -q --whatprovides /usr/bin/cat
+<span class="go">coreutils-8.32-30.fc34.x86_64</span>
+</pre></div><p>Ale nemůžeš to udělatpro příkaz <code>ogg123</code> (pokud ho nemáš nainstalovaný):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q --whatprovides /usr/bin/ogg123
+<span class="go">chyba: soubor /usr/bin/ogg123: Adresář nebo soubor neexistuje</span>
+</pre></div><p>K tomu je potřeba prohlédnout <em>repozitář</em> – seznam všeho softwaru,
+který Fedora poskytuje.</p>
+<p>K práci s repozitáři slouží příkaz <code>dnf</code>, který umí podobné věci jako
+<code>rpm</code>, ale „ví“ i o balíčcích, které zrovna nejsou nainstalované.</p>
+<p>Obdoba <code>rpm -q</code> je <code>dnf repoquery</code>.
+Můžeš se tedy podívat, jaký balíček obsahuje příkaz <code>ogg123</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>dnf repoquery --whatprovides /usr/bin/ogg123
+<span class="go">Fedora 34 - x86_64                              6.8 MB/s |  74 MB     00:10    </span>
+<span class="go">Fedora 34 openh264 (From Cisco) - x86_64        2.5 kB/s | 2.5 kB     00:01    </span>
+<span class="go">Fedora Modular 34 - x86_64                      2.3 MB/s | 4.9 MB     00:02    </span>
+<span class="go">Fedora 34 - x86_64 - Updates                    5.5 MB/s |  29 MB     00:05    </span>
+<span class="go">Fedora Modular 34 - x86_64 - Updates            3.4 MB/s | 4.2 MB     00:01    </span>
+<span class="go">vorbis-tools-1:1.4.2-2.fc34.x86_64</span>
+</pre></div><p>Poslední řádek je jméno balíčku, který obsahuje <code>/usr/bin/ogg123</code>.
+Co jsou ale ty řádky nad tím?</p>
+<p>Když <code>dnf</code> pustíš poprvé, stáhne si informace o repozitářích (tj. o softwaru
+který sedá nainstalovat).
+Když ho pustíš znovu, místo aktualizace jen vypíše poznámku o tom, že jsou
+naposledy stažené informace dost aktuální:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>dnf repoquery --whatprovides /usr/bin/ogg123
+<span class="go">Poslední kontrola metadat: před 0:00:48, Po 22. listopadu 2021, 14:53:50.</span>
+<span class="go">vorbis-tools-1:1.4.2-2.fc34.x86_64</span>
+</pre></div><div class="admonition note"><p>Informace o stahování a aktuálnosti se vypsaly na standardní chybový výstup.
+Když ten přesměruješ do <code>/dev/null</code>, dostaneš jen samotné jméno balíčku:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>dnf repoquery --whatprovides /usr/bin/ogg123 <span class="m">2</span>&gt;/dev/null
+<span class="go">vorbis-tools-1:1.4.2-2.fc34.x86_64</span>
+</pre></div></div><h2>Instalace a odinstalace</h2>
+<p>RPM umí i instalovat (<code>-i</code>) a mazat (<code>-e</code>) balíčky, ale protože neřeší
+závislosti a stahování, hodí se to jen v hodně zvláštních situacích, např:</p>
+<ul>
+<li>Spravuješ superbezpečný armádní systém, který není připojený k internetu,
+a balíčky musíš stahovat sama a nechat si je vždy schválit.</li>
+<li>Z nějakého důvodu chceš závislosti ignorovat. (Instalovaný program pak
+nejspíš nebude správně fungovat, ale když jsi <code>root</code>, můžeš vše.)</li>
+</ul>
+<p>Na instalaci je lepší použít příkaz DNF:</p>
+<ul>
+<li><p><code>dnf install <var>balíček</var></code> - instalace balíčku
+(včetné stažení a závislostí)</p>
+</li>
+<li><p><code>dnf remove <var>balíček</var></code> - odinstalace balíčku
+(větně nepotřebných závislostí)</p>
+</li>
+<li><p><code>dnf update</code> - aktualizace – <code>dnf</code> se podívá na internet,
+ zjistí nejnovější verze všech balíčků, které máš nainstalované a nabídne
+ novější verze.</p>
+</li>
+</ul>
+<p>Na rozdíl od <code>dnf repoquery</code> a <code>rpm -q</code> tyhle příkazy modifikují systém,
+a tak je potřeba je pouštět s právy superuživatele – tedy pomocí <code>sudo</code>.</p>
+<p>Zkus si nainstalovat balíček <code>vorbis-tools</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf install vorbis-tools
+<span class="go">Poslední kontrola metadat: před 0:42:11, Po 22. listopadu 2021, 14:35:00.</span>
+<span class="go">Závislosti vyřešeny.</span>
+<span class="go">============================================================================================</span>
+<span class="go"> Balíček                Architektura     Verze                       Repozitář        Velikost</span>
+<span class="go">============================================================================================</span>
+<span class="go">Instalování:</span>
+<span class="go"> vorbis-tools           x86_64           1:1.4.2-2.fc34              fedora           216 k</span>
+
+<span class="go">Shrnutí transakce</span>
+<span class="go">============================================================================================</span>
+<span class="go">Instalovat  1 balíček</span>
+
+<span class="go">Celková velikost ke stažení: 216 k</span>
+<span class="go">Velikost po nainstalování: 769 k</span>
+<span class="go">Je to ok [a/N]: a</span>
+<span class="go">Stahování balíčků:</span>
+<span class="go">vorbis-tools-1.4.2-2.fc34.x86_64.rpm                        1.1 MB/s | 216 kB     00:00    </span>
+<span class="go">--------------------------------------------------------------------------------------------</span>
+<span class="go">Celkem                                                      298 kB/s | 216 kB     00:00     </span>
+<span class="go">Spouští se kontrola transakce</span>
+<span class="go">Kontrola transakce byla úspěšná</span>
+<span class="go">Probíhá test transakce</span>
+<span class="go">Test transakce byl úspěšný.</span>
+<span class="go">Transakce probíhá</span>
+<span class="go">  Příprava        :                                                                     1/1 </span>
+<span class="go">  Instalování     : vorbis-tools-1:1.4.2-2.fc34.x86_64                                  1/1 </span>
+<span class="go">  Probíhá skriplet: vorbis-tools-1:1.4.2-2.fc34.x86_64                                  1/1 </span>
+<span class="go">  Ověřuje se      : vorbis-tools-1:1.4.2-2.fc34.x86_64                                  1/1 </span>
+
+<span class="go">Nainstalováno:</span>
+<span class="go">  vorbis-tools-1:1.4.2-2.fc34.x86_64</span>
+
+<span class="go">Hotovo!</span>
+</pre></div><p>Příkaz <code>dnf</code> předpokládá, že ho použtí člověk
+Kdybys ho spouštěla automaticky, ze skriptu, můžeš použít přepínač <code>-y</code>
+(z angl. <em>yes</em>, ano) – <code>dnf</code> se pak na takové otázky nebude ptát a bude
+předpokládat kladnou odpověď. Zkus si to na odinstalaci:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf remove -y vorbis-tools
+<span class="go">Závislosti vyřešeny.</span>
+<span class="go">============================================================================================</span>
+<span class="go"> Balíček                Architektura     Verze                      Repozitář         Velikost</span>
+<span class="go">============================================================================================</span>
+<span class="go">K odstranění:</span>
+<span class="go"> vorbis-tools           x86_64           1:1.4.2-2.fc34             @fedora           769 k</span>
+
+<span class="go">Shrnutí transakce</span>
+<span class="go">============================================================================================</span>
+<span class="go">Odstranit  1 balíček</span>
+
+<span class="go">Uvolněné místo: 769 k</span>
+<span class="go">Spouští se kontrola transakce</span>
+<span class="go">Kontrola transakce byla úspěšná</span>
+<span class="go">Probíhá test transakce</span>
+<span class="go">Test transakce byl úspěšný.</span>
+<span class="go">Transakce probíhá</span>
+<span class="go">  Příprava        :                                                                     1/1 </span>
+<span class="go">  K odstranění    : vorbis-tools-1:1.4.2-2.fc34.x86_64                                  1/1 </span>
+<span class="go">  Probíhá skriplet: vorbis-tools-1:1.4.2-2.fc34.x86_64                                  1/1 </span>
+<span class="go">  Ověřuje se      : vorbis-tools-1:1.4.2-2.fc34.x86_64                                  1/1 </span>
+
+<span class="go">Odstraněno:</span>
+<span class="go">  vorbis-tools-1:1.4.2-2.fc34.x86_64</span>
+
+<span class="go">Hotovo!</span>
+</pre></div><p>A teď nainstalovat znova – ale trošku jinak.
+Protože DNF přístup k repozitáři, umí vybrat správný balíček i podle souboru,
+který zadáš.
+Když tedy chceš nainstalovat opříkaz <code>ogg123</code>, můžeš zadat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf install /usr/bin/ogg123
+<span class="go">[...]</span>
+<span class="go">Hotovo!</span>
+</pre></div><p>A teď si štěknutí můžeš přehrát.
+(Doufám že na virtuálním počítači to půjde slyšet.)</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>locate bark.ogg
+<span class="go">/usr/share/sounds/gnome/default/alerts/bark.ogg</span>
+<span class="gp">sh-5.1$ </span>ogg123 -d alsa /usr/share/sounds/gnome/default/alerts/bark.ogg
+</pre></div><h2>Repozitáře</h2>
+<p>Repozitář je místo na internetu, kde jsou ke stažení balíčky.
+Ruzné repozitáře obsahují různé balíčky.
+Můžeš si jich přidat několik.
+Když DNF instaluje nový balíček, kontroluje všechny.</p>
+<p>Na Fedoře se repozitáře nacházejí v <code>/etc/yum.repos.d/</code>.
+(Dnes by to bylo <code>dnf.repos.d</code>, ale DNF tu používá stejný formát jako starší
+nástroj <code>yum</code>, tak zůstává i jméno adresáře.)</p>
+<p>Proč si přidávat další repozitáře?</p>
+<p>Jednotlivé linuxové distribuce – a jednotlivé repozitáře – se liší svým
+přístupem k softwaru.
+Fedora ve svých repozitářích nemá přehrávače videa nebo MP3,
+protože v Americe jsou tyto technologie patentované a musí se za jejich
+použití platit.
+To u distribuce která je volně ke stažení nejde jednoduše zařídit.</p>
+<p>Evropské právo ale softwarové patenty v takovém rozsahu neuznává,
+a tak můžeš s klidným svědomím přidat repozitáře evropského projektu
+<code>rpmfusion</code>.
+Tento projekt spravuje dva repozitáře:</p>
+<ul>
+<li>free - balíčky s programy s otevřeným zdrojovým kódem</li>
+<li>nonfree - balíčky s uzávřeným zdrojovým kódem: např. Steam</li>
+</ul>
+<div class="admonition note"><p>Software v obou je k dispozici zdarma.
+„Free“ je tu od „freedom“ – volnost software používat, zkoumat a měnit.</p>
+</div><p>Na stránkách <a href="https://rpmfusion.org/">rpmfusion</a> se můžeš doklikat k návodu,
+jak přidat repozitář do svého systému. Pro <em>free</em> variantu to je:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-<span class="k">$(</span>rpm -E %fedora<span class="k">)</span>.noarch.rpm
+</pre></div><p>Při první instalaci z nového repozitáře se DNF zeptá, jestli věříš
+šifrovacím klíčům, kterýmijsou balíčky podepsané:</p>
+<div class="highlight"><pre><span></span><span class="go">Importuje se GPG klíč 0xD651FF2E:</span>
+<span class="go">Uživatelské ID : "RPM Fusion free repository for Fedora (2020) &lt;rpmfusion-buildsys@lists.rpmfusion.org&gt;"</span>
+<span class="go">Otisk: E9A4 91A3 DE24 7814 E7E0 67EA E06F 8ECD D651 FF2E</span>
+<span class="go">Zdroj : /etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-34</span>
+<span class="go">Je to ok [a/N]:</span>
+</pre></div><p>Vypsaný <em>otisk</em> (angl. <em>fingerprint</em>) můžeš zkontrolovat na adrese
+<a href="https://rpmfusion.org/keys">rpmfusion.org/keys</a>.
+Jestli sedí, je balíček podepsaný od správců RPM Fusion.</p>
+<p>Když se instalace povede, budeš mít na systému nový balíček
+<code>rpmfusion-free-release</code>.
+Ten přidává nastavení repozitáře do <code>/etc/yum.repos.d/</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -ql rpmfusion-free-release
+<span class="go">/etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-2020</span>
+<span class="go">/etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-32</span>
+<span class="go">/etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-32-primary</span>
+<span class="go">/etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-33</span>
+<span class="go">/etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-34</span>
+<span class="go">/etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-latest</span>
+<span class="go">/etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-rawhide</span>
+<span class="go">/etc/yum.repos.d/rpmfusion-free-updates-testing.repo</span>
+<span class="go">/etc/yum.repos.d/rpmfusion-free-updates.repo</span>
+<span class="go">/etc/yum.repos.d/rpmfusion-free.repo</span>
+</pre></div><p>Od teď můžeš nainstalovat přehrávače videa/hudby jako <code>mplayer</code> nebo <code>vlc</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf install mplayer
+<span class="gp">$ </span>mplayer /usr/share/sounds/gnome/default/alerts/bark.ogg
+</pre></div><div class="admonition note"><p>Zvuky ve formátu <code>.ogg</code> jde přehrávat pomocí <code>ogg123</code>,
+tedy i bez přidání <code>rpmfusion</code>.
+<code>mplayer</code> ale funguje i s <code>.mp3</code> a ostatními.</p>
+</div><h2>Další repozitáře</h2>
+<p>Podobný „dodatečný“ repozitář si může založit kdokoli.
+Kdyby ses chtěla do tvoření balíčků ponořit, výsledky své práce můžeš
+distribuovat na stránkách <a href="https://copr.fedorainfracloud.org/">COPR</a>.
+Když ti někdo řekne aby sis z COPR něco nainstalovala, je na tobě jestli
+mu budeš věřit.
+Balíčky nainstalované pomocí <code>dnf</code> mají plný přístup k celému systému.</p>
+<div class="admonition note"><p>Na Ubuntu existuje podobný koncept „uživatelských“ repozitářů,
+kam si může kdokoli nahrát svůj software, pod jménem <strong>PPA</strong>
+(Personal Package Archive).</p>
+<p>Pro systémy CentOS, RHEL atd. existuje sada repozitářů <strong>EPEL</strong>
+(Extra Packages for Enterprise Linux), který má podobná pravidla
+jako Fedora.</p>
+</div><h2>Co je nainstalováno?</h2>
+<p>Pomocí <code>dnf</code> můžeš instalovat jak grafické aplikace (na které funguje
+i grafický nástroj <em>Gnome Software</em> tak i programy pro příkazovou řádku
+nebo systémové knihovny.
+Taky se můžeš např. podívat jaký  software máš nainstalovaný
+(což jde i bez <code>sudo</code>):</p>
+<div class="highlight"><pre><code>$ sudo dnf list installed</code></pre></div><p>Taky můžeš celý systém aktualizovat – DNF najde balíčky pro které
+je v repozitářích k dispozici novější verze, stáhne je a nahradí jimi
+to co máš nainstalováno:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf update
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/review/">↑ <span class="d-none d-sm-inline">Lekce: Instalace balíčků</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/notes/bash-subshell/"><span class="d-none d-sm-inline">Poznámky – Subshell</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/package-management/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Petr Viktorin a Karolina Surma, 2020-2021</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

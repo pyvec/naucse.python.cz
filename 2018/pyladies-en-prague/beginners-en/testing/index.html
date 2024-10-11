@@ -1,0 +1,384 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Beginners course PyLadies: Testing
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/pyladies-en-prague/">Beginners course PyLadies</a>
+
+> <a href="/2018/pyladies-en-prague/sessions/tests/">Testing</a>
+
+> <a href="/2018/pyladies-en-prague/beginners-en/testing/">Testing</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Testing</h1>
+<p>Programming is not just about writing code. 
+It is important to verify that the code does what it should 
+(and about fixing it if needed).
+The process of verification that the program works as expected is called <em>testing</em>.</p>
+<p>You have probably tested your programs by trying to execute them, 
+entered some input data and looked if the results are correct.
+It is harder to do it for bigger programs. 
+Bigger programs have more possibilities what to do and it is harder 
+to verify that all possibilities do what they should.</p>
+<p>That is why developers write code that verifies their program 
+instead of testing their programs manually.</p>
+<p><em>Automated tests</em> are functions that check that the program works correctly.
+You can execute the tests anytime and verify that the code works.
+The main benefit is that you can change the code in the future
+and let the tests verify that the change does not break existing functionalitye.</p>
+<h2>Installing the pytest library</h2>
+<p>Up to now, we have used only the modules that come installed with Python, 
+for example, modules such as <code>math</code> or <code>turtle</code>.
+There are many more <em>libraries</em> that are not included in Python
+but you can install them to your Python environment and use them.</p>
+<p>The library for testing in Python is called <code>unittest</code>.
+It is quite difficult to use this library so we will use a better one.
+We will install the library <code>pytest</code> which is easy to use and very popular.</p>
+<p>You install libraries into your active virtual environment.
+We have learned how to create and activate a virtual environment
+in the lesson about <a href="/2018/pyladies-en-prague/beginners/install/">Python installation</a>.
+Make sure that you have activated a virtual environment.</p>
+<p>Submit the following command. (It is a command-line command, 
+just as <code>cd</code> or <code>mkdir</code>; do not enter it into the Python console.)</p>
+<div class="highlight"><pre><span></span><span class="gp">(venv)$ </span>python -m pip install pytest
+</pre></div><div class="admonition note"><p class="admonition-title">What does Pip do?</p>
+<p><code>python -m pip</code> calls Python and tells it to execute the
+<code>pip</code> module. This module can install and uninstall libraries. 
+(Similarly, when you created a virtual environment, you used the
+command <code>python -m venv</code> – the <code>venv</code> module can create virtual environments.)
+And the arguments <code>install pytest</code> tell Pip to install <code>pytest</code>.</p>
+<p>You can display the help for the Pip module using the command
+<code>python -m pip --help</code>.</p>
+</div><div class="admonition warning"><p class="admonition-title">For Windows users</p>
+<p>If you use Windows, it is important to run Python programs using
+<code>python program.py</code>, and not just <code>program.py</code>.
+Although we always show <code>python</code> in our lessons, 
+it could work without it so far.
+If you do not use the command <code>python</code> in the beginning, the program 
+could start in a different Python and different virtual environment, 
+where the <code>pytest</code> module might not have been installed.</p>
+</div><h2>Writing tests</h2>
+<p>We will show testing thtough a very simple example.
+There is a function <code>add</code> that can add two numbers.
+There is another function that tests if the 
+<code>add</code> function returns correct results for specific numbers.</p>
+<p>Make a copy of the code into a file named <code>test_addition.py</code>
+in a new empty directory.</p>
+<p>The naming of files and test functions is important for <code>pytest</code> (with default settings). 
+It is important for names of files containing tests and test functions
+to start with <code>test_</code>.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="k">def</span> <span class="nf">test_add</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+</pre></div><p>What does the test function do?</p>
+<p>The <code>assert</code> statement evaluates the expression that follows it.
+If the result is not true then it raises an exception 
+and it makes the test fail.
+You can imagine that <code>assert a == b</code> does following:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">'Test failed!'</span><span class="p">)</span>
+</pre></div><div class="admonition note"><p>Do not use <code>assert</code> outside of test functions for now.
+For "regular" code, the  <code>assert</code> has functionality that
+we will not explain now.</p>
+</div><h2>Running tests</h2>
+<p>You execute tests with the command <code>python -m pytest -v</code>, 
+followed by the name of the file containing the tests.
+By using this command you are telling: <strong>Python</strong>: 
+Execute the <strong>m</strong>odule named <strong>pytest</strong>,
+in <strong>v</strong>erbose mode, for the given file.</p>
+<div class="highlight"><pre><code>$ python -m pytest -v test_addition.py
+<span style="font-weight: bold">============= test session starts =============</span>
+platform darwin -- Python 3.6.5, pytest-3.9.1, py-1.7.0, pluggy-0.8.0 -- 
+rootdir: learn, inifile: 
+<span style="font-weight: bold">collecting ...</span> collected 1 items
+
+test_addition.py::test_add <span style="color: #00aa00">PASSED</span>
+
+<span style="color: #00aa00">============= 1 passed in 0.01 seconds =============</span></code></pre></div><p>This command scans the given file and calls all functions that start
+with <code>test_</code>. It checks that they do not raise any exceptions, 
+for example, an exception raised by <code>assert</code>.
+If an exception occurs, <code>pytest</code> shows a red message with
+additional details that can help you find the bug and fix it.</p>
+<div class="admonition note"><p>You can omit the argument with the filename: <code>python -m pytest -v</code>
+In this case, <code>pytest</code> scans the current directory and runs tests
+in all files whose names start with <code>test_</code>. You can use a path to 
+a directory and <code>pytest</code> finds tests in it.</p>
+</div><p>Try to change the <code>add</code> function (or its test) and see what happens
+if a test fails.</p>
+<h2>Test modules</h2>
+<p>You do not usually write tests in the same file with the regular code.
+Typically, you write tests in another file.
+This way, your code is easier to read, and it makes it possible to distribute 
+only the code, without the tests, to someone who is interested only in executing the program.</p>
+<p>Split the <code>test_addition.py</code> file: Move the <code>add</code> function to a new module <code>addition.py</code>.
+In the <code>test_addition.py</code> file, keep only the test.
+To the <code>test_addition.py</code> file, add <code>from addition import add</code> to the top
+so the test can call the tested function.</p>
+<p>The test should pass again.</p>
+<h2>Executable modules</h2>
+<p>Automated tests have to run "unattended".
+They are usually executed automatically and the failures are reported
+automatically (e.g. by email) and the code that passes all tests can
+be automatically released (installed to a system where it runs 
+or is made available to customers).</p>
+<p>What does this mean to us?
+The <code>input</code> function will not work in tests. There is no-one who can reply.</p>
+<p>This can make your work harder sometimes. Let's look at a more complex project: 1D (one-dimensional) tic-tac-toe.</p>
+<div class="admonition note"><p>If you do not have the 1D tic-tac-toe program, the following sections are only theoretical.
+If you study at home, complete the 1D tic-tac-toe lesson before continuing.
+The homework assignment is in <a href="http://pyladies.cz/v1/s004-strings/handout/handout4.pdf">PyLadies projects</a>
+on page 2.  (the English translation is at <a href="/2018/pyladies-en-prague/beginners-en/tictactoe/">one-dimensional tic-tac-toe</a>)..</p>
+</div><p>The structure of your 1D tic-tac-toe code could look like this:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>  <span class="c1"># (and possibly other import statements that are needed)</span>
+
+<span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">space_number</span><span class="p">,</span> <span class="n">mark</span><span class="p">):</span>
+    <span class="sd">"""Returns the board with the specified mark placed in the specified position"""</span>
+    <span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">player_move</span><span class="p">(</span><span class="n">board</span><span class="p">):</span>
+    <span class="sd">"""Asks the player what move should be done and returns the board</span>
+<span class="sd">    with the move played.</span>
+<span class="sd">    """</span>
+    <span class="o">...</span>
+    <span class="nb">input</span><span class="p">(</span><span class="s1">'What is your move? '</span><span class="p">)</span>
+    <span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">tic_tac_toe_1d</span><span class="p">():</span>
+    <span class="sd">"""Starts the game</span>
+
+<span class="sd">    It creates an empty board and runs player_move and computer_move alternately</span>
+<span class="sd">    until the game is finished.</span>
+<span class="sd">    """</span>
+    <span class="k">while</span> <span class="o">...</span><span class="p">:</span>
+        <span class="o">...</span>
+        <span class="n">player_move</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+        <span class="o">...</span>
+
+<span class="c1"># Start the game:</span>
+<span class="n">tic_tac_toe_1d</span><span class="p">()</span>
+</pre></div><p>If you import this module, Python executes all commands in it 
+from top to bottom.</p>
+<p>The first command, <code>import</code>, makes some functions and variables available.
+Imports do not usually have any side-effects.</p>
+<p>The definitions of functions (<code>def</code> statements and everything in them) 
+just define the functions (but they do not execute the functions).</p>
+<p>Calling the <code>tic_tac_toe_1d</code> function starts the game.
+The <code>tic_tac_toe_1d</code> calls the <code>player_move()</code> function which calls <code>input()</code>.</p>
+<p>If you import this module from tests, the <code>input</code> fails 
+and the module is not imported.</p>
+<div class="admonition note"><p>If you want to import such a module from elsewhere – for example, you would like
+to use <code>move</code> in another game – the import of the module requires the user to 
+play 1D tic-tac-toe!</p>
+</div><p>The calling of <code>tic_tac_toe_1d</code> is a side-effect and we need to remove it.
+Yeah but you cannot start the game without it! What about it?</p>
+<p>You can create a new module.
+Name it <code>game.py</code> and put just this call into it:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tic_tac_toe</span>
+
+<span class="n">tic_tac_toe</span><span class="o">.</span><span class="n">tic_tac_toe_1d</span><span class="p">()</span>
+</pre></div><p>You cannot test this module because it calls <code>input</code> indirectly.
+But you can execute it if you want to play.
+Since you do not have tests for this module, it should be very simple: 
+one import and one statement.</p>
+<p>You can import the original module from tests or other modules.</p>
+<p>A test for the original module could look like this:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tic_tac_toe</span>
+
+<span class="k">def</span> <span class="nf">test_move_to_empty_space</span><span class="p">():</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">tic_tac_toe</span><span class="o">.</span><span class="n">computer_move</span><span class="p">(</span><span class="s1">'--------------------'</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">board</span><span class="p">)</span> <span class="o">==</span> <span class="mi">20</span>
+    <span class="k">assert</span> <span class="n">board</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">'x'</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">board</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)</span> <span class="o">==</span> <span class="mi">19</span>
+</pre></div><h2>Positive and negative tests</h2>
+<p>The tests that verify that the program works correctly 
+under correct conditions are called <em>positive tests</em>.
+But you can test what your program does under unexpected conditions.</p>
+<p>The tests that check the behavior in case of "invalid" input
+are called <em>negative tests</em>.
+They can check for a specific negative result (for example 
+that a call like <code>is_number_even(7)</code> returns <code>False</code>), 
+or that a "reasonable" exception is raised.</p>
+<p>For example, the <code>computer_move</code> function should raise an error 
+(for example <code>ValueError</code>) when the board is full.</p>
+<div class="admonition note"><p>It is much better to raise an exception than doing nothing 
+and silently letting the program get stuck.
+You can use such function in a more complex program 
+and be sure that you will get an understandable error
+when it is called under bad conditions. 
+Then you can easily fix it.</p>
+</div><p>Use the <code>with</code> statement and the <code>raises</code> function 
+to test that your code raises the expected exception.
+The <code>raises</code> function is imported from the <code>pytest</code> module.
+We will explain the <code>with</code> statement later.
+You just need to know that it checks that the block of code below 
+raises the specified exception:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">import</span> <span class="nn">tic_tac_toe</span>
+
+<span class="k">def</span> <span class="nf">test_move_failure</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">tic_tac_toe</span><span class="o">.</span><span class="n">computer_move</span><span class="p">(</span><span class="s1">'oxoxoxoxoxoxoxoxoxox'</span><span class="p">)</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2018/pyladies-en-prague/beginners-en/modules/">← <span class="d-none d-sm-inline">Modules</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/pyladies-en-prague/sessions/tests/">↑ <span class="d-none d-sm-inline">Lekce: Testing</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/pyladies-en-prague/sessions/tests/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-pyladies-en-prague/lessons/beginners-en/testing/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Translated by Petr Plavjanik</p>
+    
+        <p>Originally written by Petr Viktorin, 2014-2017 for <a href="https://naucse.python.cz/course/pyladies/beginners/testing/">PyLadies CZ</a>.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,405 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Generátory
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/advanced/generators/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/brno-jaro-2020-ut/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2020/brno-jaro-2020-ut/sessions/while/">Pokročilé metody programování</a>
+
+> <a href="/2020/brno-jaro-2020-ut/advanced/generators/">Generátory</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Generátory</h1>
+<p>Dnes si popíšeme, jak v Pythonu fungují <em>generátory</em>, tedy funkce s příkazem <code>yield</code>.
+Někteří z vás možná už nějaký jednoduchý generátor napsali, ale pojďme si je
+vysvětlit od úplného začátku: od toho, jak se v Pythonu iteruje.</p>
+<h2>Iterace</h2>
+<p>Když je v Pythonu potřeba iterovat (např. příkazem <code>for</code>) přes nějakou kolekci
+(seznam, řetězec, soubor, …), použije se <em>iterační protokol</em>,
+který pracuje se dvěma druhy objektů: s <em>iterovatelnými objekty</em> a s <em>iterátory</em>.</p>
+<p>Iterovatelné objekty (<em>iterables</em>) se vyznačují tím, že je na ně možné zavolat
+funkci <code>iter()</code>. Ta vrátí příslušný iterátor:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">iter</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">&lt;list_iterator object at 0x...&gt;</span>
+</pre></div><p>Na iterátor pak je možné opakovaně volat funkci <code>next()</code>, čímž dostáváme jednotlivé
+prvky iterace.
+Po vyčerpání iterátoru způsobuje <code>next()</code> výjimku <code>StopIteration</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">StopIteration</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">StopIteration</span>
+</pre></div><p>Cyklus <code>for x in collection: ...</code> tedy dělá něco jako:</p>
+<div class="highlight"><pre><span></span><span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="k">break</span>
+
+    <span class="o">...</span>  <span class="c1"># tělo původního cyklu</span>
+</pre></div><p>Platí, že každý iterátor je iterovatelný: zavoláním <code>iter()</code> na iterátor
+dostaneme ten stejný iterátor (nikoli jeho kopii) zpět.
+Naopak to ale obecně neplatí: např. seznamy jsou iterovatelné, ale nejsou samy
+o sobě iterátory.
+Každé zavolání <code>iter(seznam)</code> vrací nový iterátor, který má svou vlastní
+„aktuální pozici“ a iteruje od začátku.</p>
+<p>Iterátor je ve většině případů „malý“ objekt, který si „pamatuje“ jen původní iterovatelný
+objekt a aktuální pozici. Příklady jsou iterátory seznamů (<code>iter([])</code>), slovníků (<code>iter({})</code>),
+<em>n</em>-tic nebo množin, iterátor pro <code>range</code> a podobně.</p>
+<p>Iterátory ale můžou být i „větší“: třeba otevřený soubor je iterátor, z něhož <code>next()</code>
+načítá jednotlivé řádky.</p>
+<h2>Generátory</h2>
+<p>Asi nejzajímavější druh iterátoru je tzv. <em>generátor</em>: funkce, která umí postupně
+dávat k dispozici hodnoty.
+Definuje se pomocí klíčového slova <code>yield</code>: každá funkce, která obsahuje <code>yield</code>,
+je <em>generátorová funkce</em> (angl. <em>generator function</em>).</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">generate2</span><span class="p">():</span>
+    <span class="sd">"""generates 2 numbers"""</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'A'</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="mi">0</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'B'</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="mi">1</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'C'</span><span class="p">)</span>
+</pre></div><p>Zavoláním takové funkce dostáváme <em>generátorový iterátor</em> (angl. <em>generator iterator</em>):</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">generate2</span><span class="p">()</span>
+<span class="go">&lt;generator object generate2 at 0x...&gt;</span>
+</pre></div><p>Voláním <code>next()</code> se pak stane zajímavá věc: funkce se provede až po první <code>yield</code>,
+tam se <em>zastaví</em> a hodnota <code>yield</code>-u se vrátí z <code>next()</code>.
+Při dalším volání se začne provádět zbytek funkce od místa, kde byla naposled
+zastavena.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it</span> <span class="o">=</span> <span class="n">generate2</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="go">A</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="go">B</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="go">C</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">StopIteration</span>
+</pre></div><h2>Další použití generátorů</h2>
+<p>Vlastnost přerušit provádění funkce je velice užitečná nejen pro vytváření
+sekvencí, ale má celou řadu dalších užití.
+Existuje třeba dekorátor, který generátorovou funkci s jedním <code>yield</code> převede na <em>context manager</em>,
+tedy objekt použitelný s příkazem <code>with</code>:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">contextlib</span>
+
+<span class="nd">@contextlib.contextmanager</span>
+<span class="k">def</span> <span class="nf">ctx_manager</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'Entering'</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="mi">123</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'Exiting'</span><span class="p">)</span>
+
+
+<span class="k">with</span> <span class="n">ctx_manager</span><span class="p">()</span> <span class="k">as</span> <span class="n">obj</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'Inside context, with'</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+</pre></div><p>Vše před <code>yield</code> se provede při vstupu do kontextu, hodnota <code>yield</code> se předá
+dál a vše po <code>yield</code> se provede na konci.
+Můžeme si představit, že místo <code>yield</code> se „doplní“ obsah bloku <code>with</code>.
+Funkce se tam na chvíli zastaví a může se tedy provádět něco jiného.</p>
+<h2>Vracení hodnot z generátorů</h2>
+<p>V rámci generátorové funkce můžeme použít i <code>return</code>, který funkci ukončí.
+Vrácená hodnota se však při normální iteraci (např. ve <code>for</code>) nepoužije.
+Objeví se pouze jako hodnota výjimky <code>StopIteration</code>, která signalizuje konec
+iterace:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">generator</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">"""Yield two numbers and return their sum"""</span>
+    <span class="k">yield</span> <span class="n">a</span>
+    <span class="k">yield</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it</span> <span class="o">=</span> <span class="n">generator</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">"&lt;stdin&gt;"</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">StopIteration</span>: <span class="n">5</span>
+</pre></div><h2>Obousměrná komunikace</h2>
+<p>Oproti normálním iterátorům, které hodnoty jen poskytují, mají generátory metodu
+<code>send()</code>, kterou je možné posílat hodnoty <em>do</em> běžícího generátoru.
+Klíčové slovo <code>yield</code> totiž může fungovat jako výraz a tento výraz nabývá poslanou
+hodnotu (nebo <code>None</code>, byl-li použit normální <code>next()</code>).</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">running_sum</span><span class="p">():</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">total</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span><span class="p">:</span>
+            <span class="n">total</span> <span class="o">+=</span> <span class="n">num</span>
+
+<span class="n">it</span> <span class="o">=</span> <span class="n">running_sum</span><span class="p">()</span>
+<span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>  <span class="c1"># pro první iteraci nelze použít send() -- nečekáme zatím na yield-u</span>
+<span class="n">it</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">it</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+</pre></div><p>Upřímě řečeno, metoda <code>send()</code> není příliš užitečná.
+(Když byste něco takového potřebovali, radši si napište třídu, která si bude
+stav uchovávat v atributech, a měňte ji třeba metodami. Bude to pravděpodobně
+přehlednější.)
+Existuje ale příbuzná metoda, která už je užitečnější: <code>throw()</code>.
+Ta do generátoru „vhodí“ výjimku.
+Z pohledu generátorové funkce to vypadá, jako by výjimka nastala na příkazu
+<code>yield</code>.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">report_exception</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span>
+    <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">'Death by'</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="mi">123</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it</span> <span class="o">=</span> <span class="n">report_exception</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>  <span class="c1"># opět – v první iteraci nelze throw() použít</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">value</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">throw</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">())</span>
+<span class="go">Death by ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">value</span>
+<span class="go">123</span>
+</pre></div><p>Podobná věc se děje, když generátorový iterátor zanikne: Python do generátoru
+„vhodí“ výjimku GeneratorExit.
+Ta dědí z <code>BaseException</code>, ale ne <code>Exception</code>, takže klasické <code>except Exception:</code>
+ji nechytí (ale např. <code>finally</code> funguje jak má).
+Pokud generátor tuto výjimku chytá, měl by se co nejdřív ukončit.
+(Když to neudělá a provede další <code>yield</code>, Python ho ukončí „násilně“.)</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">it</span> <span class="o">=</span> <span class="n">report_exception</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">it</span><span class="p">;</span> <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>  <span class="c1"># zbavíme se objektu "it"</span>
+<span class="go">Death by GeneratorExit</span>
+<span class="go">Exception ignored in: &lt;generator object report_exception at 0x...&gt;</span>
+<span class="go">RuntimeError: generator ignored GeneratorExit</span>
+<span class="go">0</span>
+</pre></div><h2>Delegace na podgenerátor – <code>yield from</code></h2>
+<p>Máme následující generátor:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dance</span><span class="p">():</span>
+    <span class="k">yield</span> <span class="s1">'putting hands forward'</span>
+    <span class="k">yield</span> <span class="s1">'putting hands down'</span>
+    <span class="k">yield</span> <span class="s1">'turning around'</span>
+    <span class="k">yield</span> <span class="s1">'jumping'</span>
+    <span class="k">yield</span> <span class="s1">'putting hands forward'</span>
+    <span class="k">yield</span> <span class="s1">'putting hands down'</span>
+
+<span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">dance</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+</pre></div><p>Opakuje se v něm jistá sekvence, kterou bychom jako správní programátoři chtěli
+vyčlenit do samostatné funkce.
+Pomocí samotného <code>yield</code> to ale jde celkem těžko:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dance_hands</span><span class="p">():</span>
+    <span class="k">yield</span> <span class="s1">'putting hands forward'</span>
+    <span class="k">yield</span> <span class="s1">'putting hands down'</span>
+
+<span class="k">def</span> <span class="nf">dance</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">dance_hands</span><span class="p">():</span>
+        <span class="k">yield</span> <span class="n">action</span>
+    <span class="k">yield</span> <span class="s1">'turning around'</span>
+    <span class="k">yield</span> <span class="s1">'jumping'</span>
+    <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">dance_hands</span><span class="p">():</span>
+        <span class="k">yield</span> <span class="n">action</span>
+
+<span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">dance</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+</pre></div><p>Tohle počtu řádků příliš nepomohlo. Existuje lepší způsob – místo cyklu
+můžeme použít <code>yield from</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dance_hands</span><span class="p">():</span>
+    <span class="k">yield</span> <span class="s1">'putting hands forward'</span>
+    <span class="k">yield</span> <span class="s1">'putting hands down'</span>
+
+<span class="k">def</span> <span class="nf">dance</span><span class="p">():</span>
+    <span class="k">yield from</span> <span class="n">dance_hands</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="s1">'turning around'</span>
+    <span class="k">yield</span> <span class="s1">'jumping'</span>
+    <span class="k">yield from</span> <span class="n">dance_hands</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">dance</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+</pre></div><p>Navíc lze <code>yield from</code> použít jako výraz, který nabývá hodnoty
+kterou podgenerátor vrátil (t.j. hodnota výjimky <code>StopIteration</code>).</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fibonacci</span><span class="p">(</span><span class="n">limit</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">limit</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">b</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">count</span>
+
+<span class="k">def</span> <span class="nf">fib_annotated</span><span class="p">():</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield from</span> <span class="n">fibonacci</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'LOG: Generated {} numbers'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">fib_annotated</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'Got'</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div><div class="highlight"><pre><code>Got 1
+Got 1
+Got 2
+Got 3
+Got 5
+Got 8
+LOG: Generated 6 numbers</code></pre></div><p>Kromě toho <code>yield from</code> deleguje hodnoty poslané pomocí <code>send()</code> či <code>throw()</code>.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/advanced/generators/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/brno-jaro-2020-ut/sessions/while/">↑ <span class="d-none d-sm-inline">Lekce: Pokročilé metody programování</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/brno-jaro-2020-ut/homeworks/advanced/"><span class="d-none d-sm-inline">Domácí projekty</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/prusinsky/naucse.python.cz/blob/master/lessons/advanced/generators/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Miro Hrončok, Petr Viktorin a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

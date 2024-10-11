@@ -1,0 +1,429 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Inode a odkazy
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/fhs/">Souborové systémy</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/links/">Inode a odkazy</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1><em>inode</em> a odkazy</h1>
+<p>Vytvoř si soubor <code>basnicka.txt</code>.
+Napiš do něj nějakou básničku.
+To bute <em>obsah</em> souboru – většinou ta nejdůležitější část toho,
+co soubor je.</p>
+<h2>inode</h2>
+<p>Dnes se ale podíváme na to ostatní, co si počítač o souborech „pamatuje“:
+jméno souboru, délka, přístupová práva a podobně.
+Tenhle druh informací je uložen jako <em>inode</em> (česky <em>I-uzel</em>)
+a přečíst je umí program <code>stat</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>stat basnicka.txt
+<span class="go">  Soubor: basnicka.txt</span>
+<span class="go">Velikost: 94            Bloků: 8          I/O blok: 4096   běžný soubor</span>
+<span class="go">Zařízení: fd00h/64768d  I-uzel: 694527      Odkazů: 1</span>
+<span class="go">   Práva: (0664/-rw-rw-r--)  UID: ( 1000/    petr)   GID: ( 1000/    petr)</span>
+<span class="go"> Kontext: unconfined_u:object_r:user_home_t:s0</span>
+<span class="go">     Přístup: 2020-11-09 13:55:37.038584844 +0100</span>
+<span class="go">Změna obsahu: 2020-11-09 13:55:37.038584844 +0100</span>
+<span class="go">Změna i-uzlu: 2020-11-09 13:55:37.038584844 +0100</span>
+<span class="go">       Vznik: -</span>
+</pre></div><p>Tenhle výstup je hezky naformátovaný.
+Reálně je ale v <em>inode</em> uloženo jen několik čísel.
+Čísla program <code>stat</code> ukáže s přepínačem <code>-t</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>stat -t basnicka.txt
+<span class="go">basnicka.txt 94 8 81b4 1000 1000 fd00 694527 1 0 0 1604926537 1604926537 1604926537 0 4096 unconfined_u:object_r:user_home_t:s0</span>
+</pre></div><div class="admonition note"><p>Kontext <code>unconfined_u...</code> je součást bezpečnostního systému SELinux,
+který by vydal na zvláštní kurz. Zatím ho budeme ignorovat.</p>
+</div><p>Stejná čísla můžeš získat i z Pythonu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python
+<span class="go">&gt;&gt;&gt; import os</span>
+<span class="go">&gt;&gt;&gt; os.stat('basnicka.txt')</span>
+<span class="go">os.stat_result(st_mode=33204, st_ino=694527, st_dev=64768, st_nlink=1, st_uid=1000, st_gid=1000, st_size=94, st_atime=1604926537, st_mtime=1604926537, st_ctime=1604926537)</span>
+<span class="go">&gt;&gt;&gt; os.stat('basnicka.txt').st_ino</span>
+<span class="go">694527</span>
+<span class="go">&gt;&gt;&gt; os.stat('basnicka.txt').st_mtime</span>
+<span class="go">1604926537</span>
+<span class="go">&gt;&gt;&gt; os.stat('basnicka.txt').st_mtime_ns</span>
+<span class="go">1604926537038584844</span>
+<span class="go">&gt;&gt;&gt; exit()  # (nebo Ctrl+D)</span>
+</pre></div><div class="admonition note"><p>Čtení těchto informací nám trochu ztěžuje fakt, že jedno číslo
+lze zapsat několika způsoby: <em>tisíc</em> je v desítkové soustavě <code>1000</code>,
+v šestnáctkové <code>3e8</code>, osmičkové <code>1750</code>, dvojkové <code>1111101000</code> –
+a nebo se dá vypsat jako příslušné jméno uživatele.</p>
+</div><p>Podle výpisů výše můj soubor:</p>
+<ul>
+<li>Obsahuje 94 bajtů (<code>st_size</code>). Jeto krátká básnička.</li>
+<li>Je „normální“ datový soubor a má práva <code>rw-rw-r--</code> (<code>st_mode</code>).
+(Jako číslo to je <code>33204</code> v desítkové soustavě, <code>0664</code> v osmičkové.)</li>
+<li>Je <em>inode</em> číslo 694527 (<code>st_ino</code>) na disku 64768 (<code>st_dev</code>).</li>
+<li>Je jednou odkázaný (<code>st_nlink</code>). O tom za chvilku.</li>
+<li>Patří uživateli číslo 1000 (<code>st_uid</code>) a skupině 1000 (<code>st_gid</code>);
+<code>stat</code> si k číslům vyhledal jméno uživatele/skupiny.</li>
+<li><p>Má uložené časy posledního přístupu (<code>st_atime</code>, <em>access time</em>)<em>,
+poslední změny obsahu (<code>st_mtime</code>, </em>modification time<em>) a poslední
+změny </em>inode<em> (<code>st_ctime</code>, původně z </em>creation time*).
+(Číselně jsou časy uloženy jako počet (mili)sekund od 1. 1. 1970.)</p>
+<blockquote><p>[note] atime
+Čas posledního přístupu se (ve výchozím nastavení na Fedoře) aktualizuje
+jen „občas“, aby se zamezilo opotřebování disku příliš častým zapisováním.
+Je přesný jen na dny, ne sekundy/milisekundy.</p>
+</blockquote>
+</li>
+</ul>
+<p>Obsah souboru není součást <em>inode</em>.
+Je na disku uložen zvlášť – v osmi „blocích“ (<code>st_blocks</code>).
+Které přesně bloky to jsou, to je v <em>inode</em> zaznamenáno taky,
+ale <code>stat</code> tuhle informaci neukazuje.</p>
+<div class="admonition note"><p>Bloky jsou něco jako stranky v knížce: systém podle nich na disku
+hledá informace. Soubor („kapitola“) vždy začíná na začátku bloku.
+Soubory typicky zabírají minimálně osm bloků – a tady už paralela se
+stránkami v knížce selhává.</p>
+</div><p><em>Inode</em> mají všechny soubory – včetně adresářů,
+rour a jiných speciálních souborů.
+Vyzkoušej si <code>stat</code> pro aktuální adresář:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>stat .
+<span class="go">  Soubor: .</span>
+<span class="go">Velikost: 4096          Bloků: 8          I/O blok: 4096   adresář</span>
+<span class="go">Zařízení: fd00h/64768d  I-uzel: 694505      Odkazů: 2</span>
+<span class="go">   Práva: (0775/drwxrwxr-x)  UID: ( 1000/    petr)   GID: ( 1000/    petr)</span>
+<span class="go"> Kontext: unconfined_u:object_r:user_home_t:s0</span>
+<span class="go">     Přístup: 2020-11-09 14:43:39.820144055 +0100</span>
+<span class="go">Změna obsahu: 2020-11-09 14:43:37.653146851 +0100</span>
+<span class="go">Změna i-uzlu: 2020-11-09 14:43:37.653146851 +0100</span>
+<span class="go">       Vznik: -</span>
+</pre></div><h2>Jména souborů</h2>
+<p>Jedna informace kterou <em>inode</em> neobsahuje je jméno souboru.
+Program <code>stat</code> sice jméno vypíše, ale to je jen „hlavička“,
+která říká k cemu se vztahují informace pod ní.</p>
+<p>Zkus si pustit <code>stat</code> pro <code>.</code>, <code>./.</code>, což jsou to dvě jména pro ten samý
+adresář.
+Js-li v domovském adresáři, přidej i <code>~</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>stat  .  ./.  ~
+<span class="go">  Soubor: .</span>
+<span class="go">Velikost: 4096          Bloků: 8          I/O blok: 4096   adresář</span>
+<span class="go">Zařízení: fd00h/64768d  I-uzel: 694505      Odkazů: 2</span>
+<span class="go">[...]</span>
+<span class="go">  Soubor: ./.</span>
+<span class="go">Velikost: 4096          Bloků: 8          I/O blok: 4096   adresář</span>
+<span class="go">Zařízení: fd00h/64768d  I-uzel: 694505      Odkazů: 2</span>
+<span class="go">[...]</span>
+<span class="go">  Soubor: /home/petr</span>
+<span class="go">Velikost: 4096          Bloků: 8          I/O blok: 4096   adresář</span>
+<span class="go">Zařízení: fd00h/64768d  I-uzel: 694505      Odkazů: 2</span>
+<span class="go">[...]</span>
+</pre></div><p>Dostaneš úplně stejné výpisy: <code>.</code> a <code>./.</code> jsou jen dvě jména pro ten stejný
+<em>inode</em>.</p>
+<p>Když je <em>inode</em> jen sada čísel, kde je tedy uloženo jméno souboru?</p>
+<p>V adresáři, který soubor obsahuje.</p>
+<p>Obsah adresáře si můžeš představit jako slovník v Pythonu:
+přiřazuje jména konkrétním položkám.
+Například:</p>
+<ul>
+<li><code>basnicka.txt</code> → inode 694527</li>
+<li><code>.</code> → inode 694505</li>
+<li><code>..</code> → inode 694438</li>
+</ul>
+<p>Neboli:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -ai1
+<span class="go">694505 .</span>
+<span class="go">694438 ..</span>
+<span class="go">694527 basnicka.txt</span>
+</pre></div><p>Toto je skutečný obsah <em>adresáře</em>.
+<code>ls -l</code> sice vypisuje informací víc, ale ty čte z <em>inode</em> jednotlivých souborů,
+nikoli ze samotného adresáře.</p>
+<p>Jméno souboru tedy není součástí samotného souboru – je to způsob,
+jak se z adresáře k souboru dostat.</p>
+<p>Proto může mít jeden soubor dvě různá jména.
+To už jsme viděli u adresářů (<code>.</code> a <code>./.</code>), ale jde to i u normálních souborů.</p>
+<h2>Odkazy</h2>
+<p>Pojďme udělat adresář se dvěma jmény pro stejný soubor:</p>
+<ul>
+<li><code>basnicka.txt</code> → inode 694527</li>
+<li><code>takybasnicka.txt</code> → inode 694527 (stejné jako výše!)</li>
+<li><code>.</code> → inode 694505</li>
+<li><code>..</code> → inode 694438</li>
+</ul>
+<p>Použijeme k tomu příkaz <code>ln</code>.
+Ten funguje podobně jako <code>cp</code>, ale netvoří kopii.
+Jen přidá odkaz na stejný soubor:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ln basnicka.txt takybasnicka.txt
+<span class="gp">$ </span>ls -ai1
+<span class="go">694505 .</span>
+<span class="go">694438 ..</span>
+<span class="go">694527 basnicka.txt</span>
+<span class="go">694527 takybasnicka.txt</span>
+</pre></div><p>Pomocí <code>ls -l</code> nebo <code>cat</code> se můžeš přesvědčit, že obě básničky mají stejnou
+velikost i obsah:</p>
+<div class="highlight"><pre><span></span><span class="go">drwxrwxr-x. 2 petr petr 4096  9. lis 14.50 .</span>
+<span class="go">drwxrwxr-x. 3 petr petr 4096  9. lis 14.43 ..</span>
+<span class="go">-rw-rw-r--. 2 petr petr   94  9. lis 14.43 basnicka.txt</span>
+<span class="go">-rw-rw-r--. 2 petr petr   94  9. lis 14.43 takybasnicka.txt</span>
+</pre></div><p>A když do souboru něco zapíšeš, projeví se to tam i tam – <code>basnicka.txt</code>
+a <code>takybasnicka.txt</code> jsou jen dvě jména stejného souboru:</p>
+<div class="admonition note"><p>Pro zápis použij <code>echo</code> nebo <code>nano</code>; složitější editory můžou při
+uložení vytvořit nový soubor.</p>
+</div><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> haló &gt; basnicka.txt
+<span class="gp">$ </span>cat takybasnicka.txt
+<span class="go">haló</span>
+<span class="gp">$ </span>ls -al
+<span class="go">celkem 16</span>
+<span class="go">drwxrwxr-x. 2 petr petr 4096  9. lis 14.50 .</span>
+<span class="go">drwxrwxr-x. 3 petr petr 4096  9. lis 14.43 ..</span>
+<span class="go">-rw-rw-r--. 2 petr petr    6  9. lis 14.53 basnicka.txt</span>
+<span class="go">-rw-rw-r--. 2 petr petr    6  9. lis 14.53 takybasnicka.txt</span>
+</pre></div><p>Obě jména označují stejný soubor.
+Tomu se říká <em>hardlink</em> (<em>tvrdý odkaz</em>). A k čemu je to užitečné?
+Tvrdé odkazy se často používají na šetření místem na disku:
+když najdeš dva stejné soubory (které se nebudou měnit),
+můžeš zařídit aby je systém uložil jen jednou.
+Popravdě se dnes <em>hardlinky</em> příliš nepoužívají.
+Ale je dobré vědět, že existuji.</p>
+<p>Souborový systém eviduje, kolik jmen daný soubor má – to je položka <code>st_nlink</code>
+s <em>inode</em>.
+Ukazuje ji i <code>ls -l</code>, hned ve druhém sloupci:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -al
+<span class="go">celkem 16</span>
+<span class="go">drwxrwxr-x. 2 petr petr 4096  9. lis 14.50 .</span>
+<span class="go">drwxrwxr-x. 3 petr petr 4096  9. lis 14.43 ..</span>
+<span class="go">-rw-rw-r--. 2 petr petr    6  9. lis 14.53 basnicka.txt</span>
+<span class="go">-rw-rw-r--. 2 petr petr    6  9. lis 14.53 takybasnicka.txt</span>
+<span class="gp">$  </span><span class="c1">#        ^</span>
+<span class="gp">$  </span><span class="c1">#        |</span>
+</pre></div><p>Když smažeš jeden ze souborů, číslo se sníží o 1. 
+Když smažeš druhý, číslo spadne na nulu a systém bude vědět,
+že daný soubor už není potřeba a smaže ho.</p>
+<h2>Symbolický odkaz</h2>
+<p>Užitečnější a frekventovanější je <em>symbolický odkaz</em>
+(angl. <em>symbolic link</em>, <em>symlink</em>).</p>
+<p>Ten funguje jako „odkaz“: je v něm napsáno, že tenhle soubor se nachází jinde.</p>
+<p>Symbolický odkaz vytvoříš pomocí příkazu <code>ln</code> s přepínačem <code>-s</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ln -s basnicka.txt BASEN
+<span class="gp">$ </span>ls -ail
+<span class="go">celkem 16</span>
+<span class="go">694505 drwxrwxr-x. 2 petr petr 4096  9. lis 15.05 .</span>
+<span class="go">694438 drwxrwxr-x. 3 petr petr 4096  9. lis 14.43 ..</span>
+<span class="go">694508 lrwxrwxrwx. 1 petr petr   12  9. lis 15.05 BASEN -&gt; basnicka.txt</span>
+<span class="go">694527 -rw-rw-r--. 2 petr petr    6  9. lis 14.53 basnicka.txt</span>
+<span class="go">694527 -rw-rw-r--. 2 petr petr    6  9. lis 14.53 takybasnicka.txt</span>
+</pre></div><p><code>ls -l</code> zobrazí symbolický odkaz pomocí šipky: <code>BASEN -&gt; basnicka.txt</code>.
+Čísla <em>inode</em> obou souborů jsou jiná – nejsou to dvě jména stejného souboru.
+Text básničky je uložený v <code>basnicka.txt</code>; v <code>BASEN</code> je jen informace,
+že obsah se nachází v souboru <code>basnicka.txt</code>.</p>
+<p>S odkazem <code>BASEN</code> můžeš pracovat jako s jinými soubory.
+Když ho otevřeš pro čtení, systém sáhne po místě,
+na které odkazuje, tedy <code>basnicka.txt</code>, a otevře ten.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat BASEN
+<span class="go">haló</span>
+</pre></div><p>Podobně fngují ostatní operace jako zápis do souboru nebo procházení adresáře.</p>
+<p>Taky si všimni, že symbolický odkaz má povolena všechna práva.
+Systém vždy použije práva odkazovaného souboru.</p>
+<h3>Odkaz na nejnovější verzi</h3>
+<p>Symbolické odkazy jsou velmi užitečné.</p>
+<p>Když potřebuješ mít soubor na určitém místě na disku,
+ale nechceš ho kopírovat, udělej symbolický odkaz.</p>
+<p>Často uvidíš soubor <em>nejnovější verze</em> jako symbolický odkaz na
+nejnovější verzi nějakého souboru.
+Třeba na Fedoře je příkaz <code>python</code> odkazem na <code>python3</code>,
+a to je zase odkazem na <code>python3.8</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l /usr/bin/python*
+<span class="go">lrwxrwxrwx. 1 root root     9 25. zář 15.18 /usr/bin/python -&gt; ./python3</span>
+<span class="go">...</span>
+<span class="go">lrwxrwxrwx. 1 root root     9 25. zář 14.55 /usr/bin/python3 -&gt; python3.9</span>
+<span class="go">-rwxr-xr-x. 1 root root 15536 25. zář 14.55 /usr/bin/python3.9</span>
+</pre></div><p>Když tedy chci konkrétní verzi Pythonu, spustím <code>python3.9</code> nebo
+(po instalaci) <code>python3.10</code>.
+Když chci Python 3, spustím příkaz <code>python3</code>, což reprezentuje verzi,
+která je na mém systému nejvhodnější – a po aktualizaci systému se může změnit.
+A když chci jakýkoli Python, spustím <code>python</code>, což je odkaz na <code>python3</code>,
+a to je odkaz na konkrétní verzi.</p>
+<h3>Přesměrování</h3>
+<p><em>Symlink</em> může odkazovat i na adresář.</p>
+<p>V některých (často historických) verzích UNIXu byly některé příkazy v <code>/bin/</code>
+(např. <code>/bin/bash</code>) a jiné v <code>/usr/bin</code> (např. <code>/usr/bin/python</code>).
+Autoři Fedory si ale myslí, že tohle rozdělení je zbytečné a všechny programy
+by měly být na stejném místě.</p>
+<p>Respektive na obou místech, aby staré programy fungoivaly dál, ať už
+předpokládají <code>/bin/</code> nebo <code>/usr/bin</code>.</p>
+<p>Jak tenhle problém vyřešit?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -dl /bin
+<span class="go">lrwxrwxrwx. 1 root root 7 28. led  2020 /bin -&gt; usr/bin</span>
+</pre></div><p>Adresář <code>/bin</code> je symbolický odkaz. Prakticky se chová stejně jako <code>/usr/bin</code>.</p>
+<h3>Odkaz nikam</h3>
+<p>Dá se udělat i odkaz někam, kde nic není.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ln -s nic.txt NIC
+<span class="gp">$ </span>ls -l NIC
+<span class="go">lrwxrwxrwx. 1 petr petr  7  9. lis 15.22 NIC -&gt; nic.txt</span>
+</pre></div><p>Když takový soubor budeš chtít otevřit, systém řekne, že takový soubor neexistuje:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat NIC
+<span class="go">cat: NIC: No such file or directory</span>
+</pre></div><p>Co s takovými symbolickými odkazy „nikam“?
+Pokud máš nějaké velké soubory (třeba videa z dovolené) na externím disku
+a chceš s nimi pracovat na svém počítači, kde ti dochází místo,
+můžeš si vytvoři <em>symlinky</em> na určitá místa na externím disku.
+Ty můžeš třeba zorganizovat do adresářů podle data.
+Když disk odpojíš, soubory nebudou k dispozici, ale <em>symlinky</em>
+na ně zůstanou.
+Když disk zase připojíš pod stejným jménem, odkazy začnou fungovat.</p>
+<h3>V klikátku</h3>
+<p>V grafickém prohlížeči souborů můžeš odkazy dělat pomocí
+<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+přetažení myší.
+A podle ikonky se šipečkou poznáš, že se jedná o symbolický odkaz.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/fs/">← <span class="d-none d-sm-inline">Souborové systémy – úvod</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/fhs/">↑ <span class="d-none d-sm-inline">Lekce: Souborové systémy</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/mount/"><span class="d-none d-sm-inline">Mount</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/links/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Petr Viktorin a Karolina Surma, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
