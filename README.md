@@ -31,7 +31,7 @@ do vývoje, je potřeba ho nejdřív nainstalovat:
 * Vytvoř si prostředí a nainstaluj závislosti:
 
     ```console
-    $ poetry install
+    $ poetry install --no-root
     ```
 
 
