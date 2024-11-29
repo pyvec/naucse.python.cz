@@ -1,0 +1,293 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Git Workshop: Větvení v Gitu
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/git/branching/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/ostrava-git-workshop/">Git Workshop</a>
+
+> <a href="/2019/ostrava-git-workshop/sessions/git/">Git</a>
+
+> <a href="/2019/ostrava-git-workshop/git/branching/">Větvení v Gitu</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Větvení v Gitu</h1>
+<p>Takže, Git už znáš!
+Teď to začne být trošičku složitější :)</p>
+<p>Programátoři občas potřebují pracovat na dvou
+věcech zároveň.
+V projektu do práce se objeví se chyba,
+která musí být opravená
+ještě dnes, tak programátor/ka opustí, co zrovna dělá,
+vrátí se k nějaké „stabilní” verzi, opraví chybu
+a odešle ji zákazníkům.
+A pak se vrátí k tomu, co dělal/a předtím – jen ještě
+musí zakomponovat opravu chyby i do verze, na které
+pracuje dlouhodobě.</p>
+<p>Git na to má takzvané <em>větve</em> (angl. <em>branches</em>).
+Na jedné „větvi” se pracuje, ale je možné se přepnout do
+jiné (třeba starší) větve, udělat pár změn
+a pak se zase přepnout do nové větve a
+pokračovat dál nebo sloučit změny.</p>
+<p>Větvení využijeme i při spolupráci více lidí – každý
+dělá na vlastní větvi a když přijde čas,
+tak se různé změny sloučí dohromady.</p>
+<p>Podívej se, jaké máš větve ve svém repozitáři.
+K tomu slouží příkaz <code>git branch</code>:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git branch
+* <span style="color: #00aa00">master</span></code></pre></div><p>Je tam jenom jedna a jmenuje se <code>master</code>
+– to je tradičně jméno „hlavní” větve.</p>
+<p>K vytvoření nové větve znovu použiješ
+<code>git branch</code>, jen tomu příkazu dáš navíc
+jméno nové větve.
+Třeba budeš chtít k básničce doplnit jméno autora,
+tak větev pojmenuješ <code>doplneni-autora</code>.</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git branch doplneni-autora
+<span style="color: #00aaaa">$</span> git branch
+  doplneni-autora
+* <span style="color: #00aa00">master</span></code></pre></div><p>Tenhle příkaz sice udělal novou větev,
+ale nepřepnul do ní.
+Hvězdička ve výstupu z <code>git branch</code> ukazuje,
+že stále pracuješ v <code>master</code>.
+Na přepnutí budeš potřebovat další příkaz:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git checkout doplneni-autora
+Switched to branch 'doplneni-autora'
+<span style="color: #00aaaa">$</span> git branch
+* <span style="color: #00aa00">doplneni-autora</span>
+  master</code></pre></div><p>Tak. Teď jsi „ve” větvi <code>doplneni-autora</code>.
+Doplň nějaké jméno do souboru <code>basnicka.txt</code>,
+a pomocí <code>git add</code> a <code>git commit</code> udělej novou revizi.
+Pak koukni na <code>gitk --all</code>, jak to vypadá:</p>
+<p><span class="figure"><a href="/2019/ostrava-git-workshop/git/branching/static/branch1.png"><img src="/2019/ostrava-git-workshop/git/branching/static/branch1.png" alt="Výstup programu `gitk` s větví doplneni-autora"></a></span></p>
+<p>Aktuální větev – <code>doplneni-autora</code> – je
+zvýrazněná tučně a starší <code>master</code> je stále
+na původní revizi.</p>
+<p>Opusťme teď na chvíli práci na doplňování autora.
+Vrať se do větve <code>master</code> a vytvoř z ní
+větev <code>doplneni-jmena</code>.
+Pak se na tuhle novou větev přepni.</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git checkout master
+Switched to branch 'master'
+<span style="color: #00aaaa">$</span> git branch doplneni-jmena
+<span style="color: #00aaaa">$</span> git checkout doplneni-jmena
+Switched to branch 'doplneni-jmena'
+<span style="color: #00aaaa">$</span> git branch
+  doplneni-autora
+* <span style="color: #00aa00">doplneni-jmena</span>
+  master</code></pre></div><p>Doplň do souboru jméno básně a pomocí
+<code>git add</code>, <code>git commit</code> ulož revizi.
+Všechno zkontroluj přes <code>gitk --all</code>.</p>
+<p><span class="figure"><a href="/2019/ostrava-git-workshop/git/branching/static/branches.png"><img src="/2019/ostrava-git-workshop/git/branching/static/branches.png" alt="Výstup programu `gitk` s větvemi doplneni-autora a doplneni-nazvu"></a></span></p>
+<p>Takhle nějak se dá postupovat v situaci popsané v úvodu:
+opuštění rozpracované verze, přechod na „stabilní”
+verzi <code>master</code> a začátek práce v jiné
+části projektu.</p>
+<p>Mezi jednotlivými větvemi se dá podle libosti přepínat,
+jen je vždycky dobré před přepnutím udělat novou revizi
+(<code>git commit</code>) a pomocí <code>git status</code> zkontrolovat, jestli je všechno
+uložené v Gitu.</p>
+<p>Na stejném principu funguje i spolupráce několika lidí
+na jednom projektu: je nějaký společný základ
+(<code>master</code>) a každý dělá na vlastní větvi, dokud není se svými změnami spokojený.</p>
+<p>A až je některá větev hotová, může se začlenit
+zpátky do <code>master</code>. Podívejme se jak na to.</p>
+<h2>Sloučení</h2>
+<p>Nedávalo by smysl historii projektu rozdvojovat,
+kdyby pak jednotlivé větve nešly zase sloučit dohromady.
+Naštěstí je v Gitu slučování poměrně jednoduché.</p>
+<p>Přepni se zpátky na <code>master</code>
+a použij příkaz <code>git merge</code>, který
+sloučí jinou větev s tou aktuální.
+Příkazu musíš dát jméno větve, kterou chceš sloučit.</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git checkout master
+Switched to branch 'master'
+<span style="color: #00aaaa">$</span> git merge doplneni-jmena
+Updating e929fb0..c982a81
+Fast-forward
+ basnicka.txt | 6 <span style="color: #00aa00">+++++</span><span style="color: #aa0000">-</span>
+ 1 file changed, 5 insertions(+), 1 deletion(-)</code></pre></div><p>Sloučeno! Ono „<code>Fast-forward</code>” znamená, že
+vlastně nebylo co slučovat – jen se do větve
+<code>master</code> přidaly nové změny.
+Zkontroluj v <code>gitk --all</code>, jak to vypadá.</p>
+<p>A pak zkus sloučit i druhou větev: <code>git merge doplneni-autora</code>.
+Tady to bude složitější: Může se stát, že změny nepůjdou
+automaticky sloučit a ve výstupu se objeví hláška
+<code>merge conflict</code> (slučovací konflikt).
+V tom případě se na soubor podívej v editoru: objeví
+se v něm obsah z obou konfliktních verzí,
+společně se značkami, které upozorňují na místo
+kde konflikt nastal.
+Soubor uprav ho tak, jak by měl vypadat, ulož a zadej
+<code>git commit</code>.</p>
+<p>Ať nastal konflikt nebo ne, vytvoří se „slučovací revize“
+(angl. <em>merge commit</em>), které – jako každé revizi – můžeš dát popisek.</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git merge doplneni-autora
+Auto-merging basnicka.txt
+Merge made by the 'recursive' strategy.
+ basnicka.txt | 2 <span style="color: #00aa00">++</span>
+ 1 file changed, 2 insertions(+)</code></pre></div><p>Povedlo se?</p>
+<p><span class="figure"><a href="/2019/ostrava-git-workshop/git/branching/static/merge.png"><img src="/2019/ostrava-git-workshop/git/branching/static/merge.png" alt="Výstup programu `gitk` s větvemi doplneni-autora a doplneni-nazvu sloučenými do master"></a></span></p>
+<p>Pokud ano, můžeš staré větve vymazat – všechny jejich
+změny jsou v <code>master</code> a nemá na nich cenu
+pracovat dál.</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git branch -d doplneni-autora
+Deleted branch doplneni-autora (was 0e213cd).
+<span style="color: #00aaaa">$</span> git branch -d doplneni-jmena
+Deleted branch doplneni-jmena (was c982a81).
+<span style="color: #00aaaa">$</span> git branch
+* <span style="color: #00aa00">master</span></code></pre></div><p>Gratuluji, už umíš větvení a slučování!</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/ostrava-git-workshop/git/collaboration/">← <span class="d-none d-sm-inline">Spolupráce a Open source</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/ostrava-git-workshop/sessions/git/">↑ <span class="d-none d-sm-inline">Lekce: Git</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/ostrava-git-workshop/sessions/git/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-ostrava-git-workshop/lessons/git/branching/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2015-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

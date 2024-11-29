@@ -1,0 +1,350 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Poznámky – Bash I
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/shell-1/">Bash I</a>
+
+> <a href="/2020/linux-admin/notes/01/">Poznámky – Bash I</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="admonition warning"><p>Toto jsou <em>zhuštěné poznámky z prvního běhu</em>, nikoli materiály k samostudiu.</p>
+</div><h1>Linuxová administrace - 1. sraz</h1>
+<p>Kurz není vlastně čistě o bashi, ale víc o administraci linuxu
+Bash bude v prvních dvou hodinách</p>
+<p>část o bashi je o projití:
+<a href="http://swcarpentry.github.io/shell-novice/">http://swcarpentry.github.io/shell-novice/</a>
+TODO: udělat tahák, přeložit do CZ, vymyslet příklady</p>
+<h2>Shell</h2>
+<p>Co je to shell?
+shell je program na spouštění programů
+bash je varianta shellu</p>
+<p>(příklad)</p>
+<div class="highlight"><pre><code>echo $0
+/bin/bash</code></pre></div><p>Proč používat příkazovou řádku:</p>
+<ul>
+<li>copy &amp; paste, “pomož mi” na fórech</li>
+<li>automatizace, šup s tím do souboru, udělej tohle 1000x s drobnými změnami</li>
+</ul>
+<h2>Prompt</h2>
+<p><code>[jmeno@nazevpocitace ~]$</code></p>
+<ul>
+<li>už. jméno</li>
+<li>jméno počítače</li>
+<li>~ </li>
+<li>za $ se píší příkazy</li>
+</ul>
+<p>Zkusit neexistující příkaz, třeba
+<code>ks</code>
+Co se stane?</p>
+<p><em>V okénkovém prostředí</em>
+funkce programu je k dispozici někde  v menu, tlačítka atd.
+<em>V terminálu</em>
+musím si pamatovat název programu, ale mám jich k dispozici víc</p>
+<h3>Úkol:</h3>
+<p>máme k dispozici data o tom, kde je v moři je kolik např. plastového bince a můžeme ta data zpracovat</p>
+<ol>
+<li>klikáním, ale to trvá 20s per řádek</li>
+<li>my si to ale zautomatizujeme (jupí!)</li>
+</ol>
+<p><code>/</code>
+tzv. root (kořenový) adresář</p>
+<ul>
+<li>obsahuje systémové složky a soubory</li>
+<li>obsahuje složku /home, která obsahuje složky uživatelů počítače</li>
+<li>strom adresářů je oddělován jednoduchým lomítkem </li>
+</ul>
+<p><code>/home/uzivatel/</code></p>
+<ul>
+<li>první lomítko (viz výše) je také název adresáře</li>
+<li>tzv. domovský adresář</li>
+<li>zde si uživatel ukládá vlastní soubory a složky</li>
+<li><code>~</code> je zkratka pro domovský adresář</li>
+</ul>
+<p>Napsáním “ls” spustí program, co se jmenuje <strong>ls</strong>.
+<code>ls -F</code></p>
+<p>(mezi <code>s</code> a <code>-</code> je mezera)
+<strong>přepínače</strong> (option) začínají pomlčkou, nějak modifikují základní chování programu
+<strong>argumenty</strong> - typicky jména souborů, se kterými má pracovat, taky oddělováno mezerou</p>
+<p><code>ls -F /</code></p>
+<p>pamatuješ si, co dělá <code>-F</code>? Já ne. Každý příkaz má vestavěný přepínač <code>--help</code> s offline nápovědou.</p>
+<p>Krátká a dlouhá varianta přepínačů (krátká -, dlouhá --). Krátká je s písmenkem, dlouhá typicky s celoslovním názvem (<code>-h</code> vs <code>--help</code>).
+Při psaní skriptů je fajn používat dlouhou variantu, protože se to pak bude lépe číst.</p>
+<p>výstup <code>--help</code> je součást programu <code>ls</code>.</p>
+<p>jiný zdroj nápovědy:
+<code>man ls</code>
+Ovládání: pgdown/pgup, q - vypnout zobrazovač menu
+Jsou to takzvané manuálové stránky, zpravidla delší nápověda, vyčerpávající - zabírá hodně místa, a proto lehčí operační systémy ji občas nemají :).</p>
+<p>co udělá <code>ls</code>, když přepínač nezná? Odkáže tě na <code>--help</code></p>
+<p>cvičení: co dělá?
+<code>ls -h -l</code>
+adresáře mají téměř vždy 4kB</p>
+<p>sdružení přepínačů: <code>ls -lhF</code>
+neplatná kombinace je <code>--jeden--dlouhy</code></p>
+<p><code>cd</code> (bez argumentu) - přesun do domovského adresáře
+<code>cd ~</code> je přesun do adresáře “~”, což je jen odkaz na domovského adresáře</p>
+<div class="highlight"><pre><code>ls data-shell
+ls data-shell/data</code></pre></div><p>automatické doplnění názvu souboru - stačí jen první písmenko
+1x tabulator - doplnění nejdelšího prefixu
+2x tabulator - zobrazení dalších názvů stejného prefixu
+Když vím, co chci napsat, tabem si hodně urychlím práci.</p>
+<p>Cesty je možno spojovat. 
+<code>cd data-shell/data/../data/../..</code>
+^-- cesta, popis, kam v tom adr. stromu chci dojít, což je ekvivalentní s</p>
+<div class="highlight"><pre><code>cd data-shell
+cd data
+cd ..
+cd data
+cd ..
+cd ..</code></pre></div><p>Název aktuálního adresář je součástí promptu.</p>
+<p><strong>Tipy:</strong></p>
+<ul>
+<li><code>cd -</code> tě přesune do posledního navštíveného adresáře</li>
+<li><strong>vkládání prostředním tl. myši</strong> - vybrat myší text (samo se to zkopíruje), prostředním tl. se to vkládá, funguje všude, i mezi term. a graf. programy. Klasická schránka Ctrl+C/V je samostatná věc, takže je možné mít k dispozici hned dvě různé věci k dispozici</li>
+<li><strong>Copy &amp; paste</strong> v terminálu se dělá pomocí Ctrl+Shift+C/V, protože ještě než vznikly grafické programy, tak Ctrl+C mělo jiný význam (což stále platí)</li>
+</ul>
+<h2>Operace kopie, přesun, přejmenování, mazání</h2>
+<p>Přesuň se do složky <code>data-shell/creatures</code></p>
+<p><strong>basilisk.dat</strong> - “.dat” je součástí názvu souboru, systému je úplně ukradená, je to vodítko pro lidi. Linux se typicky podívá do samotného souboru a podle toho odhadne jakým programem to má otevřít. Přípona je důležitá pro Windows, který podle ní zjistí, jakým programem soubor otevřít.</p>
+<p><code>ls -R</code>
+složky začínají tečkou, příkaz nám rekurzivně zobrazí všechny adresáře a co mají v sobě</p>
+<p><code>.</code> - aktuální adresář
+<code>..</code> - předchozí adresář</p>
+<h3>tree</h3>
+<p>Hezky zobrazí strukturu našich adresářů.</p>
+<p>Když potřebuješ dát datum do názvu, tak ve formátu YYYY-MM-DD
+povolené znaky: _, -, tečka, mezeru raději ne (protože se používá jako oddělovač argumentů)</p>
+<h3>skryté soubory</h3>
+<ul>
+<li>začínají tečkou, <code>ls</code> je samo o sobě se je nezobrazuje</li>
+<li><code>ls --all</code></li>
+<li><code>..</code> je speciální složka</li>
+</ul>
+<h3>Nový adresář</h3>
+<p>V <code>data-shell</code> uděláme novou složku:</p>
+<div class="highlight"><pre><code>mkdir thesis</code></pre></div><p>Po zmáčknutí Enter to nic neřekne. Když program uspěje, tak je zticha. Chybu samozřejmě zobrazí.</p>
+<h3>Vytvoření prázdného souboru</h3>
+<div class="highlight"><pre><code>cd thesis
+nano draft.txt</code></pre></div><p>Ten poslední rádek vytvoří nový soubor, otevře stávající, když už existuje.</p>
+<p>Stisk <code>Ctrl</code> je zkrácený na znak <code>^</code> (existuje dalších 6 zápisů, jak vyjádřit stisk <code>Ctrl</code> a dalšího písmenka)</p>
+<p>Jiný způsob, jak vytvořit soubory (původně pro nastavení data změny souboru, vytvoření nového souboru je vedlejší efekt, ale přitom se to časem stalo nejběžněším use-case):</p>
+<div class="highlight"><pre><code>touch soubor.dat</code></pre></div><h3>Přesouváme, přejmenováváme</h3>
+<p>soubor <code>draft.txt</code> chceme přejmenovat. Pro větší efekt si to ale zkusíme z jiné složky.</p>
+<div class="highlight"><pre><code>cd ..</code></pre></div><p>přejmenování souboru je vlastně přesun</p>
+<div class="highlight"><pre><code>mv thesis/draft.txt thesis/basnicka.txt</code></pre></div><p>výpis obsahu souboru - <code>cat</code> (pochází z <em>concatenate</em>, původně pro spojování souborů, ale časem se to nejvíc používá pro výpis právě jednoho souboru)</p>
+<div class="highlight"><pre><code>cat basnicka.txt basnicka.txt basnicka.txt</code></pre></div><div class="highlight"><pre><code>cp thesis/basnicka.txt thesis/basen.txt</code></pre></div><div class="highlight"><pre><code>ls soubor1 soubor2 soubor3</code></pre></div><p>v <em>data-shell</em> udělat adresář “poznamky”</p>
+<p>přesun více souborů najednou:</p>
+<div class="highlight"><pre><code>mv thesis/draft.txt thesis/basnicka.txt poznamky</code></pre></div><p>Posledním argumentem je cíl, kam se mají všechny předchozí přesunout - pouze pokud má <code>mv</code> více než 2 argumenty.</p>
+<h3>Kopírujeme</h3>
+<div class="highlight"><pre><code>cp poznamky notes</code></pre></div><p>Ejhle, to se nám nepodaří (protože může být dost velký), přesunout však ano.</p>
+<p>Proto je potřeba to říci explicitně.</p>
+<div class="highlight"><pre><code>cp -r</code></pre></div><p>kopíruje celé složky</p>
+<h3>Mažeme</h3>
+<p>Dneska to nebude krajíc chleba, ale soubory a složky.</p>
+<div class="highlight"><pre><code>rm draft.txt soubor.txt</code></pre></div><p>je v pohodě, protože to jsou klasické soubory, tzn. ne-složky.</p>
+<div class="highlight"><pre><code>rm data-neco     (nejde)</code></pre></div><div class="highlight"><pre><code>rm -r</code></pre></div><p>maže i adresáře (tzv. rekurzivně).</p>
+<p><strong>Varování: Mazání je napořád, není tu žádný koš!</strong></p>
+<div class="highlight"><pre><code>rm -vr</code></pre></div><p>navíc řekne, které soubory to maže. Bez toho přepínače <code>-v</code> nám <code>rm</code> nic nepoví.</p>
+<p><code>rm -r /</code> smaže celý disk, nezadávat!</p>
+<h2>Masky názvů souborů</h2>
+<p>Jak vypsat všechny textové soubory?
+nepojmenovávat soubory se speciálními znaky, protože ty znaky mají i svůj speciální význam</p>
+<div class="highlight"><pre><code>ls tohle.txt je.txt obsah.txt slozky.txt
+ls *.txt
+ls */*.pdb</code></pre></div><p>hvězdička nahrazuje jednoduché jméno souboru, ale už ne věci za lomítkem</p>
+<p>Další spec. znak: <code>?</code> - nahrazuje právě jedno libovolné písmeno</p>
+<div class="highlight"><pre><code>ls ???????</code></pre></div><p>(zobrazí jen soubory, ktré mají 7 písmen v názvu)</p>
+<div class="highlight"><pre><code>ls *t*ane.pdb
+ls *t?ane.*
+ls *t??ane.*</code></pre></div><p>Hvězdičky předělává na konkrétní názvy souborů přímo bash, takže program “ls” už dostane konkrétní názvy souborů.</p>
+<p>Největší silou bashe je spojování malých prográmků dohromady:
+wc data-shell/molecules/cubane.pdb
+     20    156    1158   data-shell/molecules/cubane.pdb
+řádky    slova    znaky (všechny, vč. mezer)</p>
+<div class="highlight"><pre><code>wc molecules/*.pdb</code></pre></div><p>(navíc přidá řádek s “total” sumou)</p>
+<p><code>wc</code> (bez dalších arg.), Ctrl+D ukončuje stdin (otázka pro zvídavé: Proč zrovna “D”? Odpověď man ascii)
+<code>cat</code> (bez arg.)</p>
+<p>program normálně píše do terminálu, a pomocí &gt; mu řeknu, kam má ten výstup přesměrovat (do souboru)</p>
+<p><code>sort jmenosouboru</code>
+<code>sort</code> (bez arg.)
+<code>sort -n</code> (numeric sort)</p>
+<p>linux umí spoustu takových malých programů a je na vás, abyste si je sami pospojovali</p>
+<p><code>wc -l *.pdb | sort -n</code></p>
+<p><code>less</code>, terminálové scrollovátko, ukončení pomocí “q”, v programu se dá vyhledávat stiskem <code>/</code> (tím přejdeš do režimu hledání textu) a pak rovnou piš <code>to_co_hledám</code>
+git log, man, … totiž vezmou svůj výstup a nakrmí ho příkazu less</p>
+<p><code>head</code> , tail`</p>
+<p><code>echo haló haló</code></p>
+<p>program (od bashe) dostane vždy seznam řetězců</p>
+<div class="highlight"><pre><code>$ echo ahoj      halo halooo
+ahoj halo haloo</code></pre></div><p><code>$ echo ahoj *.pdb</code> (vypíše názvy souborů s příponou .pdb)
+<code>$ echo “ahoj *.pdb”</code> (vypíše jako jeden řetězec)</p>
+<p><code>echo $0</code> - $0 je nahrazen z bashe, echo ho jen tupě vypíše</p>
+<h2>Přesměrování výstupu do souboru</h2>
+<div class="highlight"><pre><code>echo halo halo co se stalo &gt; soubor.txt</code></pre></div><p>přesměrováním se přepíše původní soubor</p>
+<p>“přesměrování s přidáváním” <code>&gt;&gt;</code></p>
+<p><code>cat &gt; basnicka.txt</code> (stdin do souboru)</p>
+<div class="highlight"><pre><code>cat ‘halo halo
+co se stalo’</code></pre></div><p>(je název souboru, co obsahuje znak nového řetězce)</p>
+<p><code>cat</code> vs. <code>echo</code> - neplést si: výpis souboru vs. vypsání argumentů</p>
+<div class="highlight"><pre><code>cat data/animals | cut -d ‘,’ -f 2</code></pre></div><p><code>uniq</code> - deduplikuje záznamy, ale pamatuje si jen poslední řádek</p>
+<div class="highlight"><pre><code>cat | cut | sort | uniq</code></pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/carpentry-unix/create/">← <span class="d-none d-sm-inline">Práce se soubory a adresáři</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/shell-1/">↑ <span class="d-none d-sm-inline">Lekce: Bash I</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/sessions/shell-1/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/notes/01/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsala Karolina Surma, 2020</p>
+    
+        <p>založeno na kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, 2016–2018 Software Carpentry Foundation, 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

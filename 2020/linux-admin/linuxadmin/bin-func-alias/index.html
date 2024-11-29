@@ -1,0 +1,442 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Programy, funkce a aliasy
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/descriptors/">Bash III</a>
+
+> <a href="/2020/linux-admin/linuxadmin/bin-func-alias/">Programy, funkce a aliasy</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Programy, funkce a aliasy</h1>
+<p>Když pracuju s počítačem, docela často potřebuju vytvořit adresář
+a rovnou se do něj přepnout:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir novy-projekt
+<span class="gp">$ </span><span class="nb">cd</span> novy-projekt
+</pre></div><p>Štve mě ale, že musím psát dva příkazy a dvakrát vypisovat jméno adresáře.
+Co takhle si to zautomatizovat – vytvořit příkaz
+<code>mcd <var>novy-projekt</var></code>, který udělá oba kroky najednou?</p>
+<div class="admonition note"><p>Dvakát vypisovat jméno adresáře bych nemusel: zkratka
+<kbd>Alt</kbd>+<kbd>.</kbd> doplní poslední slovo minulého příkazu.
+(Jestli ti to nefunguje, zkus ten druhý <kbd>Alt</kbd>.)
+Ale stejně, na tohle chci mít zkratku na tři písmenka!</p>
+</div><p>Vytvoř si následující skript a ulož si ho jako <code>mcd</code> (bez přípony):</p>
+<div class="highlight"><pre><span></span><span class="ch">#! /bin/bash</span>
+
+<span class="nb">echo</span> Vytvářím <span class="nv">$1</span> &gt;<span class="p">&amp;</span><span class="m">2</span>
+mkdir -p <span class="nv">$1</span>
+<span class="nb">cd</span> <span class="nv">$1</span>
+</pre></div><p>Pak ho označ za spustitelný, spusť, a zkontroluj že se nový adresář vytvořil:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod +x mcd
+<span class="gp">$ </span>./mcd novy-adresar
+<span class="gp">$ </span>ls
+</pre></div><p>Přepnutí (<code>cd</code>) ještě úplně nefunguje.
+Spravíme to později. Zatím se podívejme, co tento skript dělá:</p>
+<ul>
+<li><code>#! /bin/bash</code> říká systému, že tento skript je napsaný v Bashi; pro jeho
+vykonání se tedy bude spouštět Bash.</li>
+<li>Za <code>$1</code> Bash doplní první argument skriptu – v našem případě jméno adresáře,
+který pomocí příkazu <code>mcd</code> chceš vytvořit.</li>
+<li>Přesměrování <code>&gt;&amp;2</code> říká, že std. výstup se má přesměrovat na std. chybový výstup;
+informační hláška z <code>echo</code> tedy půjde na chybový výstup.
+Není to součást výstupu programu.</li>
+<li><code>chmod +x mcd</code> nastavuje právo spouštět soubor <code>mcd</code> jako příkaz</li>
+<li>Příkaz je potřeba spustit pomocí <code>./mcd</code> (a ne jen <code>mcd</code>): pro příkazy bez
+daného adresáře Bash hledá program v <code>$PATH</code>, kde tento příkaz ještě není.</li>
+</ul>
+<p>Skript se spustí, <code>echo</code> vypíše, <code>mkdir</code> vytvoří adresář – ale <code>cd</code> nezabralo!
+Čím to?</p>
+<p>Vzpomeň si, jak Bash pouští příkazy.</p>
+<p><span class="figure"><a href="/2020/linux-admin/linuxadmin/bin-func-alias/static/forking-mcd.svg"><img src="/2020/linux-admin/linuxadmin/bin-func-alias/static/forking-mcd.svg" alt="Diagram spouštění jednotlivých podprocesů"></a></span></p>
+<p>K tomu je potřeba dodat, že proces <em>nemůže měnit</em>
+proměnné prostředí, aktuální adresář nebo otevřené soubory <em>jiných procesů</em>.</p>
+<p>Když Bash proces <em>spouští</em>, může mu prostředí nastavit – ale jakmile proces
+běží, nemůže měnit svůj „mateřský“ proces.</p>
+<p>Příkaz <code>cd</code> ve skriptu tudíž změní aktuální adresář – ale jen v Bashi, který
+obsluhuje náš skript.
+Aktuální adresář původního Bash zůstane nezměněný.</p>
+<p>No jo, ale jak může fungovat příkaz <code>cd</code>?
+Jaktože změní adresář Bashe, který ho pouští?</p>
+<p>Inu, <code>cd</code> je zvláštní.
+Není to program, který běží ve vlastním procesu.</p>
+<p>Pojďme se podívat, jaké příkazy vlastně Bash umí spouštět.</p>
+<h2>Normální příkazy</h2>
+<p>To, co se spustí, když zadáš určitý příkaz, ti řekne příkaz <code>type</code>.
+Většina základních příkazů jsou programy uložené na disku:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> cat
+<span class="go">cat je /usr/bin/cat</span>
+<span class="gp">$ </span><span class="nb">type</span> man
+<span class="go">man je /usr/bin/man</span>
+<span class="gp">$ </span><span class="nb">type</span> mkdir
+<span class="go">mkdir je /usr/bin/mkdir</span>
+</pre></div><p>Někdy můžeš dostat informaci o tom, že je soubor „zahashován“ – to pro nás
+znamená to samé co příklady výše.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>echo<span class="p">|</span>cat
+
+<span class="gp">$ </span><span class="nb">type</span> cat
+<span class="go">cat je zahashován (/usr/bin/cat)</span>
+</pre></div><p>Tyhle soubory opravdu existují, ač nejsou psány pro lidské oči:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls /usr/bin/cat
+<span class="go">/usr/bin/cat</span>
+<span class="gp">$ </span>less /usr/bin/cat
+<span class="go">"/usr/bin/cat" may be a binary file.  See it anyway? y</span>
+</pre></div><p>Existují ale i výjimky, které pro lidské oči jsou:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> pip
+<span class="go">pip je /usr/bin/pip</span>
+<span class="gp">$ </span>less /usr/bin/pip
+<span class="go">`</span>
+</pre></div><h2>Zabudované příkazy</h2>
+<p>Kromě toho existují i zabudované příkazy shellu.
+To nejsou programy, pro které Bash vytváří nový proces.
+Proto můžou měnit stav Bashe – proměnné prostředí, aktuální adresář nebo
+(teoreticky) otevřené soubory – nebo ho např. ukončit:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> <span class="nb">export</span>
+<span class="go">export je součást shellu</span>
+<span class="gp">$ </span><span class="nb">type</span> <span class="nb">cd</span>
+<span class="go">cd je součást shellu</span>
+<span class="gp">$ </span><span class="nb">type</span> <span class="nb">exit</span>
+<span class="go">exit je součást shellu</span>
+</pre></div><p>Některé příkazy jako <code>echo</code> a <code>pwd</code> jsou zabudované v Bashi jen proto,
+aby se rychleji spouštěly; mají i „opravdový“ program v <code>/usr/bin</code>,
+který se dá zavolat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> <span class="nb">echo</span>
+<span class="go">echo je součást shellu</span>
+<span class="gp">$ </span>ls /usr/bin/echo
+<span class="go">/usr/bin/echo</span>
+<span class="gp">$ </span>/usr/bin/echo Ahoj ahoj!
+<span class="go">Ahoj ahoj!</span>
+</pre></div><p>S přepínačem <code>-a</code> ti  <code>type</code> vypíše všechna místa, kde se daný program dá najít:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> -a <span class="nb">echo</span>
+<span class="go">echo je součást shellu</span>
+<span class="go">echo je /usr/bin/echo</span>
+</pre></div><div class="admonition note"><p>Někdy se zabudovaný příkaz od programu v <code>/usr/bin</code> liší – porovnej
+<code>echo --help</code> s <code>/usr/bin/echo --help</code>.
+Tohle není moc skvělá vlastnost.</p>
+</div><p>Takže teď už znáš trik, kterým <code>cd</code> dokáže měnit adresář Bashe,
+který ho spustil!
+Má protekci, potvůrka.
+Jak to ale zařídíme pro příkaz <code>mcd</code>?</p>
+<h3>Source</h3>
+<p>Další zabudovaný příkaz je <code>source</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> <span class="nb">source</span>
+<span class="go">source je součást shellu</span>
+</pre></div><p>Source otevře daný sour a spustí ho <em>v aktuálním Bashovém procesu</em>,
+tak jako bys jeho obsah napsala na klávesnici.
+Neboli – přesně to co hledáme pro <code>mcd</code>!</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">source</span> ./mcd <span class="nb">test</span>
+<span class="go">Vytvářím test</span>
+<span class="gp">$ </span><span class="nb">pwd</span>
+<span class="go">.../test</span>
+<span class="gp">$ </span><span class="nb">cd</span> ..
+</pre></div><p>Jestli používáš Linux pro Python, pravděpodobně tenhle příkaz znáš.
+Skript pro aktivaci virtuálního prostředí, <code>venv/bin/activate</code>,
+potřebuje měnit proměnné <code>PATH</code> (a tudíž význam příkazů <code>python</code> a <code>pip</code>)
+a <code>PS1</code> (prompt) aktuálního shellu.
+Má tedy stejný problém jako <code>mcd</code>. A protože je <code>source</code> dlouhé slovo, má i zkratku: tečku.
+Ano, tečka je taky Bashový příkaz.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>. ./mcd dalsi-test
+<span class="go">Vytvářím dalsi-test</span>
+<span class="gp">$ </span><span class="nb">pwd</span>
+<span class="go">.../dalsi-test</span>
+<span class="gp">$ </span><span class="nb">cd</span> ..
+</pre></div><p>(Tečka, mezera, tečka, lomítko, <code>m</code>, <code>c</code>, <code>d</code>.
+V materiálech pro Python používám delší <code>source</code> protože … je vidět.)</p>
+<p>Problém <code>source</code> i tečky je ale ten, že je vždycky musíš napsat.
+I kdyby byl skript <code>mcd</code> ve správném adresáři, musel by se pouštět
+pomocí <code>. mcd <var>novy-adresar</var></code>.
+A to nechceš, to je pořád moc dlouhé. Pojďme hledat dál.</p>
+<h2>Klíčová slova</h2>
+<p>Kromě programů v souborech a zabudovaných příkazů existují ještě další tři
+druhy příkazů.
+Jeden jsou klíčová slova, která mají jinou syntax než příkazy – potřebují
+strukurovanější zápis než jen argumenty a přepínače:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> <span class="k">for</span>
+<span class="go">for je klíčové slovo shellu</span>
+<span class="gp">$ </span><span class="nb">type</span> <span class="k">while</span>
+<span class="go">while je klíčové slovo shellu</span>
+<span class="gp">$ </span><span class="nb">type</span> <span class="k">do</span>
+<span class="go">do je klíčové slovo shellu</span>
+<span class="gp">$ </span><span class="nb">type</span> <span class="k">if</span>
+<span class="go">if je klíčové slovo shellu</span>
+</pre></div><h2>Aliasy</h2>
+<p>Zajímavější jsou <em>aliasy</em>, zkratky.
+Jeden alias, který má Fedora ve výchozím nastavení, je <code>ll</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> ll
+<span class="go">ls je alias na „ls -l --color=auto“</span>
+</pre></div><p>Kdykoli zavoláš příkaz <code>ll <var>argumenty</var></code>, spustí
+se reálně <code>ls -l --color=auto <var>argumenty</var></code>.
+Pro zopakování: přepínač <code>-l</code> zapíná „dlouhý“ výstup:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ll ~
+<span class="go">celkem 40</span>
+<span class="go">drwxrwxr-x. 2 petr petr 4096 26. říj 14.56 bin</span>
+<span class="go">drwxr-xr-x. 2 petr petr 4096 26. říj 16.36 dev</span>
+<span class="go">drwxr-xr-x. 5 petr petr 4096 26. říj 14.30 Dokumenty</span>
+<span class="go">drwxr-xr-x. 2 petr petr 4096  6. říj 16.24 Hudba</span>
+<span class="go">drwxr-xr-x. 2 petr petr 4096 17. říj 15.06 Obrázky</span>
+<span class="go">drwxr-xr-x. 2 petr petr 4096  6. říj 16.24 Plocha</span>
+<span class="go">drwxr-xr-x. 2 petr petr 4096  6. říj 18.13 Stažené</span>
+<span class="go">drwxr-xr-x. 2 petr petr 4096  6. říj 16.24 Šablony</span>
+<span class="go">drwxr-xr-x. 2 petr petr 4096  6. říj 16.24 Veřejné</span>
+<span class="go">drwxr-xr-x. 2 petr petr 4096  6. říj 16.24 Videa</span>
+</pre></div><p>Příkaz <code>ll</code> Bash nahradil za <code>ls -l --color=auto</code> a zbytek argumentů (<code>~</code>)
+ponechal.
+Reálně se tedy pustil příkaz <code>ls -l --color=auto ~</code>.
+Zkontroluj, že s ním dostaneš stejný výsledek.</p>
+<p>Co je ale zajímavější?
+Samotný <code>ls</code> je alias:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> ls
+<span class="go">ls je alias na „ls --color=auto“</span>
+</pre></div><p>Kdykoli zavoláš příkaz <code>ls <var>argumenty</var></code>, spustí
+se reálně <code>ls --color=auto <var>argumenty</var></code>.
+Jednou použitý alias se ale už nenahrazuje, místo toho Bash hledá <code>ls</code> dál.
+Kde? To ti poví <code>type -a</code>!</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> -a ls
+<span class="go">ls je alias na „ls --color=auto“</span>
+<span class="go">ls je /usr/bin/ls</span>
+</pre></div><p>A skutečně, když pustíš <code>/usr/bin/ls ~</code>, žádné barvičky neuvidíš.
+Ale s <code>/usr/bin/ls --color=auto ~</code> ano.</p>
+<p>Nové aliasy si můžeš definovat pomocí příkazu <code>alias</code>.
+Co třeba vytvořit příkaz <code>pozor</code>, který funguje jeko <code>echo</code> ale na
+začátek řádku dá varovný štítek <code>POZOR:</code>?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">alias</span> <span class="nv">pozor</span><span class="o">=</span><span class="s1">'echo POZOR:'</span>
+<span class="gp">$ </span>pozor vysoké napětí
+<span class="go">POZOR: vysoké napětí</span>
+<span class="gp">$ </span>pozor zlý pes
+<span class="go">POZOR: zlý pes</span>
+</pre></div><p>Alias se dá zrušit pomocí <code>unalias</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">unalias</span> pozor
+<span class="gp">$ </span>pozor pohov
+<span class="go">bash: pozor: Příkaz nebyl nenalezen...</span>
+</pre></div><p>Spousta lidí aliasy používá na jednoduché zkratky, např.
+<code>alias gc='git commit'</code>, <code>alias gst='git status'</code>, <code>alias ga='gitk --all'</code>.</p>
+<p>Nevýhoda aliasů spočívá v tom, že fungují jen na začátku příkazu.
+Můžou tedy zkrátit <code>echo POZOR: pes</code> na <code>pozor pes</code>, ale neumí už zkrátit
+<code>mkdir novy-projekt; cd novy-projekt</code> na <code>mcd novy-projekt</code>.
+Budeme se tedy muset podívat na poslední druh příkazů.</p>
+<h2>Funkce shellu</h2>
+<p>Poslední druh příkazů je funkce.
+Jedna z mála předpřipravených funkcí je <code>quote</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> quote
+<span class="go">quote je funkce</span>
+<span class="go">quote ()</span>
+<span class="go">{</span>
+<span class="go">    local quoted=${1//\'/\'\\\'\'};</span>
+<span class="go">    printf "'%s'" "$quoted"</span>
+<span class="go">}</span>
+</pre></div><p>Podobně jako u aliasů příkaz <code>type</code> u funkcí uvádí i jejich definici.
+Přesně takhle se funkce definuje: jméno, prázdné závorky, a tělo funkce –
+příkazy – v kudrnatých závorkách:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ahoj<span class="o">()</span> <span class="o">{</span>
+<span class="gp">&gt; </span>   <span class="nb">echo</span> ahoj
+<span class="gp">&gt; </span>   <span class="nb">echo</span> světe
+<span class="gp">&gt; </span><span class="o">}</span>
+<span class="gp">$ </span>ahoj
+<span class="go">ahoj</span>
+<span class="go">světe</span>
+</pre></div><p>Na rozdíl od funkcí v Pythonu jsou závorky <code>()</code> v definici vždycky prázdné.
+Každá funkce bere neomezený počet argumentů, které Bash uloží do proměnných
+<code>$1</code>, <code>$2</code>, <code>$3</code>, atd.
+Jejich počet je v proměnné <code>$#</code>; všechny dohromady jsou v <code>$*</code>.</p>
+<p>Jak tedy nadefinovat příkaz <code>mcd</code>?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mcd <span class="o">()</span> <span class="o">{</span>
+<span class="gp">&gt; </span>    mkdir -p <span class="nv">$1</span>
+<span class="gp">&gt; </span>    <span class="nb">cd</span> <span class="nv">$1</span>
+<span class="gp">&gt; </span><span class="o">}</span>
+</pre></div><p>Tenkhle příkaz funguje – zkus si ho!</p>
+<p>Má ale jednu mouchu: když zapomeneš zadat argument, <code>mkdir -p</code> selže, ale
+<code>cd</code> bez argumentů tě přepne do domovského adresáře.
+Proto je dobré příkaz <code>cd</code> provést jenom tehdy, když se povede <code>mkdir</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mcd <span class="o">()</span> <span class="o">{</span>
+<span class="gp">&gt; </span>    mkdir -p <span class="nv">$1</span> <span class="o">&amp;&amp;</span> <span class="nb">cd</span> <span class="nv">$1</span>
+<span class="gp">&gt; </span><span class="o">}</span>
+</pre></div><p>A to je on – vytoužený příkaz na vytvoření adresáře a přepnutí do něj.
+Ufff. Stálo to za to?</p>
+<p>Zvlášť když příkaz zmizí hned, když vypneš Bash?</p>
+<h2>bashrc</h2>
+<p>Je to tak, téhle ságy ještě není konec.</p>
+<p>Programy v souborech jsou uložené celkem bezpečně, ale aliasy i shellové funkce
+platí jenom pro shell, ve kterém jsou nadefinovány.</p>
+<p>Dá se to samozřjmě obejít tak, že funkci vždy nadefinuješ znovu.</p>
+<p>Můžeš si dokonce vytvořit skript, do kterého definice dáš a vždy ho na začátku
+práce s Bashem pustíš (pomocí <code>source</code>, aby se funkce nadefinovaly ve tvém
+procesu).</p>
+<p>Ale nejlepší je dát do souboru <code>~/.bashrc</code> (tedy skrytého souboru <code>.bashrc</code>
+ve tvém domovském adresáři).
+Ten totiž Bash načte na začátku sám!</p>
+<p>Dej si tedy definici <code>mcd</code> na konec souboru <code>~/.bashrc</code>
+a zapni nový Bash (buď novém termnálu, nebo třeba příkazem <code>exec bash</code>.</p>
+<p>Teď bude <code>mcd</code> k dispozici vždy!</p>
+<h2>Jednodušší příkazy</h2>
+<p>Ne všechny zkratky jsou takhle složité.
+Většinou si vystačíš s aliasem nebo spustitelným skriptem v <code>$PATH</code>,
+tedy často v adresáři <code>~/bin</code>.
+Skripty můžou být psané v Bashi (<code>#! /usr/bin/bash</code>), v Pythonu
+(<code>#! /usr/bin/python</code>) nebo jakémkoli jiném jazyce.</p>
+<p>Někteří lidé své zkratky sdílejí; autor tohoto textu je má k nahlédnutí
+<a href="https://github.com/encukou/bin">na GitHubu</a>.
+Samozřejmě bez záruky.</p>
+<h2>A další?</h2>
+<p>A co další náležitosti shellových příkazů?
+Manuálová stránka?
+Přepínače – aspoň <code>--help</code>?
+Kontrola, že náš nový příkaz nepřepsal nějaký už existující (ehm…)?</p>
+<p>To už je nad rámec tohoto kurzu.
+Přeci jen se chceme naučit Linuxové systémy ovládat, ne vytvářet :)</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/linuxadmin/env-var/">← <span class="d-none d-sm-inline">Proměnné Bashe a proměnné prostředí</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/descriptors/">↑ <span class="d-none d-sm-inline">Lekce: Bash III</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/pilot/04/"><span class="d-none d-sm-inline">Zápis – 4</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/linuxadmin/bin-func-alias/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Petr Viktorin a Karolina Surma, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

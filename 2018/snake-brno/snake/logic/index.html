@@ -1,0 +1,961 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Hadí workshop pro PyLadies: Logika hry Had
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/snake/logic/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/snake-brno/">Hadí workshop pro PyLadies</a>
+
+> <a href="/2018/snake-brno/sessions/workshop/">Had</a>
+
+> <a href="/2018/snake-brno/snake/logic/">Logika hry Had</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Logika hry</h1>
+<p>Už umíš vykreslit hada ze seznamu souřadnic.
+Hadí videohra ale nebude jen „fotka“.
+Seznam se bude měnit a had se bude hýbat!</p>
+<!--
+# Ukládání revizí
+
+XXX - Nestíhám dopsat, omlouvám se
+-->
+
+<h1>Rozhýbejme hada</h1>
+<p>Tvůj program teď, doufám, vypadá nějak takhle:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">TILES_DIRECTORY</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'snake-tiles'</span><span class="p">)</span>
+
+<span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+<span class="n">food</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+
+<span class="n">red_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'apple.png'</span><span class="p">)</span>
+<span class="n">snake_tiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">TILES_DIRECTORY</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'*.png'</span><span class="p">):</span>
+    <span class="n">snake_tiles</span><span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window.event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glBlendFunc</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_ONE_MINUS_SRC_ALPHA</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">snake</span><span class="p">:</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="s1">'end'</span>     <span class="c1"># (Tady případně je nějaké</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="s1">'end'</span>       <span class="c1">#  složitější vybírání políčka)</span>
+        <span class="n">snake_tiles</span><span class="p">[</span><span class="n">source</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">dest</span><span class="p">]</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">food</span><span class="p">:</span>
+        <span class="n">red_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>Zkus těsně nad řádek <code>pyglet.app.run</code> doplnit funkci,
+která se bude volat každou šestinu vteřiny
+a přidá hadovi políčko navíc:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">new_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">new_y</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">move</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+</pre></div><p>Funguje?
+Tak do téhle funkce ještě přidej <code>del snake[0]</code>, aby had nerostl donekonečna.
+Víš co tenhle příkaz dělá? Jestli ne, koukni znovu na poznámky k seznamům!</p>
+<p>Zvládneš funkci upravit tak, aby had lezl nahoru?</p>
+<p>Jestli ano, gratuluji!
+Zvývá směr hada ovládat šipkami na klávesnici, a většina hry bude hotová!</p>
+<h2>Třída pro stav</h2>
+<p>Než uděláme interaktivního hada, zkusíme trošku uklidit.
+Program se nám rozrůstá a za chvíli bude složité se v něm vyznat.</p>
+<p>Stav hry máme zatím ve dvou seznamech: <code>snake</code> a <code>food</code>.
+Časem ale bude podobných proměnných víc.</p>
+<p>Abychom je měli všechny pohromadě, vytvoříme pro stav <em>třídu</em>.</p>
+<p>Na všechno, co se ve hře může stát, nadefinujeme <em>metody</em>.
+Zatím budou dvě: začátek hry a pohyb hada.</p>
+<p>Na začátku hry se zavolá metoda <code>__init__</code>.
+Má trochu divné jméno se dvěma podtržítkama na každé straně.
+Podle toho Python ví, že tahle metoda je speciální a se má volat
+při vytvoření objektu.</p>
+<p>Metoda <code>__init__</code> nastaví celý stav hry jako <em>atributy</em>.
+Stav hry je všechno, co potřebujeme o hře vědět a může se to časem měnit.
+V našem případě to zatím budou souřadnice hada a jídla.</p>
+<p>Metoda <code>move</code>, kterou budeme volat při každém „tahu“ hry, je bude tyhle
+atributy měnit.</p>
+<p>Pro funkčnost, kterou zatím náš had umí, bude třída se stavem vypadat
+následovně.
+Přidej ji do programu hned za nastavení konstant.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">State</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span>
+        <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div><div class="admonition note"><p>Použij prosím pro třídu jméno <code>State</code> a i atributy pojmenuj podle
+materiálů (<code>snake</code>, <code>food</code>, a později i další).
+Bude se ti to hodit.</p>
+</div><p>Všimni si, že metody berou argument <code>self</code>.
+To označuje konkrétní objekt, stav hry se kterým metoda pracuje nebo
+který mění.
+Ke všem atributům přistupují pomocí tečky –
+<code>self.<var>jméno_atributu</var></code>.</p>
+<p>Tak, máme třídu se stavem.
+No jo, ale jak ji teď použít?</p>
+<p>Na to potřebuješ ještě několik změn:</p>
+<ul>
+<li><p>Nastavování seznamů <code>snake</code> a <code>food</code> zruš; místo nich nastav jedinou
+proměnnou <code>state</code> na nový stav:</p>
+<div class="highlight"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+</pre></div></li>
+<li><p>Místo <code>snake</code> a <code>food</code> ve funkci <code>on_draw</code> použij <code>state.snake</code>
+a <code>state.food</code> – atributy našeho stavu.</p>
+<p>Všimni si že tady nepoužíváme <code>self</code>, což je jméno které používají jen
+<em>metody</em> v rámci třídy.
+Jinde musíme pojmenovat konkrétní objekt, se kterým pracujeme.</p>
+</li>
+<li><p>Funkci <code>move</code> přepiš tak, aby jen volala metodu <code>state.move</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">move</span><span class="p">()</span>
+</pre></div><p>Všimni si že ani tady nepoužíváme <code>self</code>.</p>
+</li>
+</ul>
+<p>Povedlo se? Funguje to jako předtím?
+Pro kontrolu můžeš svůj program porovnat s mým (ale nejde o jediné správné
+řešení):</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">TILES_DIRECTORY</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'snake-tiles'</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">State</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span>
+        <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">red_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'apple.png'</span><span class="p">)</span>
+<span class="n">snake_tiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">TILES_DIRECTORY</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'*.png'</span><span class="p">):</span>
+    <span class="n">snake_tiles</span><span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+
+<span class="nd">@window.event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glBlendFunc</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_ONE_MINUS_SRC_ALPHA</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="s1">'end'</span>     <span class="c1"># (Tady případně je nějaké</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="s1">'end'</span>       <span class="c1">#  složitější vybírání políčka)</span>
+        <span class="n">snake_tiles</span><span class="p">[</span><span class="n">source</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">dest</span><span class="p">]</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+        <span class="n">red_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">move</span><span class="p">()</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">move</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><h2>Ovládání</h2>
+<p>Nyní k onomu slíbenému ovládání. Respektive nejdřív k změnám směru.</p>
+<p>Had ze hry se plazí stále stejným směrem, dokud hráč nezmáckne klávesu.
+Had z naší ukázky se plazí doprava.
+Jestli jsi to ještě neudělala, zkus zařídit, aby se místo toho
+plazil nahoru.</p>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Ve funkci <code>move</code> je potřeba jinak nastavit proměnné <code>new_x</code> a <code>new_y</code>:</p>
+<div class="highlight"><pre><span></span>        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+    </div>
+</div><p>A co dolů?</p>
+<div class="solution" id="solution-2">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/2/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">-</span> <span class="mi">1</span>
+</pre></div>
+    </div>
+</div><p>Aby si had „pamatoval“ kam se zrovna plazí, je potřeba mít směr jako součást
+stavu hry.
+Uložme ho tedy do atrubutu jménem <code>snake_direction</code>.</p>
+<p>Co tam ale přesně uložit?
+Jak reprezentovat směr v Pythonu – pomocí čísel, <var>n</var>-tic a tak?</p>
+<p><span class="figure"><a href="/2018/snake-brno/snake/logic/static/coord-vectors.svg"><img src="/2018/snake-brno/snake/logic/static/coord-vectors.svg" alt="Mřížka s X a Y souřadnicemi"></a></span></p>
+<p>Asi nejpříhodnější řešení je uložit si o kolik políček se had má posunout,
+a to zvlášť v <var>x</var>-ovém a zvlášť v <var>y</var>-ovém směru.
+Čili jako dvojici:</p>
+<ul>
+<li><code>(1, 0)</code> = doprava (o jedno políčko v kladném <var>x</var>-ovém směru;
+ v <var>y</var>-ovém neposouvat)</li>
+<li><code>(-1, 0)</code> = doleva (o jedno políčko v záporném <var>x</var>-ovém směru)</li>
+<li><code>(0, 1)</code> = nahoru (+<var>y</var>)</li>
+<li><code>(0, -1)</code> = dolů (-<var>y</var>)</li>
+</ul>
+<p>Nový atribut přidej do metody <code>__init__</code> ve stavu:</p>
+<div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+</pre></div><p>A v metodě <code>move</code> změň nastavování <code>new_x</code> a <code>new_y</code> podle nového atributu:</p>
+<div class="highlight"><pre><span></span>        <span class="n">dir_x</span><span class="p">,</span> <span class="n">dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="n">dir_x</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="n">dir_y</span>
+</pre></div><p>Směr hada teď můžeš měnit změnou <code>snake_direction</code> v <code>__init__</code>.
+Funguje to? (Jestli ne, oprav to – a jestli to nejde, zavolej někoho na pomoc!)</p>
+<p>Nyní zbývá atribut <code>snake_direction</code> měnit, když uživatel něco stiskne na
+klávesnici.
+To už je doména Pygletu.</p>
+<p>Je potřeba přidat funkci, která reaguje na stisk klávesy.
+Aby Pyglet tuhle funkci našel a uměl zavolat, musí se jmenovat <code>on_key_press</code>,
+musí mít dekorátor <code>@window.event</code>, a musí brát dva parametry:
+číslo klávesy, která byla zmáčknutá a informace o modifikátorech
+jako <kbd>Shift</kbd> nebo <kbd>Ctrl</kbd>:</p>
+<div class="highlight"><pre><span></span><span class="nd">@window.event</span>
+<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="n">key_code</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div><p>Druhý parametr nebude potřeba, ale musí v hlavičce funkce být.</p>
+<p>Podle prvního ale nastav aktuální směr hada.
+Čísla kláves jsou definována v modulu <code>pyglet.window.key</code> jako konstanty se
+jmény <code>LEFT</code>, <code>ENTER</code>, <code>Q</code> či <code>AMPERSAND</code> .
+My použijeme šipky – <code>LEFT</code>, <code>RIGHT</code>, <code>UP</code> a <code>DOWN</code>:</p>
+<div class="highlight"><pre><span></span><span class="nd">@window.event</span>
+<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="n">key_code</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+</pre></div><p>Tuhle funkci je potřeba dát někam za nastavení <code>window</code> (aby byl k dispozici
+<code>window.event</code>) a před <code>pyglet.app.run()</code> (protože nastavovat ovládání až
+potom, co hra proběhne, je zbytečné).
+Nejlepší je ji dát vedle jiné funkce s dekorátorem <code>@window.event</code>,
+aby byly pěkně pohromadě.</p>
+<p>Funguje to?
+Můžeš ovládat směr hada?
+To je skvělé!
+Určitě ale při zkoušení narazíš na pár věcí, které je potřeba dodělat:</p>
+<ul>
+<li>Had by neměl mít možnost vylézt ven z okýnka.</li>
+<li>Had by měl jíst jídlo a růst.</li>
+<li>Hra by měla skončit, když had narazí sám do sebe nebo do okraje okna.</li>
+</ul>
+<p>Pojďme je vyřešit, jednu po druhé.</p>
+<h2>Zatím dobrý, teď ale narazíme</h2>
+<p>„Hadí“ hry jako ta naše mají dvě varianty: buď je kolem hřiště „zeď“
+a hráč při nárazu do okraje prohraje, nebo je hřiště „nekonečné“ – had okrajem
+proleze a objeví se na druhé straně.
+My naprogramujeme tu první variantu – zeď.</p>
+<p>Abys zjistila, jestli had „vylezl“ z levého okraje okna ven,
+je potřeba zkontrolovat, jestli <var>x</var>-ová souřadnice hlavy
+je menší než 0.
+To je dobré udělat hned poté, co nové souřadnice hlavy získáš – konkrétně
+hned za řádkem <code>new_head = new_x, new_y</code> v metodě <code>move</code>.</p>
+<p>A co při takovém nárazu udělat?
+Pro začátek bude nejjednodušší ukončit hru.
+Na to má Python funkci <code>exit()</code>, která funguje podobně jako když v programu
+nastane chyba.
+Jen místo chybového výpisu ukáže daný text.</p>
+<p>Ukončení programu není příliš příjemný způsob, jak říct hráčovi že prohrál.
+Za chvíli ale tuhle část předěláme, tak prozatím tenhle jednoduchý způsob postačí.</p>
+<div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dir_x</span><span class="p">,</span> <span class="n">dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="n">dir_x</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="n">dir_y</span>
+        <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+
+        <span class="c1"># Nový kód – kontrola vylezení z hrací plochy</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div><p>Věřím, že zvládneš udělat stejnou kontrolu pro vylezení ze spodního okraje.</p>
+<p>Jak ale ošetřit ty zbylé okraje – pravý a horní?
+Na to je potřeba znát velikost okýnka.
+A tu zná Pyglet; třída se stavem by k okýnku neměla mít přístup!</p>
+<p>Na velikosti herní plochy závisí chování hry.
+Tahle informace tedy bude tedy muset být součást stavu.
+Pro začátek nějakou velikost – třeba 10×10 – nastav v <code>__init__</code>:</p>
+<div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">10</span>
+</pre></div><p>A pak zařiď, aby po nárazu na neviditelnou stěnu kolem hřiště velkého
+10×10 políček hra skončila.
+Pořádně vyzkoušej všechny varianty – severní, jižní, východní i západní zeď.
+Had je virtuální, nemusíš se bát že mu z toho vyroste boule.</p>
+<div class="solution" id="solution-3">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/3/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dir_x</span><span class="p">,</span> <span class="n">dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="n">dir_x</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="n">dir_y</span>
+
+        <span class="c1"># Kontrola vylezení z hrací plochy</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+
+        <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+    </div>
+</div><p>A pak v souboru se hrou hned po tom co vytvoříš stav (<code>state = State()</code>)
+a okýnko (<code>window</code>) nastav <em>opravdovou</em> velikost.
+Použij celočíselné dělení, aby počet políček byl v celých číslech:</p>
+<div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">//</span> <span class="n">TILE_SIZE</span>
+<span class="n">state</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">//</span> <span class="n">TILE_SIZE</span>
+</pre></div><h2>Krmení</h2>
+<p>Tak. Had je v kleci, už nemůže vylézt.
+Co dál?</p>
+<p>Teď se musíme o hada postarat: pravidelně ho krmit.
+Ale ještě předtím je potřeba ho naučit, jak se vůbec jí – na naši potravu
+ještě není zvyklý.
+Když to zvládneme, poroste jako z vody!</p>
+<p>Konkrétně musíme hlavně zajistit, aby když se had připlazí na políčko
+s jídlem, tak jídlo zmizelo.
+K tomu se dá použít:</p>
+<ul>
+<li>operátor <code>in</code>, který zjišťuje jestli něco (třeba
+souřadnice) je v nějakém seznamu (třeba seznamu souřadnic jídla), a</li>
+<li>metoda <code>remove</code>, která ze seznamu odstraní daný prvek (podle <em>hodnoty</em> prvku
+– na rozdíl od <code>del</code>, který maže podle pozice).</li>
+</ul>
+<p>Za kontrolu vylezení z hrací plochy potřebujeme dát kód,
+který dělá následující:</p>
+<ul>
+<li>Pokud je nová pozice hlavy v seznamu souřadnic jídla:<ul>
+<li>Odeber tuhle pozici ze seznamu souřadnic jídla</li>
+</ul>
+</li>
+</ul>
+<p>Zvládneš ho napsat?</p>
+<div class="solution" id="solution-4">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/4/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Vyzkoušej, jestli to funguje. Had by měl jíst jídlo.</p>
+<p>Ještě ale zbývá zařídit, aby po každém soustu trochu povyrostl.
+Ale jak? Kterým směrem má růst?</p>
+<p>Tady je dobré se podívat na existující kód a uvědomit si, co dělá.</p>
+<p>Náš had se plazí tak, že napřed vepředu povyroste (pomocí <code>append</code>)
+a potom se vzadu zmenší (pomocí <code>del self.snake[0]</code>).</p>
+<p>Aby tedy po snězení jídla vyrostl, stačí <em>přeskočit</em> ono zmenšování!
+Ono <em>přeskočit</em> znamená podmínit, pomocí <code>if</code>.
+Logika jezení a zmenšování hada tedy bude:</p>
+<ul>
+<li>Když had sní jídlo, jídlo zmizí. Had se nezmenší.</li>
+<li>Jinak (tedy když had <em>nesní</em> jídlo) se had zmenší (a tudíž neroste).</li>
+</ul>
+<p>Neboli přeloženo do Pythonu:</p>
+<div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div><p>Pro ty, co se začínají ztrácet, dám k dispozici celou metodu <code>move</code>.
+Běda ale těm, kdo opisují kód aniž mu rozuměli!</p>
+<div class="solution" id="solution-5">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/5/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dir_x</span><span class="p">,</span> <span class="n">dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="n">dir_x</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="n">dir_y</span>
+        <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+
+        <span class="c1"># Kontrola vylezení z hrací plochy</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+    </div>
+</div><h3>Nové jídlo</h3>
+<p>Když už had umí jíst, je potřeba mu zajistit pravidelný přísun jídla.
+Nejlépe tak, že se každé snězené jídlo nahradí novým.</p>
+<p>Přidej do třídy <code>State</code> následující novou metodu, která umí přidat jídlo:</p>
+<div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">add_food</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+</pre></div><p>Pak tuhle metodu zavolej – najdi v programu kód, který se provádí když
+je potřeba přidat nové jídlo, a přidej tam následující řádek:</p>
+<div class="highlight"><pre><span></span>            <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+</pre></div><p>Tahle metoda přidává jídlo na pozici (0, 0), tedy stále do stejného rohu.
+Bylo by ale fajn, kdyby se nové jídlo objevilo vždycky jinde,
+na náhodném místě.
+Na to můžeme použít funkci <code>random.randrange</code>, která vrací náhodná celá čísla.
+Vyzkoušej si ji (z jiného souboru, třeba <code>experiment.py</code>):</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s1">'Na kostce padlo:'</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+</pre></div><p>Čím se liší <code>random.randrange</code> od klasické hrací kostky?
+Uměla bys program upravit tak, aby padalo 1 až 6?</p>
+<p>Je tahle změna užitečná pro naši hru?
+Jaký rozsah čísel potřebujeme pro hadí jídlo?</p>
+<p>Až na to přijdeš, zkus přidat náhodu do programu: jídlo by se mělo objevit
+na <em>úplně náhjodném</em> políčku na herní ploše.</p>
+<p>Nezapomeň na <code>import random</code> – to patří na úplný začátek souboru.
+Další změny ale už dělej jen v metodě <code>add_food</code>.</p>
+<div class="solution" id="solution-6">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/6/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">add_food</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Až to budeš testovat, asi zjistíš, že <em>úplně náhodné</em> políčko není ideální.
+Občas se  totiž jídlo objeví na políčku s hadem, nebo dokonce na jiném jídle.
+Je proto dobré tuhle situaci zkontrolovat, a když volba padne na plné políčko,
+jídlo nepřidávat:</p>
+<div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+</pre></div><p>Když ale zkusíš <em>tohle</em>, zjistíš, že občas se nové jídlo vůbec nepřidá.
+To taky není vhodná varianta – had by tak měl hlad.
+Co s tím?</p>
+<p>Překvapivě dobré (i když ne <em>úplně</em> ideální) řešení je zkusit políčko vybrat
+několikrát.
+Když padne prázdné políčko, šup tam s jídlem; když padne plné, tak to
+prostě zkusit znovu.</p>
+<p>Je ale potřeba počet pokusů omezit, aby v situaci, kdy je pole <em>úplně</em> plné,
+počítač nevybíral donekonečna.
+Řekněme že když se na 100 pokusů nepodaří prázdné políčko vybrat,
+vzdáme to.</p>
+<p>Metoda <code>add_food</code> po všech úpravách bude vypadat takhle:</p>
+<div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">add_food</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">try_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+                <span class="c1"># Ukončení funkce ("vyskočí" i z cyklu for)</span>
+                <span class="k">return</span>
+</pre></div><p>Jestli ti to funguje, ještě zařiď, aby na začátku hry bylo jídlo na náhodných
+pozicích.</p>
+<div class="solution" id="solution-7">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/7/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>V metodě <code>__init__</code> se dá místo nastavení <code>self.food</code> na seznam s pozicemi
+jídla napsat:</p>
+<div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">food</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+</pre></div><p>Pak budou na začátku hry na hada čekat dvě náhodná jídla.</p>
+    </div>
+</div><h2>Konec</h2>
+<p>Had teď může narůst do obrovských rozměrů – a lze prohrát jen tím, že
+narazí do stěny.
+Zaříďme teď, aby hra skončila i když narazí sám do sebe.</p>
+<p>Jak na to?
+Do metody <code>move</code>, vedle kontrola vylezení z hrací plochy,
+dej kód který udělá následující:</p>
+<ul>
+<li>Pokud jsou souřadnice nové hlavy už součást hada:<ul>
+<li>Ukonči hru (podobně jako po nárazu do stěny).</li>
+</ul>
+</li>
+</ul>
+<p>Dokážeš to převést do Pythonu?</p>
+<div class="solution" id="solution-8">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/8/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>        <span class="c1"># Kontrola, jestli had narazil</span>
+        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Hotovo!</p>
+<h3>Pauza</h3>
+<p>Není ale dobré při konci hry ukončit celý program a zavřít okýnko.</p>
+<p>Lepší je hru „zapauzovat“ a ukázat hráči situaci, do které nešťastného hada
+dostal, aby se z ní mohl pro příště poučit.</p>
+<p>Aby to bylo možné, dáme do stavu hry další atribut: <code>snake_alive</code>.
+Ten bude nastavený na <code>True</code>, dokud bude had žít.
+Když had narazí, nastaví se na <code>False</code>, a od té doby se už nebude pohybovat.
+Je dobré i graficky ukázat, že hadovi není dobře – hráč pak spíš bude
+zpytovat svědomí.</p>
+<p>Zkus zapřemýšlet, kam v kódu patří následující
+kousky kódu, které prohru implementují:</p>
+<div class="highlight"><pre><span></span>        <span class="c1"># Prvotní nastavení atributu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake_alive</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div><div class="highlight"><pre><span></span>        <span class="c1"># Zastavení hada</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake_alive</span> <span class="o">=</span> <span class="bp">False</span>
+</pre></div><div class="highlight"><pre><span></span>        <span class="c1"># Zabránění pohybu</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_alive</span><span class="p">:</span>
+            <span class="k">return</span>
+</pre></div><div class="highlight"><pre><span></span>        <span class="c1"># Grafická indikace</span>
+        <span class="k">if</span> <span class="n">dest</span> <span class="o">==</span> <span class="s1">'end'</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">snake_alive</span><span class="p">:</span>
+            <span class="n">dest</span> <span class="o">=</span> <span class="s1">'dead'</span>
+</pre></div><div class="solution" id="solution-9">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/9/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <ul>
+<li>„Prvotní nastavení atributu“ do metody <code>__init__</code>.</li>
+<li>„Zastaveni hada“ místo všech výskytů <code>raise("Game Over")</code>.</li>
+<li>„Zabránění pohybu“ na úplný začátek metody <code>move</code> (příkaz <code>return</code>
+okamžitě ukončí provádění metody).</li>
+<li>„Grafická indikace“ za sekci pro vybírání obrázku pro kousek
+hada.</li>
+</ul>
+    </div>
+</div><h2>Vylepšení ovládání</h2>
+<p>Poslední úprava kódu!</p>
+<p>Možná si všimneš, zvlášť jestli jsi už nějakou verzi hada hrála,
+že ovládání tvé nové hry je trošku frustrující.
+A možná není úplně jednoduché přijít na to, proč.</p>
+<p>Můžou za to (hlavně) dva důvody.</p>
+<p>První problém: když zmáčkneš dvě šipky rychle za sebou, v dalším „tahu“
+hada se projeví jen ta druhá.
+Z pohledu programu to chování dává smysl – po stisknutí šipky se uloží
+její směr, a při „tahu“ hada se použije poslední uložený směr.
+S tímhle chováním je ale složité hada rychle otáčet: hráč si musí pohlídat,
+aby pro každý „tah“ hada nezmáčkl víc než jednu šipku.
+Lepší by bylo, kdyby se ukládaly <em>všechny</em> stisknuté klávesy, a had by
+v každém tahu reagoval maximálně jednu.
+Další by si „schoval“ na další tahy.</p>
+<p>Takovou „frontu“ stisků kláves lze uchovávat v seznamu.
+Přidej si na to do stavu hry seznam (v metodě <code>__init__</code>):</p>
+<div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">queued_directions</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div><p>Tuhle frontu plň po každém stisku klávesy, metodou <code>append</code>.
+Je potřeba změnit většinu funkce <code>on_key_press</code> – místo změny
+atributu se nový směr přidá do seznamu.
+Abys nemusela psát čtyřikrát <code>append</code>,
+můžeš uložit nový směr do pomocné proměnné:</p>
+<div class="highlight"><pre><span></span><span class="nd">@window.event</span>
+<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="n">key_code</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
+        <span class="n">new_direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">:</span>
+        <span class="n">new_direction</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+        <span class="n">new_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+        <span class="n">new_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">queued_directions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_direction</span><span class="p">)</span>
+</pre></div><p>A zpátky k logice. V metodě <code>move</code> místo
+<code>dir_x, dir_y = self.snake_direction</code> z fronty vyber první nepoužitý prvek.
+Nezapomeň ho pak z fronty smazat, ať se dostane i na další:</p>
+<div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">queued_directions</span><span class="p">:</span>
+            <span class="n">new_direction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queued_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">queued_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="n">new_direction</span>
+</pre></div><p>Zkontroluj, že to funguje.</p>
+<h3>Zpátky ni krok</h3>
+<p>Druhý problém s ovládáním: když se had plazí doleva a
+hráč zmáčkne šipku doprava, had se otočí a hlavou si narazí do krku.
+Z pohledu programu to opět dává smysl: políčko napravo od hlavy je plné,
+had na něj tedy nemůže vstoupit a hráč prohrává.
+Z pohledu hry (a biologie!) ale narážení do krku moc smyslu nedává.
+Lepší by bylo obrácení směru úplně ignorovat.</p>
+<p>A jak poznat opačný směr?
+Když se had plazí doprava, <code>(1, 0)</code>, tak je opačný směr doleva, <code>(-1, 0)</code>.
+Když se plazí dolů, <code>(0, -1)</code>, tak naopak je nahoru, <code>(0, 1)</code>.
+Obecně, k (<var>x</var>, <var>y</var>) je opačný směr
+(-<var>x</var>, -<var>y</var>).</p>
+<p>Zatím ale pracujeme s celými <var>n</var>-ticemi, je potřeba obě
+na <var>x</var> a <var>y</var> „rozbalit“.
+Kód tedy bude vypadat takto:</p>
+<div class="highlight"><pre><span></span>            <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>
+            <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span> <span class="o">=</span> <span class="n">new_direction</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="o">-</span><span class="n">new_x</span><span class="p">,</span> <span class="o">-</span><span class="n">new_y</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="n">new_direction</span>
+</pre></div><p>Dej ho místo puvodního <code>self.snake_direction = new_direction</code>.</p>
+<h2>A to je vše?</h2>
+<p>Gratuluji, máš funkční a hratelnou hru!
+Doufám že jsi na sebe hrdá!</p>
+<p>Dej si něco sladkého, zasloužíš si to.</p>
+<hr>
+<p>Tady je moje řešení.
+To se touhle dobou od toho tvého může dost lišit – to je úplně normální.
+(A nedívej se sem dokud hada nenaprogramuješ sama,
+Chybami a neustálým zkoušením se člověk učí – a programátor zvlášť.
+Čtením už vyřešeného se učí hůř.)</p>
+<div class="solution" id="solution-10">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-brno/snake/logic/index/solutions/10/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">TILES_DIRECTORY</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'snake-tiles'</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">State</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake_alive</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queued_directions</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">queued_directions</span><span class="p">:</span>
+            <span class="n">new_direction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queued_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">queued_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>
+            <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span> <span class="o">=</span> <span class="n">new_direction</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="o">-</span><span class="n">new_x</span><span class="p">,</span> <span class="o">-</span><span class="n">new_y</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="n">new_direction</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_alive</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dir_x</span><span class="p">,</span> <span class="n">dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="n">dir_x</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="n">dir_y</span>
+
+        <span class="c1"># Kontrola vylezení z hrací plochy</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snake_alive</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snake_alive</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snake_alive</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snake_alive</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snake_alive</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">add_food</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">try_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+                <span class="k">return</span>
+
+<span class="n">red_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'apple.png'</span><span class="p">)</span>
+<span class="n">snake_tiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">TILES_DIRECTORY</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'*.png'</span><span class="p">):</span>
+    <span class="n">snake_tiles</span><span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="n">state</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">//</span> <span class="n">TILE_SIZE</span>
+<span class="n">state</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">//</span> <span class="n">TILE_SIZE</span>
+
+
+<span class="nd">@window.event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glBlendFunc</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_ONE_MINUS_SRC_ALPHA</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="s1">'end'</span>     <span class="c1"># (Tady případně je nějaké</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="s1">'end'</span>       <span class="c1">#  složitější vybírání políčka)</span>
+        <span class="k">if</span> <span class="n">dest</span> <span class="o">==</span> <span class="s1">'end'</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">snake_alive</span><span class="p">:</span>
+            <span class="n">dest</span> <span class="o">=</span> <span class="s1">'dead'</span>
+        <span class="n">snake_tiles</span><span class="p">[</span><span class="n">source</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">dest</span><span class="p">]</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+        <span class="n">red_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+
+<span class="nd">@window.event</span>
+<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="n">key_code</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
+        <span class="n">new_direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">:</span>
+        <span class="n">new_direction</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+        <span class="n">new_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+        <span class="n">new_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">queued_directions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_direction</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">move</span><span class="p">()</span>
+
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">move</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><p>Najdeš ještě nějaké další vylepšení, které by se dalo udělat?</p>
+<p>Zkus třeba následující rozšíření:</p>
+<ul>
+<li><p>Každých 30 vteřin hry přibude samo od sebe nové jídlo,
+takže jich pak bude na hrací ploše víc.</p>
+</li>
+<li><p>Hra se bude postupně zrychlovat.<br>
+<em>(Na to je nejlepší předělat funkci <code>move</code>, aby </em>sama<em>
+naplánovala, kdy se má příště zavolat. Volání <code>schedule_interval</code> tak už
+nebude potřeba.)</em></p>
+</li>
+<li><p>Hadi budou dva; druhý se ovládá klávesami
+<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>.<br>
+<em>(Na to je nejlepší udělat novou třídu, <code>Snake</code>, a všechen stav hada
+přesunout ze <code>State</code> do ní. Ve <code>State</code> pak měj seznam hadů.
+Téhle změně je potřeba přizpůsobit celý zytek programu.)</em></p>
+</li>
+</ul>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2018/snake-brno/snake/drawing/">← <span class="d-none d-sm-inline">Kreslení hada</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/snake-brno/sessions/workshop/">↑ <span class="d-none d-sm-inline">Lekce: Had</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/snake-brno/sessions/workshop/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-snake-brno/lessons/snake/logic/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies CZ napsal Petr Viktorin, 2018.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
