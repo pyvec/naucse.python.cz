@@ -1,0 +1,508 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Beginners course PyLadies: Git
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+        .lesson-content .green {
+    color: #0a0
+    }
+.lesson-content .red {
+    color: #a00
+    }
+.lesson-content .yellow {
+    color: #a50
+    }
+.lesson-content .strong {
+    font-weight: bold
+    }
+.lesson-content .blue {
+    color: #0aa
+    }
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/pyladies-en-prague/">Beginners course PyLadies</a>
+
+> <a href="/2018/pyladies-en-prague/sessions/git/">Git</a>
+
+> <a href="/2018/pyladies-en-prague/git-en/basics/">Git</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Git</h1>
+<p>Whether you code or write documents, often you end up
+with multiple versions of the same file.
+You may want to archive one set of changes that are not needed at the moment,
+then send another set of changes to your colleagues for a review.
+At a certain point, keeping track of all these versions becomes unfeasible.</p>
+<p>Tools like Dropbox or Google Drive, which you may know already, can help a bit.
+These tools allow you to share your files easily, or to restore their content
+to an earlier point in time.
+Here's an example:</p>
+<p><span class="figure"><a href="/2018/pyladies-en-prague/git-en/basics/static/dropbox.png"><img src="/2018/pyladies-en-prague/git-en/basics/static/dropbox.png" alt="Versioning interface in Dropbox"></a></span></p>
+<p>Unfortunatelly, you can only see different versions of a <em>single file</em>.
+Also, it's hard to tell which version you might want to restore since
+there is no indication of how individual versions differ.
+A relatively large project wouldn't be manageable with this approach.</p>
+<p>Therefore, programmers tend to use more powerful tools
+dubbed <em>version control system</em> (VCS).
+Currently, the most popular one is Git, and we'll learn more about it in this lesson.</p>
+<div class="admonition note"><p>We will rely on the command line.
+If you are not confident working with it yet, look at the
+<a href="/2018/pyladies-en-prague/beginners-en/cmdline/">introduction</a>.</p>
+<p>Remember: don't write the <code>$</code> at the start.
+It is shown here to indicate the beginning of each command.</p>
+</div><h2>Installation</h2>
+<p>The process of installing Git is described 
+<a href="/2018/pyladies-en-prague/git/install/">here</a>.
+If you have skipped the lesson before, you might want to get back to it now.</p>
+<h2>Repository</h2>
+<p>Each project that you want to version-control needs to be stored in its own directory.
+Create a new directory now and navigate inside (use the command <code>cd</code>).
+Then, create a new Git <em>repository</em> using the command <code>git init</code>:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git init
+Initialized empty Git repository in ./.git/</code></pre></div><p>At first glance, it looks like nothing happened.
+This command created a <em>hidden</em> directory with the name <code>.git</code> and stored some information in there.
+You can see the file using <code>ls -a</code> (Linux) or <code>dir /a</code> (Windows).
+<code>.git</code> is a hidden directory because it is managed only by Git
+and you shouldn't be changing anything inside.</p>
+<p>The repository is empty for now.
+You can see for yourself by invoking <code>git status</code>, a command that shows information
+about the state of the repository:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git status
+On branch master
+
+Initial commit
+
+nothing to commit (create/copy files and use "git add" to track)</code></pre></div><p><em>“On branch master”</em> refers to so-called branches, we'll get back to that later.
+<em>“Initial commit”</em> means that there is no revision stored yet.
+And <em>“nothing to commit”</em> says that there are no files to be saved and versioned in the directory.</p>
+<h2>First revision</h2>
+<p>Try adding something to Git now!</p>
+<p>Create a new file <code>poem.txt</code> and write a short poem inside.
+It should span at least five lines so that we have enough to work with.
+Then, try executing <code>git status</code> again: Git reports that there is a new
+file in the directory and that it isn't managed by Git yet.</p>
+<!-- XXX: Color coding! -->
+
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git status
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+
+        <span style="color: #aa0000">poem.txt</span>
+
+nothing added to commit but untracked files present (use "git add" to track)</code></pre></div><p>We need to make Git track each new file explicitely.
+Let's do that for the file with your poem:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git add poem.txt</code></pre></div><p>Then check the state of the repository again:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached &lt;file&gt;..." to unstage)
+
+        <span style="color: #00aa00">new file:   poem.txt</span></code></pre></div><p>The lines in green (“changes to be committed”)
+will be included in the next batch of changes (a <em>commit</em>) that you will create.
+Let's create our first commit:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git commit
+[master (root-commit) 1a009f4] First revision
+ 1 file changed, 6 insertions(+)
+ create mode 100644 poem.txt</code></pre></div><p>After entering this command, an editor opens where you can write a short description 
+of this commit, briefly summarizing what changes have been made.
+This is referred to as a <em>commit message</em>. For now, a simple <code>First revision</code> will do.
+You can ignore the existing lines starting with <code>#</code>, these are just for your information.
+Git will ignore them as well. Finally, save the file and close the editor.</p>
+<div class="admonition note"><p class="admonition-title">Working with editors</p>
+<p>In Windows, if you have
+<a href="/2018/pyladies-en-prague/git/install/">set up your Git correctly</a>,
+Notepad will be used as the editor; simply write something, save (<kbd>Ctrl</kbd>+<kbd>S</kbd>)
+and close (<kbd>Alt</kbd>+<kbd>F4</kbd>).</p>
+<p>In Linux or macOS, an editor called Nano appears directly in the command line window.
+You can recognize it by the keyboard shortcut help on the bottom two lines.
+Write something, save using <kbd>Ctrl</kbd>+<kbd>O</kbd>,
+confirm the name of the file (<kbd>Enter</kbd>)
+and exit the editor using <kbd>Ctrl</kbd>+<kbd>X</kbd>.</p>
+<p>If you haven't set up Git accordingly, Vim is invoked directly in the command line window
+and will be used as the default editor.
+It is a relatively complicated editor and learning to use it is beyond the scope
+of this lesson. You can recognize it by one or two lines at the bottom that show a path
+to a temporary file that you are currently editing.
+In that case, first press
+<kbd>Esc</kbd>, then type <code>:q!</code> (colon, lower letter Q, exclamation mark)
+and confirm by pressing <kbd>Enter</kbd>.
+Then set up Git corrently and try <code>git commit</code> again.</p>
+</div><p>Try reporting on the repository again:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git status
+On branch master
+nothing to commit, working tree clean</code></pre></div><p>This short report means that nothing has changed since the last commit.
+That is expected since we've just commited all our changes!</p>
+<p>Now let's have a look at what has changed in the last commit.
+Execute <code>git show</code>:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git show
+<span style="color: #aa5500">commit 1a009f4267d5a6ab7ece87cb7514f5b803692e39</span>
+Author: Adéla Novotná &lt;adela.novotna@example.cz&gt;
+Date:   Mon Mar 20 14:51:34 2017 +0100
+
+    First revision
+
+<span style="font-weight: bold">diff --git a/poem.txt b/poem.txt</span>
+<span style="font-weight: bold">new file mode 100644</span>
+<span style="font-weight: bold">index 0000000..558d133</span>
+<span style="font-weight: bold">--- /dev/null</span>
+<span style="font-weight: bold">+++ b/poem.txt</span>
+<span style="color: #00aaaa">@@ -0,0 +1,6 @@</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Holka modrooká, nesedávej u potoka</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Holka modrooká, nesedávej tam</span>
+<span style="color: #00aa00">+</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">V potoce je hastrmánek</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Zatahá tě za copánek</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Holka modrooká, nesedávej tam</span></code></pre></div><p>Notice the unique 
+<span class="yellow">Git commit ID</span>
+that allows you to return to this state of your project at any point in the future.
+The author's name, the date of this commit's creation and the commit message
+are also listed, along with the summary of changes: a new file <tt class="strong">poem.txt</tt>
+containing the <span class="green">text in green</span> has been added.</p>
+<div class="admonition note"><p>When the output of a command is too long, you can browse it using the keys
+(<kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>PgUp</kbd>, <kbd>PgDn</kbd>).
+In such case, exit the browsing mode by pressing <kbd>q</kbd> for <em>Quit</em>.</p>
+</div><div class="admonition note"><p class="admonition-title">Text encoding in Windows</p>
+<p>If you have trouble with displaying special characters like letters with diacritics,
+enter the following command before <code>git show</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt; </span>set LC_ALL=C.UTF-8
+</pre></div><p>This command will only configure the current command line window.
+It will have to be entered for any new window that you open.</p>
+</div><h2>Second revision</h2>
+<p>Make a small change in your poem; replace one word,
+change punctuation, or add a new verse.
+Then check the status of the Git repository again.</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git status
+On branch master
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+        <span style="color: #aa0000">modified:   poem.txt</span>
+
+no changes added to commit (use "git add" and/or "git commit -a")</code></pre></div><p>The file is shown in red again. Something has changed inside!
+To see the details, execute the command <code>git diff</code>.</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git diff
+<span style="font-weight: bold">diff --git a/poem.txt b/poem.txt</span>
+<span style="font-weight: bold">index 558d133..24e2384 100644</span>
+<span style="font-weight: bold">--- a/poem.txt</span>
+<span style="font-weight: bold">+++ b/poem.txt</span>
+<span style="color: #00aaaa">@@ -1,6 +1,9 @@</span>
+<span style="color: #aa0000">-Holka modrooká, nesedávej u potoka</span>
+<span style="color: #aa0000">-Holka modrooká, nesedávej tam</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Holka modrooká</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Nesedávej u potoka</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Holka modrooká</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Nesedávej tam</span>
+ 
+ V potoce je hastrmánek
+ Zatahá tě za copánek
+<span style="color: #aa0000">-Holka modrooká, nesedávej tam</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Holka modrooká</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Nesedávej tam</span></code></pre></div><p>The changes are shown on a per-line basis.
+The lines in <tt class="red">red</tt> beginning with <tt class="red">-</tt> indicate
+the original lines that have been removed;
+the lines in <tt class="green">green</tt> starting with <tt class="green">+</tt>
+show the newly added lines.</p>
+<div class="admonition note"><p>Even if just a single word or a letter has changed on any given line,
+the whole line will be listed as removed and added (including the small change).
+This interpretation can be customized if needed,
+but it's a good idea to get used to the default behavior.</p>
+</div><p>It is easy to see what exactly has changed since the last commit.
+If your program stops working, but the last commited version still worked,
+use <code>git diff</code> –
+one of the changes listed must have introduced the error!</p>
+<div class="admonition note"><p>The line beginning with <tt class="blue">@@</tt> indicates the location in the file
+where the changes occur. In the example above, the excerpt of the original file
+starts at line number 1 and it is 6 lines long; the matching block in the changed varsion
+starts at line 1 as well, but it is 9 lines long.</p>
+</div><p>If you are satisfied with the changes, stage them for the next commit:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git add poem.txt</code></pre></div><p>As usual, check the <code>status</code> of the repository; the file in green will be included
+within the next commit.</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD &lt;file&gt;..." to unstage)
+
+        <span style="color: #00aa00">modified:   poem.txt</span></code></pre></div><p>Before we finalize the next commit, let's talk about the best practices
+in formulating the commit messages.
+There are common conventions that most programmers follow:
+the first line summarizes the changes, the second line is left blank,
+and the following lines list the reasons for the change or describe
+the changes themselves in more detail.
+Each line should have under 70 characters in length;
+the lenth of the comments (lines starting with <code>#</code>) can serve as a guide here.
+It is not worth going into detail for changes that are trivial or obvious;
+rather, focus on the broader context and reasons for the changes.
+Anything that can help whomever will try to understand the changes in the commit;
+this might include you few months later.</p>
+<p>My commit message will be the following:</p>
+<div class="highlight"><pre><code>Split long lines
+
+Typically, each verse of a poem goes on its own line. I think
+that it's easier to read like this. (Although, the real reason was 
+to demonstrate git diff.)</code></pre></div><div class="admonition note"><p>If you ever have trouble summarizing your changes using
+just 70 characters, you might be taking too many steps at once.
+E.g. "change string X and add loop Y"
+might be better to commit as two separate revisions.</p>
+</div><p>Finally, use <code>git commit</code> to create your second revision,
+and then check it using <code>git show</code>:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git show
+<span style="color: #aa5500">commit 81cbabb3bd3cd2f3896dd41b20012c44dbd69031</span>
+Author: Adéla Novotná &lt;adela.novotna@example.cz&gt;
+Date:   Mon Mar 20 14:51:34 2017 +0100
+
+    Split long lines
+
+    Typically, each verse of a poem goes on its own line. I think
+    that it's easier to read like this. (Although, the real reason was 
+    to demonstrate git diff.)
+
+<span style="font-weight: bold">diff --git a/poem.txt b/poem.txt</span>
+<span style="font-weight: bold">index 558d133..24e2384 100644</span>
+<span style="font-weight: bold">--- a/poem.txt</span>
+<span style="font-weight: bold">+++ b/poem.txt</span>
+<span style="color: #00aaaa">@@ -1,6 +1,9 @@</span>
+<span style="color: #aa0000">-Holka modrooká, nesedávej u potoka</span>
+<span style="color: #aa0000">-Holka modrooká, nesedávej tam</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Holka modrooká</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Nesedávej u potoka</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Holka modrooká</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Nesedávej tam</span>
+ 
+ V potoce je hastrmánek
+ Zatahá tě za copánek
+<span style="color: #aa0000">-Holka modrooká, nesedávej tam</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Holka modrooká</span>
+<span style="color: #00aa00">+</span><span style="color: #00aa00">Nesedávej tam</span></code></pre></div><h2>Diagram</h2>
+<p>The diagram below visualizes what each command demonstrated thus far does exactly,
+and how the changes move from “not staged” to “commited”.</p>
+<p><span class="figure"><a href="/2018/pyladies-en-prague/git-en/basics/static/diagram.svg"><img src="/2018/pyladies-en-prague/git-en/basics/static/diagram.svg" alt="Diagram showing the process of committing changes"></a></span></p>
+<h2>Log</h2>
+<p>Now that we have created our first few revisions in the repository,
+let's demonstrate more commands that will help us understand
+the whole history of our Git repository.
+The first command is <code>git log</code>.</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">$</span> git log
+<span style="color: #aa5500">commit 81cbabb3bd3cd2f3896dd41b20012c44dbd69031</span>
+Author: Adéla Novotná &lt;adela.novotna@example.cz&gt;
+Date:   Mon Mar 20 14:51:34 2017 +0100
+
+    Split long lines
+
+    Typically, each verse of a poem goes on its own line. I think
+    that it's easier to read like this. (Although, the real reason was 
+    to demonstrate git diff.)
+
+<span style="color: #aa5500">commit 1a009f4267d5a6ab7ece87cb7514f5b803692e39</span>
+Author: Adéla Novotná &lt;adela.novotna@example.cz&gt;
+Date:   Mon Mar 20 14:51:34 2017 +0100
+
+    First revision</code></pre></div><p><code>git log</code> prints all commits starting from the newest one and going
+all the way back to the initial commit at the origin of the repository.</p>
+<p>When there are so many commits that they don't fit on a single screen
+of your command line window, you can browse back and forth using
+<kbd>PgUp</kbd>/<kbd>PgDn</kbd>.
+Finally, exit by pressing <kbd>q</kbd>.</p>
+<div class="admonition note"><p>There are many options that customize the output of <code>git log</code>.
+They are all described (at great length)
+in the built-in documentation (command <code>git help log</code>).
+If the help is displayed in the command line window, press <kbd>q</kbd>
+to exit.</p>
+<p>My personal favorite combination is <code>git log --oneline --graph --decorate --cherry-mark --boundary</code>.</p>
+</div><p>To see all details about any commit,
+execute <code>git show 5ff0b</code>, replacing <code>5ff0b</code>
+with the first few characters of the <span class="yellow">Git commit ID</span>.</p>
+<h2>gitk</h2>
+<p>The command line can convey all sorts of information,
+but not always in a clear way.
+A graphical application called <em>gitk</em> offers a more intuitive look
+at the history of your repository;
+you can start it using the command <code>gitk --all</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>gitk --all
+</pre></div><p><span class="figure"><a href="/2018/pyladies-en-prague/git-en/basics/static/gitk.png"><img src="/2018/pyladies-en-prague/git-en/basics/static/gitk.png" alt="Graphical application Gitk"></a></span></p>
+<p>The application doesn't look very appealing (almost as if
+it has been designed by programmers who emphasise substance over form),
+but it will suit our needs.
+Get familiar with it first, then close it, commit a few more sets of changes
+and finally explore them using <code>git log</code> and <code>gitk --all</code>.</p>
+<h2>Conclusion</h2>
+<p>These are the Git basics that we'll need in the following lessons.
+Whenever you perform <code>git add <var>file</var></code> and <code>git commit</code>,
+the current version of the file is saved and will be accessible even if you delete the file later.
+You can always view any past version of any file in your repository,
+and review all changes made since the last time the project was saved.</p>
+<p>Maybe all this sounded unnecessarily too complicated for a beginner.
+Indeed, our projects will be relatively simple and easy to manage
+even without the use of Git.
+But it's a good idea to learn using it from the very beginning;
+when you get to participate in bigger projects, already being used to Git
+will come very handy.</p>
+<p>So, from now on, whenever you make even a small but meaningful change to your program,
+as long as the program works at least as well as it did before,
+use <code>git add</code> and <code>git commit</code> to save the change in Git.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2018/pyladies-en-prague/git-en/install/">← <span class="d-none d-sm-inline">Git installation (optional)</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/pyladies-en-prague/sessions/git/">↑ <span class="d-none d-sm-inline">Lekce: Git</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/pyladies-en-prague/sessions/git/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-pyladies-en-prague/lessons/git-en/basics/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Translated by Jakub Loucky</p>
+    
+        <p>Originally written by Petr Viktorin, 2014-2017 for <a href="https://naucse.python.cz/course/pyladies/git/basics/">PyLadies CZ</a>.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

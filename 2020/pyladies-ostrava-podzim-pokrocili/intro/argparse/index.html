@@ -1,0 +1,452 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Python a jeho knihovny: argparse – Rozhraní pro příkazovou řádku
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/">Python a jeho knihovny</a>
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/cli/">Rozhraní pro příkazovou řádku</a>
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/intro/argparse/">argparse – Rozhraní pro příkazovou řádku</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>argparse</h1>
+<p>Knihovna <code>argparse</code> je ve standardní knihovně a slouží k vytváření rozhraní pro příkazovou řádku
+(angl. <em>command line interface</em>, CLI).</p>
+<p><code>argparse</code> toho neumí tolik jako <a href="/2020/pyladies-ostrava-podzim-pokrocili/intro/click/"><code>click</code></a>, ale pro spoustu
+případů bohatě poslouží a každý s Pythonem ji má k dispozici bez nutnosti další instalace.</p>
+<h2>Argumenty příkazové řádky</h2>
+<p><code>argparse</code> není ve standardní knihovně jediným nástrojem na zpracování argumentů příkazové řádky.
+Mezi jeho hlavní „konkurenty“ patří: <a href="https://docs.python.org/3/library/os.html#os.environ">os.environ</a>, <a href="https://docs.python.org/3/library/optparse.html">optparse</a> — předchůdce <code>argparse</code> — a <a href="https://docs.python.org/3/library/getopt.html">getopt</a>.</p>
+<p>A pro to úplně nejzákladnější zpracování argumentů nám stačí i modul <code>sys</code> a seznam <code>argv</code>:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">argument</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Argument číslo </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> je: </span><span class="si">{</span><span class="n">argument</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>python3 test_sys.py ahoj <span class="s2">"ja jsem"</span> argument
+<span class="go">Argument číslo 0 je: test_sys.py</span>
+<span class="go">Argument číslo 1 je: ahoj</span>
+<span class="go">Argument číslo 2 je: ja jsem</span>
+<span class="go">Argument číslo 3 je: argument</span>
+</pre></div><p><code>sys.argv</code> se hodí, pokud potřebujete získat z příkazové řádky třeba jen jeden argument
+a program nepotřebuje nápovědu. Na složitější případy už je lepší použít <code>argparse</code>.</p>
+<p><code>argparse</code> nemá tak striktně definovanou strukturu jako <code>click</code>, takže se dá použít
+více různými způsoby. Ten úplně nejzákladnější sestává z následujících kroků:</p>
+<ol>
+<li>Vytvoříme si instanci třídy <code>ArgumentParser</code>.</li>
+<li>Parseru přidáváme argumenty, které bude umět zpracovat.</li>
+<li>Necháme parser pracovat s tím, co nám přišlo z příkazové řádky.</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Hello </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="c1"># Vytvoříme prázdný parser</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">'Sample app'</span><span class="p">)</span>
+    <span class="c1"># Naučíme ho zpracovávat první argument</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-n"</span><span class="p">,</span> <span class="s2">"--name"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store"</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"world"</span><span class="p">)</span>
+    <span class="c1"># Necháme jej zpracovat sys.argv</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="c1"># Spustíme funkci s argumentem z příkazové řádky</span>
+    <span class="n">hello</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div><p>Volání <code>parser.parse_args()</code> bez dalších informací zpracovává obsah seznamu <code>sys.argv</code>,
+ale je i možné při testování zadat seznam argumentů ručně.</p>
+<p>Pro každý argument je možné specifikovat celou řadu vlastností. V předchozím příkladu jsou první
+dvě možná jména pro nový argument, následuje akce (<code>store</code> znamená ulož hodnotu), <code>dest</code> určuje,
+jak se bude jmenovat atribut, kde bude uložená hodnota k dispozici a <code>default</code> nastavuje výchozí
+hodnotu pro případ, kdy argument při spuštění skriptu vynecháme.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python args.py
+<span class="go">Hello world!</span>
+<span class="gp">$ </span>python args.py -n PyLadies
+<span class="go">Hello PyLadies!</span>
+<span class="gp">$ </span>python args.py --name PyLadies 
+<span class="go">Hello PyLadies!</span>
+<span class="gp">$ </span>python args.py --help         
+<span class="go">usage: args.py [-h] [-n NAME]</span>
+
+<span class="go">Sample app</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+<span class="go">  -n NAME, --name NAME</span>
+</pre></div><p>Přepínač <code>--help</code> pro nápovědu získal náš program automaticky.</p>
+<h2>Přepínače</h2>
+<p>Přepínače jsou v podstatě argumenty bez hodnoty a slouží k zapnutí nebo vypnutí
+některé z vlastností programu. Například <code>--help</code> je také přepínač, který zobrazí nápovědu
+a program ukončí, aniž by cokoli udělal.</p>
+<p>Pro přepínače se používají akce <code>store_true</code> a <code>store_false</code>. <code>store_true</code> uloží
+do proměnné <code>True</code>, pokud bude přepínač zadán na příkazové řádce, a naopak <code>store_false</code>
+uloží <code>False</code> a hodí se tedy spíše pro vypnutí některé z vlastností.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">ex_mark</span><span class="p">):</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Hello </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">if</span> <span class="n">upper</span><span class="p">:</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ex_mark</span><span class="p">:</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">"!"</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">'Sample app'</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-n"</span><span class="p">,</span> <span class="s2">"--name"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store"</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"world"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-u"</span><span class="p">,</span> <span class="s2">"--uppercase"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">"upper"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-E"</span><span class="p">,</span> <span class="s2">"--no-exclamation-mark"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_false"</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">"ex_mark"</span><span class="p">)</span>
+
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">hello</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">arguments</span><span class="o">.</span><span class="n">ex_mark</span><span class="p">)</span>
+</pre></div><p>Protože <code>store_true</code> má výchozí hodnotu <code>False</code> a opačně, definice argumentů výše
+nám na chování programu bez jejich použití nic nezmění.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python args.py -n PyLadies
+<span class="go">Hello PyLadies!</span>
+</pre></div><p>Použijeme-li je, ovlivní nám podobu výstupu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python args.py -n PyLadies --upper
+<span class="go">HELLO PYLADIES!</span>
+<span class="gp">$ </span>python args.py -n PyLadies --upper -E
+<span class="go">HELLO PYLADIES</span>
+<span class="gp">$ </span>python args.py -E                    
+<span class="go">Hello world</span>
+</pre></div><p>Výhodou parseru je, že můžeme argumenty použít v libovolném pořadí:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python args.py -E --upper --name Ostrava
+<span class="go">HELLO OSTRAVA</span>
+</pre></div><h2>Poziční argumenty</h2>
+<p>Stejně jako u funkcí mohou být i v příkazové řádce argumenty nepojmenované.
+Používají se ve dvou případech: pro povinné parametry a pro parametry, kterých
+může být zadán libovolný počet.
+Na všechno ostatní radši použijte přepínače.</p>
+<p>Například příkaz <code>cd</code> potřebuje jeden argument: jméno adresáře,
+do kterého má přepnout.
+Jeho rozhraní by mohlo vypadat takto:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="k">def</span> <span class="nf">cd</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Changing to directory to </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">!"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">'Sample app'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"directory"</span><span class="p">)</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">cd</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">directory</span><span class="p">)</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>python args.py                          
+<span class="go">usage: args.py [-h] directory</span>
+<span class="go">args.py: error: the following arguments are required: directory</span>
+<span class="gp">$ </span>python args.py new_folder
+<span class="go">Changing to directory new_folder</span>
+<span class="gp">$ </span>python args.py --help    
+<span class="go">usage: args.py [-h] directory</span>
+
+<span class="go">Sample app</span>
+
+<span class="go">positional arguments:</span>
+<span class="go">  directory</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help  show this help message and exit</span>
+</pre></div><p>Argument <code>directory</code> je poziční a povinný. Spuštění bez něj skončí chybou.
+Za povšimnutí stojí, že nepovinné přepínače z minulých příkladů se v nápovědě
+vždy zobrazovaly v hranatých závorkách.</p>
+<p>Proměnný počet argumentů se zadává pomocí <code>nargs</code>. Možné hodnoty jsou:</p>
+<ul>
+<li><code>N</code> — přesný počet vyjádřený číslem</li>
+<li><code>?</code> — žádný nebo jeden argument</li>
+<li><code>*</code> — libovolné množství argumentů včetně 0</li>
+<li><code>+</code> — libovolné množství, ale minimálně jeden argument</li>
+</ul>
+<p>Můžeme například nechat náš program pozdravit hned několikrát, ale minimálně jednou.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">ex_mark</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Hello </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">if</span> <span class="n">upper</span><span class="p">:</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ex_mark</span><span class="p">:</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">"!"</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">'Sample app'</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"names"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-u"</span><span class="p">,</span> <span class="s2">"--uppercase"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">"upper"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-E"</span><span class="p">,</span> <span class="s2">"--no-exclamation-mark"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_false"</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">"ex_mark"</span><span class="p">)</span>
+
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">hello</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">arguments</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">arguments</span><span class="o">.</span><span class="n">ex_mark</span><span class="p">)</span>
+</pre></div><p>Takový program už nebude možné spustit bez alespoň jednoho nepojmenovaného argumentu
+a bude možné jich zadat hned několik. Tato skutečnost se zrcadlí i v nápovědě.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python args.py       
+<span class="go">usage: args.py [-h] [-u] [-E] names [names ...]</span>
+<span class="go">args.py: error: the following arguments are required: names</span>
+
+<span class="gp">$ </span>python args.py --help
+<span class="go">usage: args.py [-h] [-u] [-E] names [names ...]</span>
+
+<span class="go">Sample app</span>
+
+<span class="go">positional arguments:</span>
+<span class="go">  names</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+<span class="go">  -u, --uppercase</span>
+<span class="go">  -E, --no-exclamation-mark</span>
+
+<span class="gp">$ </span>python args.py PyLadies Ostrava Pythonistas
+<span class="go">Hello PyLadies!</span>
+<span class="go">Hello Ostrava!</span>
+<span class="go">Hello Pythonistas!</span>
+</pre></div><h2>Typy a validace</h2>
+<p>Prozatím všechny argumenty z příkazové řádky dostal náš program jako řetězce.
+Toto chování lze jednoduše změnit nastavením <code>type</code>.</p>
+<p>Například u jednoduchého dělení s dvěma povinnými argumenty se nám více
+hodí mít oba jako desetinná čísla namísto řetězců.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="k">def</span> <span class="nf">deleni</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">'Sample app'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"b"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">deleni</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">arguments</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>python deleni.py <span class="m">10</span> <span class="m">5</span>
+<span class="go">2.0</span>
+
+<span class="gp">$ </span>python deleni.py <span class="m">10</span> <span class="m">5</span>.5
+<span class="go">1.8181818181818181</span>
+</pre></div><p><code>type</code> bere jakoukoli funkci, kterou pak řetězec s hodnotou argumentu prožene
+a uloží si výsledek. Takže nejen <code>int</code>, <code>bool</code> a <code>float</code>, ale i libovolná vlastní funkce
+zde může sloužit nejen pro změnu typu argumentu ale třeba také pro jeho validaci nebo libovolné
+další úpravy.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="k">def</span> <span class="nf">validate_email</span><span class="p">(</span><span class="n">address</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s2">"@"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">address</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">(</span><span class="s2">"Missing @ in email address"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">address</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"@python.cz"</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">(</span><span class="s2">"Recipient address not from our domain"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">address</span>
+
+<span class="k">def</span> <span class="nf">send_email</span><span class="p">(</span><span class="n">address</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sending email to </span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">'Sample app'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"address"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">validate_email</span><span class="p">)</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">send_email</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>python email.py tomas  
+<span class="go">usage: email.py [-h] address</span>
+<span class="go">email.py: error: argument address: Missing @ in email address</span>
+
+<span class="gp">$ </span>python email.py tomas@gmail.com
+<span class="go">usage: email.py [-h] address</span>
+<span class="go">email.py: error: argument address: Recipient address not from out domain</span>
+
+<span class="gp">$ </span>python email.py tomas@python.cz
+<span class="go">Sending email to tomas@python.cz</span>
+</pre></div><p>Jako bonus způsobí vyvolání výjimky <code>ArgumentTypeError</code> automatické zobrazení nápovědy.</p>
+<h2>Soubory</h2>
+<p>Speciálním typem argumentu jsou cesty k souborům. Je samozřejmě možné
+je zpracovávat jako řetězce, ale není to nejlepší nápad a je to zbytečně pracné.</p>
+<p><code>argparse</code> má pro tyto účely speciální <code>FileType</code>, který nám soubor také rovnou otevře.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="k">def</span> <span class="nf">row_count</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Row count: </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">'Sample app'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"file"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"r"</span><span class="p">))</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">row_count</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>python soubor.py          
+<span class="go">usage: soubor.py [-h] file</span>
+<span class="go">soubor.py: error: the following arguments are required: file</span>
+
+<span class="gp">$ </span>python soubor.py deleni.py
+<span class="go">Row count: 13</span>
+
+<span class="gp">$ </span>python soubor.py args.py   
+<span class="go">Row count: 12</span>
+
+<span class="gp">$ </span>python soubor.py neexistujici
+<span class="go">usage: soubor.py [-h] file</span>
+<span class="go">soubor.py: error: argument file: can't open 'neexistujici': [Errno 2] No such file or directory: 'neexistujici'</span>
+</pre></div><h2>A další</h2>
+<p>Nejedná se o vyčerpávající popis možností modulu <code>argparse</code>, ale spíše ukázku.
+Vše ostatní je jako obvykle dostupné v <a href="https://docs.python.org/3/library/argparse.html">dokumentaci</a>.</p>
+<p>Jak je vidět, i se standardní knihovnou si v mnoha případech vystačíme.
+O důvod více dobře zvážit, zda jsou externí závislosti opravdu potřeba.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/intro/click/">← <span class="d-none d-sm-inline">Click – Rozhraní pro příkazovou řádku</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/cli/">↑ <span class="d-none d-sm-inline">Lekce: Rozhraní pro příkazovou řádku</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/cli/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyLadiesCZ/naucse.python.cz/blob/autumn2020-ostrava-advanced/lessons/intro/argparse/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz pokročilého Pythonu napsal Lumír Balhar 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

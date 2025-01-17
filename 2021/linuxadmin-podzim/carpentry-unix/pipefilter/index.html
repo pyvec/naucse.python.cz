@@ -1,0 +1,462 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Roury a filtry
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/shell-2/">Bash II</a>
+
+> <a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/">Roury a filtry</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Roury a filtry</h1>
+<p>Teď, když znáš základní příkazy, si ukážeme nejmocnější vlastnost shellu:
+možnost příkazy jednoduše spojovat dohromady.
+Začni opět v adresáři <code>molecules</code>, kde je několik souborů s popisem molekul:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ~/Dokumenty/data-shell/molecules
+<span class="gp">$ </span>ls -F
+<span class="go">cubane.pdb  ethane.pdb  methane.pdb  octane.pdb  pentane.pdb  propane.pdb</span>
+</pre></div><p>Pomocí <code>wc -l</code> si vypiš, kolik mají tyto soubory řádků:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>wc -l *.pdb
+<span class="go">  20 cubane.pdb</span>
+<span class="go">  12 ethane.pdb</span>
+<span class="go">   9 methane.pdb</span>
+<span class="go">  30 octane.pdb</span>
+<span class="go">  21 pentane.pdb</span>
+<span class="go">  15 propane.pdb</span>
+<span class="go"> 107 celkem</span>
+</pre></div><div class="admonition note"><p>Velikost všech souborů by vypsal i <code>wc -l *</code>, ale psát <code>*.pdb</code> místo <code>*</code>
+se začne hodit hned za chvíli, když začneš tvořit nové soubory.</p>
+</div><p>Který z těchto souborů je největší?
+A který je nejmenší?
+Tohle jsou docela jednoduché otázky, ale představ si, že bys těch souborů
+měla 6000.
+To už by se hodilo zeptat počítače spíš než hledat očima.</p>
+<h2>Přesměrování výstupu</h2>
+<p>První věc, kterou uděláme, je <em>přesměrování výstupu</em>.
+Pomocí <code>&gt;</code> pusť příkaz <code>wc</code> tak, aby místo na obrazovku zapisoval do souboru:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>wc -l *.pdb &gt; delky.txt
+</pre></div><p>Na obrazovku se nic nevypíše, ale vytvoří se soubor <code>delky.txt</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls delky.txt
+<span class="go">delky.txt</span>
+</pre></div><p>A v tom souboru je všechno, co by příkaz <code>wc</code> normálně vypsal do terminálu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat delky.txt
+<span class="go">  20 cubane.pdb</span>
+<span class="go">  12 ethane.pdb</span>
+<span class="go">   9 methane.pdb</span>
+<span class="go">  30 octane.pdb</span>
+<span class="go">  21 pentane.pdb</span>
+<span class="go">  15 propane.pdb</span>
+<span class="go"> 107 celkem</span>
+</pre></div><p>Jak to funguje?</p>
+<p>Každý příkaz v Bashi (a obecně každý proces — běžící program na počítači)
+má k dispozici takzvaný <em>standardní výstup</em> (angl. <em>standard output</em>, <em>stdout</em>):
+místo, kam může vypisovat výsledky.
+Bash předtím, než spustí nějaký program, nastaví tenhle standardní výstup buď
+do terminálu nebo do souboru.
+Programy jako <code>cat</code>, <code>wc</code> nebo <code>tail</code> se pak nestarají o to, kde ty výsledky
+skončí.
+Prostě je vypíšou na předem určené místo.</p>
+<p><span class="figure"><a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/wc-to-term.svg"><img src="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/wc-to-term.svg" alt="Diagram příkazu `wc -l *.pdb`"></a></span></p>
+<p><span class="figure"><a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/wc-to-file.svg"><img src="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/wc-to-file.svg" alt="Diagram příkazu `wc -l *.pdb` přesměrovaného do souboru"></a></span></p>
+<p>Pomocí <code>&gt;</code> říkáš Bashi, aby výstup programu přesměroval do souboru.
+Když soubor daného jména neexistuje, Bash ho vytvoří.
+Pokud existuje, Bash jeho obsah ještě před spuštěním příkazu <em>smaže</em>
+a nechá příkaz, ať do něj zapíše něco nového.
+Takže postupuj opatrně: jak už víš, v příkazové řádce není odpadkový koš.
+Ani tlačítko Zpět.</p>
+<div class="admonition warning"><p class="admonition-title">Přesměrováním přepíšeš existující soubor</p>
+<p>A ještě jednou v červeném rámečku: pokud soubor za <code>&gt;</code> existuje, smaže se.
+Na kurzu to nevadí – virtuální počítač máš na hraní – ale „v reálném světě“
+si dělej zálohy.</p>
+</div><h2>Hadí odbočka</h2>
+<p>Program <code>python</code> má přepínač -c, který umožňuje zadat pythonní příkaz přímo
+jako argument příkazové řádky.
+I výstup této operace můžeš přesměrovat do souboru a dál s ním pracovat.</p>
+<p>Kód v Pythonu často obsahuje speciální znaky (mezery, závorky, atd.),
+takže je ho často potřeba uzavřít do jednoduchých uvozovek:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python -c <span class="s1">'print(2 + 2)'</span> &gt; ctyri.txt
+<span class="gp">$ </span>cat ctyri.txt
+<span class="go">4</span>
+</pre></div><h2>Řazení</h2>
+<p>Seznam se s příkazem <code>sort</code> (angl. <em>seřaď</em>), který seřadí řádky daného souboru.</p>
+<p>Soubor <code>delky.txt</code> teď vypadá takhle:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat delky.txt
+<span class="go">  20 cubane.pdb</span>
+<span class="go">  12 ethane.pdb</span>
+<span class="go">   9 methane.pdb</span>
+<span class="go">  30 octane.pdb</span>
+<span class="go">  21 pentane.pdb</span>
+<span class="go">  15 propane.pdb</span>
+<span class="go"> 107 celkem</span>
+</pre></div><p>A příkaz <code>sort</code> ho seřadí následujícím způsobem:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sort delky.txt
+<span class="go"> 107 celkem</span>
+<span class="go">  12 ethane.pdb</span>
+<span class="go">  15 propane.pdb</span>
+<span class="go">  20 cubane.pdb</span>
+<span class="go">  21 pentane.pdb</span>
+<span class="go">  30 octane.pdb</span>
+<span class="go">   9 methane.pdb</span>
+</pre></div><p>To není úplně ono – <code>sort</code> totiž řadí podle abecedy, nikoli číselně;
+<code>102</code> je tedy před <code>12</code> podobně jako <code>BAC</code> je v abecedě před <code>BC</code>.</p>
+<p>Ale jak už to bývá, tohle chování se dá změnit pomocí přepínače – v tomto
+případě přepínače <code>-n</code> (<code>--numeric-sort</code>, číselné řazení):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sort -n delky.txt
+<span class="go">   9 methane.pdb</span>
+<span class="go">  12 ethane.pdb</span>
+<span class="go">  15 propane.pdb</span>
+<span class="go">  20 cubane.pdb</span>
+<span class="go">  21 pentane.pdb</span>
+<span class="go">  30 octane.pdb</span>
+<span class="go"> 107 celkem</span>
+</pre></div><div class="admonition note"><p>Bez přepínače <code>-n</code> řadí <code>sort</code> podle zvoleného jazyka, např. česky nebo
+anglicky.
+Jazyk se dá zvolit pomocí nastavení <code>LC_ALL</code> před příkazem:</p>
+<div class="highlight"><pre><span></span><span class="nv">LC_ALL</span><span class="o">=</span>czech sort soubor.txt    <span class="c1"># řadí česky</span>
+<span class="nv">LC_ALL</span><span class="o">=</span>en_US sort soubor.txt    <span class="c1"># řadí anglicky (americká angličtina)</span>
+<span class="nv">LC_ALL</span><span class="o">=</span>C sort soubor.txt        <span class="c1"># řadí byty (tak jako Python – a jazyk C)</span>
+</pre></div><p>Pozor na velikost písmen a na to, že před a za rovnítkem není mezera.
+Všechny nainstalované jazyky ti vypíše příkaz <code>locale -a</code>.</p>
+<p>Ale teď zpátky k příběhu – soubor <code>delky.txt</code> jsme seřadili podle čísel
+na začátku.</p>
+</div><h2>Nejmenší molekula</h2>
+<p>Která molekula tedy obsahuje nejmíň atomů?</p>
+<p>Když umíš jména souborů seřazené podle počtu řádků vypsat,
+stejně tak je můžeš uložit do souboru.
+A ten soubor potom můžeš dál zpracovávat.
+Nejkratší soubor bude v prvním řádku;
+prvních <var>n</var> řádků souboru vypíšeš pomocí <code>head</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sort -n delky.txt &gt; delky-serazene.txt
+<span class="gp">$ </span>head -n1 delky-serazene.txt
+<span class="go">   9 methane.pdb</span>
+</pre></div><p>Celý postup zjištění nejkratší molekuly tedy je:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>wc -l *.pdb &gt; delky.txt
+<span class="gp">$ </span>sort -n delky.txt &gt; delky-serazene.txt
+<span class="gp">$ </span>head -n1 delky-serazene.txt
+<span class="go">   9 methane.pdb</span>
+</pre></div><p>Neboli česky:</p>
+<ul>
+<li>Počty řádků a jména souborů zapiš do <code>delky.txt</code>.</li>
+<li>Soubor <code>delky.txt</code> seřaď (číselně) a zapiš do souboru <code>delky-serazene.txt</code>.</li>
+<li>Ze souboru <code>delky-serazene.txt</code> vypiš první řádek.</li>
+</ul>
+<p>Tahle sekvence příkazů bude fungovat i kdyby souborů s molekulami bylo 6000.
+Můžeš si je zapsat do souboru a použít příště, až zase budeš hledat nejmenší
+molekulu!</p>
+<p>Jde to zjednodušit ještě dál, ale než si ukážeme jak na to,
+podívejme se na přesměrování <em>vstupu</em>.</p>
+<h2>Přesměrování vstupu</h2>
+<p>Tak jako jde přesměrovat <em>výstup</em> příkazu pomocí <code>&gt;</code> – tedy to,
+co by se vypsalo na obrazovku, zapsat do souboru,
+jde přesměrovat i <em>vstup</em> – tedy to, co bys napsala na klávesnici,
+načíst ze souboru.</p>
+<p>Už víš, že když příkaz jako <code>cat</code> pustíš bez jména souboru,
+načítají informace „z klávesnice“:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat
+<span class="go">haló haló,</span>
+<span class="go">haló haló,</span>
+<span class="go">co se stalo?</span>
+<span class="go">co se stalo?</span>
+<span class="go">^C</span>
+</pre></div><p>Podobně jako u standatního výstupu existuje <em>standardní vstup</em>
+(angl. <em>standard input</em>, <em>stdin</em>) – místo, odkud program získává textové
+informace.
+Normálně to je terminál, tedy „klávesnice“:</p>
+<p><span class="figure"><a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/cat.svg"><img src="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/cat.svg" alt="Diagram příkazu `cat`"></a></span></p>
+<p>Standartní vstup můžeš přesměrovat tak, aby místo toho, co napíšeš klávesnici,
+příkaz zpracoval daný soubor.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat &lt; delky.txt
+<span class="go">  20 cubane.pdb</span>
+<span class="go">  12 ethane.pdb</span>
+<span class="go">   9 methane.pdb</span>
+<span class="go">  30 octane.pdb</span>
+<span class="go">  21 pentane.pdb</span>
+<span class="go">  15 propane.pdb</span>
+<span class="go"> 107 celkem</span>
+</pre></div><p><span class="figure"><a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/cat-from-file.svg"><img src="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/cat-from-file.svg" alt="Diagram příkazu `cat`"></a></span></p>
+<p>Spousta programů standardní vstup nepoužívá:</p>
+<ul>
+<li><code>ls</code>, <code>cd</code> nebo <code>mv</code> dostávají všechny potřebné informace jako argumenty,
+nepotřebují vstup z klávesnice;</li>
+<li><p>Příkazy s argumentem jako <code>cat soubor.txt</code> nebo <code>wc soubor.txt</code> čtou
+daný soubor. Klávesnici ignorují, i když jim je k dispozici:</p>
+<p><span class="figure"><a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/cat-file-arg.svg"><img src="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/cat-file-arg.svg" alt="Diagram příkazu `cat soubor.txt`"></a></span></p>
+</li>
+</ul>
+<p>Spousta příkazů ale standardní vstup používá když je zavoláš <em>bez</em> argumentu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sort -n &lt; delky.txt
+<span class="go">   9 methane.pdb</span>
+<span class="go">  12 ethane.pdb</span>
+<span class="go">  15 propane.pdb</span>
+<span class="go">  20 cubane.pdb</span>
+<span class="go">  21 pentane.pdb</span>
+<span class="go">  30 octane.pdb</span>
+<span class="go"> 107 celkem</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>wc -l &lt; delky.txt
+<span class="go">7</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>head -n1 &lt; delky-serazene.txt
+<span class="go">   9 methane.pdb</span>
+</pre></div><p><code>wc</code> bez argumentu se chová tak, jako kdybys
+obsah <code>delky.txt</code> napsala na klávesnici.</p>
+<div class="admonition note"><p>Všimni si rozdílu mezi příkazy:</p>
+<div class="highlight"><pre><span></span>$ wc -l delky.txt
+$ wc -l &lt; delky.txt
+</pre></div><p>Při použití přesměrování příkaz <code>wc</code> nevypíše název souboru.
+Používá standardní vstup; “neví” že to co čte pochází ze souboru na disku
+nebo z klávesnice.</p>
+<p>Soubor mu v tomto případě otevřel Bash.
+K otevření je jméno souboru potřeba; k dalšímu čtení ale už ne.</p>
+</div><p>K čemu je to dobré?
+Zatím, pravda, k ničemu.
+Příkazy <code>cat</code>, <code>wc</code> i <code>sort</code> umí soubory z disku otevřít samy;
+nepotřebují na to od Bashe pomoc.</p>
+<p>Vstup a výstup ale můžeš přesměrovat i na jiné věci než jen soubory na disku.</p>
+<h2>Datové potrubí</h2>
+<p>Najdi na klávesnisi znak <code>|</code>, kterému budu říkat <em>svislítko</em>.
+Tenhle znak nejspíš nemá oficiální české jméno.
+Formálně se mu dá říkat <em>svislá čára</em>, často ale uslyšíš pojmenování
+<em>roura</em> nebo <em>pajpa</em> (z angl. <em>pipe</em>, roura), která vychází z funkce tohoto
+znaku v Bashi. Tak moc je ta funkce důležitá.</p>
+<p>Když svislítkem oddělíš dva příkazy, standardní výstup prvního z nich
+se přesměruje na standardní vstup toho druhého.
+Dva příkazy tak spojíš dohromady: první připraví mezivýsledek se kterým ten
+druhý pak pracuje dál.</p>
+<p>Zkus si to na příkladu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sort -n delky.txt <span class="p">|</span> head -n <span class="m">1</span>
+<span class="go">   9 methane.pdb</span>
+</pre></div><p><span class="figure"><a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/sort-head-pipeline.svg"><img src="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/sort-head-pipeline.svg" alt="Diagram příkazů `sort -n delky.txt | head -n 1`"></a></span></p>
+<p>Toto je ekvivalent dvou příkazů, které jsi použila dříve – jen s tím
+rozdílem, že se pro mezivýsledek nepoužívá soubor, ale text se přesměruje
+rovnou z jednoho příkazu do druhého.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sort -n delky.txt &gt; delky-serazene.txt
+<span class="gp">$ </span>head -n1 &lt; delky-serazene.txt
+<span class="go">   9 methane.pdb</span>
+</pre></div><p><span class="figure"><a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/sort-head-nopipe.svg"><img src="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/sort-head-nopipe.svg" alt="Diagram dvojice příkazů výše"></a></span></p>
+<p>Takovému přesměrování se říká <em>roura</em> (angl. <em>pipe</em>): můžeš si představit,
+že text “teče” z jednoho příkazu do druhého.</p>
+<p>Z rour můžeš sestavovat celá potrubí,
+kterým budou data proudit mezi jednotlivými příkazy:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>wc -l *.pdb <span class="p">|</span> sort -n <span class="p">|</span> head -n <span class="m">1</span>
+</pre></div><p><span class="figure"><a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/pipeline.svg"><img src="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/pipeline.svg" alt="Diagram příkazů `wc -l *.pdb | sort -n | head -n 1`"></a></span></p>
+<p>Toto spojování stojí za úspěchem Unixových shellů.
+Místo obrovských programů (např. tabulkový procesor, textový editor,
+webový prohlížeč) které mají nepřeberné množství různých funkcí se Unixoví
+programátoři soustředí na jednoduché nástroje (např. <code>cat</code>, <code>wc</code>, <code>head</code>,
+které bys uměla napsat v Pythonu i ty).
+Každý z těchto jednoduchých nástrojů dělá jen jednu věc, ale dělá ji dobře.
+A pomocí rour jde nástroje spojovat k řešení mnohem komplexnějších situací,
+než na jaké můžou myslet autoři složitých programů.</p>
+<p>Každý způsob má samozřejmě svoje místo.
+Nic tě nenutí používat <em>jen</em> příkazovou řádku, která je mnohem složitější
+na ovládnutí než „klikátko“ s předpřipravenou nabídkou akcí.
+Ale jakmile se Bash a malé nástroje naučíš efektivně používat,
+sama poznáš jak jsou užitečné.
+Ne všechno co potřebuješ je totiž v “klikátcích” předpřipravené.</p>
+<p>Modelu pospojovaných nástrojů se také říká <em>roury a filtry</em>
+(angl. <em>pipes and filters</em>).
+Roury už znáš; filtry jsou nástroje jako <code>wc</code> a <code>sort</code>, které nějak
+transformují standardní vstup na standardní výstup.
+Většina Unixových nástrojů funguje právě takhle: pokud jim nepředáš
+argument, čtou ze std. vstupu a výsledky píší na std. výstup.</p>
+<h2>Stejný vstup a výstup</h2>
+<p>Není dobrý nápad nastavit výstup na soubor, který v “potrubí” používáš jinde.
+Například:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sort -n delky.txt &gt; delky.txt
+</pre></div><p>Když totiž Bash “potrubí” připravuje, často otevře soubory ještě předtím
+než spustí příkaz.
+A protože při přesměrování <em>do</em> souboru se existující soubor vyprázdní,
+bude <code>sort</code> v příkazu výše číst z už prázdného souboru.</p>
+<h2>Řádky a podvodníci</h2>
+<p>Protože výchozí std. vstup je klávesnice a výchozí std. výstup je obrazovka,
+rourami většinou „teče“ text, který je více či méně srozumitelný pro lidi.
+Často v něm každá položka bývá na zvláštním řádku.
+Právě na taková data je připravena celá řada nástrojů: od filtrů jako <code>sort</code>,
+který řadí řádky, po Pythoní <code>for radek in soubor:</code> po <code>git diff</code> a jeho
+ekvivalent na webu GitHub.</p>
+<p>Co ale takový <code>ls</code>, který skládá jména souborů za sebe – na jeden řádek
+jich dá několik?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -F ..
+<span class="go">creatures/  diplomka_archiv/  north-pacific-gyre/  plan.txt   writing/</span>
+<span class="go">data/       molecules/        pizza.cfg            solar.pdf</span>
+</pre></div><p>Příkaz <code>ls</code> trochu podvádí: zjistí si jestli má na std. výstupu terminál,
+a pokud ano, přizpůsobí svůj výpis „lidem“.</p>
+<p><span class="figure"><a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/ls-cheats.svg"><img src="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/static/ls-cheats.svg" alt="Diagram příkazu `ls`, který trochu podvádí"></a></span></p>
+<p>Když ale <em>nemá</em> na std. výstupu terminál, dává každé jméno souboru na
+zvláštní řádek, aby se výsledek dal dobře zpracovat dalšími filtry:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -F .. <span class="p">|</span> cat
+<span class="go">creatures/</span>
+<span class="go">data/</span>
+<span class="go">diplomka_archiv/</span>
+<span class="go">molecules/</span>
+<span class="go">north-pacific-gyre/</span>
+<span class="go">pizza.cfg</span>
+<span class="go">plan.txt</span>
+<span class="go">solar.pdf</span>
+<span class="go">writing/</span>
+</pre></div><p>Když si to zkusíš, zjistíš že z výstupu zmizely i barvy.
+I to je vlastnost, která se špatně zpracovává filtrem, a tak ji <code>ls</code> přidává
+jen pokud vypisuje do terminálu.</p>
+<div class="admonition note"><p>Budeš-li někdy psát <em>vlastní</em> program který něco vypisuje barevně, nezapomeň
+dát uživatelům možnost barvy vypnout (viz <code>--color</code> v <code>man ls</code>).
+A ideálně nastav výchozí chování podle toho, jestli je std. výstup terminálem.</p>
+</div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/output-files/">← <span class="d-none d-sm-inline">Vypisování souborů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-2/">↑ <span class="d-none d-sm-inline">Lekce: Bash II</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/echo/"><span class="d-none d-sm-inline">Echo</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/carpentry-unix/pipefilter/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Petr Viktorin a Karolina Surma, 2020</p>
+    
+        <p>založeno na kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, 2016–2018 Software Carpentry Foundation, 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

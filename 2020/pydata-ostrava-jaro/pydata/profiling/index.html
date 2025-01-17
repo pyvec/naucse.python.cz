@@ -1,0 +1,257 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: EDA - Pandas profiling
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-ostrava-jaro/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-ostrava-jaro/sessions/eda5/">EDA — Reprezentativnost dat, CLT a automatický pomocník</a>
+
+> <a href="/2020/pydata-ostrava-jaro/pydata/profiling/">EDA - Pandas profiling</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>EDA - Pandas profiling</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Asi nikoho nepřekvapí, že existuje spousta automatických nástrojů, které dokáží datovým analytikům usnadnit práci. O co snazší je dostat s jejich pomocí z dat spoustu čísel, grafů a informací, o to větší pozornost se musí věnovat jejich správné interpretaci. Proto si o jednom z nich budeme povídat až na samotném konci explorační datové analýzy, když už umíme jednotlivé charakteristiky získat i ručně a správně je interpretovat, díky čemuž se v bohatých automatických reportech neztratíme.</p>
+<p>Jedním z nástrojů pro automatické reporty je <a href="https://github.com/pandas-profiling/pandas-profiling">Pandas Profiling</a>.</p>
+<p>Pandas Profiling si stejně jako ostatní knihovny musíme nejdříve nainstalovat. V jedné z prvních lekcí jsme zjistili, že příkazy příkazové řádky lze spouštět i přímo z notebooku, tak toho můžeme zkusit využít.</p>
+<blockquote><p>Příprava prostředí a instalace knihoven standardně nebývá součástí notebooků a provádí se ještě před jeho spuštěním, takže to ber jako netradiční využití a spíše jako ukázku možností.</p>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="err">!</span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">pandas</span><span class="o">-</span><span class="n">profiling</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<blockquote><p>Dynamický výstup v tomto případě není příliš přehledný a kromě seznamu všech instalovaných závislostí neobsahuje nic užitečného, takže jej pro tentokrát z notebooku vynecháme.</p>
+</blockquote>
+<p>Data k analýze jsou připravena v souboru <a href="/2020/pydata-ostrava-jaro/pydata/profiling/static/spotify_top10.csv">spotify_top10.csv</a> a obsahují informace o nejpopulárnějších skladbách ve službě Spotify v letech 2010-2019. Data byla publikována na <a href="https://www.kaggle.com/leonardopena/top-spotify-songs-from-20102019-by-year">kaggle.com</a> a jejich původní zdroj je <a href="http://organizeyourmusic.playlistmachinery.com/">tato část služby Spotify</a>.</p>
+<p>Generování reportu lze provést buď samostatně mimo notebook a v tom případě bude výsledkem samostatný HTML soubor s reportem, nebo v notebooku, kdy se výsledky zobrazí přímo uvnitř notebooku. My použijeme první variantu, protože je rychlejší a přehlednější.</p>
+<blockquote><p>Stejně jako v předchozím případě lze tento příkaz spustit přímo v příkazové řádce a notebook k němu není vůbec potřeba.</p>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="err">!</span><span class="n">pandas_profiling</span> <span class="n">static</span><span class="o">/</span><span class="n">spotify_top10</span><span class="o">.</span><span class="n">csv</span> <span class="n">static</span><span class="o">/</span><span class="n">spotify_report</span><span class="o">.</span><span class="n">html</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud máš na počítači procesor s více jádry, je možné parametrem <code>--pool_size X</code> nastavit, aby <code>pandas_profiling</code> zpracovával data paralelně na <em>X</em> jádrech a tím lépe využil výpočetní výkon tvého počítače a zkrátil dobu zpracování.</p>
+<p>A teď už k samotnému reportu, který je dostupný na <a href="/2020/pydata-ostrava-jaro/pydata/profiling/static/spotify_report.html">této stránce</a>.</p>
+<p>Úplně nahoře je navigační pruh, který nám usnadní navigaci v dlouhém reportu a zrychlí přepínání mezi jednotlivými částmi, na které se teď podíváme postupně.</p>
+<h2>Část první - Obecné informace (Overview)</h2>
+<p>První část obsahuje v levém sloupci obecné informace o celém datasetu a v pravém sloupci pak informace o jednotlivých proměnných a identifikovaných typech. Zajímavé je si všimnout, že jedna proměnná byla z analýzy automaticky vyřazena. Proč se tak stalo, se dozvíme o kousek níže v sekci s informacemi a varováními. Ta nejčastěji obsahuje upozornění na příliš mnoho nulových hodnot nebo naopak příliš mnoho jedinečných hodnot u kategoriálních proměnných. Stejně jako v tomto případě je zde i důvod vyřazení sloupce <em>year</em> pro příliš vysokou korelaci s nepojmenovaným sloupcem. Tady je vidět první chyba. Zatímco my bychom raději vyřadili první nepojmenovaný sloupec obsahující index, automatika se rozhodla jinak.</p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/profiling/static/overview.png" alt="overview"></p>
+<h2>Část druhá - Proměnné (Variables)</h2>
+<p>Druhá část obsahuje informace pro jednotlivé sloupce. Množství a podoba poskytnutých informací záleží na typu proměnné. U každé proměnné je možné si rozbalit další podrobnosti odkazem v pravém dolním rohu (Toggle details) a dostat tak podrobnější informace. U numerických proměnných jsou to podrobnější popisné statistiky, histogramy a nejběžnější a extrémní hodnoty. U kategoriálních proměnných jsou to podrobnější informace o nejčastějších hodnotách a dalších vlastnostech popisující souhrnně vyskytující se hodnoty (Composition).</p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/profiling/static/variables.png" alt="variables"></p>
+<h2>Část třetí - Korelace (Correlations)</h2>
+<p>Třetí část graficky reprezentuje několik různých korelačních koeficientů mezi páry proměnných.</p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/profiling/static/correlations.png" alt="correlations"></p>
+<h2>Část čtvrtá - Chybějící hodnoty (Missing values)</h2>
+<p>Ve čtvrté části najdeme grafické i numerické reprezentace chybějících hodnot. Zobrazení v matici nám může pomoci s detekcí jejich výskytů ve shlucích.</p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/profiling/static/missing.png" alt="missing"></p>
+<h2>Část pátá - Vzorek (Sample)</h2>
+<p>Poslední část reportu obsahuje prvních deset a posledních pět řádku datasetu k nahlédnutí.</p>
+<h2>Jak využít potenciál automatických reportů</h2>
+<p>Každý analytik si samozřejmě časem vytvoří vlastní návyky a pracovní postupy, aby využil možností automatických reportů naplno, ale zároveň tak, aby se dokázal soustředit na to důležité a nenechal se unést zdánlivě překvapivými informacemi bez hlubšího manuálního zkoumání.</p>
+<p>Častou praxí bývá vytvoření reportu na samotném začátku analýzy. Protože námi zkoušený nástroj, jak už jeho název napovídá, používá na pozadí Pandas, dokážeme z reportu poznat, jak dobrá bude automatická detekce typů jednotlivých proměnných. Pokud se detekce na první pokus nepodaří, přichází na řadu úprava vstupních dat a nové generování reportu. Pak už je možné zkoumat vlastnosti jednotlivých proměnných a vztahů mezi nimi a provádět navazující analýzy. Osobně mám nejraději otevřený report hned vedle notebooku, kde data analyzuji, protože se kdykoli můžu podívat zpět na grafy a popisné statistiky a nemusím je získávat znovu manuálně. Ne vše je ale v reportu obsaženo, a to, co tam je, nemusí být bez chyby.</p>
+<h2>Příklady</h2>
+<p>Pokud je tato ukázka málo, obsahují <a href="https://github.com/pandas-profiling/pandas-profiling#examples">stránky projektu</a> řadu příkladů reportů z různých datasetů.</p>
+<h2>Čas na hraní</h2>
+<p>Pokud se ti Pandas profiling líbí, můžeš jej zkusit použít na vlastní data z minulých lekcí a zkoumat, zda tento automatický nástroj přišel na něco, co ty ne, resp. zda by ti nějaký jeho objev dokázal ušetřit manuální práci.</p>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-ostrava-jaro/pydata/clt/">← <span class="d-none d-sm-inline">EDA - Reprezentativnost dat a Centrální limitní věta</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-ostrava-jaro/sessions/eda5/">↑ <span class="d-none d-sm-inline">Lekce: EDA — Reprezentativnost dat, CLT a automatický pomocník</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-ostrava-jaro/sessions/eda5/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2020-pydata-ostrava-jaro/lessons/pydata/profiling/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Lumír Balhar, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,351 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Textový editor Vim
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2024/brno-linuxadmin-jaro/">Linuxová administrace</a>
+
+> <a href="/2024/brno-linuxadmin-jaro/sessions/shell-1/">Bash I</a>
+
+> <a href="/2024/brno-linuxadmin-jaro/carpentry-unix/vim/">Textový editor Vim</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Textový editor vim</h1>
+<p>Pokud bychom potřebovali nějaký soubor upravit, popř. vytvořit nový soubor s
+nějakým obsahem, budeme potřebovat textový editor.</p>
+<p>V profesionálním světe linuxové příkazové řádky se pro tyto případy nejčastěji
+používá editor <code>vim</code>. Důležité je vědět, že editor <a href="https://www.vim.org/">Vim</a>
+se svým ovládáním významně liší od běžných textových editorů, se kterými jste
+se doposud nejspíše setkali při psaní a editaci nějakého kódu (např. <a href="https://code.visualstudio.com/">Visual
+Studio Code</a> nebo <a href="https://www.sublimetext.com/">Sublime
+Text</a>)</p>
+<p>Editor Vim je profesionální nástroj a je nutné věnovat určitý čas naučení se s
+ním pracovat. Odměnou nám bude mnohem efektivnější a rychlejší editace
+textových souborů (požadované operace lze vykonat mnohem rychleji za použití
+menšího počtu úhozů). Výhody vznikají pouze při psaní 10 prsty bez sledování
+klávesnice.</p>
+<p>Běžné textové editory obsahují jediný mód použití, a to režim vkládání textu
+(zmáčknutá posloupnost písmen daný text napíše do okna editoru). O pohyb
+kurzoru se v běžných editorech starají kurzorové šipky, navigační blok
+<kbd>Home</kbd>, <kbd>End</kbd>, <kbd>PageUP</kbd>, <kbd>PageDown</kbd>, popř.
+ještě s klávesou <kbd>Ctrl</kbd>. Mnoho činností lze vykonat pomocí myši.</p>
+<p>Editor Vim vznikl jako následovník staršího editoru Vi, který se používal na
+UNIXových systémech vybavených monitorem. Klávesnice u terminálů tehdy běžně
+neměly kurzorové šipky ani navigační klávesy. Proto vznikl editor, který má
+oddělené režimy vkládání textu od režimu pohybu kurzoru a manipulace s textem.</p>
+<p>U vimu rozlišujeme 3 hlavní režimy práce:</p>
+<ul>
+<li>Editační mód (Normal mode)<ul>
+<li>Slouží k pohybu kurzoru, přesouvání částí textu</li>
+<li>V tomto režimu není možné psát text</li>
+<li>Výchozí mód při spuštění Vimu</li>
+<li>Vstup do editačního módu: klávesa <kbd>Esc</kbd></li>
+</ul>
+</li>
+<li>INSERT mód<ul>
+<li>Slouží ke vkládání znaků do souboru</li>
+<li>Vstup do INSERT módu: klávesa <kbd>i</kbd></li>
+<li>Ukončení INSERT módu: klávesa <kbd>Esc</kbd></li>
+</ul>
+</li>
+<li>Příkazový mód<ul>
+<li>Vim zobrazí vlastní příkazovou řádku, kam je možné napsat složitější
+příkaz</li>
+<li>Vstup do příkazového módu: klávesa <kbd>:</kbd></li>
+<li>Ukončení příkazového módu: klávesa <kbd>Esc</kbd></li>
+</ul>
+</li>
+</ul>
+<h2>Jak to spustím a jak to vypnu</h2>
+<p>Editor Vim spustíme příkazem <code>vim</code>. Zobrazí se nám "Welcome screen", kde si
+můžeme povšimnout dobré rady, jak editor vlastně ukončit. Editor zavřeme
+vstupem do příkazového módu pomocí dvojtečky <kbd>:</kbd> následované příkazem
+<kbd>q</kbd> a <kbd>Enter</kbd>.</p>
+<p>Pokud editor není nainstalovaný, spusť následující příkaz k jeho instalaci:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf install vim -y
+</pre></div><p>Následně budeš vyzvána k zadání hesla, napiš jej do příkazové řádky a stiskni
+<kbd>Enter</kbd>. Neboj se, že se heslo nezobrazuje.</p>
+<p>Vyzkoušej si několikrát otevřít a bezpečně zavřít prázdný editor Vim.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>vim
+</pre></div><div class="highlight"><pre><span></span><span class="go">  1                                                        </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                    VIM - Vi IMproved                     </span>
+<span class="go">~                                                          </span>
+<span class="go">~                     version 8.2.3512                     </span>
+<span class="go">~                 by Bram Moolenaar et al.                 </span>
+<span class="go">~            Modified by &lt;bugzilla@redhat.com&gt;             </span>
+<span class="go">~       Vim is open source and freely distributable        </span>
+<span class="go">~                                                          </span>
+<span class="go">~              Help poor children in Uganda!               </span>
+<span class="go">~      type  :help iccf&lt;Enter&gt;       for information       </span>
+<span class="go">~                                                          </span>
+<span class="go">~      type  :q&lt;Enter&gt;               to exit               </span>
+<span class="go">~      type  :help&lt;Enter&gt;  or  &lt;F1&gt;  for on-line help      </span>
+<span class="go">~      type  :help version8&lt;Enter&gt;   for version info      </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">utf-8 unix  [No Name]                              0/1   1</span>
+</pre></div><p>Pokud chceme v editoru něco napsat, zmáčkneme klávesu <kbd>i</kbd>, která nás
+přepne do INSERT módu. V tu chvíli klávesy dělají to, co od nich očekáváme -
+text se zobrazuje v okně editoru. Znak tilda <code>~</code> zde znamená prázdný řádek.</p>
+<div class="highlight"><pre><span></span><span class="go">  1 Ahoj vime!                                             </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">utf-8 unix  [No Name] +                            1/1  11 </span>
+<span class="go">-- INSERT --</span>
+</pre></div><p>Do editoru napiš pár řádek textu:
+<span class="figure"><a href="/2024/brno-linuxadmin-jaro/carpentry-unix/vim/static/vim.png"><img src="/2024/brno-linuxadmin-jaro/carpentry-unix/vim/static/vim.png" alt="Editor vim s otevřeným souborem"></a></span></p>
+<p>Pokud jsme něco napsali, ale text nechceme ukládat do souboru, musíme Vim
+ukončit příkazem <code>:q!</code>, abychom dali najevo, že opravdu nechceme soubor
+ukládat.</p>
+<div class="highlight"><pre><span></span><span class="go">  1 Ahoj vime!                                             </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">utf-8 unix  [No Name] +                            1/1  10 </span>
+<span class="go">:q!</span>
+</pre></div><p>V opačném případě musíme soubor uložit příkazem <code>:w &lt;název souboru&gt;</code>.</p>
+<div class="highlight"><pre><span></span><span class="go">  1 Ahoj vime!                                             </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">~                                                          </span>
+<span class="go">utf-8 unix  [No Name] +                            1/1  10 </span>
+<span class="go">:w pozdrav.txt</span>
+</pre></div><p>Po ukončení editoru pomocí <code>:q</code> si můžeme obsah souboru vypsat na terminál</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat pozdrav.txt
+<span class="go">Ahoj vime!</span>
+</pre></div><p>Námi vytvořený soubor si můžeme opět otevřít ve Vimu tak, že název souboru
+zadáme jako parametr. Stejně můžeme otevřít ve Vimu i neexistující soubor a
+editor nám ho při uložení souboru vytvoří.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>vim pozdrav.txt
+</pre></div><p>Příkazy, které už umíme jako <code>:w</code> a <code>:q</code> je možné i zkombinovat do jednoho
+<code>:wq</code>.</p>
+<h2>Další funkce Vimu</h2>
+<p>Vyhledávání zapneme klávesou lomítko <kbd>/</kbd> v editačním módu a napíšeme
+text, který chceme v souboru vyhledat. Na další výskyt vyhledávaného řetězce se
+přesuneme pomocí <kbd>n</kbd> a na předchozí pomocí <kbd>N</kbd>. Toto funguje
+stejně jako v programech <code>less</code> a <code>man</code>.</p>
+<p>Vim je profesionální editor pro editaci programů a konfiguračních souborů. Je
+velmi ergonomický, protože při jeho používání není nutné, aby prsty opustily
+prostřední řadu klávesnice. Není nutné používat kurzorové šipky, navigační blok
+nebo myš. Pohyb kurzoru a editace existujícího textu se provádí v editačním
+módu (Normal mode).</p>
+<p>Pokud ti editor Vim přijde děsivý, je důležité vědět, že po tobě nikdo
+nevyžaduje, abys ho používala výlučně. Pro dobrou znalost práce v linuxové
+příkazové řádce je však velmi vhodné znát alespoň minimum editoru Vim. Je
+důležité znát alespoň:</p>
+<ul>
+<li>Otevřít soubor ve Vimu: <code>$ vim &lt;název souboru&gt;</code></li>
+<li>Vyhledat text v souboru: <kbd>/</kbd></li>
+<li>Upravit slovo nebo řádek v souboru: INSERT mód zapneme klávesou <kbd>i</kbd></li>
+<li>Ukončit Vim: ukončíme INSERT mód pomocí <kbd>Esc</kbd> a uložíme a ukončíme
+práci pomocí <code>:wq</code></li>
+</ul>
+<p>Pro zájemce doporučuji vestavěný tutoriál</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>vimtutor
+</pre></div><p>Pokud tě editor Vim zaujme a naučíš se s ním pracovat, odměnou ti bude
+mnohem vyšší rychlost úprav textových souborů, zdravější ergonomie práce na
+klávesnici a doživotní závislost na vimovském způsobu ovládání textového
+editoru 😄.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2024/brno-linuxadmin-jaro/carpentry-unix/create/">← <span class="d-none d-sm-inline">Práce se soubory a adresáři</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2024/brno-linuxadmin-jaro/sessions/shell-1/">↑ <span class="d-none d-sm-inline">Lekce: Bash I</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2024/brno-linuxadmin-jaro/hw/bash-1/"><span class="d-none d-sm-inline">Úkoly - Bash I</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/ejegrova/linuxadmin/blob/main/lessons/carpentry-unix/vim/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsal Martin Zelený, 2024</p>
+    
+        <p>založeno na kurzu <a href="https://github.com/ZelenyMartin/uvod-do-linuxu/tree/main/prikazova-radka/absolutni-minimum-editoru-vim"><em>Úvod do Linuxu</em></a>, 2022 Martin Zelený</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
