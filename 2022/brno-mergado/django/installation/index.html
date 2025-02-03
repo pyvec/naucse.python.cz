@@ -1,0 +1,241 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz Pyladies (Mergado): Django instalace
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2022/brno-mergado/">Začátečnický kurz Pyladies (Mergado)</a>
+
+> <a href="/2022/brno-mergado/sessions/databases/">Django, databáze, Flask</a>
+
+> <a href="/2022/brno-mergado/django/installation/">Django instalace</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1 id="instalacia_django">Inštalácia: Django
+<a href="#header-instalacia_django" class="header-link">#</a>
+</h1>
+<p>Vo vašom adresári Pyladies, tam kde máte vytvorené zložky k jednotlivým lekciám si vytvorte zložku pre Django aplikáciu a prejdite do nej.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir django_project
+<span class="gp">$ </span><span class="nb">cd</span> django_project/
+</pre></div><p>Zapnite si virtuálne prostredie (venv).</p>
+<p>V zložke <code>django_project/</code> si vytvorte súbor <code>requirements.txt</code> do ktorého zapíšte:</p>
+<div class="highlight"><pre><span></span><span class="go">Django~=4.0.8</span>
+</pre></div><p>Nainštalujte Django pomocou zadania príkazu do terminálu:</p>
+<div class="highlight"><pre><span></span><span class="go">pip install -r requirements.txt</span>
+</pre></div><p>Na konci výpisu v terminále by ste mali vidieť:</p>
+<div class="highlight"><pre><span></span><span class="go">Successfully installed Django-4.0.8</span>
+</pre></div><h1 id="django_projekt">Django projekt
+<a href="#header-django_projekt" class="header-link">#</a>
+</h1>
+<p>Prvým krokom pri tvorbe projektu v Django je vytvorenie jeho základnej kostry zložiek a súborov pomocou Django skriptov.
+Tieto zložky a súbory budeme neskôr používať, ich umiestnenie a pomenovanie sú pre Django dôležité, preto ich nepresúvajte
+ani nepremenovávajte. Nezabudnite, že je potreba byť v zložke <code>django_project/</code>a mať zapnutý venv (platí aj pre ďalšie príkazy
+do terminálu v rámci tohoto nastavenia).</p>
+<p>Bodka (tečka) na konci príkazu je dôležitá.</p>
+<p>Windows</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>django-admin.exe startproject pyladies_project .
+</pre></div><p>macOS / Linux</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>django-admin startproject pyladies_project .
+</pre></div><p><code>django-admin.py</code> je skript ktorý vytvorí súbory a zložky. Štruktúra by mala vyzerať takto:</p>
+<div class="highlight"><pre><code>django_project
+├── manage.py
+├── pyladies_project
+│   ├── asgi.py
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+└── requirements.txt</code></pre></div><p>Súbor <code>manage.py</code> je skript ktorý slúži k správe webovej aplikácie.
+Pomocou neho si budeš (okrem iného) môcť spusiť web server na svojom počítači bez nutnosti inštalovať čokoľvek iné.</p>
+<p>Súbor <code>settings.py</code> obsahuje konfiguráciu tvojej aplikácie.</p>
+<p>Súbor <code>urls.py</code> obsahuje zoznam schémat na základe ktorých sa párujú Python triedy (tzv. views) s URL cestami.</p>
+<h1 id="uprava_nastavenia_projektu">Úprava nastavenia projektu
+<a href="#header-uprava_nastavenia_projektu" class="header-link">#</a>
+</h1>
+<p>Do súboru <code>settings.py</code> je potrebné pridať nakoniec:</p>
+<div class="highlight"><pre><code>STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'</code></pre></div><p>Je možné zmeniť si jazyk vašej aplikácie pomocou nastavenia v <code>LANGUAGE_CODE</code>,
+ideálne si ale ponechajte angličtinu (pozn. pre češtinu by bola hodnota <code>cs-CZ</code>).</p>
+<h1 id="nastavenie_databaze">Nastavenie databáze
+<a href="#header-nastavenie_databaze" class="header-link">#</a>
+</h1>
+<p>Je niekoľko databázových software-ov pre uloženie dát o vašej aplikácii, my budeme používať
+defaultné <code>sqlite3</code>. Nastavenie je už súčasťou <code>settings.py</code>.</p>
+<p>Pre vytvorenie databáze pre vašu aplikáciu je potrebné spustiť následovné (zo zložky <code>django_project/</code>):</p>
+<div class="highlight"><pre><span></span><span class="go">python manage.py migrate</span>
+</pre></div><p>Mali by ste v prípade úspechu vidieť takýto výpis:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span> <span class="go">~/pyladies/django_project$ python manage.py migrate</span>
+<span class="go">Operations to perform:</span>
+<span class="go">  Apply all migrations: admin, auth, contenttypes, sessions</span>
+<span class="go">Running migrations:</span>
+<span class="go">  Applying contenttypes.0001_initial... OK</span>
+<span class="go">  Applying auth.0001_initial... OK</span>
+<span class="go">  Applying admin.0001_initial... OK</span>
+<span class="go">  Applying admin.0002_logentry_remove_auto_add... OK</span>
+<span class="go">  Applying admin.0003_logentry_add_action_flag_choices... OK</span>
+<span class="go">  Applying contenttypes.0002_remove_content_type_name... OK</span>
+<span class="go">  Applying auth.0002_alter_permission_name_max_length... OK</span>
+<span class="go">  Applying auth.0003_alter_user_email_max_length... OK</span>
+<span class="go">  Applying auth.0004_alter_user_username_opts... OK</span>
+<span class="go">  Applying auth.0005_alter_user_last_login_null... OK</span>
+<span class="go">  Applying auth.0006_require_contenttypes_0002... OK</span>
+<span class="go">  Applying auth.0007_alter_validators_add_error_messages... OK</span>
+<span class="go">  Applying auth.0008_alter_user_username_max_length... OK</span>
+<span class="go">  Applying auth.0009_alter_user_last_name_max_length... OK</span>
+<span class="go">  Applying auth.0010_alter_group_name_max_length... OK</span>
+<span class="go">  Applying auth.0011_update_proxy_permissions... OK</span>
+<span class="go">  Applying auth.0012_alter_user_first_name_max_length... OK</span>
+<span class="go">  Applying sessions.0001_initial... OK</span>
+</pre></div><p>Spustíme si webserver:</p>
+<div class="highlight"><pre><code>$ python manage.py runserver</code></pre></div><p><span class="figure"><a href="/2022/brno-mergado/django/installation/static/home.png"><img src="/2022/brno-mergado/django/installation/static/home.png" alt="Home"></a></span></p>
+<p>Webserver ukončíme tak, že v termináli, v ktorom webserver beží použijeme klávesovú skratku CTRL+C, prípadne CTRL+BREAK pre Windows.</p>
+<p>Hotovo :)</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2022/brno-mergado/sessions/databases/">↑ <span class="d-none d-sm-inline">Lekce: Django, databáze, Flask</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2022/brno-mergado/django/basics/"><span class="d-none d-sm-inline">Django úvod</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/milandufek/naucse-python/blob/main/lessons/django/installation/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz PyLadies Brno v Mergadu napsala Alby Waageová, 2022.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

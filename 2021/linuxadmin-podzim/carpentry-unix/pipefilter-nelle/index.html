@@ -1,0 +1,261 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Nela a medúzy: Kontrola souborů
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/shell-2/">Bash II</a>
+
+> <a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter-nelle/">Nela a medúzy: Kontrola souborů</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Nela a medúzy: Kontrola souborů</h1>
+<p>Zapni terminál a přepni se do adresáře <code>data-shell/north-pacific-gyre/2012-07-03</code>.</p>
+<p>Pomocí <code>ls</code> se podívej, co v adresáři je:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls
+<span class="go">goodiff         NENE01736A.txt  NENE01843A.txt  NENE01978B.txt  NENE02040Z.txt</span>
+<span class="go">goostats        NENE01751A.txt  NENE01843B.txt  NENE02018B.txt  NENE02043A.txt</span>
+<span class="go">NENE01729A.txt  NENE01751B.txt  NENE01971Z.txt  NENE02040A.txt  NENE02043B.txt</span>
+<span class="go">NENE01729B.txt  NENE01812A.txt  NENE01978A.txt  NENE02040B.txt</span>
+</pre></div><p>Úkol: Kolik mají řádků datové soubory s <code>.txt</code> na konci?</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter-nelle/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="gp">$ </span>wc -l *.txt
+</pre></div>
+    </div>
+</div><p>Všechny by měly mít 300 řádků. Když se ale podíváš na výstup, zjistíš, že tomu tak není.
+Představ si, že máš těchto souborů k ověření několik tisíc a procházení <em>očima</em> nebude možné.
+Jak zjistíš, jestli všechny tyto soubory mají opravdu 300 řádků?</p>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter-nelle/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p><code>wc -l *.txt | sort | head</code> - uvidíš, jestli soubory na začátku jsou OK
+<code>wc -l *.txt | sort | tail</code> - uvidíš, jestli soubory na konci jsou OK</p>
+<p>Podívej se na výstup prvního z těch příkazů:</p>
+<div class="highlight"><pre><code>  240 NENE02018B.txt
+  300 NENE01729A.txt
+  300 NENE01729B.txt
+  300 NENE01736A.txt
+  300 NENE01751A.txt
+  300 NENE01751B.txt
+  300 NENE01812A.txt
+  300 NENE01843A.txt
+  300 NENE01843B.txt
+  300 NENE01971Z.txt</code></pre></div>
+    </div>
+</div><p>Soubory končí většinou na písmenko <code>A</code> nebo <code>B,</code> ale je zde jeden končící <code>Z</code>. Spočítej, kolik je souborů končících <code>Z</code>.</p>
+<div class="solution" id="solution-2">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter-nelle/index/solutions/2/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="gp">$ </span>ls *Z.txt <span class="p">|</span> wc -l
+<span class="go">2</span>
+</pre></div>
+    </div>
+</div><p>Už podle názvů tyhle soubory nevypadají na to, že by je někdo vytvořil ručně.
+Můžeš bezpečně předpokládat, že jsou výstupem nějakého programu na zpracování vzorků.</p>
+<p>Podívej se do několika z nich (např. pomocí příkazu <code>less</code>), abys zjistila jak zhruba vypadají informace v nich obsažené.</p>
+<p>Obsahem je relativní výskyt 300 bílkovin v různých hloubkách oceánu.
+<code>A</code> a <code>B</code> jsou dvě hloubky, na nichž bylo prováděno měření; <code>Z</code> znamená, že se hloubku z nějakého důvodu nepodařilo zjistit.
+Kratší soubor je způsobený restarem počítače během měření.
+Nevíme, zda takový soubor bude použitelný pro další zpracování.</p>
+<h2>Hranaté závorky: Filtrování písmen</h2>
+<p>Už znáš hvězdičku a otazník, díky nimž můžeš vytvořit masky souborů.
+Existují i další „finty“, jak jména souborů filtrovat. Jednu z nich si teď ukážeme.
+Když dáš do hranatých závorek výčet znaků, které chceš hledat, např. <code>[AB]</code>, celý výraz v závorkách se nahradí za jedno písmenko – buďto <code>A</code> nebo <code>B</code>.
+Můžeš tak odfiltrovat soubory, které končí na <code>Z</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls *<span class="o">[</span>AB<span class="o">]</span>.txt
+<span class="go">NENE01729A.txt  NENE01751A.txt  NENE01843A.txt  NENE01978B.txt  NENE02040B.txt</span>
+<span class="go">NENE01729B.txt  NENE01751B.txt  NENE01843B.txt  NENE02018B.txt  NENE02043A.txt</span>
+<span class="go">NENE01736A.txt  NENE01812A.txt  NENE01978A.txt  NENE02040A.txt  NENE02043B.txt</span>
+</pre></div><p>V tomto případě dostaneš stejný výstup, když napíšeš příkaz:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls *A.txt *B.txt
+</pre></div><p>Výstup se ale bude lišit v případě, kdy neexistuje soubor kterému taková maska
+odpovídá.
+Představ si, že chceš vypsat všechny soubory, které mají na konci <code>A</code>, <code>B</code> nebo <code>C</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls *<span class="o">[</span>ABC<span class="o">]</span>.txt
+<span class="go">NENE01729A.txt  NENE01751A.txt  NENE01843A.txt  NENE01978B.txt  NENE02040B.txt</span>
+<span class="go">NENE01729B.txt  NENE01751B.txt  NENE01843B.txt  NENE02018B.txt  NENE02043A.txt</span>
+<span class="go">NENE01736A.txt  NENE01812A.txt  NENE01978A.txt  NENE02040A.txt  NENE02043B.txt</span>
+
+<span class="gp">$ </span>ls *A.txt *B.txt *C.txt
+<span class="go">ls: cannot access '*C.txt': No such file or directory</span>
+<span class="go"> NENE01729A.txt   NENE01751B.txt   NENE01978A.txt   NENE02040B.txt</span>
+<span class="go"> NENE01729B.txt   NENE01812A.txt   NENE01978B.txt   NENE02043A.txt</span>
+<span class="go"> NENE01736A.txt   NENE01843A.txt   NENE02018B.txt   NENE02043B.txt</span>
+<span class="go"> NENE01751A.txt   NENE01843B.txt   NENE02040A.txt</span>
+</pre></div><p>Bash nechá <code>*C.txt</code> beze změny, protože takový soubor nenajde.
+Program <code>ls</code> si pak postěžuje že soubor <code>*C.txt</code> nezná.</p>
+<p>Zkus si, co v těchto případech dostává příkaz <code>ls</code> od Bashe.
+To můžeš zjistit tak, že místo <code>ls</code> zadáš <code>echo</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> *<span class="o">[</span>ABC<span class="o">]</span>.txt
+<span class="gp">$ </span><span class="nb">echo</span> *A.txt *B.txt *C.txt
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/echo/">← <span class="d-none d-sm-inline">Echo</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-2/">↑ <span class="d-none d-sm-inline">Lekce: Bash II</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/var-loop/"><span class="d-none d-sm-inline">Proměnné a cyklus</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/carpentry-unix/pipefilter-nelle/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>přeložila Karolina Surma, 2020</p>
+    
+        <p>založeno na kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, 2016–2018 Software Carpentry Foundation, 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

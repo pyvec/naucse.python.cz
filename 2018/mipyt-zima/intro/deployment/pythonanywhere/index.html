@@ -1,0 +1,253 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                MI-PYT (Pokročilý Python): Deployment webových aplikací na PythonAnywhere
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/deployment/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/mipyt-zima/">MI-PYT (Pokročilý Python)</a>
+
+> <a href="/2018/mipyt-zima/sessions/flask/">Webové aplikace – Flask</a>
+
+> <a href="/2018/mipyt-zima/intro/deployment/">Deployment webových aplikací</a>
+
+    
+        > Deployment webových aplikací na PythonAnywhere
+    
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Deployment webových aplikací na PythonAnywhere</h1>
+<p><a href="https://www.pythonanywhere.com/">PythonAnywhere</a> je pro limitované použití zdarma.</p>
+<p>K posílání kódu na produkční prostředí budeme používat Git.
+Nejprve proto uložte celý projekt do Gitu a nahrajte na GitHub.</p>
+<p>Potom se zaregistrujte na
+<a href="https://www.pythonanywhere.com/">www.pythonanywhere.com</a> a vyberte
+<em>Beginner Account</em>.
+Po přihlášení se ukáže záložka <em>Consoles</em>, kde vytvořte "Bash" konzoli.
+V té vytvořte a aktivujte virtuální prostředí a nainstalujte Flask (plus
+případně další závislosti nebo jiný webový framework).</p>
+<p>PythonAnywhere používá specificky nastavený Linux,
+tak je ve webové konzoli potřeba použít jiný příkaz
+na vytvoření virtuální prostředí, než jste z toho kurzu zvyklí.
+Napište příkazy takto (bez úvodního <code>$</code>):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>virtualenv --python<span class="o">=</span>python3.7 __venv__
+<span class="gp">$ </span>. __venv__/bin/activate
+<span class="gp">$ </span>python -m pip install flask
+</pre></div><div class="admonition note"><p>Pokud máte na PythonAnywhere starší účet, možná tam Python 3.7 nenajdete.
+Můžete použít Python 3.6, nemělo by to vadit, protože tento návod je
+koncipován tak, aby s touto verzí také fungoval.
+Případně můžete <a href="https://www.pythonanywhere.com/forums/topic/12878/#id_post_52160">zažádat o aktualizaci systémové
+image</a>.</p>
+</div><p>Následně naklonujte na PythonAnywhere váš kód.
+S veřejným repozitářem je to jednodušší – stačí ho naklonovat „anonymně”
+(<code>git clone https://github.com/&lt;github-username&gt;/&lt;github-repo&gt;</code>).
+Pokud ale používáme privátní repozitář, bude potřeba si vygenerovat SSH klíč:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ssh-keygen  <span class="c1"># (zeptá se na hesla ke klíči)</span>
+<span class="gp">$ </span>cat ~/.ssh/id_rsa.pub
+</pre></div><p>Obsah souboru <code>~/.ssh/id_rsa.pub</code> je pak potřeba přidat na GitHub v osobním
+nastavení v sekci "SSH and GPG Keys".
+Pak můžete klonovat přes SSH:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git clone git@github.com:&lt;github-username&gt;/&lt;github-repo&gt;.git
+</pre></div><p>Zbývá nastavit, aby PythonAnywhere tento kód spustil jako webovou aplikaci.</p>
+<p>Přejděte na stránkách PythonAnywhere do <em>Dashboard</em> do záložky <em>Web</em>,
+a vytvořte novou aplikaci.
+V nastavení zvolte <em>Manual Configuration</em> a <em>Python 3.7</em>.
+(Volby jiné než <em>Manual Configuration</em> automaticky vytvoří kostru aplikace.
+Vy ale už aplikaci máte hotovou, takže je nepotřebujete.)</p>
+<p>V konfiguraci vzniklé webové aplikace je potřeba nastavit <em>Virtualenv</em>
+na cestu k virtuálnímu prostředí (<code>/home/<var>&lt;uživatelské-jméno&gt;</var>/__venv__</code>),
+a obsah <em>WSGI Configuration File</em> přepsat.
+To jde buď kliknutím na odkaz v konfiguraci (otevře se webový editor)
+nebo zpět v bashové konzoli pomocí editoru jako <code>vi</code> nebo <code>nano</code>.</p>
+<p>Nový obsah souboru by měl být:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s1">'/home/&lt;uživatelské-jméno&gt;/&lt;jméno-adresáře&gt;'</span>
+<span class="k">if</span> <span class="n">path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="o">&lt;</span><span class="n">jméno</span><span class="o">-</span><span class="n">souboru</span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">app</span> <span class="kn">as</span> <span class="nn">application</span>
+</pre></div><p>(Za <code><var>&lt;uživatelské-jméno&gt;</var></code>,
+<code><var>&lt;jméno-adresáře&gt;</var></code> a
+<code><var>&lt;jméno-souboru&gt;</var></code>
+je samozřejmě potřeba doplnit
+vaše údaje. Jméno souboru je zde bez přípony <code>.py</code>.)</p>
+<p>Nakonec restartujte aplikaci velkým zeleným tlačítkem na záložce <em>Web</em>
+a na adrese <code><var>&lt;uživatelské-jméno&gt;</var>.pythonanywhere.com</code>
+si ji můžete prohlédnout.</p>
+<h3>Deployment soukromých údajů</h3>
+<p>Protože vaše hesla, tajné klíče apod. nejsou v repozitáři, je nutné je předat
+aplikaci zvlášť.
+Konfigurační i jiné soubory jde nahrát v záložce <em>Files</em> nebo opět vytvořit
+a editovat ve webové konzoli.</p>
+<p>Pokud vaše aplikace vyžaduje nastavení nějakých proměnných prostředí
+(například s cestou ke konfiguračnímu souboru nebo přímo s nějakou konfigurací),
+můžete tak učinit přímo z <em>WSGI Configuration File</em>.
+Buďto „nízkoúrovňově“ (<code>os.environ</code>) nebo více sofistikovaně například pomocí modulu <code>dotenv</code>,
+což ostatně <a href="https://help.pythonanywhere.com/pages/environment-variables-for-web-apps/">doporučují i v dokumentaci</a>.</p>
+<div class="admonition note"><p>Doporučujeme pro tyto potřeby stejně raději nepoužívat API klíče
+k vlastním účtům, raději si vyrobte nějaké účty pouze pro tento účel.
+GitHub povoluje všem vytvořit si jeden účet pro automatické operace, ale
+takový účet musí mít napsané v popisu, že je robot.</p>
+</div><h3>Aktualizace</h3>
+<p>Když nahrajeme nový kód na GitHub, je vždy potřeba provést na PythonAnywhere
+v konzoli <code>git pull</code> a pak v záložce <em>Web</em> aplikaci restartovat.</p>
+<p>Placená varianta PythonAnywhere má API a tento proces jde zautomatizovat.</p>
+<p>Ve verzi zadarmo to není tak pohodlné.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/intro/deployment/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2018/mipyt-zima/intro/deployment/">← <span class="d-none d-sm-inline">Deployment webových aplikací</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/mipyt-zima/sessions/flask/">↑ <span class="d-none d-sm-inline">Lekce: Webové aplikace – Flask</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/mipyt-zima/sessions/flask/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-mipyt-zima/lessons/intro/deployment/pythonanywhere.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Miro Hrončok, Petr Viktorin a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

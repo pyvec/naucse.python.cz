@@ -1,0 +1,2972 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Základní manipulace s tabulkovými daty
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-ostrava-jaro/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-ostrava-jaro/sessions/eda1/">Představení, Jupyter notebook, základy pandas</a>
+
+> <a href="/2020/pydata-ostrava-jaro/pydata/pandas/">Základní manipulace s tabulkovými daty</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Pandas a základní manipulace s tabulkovými daty</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Před jakoukoli složitější analýzou je třeba naučit se základy práce se zpracovávanými daty - v našem případě půjde o tabulky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Import knihoven</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Při běžném programování se snažíme aliasům vyhýbat, protože snižují čitelnost kódu pro další programátory. U datové analytiky je to jinak, protože použití jednoho aliasu, který je navíc velmi běžný, nám ušetří spoustu psaní. Mimoto výsledkem našich analýz budou spíše tabulky a grafy než kód.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Načtení tabulky s daty</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro čtení dat má Pandas celou řadu funkcí <code>read_*</code>, díky kterým si poradí s celou řadou různých formátů. Nejběžnějším je ale pořád formát CSV, ve kterém jsou jednotlivé hodnoty oddělené čárkami.</p>
+<p>Pokud budeš tímto notebookem experimentovat, stáhni si nejdříve soubor s daty z <a href="/2020/pydata-ostrava-jaro/pydata/pandas/static/pokemon.csv">tohoto odkazu</a>. Data pro pokusy jsou vytvořena z <a href="https://github.com/veekun/pokedex">komplexního Pokedexu na Githubu</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"static/pokemon.csv"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Po načtení dat dává smysl se na ně hned podívat, abychom zjistili, že je vše v pořádku. Může se stát, že v CSV souboru bude chybět první řádek s názvy sloupců, hodnoty budou oddělené jiným znakem než čárkou a spousta dalších eventualit. Náš CSV soubor je však precizně připraven a tak, když si jej zobrazíme v notebooku, uvidíme kompletní tabulku, kde je vše jak má být.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>name</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>1</td>
+      <td>bulbasaur</td>
+      <td>0.7</td>
+      <td>6.9</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>45</td>
+      <td>49</td>
+      <td>49</td>
+      <td>45</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>ivysaur</td>
+      <td>1.0</td>
+      <td>13.0</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>60</td>
+      <td>62</td>
+      <td>63</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>venusaur</td>
+      <td>2.0</td>
+      <td>100.0</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>80</td>
+      <td>82</td>
+      <td>83</td>
+      <td>80</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4</td>
+      <td>charmander</td>
+      <td>0.6</td>
+      <td>8.5</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>39</td>
+      <td>52</td>
+      <td>43</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>5</td>
+      <td>charmeleon</td>
+      <td>1.1</td>
+      <td>19.0</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>58</td>
+      <td>64</td>
+      <td>58</td>
+      <td>80</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>802</td>
+      <td>803</td>
+      <td>poipole</td>
+      <td>0.6</td>
+      <td>1.8</td>
+      <td>purple</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>NaN</td>
+      <td>67</td>
+      <td>73</td>
+      <td>67</td>
+      <td>73</td>
+    </tr>
+    <tr>
+      <td>803</td>
+      <td>804</td>
+      <td>naganadel</td>
+      <td>3.6</td>
+      <td>150.0</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Dragon</td>
+      <td>73</td>
+      <td>73</td>
+      <td>73</td>
+      <td>121</td>
+    </tr>
+    <tr>
+      <td>804</td>
+      <td>805</td>
+      <td>stakataka</td>
+      <td>5.5</td>
+      <td>820.0</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Rock</td>
+      <td>Steel</td>
+      <td>61</td>
+      <td>131</td>
+      <td>211</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <td>805</td>
+      <td>806</td>
+      <td>blacephalon</td>
+      <td>1.8</td>
+      <td>13.0</td>
+      <td>white</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>Ghost</td>
+      <td>53</td>
+      <td>127</td>
+      <td>53</td>
+      <td>107</td>
+    </tr>
+    <tr>
+      <td>806</td>
+      <td>807</td>
+      <td>zeraora</td>
+      <td>1.5</td>
+      <td>44.5</td>
+      <td>yellow</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>88</td>
+      <td>112</td>
+      <td>75</td>
+      <td>143</td>
+    </tr>
+  </tbody>
+</table>
+<p>807 rows × 13 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Základní zobrazení v notebooku nám ukáže prvních pět a posledních pět řádků v tabulce společně s informací o celkovém počtu řádků a sloupců. Naše tabulka je úmyslně dostatečně malá, aby se s ní pohodlně pracovalo, což ale většinou není ten případ. Proto se podíváme na to, jak si z tabulky vybrat jen to, co nás zajímá.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Sloupce a řádky</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Sloupce i řádky mají tzv. index, s jehož pomocí se dá k jednotlivým částem tabulky přistoupit. V našem případě má každý řádek automaticky doplněný unikátní číselný index (ten bezejmenný sloupec nalevo) a jako index pro sloupce nám poslouží prvni řádek CSV souboru s názvy sloupců.</p>
+<p>Později se naučíme indexy měnit a vkládat do nich i více než jednu hodnotu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Sloupce</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Sloupce lze vybrat stejně jako se vybírají hodnoty ze slovníku - do hranatých závorek stačí napsat název sloupce.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0        bulbasaur
+1          ivysaur
+2         venusaur
+3       charmander
+4       charmeleon
+          ...     
+802        poipole
+803      naganadel
+804      stakataka
+805    blacephalon
+806        zeraora
+Name: name, Length: 807, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud potřebujeme více sloupců najednou, vložíme do hranatých závorek za proměnnou s tabulkou jejich seznam.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[[</span><span class="s1">'name'</span><span class="p">,</span> <span class="s1">'color'</span><span class="p">]]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>color</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>bulbasaur</td>
+      <td>green</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ivysaur</td>
+      <td>green</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>venusaur</td>
+      <td>green</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>charmander</td>
+      <td>red</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>charmeleon</td>
+      <td>red</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>802</td>
+      <td>poipole</td>
+      <td>purple</td>
+    </tr>
+    <tr>
+      <td>803</td>
+      <td>naganadel</td>
+      <td>purple</td>
+    </tr>
+    <tr>
+      <td>804</td>
+      <td>stakataka</td>
+      <td>gray</td>
+    </tr>
+    <tr>
+      <td>805</td>
+      <td>blacephalon</td>
+      <td>white</td>
+    </tr>
+    <tr>
+      <td>806</td>
+      <td>zeraora</td>
+      <td>yellow</td>
+    </tr>
+  </tbody>
+</table>
+<p>807 rows × 2 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud název sloupce neobsahuje mezeru a nekoliduje s názvem existující metody, dá se k němu přistoupit i pomocí tečkové notace, což je velmi užitečné především při psaní složitějších podmínek.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0        bulbasaur
+1          ivysaur
+2         venusaur
+3       charmander
+4       charmeleon
+          ...     
+802        poipole
+803      naganadel
+804      stakataka
+805    blacephalon
+806        zeraora
+Name: name, Length: 807, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro sloupec <code>shape</code> je tento přístup nepoužitelný, protože koliduje s atributem, ve kterém je uložen počet řádků a slupců tabulky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(807, 13)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Řádky</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro řádky se používá tzv. indexer <code>loc</code>, který nám dokáže obstarat jeden či více řádků.</p>
+<p>Můžeme si například říci o jeden řádek jeho indexem:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>id                 2
+name         ivysaur
+height             1
+weight            13
+color          green
+shape      quadruped
+is baby        False
+type 1         Grass
+type 2        Poison
+hp                60
+attack            62
+defense           63
+speed             60
+Name: 1, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>O více řádků seznamem jejich indexů:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>name</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>ivysaur</td>
+      <td>1.0</td>
+      <td>13.0</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>60</td>
+      <td>62</td>
+      <td>63</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>venusaur</td>
+      <td>2.0</td>
+      <td>100.0</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>80</td>
+      <td>82</td>
+      <td>83</td>
+      <td>80</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4</td>
+      <td>charmander</td>
+      <td>0.6</td>
+      <td>8.5</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>39</td>
+      <td>52</td>
+      <td>43</td>
+      <td>65</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nebo třeba stejně jako i seznamů o několik řádků pomocí rozsahu indexů:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">105</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>name</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>100</td>
+      <td>101</td>
+      <td>electrode</td>
+      <td>1.2</td>
+      <td>66.6</td>
+      <td>red</td>
+      <td>ball</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>60</td>
+      <td>50</td>
+      <td>70</td>
+      <td>150</td>
+    </tr>
+    <tr>
+      <td>101</td>
+      <td>102</td>
+      <td>exeggcute</td>
+      <td>0.4</td>
+      <td>2.5</td>
+      <td>pink</td>
+      <td>heads</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Psychic</td>
+      <td>60</td>
+      <td>40</td>
+      <td>80</td>
+      <td>40</td>
+    </tr>
+    <tr>
+      <td>102</td>
+      <td>103</td>
+      <td>exeggutor</td>
+      <td>2.0</td>
+      <td>120.0</td>
+      <td>yellow</td>
+      <td>legs</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Psychic</td>
+      <td>95</td>
+      <td>95</td>
+      <td>85</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <td>103</td>
+      <td>104</td>
+      <td>cubone</td>
+      <td>0.4</td>
+      <td>6.5</td>
+      <td>brown</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Ground</td>
+      <td>NaN</td>
+      <td>50</td>
+      <td>50</td>
+      <td>95</td>
+      <td>35</td>
+    </tr>
+    <tr>
+      <td>104</td>
+      <td>105</td>
+      <td>marowak</td>
+      <td>1.0</td>
+      <td>45.0</td>
+      <td>brown</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Ground</td>
+      <td>NaN</td>
+      <td>60</td>
+      <td>80</td>
+      <td>110</td>
+      <td>45</td>
+    </tr>
+    <tr>
+      <td>105</td>
+      <td>106</td>
+      <td>hitmonlee</td>
+      <td>1.5</td>
+      <td>49.8</td>
+      <td>brown</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Fighting</td>
+      <td>NaN</td>
+      <td>50</td>
+      <td>120</td>
+      <td>53</td>
+      <td>87</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Konkrétní hodnoty</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Indexer <code>loc</code> je vhodný i pro získání konkrétní hodnoty, jen se při indexaci použijí oba indexy (pro řádek i sloupec) najednou ve formě ntice.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">101</span><span class="p">,</span> <span class="s1">'name'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'exeggcute'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Filtrace dat</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Velmi často se hodí získat část tabulky, ve kteté hodnoty splňují určitá kritéria. Toho lze docílit tak, že napíšeme do hranatých závorek podmínku a dostaneme jen ty řádky, které danou podmínku splňují.</p>
+<p>Například nás budou zajímat jen červení pokémoni.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'color'</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"red"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>name</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>3</td>
+      <td>4</td>
+      <td>charmander</td>
+      <td>0.6</td>
+      <td>8.5</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>39</td>
+      <td>52</td>
+      <td>43</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>5</td>
+      <td>charmeleon</td>
+      <td>1.1</td>
+      <td>19.0</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>58</td>
+      <td>64</td>
+      <td>58</td>
+      <td>80</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>6</td>
+      <td>charizard</td>
+      <td>1.7</td>
+      <td>90.5</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>Flying</td>
+      <td>78</td>
+      <td>84</td>
+      <td>78</td>
+      <td>100</td>
+    </tr>
+    <tr>
+      <td>44</td>
+      <td>45</td>
+      <td>vileplume</td>
+      <td>1.2</td>
+      <td>18.6</td>
+      <td>red</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>75</td>
+      <td>80</td>
+      <td>85</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>45</td>
+      <td>46</td>
+      <td>paras</td>
+      <td>0.3</td>
+      <td>5.4</td>
+      <td>red</td>
+      <td>armor</td>
+      <td>False</td>
+      <td>Bug</td>
+      <td>Grass</td>
+      <td>35</td>
+      <td>70</td>
+      <td>55</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>726</td>
+      <td>727</td>
+      <td>incineroar</td>
+      <td>1.8</td>
+      <td>83.0</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>Dark</td>
+      <td>95</td>
+      <td>115</td>
+      <td>90</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>740</td>
+      <td>741</td>
+      <td>oricorio</td>
+      <td>0.6</td>
+      <td>3.4</td>
+      <td>red</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>Flying</td>
+      <td>75</td>
+      <td>70</td>
+      <td>70</td>
+      <td>93</td>
+    </tr>
+    <tr>
+      <td>775</td>
+      <td>776</td>
+      <td>turtonator</td>
+      <td>2.0</td>
+      <td>212.0</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>Dragon</td>
+      <td>60</td>
+      <td>78</td>
+      <td>135</td>
+      <td>36</td>
+    </tr>
+    <tr>
+      <td>786</td>
+      <td>787</td>
+      <td>tapu-bulu</td>
+      <td>1.9</td>
+      <td>45.5</td>
+      <td>red</td>
+      <td>arms</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Fairy</td>
+      <td>70</td>
+      <td>130</td>
+      <td>115</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>793</td>
+      <td>794</td>
+      <td>buzzwole</td>
+      <td>2.4</td>
+      <td>333.6</td>
+      <td>red</td>
+      <td>tentacles</td>
+      <td>False</td>
+      <td>Bug</td>
+      <td>Fighting</td>
+      <td>107</td>
+      <td>139</td>
+      <td>139</td>
+      <td>79</td>
+    </tr>
+  </tbody>
+</table>
+<p>82 rows × 13 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Podmínky se dají i kombinovat, ale musí se dodržet jistá pravidla. První z nich je, že každá podmínka musí být samostatně uzavřena v kulatých závorkách. Dále pak logické spojky <code>and</code> a <code>or</code> jsou zde nahrazeny znaky <code>&amp;</code> a <code>|</code>.</p>
+<p>Co třeba červení pokémoni, jejichž síla útoku je vyšší nebo rovna 130?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[(</span><span class="n">data</span><span class="p">[</span><span class="s1">'attack'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">130</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'color'</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"red"</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>name</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>98</td>
+      <td>99</td>
+      <td>kingler</td>
+      <td>1.3</td>
+      <td>60.0</td>
+      <td>red</td>
+      <td>armor</td>
+      <td>False</td>
+      <td>Water</td>
+      <td>NaN</td>
+      <td>55</td>
+      <td>130</td>
+      <td>115</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>135</td>
+      <td>136</td>
+      <td>flareon</td>
+      <td>0.9</td>
+      <td>25.0</td>
+      <td>red</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>65</td>
+      <td>130</td>
+      <td>60</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>211</td>
+      <td>212</td>
+      <td>scizor</td>
+      <td>1.8</td>
+      <td>118.0</td>
+      <td>red</td>
+      <td>bug-wings</td>
+      <td>False</td>
+      <td>Bug</td>
+      <td>Steel</td>
+      <td>70</td>
+      <td>130</td>
+      <td>100</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>249</td>
+      <td>250</td>
+      <td>ho-oh</td>
+      <td>3.8</td>
+      <td>199.0</td>
+      <td>red</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>Flying</td>
+      <td>106</td>
+      <td>130</td>
+      <td>90</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>382</td>
+      <td>383</td>
+      <td>groudon</td>
+      <td>3.5</td>
+      <td>950.0</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Ground</td>
+      <td>NaN</td>
+      <td>100</td>
+      <td>150</td>
+      <td>140</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>385</td>
+      <td>386</td>
+      <td>deoxys</td>
+      <td>1.7</td>
+      <td>60.8</td>
+      <td>red</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Psychic</td>
+      <td>NaN</td>
+      <td>50</td>
+      <td>150</td>
+      <td>50</td>
+      <td>150</td>
+    </tr>
+    <tr>
+      <td>554</td>
+      <td>555</td>
+      <td>darmanitan</td>
+      <td>1.3</td>
+      <td>92.9</td>
+      <td>red</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>105</td>
+      <td>140</td>
+      <td>55</td>
+      <td>95</td>
+    </tr>
+    <tr>
+      <td>716</td>
+      <td>717</td>
+      <td>yveltal</td>
+      <td>5.8</td>
+      <td>203.0</td>
+      <td>red</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>Flying</td>
+      <td>126</td>
+      <td>131</td>
+      <td>95</td>
+      <td>99</td>
+    </tr>
+    <tr>
+      <td>786</td>
+      <td>787</td>
+      <td>tapu-bulu</td>
+      <td>1.9</td>
+      <td>45.5</td>
+      <td>red</td>
+      <td>arms</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Fairy</td>
+      <td>70</td>
+      <td>130</td>
+      <td>115</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>793</td>
+      <td>794</td>
+      <td>buzzwole</td>
+      <td>2.4</td>
+      <td>333.6</td>
+      <td>red</td>
+      <td>tentacles</td>
+      <td>False</td>
+      <td>Bug</td>
+      <td>Fighting</td>
+      <td>107</td>
+      <td>139</td>
+      <td>139</td>
+      <td>79</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Operace se sloupci</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Podmínka zapsaná v hranatých závorkách ve skutečnosti není jen tak obyčejnou podmínkou. Jedná se totiž o hromadnou operaci napříč celým sloupcem, která pro každý řádek vrátí <code>True</code> nebo <code>False</code>, což v případě použití k filtraci rozhodne o jeho zobrazení.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">speed</span> <span class="o">&gt;=</span> <span class="mi">65</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0      False
+1      False
+2       True
+3       True
+4       True
+       ...  
+802     True
+803     True
+804    False
+805     True
+806     True
+Name: speed, Length: 807, dtype: bool</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I další známé operátory lze použít stejným způsobem a aplikovat je na sloupec a jednu hodnotu či na více sloupců najednou.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s2">"speed"</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0       4.5
+1       6.0
+2       8.0
+3       6.5
+4       8.0
+       ... 
+802     7.3
+803    12.1
+804     1.3
+805    10.7
+806    14.3
+Name: speed, Length: 807, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">hp</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">defense</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0       2205
+1       3780
+2       6640
+3       1677
+4       3364
+       ...  
+802     4489
+803     5329
+804    12871
+805     2809
+806     6600
+Length: 807, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Výsledek takové operace lze velmi snadno přidat zpět k původní tabulce jako nový sloupec.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s2">"fast"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">speed</span> <span class="o">&gt;=</span> <span class="mi">65</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>name</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+      <th>fast</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>1</td>
+      <td>bulbasaur</td>
+      <td>0.7</td>
+      <td>6.9</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>45</td>
+      <td>49</td>
+      <td>49</td>
+      <td>45</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>ivysaur</td>
+      <td>1.0</td>
+      <td>13.0</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>60</td>
+      <td>62</td>
+      <td>63</td>
+      <td>60</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>venusaur</td>
+      <td>2.0</td>
+      <td>100.0</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>80</td>
+      <td>82</td>
+      <td>83</td>
+      <td>80</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4</td>
+      <td>charmander</td>
+      <td>0.6</td>
+      <td>8.5</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>39</td>
+      <td>52</td>
+      <td>43</td>
+      <td>65</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>5</td>
+      <td>charmeleon</td>
+      <td>1.1</td>
+      <td>19.0</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>58</td>
+      <td>64</td>
+      <td>58</td>
+      <td>80</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>802</td>
+      <td>803</td>
+      <td>poipole</td>
+      <td>0.6</td>
+      <td>1.8</td>
+      <td>purple</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>NaN</td>
+      <td>67</td>
+      <td>73</td>
+      <td>67</td>
+      <td>73</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>803</td>
+      <td>804</td>
+      <td>naganadel</td>
+      <td>3.6</td>
+      <td>150.0</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Dragon</td>
+      <td>73</td>
+      <td>73</td>
+      <td>73</td>
+      <td>121</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>804</td>
+      <td>805</td>
+      <td>stakataka</td>
+      <td>5.5</td>
+      <td>820.0</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Rock</td>
+      <td>Steel</td>
+      <td>61</td>
+      <td>131</td>
+      <td>211</td>
+      <td>13</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>805</td>
+      <td>806</td>
+      <td>blacephalon</td>
+      <td>1.8</td>
+      <td>13.0</td>
+      <td>white</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>Ghost</td>
+      <td>53</td>
+      <td>127</td>
+      <td>53</td>
+      <td>107</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>806</td>
+      <td>807</td>
+      <td>zeraora</td>
+      <td>1.5</td>
+      <td>44.5</td>
+      <td>yellow</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>88</td>
+      <td>112</td>
+      <td>75</td>
+      <td>143</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+<p>807 rows × 14 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Řazení</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>K řazení podle hodnot slouží metoda <code>sort_values</code>, podle indexu pak řadí metoda <code>sort_index</code>. Prvních několik řádků získáme metodou <code>head</code> a naopak poslední nám poskytne metoda <code>tail</code>.</p>
+<p>Pět nejrychlejších pokémonů tedy získáme snadno sestupným seřazením podle jejich rychlosti a omezením na prvních pět řádků.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">"speed"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>name</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+      <th>fast</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>290</td>
+      <td>291</td>
+      <td>ninjask</td>
+      <td>0.8</td>
+      <td>12.0</td>
+      <td>yellow</td>
+      <td>bug-wings</td>
+      <td>False</td>
+      <td>Bug</td>
+      <td>Flying</td>
+      <td>61</td>
+      <td>90</td>
+      <td>45</td>
+      <td>160</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>794</td>
+      <td>795</td>
+      <td>pheromosa</td>
+      <td>1.8</td>
+      <td>25.0</td>
+      <td>white</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Bug</td>
+      <td>Fighting</td>
+      <td>71</td>
+      <td>137</td>
+      <td>37</td>
+      <td>151</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>385</td>
+      <td>386</td>
+      <td>deoxys</td>
+      <td>1.7</td>
+      <td>60.8</td>
+      <td>red</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Psychic</td>
+      <td>NaN</td>
+      <td>50</td>
+      <td>150</td>
+      <td>50</td>
+      <td>150</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>100</td>
+      <td>101</td>
+      <td>electrode</td>
+      <td>1.2</td>
+      <td>66.6</td>
+      <td>red</td>
+      <td>ball</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>60</td>
+      <td>50</td>
+      <td>70</td>
+      <td>150</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>616</td>
+      <td>617</td>
+      <td>accelgor</td>
+      <td>0.8</td>
+      <td>25.3</td>
+      <td>red</td>
+      <td>arms</td>
+      <td>False</td>
+      <td>Bug</td>
+      <td>NaN</td>
+      <td>80</td>
+      <td>70</td>
+      <td>40</td>
+      <td>145</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Změna indexu</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Před změnou indexu je dobrý nápad se přesvědčit, zda sloupec s budoucím indexem obsahuje jen unikátní hodnoty.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(807, 14)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>807</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Protože počet unikátních hodnot ve sloupci se jménem pokémona je stejný jako celkový počet řádků, můžeme jméno použít jako index. To lze udělat buď nastavením atributu <code>index</code> nebo pomocí metody <code>set_index</code>, která toho umí i daleko více.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+      <th>fast</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>bulbasaur</td>
+      <td>1</td>
+      <td>0.7</td>
+      <td>6.9</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>45</td>
+      <td>49</td>
+      <td>49</td>
+      <td>45</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>ivysaur</td>
+      <td>2</td>
+      <td>1.0</td>
+      <td>13.0</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>60</td>
+      <td>62</td>
+      <td>63</td>
+      <td>60</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>venusaur</td>
+      <td>3</td>
+      <td>2.0</td>
+      <td>100.0</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>80</td>
+      <td>82</td>
+      <td>83</td>
+      <td>80</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>charmander</td>
+      <td>4</td>
+      <td>0.6</td>
+      <td>8.5</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>39</td>
+      <td>52</td>
+      <td>43</td>
+      <td>65</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>charmeleon</td>
+      <td>5</td>
+      <td>1.1</td>
+      <td>19.0</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>58</td>
+      <td>64</td>
+      <td>58</td>
+      <td>80</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>poipole</td>
+      <td>803</td>
+      <td>0.6</td>
+      <td>1.8</td>
+      <td>purple</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>NaN</td>
+      <td>67</td>
+      <td>73</td>
+      <td>67</td>
+      <td>73</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>naganadel</td>
+      <td>804</td>
+      <td>3.6</td>
+      <td>150.0</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Dragon</td>
+      <td>73</td>
+      <td>73</td>
+      <td>73</td>
+      <td>121</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>stakataka</td>
+      <td>805</td>
+      <td>5.5</td>
+      <td>820.0</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Rock</td>
+      <td>Steel</td>
+      <td>61</td>
+      <td>131</td>
+      <td>211</td>
+      <td>13</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>blacephalon</td>
+      <td>806</td>
+      <td>1.8</td>
+      <td>13.0</td>
+      <td>white</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>Ghost</td>
+      <td>53</td>
+      <td>127</td>
+      <td>53</td>
+      <td>107</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>zeraora</td>
+      <td>807</td>
+      <td>1.5</td>
+      <td>44.5</td>
+      <td>yellow</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>88</td>
+      <td>112</td>
+      <td>75</td>
+      <td>143</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+<p>807 rows × 13 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Celá řada metod vrátí po úpravě tabulky její kopii s provedenou změnou. Protože bychom v tomto případě raději upravili tabulku přímo, uložíme výsledek nastavení indexu zpět do proměnné <code>data</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nyní si můžeme vyzkoušet řazení s upraveným indexem a také získávání konkrétních řádků s jeho pomocí.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[24]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+      <th>fast</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>abomasnow</td>
+      <td>460</td>
+      <td>2.2</td>
+      <td>135.5</td>
+      <td>white</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Ice</td>
+      <td>90</td>
+      <td>92</td>
+      <td>75</td>
+      <td>60</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>abra</td>
+      <td>63</td>
+      <td>0.9</td>
+      <td>19.5</td>
+      <td>brown</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Psychic</td>
+      <td>NaN</td>
+      <td>25</td>
+      <td>20</td>
+      <td>15</td>
+      <td>90</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>absol</td>
+      <td>359</td>
+      <td>1.2</td>
+      <td>47.0</td>
+      <td>white</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>65</td>
+      <td>130</td>
+      <td>60</td>
+      <td>75</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>accelgor</td>
+      <td>617</td>
+      <td>0.8</td>
+      <td>25.3</td>
+      <td>red</td>
+      <td>arms</td>
+      <td>False</td>
+      <td>Bug</td>
+      <td>NaN</td>
+      <td>80</td>
+      <td>70</td>
+      <td>40</td>
+      <td>145</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>aegislash</td>
+      <td>681</td>
+      <td>1.7</td>
+      <td>53.0</td>
+      <td>brown</td>
+      <td>blob</td>
+      <td>False</td>
+      <td>Steel</td>
+      <td>Ghost</td>
+      <td>60</td>
+      <td>50</td>
+      <td>150</td>
+      <td>60</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>zoroark</td>
+      <td>571</td>
+      <td>1.6</td>
+      <td>81.1</td>
+      <td>gray</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>60</td>
+      <td>105</td>
+      <td>60</td>
+      <td>105</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>zorua</td>
+      <td>570</td>
+      <td>0.7</td>
+      <td>12.5</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>40</td>
+      <td>65</td>
+      <td>40</td>
+      <td>65</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>zubat</td>
+      <td>41</td>
+      <td>0.8</td>
+      <td>7.5</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Flying</td>
+      <td>40</td>
+      <td>45</td>
+      <td>35</td>
+      <td>55</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>zweilous</td>
+      <td>634</td>
+      <td>1.4</td>
+      <td>50.0</td>
+      <td>blue</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>Dragon</td>
+      <td>72</td>
+      <td>85</td>
+      <td>70</td>
+      <td>58</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>zygarde</td>
+      <td>718</td>
+      <td>5.0</td>
+      <td>305.0</td>
+      <td>green</td>
+      <td>squiggle</td>
+      <td>False</td>
+      <td>Dragon</td>
+      <td>Ground</td>
+      <td>108</td>
+      <td>100</td>
+      <td>121</td>
+      <td>95</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+<p>807 rows × 13 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"pikachu"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[25]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>id                25
+height           0.4
+weight             6
+color         yellow
+shape      quadruped
+is baby        False
+type 1      Electric
+type 2           NaN
+hp                35
+attack            55
+defense           40
+speed             90
+fast            True
+Name: pikachu, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Pokračování</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tohle nejsou ani zdaleka všechny možnosti manipulace s daty, které Pandas umožňuje, ale pro začátek to bude stačit. Další si ukážeme během explorační datové analýzy v následujících kapitolách.</p>
+<p>Pokud si chceš výsledky svých experimentů uložit do souboru, stačí použít metodu <code>to_csv()</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">"vysledky_pokusu.csv"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Čas na hraní</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Před další lekcí je důležité se s Pandasem trošku sžít a základní operace s daty dostat pod kůži. V dalších lekcích si budeme ukazovat pokročilejší metody pro práci s daty, které budou na těchto základech stavět. Po každé lekci bude také více než vhodné si nově získané znalosti zkusit a k tomu bude potřeba pro začátek sehnat nějaká data.</p>
+<p>Lepších či horších zdrojů dat je na internetu nepřeberné množství, takže si každý jistě vybere. Na začátku doporučujeme si vybrat data, kterým rozumíš, protože se pak při analýze budeš moci soustředit na řešení pokročilejších úloh a nebudeš muset bazírovat nad významem krkolomně pojmenovaných sloupců.</p>
+<p>Pro začátek se můžeš podívat třeba sem:</p>
+<ul>
+<li><a href="https://data.gov.cz/datov%C3%A9-sady">Národní katalog otevřených dat (NKOD)</a> obsahuje spoustu datových sad od různých institucí - <a href="https://data.gov.cz/datov%C3%A1-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatov%C3%A9-sady%2FCSShZbzpcn%2F695492977%2Fe6e6bc9dc686d59dca74bfa80574d05e">počtem vyplácených invalidních důchodů v České republice dle skupin diagnóz</a> počínaje a <a href="https://data.gov.cz/datov%C3%A1-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatov%C3%A9-sady%2Fhttps---data.army.cz-api-3-action-package_show-id-uhrazen%C3%A9-faktury-2018">uhrazenými fakturami ministerstva obrany</a> konče.</li>
+<li><a href="https://www.czso.cz/">Český statistický úřad (ČSÚ)</a> poskytuje některá data do NKOD a další jsou k dispozici u něj. Můžete se tak zaměřit na <a href="https://volby.cz/opendata/opendata.htm">výsledky voleb</a> nebo třeba <a href="https://www.czso.cz/csu/czso/databaze-demografickych-udaju-za-obce-cr">počty sňatků a rozvodů</a> či jiná demografická data.</li>
+<li><a href="https://www.kaggle.com/datasets">Kaggle</a> nabídne po registraci obrovskou spoustu datových sad od <a href="https://www.kaggle.com/gustavomodelli/forest-fires-in-brazil">lesních požárů v Brazílii</a>, přes informace o <a href="https://www.kaggle.com/brkurzawa/us-breweries">amerických pivovarech</a> až po <a href="https://www.kaggle.com/irinachuchueva/russian-wholesale-electricity-market">velkoobchodní trh s elektřinou v Rusku</a>.</li>
+</ul>
+<p>Zkus si nějakou datovou sadu stáhnout a prozkoumat. Když se ti zalíbí, tak si ji nech, budeš si s ní moci hrát čím dál sofistikovaněji po absolvování dalších lekcích.</p>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-ostrava-jaro/pydata/notebook/">← <span class="d-none d-sm-inline">Základy práce s Jupyter Notebookem</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-ostrava-jaro/sessions/eda1/">↑ <span class="d-none d-sm-inline">Lekce: Představení, Jupyter notebook, základy pandas</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-ostrava-jaro/sessions/eda1/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2020-pydata-ostrava-jaro/lessons/pydata/pandas/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Lumír Balhar, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
