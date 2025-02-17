@@ -1,0 +1,276 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Spouštění procesů
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/descriptors/">Bash III</a>
+
+> <a href="/2020/linux-admin/linuxadmin/process-execution/">Spouštění procesů</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Spouštění procesů</h1>
+<p>Pojďme se podívat na to, co přesně Bash dělá, když spustí program.</p>
+<p>Příkaz <code>ps</code> bez argumentů vypíše jen ty procesy, které „patří“ k aktuálnímu
+terminálu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">   2328 pts/0    00:00:00 bash</span>
+<span class="go">  14509 pts/0    00:00:00 ps</span>
+</pre></div><p>Vidíš, že běží dva programy: jak <code>bash</code> tak <code>ps</code>.</p>
+<p>Co když přesměruješ data z jednoho příkazu do druhého?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps <span class="p">|</span> cat
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">   2328 pts/0    00:00:00 bash</span>
+<span class="go">  14661 pts/0    00:00:00 ps</span>
+<span class="go">  14662 pts/0    00:00:00 cat</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>ps <span class="p">|</span> cat <span class="p">|</span> sort
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">  14679 pts/0    00:00:00 ps</span>
+<span class="go">  14680 pts/0    00:00:00 cat</span>
+<span class="go">  14681 pts/0    00:00:00 sort</span>
+<span class="go">   2328 pts/0    00:00:00 bash</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="p">|</span> ps
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">   2328 pts/0    00:00:00 bash</span>
+<span class="go">  14689 pts/0    00:00:00 ps</span>
+</pre></div><h2>Nastavení, spuštění a čekání</h2>
+<p>Když Bash spouští program, udělá tři věci:</p>
+<ul>
+<li>Nastaví prostředí – přesměrovaný vstup/výstup, proměnné prostředí apod.;</li>
+<li>program spustí;</li>
+<li>čeká, až se program ukončí.</li>
+</ul>
+<p>Pokud Bash spouští několik programů najednou, udělá obecně každý z těchto
+kroků pro všechny spouštěné programy najednou.</p>
+<p>Příklady:</p>
+<h3><code>ps</code></h3>
+<ul>
+<li>Prostředí je nastavené – std. vstup i výstup jdou na stejné místo jako
+u Bashe.</li>
+<li>Spustí se program <code>ps</code>.</li>
+<li>Čeká se, než se <code>ps</code> ukončí.
+(Program <code>ps</code> mezitím něco vypíše na std. výstup.)</li>
+</ul>
+<p>Po ukončení Bash vypíše výzvu a čeká na další příkaz.</p>
+<p><span class="figure"><a href="/2020/linux-admin/linuxadmin/process-execution/static/ps.svg"><img src="/2020/linux-admin/linuxadmin/process-execution/static/ps.svg" alt="Diagram spouštění `ps`"></a></span></p>
+<h3><code>ps | cat</code></h3>
+<ul>
+<li>Bash vytvoří novou rouru. Std. výstup z <code>ps</code> a std. vstup pro <code>cat</code>
+přesměruje na tuto rouru.
+(Zbylé – std. chyby, vstup pr <code>ps</code> i výstup z <code>cat</code> – nechá jako u Bashe.)</li>
+<li>Spustí programy <code>ps</code> i <code>cat</code>.</li>
+<li><p>Čeká, než se <code>ps</code> i <code>cat</code> ukončí.
+(Programy mezitím spolu komunikují nebo píší na std. výstup.)</p>
+<p><span class="figure"><a href="/2020/linux-admin/linuxadmin/process-execution/static/ps-cat.svg"><img src="/2020/linux-admin/linuxadmin/process-execution/static/ps-cat.svg" alt="Diagram spouštění `ps | cat`"></a></span></p>
+</li>
+</ul>
+<h3><code>ps | cat | sort</code></h3>
+<p>Příkazů propojených rourami může být více;
+Bash skládá za sebe stejným spůsobem.</p>
+<p><span class="figure"><a href="/2020/linux-admin/linuxadmin/process-execution/static/ps-cat-sort.svg"><img src="/2020/linux-admin/linuxadmin/process-execution/static/ps-cat-sort.svg" alt="Diagram spouštění `ps | cat | sort`"></a></span></p>
+<h3><code>echo | ps</code></h3>
+<p>Z pohledu Bashe je <code>echo | ps</code> úplně stejné jako <code>ps | cat</code>.
+Příkaz <code>echo</code> se ale ukončí hned poté co vypíše svůj řádek, což je většinou
+velice rychlé – stihne to dřív než se <code>ps</code> zeptá systému na běžící programy.
+Proto <code>echo</code> většinou není ve výstupu vidět.:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="p">|</span> ps
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">   2328 pts/0    00:00:00 bash</span>
+<span class="go">  14689 pts/0    00:00:00 ps</span>
+</pre></div><p><span class="figure"><a href="/2020/linux-admin/linuxadmin/process-execution/static/echo-ps.svg"><img src="/2020/linux-admin/linuxadmin/process-execution/static/echo-ps.svg" alt="Diagram spouštění `echo | ps`"></a></span></p>
+<h2>Další kombinace příkazů</h2>
+<p>Kromě <code>|</code> se příkazy dají kombinovat několika dalšími operátory.</p>
+<p>Nejjednodušší je středník (<code>;</code>): napřed se provede příkaz na levé straně,
+potom ten na pravé.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'Vysledek je'</span><span class="p">;</span> python -c <span class="s1">'print(1 + 1)'</span>
+<span class="go">Vysledek je</span>
+<span class="go">2</span>
+</pre></div><p>Docela užitečné je <code>&amp;&amp;</code> (logické A; angl. <em>AND</em>): napřed se provede příkaz
+na levé straně, a pouze pokud uspěl (<code>$?</code> je 0), se provede ten na pravé.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python -c <span class="s1">'print(1 + )'</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s1">'je výsledek'</span>
+<span class="go">  File "&lt;string&gt;", line 1</span>
+<span class="go">    print(1 + )</span>
+<span class="go">              ^</span>
+<span class="go">SyntaxError: invalid syntax</span>
+</pre></div><p>Tenhle operátor se hodí např. v případech, kdy píšeš program, který připraví
+nějaký soubor. Příkaz <code>python priprav-soubor.py &amp;&amp; head pripraveny-soubor.dat</code>
+vypíše ukázku výsledku, ale jen když se všechno povedlo.
+Když Python skončí s chybou, <code>pripraveny-soubor.dat</code> (existující od minula)
+se nevypíše – na obrazovce zůstane chybová hláška od Pythonu.</p>
+<p>Opak je <code>||</code> (logické NEBO; angl. <em>OR</em>): příkaz na pravé straně se provede,
+pokud příkaz nalevo <em>neuspěl</em> (<code>$?</code> není 0).</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python -c <span class="s1">'print(1 + )'</span> <span class="o">||</span> <span class="nb">echo</span> <span class="s1">'Jejda! Chyba!'</span>
+<span class="go">  File "&lt;string&gt;", line 1</span>
+<span class="go">    print(1 + )</span>
+<span class="go">              ^</span>
+<span class="go">SyntaxError: invalid syntax</span>
+<span class="go">Jejda! Chyba!</span>
+</pre></div><p>A nakonec, když dáš za příkaz <code>&amp;</code>, tak Bash nebude čekat na konec programu,
+ale pokračuje hned dál.
+Když program skončí, dá Bash před dalším promptem vědět:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sleep <span class="m">1</span>
+<span class="gp">$ </span>sleep <span class="m">1</span> <span class="p">&amp;</span>
+<span class="go">[1] 25507</span>
+<span class="gp">$
+</span><span class="gp">$ </span><span class="c1"># vteřinu počkej...</span>
+<span class="go">[1]+  Dokončena              sleep 1</span>
+<span class="gp">$
+</span></pre></div><p>Pozor na to, že program „v pozadí“ sdílí s Bashem terminál,
+takže pokud bude něco psát (nebo hůř, číst) se std. vstupu/výstupů,
+bude se s Bashem „hádat“.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>curl https://httpbin.org/get <span class="p">&amp;</span>
+<span class="go">[1] 25537</span>
+<span class="gp">$ </span><span class="o">{</span> ... sem curl vypíše jakási stažená JSON data ...  <span class="o">}</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/descriptors/">↑ <span class="d-none d-sm-inline">Lekce: Bash III</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/linuxadmin/fork-exec/"><span class="d-none d-sm-inline">Fork a exec</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/linuxadmin/process-execution/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Petr Viktorin a Karolina Surma, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

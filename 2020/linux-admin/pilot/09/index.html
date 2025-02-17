@@ -1,0 +1,463 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Zápis – cron, Ansible, barvičky
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/containers/">Kontejnery a Automatizovaná konfigurace</a>
+
+> <a href="/2020/linux-admin/pilot/09/">Zápis – cron, Ansible, barvičky</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>9. Linuxová administrace - cron, Ansible, barvičky</h1>
+<p>Dnes si vyzkoušíme přehrávat zvuky z příkazové řádky!
+Jaké zvukové soubory máš k dispozici na počítači?</p>
+<h2>Příkaz <code>locate</code></h2>
+<p>Příkaz <code>locate</code> projde databázi všech souborů, které máš na disku a vypíše seznam všech souborů, které mají v názvu hledanou sekvenci písmen:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>locate .ogg
+</pre></div><p><code>locate</code> je <code>daemon</code>, který jednou za čas projde celý disk a zaindexuje všechny soubory.
+Pokud sis tento příkaz právě nainstalovala, tak ti ještě nic neřekne, protože je jeho databáze zatím prázdná. 
+Tu si můžeš nechat vytvořit/zaindexovat pomocí <code>updatedb</code> (nutno spouštět jako <code>root</code>, či se <code>sudo</code>).</p>
+<p>Pokud nemáš žádné nahrané zvuky, můžeš sáhnout po těch systémových.
+Ty najdeš v <code>/usr/share/sounds</code>, kde jsou různé soubory ve formátu <code>.ogg</code>.</p>
+<h2>Přehrávání zvuků z příkazové řádky</h2>
+<p>Proč se hodí přehrávat zvuk v příkazové řádce?</p>
+<p>Protože pak to můžeš <strong>automatizovat</strong>. 
+Třeba spouštět stále dokola.</p>
+<p>My si to zkusíme s přehrávačem <code>mplayer</code>. 
+Mrkni, jestli je v tvém systému. 
+Pokud ne a jsi na Fedoře, nainstaluj si repozitář <code>free</code> z  <a href="https://rpmfusion.org/Configuration">rpmfusion</a></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">while</span> <span class="nb">true</span> <span class="p">;</span> <span class="k">do</span> mplayer &lt;cesta/k/tvemu/zvuku&gt;<span class="p">;</span> <span class="k">done</span>
+</pre></div><p>Až to budeš chtít zrušit, zmáčkni <code>Ctrl+C</code>.</p>
+<h2>Spouštění zvuku podle času</h2>
+<p>Jde to přehrát? Tak je čas na vyzkoušení, jak spustit zvuk v zadaný čas.</p>
+<p>Řekneme počítači, aby v určitém intervalu něco opakoval. 
+Příklad se zvukem ti možná nepřijde úplně prakticky (i když... pokud někdy budeš potřebovat budík a nabíječka k mobilu bude ta tam, touhle cestou si hravě poradíš!). 
+Je to ale dobrý příklad, jak si ukázat princip <strong>pravidelně plánovaných úloh</strong>.</p>
+<p>V praxi systémového administrátora se může stát, že budeš chtít každý den udělat zálohu databáze. 
+Do speciálního konfiguračního souboru zadáš ve speciálním formátu informaci, že se má pustit každý den v určitou hodinu určitý skript.
+Jiný příklad: můžeš si třeba chtít každý den na konci dne uložit své poznámky do gitu.</p>
+<p>O spouštění programů podle času se stará démon <code>cron</code>. 
+Jeho konfigurace se nastavuje přes <code>crontab</code>.</p>
+<p>Má pěknou manuálovou stránku, kde si najdeš veškeré informace, co tento program dělá.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>man crontab
+</pre></div><p>Na této stránce najdeš informaci, že přepínač <code>-e</code> spustí editor, do kterého si můžeš napsat, co a jak často se má spouštět.</p>
+<p>Co potřebuješ napsat do takového konfiguračního souboru, není napsané na této manuálové stránce.
+<code>man</code> má totiž více <em>kapitol</em>, kde každá kapitola má spoustu stránek.
+Základním příkazem <code>man</code> se dostaneš do kapitoly <code>1</code>, kde je napsané, jak se zadaný příkaz spouští a jaké má parametry.
+Na konci první manuálové stránky je odkaz na <code>SEE ALSO crontab(5), cron(8)</code>.
+Informace o tom, jak nakonfigurovat soubor, najdeš v kapitole 5.</p>
+<p>Tuto kapitolu otevřeš pomocí příkazu níže:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>man <span class="m">5</span> crontab
+</pre></div><p>A teď už je čas na nakonfigurování naší úlohy.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>crontab -e
+</pre></div><p>Otevře se ti textový editor. 
+Na některých operačních systémech jsou v něm už komentáře s vysvětlivkami, na jiných je tento soubor úplně prázdný.</p>
+<p>Do otevřeného souboru napiš 5 hvězdiček a příkaz, který se má spouštět. 
+Zaměň příkladovou cestu k zvukovému souboru za zvuk na tvém počítači.</p>
+<div class="highlight"><pre><span></span><span class="go">* * * * * mplayer /usr/share/sounds/gnome/default/alerts/bark.ogg</span>
+</pre></div><p>Každá z hvězdiček vyjadřuje jinou část času (minuta, hodina, ...). 
+Aby sis to ale nemusela pokaždé číst znova, doporučujeme si na první řádek dát komentář, co která pozice říká.
+Výsledek:</p>
+<div class="highlight"><pre><code># min hod den mesic den_tydne prikaz
+  *   *   *   *     *         mplayer /usr/share/sounds/gnome/default/alerts/bark.ogg</code></pre></div><p>Když to uložíš a zavřeš, <code>crontab</code> se nainstaluje.</p>
+<p>5 hvězdiček znamená, že teď ti to každou minutu přehraje zvuk. Jupí!</p>
+<p>Toto nastavení vydrží i po vypnutí počítače. 
+Zkrátka dokud si to zas nevypneš.</p>
+<p>Počkej pár minut a ověř, jestli se to opravdu každou minutu přehrává.
+Moc dlouho tě to asi bavit nebude, tak zkus snížit frekvenci, s jakou se zvuk bude přehrávat. 
+Nastav přehrávání každou 50. minutu.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>crontab -e
+<span class="go">50 * * * * mplayer /cesta/ke/zvuku</span>
+</pre></div><p><code>*</code> znamená každou/každý.</p>
+<p>Zkus se zamyslet, co znamená toto nastavení:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>crontab -e
+<span class="go">* 4 * * * mplayer /cesta/ke/zvuku</span>
+</pre></div><p>Odpověď: bude to přehrávat zvuk každou minutu od 4. do 5. hodin.</p>
+<p>Proto je lepší nemít hvězdičky vlevo od hodnoty, kterou chceme nastavit.</p>
+<p>Každý druhý den se napíše:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>crontab -e
+<span class="go">0 0 /2 * * mplayer /cesta/ke/zvuku</span>
+</pre></div><p>A 2. den v měsíci takto:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>crontab -e
+<span class="go">0 0 2 * * mplayer /cesta/ke/zvuku</span>
+</pre></div><p><code>crontab</code> je mocný nástroj, ale i krypticky. 
+V manuálu najdeš všechno, co potřebuješ k jeho nastavení.</p>
+<p>[note]</p>
+<blockquote><p>Cron může posílat maily, pokud jde z programu nějaký chybový výstup. 
+E-mail je věc starší, než je internet. 
+Původně se emaily posílaly v rámci jednoho počítače.</p>
+<p>Příkazem <code>mail</code> si je můžeš zobrazit. 
+Po čase je dobré se podívat, jestli ti je <code>cron</code> neposílá, což by nám po čase mohlo naplnit takovou schránku.</p>
+</blockquote>
+<h2>Příkaz <code>watch</code></h2>
+<p>Jiný zajímavý příkaz, který si dnes ukážeme, hodně pomáhá administrátorům, když chtějí v reálném čase koukat, jak se mění nějaká hodnota.</p>
+<p>Znáš už příkaz <code>top</code>, který se automaticky aktualizuje, ale ne všechny příkazy toto dělají. 
+Zkus například <code>date</code>, který ti řekne aktuální datum a čas.
+Nebo <code>free</code>, který ukáže, jak kolik paměti je použito.
+Jiný takový příkaz je <code>df</code>, který ukáže volné místo na disku.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>df
+<span class="go">Filesystem     1K-blocks      Used Available Use% Mounted on</span>
+<span class="go">udev             3889396         0   3889396   0% /dev</span>
+<span class="go">tmpfs             782916      2276    780640   1% /run</span>
+<span class="go">/dev/sda1      245084444 217345020  15220156  94% /</span>
+<span class="go">tmpfs            3914572    284800   3629772   8% /dev/shm</span>
+<span class="go">tmpfs               5120         4      5116   1% /run/lock</span>
+<span class="go">tmpfs            3914572         0   3914572   0% /sys/fs/cgroup</span>
+</pre></div><p>Můžeš použít přepínač <code>-h</code>, výpis pak bude čitelný pro lidi (v kB, MB, GB...).</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>df -h
+<span class="go">Filesystem      Size  Used Avail Use% Mounted on</span>
+<span class="go">udev            3,8G     0  3,8G   0% /dev</span>
+<span class="go">tmpfs           765M  2,3M  763M   1% /run</span>
+<span class="go">/dev/sda1       234G  208G   15G  94% /</span>
+<span class="go">tmpfs           3,8G  349M  3,4G  10% /dev/shm</span>
+<span class="go">tmpfs           5,0M  4,0K  5,0M   1% /run/lock</span>
+<span class="go">tmpfs           3,8G     0  3,8G   0% /sys/fs/cgroup</span>
+</pre></div><p>Problém s příkazem je, že vypíše aktuální stav a pak se ukončí.
+Pokud něco zapisuje určité množství dat na tvůj disk, například nahráváš video a chceš koukat, jak moc se zaplňuje místo, musíš se podívat po lepším řešení.</p>
+<p>Existuje program, které bude pouštět zadaný program v cyklu a zobrazí vždy poslední hodnotu.
+Příkaz <code>watch</code> nám spouští zadaný příkaz každé 2s.
+Zkus s programy výše:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>watch df -h
+<span class="gp">$ </span>watch date
+<span class="gp">$ </span>watch -d free
+</pre></div><p>Toto zvýrazní rozdílné znaky od minulého zobrazení.</p>
+<p>Pokud bys to chtěla spouštět častěji, tak to zařídíme pomocí <code>-n</code> (čas v sekundách), takže třeba:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>watch -n <span class="m">0</span>.7 free
+</pre></div><p>Ukončíš to přes <kbd>CTRL</kbd>+<kbd>C</kbd>.</p>
+<p>Co umí <code>date</code>? Zkus některé přepínače.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>date -Is
+<span class="go">2020-12-02T20:47:38+01:00</span>
+<span class="gp">$ </span>date -Id
+<span class="go">2020-12-02</span>
+<span class="gp">$ </span>date -Im
+<span class="go">2020-12-02T20:47+01:00</span>
+</pre></div><p>To je dostatečně hezký formát, aby se to dalo použít jako název souboru na Linuxu. 
+Zde totiž nějaké dvojtečky a plusy v názvu souboru nevadí, ale pozor, na Windows by to mohlo zlobit.</p>
+<h2>Ansible</h2>
+<p>Příklad: Představ si, že jsi systémový administrátor na serverové farmě. 
+Staráš se o 500 počítačů. Každý z nich má nastavený <code>cron</code> na zálohy. 
+Třetina má nastavený webový server, další třetina je velký cluster databází a poslední třetina dělá maily. 
+Tvůj úkol je zajistit, aby se na všech těch serverech záloha dělala dvakrát častěji.</p>
+<p>Co uděláš?
+Připojíš se <code>ssh</code> k prvnímu serveru, pozměníš <code>crontab</code>. 
+Hurá! Jen 499 a můžeš jít domů.</p>
+<p>Jiná varianta je, že si napíšeš v Bashi cyklus, který se připojí ke každému počítači a změní interval crontabu.
+Budeš mít z toho skvělý pocit a práce bude odvedená během chvilky.
+...Jenže pak zjistíš, že u serveru číslo 54 se to jaksi nepovedlo. 
+Což znamená, že bys měla zjistit, jestli u ostatních serverů to dopadlo dobře, nebo taky ne.</p>
+<p>Změny konfigurace na vícero strojích se dnes už nedělají tak, že jdeš k počítači a fyzicky na něm upravíš konfigurační soubor, a následně restartuješ příslušnou službu.</p>
+<p>Představ si, že na tvé farmě právě shořel jeden z tvých serverů. 
+Nakoupíš nový počítač a chceš, aby se nakonfiguroval úplně stejně jako ten předchozí. 
+Potřebuješ určitou verzi databáze s určitou konfigurací, a taky tam potřebuješ nastavit <code>crontab</code>, a ještě dát tam změnu z úterka, s tou zvýšenou frekvencí záloh.</p>
+<p>Používají se na to systémy, kde si do souboru napíšeš, jak má tvůj systém vypadat a pustíš program, který se připojí na těch 500 serverů a každý nastaví podle toho seznamu.
+Pak shoří server, vyměníš ho za jiný a pustíš ten program znova. 
+Důležité je, že nastavení toho počítače máš v gitu.
+Je to verzovaný soubor, a tak se můžou sledovat změny, které kdo v tom nastavení dělal.</p>
+<p>Ansible dělá přesně takové věci. 
+Popíšeš si systém, pustíš Ansible, řekneš mu, na jaké počítače se má připojit, on se přípojí a počítač nastaví.</p>
+<p>Nevýhoda je, že je to další systém, který se musíš naučit konfigurovat. 
+Dnes je to ovšem čím dál rozšířenější a systémoví administrátoři s Ansiblem nebo podobnými systémy (jako <em>Puppet</em>) běžně pracují.</p>
+<h3>Nainstalujeme si nějaký <em>užitečný program</em></h3>
+<p>Nejlepší způsob, jak se naučit pracovat s Ansiblem, je říct si, jaký balíček chceš mít vždy na svém systému.
+A ten si nakonfigurujeme.</p>
+<p>Nainstaluj Ansible:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf install ansible
+</pre></div><p>Udělej si nový adresář pro tuto lekci.</p>
+<p>Pro Ansible se píšou tzv. <em>playbooky</em>, což jsou konfigurační soubory ve formátu <code>yml</code>/<code>yaml</code>. 
+<a href="https://en.wikipedia.org/wiki/YAML">YAML</a> vyžaduje určité odsazení v souboru a bude si stěžovat, pokud ho nedodržíš.</p>
+<p>Napíšeme si konfigurační soubor s názvem <code>setup.yml</code>.
+Protože chceš konfigurovat jen vlastní počítač, <code>hosts</code> nastav na <code>localhost</code> a <code>connection</code> - <code>local</code>.</p>
+<div class="highlight"><pre><code># setup.yml
+
+- hosts: localhost
+  connection: local</code></pre></div><p>Pokud bys to používala i s dalšími počítači, správně by se nadefinovaly v samostatném souboru.</p>
+<p>Abys mohla něco nainstalovat, je třeba býti <code>root</code>em.</p>
+<div class="highlight"><pre><code>   become_user: root</code></pre></div><p>Dále se píše stav, do jakého chceš dostat svůj systém.
+Nejde o příkazy, ale o cíl, jak to má na konci vypadat.
+Až potom ten soubor pustíš, nebude provádět příkazy, ale podívá se, jestli je počítač ve správném stavu. 
+Když není, tak ho tam dostane. 
+Když pustíš Ansible dvakrát za sebou, poprvé udělá nějakou změnu, a podruhé si všimne, že už není co dělat, a tak žádnou změnu neudělá. 
+Vytvoř si tedy <code>tasks</code>. Úlohy, tedy <code>tasks</code>, jsou seznam. V <code>yml</code> se seznamy definují pomlčkou. 
+Každá úloha musí mít jméno.
+Nainstalujeme si <code>htop</code>, což je vylepšený <code>top</code>. 
+Pro instalaci musíš být <code>root</code>, a proto se to nastavení potvrdí v úloze (<code>become: yes</code>).</p>
+<div class="highlight"><pre><code>   tasks:
+   - name: Install htop
+     become: yes</code></pre></div><p>Přichází čas na instrukci, jak balíček nainstalovat.
+Na Fedoře se instaluje pomocí <code>dnf</code>. 
+Pak řekneš, že balíček <code>htop</code> chceš nainstalovat v poslední dostupné verzi.</p>
+<div class="highlight"><pre><code>     dnf:
+        state: latest
+        name:
+        - htop</code></pre></div><p>Celý blok nakonec vypadá takto. Pozor na odsazení:</p>
+<div class="highlight"><pre><code>- hosts: localhost
+  connection: local
+  become_user: root
+  tasks:
+   - name: Install htop
+     become: yes
+     dnf:
+        state: latest
+        name:
+        - htop</code></pre></div><p>Teď to zkus spustit:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ansible-playbook -K setup.yml
+<span class="go">BECOME password: </span>
+<span class="go">[WARNING]: provided hosts list is empty, only localhost is available. Note that</span>
+<span class="go">the implicit localhost does not match 'all'</span>
+
+<span class="go">PLAY [localhost] ***************************************************************</span>
+
+<span class="go">TASK [Gathering Facts] *********************************************************</span>
+<span class="go">ok: [localhost]</span>
+
+<span class="go">TASK [Install htop] ************************************************************</span>
+<span class="go">changed: [localhost]</span>
+
+<span class="go">PLAY RECAP *********************************************************************</span>
+<span class="go">localhost                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0</span>
+</pre></div><p>Díky parametru <code>-K</code> se tě Ansible nejdřív zeptá na <code>sudo</code> heslo a s tím pak spouští celý <em>playbook</em>.</p>
+<p>Pokud máš nainstalovaný <code>cowsay</code> a dostáváš tak výpis příkazu do obrázků kraviček, můžeš si to zkusit odinstalovat. 
+Pod <code>tasks</code> dopiš další odrážku:</p>
+<div class="highlight"><pre><code>   - name: Uninstall cowsay
+     become: yes
+     dnf:
+        state: absent   # chceš, aby nebyl nainstalován
+        name:
+        - cowsay</code></pre></div><p>Když ten <em>playbook</em> spouštíš dvakrát po sobě, tak to sice chvilku trvá, ale už ti to řekne <code>ok=3 changed=0</code>, protože druhé spuštění už nic nezměnilo.</p>
+<p>Co všechno se dá dělat s Ansiblem?</p>
+<ul>
+<li>instalovat balíčky (to jsme si právě zkusili)</li>
+<li>kopírovat soubory - např. konfigurační soubor pro <code>cron</code>.</li>
+<li>přidávat uživatele, skupinu uživatelů</li>
+<li>a mnohem víc...</li>
+</ul>
+<p>Existují pro to tzv. <em>pluginy</em>, které dělají přesně tyto věci. 
+Pokud ti nebude stačit nabídka pluginů, můžeš si v Pythonu napsat další.</p>
+<p>Tento příklad se připojuje pouze k aktuálnímu počítači. 
+Pokud bys to chtěla pouštět i na jiných počítačích, je třeba je zapsat do takzvaného <em>inventáře</em> (<em>inventory</em> file - <code>/etc/ansible/hosts</code>). Návod a příklady najdeš v dokumentaci programu.</p>
+<h3>Barvičky v terminálu</h3>
+<p>Když napíšeš <code>ls</code>, vypíše se barevný výstup. Jak to dělá? A hlavně, jak si to uděláš ty?</p>
+<p>Krátká odpověď je, že použiješ knihovnu, například Pythonní <a href="https://click.palletsprojects.com/en/7.x/">Click</a>, což je knihovna na uživatelská textová rozhraní.
+Taková knihovna se postará o veškerou správu: bude fungovat na různých terminálech, poradí si i se změnou velikostí okna terminálu a vyřeší spoustu dalších problémů.
+Pokud budeš chtít obarvovat textový výstup, je to nejlepší cesta, jak dosáhnout cíle.</p>
+<p>Je ale dobré vědět, na čem ty knihovny staví a jak to funguje na pozadí.
+Začneme nahlédnutím do prehistorie :)</p>
+<p>Původní terminály byly připojené k tiskárnám. 
+Po zadání příkazu do terminálu se požadovaný výstup vytiskl na papír.
+Neexistovala klávesa <kbd>Backspace</kbd> ani <kbd>ESC</kbd>, protože když jsi udělala překlep, už byl dávno vytisknutý na papíře. 
+Mohla jsi příkaz maximálně zrušit a napsat nový.
+Postupem času terminál získal nové funkce a začal ukazovat vepsaný text na obrazovce. 
+U těch nových, grafických terminálů už by šlo opravit překlep. 
+Jenže s touhle variantou se původně nepočítalo, a tak se řešilo, jak napsat na klávesnici <kbd>ESC</kbd>. 
+To řešení bylo, že když budeš chtít smazat písmeno, pošle se speciální řídící znak, který znamená mazání.
+Tak jako když zmáčkneš <kbd>Enter</kbd>, je to speciální znak <code>\n</code>, který přehodí kurzor na nový řádek, vznikl speciální znak, který posune kurzor o jedno místo zpátky a případně smaže poslední znak.</p>
+<p>Když se podíváš do tabulky ASCII (<code>man ascii</code>), zjistíš, že ta má na začátku spoustu řídících znaků. 
+Prvních 31 znaků na začátku jsou speciální znaky a mají různé významy jako začátek textu, začátek hlavičky, protože ASCII tabulka vychází z telegrafů a jiných forem komunikace ještě před internetem.</p>
+<p>Dnes se jich používá jen pár: nový řádek, tabulátor a pár dalších.</p>
+<p>Podívejme se ale na ten jeden konkrétní znak, 27 - ESC.
+To znamená útěk z toho módu, když se mají vykreslit písmenka na obrazovku, a informaci, že se bude dít něco navíc. 
+ESC uvozuje sekvenci znaku, která říká, co se má stát, např. <em>nastav barvu na červenou</em>.
+Znak s číslem 27 nejspíš na své klávesnici nenajdeš, a proto je čas na ukázku v Pythonu. 
+Hexadecimálně 27 je 1B.</p>
+<p>Vytvoř si soubor <code>barvicky.py</code> s obsahem níže:</p>
+<div class="highlight"><pre><span></span><span class="c1"># barvicky.py</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[1;31m slovo'</span><span class="p">)</span>
+</pre></div><p>Když ho spustíš, výpis v terminálu bude červený.</p>
+<div class="highlight"><pre><code>       +--- tzv. kontrolní sekvence, která nastavuje barvu
+       |
+    ------
+\x1B[1;31m
+----
+  |
+  +--- je jediný znak, a to ASCII ESC</code></pre></div><p>Kdy to přestane psát červeně? 
+Až zavřeš terminál, nebo až napíšeš reset sekvenci.</p>
+<p>Reset vypadá takto:</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[1;31m slovo   </span><span class="se">\x1B</span><span class="s1">[0m'</span><span class="p">)</span>
+</pre></div><p>1 znamená, že nastavuješ barvu, 31 je číslo konkrétní barvy.
+Můžeš si udělat duhu v terminálu - vyzkoušej si skript:</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[1;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">m slovo   </span><span class="se">\x1B</span><span class="s1">[0m'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[1;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">m slovo   </span><span class="se">\x1B</span><span class="s1">[0m'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[38;5;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">mM</span><span class="se">\x1B</span><span class="s1">[0m'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[48;5;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">mM</span><span class="se">\x1B</span><span class="s1">[0m'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+</pre></div><p>S těmito sekvencemi bývá problém, protože existuje různé terminály a jejich dodavatelé si barvičky implementovali po svém. 
+To se sice standardizovalo do tak zvaných ANSI sekvencí, kterých ukázku vidíš ve skriptu výše, ale i tak nejlepší varianta je použít nějakou knihovnu jako již zmíněný Click.</p>
+<p>Existují další řídící sekvence, které umí pohybovat kurzorem.
+Jedna základní je <code>\r</code>, která posune kurzor na začátek řádku.
+Vykoušej si cyklus v příkladu níže.</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">"="</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">'</span><span class="se">\r</span><span class="s1">'</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div><p>Takto se například dají vykreslovat progress bary. 
+Má to ale i svá úskalí, například změna velikosti terminálu nemusí dopadnout dobře. 
+Pokud budeš mít za úkol napsát progress bar, určitě si na to nainstaluj knihovnu, která to správně vyřeší za tebe.</p>
+<p>Pozor, na Windows to fungovat nebude, tam se to řeší přes speciální systémovou funkci "nastav barvu terminálu".</p>
+<p><em>To by chtělo trošku líp rozepsat, pokud bude v materiálech, vypadá to sice cool, ale i na druhý poslech je to celkem magic.</em></p>
+<p>Pro zajímavost, terminálové editory fungují právě na tomto principu <em>escape sekvencí</em>.
+Když přesvědčíš <code>vi</code>, že to, na co je napojený, je terminál, můžeš udělat něco jako</p>
+<div class="highlight"><pre><code>$ vi &gt; /tmp/session</code></pre></div><p>A to si zobrazíš třeba přes:</p>
+<div class="highlight"><pre><code>less /tmp/session</code></pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/notes/containers/">← <span class="d-none d-sm-inline">Kontejnery</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/containers/">↑ <span class="d-none d-sm-inline">Lekce: Kontejnery a Automatizovaná konfigurace</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/pilot/10/"><span class="d-none d-sm-inline">Zápis z minula – Syscalls, kontejnery</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/pilot/09/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsala Karolina Surma, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

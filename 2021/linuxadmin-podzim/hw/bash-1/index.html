@@ -1,0 +1,377 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Úkoly - Bash I
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/shell-1/">Bash I</a>
+
+> <a href="/2021/linuxadmin-podzim/hw/bash-1/">Úkoly - Bash I</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Úkoly - Bash I</h1>
+<p>U úkolů označených ⌨* budeš potřebovat počítač.
+Ostatní zkus dát „z hlavy“.</p>
+<h2>1. ⌨*</h2>
+<p>Co dělá příkaz <code>ls -v</code>?</p>
+<ul>
+<li><strong>A.</strong> Vypíše verzi programu <code>ls</code></li>
+<li><strong>B.</strong> Vypíše jméno aktuálního adresáře, ne jeho obsah</li>
+<li><strong>C.</strong> Seřadí soubory podle hodnot (víceciferných) čísel v názvech</li>
+<li><strong>D.</strong> Vypíše obsah adresáře kompaktně – jednotlivá jména oddělí čárkou</li>
+</ul>
+<p>Bonus: Jaké přepínače mají ostatní efekty?</p>
+<h2>2.</h2>
+<p>Začnu-li (jako uživatel <code>mh</code>) v adresáři <code>/home/mh/data</code>, které z těchto příkazů mě dostanou do <code>/home/mh</code>?</p>
+<ul>
+<li><strong>A.</strong> <code>cd .</code></li>
+<li><strong>B.</strong> <code>cd /</code></li>
+<li><strong>C.</strong> <code>cd /home/mh</code></li>
+<li><strong>D.</strong> <code>cd ../..</code></li>
+<li><strong>E.</strong> <code>cd ~</code></li>
+<li><strong>F.</strong> <code>cd home</code></li>
+<li><strong>G.</strong> <code>cd ~/data/..</code></li>
+<li><strong>H.</strong> <code>cd</code></li>
+<li><strong>I.</strong> <code>cd ..</code></li>
+<li><strong>J.</strong>  otevření nového terminálu</li>
+</ul>
+<h2>3.</h2>
+<p>Mám-li níže ukázané adresáře, a <code>pwd</code> vypisuje <code>/home/mh/vec</code>, co ukáže <code>ls -F ../archiv</code>?</p>
+<p><span class="figure"><a href="/2021/linuxadmin-podzim/hw/bash-1/static/hierarchy.svg"><img src="/2021/linuxadmin-podzim/hw/bash-1/static/hierarchy.svg" alt="Diagram adresářové struktury"></a></span></p>
+<!--
+
+```graphviz
+digraph hierarchy {
+    node [shape=folder];
+    "/" -> home;
+    home -> mh;
+    mh -> vec;
+    vec -> archiv;
+    archiv -> "2020-09-01";
+    archiv -> "2020-09-16";
+    archiv -> "2020-10-01";
+    mh -> archiv2;
+    archiv2 [label="archiv"]
+    archiv2 -> original;
+    archiv2 -> pnas_final;
+    archiv2 -> pnas_2
+}
+```
+
+-->
+
+
+<ul>
+<li><strong>A.</strong> <code>../archiv</code>: Adresář nebo soubor neexistuje</li>
+<li><strong>B.</strong> <code>2012-12-01 2013-01-08 2013-01-27</code></li>
+<li><strong>C.</strong> <code>2012-12-01/ 2013-01-08/ 2013-01-27/</code></li>
+<li><strong>D.</strong> <code>original pnas_final pnas_2</code></li>
+<li><strong>E.</strong> <code>original/ pnas_final/ pnas_2/</code></li>
+</ul>
+<h2>4.</h2>
+<p>Vypadá-li disk jako v předchozím úkolu a <code>pwd</code> vypisuje <code>/home/mh/archiv</code>, které z těchto příkazů vypíšou <code>pnas_2/ pnas_final/ original/</code>?</p>
+<ul>
+<li><strong>A.</strong> <code>ls pwd</code></li>
+<li><strong>B.</strong> <code>ls -r -F</code></li>
+<li><strong>C.</strong> <code>ls -r -F /home/mh/archiv</code></li>
+</ul>
+<h2>5. ⌨*</h2>
+<p>Zadej tenhle příkaz:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>touch novy_soubor.txt
+</pre></div><ol>
+<li>Co tenhle příkaz udělal? (Nápověda: Použij <code>ls</code>)</li>
+<li>Když se do aktuálního adresáře podíváš grafickým manažerem souborů, ukáže se ti <code>novy_soubor.txt</code>?</li>
+<li>Pusť <code>ls -l</code>. Zjistíš z výpisu, co nový soubor obsahuje?</li>
+<li>K čemu slouží příkaz <code>touch</code>?</li>
+</ol>
+<h2>6.</h2>
+<p>Po tom, co pustíš následující příkazy, si uvědomíš, že soubory <code>sucrose.dat</code> a <code>maltose.dat</code> jsou špatně umístěné – měly by být v adresáři <code>raw</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -F
+<span class="go"> analyzed/ raw/</span>
+<span class="gp">$ </span>ls -F analyzed
+<span class="go">fructose.dat glucose.dat maltose.dat sucrose.dat</span>
+<span class="gp">$ </span><span class="nb">cd</span> analyzed
+</pre></div><p>Doplň příkaz, který je tam přesune.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mv sucrose.dat maltose.dat ____/____
+</pre></div><h2>7.</h2>
+<p>Vytvořila sis soubor <code>statsitika.txt</code>, ve kterém máš nějaké výpočty. Ale ve jméně je překlep! Které z těchto příkazů to spraví?</p>
+<ul>
+<li><strong>A.</strong> <code>cp statsitika.txt statistika.txt</code></li>
+<li><strong>B.</strong> <code>mv statsitika.txt statistika.txt</code></li>
+<li><strong>C.</strong> <code>cp statsitika.txt .</code></li>
+<li><strong>D.</strong> <code>mv statsitika.txt .</code></li>
+</ul>
+<h2>8.</h2>
+<p>Co vypíše <code>ls</code> na konci této sekvence příkazů?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">pwd</span>
+<span class="go">/home/jamie/data</span>
+<span class="gp">$ </span>ls
+<span class="go">proteiny.dat</span>
+<span class="gp">$ </span>mkdir rekombinace
+<span class="gp">$ </span>mv proteiny.dat rekombinace
+<span class="gp">$ </span>cp rekombinace/proteiny.dat ../proteiny2.dat
+<span class="gp">$ </span>ls
+</pre></div><ul>
+<li><strong>A.</strong> <code>proteiny2.dat rekombinace</code></li>
+<li><strong>B.</strong> <code>rekombinace</code></li>
+<li><strong>C.</strong> <code>proteiny.dat rekombinace</code></li>
+<li><strong>D.</strong> <code>proteiny2.dat</code></li>
+</ul>
+<h2>9.</h2>
+<p>Sam má následující soubory:</p>
+<div class="highlight"><pre><code>.
+├── 2015-10-23-calibration.txt
+├── 2015-10-23-dataset1.txt
+├── 2015-10-23-dataset2.txt
+├── 2015-10-23-dataset_overview.txt
+├── 2015-10-26-calibration.txt
+├── 2015-10-26-dataset1.txt
+├── 2015-10-26-dataset2.txt
+├── 2015-10-26-dataset_overview.txt
+├── 2015-11-23-calibration.txt
+├── 2015-11-23-dataset1.txt
+├── 2015-11-23-dataset2.txt
+├── 2015-11-23-dataset_overview.txt
+├── backup
+│   ├── calibration
+│   └── datasets
+└── send_to_bob
+    ├── all_datasets_created_on_a_23rd
+    └── all_november_files</code></pre></div><p>Doplň následující příkazy...</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cp *dataset* backup/datasets
+<span class="gp">$ </span>cp ____calibration____ backup/calibration
+<span class="gp">$ </span>cp <span class="m">2015</span>-____-____ send_to_bob/all_november_files/
+<span class="gp">$ </span>cp ____ send_to_bob/all_datasets_created_on_a_23rd/
+</pre></div><p>... aby výsledek vypadal takhle:</p>
+<div class="highlight"><pre><code>.
+├── 2015-10-23-calibration.txt
+├── 2015-10-23-dataset1.txt
+├── 2015-10-23-dataset2.txt
+├── 2015-10-23-dataset_overview.txt
+├── 2015-10-26-calibration.txt
+├── 2015-10-26-dataset1.txt
+├── 2015-10-26-dataset2.txt
+├── 2015-10-26-dataset_overview.txt
+├── 2015-11-23-calibration.txt
+├── 2015-11-23-dataset1.txt
+├── 2015-11-23-dataset2.txt
+├── 2015-11-23-dataset_overview.txt
+├── backup
+│   ├── calibration
+│   │   ├── 2015-10-23-calibration.txt
+│   │   ├── 2015-10-26-calibration.txt
+│   │   └── 2015-11-23-calibration.txt
+│   └── datasets
+│       ├── 2015-10-23-dataset1.txt
+│       ├── 2015-10-23-dataset2.txt
+│       ├── 2015-10-23-dataset_overview.txt
+│       ├── 2015-10-26-dataset1.txt
+│       ├── 2015-10-26-dataset2.txt
+│       ├── 2015-10-26-dataset_overview.txt
+│       ├── 2015-11-23-dataset1.txt
+│       ├── 2015-11-23-dataset2.txt
+│       └── 2015-11-23-dataset_overview.txt
+└── send_to_bob
+    ├── all_datasets_created_on_a_23rd
+    │   ├── 2015-10-23-dataset1.txt
+    │   ├── 2015-10-23-dataset2.txt
+    │   ├── 2015-10-23-dataset_overview.txt
+    │   ├── 2015-11-23-dataset1.txt
+    │   ├── 2015-11-23-dataset2.txt
+    │   └── 2015-11-23-dataset_overview.txt
+    └── all_november_files
+        ├── 2015-11-23-calibration.txt
+        ├── 2015-11-23-dataset1.txt
+        ├── 2015-11-23-dataset2.txt
+        └── 2015-11-23-dataset_overview.txt</code></pre></div><h2>10.</h2>
+<p>Máš následující soubory:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -F
+<span class="go">analyzed/  fructose.dat    raw/   sucrose.dat</span>
+</pre></div><p>Zkus napsat co nejkratší příkaz, kterým přesuneš <code>fructose.dat</code> a <code>sucrose.dat</code> do adresáře <code>analyzed/</code>.</p>
+<h2>11.</h2>
+<p>Které z následujících sad příkazů vytvoří tuhle strukturu adresářů?</p>
+<div class="highlight"><pre><code>2016-05-20/
+└── data
+    ├── processed
+    └── raw</code></pre></div><p><strong>A.</strong></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir <span class="m">2016</span>-05-20
+<span class="gp">$ </span>mkdir <span class="m">2016</span>-05-20/data
+<span class="gp">$ </span>mkdir <span class="m">2016</span>-05-20/data/processed
+<span class="gp">$ </span>mkdir <span class="m">2016</span>-05-20/data/raw
+</pre></div><p><strong>B.</strong></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir <span class="m">2016</span>-05-20
+<span class="gp">$ </span><span class="nb">cd</span> <span class="m">2016</span>-05-20
+<span class="gp">$ </span>mkdir data
+<span class="gp">$ </span><span class="nb">cd</span> data
+<span class="gp">$ </span>mkdir raw processed
+</pre></div><p><strong>C.</strong></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir <span class="m">2016</span>-05-20/data/raw
+<span class="gp">$ </span>mkdir <span class="m">2016</span>-05-20/data/processed
+</pre></div><p><strong>D.</strong></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir -p <span class="m">2016</span>-05-20/data/raw
+<span class="gp">$ </span>mkdir -p <span class="m">2016</span>-05-20/data/processed
+</pre></div><p><strong>E.</strong></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir <span class="m">2016</span>-05-20
+<span class="gp">$ </span><span class="nb">cd</span> <span class="m">2016</span>-05-20
+<span class="gp">$ </span>mkdir data
+<span class="gp">$ </span>mkdir raw processed
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/carpentry-unix/create/">← <span class="d-none d-sm-inline">Práce se soubory a adresáři</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-1/">↑ <span class="d-none d-sm-inline">Lekce: Bash I</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-1/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/hw/bash-1/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>přeložil Petr Viktorin, 2020</p>
+    
+        <p>Většina úkolů pochází z kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, © 2016–2018 Software Carpentry Foundation, © 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
