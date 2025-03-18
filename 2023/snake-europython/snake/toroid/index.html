@@ -1,0 +1,224 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Snake Workshop for PyLadies: Snake extension: Infinite playground
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/2023/snake-europython/">Snake Workshop for PyLadies</a>
+
+> <a href="/2023/snake-europython/sessions/extensions/">Extensions</a>
+
+> <a href="/2023/snake-europython/snake/toroid/">Snake extension: Infinite playground</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="admonition warning"><p>This is a machine-generated translation.</p>
+</div><h1 id="infinite_cage">Infinite cage
+<a href="#infinite_cage" class="header-link">#</a>
+</h1>
+<p>Instead of ending the game when hitting the edge of the window, you can let the snake "pass through" and appear on the other side.</p>
+<p>From a game logic standpoint, it's not as complicated as it may sound. It's enough to set the appropriate value for the end of the game in the <code>move</code> function. However, it's necessary to be careful where to use <code>new_x</code> and where to use <code>new_y</code>, where to use <code>width</code> and where to use <code>height</code>, and where to add or subtract one, so that everything fits when numbering from zero. Give it a try!</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/toroid/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">new_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">new_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
+            <span class="n">new_x</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+            <span class="n">new_y</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+    </div>
+</div><p>However, if you draw a snake (instead of a caterpillar), you will now encounter a problem with selecting the correct pieces - the edge of the snake game visually divides it into two smaller parts. I leave the solution to this problem to the reader - with the note that it is a very difficult problem.</p>
+<h2 id="residual_solution">Residual solution
+<a href="#residual_solution" class="header-link">#</a>
+</h2>
+<p>Can the logic of climbing out of the window be solved more simply? Yes, it can!
+Mathematicians have come up with an operation called the <em>remainder of division</em>.
+It does exactly what you need - the remainder of division of the new coordinates by the size of the field gives a coordinate that lies within the field.
+When the previous coordinate was one larger than the maximum, the remainder of division will be zero; when it was -1, we get the maximum.</p>
+<p>Python uses the operator <code>%</code> for the remainder after division. Try it out.</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; 6 % 10      # Remainder after dividing six by ten
+6
+&gt;&gt;&gt; 10 % 10
+0
+&gt;&gt;&gt; -1 % 10
+9</code></pre></div><p>The entire code for controlling and handling climbing out of the playing area can be replaced by two lines.</p>
+<div class="highlight"><pre><span></span><span class="n">new_x</span> <span class="o">=</span> <span class="n">new_x</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
+<span class="n">new_y</span> <span class="o">=</span> <span class="n">new_y</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span>
+</pre></div><p>Similar mathematical 'shortcuts' can often make life easier for programmers. However, coming up with them is not always easy. But don't worry: if you're not interested in studying computer science at school, know that it's possible to do it without 'shortcuts'. It just might be a bit more convoluted at times.</p>
+<div class="admonition note"><p>The fact that there is exactly the operation we need is not entirely a coincidence. The mathematical simplicity is rather the <em>reason</em> why the playing field behaves this way in many old games. &lt;This is called <a href="https://en.wikipedia.org/wiki/Torus#Topology">toroidal topology</a> in professional terms.</p>
+</div><div class="admonition note"><p class="admonition-title">For mathematicians</p>
+<p>Experienced mathematicians may now complain about the need to define the remainder of division of a negative number. Therefore, I will add that Python intentionally <a href="https://docs.python.org/3/reference/expressions.html#binary-arithmetic-operations">defines it appropriately</a> for this purpose; <code>a % b</code> always has the same sign as <code>b</code>.</p>
+</div><h2 id="rendering">Rendering
+<a href="#rendering" class="header-link">#</a>
+</h2>
+<p>In your free time, try to fix the problem. I recommend returning to the 'abstract' function that only prints coordinates and directions:</p>
+<div class="highlight"><pre><code>1 2 tail right
+2 2 left right
+3 2 left top
+3 3 bottom top
+3 4 bottom top
+3 5 bottom right
+4 5 left head</code></pre></div><p>If you follow the instructions, you have this function saved in the file <code>smery.py</code>. First, fix it and then 'transplant' the solution into the game.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2023/snake-europython/snake/handling/">← <span class="d-none d-sm-inline">Snake extension: Better controls</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2023/snake-europython/sessions/extensions/">↑ <span class="d-none d-sm-inline">Lekce: Extensions</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2023/snake-europython/snake/tile-selection/"><span class="d-none d-sm-inline">Snake tile selection</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/snake-workshop/blob/snake-ep-2023/lessons/snake/toroid/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Written by Petr Viktorin for PyLadies Brno, 2018.</p>
+    
+        <p>Initial translation to English by Petra Vidnerová, based on ChatGPT</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

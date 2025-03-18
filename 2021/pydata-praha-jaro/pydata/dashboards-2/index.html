@@ -1,0 +1,237 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Pokročilejší možnosti pro dashboardy
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/pydata-praha-jaro/">Datový kurz PyLadies</a>
+
+> <a href="/2021/pydata-praha-jaro/sessions/dashboards/">Interaktivní vizualizace a aplikace</a>
+
+> <a href="/2021/pydata-praha-jaro/pydata/dashboards-2/">Pokročilejší možnosti pro dashboardy</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Pokročilejší dashboarding</h1>
+<p>V předchodí části jsme velice efektivně vytvořili jednoduchý a přesto užitečný dashboard na vizualizaci dat. Teď se podíváme na trochu rozsáhlejší aplikaci: Vrátíme se zpět k rybám, tučňákům a strojovému učení.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Fishboard</h2>
+<p>Když jsme zkoumali možnosti strojového učení (regrese, klasifikace, klastrování atd.), měnili jsme metody, (hyper)parametry a dívali jsme se, jak dobře se stroj naučil odhadovat nějakou vlastnost z dat. To je rozhodně příležitost pro pěkný dashboard, který nám takovou práci usnadní.</p>
+<h3>První verze</h3>
+<p>První verzi aplikace najdeš v Github repozitáři <a href="https://github.com/coobas/fishboard">https://github.com/coobas/fishboard</a>. K sobě si ji naklonuješ příkazem</p>
+<div class="highlight"><pre><code>git clone https://github.com/coobas/fishboard.git
+
+</code></pre></div><p>Pro lokální vývoj takového dashboardu je rozumné vytvořit pro ni vlastní virtuální prostředí, aby se nemíchaly balíky z jiných projektů a aby tak chování aplikace bylo lokálně stejné jako na serveru. Můžeme postupovat takto:</p>
+<div class="highlight"><pre><code>cd fishboard
+python3 -m venv .venv</code></pre></div><p>Tím jsme vytvořili virtuální prostředí v adresáři <code>.venv</code>. Aktivujeme ho na Linuxu / Mac OS pomocí</p>
+<div class="highlight"><pre><code>source .venv/bin/activate
+
+</code></pre></div><p>nebo na Windows</p>
+<div class="highlight"><pre><code>.venv/bin/activate.bat
+
+</code></pre></div><p>A teď nainstalujeme všechny potřebné balíky:</p>
+<div class="highlight"><pre><code>python -m pip install -r requirements.txt
+
+</code></pre></div><p>Pak by měl jít fishboard spustit už známým způsobem:</p>
+<div class="highlight"><pre><code>streamlit run fishboard.py</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Přidáváme vizualizaci</h3>
+<p>Jistě si všichni všimli, že fishboard umí pracovat jen s rybími daty a navíc je neumí ani vykreslit. Ještě že máme tuto část připravenou z předchozí části a nic nám nebrání ji použít.</p>
+<p><strong>Úkol:</strong> Přidej do fishboardu naši předchozí aplikaci pro načítání a zobrazování dat. Asi bude potřeba někde místo <code>st.</code> použít <code>col1.</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Na co si dát pozor</h2>
+<p>Streamlit aplikace je vlastně takový skript. Spouští se pořád dokola, jakmile uživatel něco zadá, někam klikne. Je to záměr, tento design přináší opravdu přímočarý způsob psaní užitečných webových aplikací. Za tuto přímočarost ale samozřejmě platíme některými omezeními.</p>
+<h3>Rychlost</h3>
+<p>Od Streamlitu rozhodně nečekejte nejsvižnější uživatelské rozhraní, spíš naopak. Tím, že se aplikace spouští celá stále dokola, může docházet k menším i větším prodlevám (které ovšem nemusí zásadně vadit). Existují dva jednoduché způsoby, jak rychlost optimalizovat:</p>
+<ol>
+<li>Používat cache na pomalé funkce, tj. "schovávat" si výsledky těchto funkcí, a pokud se funkce zavolá s argumenty, pro které už je výsledek k dispozici, vytáhne se výsledek (rychle) z cache. Streamlit na to má velice užitečnou funkci <code>st.cache</code>, která se nejčastěji používá jako @dekorátor.</li>
+<li>Přidat tlačítko pro spuštění výpočtu, aby se drahé výpočty neprováděly po každé změně vstupu.</li>
+</ol>
+<h3>Složitost aplikace</h3>
+<p>Programování ve Streamlitu je přímočaré a taková by měla být i aplikace, kterou vytváříme. Pokud potřebujeme nestandardní komponenty (widgety), detailní rozložení komponent na stránce nebo komplexní interakce mezi komponenty, je potřeba sáhnout jinam: Ve světě čistého Pythonu nám mohou posloužit <a href="https://plotly.com/dash/">Dash</a> nebo <a href="https://panel.holoviz.org/">Panel</a>. Největší možnosti pak přináší rozdělení aplikace na backend a frontend. Backend napíšeme samozřejmě v Pythonu (pomůže nám např. <a href="https://fastapi.tiangolo.com/">FastAPI</a>), frontend pak třeba v <a href="https://www.typescriptlang.org/">TypeScript</a> a <a href="https://reactjs.org/">React</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Domácí projekt</h2>
+<p>Přidej do fishboardu možnost klasifikace a / nebo klastrování (PCA). Aplikaci spusť na Heroku. Jako bonus můžeš dát svůj kód k dispozici na Githubu.</p>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/pydata-praha-jaro/pydata/dashboards/">← <span class="d-none d-sm-inline">Interaktivní vizualizace a aplikace I.</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/pydata-praha-jaro/sessions/dashboards/">↑ <span class="d-none d-sm-inline">Lekce: Interaktivní vizualizace a aplikace</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/pydata-praha-jaro/sessions/dashboards/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyDataCZ/naucse.python.cz/blob/praha-jaro2021/lessons/pydata/dashboards-2/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Jakub Urban, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

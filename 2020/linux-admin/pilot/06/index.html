@@ -1,0 +1,321 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Zápis – Mount
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/fhs/">Souborové systémy</a>
+
+> <a href="/2020/linux-admin/pilot/06/">Zápis – Mount</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>6. Linuxová administrace - mount</h1>
+<h2>Archivy</h2>
+<p>Jak fungují archivy?</p>
+<p>Představ si knížku. Knížka je v podstatě sekvence písmenek. 
+Když se chceš podívat na určité místo, nemusíš listovat každou stránku zvlášť. 
+Pro vyřešení tohoto úkolu najdeš prvně v knížce <strong>Obsah</strong>, který řekne například: <em>tato kapitola je na stránce 254</em>. 
+Podobně je vše na disku uloženo jako sekvence bajtů. 
+To, že jsou v něm nějaké soubory a adresáře, o nichž jsme se minule bavili, je jen iluze. 
+Ve skutečnosti je na disku jedna dlouhá sekvence jedniček a nul. 
+V tom by se ale vyhledávalo špatně, a proto má počítač v rámci svých jedniček a nul speciální informace, které podobně jako obsah v knížce říkají: <em>zde jsou adresáře, v nich jsou tyto soubory, jsou takto velké, takto se jmenují</em> atd.</p>
+<p>Nejlepší si to bude ukázat na příkladu archivu <code>zip</code>.</p>
+<h3>ZIP</h3>
+<ul>
+<li><a href="https://commons.wikimedia.org/wiki/File:ZIP-64_Internal_Layout.svg">https://commons.wikimedia.org/wiki/File:ZIP-64_Internal_Layout.svg</a></li>
+</ul>
+<p>Obsahuje jednu dlouhou sekvenci informaci, na jejíž konci je <em>centrální adresář</em>. Ještě za ním je informace o počtu souborů v archivu.
+V centrálním adresáři je řečeno: <em>1. soubor začíná na 0. pozici, 2. soubor začíná na 15. pozici</em> atd. 
+Jsou v něm také informace o jednotlivých souborech: mj. jejich jména a jak jsou dlouhé.</p>
+<p>Centrální adresář se nachází v zipu na konci, což má svůj důvod.
+Můžeš vzít normální soubor, na konec mu přilepit <code>zip</code>, a soubor bude pořád fungovat i jako <code>zip</code> i jako soubor / program.</p>
+<p>Zip je, zjednodušeně řečeno, souborový systém v souboru.
+Soubory v zipu se dají docela jednoduše číst. 
+Podíváš se, kde začít a jak dlouho číst, a je to.</p>
+<p>Existují i takové formáty souborových systémů v souboru, které jsou dělané nejen na čtení souborů, ale dají se do nich i zapisovat.
+To teoreticky jde i v zipu, ale problém vzniká, pokud soubor, který chceš do archivu nahrát, je větší než místo, které je v něm k dispozici.</p>
+<p>Je to podstatná myšlenka, zkus se nad ní pořádně zamyslet.
+Je to jak s tou knížkou: na určitém, pevně daném místě se nachází obsah, který ti říká, kde se nachází jednotlivé kapitoly.</p>
+<h2>Souborový systém</h2>
+<p>A protože v UNIXu je všechno soubor, i souborové systémy jsou v souboru. 
+Vzpomeň si na ukázku z minulé lekce, jak je myš reprezentovaná souborem. 
+Když se soubor otevřel pro čtení, každý pohyb myši se zobrazil v terminálu jako spousta binárních symbolů.</p>
+<p>Podívej se do adresáře <code>/dev/disk</code> - zde uvidíš soubory, které reprezentují tvůj disk, jak jsme si ukázali minule.</p>
+<p>Soubory pro celý disk:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ll /dev/disk
+<span class="go">drwxr-xr-x. 2 root root 400 Nov  7 09:41 by-id</span>
+<span class="go">drwxr-xr-x. 2 root root  80 Nov  7 09:34 by-partuuid</span>
+<span class="go">drwxr-xr-x. 2 root root 120 Nov  7 09:34 by-path</span>
+<span class="go">drwxr-xr-x. 2 root root 160 Nov  7 09:41 by-uuid</span>
+</pre></div><p>Uvnitř každého souboru je souborový systém. I zde jsou, podobně jako v zipu, jednotlivé soubory a legenda obsahující informace o jejich vlastnostech.</p>
+<p>Druhů souborových systémů je spousta.</p>
+<p>Na flashce máš pravděpodobně prastarý DOSový formát <strong>FAT32</strong>, který je tak starý, že mu už vypršely patenty, a díky tomu ho může používat kdokoliv. :) 
+Na disku, pokud je to Linux, se většinou používá <strong>EXT4</strong>, na Windows <strong>NTFS</strong>.</p>
+<h3>mount</h3>
+<p>Pusť příkaz <code>mount</code>. Jeho výstup bude celkem dlouhý.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mount
+<span class="go">...</span>
+<span class="go">název  kde je umístěn</span>
+<span class="go">|        |       typ souborového systému</span>
+<span class="go">|        |        |        </span>
+<span class="go">sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)</span>
+<span class="go">proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)</span>
+<span class="go">devtmpfs on /dev type devtmpfs (rw,nosuid,seclabel,size=8002676k,nr_inodes=2000669,mode=755)</span>
+<span class="go">...</span>
+</pre></div><p><code>mount</code> říká, kde jsou připojené jednotlivé souborové systémy.</p>
+<ul>
+<li>např. souborový systém <code>devtmpfs</code> je připojen na <code>/dev</code></li>
+</ul>
+<p>Když připojíš flashku a spustíš <code>mount</code> znovu, přibude na konci nový řádek. 
+A říká:</p>
+<ul>
+<li><code>/dev/něco</code> s obsahem celé flashky je přípojen na <code>/run/media/něco</code></li>
+</ul>
+<p>což znamená, že v tomto místě najdeš souborový systém své flashky. 
+Systém interpretuje souborový systém na flashce a zpřístupní ti ho formou adresářů a souborů k prohlížení a měnění.
+Každá flashka, každé záznamové medium funguje trochu jako zip archiv: je v něm víc souborů naskládaných za sebou s <em>obsahem</em>, který je umožňuje identifikovat a měnit.</p>
+<p>Když se chceš podívat, jaké disky máš k dispozici, je na to příkaz <code>lsblk</code>. 
+Flashka níže je připojená jako <code>sdb</code>.</p>
+<div class="highlight"><pre><code>$ lsblk
+NAME                             MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+nvme0n1                          259:0    0 238.5G  0 disk  
+├─nvme0n1p1                      259:1    0     1G  0 part  /boot
+└─nvme0n1p2                      259:2    0 237.5G  0 part  
+  ├─fedora_dhcp--0--123-root     253:0    0    50G  0 lvm   
+  │ └─luks-e28e6e1b-f122-43d6-99d7-049dc034656f
+  │                              253:2    0    50G  0 crypt /
+  ├─fedora_dhcp--0--123-swap     253:1    0   7.7G  0 lvm   [SWAP]
+  └─fedora_dhcp--0--123-home     253:3    0 179.8G  0 lvm   
+    └─luks-0147c4fc-0301-4d1e-9cba-b0c17c700b48
+                                 253:4    0 179.7G  0 crypt /home
+sdb                                8:16   1  29,3G  0 disk 
+└─sdb1                             8:17   1  29,3G  0 part  /run/media/guest/pendrive</code></pre></div><p>Když flashku odpojíš, <code>sdb</code> zmizí.</p>
+<p>Pevný disk může být rozdělen na části, z nichž každá smí mít jiný souborový systém. 
+Můžeš mít na počítači nainstalované zároveň operační systémy Windows a Linux, které používají jiné souborové systémy, ale dokud každý kouká na svoje místo na disku, proběhne to bez problému.</p>
+<p>Disk může být i zašifrovaný, což funguje tak, že Linux vytvoří ještě jeden soubor s obsahem celého disku. 
+Když někdo zapíše něco na disk, soubor s obsahem disku se zašifruje a uloží na ten opravdový disk. 
+Když chceš potom z něho číst, jde to opačným směrem.
+Jsou to abstrakce dány na sebe. 
+<strong>Soubor znamená něco, na čem můžeš provádět operace jako čtení a zápis.</strong></p>
+<p>Jak se čte soubor?
+Systém se podívá do "legendy", kde je řečeno, kde se na disku se soubor nachází. 
+Až ho najde, zeptá se přímo ovladačů pevného disku a pošle tam elektrické impulzy, aby se přečetly nuly a jedničky, a pak to reprezentuje jako souborový systém. 
+Mezi tím může být vrstva šifrování, nebo vrstva, která komunikuje s jiným serverem. 
+Například přístupy v univerzitní síti vypadají tak, že domovská složka je sdílená někde na serveru, a je úplně jedno, na který z dostupných počítačů se přihlásíš. 
+Vždy, když chceš něco přečíst nebo zapsat, probíhá mezi počítačem a serverem síťová komunikace - pro tebe se to ale celou dobu chová jako normální soubor.</p>
+<p>Souborový systém se připojuje na určité místo v adresářovém systému (např. <code>/</code> nebo <code>/run/media</code>) - to místo se jmenuje <em>mount point</em> (přípojný bod). 
+Tím říkáš: vše, co je pod danou cestou, se bude číst jako daný souborový systém.</p>
+<p>Když provedeš příkaz <code>mount</code>, dostaneš informace o všem, co je přípojené na jaký mount point.</p>
+<p>Ve výpisu <code>lsblk</code> můžeš uvidět ještě dvě zajímavůstky.</p>
+<ul>
+<li>Část pevného disku může být uvedená jako <code>/boot</code> nebo <code>/efi</code>.<ul>
+<li>část disku určená pro to, aby se z ní spustil operační systém.</li>
+<li>po zapnutí počítače se BIOS podívá na začátek pevného disku a načte instrukce pro provedení dalších kroků</li>
+<li>z historických důvodů je tato část spíš malá (disky nebývaly velké) - efi bývá větší než boot.</li>
+</ul>
+</li>
+<li>Může tam být i <code>[SWAP]</code>.<ul>
+<li>část disku určená pro zápis mezivýsledků běžících programů z paměti</li>
+<li>odkládají se věci, které není potřeba mít zrovna v paměti (například zapomenutá instance prohlížeče...)</li>
+</ul>
+</li>
+</ul>
+<h2>gparted</h2>
+<p>Program, který umí modifikovat struktury na disku - dávej velký pozor při spouštění.
+Práva na spuštění má pouze superuživatel, protože nesprávnými změnami může dojít k zrušení systému.
+Po spuštění bez argumentů <code>gparted</code> uvidíš grafické zobrazení rozdělení svého disku na oddíly a kolik z nich je zaplněno daty. 
+Tento program můžeš použít na smazání oddílů a vytvoření několika nových - menších, nebo jiné uspořádání místa. Nedělej to, dokud si nejsi stoprocentně jistý/á, že víš, co chceš provést :).</p>
+<h2>ISO</h2>
+<p>Jiný druh souborového systému je ISO, který byl vyvinutý na to, aby soubory bylo možno dávat na CD. 
+Nemůžeš je proto modifikovat, jen z nich číst.</p>
+<p><em>Další část vyžaduje stažený .iso soubor (v našem případě s Fedorou, ale obsah není důležitý, může to být cokoli jiného).</em></p>
+<p>Podívej se, co máš v adresáři <code>/mnt</code>. Nemělo by tam být nic.
+Vytvoř v něm soubor (v kořenovém adresáři musíš mít právo superuživatele, proto použij <code>sudo</code>).</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls /mnt
+<span class="gp">$ </span>sudo touch /mnt/soubor
+</pre></div><p>Adresář <code>/mnt</code> slouží k připojení různých zařízení jako flashky, disky atp.</p>
+<p>Připojíme si souborový systém z ISO souboru tak, jako bychom vložili CD do počítače.</p>
+<p>Stažený soubor připojíš takto:</p>
+<div class="highlight"><pre><span></span><span class="go">sudo mount cesta/k/souboru.iso /mnt</span>
+</pre></div><p>Nyní můžeš otevřít složku <code>/mnt</code> a najdeš v ní další adresáře a soubory.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls /mnt
+<span class="go">EFI   images   isolinux</span>
+</pre></div><p>Pokud máš v <code>/mnt</code> cokoli jiného před připojením (jak náš <code>soubor</code>), pak se k těmto souborům nyní nedostaneš, protože data směřují někam jinam - vhodné je např. vytvořit složku v <code>/mnt</code> a připojit zařízení tam.</p>
+<p>Když se teď podíváš na výstup příkazu <code>mount</code>, na posledním řádku bys měla najít připojené iso.</p>
+<p>Pro odpojení připojeného prostoru napiš:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>umount /mnt
+</pre></div><p>Pozor, když se o to pokusíš přímo v adresáři <code>/mnt</code>, operace nebude úspěšná.
+Pro odpojení se musíš přepnout mimo adresář <code>/mnt</code>.</p>
+<p>Úplně nakonec můžeš po sobě uklidit a smazat soubor.</p>
+<div class="highlight"><pre><span></span><span class="go">sudo rm /mnt/soubor</span>
+</pre></div><p>Souborový systém si můžeš představit jako Pythonní třídu. 
+Je to objekt, který má nějakou funkčnost (umí číst soubory, zapisovat, zjistit, kdo vlastní soubor atd.) a má nějaká data (na disku, v souboru, v paměti...). 
+Adresář <code>/proc</code> má například soubory obsahující hodnoty vypočítané v aktuálně běžících procesech. Nejsou to fyzické soubory na disku.
+Adresář <code>/tmp</code> je dnes většinou jen v paměti, jeho obsah se ani neukládá na disk.</p>
+<p>Pokud tě zajímá, jak doopravdy funguje souborový systém, existuje knihovna <a href="https://github.com/libfuse/python-fuse">python-fuse</a> (<em>file system in user space</em>), s jejiž pomoci si můžeš napsat Pythonní třídu, ve které nadefinuješ souborové operace, a namountovat si ji do systému.</p>
+<h3>Vychytávky</h3>
+<p>Při náhlém odpojení počítače/souboru je možné, že se souborový systém poškodí. 
+Je možné se jej pokusit opravit pomocí <code>fsck</code>.
+Detaily najdeš v manuálové stránce toho programu.</p>
+<p>Můžeš mít několik fyzických disků spojených dohromady jako jeden souborový systém. Tímto se jednoduše zvětšuje nebo zmenšuje kapacita disku.
+Aby fungovaly jako jeden souborový systém, je nad nimi vrstva, která funguje jako jeden disk, a podle toho na které místo přistoupíš, bude vědět, na který konkrétní disk se má obrátit.</p>
+<p>Takto můžeš dělat zálohy, že když něco zapíšeš na disk, rozdistribuuje se to na dvě nebo víc míst. 
+Nejčastěji používaná technologie k duplikování dat se jmenuje <a href="https://en.wikipedia.org/wiki/RAID">RAID</a>. 
+Tuto bys měla rozhodně znát, pokud se chystáš pracovat jako systémový administrátor.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/notes/mount/">← <span class="d-none d-sm-inline">Poznámky – Mount</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/fhs/">↑ <span class="d-none d-sm-inline">Lekce: Souborové systémy</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/sessions/fhs/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/pilot/06/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsala Karolina Surma, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
