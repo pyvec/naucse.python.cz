@@ -1,0 +1,292 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Signály
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/net-services/">Signály a Automatizovaná konfigurace</a>
+
+> <a href="/2021/linuxadmin-podzim/notes/signals/">Signály</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="admonition warning"><p>Tohle jsou jen poznámky, ne materiály k samostudiu.</p>
+</div><h1>Signály</h1>
+<p>Signál (angl. <em>signal</em>) je způsob, jak poslat „upozornění“ běžícímu procesu.
+I když ten proces zrovna dělá něco jiného, může na signál zareagovat.
+Vlastně, jak si ukážeme, na signál zareagovat <em>musí</em>.</p>
+<p>Signály jsou docela minimalistické: obsahují jen jedno malé číslo,
+druh signálu.
+Větší „zprávy“ se musí procesům posílat jiným způsobem (třeba souborem,
+rourou nebo přes síť), ale i v těchto případech se dá signálem upozornit
+že si proces má nějakou větší zprávu přečíst.
+Například <code>httpd</code> čte konfiguraci ze spousty souborů,
+ale signálem se dá přimět, aby je všechny načetl znova.
+Příkaz <code>systemctl reload httpd</code> dělá právě tohle: pošle HTTP serveru signál.</p>
+<h2>Přijetí signálu</h2>
+<p>Když procesu pošleš signál, tak ten proces <em>přeruší</em> to co zrovna dělá
+a signál zpracuje.
+Co přesně se stane závisí na druhu signálu; možnosti jsou tyto:</p>
+<ul>
+<li>Ukončení (angl. <em>terminate</em>): proces se ukončí.</li>
+<li>Ignorování (angl. <em>ignore</em>): nic se nestane.</li>
+<li>Ukončení s chybou (angl. <em>core dump</em>): proces se ukončí. Pokud je na to
+systém nastaven, stav paměti ukončeného procesu se zapíše do speciálního
+souboru, aby bylo jednodušší zjistit co se v momentě ukončení zrovna dělo.</li>
+<li>Pozastavení (angl. <em>stop</em>): Proces se pozastaví.
+V shellu tohle dělá zkratka <kbd>Ctrl</kbd>+<kbd>Z</kbd></li>
+<li>Obnovení (angl. <em>continue</em>): Pozastavený proces se znovu spustí.</li>
+<li>Zachycení (angl. <em>catch</em>): Po přijetí signálu se zavolá funkce,
+kterou proces nastavil.</li>
+</ul>
+<p>Když se proces na signály předem nepřipraví, provede se nějaká výchozí akce.
+Ta závisí na druhu signálu, ale nejčastější jsou první dvě: proces se ukončí.</p>
+<h2>Druhy signálů</h2>
+<p>Každý druh signálu má své číslo a zkratkovité jméno.
+Jejich seznam najdeš v manuálové stránce <code>signal(7)</code>, pomocí příkazu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>man <span class="m">7</span> signal
+</pre></div><div class="admonition note"><p>Pozor, <code>man signal</code> zobrazí stránku <code>signal(2)</code> – nápovědu pro funkci
+<code>signal</code>, nikoli signály obecně.
+To číslo je číslo „sekce“ manuálu; seznam sekcí najdeš v <code>man man</code>.</p>
+</div><p>Každý signál má i své číslo, které se ale může na různých systémech
+a procesorech lišit.
+Lepší je proto používat jména – snad kromě čísla 9 pro <code>SIGKILL</code>.</p>
+<h2>Posílání signálů</h2>
+<p>Příkaz na posílání signálů už znáš: je to <code>kill</code>.
+Přepínačem pojmenovaným podle signálu můžeš vybrat, který signál pošleš.</p>
+<p>Zkus si to!</p>
+<p>V jedom terminálu zadej:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sleep <span class="m">1000</span>
+</pre></div><p>A ve druhém třeba:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -a <span class="p">|</span> grep sleep
+<span class="go"> 12345678 pts/3   00:00:00 sleep</span>
+<span class="gp">$ </span><span class="nb">kill</span> -SIGABRT <span class="m">12345678</span>
+</pre></div><p>Signál <code>SIGABRT</code> proces dostane když se snaží provést neplatnou operaci –
+instrukci, které procesor nerozumí.
+To je většinou hodně závažná chyba.
+Kdybys při instalaci systému zadala „automatické hlášení chyb“,
+už by k vývojářům Fedory putovalo hlášení o tom, že v <code>/usr/bin/sleep</code>
+z balíčku <code>coreutils</code> je chyba.
+Pravděpodobně takhle ale virtuálku nastavenou nemáš, ale můžeš se aspoň
+pomocí <code>abrt-cli list</code> podívat, že chyba byla zaznamenána.</p>
+<p>Podobně si můžeš vyzkoušet jiné signály, třeba:</p>
+<ul>
+<li><code>SIGINT</code> se posílá když zmáčkneš <kbd>Ctrl</kbd>+<kbd>C</kbd>.</li>
+<li><code>SIGTERM</code> posílá <code>kill</code> když mu nezadáš jiný signál.</li>
+<li><code>SIGKILL</code> (9) se posílá když zmáčkneš <kbd>Ctrl</kbd>+<kbd>\</kbd>;
+proces se „natvrdo“ ukončí.
+U tohoto signálu si procesy nemůžou nastavit jiné chování:
+proces se vždy ukončí.</li>
+<li><code>SIGSTOP</code> se posílá když zmáčkneš <kbd>Ctrl</kbd>+<kbd>z</kbd>;
+proces se pozastaví.
+Podobně jako u <code>SIGKILL</code> si i u tohoto signálu si procesy nemůžou nastavit
+jiné chování.</li>
+<li><code>SIGCONT</code> posílá příkaz <code>fg</code>; pozastavený proces se obnoví.</li>
+</ul>
+<h2>Signály v Pythonu</h2>
+<p>To, že se přijetí signálu přeruší cokoli co proces zrovna dělá,
+se dá přirovnat k výjimkám v Pythonu.
+Koneckonců, výjimka <code>KeyboardInterrupt</code> je jen reakce Pythonu na signál
+<code>SIGINT</code>: vzniká tak, že so Python na <code>SIGINT</code> připravil: řekl operačnímu
+systému že pro <code>SIGINT</code> nemá ukončit proces,
+ale má se zavolat funkce která způsobí výjimku.</p>
+<p>Program v Pythonu můžeš „připravit“ na výjimky pomocí <code>try</code> a <code>except</code>.
+Na to, aby se program připravil na přijetí signálu, slouží funkce
+<code>signal</code> z modulu <code>signal</code>:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Moje PID:'</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+
+<span class="k">def</span> <span class="nf">handler</span><span class="p">(</span><span class="n">sig_number</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Dostal jsem signál </span><span class="si">{</span><span class="n">sig_number</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">signal</span><span class="o">.</span><span class="n">strsignal</span><span class="p">(</span><span class="n">sig_number</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGUSR1</span><span class="p">,</span> <span class="n">handler</span><span class="p">)</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGUSR2</span><span class="p">,</span> <span class="n">handler</span><span class="p">)</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">handler</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div><p>Tento program reaguje na <code>SIGUSR1</code> a <code>SIGUSR2</code>, tedy např. <code>kill -SIGUSR1 $pid</code>.</p>
+<p>Můžeš si ověřit, že pro <code>SIGKILL</code> a <code>SIGSTOP</code> funkce <code>signal.signal</code> selže.
+A taky že předefinování <code>SIGINT</code> přenastaví chování
+<kbd>Ctrl</kbd>+<kbd>C</kbd> – právě pro takové situace se hodí <code>SIGKILL</code>.</p>
+<h2>Signály a démoni</h2>
+<p>Démoni systémových služeb často reagují na signály.
+Když se podíváš na <code>systemctl cat httpd</code> a <code>systemctl cat sshd</code>,
+uvidíš řádky jako:</p>
+<ul>
+<li><code>KillSignal=SIGWINCH</code> – služba se ukončuje (<code>stop</code>) pomocí signálu
+<code>SIGWINCH</code>, po kterém se server ukončí „elegantně“: přestane přijímat
+nová spojení, ta co jsou otevřená zpracuje, a až potom se ukončí.</li>
+<li><code>ExecReload=/usr/sbin/httpd $OPTIONS -k graceful</code> – tady se pro <code>reload</code>
+volá speciální příkaz, který ale ve výsledku nedělá nic moc jiného než
+poslání signálu <code>SIGUSR1</code>.
+Když server tenhle signál dostane, dokončí otevřená spojení, ale mezitím
+znovu načte konfiguraci a nová spojení začne zpracovávat s novým nastavením.</li>
+<li><code>ExecReload=/bin/kill -HUP $MAINPID</code> – pro <code>reload</code> tohoto serveru se pošle
+signál <code>SIGHUP</code>, který server interpretuje jako žádost o to, aby znovu načetl
+nastavení.</li>
+</ul>
+<p>Co dělá který signál, to se dozvíš v dokumentaci konkrétního serveru.
+Signálů je málo, a tak se často „zneužívají“ – třeba <code>SIGWINCH</code> by se formálně
+měl posílat když se změní velikost terminálu; programy jako <code>nano</code> nebo
+<code>top</code> si po jeho přijetí zjistí novou velikost a překreslí výstup.
+Ale Apache <code>httpd</code> ho používá pro ukončení.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/ansible/">← <span class="d-none d-sm-inline">Automatizace administrace – lehký úvod k Ansible</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/net-services/">↑ <span class="d-none d-sm-inline">Lekce: Signály a Automatizovaná konfigurace</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/sessions/net-services/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/notes/signals/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsal Petr Viktorin, 2021</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
