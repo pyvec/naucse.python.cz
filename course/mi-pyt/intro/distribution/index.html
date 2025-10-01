@@ -1,0 +1,587 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                MI-PYT: Moduly
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/distribution/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/course/mi-pyt/">MI-PYT</a>
+
+> <a href="/course/mi-pyt/sessions/distribution/">Moduly</a>
+
+> <a href="/course/mi-pyt/intro/distribution/">Moduly</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1 id="moduly">Moduly
+<a href="#moduly" class="header-link">#</a>
+</h1>
+<p>Zatím jsme tvořili programy v Pythonu tak nějak na divoko, tedy v jednom nebo
+více souborech bez nějakého zvláštního řádu. V této lekci se podíváme na
+to, jak tvořit redistribuovatelné moduly a balíčky, které jdou nahrát na PyPI
+(veřejný seznam balíčků pro Python) a instalovat pomocí nástroje pip.</p>
+<p>Za příklad si vezmeme kód Ondřeje Caletky, který umožňuje určit české svátky
+v zadaném roce. Jako příklad je ideální, protože obsahuje jak funkce, které
+můžeme volat z Pythonu, tak lze volat z příkazové řádky.</p>
+<ul>
+<li><a href="https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e">oskar456/isholiday.py</a></li>
+</ul>
+<p>Volání z příkazové řádky, pomocí příkazu <code>python isholiday.py</code> nebo
+<code>python -m isholiday</code>, zajišťuje blok <code>if __name__ == '__main__':</code>.
+Toto je rychlý způsob, jak napsat modul, který jde jak importovat, tak spustit.
+Když nějaký modul importujeme, má v proměnné <code>__name__</code> k dispozici své jméno.
+„Hlavní” modul ale není importován a jeho jméno není vždy k dispozici
+(např. v <code>cat isholiday.py | python</code>).
+Python proto <code>__name__</code> „hlavního” modulu nastavuje na <code>'__main__'</code>,
+čehož se často využívá.</p>
+<p>Později se podíváme na elegantnější způsob jak to zařídit; teď se vraťme
+zpět k balíčkování.</p>
+<h2 id="slovnicek_pojmu">Slovníček pojmů
+<a href="#slovnicek_pojmu" class="header-link">#</a>
+</h2>
+<p>Než se pustíme do samotného výkladu, zavedeme některé pojmy tak,
+aby mezi nimi nedošlo v textu záměně.
+Anglické pojmy v závorce jsou převzaty z oficiálního <a href="https://packaging.python.org/glossary">glosáře</a>.</p>
+<ul>
+<li><strong>(importovatelný) modul</strong> (<em>Module</em> ∪ <em>Import Package</em>) je cokoliv,
+co se dá importovat z Pythonu, v tomto textu tedy především Python soubor nebo adresář s vícero Python soubory;</li>
+<li><strong>balíček</strong> (<em>Distribution Package</em>) je instalovatelný archiv obsahující
+<em>importovatelné moduly</em> pro Python a další potřebné soubory, může být i rozbalený;</li>
+<li><strong>zdrojový balíček</strong> (<em>Source Distribution</em>, <code>sdist</code>) je varianta zabaleného <em>balíčku</em> ve zdrojové formě;</li>
+<li><strong>binární balíček</strong> (<em>Binary Distribution</em>, <code>bdist</code>) je varianta zabaleného <em>balíčku</em> v nezdrojové (např. zkompilované) formě, nejčastější podoba toho balíčku se jmenuje <code>wheel</code>;</li>
+<li><strong>projekt</strong> (<em>Project</em>) je knihovna, framework, skript, plugin, aplikace apod. (či jejich kombinace), které balíme do <em>balíčků</em>;</li>
+<li><strong>build backend</strong> je program, který vytváří z projektu balíček. Existuje mnoho takových programů, které mají různé vlastnosti a hodí se k různým účelům.
+Jejich přehled najdete třeba na oficiálním <a href="https://packaging.python.org/en/latest/tutorials/packaging-projects/">tutoriálu, jak tvořit Python balíčky</a>.</li>
+</ul>
+<h2 id="pyprojecttoml">pyproject.toml
+<a href="#pyprojecttoml" class="header-link">#</a>
+</h2>
+<p>Základním stavebním kamenem Python balíčku je soubor <code>pyproject.toml</code>, který
+obsahuje všechna potřebná metadata pro vytvoření zdrojového i binárního balíčku.
+Soubor používá jazyk TOML, což je datový formát, který se dobře píše člověkem a čte počítačem.
+Plnou specifikaci TOMLu můžete najít v oficiální <a href="https://toml.io/en/">dokumentaci tohoto jazyka</a>.</p>
+<p>Pojďme vytvořit minimální variantu souboru <code>pyproject.toml</code>.
+Použijeme balíček <code>setuptools</code> jako náš build backend.</p>
+<div class="highlight"><pre><span></span><span class="k">[build-system]</span>
+<span class="n">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"setuptools&gt;=61.0"</span><span class="p">]</span>
+<span class="n">build-backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"setuptools.build_meta"</span>
+
+<span class="k">[project]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"isholiday"</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"0.1.0"</span>
+<span class="n">authors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="p">=</span><span class="s2">"Ondřej Caletka"</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">=</span><span class="s2">"ondrej@caletka.cz"</span><span class="w"> </span><span class="p">},</span>
+<span class="p">]</span>
+<span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Finds Czech holiday for given year"</span>
+<span class="n">license</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">text</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"Public Domain"</span><span class="p">}</span>
+
+<span class="k">[project.urls]</span>
+<span class="s2">"Homepage"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e"</span>
+</pre></div><p>Všimněte si, že jsme balíček pojmenovali stejně jako soubor se zdrojovým kódem
+(tedy stejně jako modul).
+Je to dobrá konvence, ale není to technicky nutné.</p>
+<p>Balíček můžeme zkusit nainstalovat do virtuálního prostředí:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python3.11<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>__venv__<span class="w">     </span><span class="c1"># (nebo jinak -- podle vašeho OS)</span>
+<span class="gp">$ </span>.<span class="w"> </span>__venv__/bin/activate<span class="w">        </span><span class="c1"># (nebo jinak -- podle vašeho OS)</span>
+<span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
+<span class="go">...</span>
+<span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python
+<span class="go">&gt;&gt;&gt; import isholiday</span>
+<span class="go">&gt;&gt;&gt; </span>
+<span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>freeze
+<span class="go">isholiday @ file:///tmp/isholiday  # cesta k modulu bude u vás vypadat jinak</span>
+</pre></div><p>Alternativně můžete použít příkaz <code>pip install --editable</code>,
+který balíček nainstaluje tak, že změny v souborech se projeví rovnou
+(není třeba po každé změněně instalovat znovu).</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--editable<span class="w"> </span>.
+<span class="go">...</span>
+<span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>pip<span class="w"> </span>freeze
+<span class="gp"># </span>Editable<span class="w"> </span>install<span class="w"> </span>with<span class="w"> </span>no<span class="w"> </span>version<span class="w"> </span>control<span class="w"> </span><span class="o">(</span><span class="nv">isholiday</span><span class="o">==</span><span class="m">0</span>.1.0<span class="o">)</span>
+<span class="go">-e /tmp/isholiday</span>
+</pre></div><h2 id="vytvoreni_zdrojoveho_a_binarniho_balicku">Vytvoření zdrojového a binárního balíčku
+<a href="#vytvoreni_zdrojoveho_a_binarniho_balicku" class="header-link">#</a>
+</h2>
+<p>Pomocí nástroje <code>pip</code> můžeme sice nainstalovat náš balíček do vlastního virtuálního prostředí,
+ale neřešíme tím základní otázku: distribuci pro širokou veřejnost.</p>
+<p>Použijeme nástroj <code>build</code>, který přečte <em>recept na balíček</em>, obsažen v souboru <code>pyproject.toml</code>,
+a vytvoří zdrojovou a binární distribuci.</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>build
+<span class="go">...</span>
+<span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>build
+<span class="go">* Creating venv isolated environment...</span>
+<span class="go">* Installing packages in isolated environment... (setuptools&gt;=61.0)</span>
+<span class="go">* Getting build dependencies for sdist...</span>
+<span class="go">...</span>
+<span class="go">Successfully built isholiday-0.1.0.tar.gz and isholiday-0.1.0-py3-none-any.whl</span>
+</pre></div><p>Všimněte si nového adresáře v projektu: <code>dist</code>, v němž jsou dva archivy:</p>
+<ul>
+<li><code>isholiday-0.1.0.tar.gz</code> - zdrojový balíček</li>
+<li><code>isholiday-0.1.0-py3-none-any.whl</code> - binární balíček (tzv. <em>wheel</em>).</li>
+</ul>
+<p>Můžete je rozbalit pomocí systémových nástrojů a podívat se dovnitř.</p>
+<div class="admonition note"><p><code>whl</code> je ve skutečnosti stejný formát jako <code>zip</code>,
+takže pokud ho vaše systémové nástroje neumí otevřít,
+stačí před otevřením změnit příponu souboru na <code>.zip</code>.</p>
+</div><p>Můžete také vytvořit pouze zdrojový nebo pouze binární balíček pomocí přepínačů <code>--sdist</code>, resp. <code>--wheel</code>.</p>
+<h2 id="extra_soubory_do_zdrojoveho_balicku">Extra soubory do zdrojového balíčku
+<a href="#extra_soubory_do_zdrojoveho_balicku" class="header-link">#</a>
+</h2>
+<p>Náš projekt nemá <code>README</code> – soubor, do kterého se tradičně píšou základní informace o projektu.
+Můžeme jej vytvořit a uložit jako <code>README</code> přímo v kořenovém adresáři projektu,
+tedy tam, kde byste jej nejspíš čekali.</p>
+<div class="highlight"><pre><code>Czech public holiday checker...
+</code></pre></div><p>Pojďme vytvořit i další speciální soubor, <code>LICENSE</code>, který bude
+obsahovat text licence, v tomto případě Public Domain.
+Obsah najdete třeba na <a href="https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt">CC0</a>.</p>
+<p>Poté vytvoříme balíčky znovu:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>build
+</pre></div><p>Zkontrolujte obsah zdrojového archivu (<code>isholiday-0.1.0.tar.gz</code>), který najdete v adresáři <code>dist</code>.
+Měly by tam být oba soubory.</p>
+<p>Hotový balíček pak můžete nainstalovat pomocí nástroje <code>pip</code>.
+Doporučuji to dělat v jiném virtuálním prostředí – v aktuálním už ho máte
+nainstalovaný.</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>v<span class="w"> </span>jiné<span class="w"> </span>konzoli,<span class="w"> </span>v<span class="w"> </span>jiném<span class="w"> </span>adresáři
+<span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>__venv2__
+<span class="gp">$ </span>.<span class="w"> </span>__venv2__/bin/activate
+<span class="gp gp-VirtualEnv">(__venv2__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>cesta/k/projektu/dist/isholiday-0.1.0.tar.gz
+<span class="go">Processing cesta/k/projektu/dist/isholiday-0.1.0.tar.gz</span>
+<span class="go">Installing collected packages: isholiday</span>
+<span class="go">  Running setup.py install for isholiday ... done</span>
+<span class="go">Successfully installed isholiday-0.1.0</span>
+</pre></div><h2 id="vice_metadat_v_pyprojecttoml">Více metadat v pyproject.toml
+<a href="#vice_metadat_v_pyprojecttoml" class="header-link">#</a>
+</h2>
+<p>Na chvíli se vrátíme k <code>pyproject.toml</code> a přidáme co nejvíc dalších
+položek.
+Jejich vysvětlení najdete <a href="https://packaging.python.org/en/latest/specifications/declaring-project-metadata/#declaring-project-metadata">v dokumentaci</a>.</p>
+<div class="highlight"><pre><span></span><span class="k">[build-system]</span>
+<span class="n">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"setuptools&gt;=61.0"</span><span class="p">]</span>
+<span class="n">build-backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"setuptools.build_meta"</span>
+
+<span class="k">[project]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"isholiday"</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"0.1.0"</span>
+<span class="n">authors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="p">=</span><span class="s2">"Ondřej Caletka"</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">=</span><span class="s2">"ondrej@caletka.cz"</span><span class="w"> </span><span class="p">},</span>
+<span class="p">]</span>
+<span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Finds Czech holiday for given year"</span>
+<span class="n">license</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">file</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"LICENSE"</span><span class="p">}</span>
+<span class="n">readme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s2">"README"</span><span class="p">}</span>
+<span class="n">requires-python</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"&gt;=3.6"</span>
+<span class="n">keywords</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s1">'holiday'</span><span class="p">,</span><span class="w"> </span><span class="s1">'dates'</span><span class="p">,</span><span class="w"> </span><span class="s1">'Czech'</span><span class="p">]</span>
+<span class="n">classifiers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s1">'Intended Audience :: Developers'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'License :: Public Domain'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Operating System :: POSIX :: Linux'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Programming Language :: Python'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Programming Language :: Python :: Implementation :: CPython'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Programming Language :: Python :: 3'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Programming Language :: Python :: 3.6'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Programming Language :: Python :: 3.7'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Programming Language :: Python :: 3.8'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Programming Language :: Python :: 3.9'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Programming Language :: Python :: 3.10'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Programming Language :: Python :: 3.11'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Programming Language :: Python :: 3.12'</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">'Topic :: Software Development :: Libraries'</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="k">[project.urls]</span>
+<span class="s2">"Homepage"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://gist.github.com/oskar456/e91ef3ff77476b0dbc4ac19875d0555e"</span>
+</pre></div><p>Všimněte si argumentu <code>classifiers</code>. Jsou to
+v podstatě takové tagy nebo strukturované informace o balíčku.
+Zásadně si je nevymýšlíme sami, ale hledáme je v
+<a href="https://pypi.org/pypi?%3Aaction=list_classifiers">seznamu</a>.
+Tyto informace budou později vidět na <a href="https://pypi.org">PyPI</a> a
+půjde podle nich hledat.</p>
+<h2 id="vice_souboru_s_python_kodem">Více souborů s Python kódem
+<a href="#vice_souboru_s_python_kodem" class="header-link">#</a>
+</h2>
+<p>Doteď jsme vytvářeli balíček jen s modulem ve formě jednoho zdrojového souboru <code>isholiday.py</code>.
+Co ale dělat, pokud je náš projekt větší a obsahuje souborů více?</p>
+<p>Vytvoříme modul ve formě složky. V našem případě soubor
+<code>isholiday.py</code> zatím přesuneme do <code>isholiday/__init__.py</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>tree
+<span class="go">.</span>
+<span class="go">├── LICENSE</span>
+<span class="go">├── pyproject.toml</span>
+<span class="go">└── isholiday</span>
+<span class="go">    └── __init__.py</span>
+</pre></div><p>Soubor <code>__init__.py</code> jednak značí, že adresář <code>isholiday</code> je importovatelný modul,
+a také obsahuje kód, který se spustí při importu modulu <code>isholiday</code>.</p>
+<p><code>setuptools</code> bude této změně automaticky rozumět, což si můžete vyzkoušet vytvořením a prozkoumáním balíčku.</p>
+<p>Momentálně máme všechen kód přímo v <code>__init__.py</code>, což sice funguje,
+ale ideální to není. Dobré je mít kód v samostatných souborech a v <code>__init__.py</code>
+pouze importovat veřejné rozhraní, tedy to, co budou z vašeho modulu importovat
+jeho uživatelé.</p>
+<p>V souboru <code>__init__.py</code> by tak prakticky žádný kód kromě importů být neměl.
+Přesuňte tedy obsah <code>__init__.py</code> do <code>holidays.py</code> a
+do <code>__init__.py</code> místo toho napište:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.holidays</span><span class="w"> </span><span class="kn">import</span> <span class="n">getholidays</span><span class="p">,</span> <span class="n">isholiday</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'getholidays'</span><span class="p">,</span> <span class="s1">'isholiday'</span><span class="p">]</span>
+</pre></div><p>Tečka v příkazu <code>import</code> není chyba: je to zkratka pro aktuální modul.
+Můžeme psát i <code>from isholiday.holidays import ...</code>,
+což ale trochu ztěžuje případné přejmenování modulu.</p>
+<p>Ono <code>__all__</code> pak explicitně definuje rozhraní modulu. Například s původním
+modulem šlo provést <code>from isholiday import datetime</code>, ale asi by nikdo
+nečekal, že tahle možnost bude nutně zachována i v příštích verzích knihovny.
+Seznamem <code>__all__</code> dáte najevo, že tyhle funkce nejsou jen „náhodné importy“,
+a zároveň tím zamezíte různým varováním o
+importovaném ale nevyužitém modulu, které může hlásit vaše IDE nebo linter.</p>
+<div class="admonition note"><p>Python samotný pak <code>__all__</code> používá jako seznam proměnných importovaných
+přes <code>from isholiday import *</code>. Tento způsob importu nevidíme rádi,
+protože znepřehledňuje kód, to ale neznamená, že to musíme uživatelům
+naší knihovny znepříjemňovat (např. pro interaktivní režim).</p>
+</div><h2 id="spousteni_modulu">Spouštění modulu
+<a href="#spousteni_modulu" class="header-link">#</a>
+</h2>
+<p>Pokusíme-li se teď program spustit pomocí <code>python -m isholiday</code>,
+narazíme na problém: na rozdíl od souboru se složka s kódem takto spustit nedá:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>isholiday
+<span class="go">python: No module named isholiday.__main__; 'isholiday' is a package and cannot be directly executed</span>
+</pre></div><p>Namísto spuštění souboru (typicky s blokem <code>if __name__ == '__main__':</code>) totiž
+Python v tomto případě hledá <em>soubor</em> pojmenovaný <code>__main__.py</code> a spustí ten.</p>
+<p>Soubor <code>__main__.py</code> není určený k tomu, aby se z něho importovalo, proto
+by měl obsahovat co nejméně kódu – ideálně jen volání funkce, která je
+definovaná jinde. Vytvořte proto <code>__main__.py</code> s následujícím obsahem:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.holidays</span><span class="w"> </span><span class="kn">import</span> <span class="n">main</span>
+
+<span class="n">main</span><span class="p">()</span>
+</pre></div><p>a v <code>holidays.py</code> zaměňte <code>if __name__ == '__main__':</code> za <code>def main():</code>.</p>
+<p>Modul teď bude možné (opět) spustit pomocí <code>python -m isholiday</code>.
+Bude to fungovat i tehdy, když vytvoříte balíček (<code>python -m build</code>)
+a nainstalujete ho v jiném virtuálním prostředí.</p>
+<h2 id="programy_pro_prikazovou_radku">Programy pro příkazovou řádku
+<a href="#programy_pro_prikazovou_radku" class="header-link">#</a>
+</h2>
+<p>Pokud chcete, aby váš modul umožňoval spouštění přímo z příkazové řádky,
+bez <code>python -m</code>, měli byste použít <a href="https://packaging.python.org/en/latest/specifications/declaring-project-metadata/#entry-points">entry-points</a>.
+K tomu je potřeba přidat do <code>pyproject.toml</code> příslušný argument:</p>
+<div class="highlight"><pre><span></span><span class="k">[project.scripts]</span>
+<span class="n">isholiday_demo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"isholiday.holidays:main"</span>
+</pre></div><p><code>isholiday_demo</code> je jméno <em>entrypointu</em>, tedy příkazu pro příkazovou řádku.
+<code>isholiday.holidays:main</code> je pak cesta k funkci ve tvaru <code>modul:funkce</code>;
+funkce může být v modulu definovaná nebo importovaná.</p>
+<p>Skript bude možné použít, je-li aktivní prostředí, kde je nainstalován, jen
+zadáním jména <em>entrypointu</em>:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>build
+</pre></div><div class="highlight"><pre><span></span><span class="gp"># </span>v<span class="w"> </span>jiné<span class="w"> </span>konzoli,<span class="w"> </span>v<span class="w"> </span>jiném<span class="w"> </span>virtuálním<span class="w"> </span>prostředí
+<span class="gp gp-VirtualEnv">(__venv2__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>cesta/k/projektu/dist/isholiday-0.1.0.tar.gz
+<span class="gp gp-VirtualEnv">(__venv2__)</span><span class="gp">$ </span>isholiday_demo
+<span class="go">...</span>
+<span class="go">Mon Mar 28 00:00:00 2016 True</span>
+<span class="go">Tue Mar 28 00:00:00 2017 False</span>
+<span class="go">Fri Apr 14 00:00:00 2017 True</span>
+</pre></div><h2 id="specifikace_zavislosti">Specifikace závislostí
+<a href="#specifikace_zavislosti" class="header-link">#</a>
+</h2>
+<p>Balíčky na PyPI mohou záviset na dalších balíčkách. V případě <code>isholiday</code> to
+potřeba není, ale v úlohách z minulých cvičení ano.</p>
+<p>Existuje několik úrovní závislostí, ve většině případů si
+vystačíte s klíčem <code>dependencies</code>.
+Balíček, který závisí na balíčkách <code>Flask</code> (jakékoli verze) a
+<code>click</code> (verze 6 a vyšší) by v <code>pyproject.toml</code> měl mít:</p>
+<div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"Flask"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"click&gt;=6"</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div><h3 id="soubor_requirementstxt">Soubor requirements.txt
+<a href="#soubor_requirementstxt" class="header-link">#</a>
+</h3>
+<p>Kromě závislostí v <code>pyproject.toml</code> se u pythonních projektů často setkáme se souborem
+<code>requirements.txt</code>, který obsahuje přesné verze všech závislostí, včetně
+tranzitivních – t.j. závisí-li náš balíček na <code>Flask</code> a <code>Flask</code> na <code>Jinja2</code>,
+najdeme v <code>requirements.txt</code> mimo jiné například řádky:</p>
+<div class="highlight"><pre><code>Flask==0.11.1
+Jinja2==2.8
+</code></pre></div><p>Tento soubor se používá, když je potřeba přesně replikovat prostředí, kde
+program běží, například mezi testovacím strojem a produkčním nasazením
+webové aplikace.
+Tento soubor se dá vygenerovat z aktuálního prostředí zadáním
+<code>python -m pip freeze &gt; requirements.txt</code> a balíčky v něm se dají nainstalovat
+pomocí <code>python -m pip install -r requirements.txt</code>.
+My ho používat nebudeme, vystačíme si s volnější specifikací závislostí
+v <code>pyproject.toml</code>.</p>
+<h2 id="nahrani_na_pypi">Nahrání na PyPI
+<a href="#nahrani_na_pypi" class="header-link">#</a>
+</h2>
+<p>Balíček jde zaregistrovat a nahrát na PyPI. Použijeme pro to program <code>twine</code>
+(instalovatelný přes pip).</p>
+<p>Budete si potřebovat zařídit
+<a href="https://test.pypi.org/account/register/">účet na testovací PyPI</a>.
+Od roku 2023 proces registrace zahrnuje nastavení dvoufaktorové autentikace
+pro práci s PyPI.
+Budete pro to potřebovat TOTP aplikaci - pokud jste ji zatím nepoužívali,
+podívejte se na <a href="https://pypi.org/help/#totp">doporučení od administrátorů PyPI</a>.
+Poté, co si nastavíte dvoufaktorový přístup na účet, budete moci vytvořit API
+token pro nahrávání balíčků.
+Vytvořte nový token a vložte jeho hodnotu do konfiguračního souboru <code>~/.pypirc</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">[distutils]</span>
+<span class="na">index-servers</span><span class="o">=</span>
+<span class="w">    </span><span class="na">testpypi</span>
+
+<span class="k">[testpypi]</span>
+<span class="na">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">__token__</span>
+<span class="na">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&lt;TestPyPI token&gt;</span>
+</pre></div><p>Používáte-li Windows, je potřeba nastavit proměnnou prostředí <code>HOME</code> na adresář
+se souborem <code>.pypirc</code>, např:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt; </span>set HOME=C:\cesta\k\nastaveni
+</pre></div><p>Registrace projektu a nahrání na testovací PyPI se provádí pomocí příkazu
+<code>upload</code>: ten projekt zaregistruje (pokud to jde) a nahraje samotný balíček:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>twine<span class="w"> </span>upload<span class="w"> </span>-r<span class="w"> </span>testpypi<span class="w"> </span>dist/isholiday-0.1.0.tar.gz
+<span class="go">Uploading distributions to https://test.pypi.org/legacy/</span>
+<span class="go">Uploading isholiday-0.1.0.tar.gz</span>
+<span class="go">[================================] 8379/8379 - 00:00:02</span>
+</pre></div><p>První nahrání se zdaří, jen pokud jméno projektu již není zabrané.
+Další nahrávání je povoleno jen vám, případně uživatelům,
+kterým to povlíte přes webové rozhraní.
+Po úspěšném nahrání lze nahrávat další verze balíčku, ale musí být novější
+než ta, co už na PyPI je. Nejde tedy jednou nahraný balíček přepsat.</p>
+<p>Svůj balíček najdete na <code>https://test.pypi.org/project/&lt;název_balíčku&gt;/</code>.</p>
+<div class="admonition note"><p>Až budete chtít nahrávat opravdové balíčky na PyPI, vytvořte si
+<a href="https://pypi.org/account/register/">účet na PyPI</a>.
+Všechny kroky budou třeba provést znovu, včetně nastavení
+dvoufaktorové autentikace a vygenerování nového tokenu.
+Pak aktualizujte konfigurační soubor <code>~/.pypirc</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">[distutils]</span>
+<span class="na">index-servers</span><span class="o">=</span>
+<span class="w">    </span><span class="na">pypi</span>
+<span class="w">    </span><span class="na">testpypi</span>
+
+<span class="k">[pypi]</span>
+<span class="na">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">__token__</span>
+<span class="na">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&lt;PyPI token&gt;</span>
+
+<span class="k">[testpypi]</span>
+<span class="na">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">__token__</span>
+<span class="na">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&lt;TestPyPI token&gt;</span>
+</pre></div><p>Pro nahrání na opravdovou PyPI stačí vynechat <code>-r testpypi</code>.
+Zabírat jména na opravdové PyPI jen tak není hezké vůči ostatním Pythonistům;
+registrujte tedy prosím jen balíčky, které budou nějak pro ostatní užitečné.</p>
+</div><h2 id="instalace_pomoci_pip">Instalace pomocí pip
+<a href="#instalace_pomoci_pip" class="header-link">#</a>
+</h2>
+<p>Projekt nahraný na PyPI by mělo jít nainstalovat pomocí pipu.
+V případě použití ostré verze PyPI stačí k instalaci zadat název balíčku:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>&lt;název_balíčku&gt;
+</pre></div><p>Pokud však použijeme testovací PyPI, je nutné pipu říct, aby balíček hledal tam.
+<a href="https://packaging.python.org/en/latest/guides/using-testpypi/">Postup</a> uvedený v dokumentaci není
+v tomto případě nejvhodnější, protože z testovací PyPI vezme jak náš balíček,
+tak i případné závislosti, které mohou být zastaralé, rozbité či jinak škodlivé.</p>
+<p>Lepší by bylo, kdyby pip nainstaloval závislosti z ostré PyPI a na testovací
+hledal jen náš projekt. Toho se dá docílit přepínačem <code>--extra-index-url</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--extra-index-url<span class="w"> </span>https://test.pypi.org/pypi<span class="w"> </span>&lt;název_balíčku&gt;
+</pre></div><p>V tomto případě pip nejdřív prohledá ostrou PyPI, a pokud nenajde požadovaný
+balíček, použije testovací PyPI. Zde je potřeba dávat pozor na název projektu,
+protože případné konflikty mezi ostrou a testovací PyPI se nekontrolují.
+Pokud tedy máme projekt na testovací PyPI a na ostré existuje projekt se
+stejným názvem, nainstaluje se ten z ostré verze.</p>
+<p>V případě, že tento problém nastane, je možné ho částečně obejít specifikací
+verze instalovaného balíčku:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--extra-index-url<span class="w"> </span>https://test.pypi.org/pypi<span class="w"> </span>&lt;název_balíčku&gt;<span class="o">==</span><span class="m">0</span>.3
+</pre></div><p>Pokud u duplicitního projektu na ostré PyPI neexistuje požadovaná verze,
+nainstaluje se náš balíček z testovací PyPI.</p>
+<p>Jiná možnost je zadat přímo cestu k archivu s balíčkem místo jeho názvu.
+Zde pak na umístění balíčku ani verzi nezáleží:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>https://test-files.pythonhosted.org/packages/.../&lt;název_balíčku&gt;-0.3.tar.gz
+</pre></div><p>Odkaz na archiv se dá najít na informační stránce o našem projektu na PyPI.</p>
+<h2 id="datove_soubory">Datové soubory
+<a href="#datove_soubory" class="header-link">#</a>
+</h2>
+<p>Některé moduly kromě samotného kódu potřebují i datové soubory.
+Například aplikace ve Flasku potřebují <em>templates</em>.</p>
+<p>Taková data se dají do balíčku přidat klíčem <code>tool.setuptools.package_data</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">[tool.setuptools.packages]</span>
+<span class="n">find</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="k">[tool.setuptools.package-data]</span>
+<span class="s2">"*"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"*.html"</span><span class="p">]</span>
+</pre></div><p>Dodatečnou dokumentaci, jak konfigurovat přidání těchto souborů, najdete v dokumentaci příslušného build backendu.
+<a href="https://setuptools.pypa.io/en/latest/userguide/datafiles.html#data-files-support">Dokumentace k setuptools</a>.</p>
+<h2 id="wheel_binarni_balicky">Wheel: Binární balíčky
+<a href="#wheel_binarni_balicky" class="header-link">#</a>
+</h2>
+<p>Zatím jsme se zabývali jen zdrojovými balíčky (<code>sdist</code>).
+Existují ale i balíčky „zkompilované” – binární (<code>bdist</code>, nejčastěji <code>wheel</code>).
+Když se instaluje zdrojový balíček, pip prvně vytvoří <code>wheel</code>, a následně ho rozbalí
+na patříčné místo. Binární balíček se už jen rozbalí.</p>
+<p>Z historických důvodů existuje několik různých druhů binárních distribucí,
+v současné době je ale důležitý pouze <code>wheel</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>build
+</pre></div><p>Výsledek je v souboru <code>dist/*.whl</code>.</p>
+<p>Obsah binárního balíčku typu wheel můžete prozkoumat, je to obyčejný ZIP.</p>
+<p>Naše programy jsou zatím platformně nezávislé a ve wheelu,
+i když se jmenuje binární, žádné binární soubory nejsou.
+To se ale změní, až se budeme zabývat tvorbou modulů v jazyce C:
+<code>sdist</code> pak obsahuje zdrojové soubory a <code>wheel</code> zkompilované moduly.</p>
+<p>Potom je dobré distribuovat oba dva – každý má své výhody:</p>
+<ul>
+<li><em>sdist</em> jde nainstalovat na různých operačních systémech i procesorových
+architekturách,</li>
+<li><em>sdist</em> tradičně obsahuje soubory jako LICENSE a README, ale</li>
+<li><em>wheel</em> při instalaci nepotřebuje např. překladače C (všechno už je přeložené
+pro konkrétní OS a architekturu), a</li>
+<li><em>wheel</em> se rychleji instaluje.</li>
+</ul>
+<p>Proces vydání složitějšího softwaru pak může vypadat takto:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>rm<span class="w"> </span>dist/*
+<span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>build
+<span class="go">[... kontrola vytvořených balíčků v „čistém“ virtualenvu ...]</span>
+<span class="gp gp-VirtualEnv">(__venv__)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>dist/*
+</pre></div><h2 id="dalsi">Další
+<a href="#dalsi" class="header-link">#</a>
+</h2>
+<p>K balíčkování existuje <a href="https://packaging.python.org/">obsáhlá dokumentace</a>.
+Budete-li chtít dělat něco, co v tomto kurzu není, podívejte se tam!</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/course/mi-pyt/sessions/distribution/">↑ <span class="d-none d-sm-inline">Lekce: Moduly</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/course/mi-pyt/sessions/distribution/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse-python/blob/main/lessons/intro/distribution/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Miro Hrončok, Petr Viktorin a další, 2016-2017</p>
+    
+        <p>Aktualizaci k novému standardu balíčkování provedla Karolina Surma, 2023-2024</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+        <p>
+            Licence ukázek kódu:
+            <a href="https://creativecommons.org/publicdomain/zero/1.0/">
+                CC0 1.0 Universal Public Domain Dedication
+            </a>
+        </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

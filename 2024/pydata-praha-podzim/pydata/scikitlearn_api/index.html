@@ -1,0 +1,1969 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Knihovna Scikit-learn
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2024/pydata-praha-podzim/">Datový kurz PyLadies</a>
+
+> <a href="/2024/pydata-praha-podzim/sessions/ml2/">Strojové učení - Scikit-learn, ML workflow</a>
+
+> <a href="/2024/pydata-praha-podzim/pydata/scikitlearn_api/">Knihovna Scikit-learn</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="knihovna_scikit-learn_prehled_uzitecnych_funkci">Knihovna Scikit-learn, přehled užitečných funkcí
+<a class="header-link" href="#knihovna_scikit-learn_prehled_uzitecnych_funkci">#</a>
+</h1>
+<p>V předešlé hodině jsme se vyhýbali programování, jak jen se to dalo. Teď už si ale chceš také sama vše vyzkoušet.
+Abys mohla úlohu rozmyšlenou v domácím úkolu naprogramovat, projdeme si nejdůležitější funkce, které budeš potřebovat. Použijeme jednoduchá data <a href="/2024/pydata-praha-podzim/pydata/scikitlearn_api/static/salaries.csv">salaries.csv</a></p>
+<p>Především budeme používat knihovnu <a href="https://scikit-learn.org">Scikit-learn</a> a samozrejmě také pandas.
+Potřebné věci projdeme na příkladu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="nacteni_a_priprava_dat">Načtení a příprava dat
+<a class="header-link" href="#nacteni_a_priprava_dat">#</a>
+</h2>
+<table>
+<tr><td>
+<p>☑ výběr vstupních proměnných</p>
+<p>☑ rozdělení na trénovací a testovací data</p>
+<p>☑ chybějící hodnoty</p>
+<p>☑ kategorické hodnoty</p>
+<p>☑ přeškálování / normování hodnot</p>
+</td></tr>
+</table>
+<p>Na začátku vždy bude potřeba připravit data. Čištění dat a použití knihovny pandas už bys měla ovládat,
+zaměříme se jen na věci, které jsou specifické pro strojové učení.</p>
+<p>Načíst data tedy umíš.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df_salary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"static/salaries.csv"</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">df_salary</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[2]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>rank</th>
+<th>discipline</th>
+<th>yrs.since.phd</th>
+<th>yrs.service</th>
+<th>sex</th>
+<th>salary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>66</th>
+<td>AssocProf</td>
+<td>B</td>
+<td>9</td>
+<td>8</td>
+<td>Male</td>
+<td>100522</td>
+</tr>
+<tr>
+<th>115</th>
+<td>Prof</td>
+<td>A</td>
+<td>12</td>
+<td>0</td>
+<td>Female</td>
+<td>105000</td>
+</tr>
+<tr>
+<th>17</th>
+<td>Prof</td>
+<td>B</td>
+<td>19</td>
+<td>20</td>
+<td>Male</td>
+<td>101000</td>
+</tr>
+<tr>
+<th>142</th>
+<td>AssocProf</td>
+<td>A</td>
+<td>15</td>
+<td>10</td>
+<td>Male</td>
+<td>81500</td>
+</tr>
+<tr>
+<th>157</th>
+<td>AssocProf</td>
+<td>B</td>
+<td>12</td>
+<td>18</td>
+<td>Male</td>
+<td>113341</td>
+</tr>
+<tr>
+<th>127</th>
+<td>Prof</td>
+<td>A</td>
+<td>28</td>
+<td>26</td>
+<td>Male</td>
+<td>155500</td>
+</tr>
+<tr>
+<th>141</th>
+<td>AssocProf</td>
+<td>A</td>
+<td>14</td>
+<td>8</td>
+<td>Male</td>
+<td>100102</td>
+</tr>
+<tr>
+<th>31</th>
+<td>Prof</td>
+<td>B</td>
+<td>20</td>
+<td>4</td>
+<td>Male</td>
+<td>132261</td>
+</tr>
+<tr>
+<th>19</th>
+<td>Prof</td>
+<td>A</td>
+<td>37</td>
+<td>23</td>
+<td>Male</td>
+<td>124750</td>
+</tr>
+<tr>
+<th>168</th>
+<td>Prof</td>
+<td>B</td>
+<td>18</td>
+<td>19</td>
+<td>Male</td>
+<td>130664</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="vytvoreni_trenovaci_a_testovaci_mnoziny">Vytvoření trénovací a testovací množiny
+<a class="header-link" href="#vytvoreni_trenovaci_a_testovaci_mnoziny">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro predikci použijeme jako příznaky <code>rank</code>, <code>discipline</code>, <code>yrs.since.phd</code>, <code>yrs.service</code> a <code>sex</code>,
+predikovat budeme hodnotu <code>salary</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V teorii strojového učení se vstupy modelu (příznaky, vstupní proměnné) typicky označují písmenem <code>X</code> a výstupy písmenem <code>y</code>. Řada programátorů toto používá i k označování proměnných v kódu.
+<code>X</code> představuje <em>matici</em> (neboli tabulku), kde každý řádek odpovídá jednomu datovému vzorku a každý sloupec jednomu příznaku (vstupní proměnné). <code>y</code> je vektor, neboli jeden sloupec s odezvou.</p>
+<p>(Na vyzobnutí odezvy se může hodit metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.pop.html">pop</a>. Její nevýhodou je ale nemožnost opakovaně spouštět buňku.)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">df_salary</span><span class="p">[</span><span class="s2">"salary"</span><span class="p">]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df_salary</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"salary"</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Index(['rank', 'discipline', 'yrs.since.phd', 'yrs.service', 'sex'], dtype='object')
+salary
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[4]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>rank</th>
+<th>discipline</th>
+<th>yrs.since.phd</th>
+<th>yrs.service</th>
+<th>sex</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>1</th>
+<td>Prof</td>
+<td>B</td>
+<td>19</td>
+<td>18</td>
+<td>Male</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Prof</td>
+<td>B</td>
+<td>20</td>
+<td>16</td>
+<td>Male</td>
+</tr>
+<tr>
+<th>3</th>
+<td>AsstProf</td>
+<td>B</td>
+<td>4</td>
+<td>3</td>
+<td>Male</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Prof</td>
+<td>B</td>
+<td>45</td>
+<td>39</td>
+<td>Male</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Prof</td>
+<td>B</td>
+<td>40</td>
+<td>41</td>
+<td>Male</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[5]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>1    139750
+2    173200
+3     79750
+4    115000
+5    141500
+Name: salary, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zbývá data rozdělit na trénovací a testovací, to je třeba udělat co nejdříve, abychom při různých konverzích dat používali jen informace z trénovací množiny a testovací množina byla opravdu jen k evaluaci. K tomu slouží metoda <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html?highlight=train%20test%20split#sklearn.model_selection.train_test_split">train_test_split</a>.
+Data nám rozdělí náhodně na trénovací a testovací sadu. Velikost testovací množiny můžeme specifikovat parametrem <code>test_size</code>, jeho defaultní hodnota je <code>0.25</code>, t. j. 25%.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span> 
+
+<span class="n">X_train_raw</span><span class="p">,</span> <span class="n">X_test_raw</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">X_train_raw</span><span class="p">,</span> <span class="n">X_test_raw</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="kodovani_vstupu">Kódování vstupů
+<a class="header-link" href="#kodovani_vstupu">#</a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro učení potřebujeme všechny hondoty převést na čísla (<code>float</code>). Pokud by data obsahovala chybějící
+hodnoty, nejjednodušší řešení je takové řádky zahodit. (Bonus: pokud bys měla data s větším množstvím
+chybějících hodnot, podívej se na možnosti <a href="https://scikit-learn.org/stable/modules/classes.html#module-sklearn.impute">sklearn.impute</a>)</p>
+<p>Dále je důležité vypořádat se s kategorickými hodnotami. Sloupce obsahující hodnoty typu Boolean nebo dvě hodnoty (např. muž/žena), lze snadno převést na hodnoty $[0,1]$.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro kategorické proměnné s více možnostmi použijeme tzv. <em>onehot encoding</em>.</p>
+<p>Např. sloupec <code>rank</code> obsahuje hodnoty <code>Prof</code>, <code>AsstProf</code> a <code>AssocProf</code>. K zakódování pomocí onehot encoding potřebujeme tři sloupce:</p>
+<p>Původní hodnota | Kód
+--- | ---
+Prof      | 1 0 0
+AsstProf  | 0 1 0
+AssocProf | 0 0 1</p>
+<p>Knihovna Scikitlearn nabízí <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html#sklearn.preprocessing.OneHotEncoder">sklearn.preprocessing.OneHotEncoder</a>.</p>
+<p>Při práci s pandas se může hodit i metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.get_dummies.html">get_dummies</a>. (Pozn. <em>dummies</em> proto, že nám přibudou pomocné proměnné (sloupce), které se označují jako <em>dummy variables</em>.) Ale pozor, pokud budeme později potřebovat stejným způsobem zakódovat další data, musí obsahovat stejné kategorie.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">X_train_raw</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[7]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>yrs.since.phd</th>
+<th>yrs.service</th>
+<th>rank_AssocProf</th>
+<th>rank_AsstProf</th>
+<th>rank_Prof</th>
+<th>discipline_A</th>
+<th>discipline_B</th>
+<th>sex_Female</th>
+<th>sex_Male</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>165</th>
+<td>1</td>
+<td>0</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr>
+<th>197</th>
+<td>4</td>
+<td>4</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr>
+<th>78</th>
+<td>26</td>
+<td>19</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr>
+<th>64</th>
+<td>11</td>
+<td>11</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<th>166</th>
+<td>21</td>
+<td>8</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Naše data zakódujeme pomocí OneHotEncoder z knihovny Scikit-learn.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">X_train_raw</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[8]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>Index(['rank', 'discipline', 'yrs.since.phd', 'yrs.service', 'sex'], dtype='object')</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">categorical_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rank"</span><span class="p">,</span> <span class="s2">"discipline"</span><span class="p">]</span> 
+<span class="n">numerical_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"yrs.since.phd"</span><span class="p">,</span> <span class="s2">"yrs.service"</span><span class="p">]</span>
+<span class="c1"># zbývá sloupec sex </span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">OneHotEncoder</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">()</span>
+
+<span class="n">encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_raw</span><span class="p">[</span><span class="n">categorical_columns</span><span class="p">])</span>
+<span class="n">column_names</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">column_names</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[11]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>array(['rank_AssocProf', 'rank_AsstProf', 'rank_Prof', 'discipline_A',
+       'discipline_B'], dtype=object)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train_raw</span><span class="p">[</span><span class="n">categorical_columns</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[12]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;138x5 sparse matrix of type '&lt;class 'numpy.float64'&gt;'
+	with 276 stored elements in Compressed Sparse Row format&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">encoder1</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">sparse_output</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">encoder1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_raw</span><span class="p">[</span><span class="n">categorical_columns</span><span class="p">])</span>
+<span class="n">encoder1</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train_raw</span><span class="p">[</span><span class="n">categorical_columns</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[13]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 1., 0.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 1., 0., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [1., 0., 0., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [1., 0., 0., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 1., 0., 1., 0.],
+       [0., 0., 1., 1., 0.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [1., 0., 0., 1., 0.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [1., 0., 0., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 1., 0.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 1., 0.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 1., 0.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 1., 0.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [1., 0., 0., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 1., 0., 1., 0.],
+       [0., 0., 1., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [1., 0., 0., 1., 0.],
+       [0., 0., 1., 1., 0.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 1., 0.],
+       [1., 0., 0., 1., 0.],
+       [1., 0., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [1., 0., 0., 1., 0.],
+       [0., 1., 0., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 1., 0., 0., 1.],
+       [0., 0., 1., 0., 1.],
+       [0., 0., 1., 0., 1.]])</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.compose</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_column_transformer</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">transformer</span> <span class="o">=</span> <span class="n">make_column_transformer</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">sparse_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">),</span><span class="n">categorical_columns</span><span class="p">),</span>
+    <span class="n">remainder</span><span class="o">=</span><span class="s2">"passthrough"</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">transformer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_raw</span><span class="p">)</span>
+<span class="n">transformer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train_raw</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[16]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.0, 1.0, 0.0, ..., 1, 0, 'Male'],
+       [0.0, 1.0, 0.0, ..., 4, 4, 'Male'],
+       [0.0, 0.0, 1.0, ..., 26, 19, 'Male'],
+       ...,
+       [0.0, 1.0, 0.0, ..., 3, 3, 'Female'],
+       [0.0, 0.0, 1.0, ..., 25, 25, 'Female'],
+       [0.0, 0.0, 1.0, ..., 15, 14, 'Male']], dtype=object)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">transformer</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[17]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>array(['onehotencoder__rank_AssocProf', 'onehotencoder__rank_AsstProf',
+       'onehotencoder__rank_Prof', 'onehotencoder__discipline_A',
+       'onehotencoder__discipline_B', 'remainder__yrs.since.phd',
+       'remainder__yrs.service', 'remainder__sex'], dtype=object)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrdinalEncoder</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">transformer</span> <span class="o">=</span> <span class="n">make_column_transformer</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">sparse_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">),</span> <span class="n">categorical_columns</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">OrdinalEncoder</span><span class="p">(),</span> <span class="p">[</span><span class="s2">"sex"</span><span class="p">]),</span>
+    <span class="n">remainder</span><span class="o">=</span><span class="s2">"passthrough"</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">X_train_transformed</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train_raw</span><span class="p">)</span>
+<span class="n">X_test_transformed</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test_raw</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">transformer</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">(),</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X_test_transformed</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[21]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>(array(['onehotencoder__rank_AssocProf', 'onehotencoder__rank_AsstProf',
+        'onehotencoder__rank_Prof', 'onehotencoder__discipline_A',
+        'onehotencoder__discipline_B', 'ordinalencoder__sex',
+        'remainder__yrs.since.phd', 'remainder__yrs.service'], dtype=object),
+      0    1    2    3    4    5     6     7
+ 0  1.0  0.0  0.0  1.0  0.0  1.0  19.0  16.0
+ 1  0.0  0.0  1.0  1.0  0.0  1.0  35.0  23.0
+ 2  0.0  0.0  1.0  0.0  1.0  1.0  17.0   3.0
+ 3  0.0  1.0  0.0  0.0  1.0  1.0   3.0   1.0
+ 4  1.0  0.0  0.0  0.0  1.0  1.0   8.0   8.0
+ 5  0.0  1.0  0.0  0.0  1.0  1.0   5.0   5.0
+ 6  1.0  0.0  0.0  0.0  1.0  1.0  12.0   8.0
+ 7  0.0  0.0  1.0  1.0  0.0  1.0  56.0  57.0
+ 8  0.0  1.0  0.0  1.0  0.0  0.0   3.0   1.0
+ 9  0.0  0.0  1.0  0.0  1.0  1.0  37.0  37.0)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="skalovani">Škálování
+<a class="header-link" href="#skalovani">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Přeškálování není vždy nutné, ale některým modelům to může pomoci. Řiďte se tedy pravidlem, že rozhodně neuškodí.
+Využijeme <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler">StandardScaler</a>.</p>
+<p>StandardScaler nám hodnoty přeškáluje, aby zhruba odpovídaly normálnímu rozdělení. Některé algoritmy to předpokládají. Pokud bychom neškálovali, mohlo by se stát, že příznak (sloupeček), která má výrazně větší rozptyl než ostatní, je brán jako významnější.</p>
+<p>Nejprve si ukažme jednoduchý příklad.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span> 
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span> 
+
+<span class="c1"># vygeneruje 20 náhodných bodů</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"a"</span><span class="p">:</span> <span class="mi">100</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)})</span>
+<span class="n">example</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[22]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>a</th>
+<th>b</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>100.888984</td>
+<td>-260.878801</td>
+</tr>
+<tr>
+<th>1</th>
+<td>100.496064</td>
+<td>-65.508528</td>
+</tr>
+<tr>
+<th>2</th>
+<td>100.055572</td>
+<td>59.374218</td>
+</tr>
+<tr>
+<th>3</th>
+<td>100.060233</td>
+<td>121.281507</td>
+</tr>
+<tr>
+<th>4</th>
+<td>98.560538</td>
+<td>20.311355</td>
+</tr>
+<tr>
+<th>5</th>
+<td>99.616512</td>
+<td>4.957273</td>
+</tr>
+<tr>
+<th>6</th>
+<td>100.886202</td>
+<td>161.057846</td>
+</tr>
+<tr>
+<th>7</th>
+<td>99.766297</td>
+<td>127.399339</td>
+</tr>
+<tr>
+<th>8</th>
+<td>100.044351</td>
+<td>-86.858194</td>
+</tr>
+<tr>
+<th>9</th>
+<td>98.823873</td>
+<td>11.641098</td>
+</tr>
+<tr>
+<th>10</th>
+<td>100.445507</td>
+<td>36.016900</td>
+</tr>
+<tr>
+<th>11</th>
+<td>98.538243</td>
+<td>171.859937</td>
+</tr>
+<tr>
+<th>12</th>
+<td>100.289883</td>
+<td>86.607052</td>
+</tr>
+<tr>
+<th>13</th>
+<td>99.812775</td>
+<td>-10.357610</td>
+</tr>
+<tr>
+<th>14</th>
+<td>98.256715</td>
+<td>22.007433</td>
+</tr>
+<tr>
+<th>15</th>
+<td>101.069478</td>
+<td>-188.388349</td>
+</tr>
+<tr>
+<th>16</th>
+<td>99.836135</td>
+<td>96.862848</td>
+</tr>
+<tr>
+<th>17</th>
+<td>101.860778</td>
+<td>64.573279</td>
+</tr>
+<tr>
+<th>18</th>
+<td>101.478252</td>
+<td>121.215643</td>
+</tr>
+<tr>
+<th>19</th>
+<td>99.120532</td>
+<td>-14.404930</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">example</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[23]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>a</th>
+<th>b</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>count</th>
+<td>100.000000</td>
+<td>100.000000</td>
+</tr>
+<tr>
+<th>mean</th>
+<td>99.914380</td>
+<td>-1.182795</td>
+</tr>
+<tr>
+<th>std</th>
+<td>0.967421</td>
+<td>107.772840</td>
+</tr>
+<tr>
+<th>min</th>
+<td>97.540807</td>
+<td>-260.878801</td>
+</tr>
+<tr>
+<th>25%</th>
+<td>99.252158</td>
+<td>-75.710666</td>
+</tr>
+<tr>
+<th>50%</th>
+<td>99.846426</td>
+<td>5.370076</td>
+</tr>
+<tr>
+<th>75%</th>
+<td>100.740273</td>
+<td>66.216316</td>
+</tr>
+<tr>
+<th>max</th>
+<td>101.860778</td>
+<td>217.284230</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">example_scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">transformed_example</span> <span class="o">=</span> <span class="n">example_scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Histogram původních dat"</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">example</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Histogram přeškálovaných dat"</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">transformed_example</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea">
+<img alt="No description has been provided for this image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkoAAAGzCAYAAADQVjjVAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjkuMiwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy8hTgPZAAAACXBIWXMAAA9hAAAPYQGoP6dpAABQeElEQVR4nO3deVxU9f4/8NfIMiwiCMgmi2ioKGpumbjhhmFaaWW5lKaWqeg1LA1X9KokltJ1zftNtAy1e1OzW1dTc8nrEuKuiEsoqCCCsuOwfX5/8OPkCEdgmGFm4PV8POZRc5bPvOcw85mX53zOOQohhAARERERldNA3wUQERERGSoGJSIiIiIZDEpEREREMhiUiIiIiGQwKBERERHJYFAiIiIiksGgRERERCSDQYmIiIhIBoMSERERkQwGJaoTioqKMH78eFhbW6N37964d++evksiIqI6gEGJ6oRNmzbhzJkz2LNnD5o2bYpPPvlE3yVpLC8vD+3atcMbb7yBkpISfZdDpFfffvst2rdvj/z8fKSnp8PLywsnTpyoVhtffvklBgwYgJKSEty4cQOurq74888/a1RXbm4u2rRpg+HDh9fJ72lKSgpcXFwwa9YsfZeidwxKVbR582YoFAqcPn26wvlDhgxBs2bN1KY1a9YM48aNq9brHD9+HGFhYcjIyNCs0Hrq/Pnz+OCDD9C/f3/MmzcP58+f11stYWFhUCgUGq8/depU2NnZYevWrWjQoGpf0XHjxqFhw4Yav6YcTT7DQGnYCwsLw+HDh7Veky7w+2243nnnHTz33HMIDg7G2LFjMWLECHTv3r1abUyfPh0FBQVYsGABRowYgXnz5qF58+bS/LLvbFpaWpXbfP/99+Hg4IDo6Ohy39Nx48aV+7wYk+LiYrz99tsICAjA8uXLq73+4cOHoVAo8O9//1urddWkb42OjkZkZKRG65pqtBZVya5du9CoUaNqrXP8+HEsWrQI48aNg52dnW4Kq4M6duyIf/3rX3jrrbewY8cOPP/88/ouSSNff/01Tp48if/973+wsLDQdzkay8vLw6JFiwAAAQEB+i1GR/j9rj1fffUV2rZtC3t7e41+fBUKBTZt2oQOHTqga9eumDJlSo3qWbduHc6fP49jx44Z9fdUzrx58yCEwJYtW2r0jz5DEh0djUuXLmHGjBnVXpdBSYc6duyo7xKqrbCwEAqFAqamxvXRGDduHE6ePAlvb2906tQJ0dHR+i5JIxMmTMCECRP0XQZVAb/ftadJkyZITU0FAAgh8Pjx42oHlOeeew65ublaqWfKlCk1DluGLDw8XN8lGBQeetOhp3fNl5SUYMmSJWjVqhUsLS1hZ2eH9u3b48svvwRQuluxbGyNt7c3FAoFFAqFdPiipKQEERERaN26NZRKJZycnPDuu+/izp07aq8rhMCyZcvg5eUFCwsLdOnSBfv370dAQIDav+7Ldo9+++23mDlzJpo2bQqlUokbN27gwYMHmDJlCtq0aYOGDRvCyckJ/fr1w++//672Wrdu3YJCocCKFSuwfPlyNGvWDJaWlggICMC1a9dQWFiITz/9FG5ubrC1tcWwYcOkDu9Zyg4lXb58Gf3794e1tTWaNGmC4OBg5OXllXv9rVu34v/+7/+QlZWFw4cPw83NDQqFAmFhYQCA3bt3Q6FQ4ODBg+Vea/369VAoFLhw4YI0bc+ePejevTusrKxgY2ODgQMHVjgu4ueff8bzzz8PpVIJb29vfP755xW+H4VCgeDgYHz77bfw9fWFlZUVOnTogP/85z9qy5UdArp165ba9L1796J///6wtbWFlZUVfH19K+zMbty4gcGDB6Nhw4bw8PDAzJkzoVKpZLdzmcLCQsyaNQsuLi6wsrJCz5498ccff5Rbriqfi1u3bqFJkyYAgEWLFkmfY00O4Rkyfr91//0G/vrubNiwAb6+vlAqldi8eTMA4Pr16xg1ahScnJygVCrh6+uLtWvXqq1f2d9FztWrV9G8eXN069ZNek9r165F79694eTkBGtra7Rr1w4REREoLCys9D0/fvwYoaGh8Pb2hrm5OZo2bYqpU6eqHYZ97bXX4OXlVeGYp27duqFTp07S86rWEhAQAD8/P8TExKBXr16wsrJC8+bN8dlnn0mvk5OTAzs7O0yaNKnc6966dQsmJiZYsWKFNO3u3bv44IMP4OHhAXNzc7i5ueGNN97A/fv31dYtLCzE3Llz4ebmhkaNGmHAgAGIj4+vdFsBVe9bq7IdAgIC8PPPP+P27dvS9646e8qM658VBqC4uBhFRUXlpgshKl03IiICYWFhmDdvHnr37o3CwkJcvXpV+qJMnDgRDx8+xOrVq7Fz5064uroCANq0aQMAmDx5MjZu3Ijg4GAMGTIEt27dwvz583H48GGcOXMGjo6OAIC5c+ciPDwcH3zwAYYPH46kpCRMnDgRhYWFaNmyZbm6QkND0b17d2zYsAENGjSAk5MTHjx4AABYuHAhXFxckJOTg127diEgIAAHDx4sdzhl7dq1aN++PdauXYuMjAzMnDkTQ4cORbdu3WBmZoZNmzbh9u3b+PjjjzFx4kTs2bOn0u1VWFiIwYMHY9KkSfj0009x/PhxLFmyBLdv38ZPP/1U6fpPGjJkCJycnBAVFYX+/furzdu8eTM6deqE9u3bAyjdRTt69GgEBgZi27ZtUKlUiIiIkN57z549AQAHDx7Eq6++iu7du2P79u0oLi5GREREuc6izM8//4yYmBgsXrwYDRs2REREBIYNG4b4+Hi18RJP+/rrr/H++++jT58+2LBhA5ycnHDt2jVcunSp3PZ65ZVXMGHCBMycORNHjx7F3//+d9ja2mLBggXP3D7vv/8+vvnmG3z88ccYOHAgLl26hOHDhyM7O1ttuYcPHwJ49ufC1dUVe/fuxUsvvYQJEyZg4sSJACCFJ0PG77dhfr93796N33//HQsWLICLiwucnJxw5coV+Pv7w9PTE1988QVcXFywb98+TJ8+HWlpaVi4cGGV/i4VOXLkCIYNG4bevXsjOjoaVlZWAIBr165hxIgRaNGiBSwsLHD+/HksXboUV69exaZNm2TbE0Lgtddew8GDBxEaGopevXrhwoULWLhwIU6cOIETJ05AqVRi/PjxePXVV/Hbb79hwIAB0vpXr17FH3/8gX/84x/StJs3b2LUqFFS8HpWLSkpKRg9ejRmzpyJhQsXYteuXQgNDYWbmxveffddNGzYEOPHj8fGjRsREREBW1tbad1169bB3Nwc48ePB1Aakrp27YrCwkLMmTMH7du3R3p6Ovbt24dHjx7B2dlZWnfOnDno0aOH9I/Y2bNnY+jQoYiLi4OJiYns9qpO31qV7bBu3Tp88MEHuHnzJnbt2iX7urIEVUlUVJQA8MyHl5eX2jpeXl5i7Nix0vMhQ4aI559//pmvs2LFCgFAJCQkqE2Pi4sTAMSUKVPUpp86dUoAEHPmzBFCCPHw4UOhVCrFW2+9pbbciRMnBADRp08fadqhQ4cEANG7d+9K339RUZEoLCwU/fv3F8OGDZOmJyQkCACiQ4cOori4WJoeGRkpAIhXXnlFrZ0ZM2YIACIzM/OZrzd27FgBQHz55Zdq05cuXSoAiGPHjqm9flRUVLk2AIiFCxdKz0NCQoSlpaXIyMiQpl25ckUAEKtXrxZCCFFcXCzc3NxEu3bt1N5Pdna2cHJyEv7+/tK0bt26CTc3N5Gfny9Ny8rKEvb29uLprxYA4ezsLLKysqRpKSkpokGDBiI8PFyaVvY5K/v7Z2dni0aNGomePXuKkpKSSrfX999/rzZ98ODBolWrVrLrCfHXZ+ujjz5Sm/7dd98JAGqf4afJfS4ePHhQbvsbMn6/DfP7LUTpd8fW1lY8fPhQbdlBgwYJd3f3cq8VHBwsLCwspOWr8ndZuHChACAePHggvv32W2Fubi6mT5+u9p7lfPPNN8LExEStvrFjx6p9Xvbu3SsAiIiICLV1d+zYIQCIjRs3CiGEKCwsFM7OzmLUqFFqy82aNUuYm5uLtLS0CmsoLi4WhYWFFdbSp08fAUCcOnVKbZ02bdqIQYMGSc9v3rwpGjRoIFatWiVNy8/PFw4ODuK9996Tpo0fP16YmZmJK1euyG6Tss/e4MGD1aZ///33AoA4ceKE7LpCVK9vfdKztsPLL79c7jtcVTz0Vk3ffPMNYmJiyj3K9jI8ywsvvIDz589jypQp2LdvH7Kysqr8uocOHQKAcocvXnjhBfj6+kqHlE6ePAmVSoURI0aoLffiiy/KnoXx+uuvVzh9w4YN6NSpEywsLGBqagozMzMcPHgQcXFx5ZYdPHiw2pkfvr6+AICXX35Zbbmy6YmJiTLvVN3o0aPVno8aNQrAX9ujOsaPH4/8/Hzs2LFDmhYVFQWlUim1Gx8fj3v37uGdd95Rez8NGzbE66+/jpMnTyIvLw+5ubmIiYnB8OHD1cZK2NjYYOjQoRW+ft++fWFjYyM9d3Z2hpOTE27fvi1b8/Hjx5GVlYUpU6ZUuqtYoVCUe+327ds/s33gr2359LYeMWJEhWNZqvO5MDb8fhvm97tfv35o3Lix9Pzx48c4ePAghg0bBisrKxQVFUmPwYMH4/Hjxzh58iSA6v1dli5dinHjxuGzzz7Dl19+We5stsuXL2PkyJHw8vKCtbU1LCwsMGHCBBQXF+PatWuy7f72228Ayv9933zzTVhbW0t/X1NTU4wZMwY7d+5EZmYmgNK9nN9++y1effVVODg4SOuePXsWr7zyChwcHGBiYgIzMzO8++67Fdbi4uKCF154QW3a031D8+bNMWTIEKxbt07agxodHY309HQEBwdLy/33v/9F3759pb/1s7zyyivlXhPAM/uk6vat1dkOmmJQqiZfX1906dKl3OPJXZVyQkND8fnnn+PkyZMICgqCg4MD+vfvL3tK8pPS09MBQNpd/yQ3Nzdpftl/n9z9WaaiaXJtrly5EpMnT0a3bt3www8/4OTJk4iJicFLL72E/Pz8csvb29urPTc3N3/m9MePH1dYy5NMTU3VOgag9AsP/PU+q6Nt27bo2rUroqKiAJR2QFu3bsWrr74q1VnZdi4pKcGjR4/w6NEjlJSUSPVUVOPTnn4vAKBUKivcnmXKDpG4u7tX8u4AKyurcgNclUplpdu67D0/XXdF27+6nwtjw++3YX6/n34P6enpKCoqwurVq2FmZqb2GDx4MABIp/pX5++ydetWNG3aFG+//Xa5eXfu3IG/vz8SEhKwatUq/O9//8O5c+ewYcMGAHjm5z89PR2mpqblDj8rFAq4uLiovd/x48fj8ePH2L59OwBg3759SE5OxnvvvSctk5iYiF69euHu3bv48ssv8fvvvyMmJkYan/V0LVXte/72t7/h+vXr2L9/P4DSQ67du3dXGxv14MGDKvVHFb2uUqmssL4nVadvre520BTHKNUiU1NThISEICQkBBkZGThw4ADmzJmDQYMGISkpSToOXpGyD1xycnK5D+m9e/ek8Qtly1V0LDclJaXCf3VWtKdi69atCAgIwPr169WmPz1mRZeKioqQnp6u9mVLSUkB8Nf7LAsGTw9YlgtS7733HqZMmYK4uDj8+eef5TqgJ7fz0+7du4cGDRqgcePGEEJAoVBI9TypommaKutYnx7Qq01l7zklJQVNmzaVppdt/ycZwufCUPH7XT1V+X6Xefo9NG7cGCYmJnjnnXcwderUCtv39vYGUL2/y969e/HWW2+hV69eOHjwILy8vKR5u3btQlZWFv71r3/Bw8NDmn706NFK36uDgwOKiorw4MEDtbAkhEBKSgq6du0qTWvTpg1eeOEFREVFYdKkSYiKioKbmxsCAwOlZXbv3o3c3Fzs3LlTrcZz585VWsuz9OvXD35+flizZg0aNmyIM2fOYOvWrWrLNGnSRKf9UePGjavct+pqOzyNe5T0xM7ODm+88QamTp2Khw8fSmc5ySXufv36AUC5D21MTAzi4uKkAcrdunWDUqlUO7wElO6yr+wQzJMUCoVUS5kLFy5U+4q4NfXdd9+pPS877b9ssKmzszMsLCzUzlgDgB9//LHC9kaOHAkLCwts3rwZmzdvRtOmTdU6oFatWqFp06aIjo5WG8Cbm5uLH374QToTztraGi+88AJ27typ9q/n7Ozsag80fxZ/f3/Y2tpiw4YNVRpQrImybfn0tv7+++/LDWyu6ueiKv9yrMv4/a6ayr7fcqysrNC3b1+cPXsW7du3r3AvYEV7UeT+LmW8vLzw+++/Q6lUolevXrh+/bo0r+z79+Qg5JKSEmzcuLHS91n293v67/vDDz8gNze33Akm7733Hk6dOoVjx47hp59+wtixY9Vetyw4Pvk3FELgn//8Z6W1VGb69On4+eefERoaCmdnZ7z55ptq84OCgnDo0KEqn71WXdXpW6uzHSrbe/8s3KNUi4YOHQo/Pz906dIFTZo0we3btxEZGQkvLy/4+PgAANq1aweg9JL7Y8eOhZmZGVq1aoVWrVrhgw8+wOrVq9GgQQMEBQVJZ8V4eHjgo48+AlC6KzwkJATh4eFo3Lgxhg0bhjt37mDRokVwdXWt8pWehwwZgr///e9YuHAh+vTpg/j4eCxevBje3t4VnhWkC+bm5vjiiy+Qk5ODrl27SmfFBAUFSWNGFAoFxowZg02bNqFFixbo0KED/vjjD9nrKNnZ2WHYsGHYvHkzMjIy8PHHH6ttkwYNGiAiIgKjR4/GkCFDMGnSJKhUKqxYsQIZGRn47LPPpGX//ve/46WXXsLAgQMxc+ZMFBcXY/ny5bC2tpbODquphg0b4osvvsDEiRMxYMAAvP/++3B2dsaNGzdw/vx5rFmzpsav4evrizFjxiAyMhJmZmYYMGAALl26hM8//7zcBRWr+rmwsbGBl5cXfvzxR/Tv3x/29vZwdHQ06qsVV4bf7+qpyvf7Wb788kv07NkTvXr1wuTJk9GsWTNkZ2fjxo0b+Omnn6RxQVX5uzzJ1dUVR44cwaBBg9C7d2/s378ffn5+CAwMhLm5OUaOHInZs2fj8ePHWLduXZXGog0cOBCDBg3C7NmzkZWVhR49ekhnvXXs2BHvvPOO2vIjR45ESEgIRo4cCZVKVW5s08CBA6VaZs2ahcePH2P9+vV49OhRpbVUZsyYMQgNDcXRo0cxb9486XBqmcWLF+O///0vevfujTlz5qBdu3bIyMjA3r17ERISgtatW9e4hqr2rdXZDu3atcPOnTuxfv16dO7cGQ0aNECXLl2qVpBGQ8DrobKzYmJiYiqcX9GI+qfPivniiy+Ev7+/cHR0FObm5sLT01NMmDBB3Lp1S2290NBQ4ebmJho0aCAAiEOHDgkhSkf0L1++XLRs2VKYmZkJR0dHMWbMGJGUlKS2fklJiViyZIlwd3cX5ubmon379uI///mP6NChg9oZLWVnJvzrX/8q935UKpX4+OOPRdOmTYWFhYXo1KmT2L17d7mzOcrOilmxYoXa+nJtV7Ydy4wdO1ZYW1uLCxcuiICAAGFpaSns7e3F5MmTRU5OjtqymZmZYuLEicLZ2VlYW1uLoUOHilu3bsmedfXrr79KZzJdu3atwtffvXu36Natm7CwsBDW1taif//+4n//+1+55fbs2SPat28v/T0/++wz6QyaJwEQU6dOLbf+05+Rp896K/PLL7+IPn36CGtra2FlZSXatGkjli9fXm57Pa2iWiqiUqnEzJkzhZOTk7CwsBAvvviiOHHiRLn6qvq5EEKIAwcOiI4dOwqlUlnp2XP6xu+34X6/5b47ZfWNHz9eNG3aVJiZmYkmTZoIf39/sWTJEmmZqvxdnjzrrUxGRobo0aOHsLe3l97PTz/9JDp06CAsLCxE06ZNxSeffCL++9//qv0dy97f05+X/Px8MXv2bOHl5SXMzMyEq6urmDx5snj06FGF723UqFECgOjRo0eF86taS58+fUTbtm3LrV9RjWXGjRsnTE1NxZ07dyqcn5SUJMaPHy9cXFyEmZmZcHNzEyNGjBD3798XQsh/Pp51lvLTqtq3VnU7PHz4ULzxxhvCzs5OKBSKKvWLZRRC6Gh/PhmUhIQEtG7dGgsXLsScOXP0XU6lxo0bh3//+9/IycnRdylEBo/fb9KWgoICNGvWDD179sT333+v73IMAg+91UHnz5/Htm3b4O/vj0aNGiE+Ph4RERFo1KgRb49BZOT4/SZdePDgAeLj4xEVFYX79+/j008/1XdJBoNBqQ6ytrbG6dOn8fXXXyMjIwO2trYICAjA0qVLZU8hJiLjwO836cLPP/+M9957D66urli3bp3aJQHqOx56IyIiIpLBywMQERERyWBQIiIiIpLBoEREREQkg4O5UXp11Xv37sHGxqbSG48SkfYJIZCdnQ03N7cqXzTxWcLDw7Fz505cvXoVlpaW8Pf3x/Lly9GqVStpmXHjxmHLli1q63Xr1k26mWpl2G8Q6Z+2+46KMCih9F5KT967h4j0Iykpqco33HyWI0eOYOrUqejatSuKioowd+5cBAYG4sqVK7C2tpaWe+mll6SbJAModxXiZ2G/QWQ4tNV3VIRBCaW3WwBKN/TTt2wgIt3LysqCh4eH9F2sqb1796o9j4qKgpOTE2JjY9G7d29pulKprPAu5VXBfoNI/7Tdd1SEQQl/3VivUaNG7PCI9EhXh7AyMzMBlN4r7UmHDx+Gk5MT7Ozs0KdPHyxduhROTk4VtqFSqaBSqaTn2dnZANhvEBkCXR7+5mBuIqrThBAICQlBz5494efnJ00PCgrCd999h99++w1ffPEFYmJi0K9fP7Uw9KTw8HDY2tpKDx52I6ofeMFJlO66s7W1RWZmJv9lSKQHuvwOTp06FT///DOOHTv2zDEMycnJ8PLywvbt2zF8+PBy85/eo1S2y5/9BpH+1MbvNw+9EVGdNW3aNOzZswdHjx6tdKCnq6srvLy8cP369QrnK5VKKJVKXZRJRAaMQamKhBAoKipCcXGxvkvRCRMTE5iamvI0Z6oThBCYNm0adu3ahcOHD8Pb27vSddLT05GUlARXV9daqJBIO/jbpHsMSlVQUFCA5ORk5OXl6bsUnbKysoKrq2u1TpEmMkRTp05FdHQ0fvzxR9jY2CAlJQUAYGtrC0tLS+Tk5CAsLAyvv/46XF1dcevWLcyZMweOjo4YNmyYnqsnqhr+NtUOBqVKlJSUICEhASYmJnBzc4O5uXmd2+sihEBBQQEePHiAhIQE+Pj46OzCXUS1Yf369QCAgIAAtelRUVEYN24cTExMcPHiRXzzzTfIyMiAq6sr+vbtix07duj0NGMibeFvU+1hUKpEQUEBSkpK4OHhASsrK32XozOWlpYwMzPD7du3UVBQAAsLC32XRKSxys5RsbS0xL59+2qpGiLt429T7eFugyqqD3tY6sN7JCKqS+pDv63v91j3tzARERGRhnjoTUOJiYlIS0urtddzdHSEp6dnrb0eEREZp9r8faoPv016DUpHjx7FihUrEBsbi+TkZOzatQuvvfaaNF8IgUWLFmHjxo149OgRunXrhrVr16Jt27bSMiqVCh9//DG2bduG/Px89O/fH+vWrdPZzfGA0g9ha19f5NfimQaWVla4GhdX5z+QRESkudr+faoPv016DUq5ubno0KED3nvvPbz++uvl5kdERGDlypXYvHkzWrZsiSVLlmDgwIGIj4+XzkyZMWMGfvrpJ2zfvh0ODg6YOXMmhgwZgtjYWJiYmOik7rS0NOTn5WH07BVw9myhk9d40v3Em/hu+SdIS0ur0x9GIiKqmdr8farJb9O6deuwYsUKJCcno23btoiMjESvXr10VGnN6DUoBQUFISgoqMJ5QghERkZi7ty50u0EtmzZAmdnZ0RHR2PSpEnIzMzE119/jW+//RYDBgwAAGzduhUeHh44cOAABg0apNP6nT1bwN2nbeULEhER1SJD/n3asWMHZsyYgXXr1qFHjx746quvEBQUhCtXrhjkzgCDHaOUkJCAlJQUBAYGStOUSiX69OmD48ePY9KkSYiNjUVhYaHaMm5ubvDz88Px48dlg1JF92yqi/bu3YslS5bg0qVLMDExQffu3fHll1+iRQvd7wWj6rlz5w7S09OrvZ6Dg4NODzMT1XW6GM9TH8bt1MTKlSsxYcIETJw4EQAQGRmJffv2Yf369QgPD9dzdeUZbFAqu5Kus7Oz2nRnZ2fcvn1bWsbc3ByNGzcut0zZ+hUJDw/HokWLtFyx4cnNzUVISAjatWuH3NxcLFiwAMOGDcO5c+f0frol/eXOnTto1bo18nJzq72ulbU14q9eZVgi0kBiYiJ8fVsjLy9fq+1aWVkiLu4qw1IFCgoKEBsbi08//VRtemBgII4fP66nqp7NYINSmaevNCqEqPTqo5UtExoaipCQEOl52V3A65qnx319/fXXcHJywpUrV+Dn56enquhp6enpyMvNxbtzV6GJe/Mqr/fgzp/4ZulHSE9PZ1Ai0kBaWhry8vKxdc4I+Ho20UqbcYkPMGbZ9xxTKiMtLQ3FxcUV7gR51g4OfTLYoOTi4gKgdK/RkzepTE1NlTawi4sLCgoK8OjRI7W9SqmpqfD395dtu77cBfzmzZuYP38+Tp48ibS0NJSUlAAo/VcUg5LhaeLeHE1btNZ3GUT1jq9nE3Rq2VTfZdQrmuwE0ReDPf7i7e0NFxcX7N+/X5pWUFCAI0eOSCGoc+fOMDMzU1smOTkZly5demZQqi+GDh2K9PR0/POf/8SpU6dw6tQpAKXbkYiIqLY5OjrCxMSk3N6jJ3eCGBq97lHKycnBjRs3pOcJCQk4d+4c7O3t4enpiRkzZmDZsmXw8fGBj48Pli1bBisrK4waNQpA6Z3AJ0yYgJkzZ8LBwQH29vb4+OOP0a5dO+ksuPoqPT0dcXFx+Oqrr6RTLo8dO6bnqoiIqD4zNzdH586dsX//fgwbNkyavn//frz66qt6rEyeXoPS6dOn0bdvX+l52bihsWPHYvPmzZg1axby8/MxZcoU6YKTv/76q9rdvVetWgVTU1OMGDFCuuDk5s2bdXYNpSfdT7yp89fQ9HUaN24MBwcHbNy4Ea6urkhMTCw3eI6IiOqm2vh90vQ1QkJC8M4776BLly7o3r07Nm7ciMTERHz44YdarlA79BqUAgICnnmXb4VCgbCwMISFhckuY2FhgdWrV2P16tU6qLBijo6OsLSywnfLP6m117S0soKjo2OVl2/QoAG2b9+O6dOnw8/PD61atcI//vEPBAQE6K5IIiLSq9r+farubxMAvPXWW0hPT8fixYuRnJwMPz8//PLLL/Dy8tJRlTVjsIO5DZmnpyeuxsUZ/L3eBgwYgCtXrqhNe1YwJSIi41bbv0+aXjNqypQpmDJlig4q0j4GJQ15enry1E8iIjI4/H3SLoM9642IiIhI3xiUiIiIiGQwKBERERHJYFAiIiIiksGgRERERCSDQYmIiIhIBoMSERERkQxeR0lDiYmJBn/BSSIiqn9q8/epPvw2MShpIDExEb6+rZGXl19rr2llZYm4uKvV+kAGBATg+eefR2RkpO4KIyIig1Hbv0+a/DYZGwYlDaSlpSEvLx9b54yAr2cTnb9eXOIDjFn2PdLS0ur0h5GIiGqmNn+fNP1tOnr0KFasWIHY2FgkJydj165deO2113RXaA0xKNWAr2cTdGrZVN9lEBERqTHk36fc3Fx06NAB7733Hl5//XV9l1MpDuau44qKihAcHAw7Ozs4ODhg3rx5vDEuERHpTVBQEJYsWYLhw4fru5QqYVCq47Zs2QJTU1OcOnUK//jHP7Bq1Sr83//9n77LIiIiMgo89FbHeXh4YNWqVVAoFGjVqhUuXryIVatW4f3339d3aURERAaPe5TquBdffBEKhUJ63r17d1y/fh3FxcV6rIqIiMg4MCgRERERyWBQquNOnjxZ7rmPjw9MTEz0VBEREZHx4BilGohLfGDwr5OUlISQkBBMmjQJZ86cwerVq/HFF19osToiIjI0tfH7pOlr5OTk4MaNG9LzhIQEnDt3Dvb29gZ5rUAGJQ04OjrCysoSY5Z9X2uvaWVlCUdHx2qv9+677yI/Px8vvPACTExMMG3aNHzwwQc6qJCIiPSttn+fNPltOn36NPr27Ss9DwkJAQCMHTsWmzdv1mZ5WsGgpAFPT0/ExV01+Hu9HT58WPr/9evXa7kiIiIyNLX9+6TJb1NAQIBRXc+PQUlDnp6eBrmLkIiI6jf+PmkXB3MTERERyWBQIiIiIpLBoEREREQkg0Gpioxp4Jmm6sN7JCKqS+pDv63v98igVAkzMzMAQF5enp4r0b2y91j2nomIyDDxt6n28Ky3SpiYmMDOzg6pqakAACsrK7V7p9UFQgjk5eUhNTUVdnZ2vGo3EZGB429T7WFQqgIXFxcAkD6QdZWdnZ30XomIyLDxt6l2MChVgUKhgKurK5ycnFBYWKjvcnTCzMyMe5KIiIwIf5tqB4NSNZiYmOj9D0ZERPQk/jbpFgdzExEREclgUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyGJSIiIiIZDAoEREREclgUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyGJSIiIiIZDAoEVGdEx4ejq5du8LGxgZOTk547bXXEB8fr7aMEAJhYWFwc3ODpaUlAgICcPnyZT1VTESGikGJiOqcI0eOYOrUqTh58iT279+PoqIiBAYGIjc3V1omIiICK1euxJo1axATEwMXFxcMHDgQ2dnZeqyciAyNqb4LICLStr1796o9j4qKgpOTE2JjY9G7d28IIRAZGYm5c+di+PDhAIAtW7bA2dkZ0dHRmDRpkj7KJiIDxD1KRFTnZWZmAgDs7e0BAAkJCUhJSUFgYKC0jFKpRJ8+fXD8+PEK21CpVMjKylJ7EFHdx6BERHWaEAIhISHo2bMn/Pz8AAApKSkAAGdnZ7VlnZ2dpXlPCw8Ph62trfTw8PDQbeFEZBAYlIioTgsODsaFCxewbdu2cvMUCoXacyFEuWllQkNDkZmZKT2SkpJ0Ui8RGRaOUSKiOmvatGnYs2cPjh49Cnd3d2m6i4sLgNI9S66urtL01NTUcnuZyiiVSiiVSt0WTEQGh3uUiKjOEUIgODgYO3fuxG+//QZvb2+1+d7e3nBxccH+/fulaQUFBThy5Aj8/f1ru1wiMmDco0REdc7UqVMRHR2NH3/8ETY2NtK4I1tbW1haWkKhUGDGjBlYtmwZfHx84OPjg2XLlsHKygqjRo3Sc/VEZEgYlIiozlm/fj0AICAgQG16VFQUxo0bBwCYNWsW8vPzMWXKFDx69AjdunXDr7/+Chsbm1qulogMGYMSEdU5QohKl1EoFAgLC0NYWJjuCyIio8UxSkREREQyDDooFRUVYd68efD29oalpSWaN2+OxYsXo6SkRFqG92siIiIiXTHooLR8+XJs2LABa9asQVxcHCIiIrBixQqsXr1aWob3ayIiIiJdMeigdOLECbz66qt4+eWX0axZM7zxxhsIDAzE6dOnAaDc/Zr8/PywZcsW5OXlITo6Ws/VExERkbEz6KDUs2dPHDx4ENeuXQMAnD9/HseOHcPgwYMBaHa/JoD3bCIiIqKqMeiz3mbPno3MzEy0bt0aJiYmKC4uxtKlSzFy5EgAz75f0+3bt2XbDQ8Px6JFi3RXOBEREdUJBr1HaceOHdi6dSuio6Nx5swZbNmyBZ9//jm2bNmitlx17tcE8J5NREREVDUGvUfpk08+waeffoq3334bANCuXTvcvn0b4eHhGDt2rEb3awJ4zyYiImOVmJiItLQ0rbQVFxenlXaobjPooJSXl4cGDdR3epmYmEiXB3jyfk0dO3YE8Nf9mpYvX17r9RIRke4kJiaita8v8vPytNpu8kOeJU3yDDooDR06FEuXLoWnpyfatm2Ls2fPYuXKlRg/fjwA8H5NRET1SFpaGvLz8jB69go4e7aocXvxF2Lx81dLkZHzWAvVUV1l0EFp9erVmD9/PqZMmYLU1FS4ublh0qRJWLBggbQM79dERFS/OHu2gLtP2xq3o61DeFS3GXRQsrGxQWRkJCIjI2WX4f2aiIiISFcM+qw3IiIiIn1iUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyGJSIiIiIZDAoEREREclgUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyGJSIiIiIZDAoEREREclgUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyGJSIiIiIZDAoEREREclgUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyGJSIiIiIZDAoEREREclgUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyGJSIiIiIZDAoEREREclgUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyGJSIiIiIZDAoEREREclgUCIiIiKSwaBERHXS0aNHMXToULi5uUGhUGD37t1q88eNGweFQqH2ePHFF/VTLBEZLAYlIqqTcnNz0aFDB6xZs0Z2mZdeegnJycnS45dffqnFConIGJjquwAiIl0ICgpCUFDQM5dRKpVwcXGppYqIyBgxKBFRvXX48GE4OTnBzs4Offr0wdKlS+Hk5FThsiqVCiqVSnqelZVVW2WSjiWkPMKZa3e10lZc4gOttEOGg0GJiOqloKAgvPnmm/Dy8kJCQgLmz5+Pfv36ITY2Fkqlstzy4eHhWLRokR4qJV3JyUgHAMzftB/zN+3XatvJyclabY/0h0GJiOqlt956S/p/Pz8/dOnSBV5eXvj5558xfPjwcsuHhoYiJCREep6VlQUPD49aqZV0Q5WXAwDoPfRNdGnvq5U246//iZ+/34qMjAyttEf6x6BERATA1dUVXl5euH79eoXzlUplhXuayPjZOjSBu5eXVtpKy8zRSjtkOHjWGxERgPT0dCQlJcHV1VXfpRCRAeEeJSKqk3JycnDjxg3peUJCAs6dOwd7e3vY29sjLCwMr7/+OlxdXXHr1i3MmTMHjo6OGDZsmB6rJiJDY/B7lO7evYsxY8bAwcEBVlZWeP755xEbGyvNF0IgLCwMbm5usLS0REBAAC5fvqzHionIEJw+fRodO3ZEx44dAQAhISHo2LEjFixYABMTE1y8eBGvvvoqWrZsibFjx6Jly5Y4ceIEbGxs9Fw5ERkSg96j9OjRI/To0QN9+/bFf//7Xzg5OeHmzZuws7OTlomIiMDKlSuxefNmtGzZEkuWLMHAgQMRHx/PDo+oHgsICIAQQnb+vn37arEaIjJWBh2Uli9fDg8PD0RFRUnTmjVrJv2/EAKRkZGYO3eudJbKli1b4OzsjOjoaEyaNKm2SyYiIqI6xKAPve3ZswddunTBm2++CScnJ3Ts2BH//Oc/pfkJCQlISUlBYGCgNE2pVKJPnz44fvy4bLsqlQpZWVlqDyIiIqKnGXRQ+vPPP7F+/Xr4+Phg3759+PDDDzF9+nR88803AICUlBQAgLOzs9p6zs7O0ryKhIeHw9bWVnrwWihERERUEYMOSiUlJejUqROWLVuGjh07YtKkSXj//fexfv16teUUCoXacyFEuWlPCg0NRWZmpvRISkrSSf1ERERk3Aw6KLm6uqJNmzZq03x9fZGYmAgA0s0sn957lJqaWm4v05OUSiUaNWqk9iAiIiJ6mkEHpR49eiA+Pl5t2rVr1+D1/6+g6u3tDRcXF+zf/9c9egoKCnDkyBH4+/vXaq1ERERU9xj0WW8fffQR/P39sWzZMowYMQJ//PEHNm7ciI0bNwIoPeQ2Y8YMLFu2DD4+PvDx8cGyZctgZWWFUaNG6bl6IiIiMnYGHZS6du2KXbt2ITQ0FIsXL4a3tzciIyMxevRoaZlZs2YhPz8fU6ZMwaNHj9CtWzf8+uuvvIYSERHpTUJCAs6cOaOVthwdHeHp6amVtqj6DDooAcCQIUMwZMgQ2fkKhQJhYWEICwurvaKIiIgqkJNdermZ+fPnY/78+Vpp09LKClfj4hiW9MTggxIREZGxUOXnAwB6j5qOLj0Catze/cSb+G75J0hLS2NQ0hMGJSIiIi2zdXaHu09bfZdBWqDRWW/NmzdHenp6uekZGRlo3rx5jYsiovqpffv27FuIyKBoFJRu3bqF4uLictNVKhXu3r1b46KIqH5KTExk30JEBqVah9727Nkj/f++fftga2srPS8uLsbBgwfVblpLRFQVv/zyi/T/7FuIyJBUKyi99tprAErPNBs7dqzaPDMzMzRr1gxffPGF1oojovqh7Lpn7FuIyNBUKyiVlJQAKL0idkxMDBwdHXVSFBHVLxkZGbC1tYW7uztiY2PZtxCRwdDorLeEhARt10FEhIsXL/Lei0RkUDS+PMDBgwdx8OBBpKamSnuaymzatKnGhRFR/cS+hYgMiUZBadGiRVi8eDG6dOkCV1dXKBQKbddFRPXQZ599huXLl7NvISKDoVFQ2rBhAzZv3ox33nlH2/UQUT22adMm9i1EZFA0uo5SQUEB/P39tV0LEdVz7FuIyNBoFJQmTpyI6OhobddCRPXcu+++y76FiAyKRofeHj9+jI0bN+LAgQNo3749zMzM1OavXLlSK8URUf2iUqmwcuVK9i30TGlpaTBpmFzjdrKys7VQTcWys7KQnFzzGtPS0rRQDdWERkHpwoULeP755wEAly5dUpvHwZdEpKnLly+zbyFZZcFj586dMGloX+P2ClJLL3VTVFRU47bKPC4svQXP6dOncfbqnzVurzjnIQBoJXSRZjQKSocOHdJ2HURE+M9//sPrKJGsjIwMAEDfjs3RupVPjdv77bdcxF4HikvK319QUwVFpW11aOEE/64da9ze1fjr+On8X++dap/G11EiIiLSh8YNLeDqUPNAbWVhroVqKmZtYaaVGu83tNBCNVQTGgWlvn37PnM3+G+//aZxQURUfw0ZMgSmpvLdEvsWIqptGgWlsjEEZQoLC3Hu3DlcunSp3A0tiYiqql27djA3/+tf+exbiEjfNApKq1atqnB6WFgYcnJyalQQEdVf4eHhFY5RYt9CRPqi0XWU5IwZM4b3YiIirWPfQkT6otWgdOLECVhYcOAZEWkX+xYi0heNDr0NHz5c7bkQAsnJyTh9+jTmz5+vlcKIqP4ZPXq02kUm2bcQkb5pFJRsbW3Vnjdo0ACtWrXC4sWLERgYqJXCiKj+sbW1VQtK7FuISN80CkpRUVHaroOICOvWreMFJ4nIoNTogpOxsbGIi4uDQqFAmzZt0LFjza9CSkTEvoWIDIVGQSk1NRVvv/02Dh8+DDs7OwghkJmZib59+2L79u1o0qSJtuskonrgwYMHeO2119i3EJHB0CgoTZs2DVlZWbh8+TJ8fX0BAFeuXMHYsWMxffp0bNu2TatFElH98Mknn7BvqUMSExORlpamtfYSEhK01hZRVWkUlPbu3YsDBw5IHRkAtGnTBmvXruWASyLS2MGDB9m31BGJiYnw9W2NvLx8rbddWFik9TaJ5GgUlEpKStTOTCljZmaGkpKSGhdFRPUT+5a6Iy0tDXl5+dg6ZwR8PbVzyPT/fjmN9XtOobiYQYlqj0ZBqV+/fvjb3/6Gbdu2wc3NDQBw9+5dfPTRR+jfv79WCySi+qN3797sW+oYX88m6NSyqVbacvvjmlbaIaoOja7MvWbNGmRnZ6NZs2Zo0aIFnnvuOXh7eyM7OxurV6/Wdo1EVE+sWLGCfQsRGRSN9ih5eHjgzJkz2L9/P65evQohBNq0aYMBAwZouz4iqkfc3d3ZtxCRQalWUPrtt98QHByMkydPolGjRhg4cCAGDhwIAMjMzETbtm2xYcMG9OrVSyfFElHddOTIEQBAVlYW+xYiMijVOvQWGRmJ999/v8Ir59ra2mLSpElYuXKl1oojovph/fr1AMC+hYgMTrWC0vnz5/HSSy/Jzg8MDERsbGyNiyKi+uXSpUvPnM++hYj0pVpB6f79+xWeulvG1NQUDx48qHFRRFS/pKamPnM++xYi0pdqBaWmTZvi4sWLsvMvXLgAV1fXGhdFRPVLZf0G+xYi0pdqBaXBgwdjwYIFePz4cbl5+fn5WLhwIYYMGaK14oiofii76jb7FiIyNNU6623evHnYuXMnWrZsieDgYLRq1QoKhQJxcXFYu3YtiouLMXfuXF3VSkR11CeffIKNGzeic+fOmDZtGvsWIjIY1QpKzs7OOH78OCZPnozQ0FAIIQAACoUCgwYNwrp16+Ds7KyTQomo7nJycgIA+Pr6sm8hIoNS7QtOenl54ZdffsGjR49w48YNCCHg4+ODxo0b66I+IqpH/v3vf6O4uJh9CxEZDI2uzA0AjRs3RteuXbVZCxER+5Y6Ji5Re2cr3kvL0lpbxiYhIQFnzpzRWnuOjo7w9PTUWnt1mcZBiYiISE5ycjIAYMyy77Xedn5BkdbbNFQ52aXhcP78+Zg/f77W2rW0ssLVuDiGpSpgUCIiIq3LyMgAALw8Ygxa+TTXSpuHjh7H2d8PQFVUrJX2jIEqPx8A0HvUdHTpEaCVNu8n3sR3yz9BWloag1IVMCgREZHOODg5wd3LSyttNbSL00o7xsjW2R3uPm31XUa9VK3rKBERERHVJwxKRERERDIYlIiIiIhkMCgRERERyWBQIiIiIpLBoEREREQkg0GJiIiISAaDEhEREZEMBiUiqpOOHj2KoUOHws3NDQqFArt371abL4RAWFgY3NzcYGlpiYCAAFy+fFk/xRKRwWJQIqI6KTc3Fx06dMCaNWsqnB8REYGVK1dizZo1iImJgYuLCwYOHIjs7OxarpSIDBlvYUJEdVJQUBCCgoIqnCeEQGRkJObOnYvhw4cDALZs2QJnZ2dER0dj0qRJtVkqERkwBiUiqncSEhKQkpKCwMBAaZpSqUSfPn1w/PjxCoOSSqWCSqWSnmdlZdVKrbUpMTERaWlpWmkrISFBK+1QqeysLCQnJ2ulLW39jesLBiUiqndSUlIAAM7OzmrTnZ2dcfv27QrXCQ8Px6JFi3Rem74kJiaita8v8vPytNpunqpIq+3VN48LiwEAp0+fxtmrf2qlzeKchwCgteBV1zEoEVG9pVAo1J4LIcpNKxMaGoqQkBDpeVZWFjw8PHRaX21KS0tDfl4eRs9eAWfPFjVu74+D/8GxnZugKmRQqomCotKg1KGFE/y7dtRKm1fjr+On80BGRoZW2qvrjCoohYeHY86cOfjb3/6GyMhIAKUd26JFi7Bx40Y8evQI3bp1w9q1a9G2bVv9FktEBsvFxQVA6Z4lV1dXaXpqamq5vUxllEollEplrdSnT86eLeDuU/P+M/5CrBaqoTLWFmZwdWiklbbuN7TQSjv1hdGc9RYTE4ONGzeiffv2atN55goRVZe3tzdcXFywf/9+aVpBQQGOHDkCf39/PVZGRIbGKIJSTk4ORo8ejX/+859o3LixNP3pM1f8/PywZcsW5OXlITo6WrY9lUqFrKwstQcR1S05OTk4d+4czp07B6B0cPG5c+eQmJgIhUKBGTNmYNmyZdi1axcuXbqEcePGwcrKCqNGjdJv4URkUIwiKE2dOhUvv/wyBgwYoDa9sjNX5ISHh8PW1lZ61KVxBkRU6vTp0+jYsSM6diwd1xESEoKOHTtiwYIFAIBZs2ZhxowZmDJlCrp06YK7d+/i119/hY2NjT7LJiIDY/BjlLZv344zZ84gJiam3DxNzlwB6v6gTCICAgICIISQna9QKBAWFoawsLDaK4qIjI5BB6WkpCT87W9/w6+//goLC/nBZ9U5cwWoP4MyiYiIqGYM+tBbbGwsUlNT0blzZ5iamsLU1BRHjhzBP/7xD5iamkp7ksr2LJV51pkrRERERFVl0EGpf//+uHjxojQg89y5c+jSpQtGjx6Nc+fOoXnz5jxzhYiIiHTGoA+92djYwM/PT22atbU1HBwcpOllZ674+PjAx8cHy5Yt45krREREpBUGHZSqYtasWcjPz8eUKVOkC07yzBUiIiLSBqMLSocPH1Z7zjNXiIiISFeMLigRERFRzSUkJODMmTNaacvR0RGenp5aacvQMCgRERHVI3mq0hsVz58/H/Pnz9dKm1ZWloiLu1onwxKDEhERUT2iKiwNSrPffBEj+neucXtxiQ8wZtn3SEtLY1AiIiKiusG9iQ06tWyq7zIMnkFfR4mIiIhInxiUiIiIiGQwKBERERHJYFAiIiIiksGgRERERCSDQYmIiIhIBoMSERERkQwGJSIiIiIZDEpEREREMhiUiIiIiGQwKBERERHJ4L3eiIiI6qGkB1k4c+1ujduJS3yghWoMF4MSERFRPZKXkw0AiPjXKUT865TW2k1OTtZaW4aEQYmIiKgeKVA9BgC8+NKr8O/cocbtxV//Ez9/vxUZGRk1bssQMSgRERHVQ43sHeHu5VXjdtIyc7RQjeHiYG4iIiIiGQxKRERERDIYlIiIiIhkMCgRERERyWBQIiIiIpLBoEREREQkg0GJiIiISAaDEhEREZEMBiUiIiIiGQxKRERERDIYlIiIiIhk8F5vREREVGMJCQk4c+aM1tpzdHSEp6en1trTFIMSERERaSwnOwsAMH/+fMyfP19r7VpaWeFqXJzewxKDEhEREWlMlZ8PAOg9ajq69AjQSpv3E2/iu+WfIC0tjUGJiIiIjJ+tszvcfdrquwyt42BuIiIiIhkMSkREREQyGJSIiIiIZDAoEREREclgUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyeAsTIiIjlJiYiLS0NK21FxcXp7W2iOoSBiUiIiOTmJgIX9/WyMvL13rbOTk5Wm+TyJgxKBERGZm0tDTk5eVj65wR8PVsopU2f/njGuZv2o/Hjx9rpT2iuoJBiYjISPl6NkGnlk210lZc4gOttENU13AwNxEREZEMBiUiIiIiGQxKRERERDIYlIiIiIhkMCgRERERyWBQIiIiIpLBoEREREQkg0GJiIiISAaDEhHVS2FhYVAoFGoPFxcXfZdFRAaGV+Ymonqrbdu2OHDggPTcxMREj9UQkSFiUKI6786dO0hPT6/2eg4ODnB3d9dBRWQoTE1NuReJiJ7JoINSeHg4du7ciatXr8LS0hL+/v5Yvnw5WrVqJS0jhMCiRYuwceNGPHr0CN26dcPatWvRtm1bPVZOhuLOnTto3boVcnPzqr2utbUVrl6NZ1iqw65fvw43NzcolUp069YNy5YtQ/PmzStcVqVSQaVSSc+zsrJqq8xa9SgjA8nJyTVuJys7WwvVkDHJzsrSymcHKL3xs6Ew6KB05MgRTJ06FV27dkVRURHmzp2LwMBAXLlyBdbW1gCAiIgIrFy5Eps3b0bLli2xZMkSDBw4EPHx8bCxsdHzOyB9S09PR25uHnYseButPKp+l/X4pAd4a/F2pKenMyjVUd26dcM333yDli1b4v79+1iyZAn8/f1x+fJlODg4lFs+PDwcixYt0kOltSMtMxcAcOi333D0j3M1bq8gNQEAUFRUVOO2yLA9LiwGAJw+fRpnr/6plTaLcx4CgNaCV00YdFDau3ev2vOoqCg4OTkhNjYWvXv3hhACkZGRmDt3LoYPHw4A2LJlC5ydnREdHY1Jkybpo2wyQK08mqBDC1d9l0EGJCgoSPr/du3aoXv37mjRogW2bNmCkJCQcsuHhoaqTc/KyoKHh0et1FobsvMLAAA92rqjfbua75H/7bdcxF4HikuKa9wWGbaCotK/cYcWTvDv2lErbV6Nv46fzgMZGRlaaa8mDDooPS0zMxMAYG9vDwBISEhASkoKAgMDpWWUSiX69OmD48ePywal+rILnYiqztraGu3atcP169crnK9UKqFUKmu5qtpna2UOV4dGNW7HysJcC9WQMbG2MNPKZwcA7je00Eo72mA0lwcQQiAkJAQ9e/aEn58fACAlJQUA4OzsrLass7OzNK8i4eHhsLW1lR516V+FRKQZlUqFuLg4uLpyzyMR/cVoglJwcDAuXLiAbdu2lZunUCjUngshyk17UmhoKDIzM6VHUlKS1uslIsP28ccf48iRI0hISMCpU6fwxhtvICsrC2PHjtV3aURkQIzi0Nu0adOwZ88eHD16VG1gbdlpvSkpKWr/CkxNTS23l+lJ9WUXOhHJu3PnDkaOHIm0tDQ0adIEL774Ik6ePAkvLy99l0ZEBsSgg5IQAtOmTcOuXbtw+PBheHt7q8339vaGi4sL9u/fj44dSweQFRQU4MiRI1i+fLk+SiYiI7F9+3Z9l0BERsCgg9LUqVMRHR2NH3/8ETY2NtK4I1tbW1haWkKhUGDGjBlYtmwZfHx84OPjg2XLlsHKygqjRo3Sc/VERERk7Aw6KK1fvx4AEBAQoDY9KioK48aNAwDMmjUL+fn5mDJlinTByV9//ZXXUCIiIqIaM+igJISodBmFQoGwsDCEhYXpviAiIiKqV4zmrDciIiKi2sagRERERCSDQYmIiIhIBoMSERERkQyDHsxNRETy4hIfaK2te2m85yVRRRiUiIiMTHJyMgBgzLLvtd52fkGR1tskMmYMSkRERiYjIwMA8PKIMWjl01wrbR46ehxnfz8AVVGxVtojqisYlIiIjJSDkxPctXRvuoZ2cVpph6iu4WBuIiIiIhkMSkREREQyGJSIiIiIZDAoEREREclgUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyeAsTIqJakJiYiLS0NK20lZCQoJV2iKhyDEpERDqWmJgIX9/WyMvL12q7hYVFWm2PiMpjUCIi0rG0tDTk5eVj65wR8PVsUuP2/u+X01i/5xSKixmUiHSNQYmIqJb4ejZBp5ZNa9yO2x/XtFANEVUFB3MTERERyWBQIiIiIpLBoEREREQkg0GJiIiISAaDEhEREZEMnvVGZCAepqfBtGFKtZYnIiLdYlAi0rP79+8DAP7173/DxLpxldcrzn2ktj4REWkfgxKRnmVkZAAABnR+Dq18WlR5vfjrN7H73F/rExGR9jEoERmIxtYWcLa3qfLyqdYWOqyGiIgABiWqoTt37iA9Pb3a6zk4OMDd3V0HFREREWkPgxJp7M6dO2jduhVyc/Oqva61tRWuXo1nWCIiIoPGoEQaS09PR25uHnYseButPKp+o8/4pAd4a/F2pKenMygREZFBY1AiSXUPo8XHxwMAWnk0QYcWrtV+vbL1q6O2D9kZQ41ERKQ7DEoEoGaH0XJycqq1/P2HOVAAeOutt6r9WrV1yM4YaiQiIt1jUCIAmh1G2xdzDbM37sNj1eNqvVZGbj4EgK+mv4Ru7XyqvF5tHrIzhhqJiEj3GJRITXUOo8UnPajRa7Vwa6zRIbvaZAw1EhGR7jAokdGpzrghTcYYaUN1XvfWrVu6K4SIiGqEQYmMRk3GDVV3HJWmalJjYVGh9gsiIqIaYVAio6HJuCFNx1FpSpMao/aexpc/nEBRcbFuiyMiompjUCKjU51xQzUdR6Wp6tTo5tBIx9UQEZGmGui7ACIiIiJDxaBEREREJINBiYiIiEgGxyjVkureHgTgrTBId/h5JCKqGgalWqDp7UF4KwzSBX4eiYiqjkGpFmhyexDeCoN0hZ9HIqKqY1CqRdW5PQiRrmnyedTkSuc8ZPeXuETtXK7iXlqWVtohosoxKBFRpWpyxXEesgOSk5MBAGOWfa/VdvMLirTaHhGVx6BERJXS5IrjAA/ZlcnIyAAAvDxiDFr5NK9xe4eOHsfZ3w9AVcSruRPpGoMSEVVZda44TuU5ODnB3curxu00tIvTQjVEVBUMSgaOY0KoMrdu3cL58+ervLwmnykiovqKQclAcUwIVSZPVQgAmD17NmbPnl3t9XNycrRdEhFRncOgZKA4JoQqUzY+Zd5If7zRr3OV19sXcw2zN+7DY9VjXZVGRFRnMCgZOI4Jocp4NGlUrc9IfJJ2TlEnIqoPeK83IiIiIhkMSkREREQyGJSIiIiIZNSZMUrr1q3DihUrkJycjLZt2yIyMhK9evXS+utoctd1fZyOXd3X5CnjVF/VVt9BRMapTgSlHTt2YMaMGVi3bh169OiBr776CkFBQbhy5Qo8PT219jqa3nW9TG2cjl2TywoAPGWc6pfa6juIyHjViaC0cuVKTJgwARMnTgQAREZGYt++fVi/fj3Cw8O19jqa3HUdqN3TsTW9rABPGaf6qLb6DiIyXkYflAoKChAbG4tPP/1UbXpgYCCOHz9e4ToqlQoqlUp6npmZCQDIynr2HbnL9rZcTXwgXeyvKhJSHgIA9p2+iaRHBVVa51RcYrXXeXK9G/cewtzynkHXWBvrGUONp+PvAABuJdyGCRRVfq2k27cAAMev3IG5ZaxOa9R0eyTezwBQ+t151verbJ4Qospt11R1+w5N+w0AyMsr3Qt948afKChQVbJ05e7fK/1u30tKwh+nz9S4PV20yRpZY00kJt4FUPrd0XvfIYzc3bt3BQDxv//9T2360qVLRcuWLStcZ+HChQIAH3zwYWCPpKSk2ug2hBDV7zvYb/DBh+E+dNl3GP0epTIKhfq/xIUQ5aaVCQ0NRUhIiPS8pKQEDx8+hIODg+w6tSkrKwseHh5ISkpCo0aN9F1OncHtqhva2K5CCGRnZ8PNzU3L1VWuqn2HofUbxvh5NsaaAeOs2xhrBqpfd230HUYflBwdHWFiYoKUlBS16ampqXB2dq5wHaVSCaVSqTbNzs5OVyVqrFGjRkb1ATcW3K66UdPtamtrq8VqKlfdvsNQ+w1j/DwbY82AcdZtjDUD1atb132H0V9HydzcHJ07d8b+/fvVpu/fvx/+/v56qoqIDB37DiKqCqPfowQAISEheOedd9ClSxd0794dGzduRGJiIj788EN9l0ZEBox9BxFVpk4Epbfeegvp6elYvHgxkpOT4efnh19++QVeXl76Lk0jSqUSCxcuLLebn2qG21U3jHm7GnPfYYzb3RhrBoyzbmOsGTDMuhVC1OL5uERERERGxOjHKBERERHpCoMSERERkQwGJSIiIiIZDEpEREREMhiUiIiIiGQwKOnRrVu3MGHCBHh7e8PS0hItWrTAwoULUVCgftPRxMREDB06FNbW1nB0dMT06dPLLXPx4kX06dMHlpaWaNq0KRYvXlyrNxg1dOvWrYO3tzcsLCzQuXNn/P777/ouyWCFh4eja9eusLGxgZOTE1577TXEx8erLSOEQFhYGNzc3GBpaYmAgABcvnxZbRmVSoVp06bB0dER1tbWeOWVV3Dnzp3afCv1QlX7EUO0dOlS+Pv7w8rKyiCucl4RY+w7jh49iqFDh8LNzQ0KhQK7d+/Wd0mVqkq/oy8MSnp09epVlJSU4KuvvsLly5exatUqbNiwAXPmzJGWKS4uxssvv4zc3FwcO3YM27dvxw8//ICZM2dKy2RlZWHgwIFwc3NDTEwMVq9ejc8//xwrV67Ux9syODt27MCMGTMwd+5cnD17Fr169UJQUBASExP1XZpBOnLkCKZOnYqTJ09i//79KCoqQmBgIHJzc6VlIiIisHLlSqxZswYxMTFwcXHBwIEDkZ2dLS0zY8YM7Nq1C9u3b8exY8eQk5ODIUOGoLi4WB9vq86qSj9iqAoKCvDmm29i8uTJ+i6lQsbad+Tm5qJDhw5Ys2aNvkupsqr0O3qjs9vtkkYiIiKEt7e39PyXX34RDRo0EHfv3pWmbdu2TSiVSpGZmSmEEGLdunXC1tZWPH78WFomPDxcuLm5iZKSktor3kC98MIL4sMPP1Sb1rp1a/Hpp5/qqSLjkpqaKgCII0eOCCGEKCkpES4uLuKzzz6Tlnn8+LGwtbUVGzZsEEIIkZGRIczMzMT27dulZe7evSsaNGgg9u7dW7tvoB56uh8xdFFRUcLW1lbfZZRTF/oOAGLXrl36LqPanu539Il7lAxMZmYm7O3tpecnTpyAn5+f2p2RBw0aBJVKhdjYWGmZPn36qF3JdNCgQbh37x5u3bpVa7UbooKCAsTGxiIwMFBtemBgII4fP66nqoxLZmYmAEify4SEBKSkpKhtU6VSiT59+kjbNDY2FoWFhWrLuLm5wc/Pj9u9Fjzdj1D1se/Qr6f7HX1iUDIgN2/exOrVq9XuM5WSklLuTuaNGzeGubm5dNfzipYpe/70ndHrm7S0NBQXF1e4fer7tqkKIQRCQkLQs2dP+Pn5AfjrM/WsbZqSkgJzc3M0btxYdhnSjYr6Eao+9h36U1G/o08MSjoQFhYGhULxzMfp06fV1rl37x5eeuklvPnmm5g4caLaPIVCUe41hBBq059eRvz/gdwVrVsfVbR9uG0qFxwcjAsXLmDbtm3l5mmyTbndq07b/Ygh123I2HfUvmf1O/pQJ26Ka2iCg4Px9ttvP3OZZs2aSf9/79499O3bV7p7+ZNcXFxw6tQptWmPHj1CYWGh9C8dFxeXcv/CSU1NBVD+X/31jaOjI0xMTCrcPvV921Rm2rRp2LNnD44ePQp3d3dpuouLC4DSvUaurq7S9Ce3qYuLCwoKCvDo0SO1vUqpqanw9/evpXdg3LTZj9Sm6tZtqNh36Idcv6NX+hseRUIIcefOHeHj4yPefvttUVRUVG5+2WDue/fuSdO2b99ebjC3nZ2dUKlU0jKfffYZB3P/fy+88IKYPHmy2jRfX1+jGpBZm0pKSsTUqVOFm5ubuHbtWoXzXVxcxPLly6VpKpWqwsHcO3bskJa5d+8eB3PrSGX9iKEz5MHcxt53wEgGc1fW7+gTg5Ie3b17Vzz33HOiX79+4s6dOyI5OVl6lCkqKhJ+fn6if//+4syZM+LAgQPC3d1dBAcHS8tkZGQIZ2dnMXLkSHHx4kWxc+dO0ahRI/H555/r420ZnO3btwszMzPx9ddfiytXrogZM2YIa2trcevWLX2XZpAmT54sbG1txeHDh9U+k3l5edIyn332mbC1tRU7d+4UFy9eFCNHjhSurq4iKytLWubDDz8U7u7u4sCBA+LMmTOiX79+okOHDkb5Q27IqtKPGKrbt2+Ls2fPikWLFomGDRuKs2fPirNnz4rs7Gx9lyaEMN6+Izs7W9qWAMTKlSvF2bNnxe3bt/Vdmqyq9Dv6wqCkR1FRUQJAhY8n3b59W7z88svC0tJS2Nvbi+DgYLVLAQghxIULF0SvXr2EUqkULi4uIiwsjHuTnrB27Vrh5eUlzM3NRadOnQzilFNDJfeZjIqKkpYpKSkRCxcuFC4uLkKpVIrevXuLixcvqrWTn58vgoODhb29vbC0tBRDhgwRiYmJtfxu6r6q9iOGaOzYsRXWfejQIX2XJjHGvuPQoUMVbtexY8fquzRZVel39EUhBC/fTERERFQRnvVGREREJINBiYiIiEgGgxIRERGRDAYlIiIiIhkMSkREREQyGJSIiIiIZDAoEREREclgUCIiIiKSwaBEREREJINBiYiIiEgGgxIRERGRjP8HqSNBzqW9+d8AAAAASUVORK5CYII=">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [25]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">transformed_example</span><span class="p">)</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[25]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>count</th>
+<td>1.000000e+02</td>
+<td>1.000000e+02</td>
+</tr>
+<tr>
+<th>mean</th>
+<td>8.699708e-15</td>
+<td>5.551115e-18</td>
+</tr>
+<tr>
+<th>std</th>
+<td>1.005038e+00</td>
+<td>1.005038e+00</td>
+</tr>
+<tr>
+<th>min</th>
+<td>-2.465865e+00</td>
+<td>-2.421800e+00</td>
+</tr>
+<tr>
+<th>25%</th>
+<td>-6.879710e-01</td>
+<td>-6.950112e-01</td>
+</tr>
+<tr>
+<th>50%</th>
+<td>-7.059610e-02</td>
+<td>6.110893e-02</td>
+</tr>
+<tr>
+<th>75%</th>
+<td>8.580067e-01</td>
+<td>6.285318e-01</td>
+</tr>
+<tr>
+<th>max</th>
+<td>2.022080e+00</td>
+<td>2.037319e+00</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [26]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">transformed_example</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[26]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>1.012500</td>
+<td>-2.421800</td>
+</tr>
+<tr>
+<th>1</th>
+<td>0.604302</td>
+<td>-0.599871</td>
+</tr>
+<tr>
+<th>2</th>
+<td>0.146683</td>
+<td>0.564726</td>
+</tr>
+<tr>
+<th>3</th>
+<td>0.151525</td>
+<td>1.142043</td>
+</tr>
+<tr>
+<th>4</th>
+<td>-1.406483</td>
+<td>0.200444</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zpátky k našim datům. Transformaci musíme nastavit (fit) pouze na trénovacích datech, škálovat pak budeme stejným způsobem trénovací i testovací data.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [27]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train_transformed</span><span class="p">)</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test_transformed</span><span class="p">)</span>
+
+<span class="n">X_train</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[27]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[-0.47036043,  1.85785169, -1.21007674, ...,  0.37482778,
+        -1.52392312, -1.3377031 ],
+       [-0.47036043,  1.85785169, -1.21007674, ...,  0.37482778,
+        -1.27246669, -0.98473364],
+       [-0.47036043, -0.5382561 ,  0.82639387, ...,  0.37482778,
+         0.57154709,  0.33890184],
+       ...,
+       [-0.47036043,  1.85785169, -1.21007674, ..., -2.66789188,
+        -1.3562855 , -1.072976  ],
+       [-0.47036043, -0.5382561 ,  0.82639387, ..., -2.66789188,
+         0.48772828,  0.86835603],
+       [-0.47036043, -0.5382561 ,  0.82639387, ...,  0.37482778,
+        -0.3504598 , -0.10230999]])</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="modely">Modely
+<a class="header-link" href="#modely">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Můžeme přejít k samotnému učení. Vybereme si model. Přehled modelů najdeš v sekci <a href="https://scikit-learn.org/stable/supervised_learning.html#supervised-learning">Supervised learnig</a>.</p>
+<p>Na regresi můžeš použít:</p>
+<ul>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html">LinearRegression</a></p>
+</li>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lasso.html#sklearn.linear_model.Lasso">Lasso</a></p>
+<ul>
+<li>hyperparametry:<ul>
+<li>alpha, float, default=1.0</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html#sklearn.svm.SVR">SVR</a></p>
+<ul>
+<li>hyperparametry:<ul>
+<li>kernel, default rbf, one of ‘linear’, ‘poly’, ‘rbf’, ‘sigmoid’</li>
+<li>C, float, optional (default=1.0)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Na klasifikační úlohy (ke kterým se dostaneme v příští hodině) využiješ:</p>
+<ul>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html#sklearn.tree.DecisionTreeClassifier">DecisionTreeClassifier</a></p>
+</li>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier">RandomForestClassifier</a></p>
+<ul>
+<li>hyperparametry:<ul>
+<li>n_estimators, integer, optional (default=100)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html#sklearn.svm.SVC">SVC</a></p>
+<ul>
+<li>hyperparametry:<ul>
+<li>C, float, optional (default=1.0)</li>
+<li>kernelstring, optional (default=’rbf’)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Vytvoříme instanci vybraného modelu (jde nám teď jen o způsob použití knihovny, vezmeme nejjednodušší lineární regresi):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [28]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="trenovani">Trénování
+<a class="header-link" href="#trenovani">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Model natrénujeme na trénovací množině:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="predikce">Predikce
+<a class="header-link" href="#predikce">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Natrénovaný model typicky chceme použít k ohodnocení nějakých nových datových vzorků, k tomu máme metodu <code>predict</code>. Zavolejme ji jak na trénovací, tak na testovací data.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [30]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">train_predikce</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">test_predikce</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Vypišme si prvních deset testovacích vzorků a jejich predikce:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [31]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"skutečný plat    predicke platu     "</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">y_test</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;10.2f</span><span class="si">}</span><span class="s2">         </span><span class="si">{</span><span class="n">test_predikce</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;10.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>skutečný plat    predicke platu     
+  82100.00           85454.16
+ 134885.00          112335.62
+ 150480.00          126773.44
+  86100.00           84785.42
+ 100000.00          102575.04
+  91227.00           85896.89
+ 119800.00           99969.59
+  76840.00          119177.70
+  72500.00           68496.04
+ 152708.00          134266.88
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="jednoduchy_dotaz">Jednoduchý dotaz
+<a class="header-link" href="#jednoduchy_dotaz">#</a>
+</h1>
+<p>Vyzkoušejte si zadat modelu svůj vlastní jednoduchý dotaz. K tomu můžete využít následující jednořádkový DataFrame.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [32]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">dotaz</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">"rank"</span><span class="p">:</span> <span class="s2">"Prof"</span><span class="p">,</span>
+    <span class="s2">"discipline"</span><span class="p">:</span> <span class="s2">"B"</span><span class="p">,</span>
+    <span class="s2">"yrs.since.phd"</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="s2">"yrs.service"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"Male"</span><span class="p">,</span>
+<span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">dotaz</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[32]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>rank</th>
+<th>discipline</th>
+<th>yrs.since.phd</th>
+<th>yrs.service</th>
+<th>sex</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>Prof</td>
+<td>B</td>
+<td>15</td>
+<td>10</td>
+<td>Male</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [33]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">X_query</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dotaz</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [34]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Odhadovaný plat vašeho pracovníka je: </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_query</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Odhadovaný plat vašeho pracovníka je: 132301.01
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="evaluace_modelu">Evaluace modelu
+<a class="header-link" href="#evaluace_modelu">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Můžeme využít funkci <code>score</code>, která nám vrátí hodnotu $R^2$ metriky:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [35]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"R2 na trénovací množině: "</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"R2 na testovací množině: "</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>R2 na trénovací množině:  0.5135908532845631
+R2 na testovací množině:  0.5444018189943942
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Funkce pro všechny možné metriky najdeš v <a href="https://scikit-learn.org/stable/modules/classes.html?highlight=sklearn%20metrics#module-sklearn.metrics">sklearn.metrics</a>.
+(nyní nás zajímají <a href="https://scikit-learn.org/stable/modules/classes.html?highlight=sklearn%20metrics#module-sklearn.metrics">regresní metriky</a>)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [36]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
+
+<span class="n">MAE_train</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">train_predikce</span><span class="p">)</span>
+<span class="n">MAE_test</span>  <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predikce</span><span class="p">)</span>
+
+<span class="n">MSE_train</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">train_predikce</span><span class="p">)</span> 
+<span class="n">MSE_test</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predikce</span><span class="p">)</span>
+
+<span class="n">R2_train</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">train_predikce</span><span class="p">)</span>
+<span class="n">R2_test</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predikce</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"    Trénovací data  Testovací data"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"MSE </span><span class="si">{</span><span class="n">MSE_train</span><span class="si">:</span><span class="s2">&gt;14.3f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">MSE_test</span><span class="si">:</span><span class="s2">&gt;14.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"MAE </span><span class="si">{</span><span class="n">MAE_train</span><span class="si">:</span><span class="s2">&gt;14.3f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">MAE_test</span><span class="si">:</span><span class="s2">&gt;14.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"R2  </span><span class="si">{</span><span class="n">R2_train</span><span class="si">:</span><span class="s2">&gt;14.3f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">R2_test</span><span class="si">:</span><span class="s2">&gt;14.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>    Trénovací data  Testovací data
+MSE  421032608.678   317260319.429
+MAE      14436.169       13600.608
+R2           0.514           0.544
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="ulozeni_modelu">Uložení modelu
+<a class="header-link" href="#ulozeni_modelu">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Někdy si potřebujeme naučený model uchovat na další použití. Model lze uložit do souboru a zase načíst pomocí <code>pickle</code>.
+Kujme pikle:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [37]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span> 
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"model.pickle"</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">soubor</span><span class="p">)</span>
+
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"model.pickle"</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor</span><span class="p">:</span>
+    <span class="n">staronovy_model</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">soubor</span><span class="p">)</span>
+
+<span class="n">staronovy_model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[37]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0.5444018189943942</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="bonusy">Bonusy:
+<a class="header-link" href="#bonusy">#</a>
+</h3>
+<ul>
+<li><p>volba vhodného modelu a jeho hyper-parametrů se skrývá pod klíčovým slovem <strong>model selection</strong>. Knihovna Scikit-learn obsahuje různé pomůcky k ulehčení toho výběru. Přesahuje to ale rámec tohoto kurzu, narazíš-li na to toho téma při samostudiu, pročti si <a href="https://scikit-learn.org/stable/modules/classes.html?highlight=model%20selection#module-sklearn.model_selection">sklear.model_selection</a>.</p>
+</li>
+<li><p>v příkladu výše jsme použili různé transformace nad daty a pak teprve tvorbu modelu. Až budeš v těchto věcech zběhlejší, bude se ti hodit propojit tyto věci dohromady. K tomu slouží tzv. <a href="https://scikit-learn.org/stable/modules/classes.html?highlight=pipeline#module-sklearn.pipeline">pipeline</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2024/pydata-praha-podzim/sessions/ml2/">↑ <span class="d-none d-sm-inline">Lekce: Strojové učení - Scikit-learn, ML workflow</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2024/pydata-praha-podzim/pydata/homework_revisited/"><span class="d-none d-sm-inline">Implementace úlohy z domácího úkolu</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyDataCZ/pyladies-kurz/blob/main/lessons/pydata/scikitlearn_api/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Petra Vidnerová, Roman Diba, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

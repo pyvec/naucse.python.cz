@@ -1,0 +1,505 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Jak přidat kurz na Nauč se Python: Vytvoření lokálního kurzu
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/meta/local-run/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/course/meta/">Jak přidat kurz na Nauč se Python</a>
+
+> <a href="/course/meta/sessions/adding-a-run/">Přidání kurzu</a>
+
+> <a href="/course/meta/meta/local-run/">Vytvoření lokálního kurzu</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1 id="vytvoreni_lokalniho_kurzu">Vytvoření lokálního kurzu
+<a href="#vytvoreni_lokalniho_kurzu" class="header-link">#</a>
+</h1>
+<h2 id="priprava">Příprava
+<a href="#priprava" class="header-link">#</a>
+</h2>
+<p>První věc, kterou budeš potřebovat, je Python, a to alespoň ve verzi 3.8.
+Pokud zrovna danou verzi Pythonu nainstalovanou nemáš, můžeš postupovat podle <a href="/course/meta/beginners/install/">návodu na instalaci Pythonu</a>.</p>
+<p>Druhá věc, kterou budeš potřebovat, je Git – pokud nemáš ten, můžeš postupovat podle <a href="/course/meta/git/install/">návodu na instalaci Gitu</a>.</p>
+<p>Třetí věc, kterou budeš potřebovat, je nástroj Poetry.
+Ten můžeš nainstalovat několika způsoby:</p>
+<ul>
+<li>Na některých variantách Linuxu můžeš nainstalovat systémový balíček, který se pak bude aktualizovat spolu se systémem), např.:<ul>
+<li>Fedora: <code>sudo dnf install poetry</code></li>
+</ul>
+</li>
+<li>Poetry můžeš nainstalovat do systému podle <a href="https://python-poetry.org/docs/#installation">návodu</a> na stránkách Poetry</li>
+<li>Můžeš si aktivovat <a href="/course/meta/beginners/venv-setup/">virtuální prostředí</a> a Poetry nainstalovat pomocí:<div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>poetry
+</pre></div></li>
+</ul>
+<p>Poslední věc, kterou potřebuješ, už není žádný program, ale pár schopností.
+Je potřeba, abys uměl/a pracovat s příkazovou řádkou (terminálem), Gitem
+a formátem YAML.
+Vše potřebné si můžeš připomenout v <a href="/course/meta/beginners/cmdline/">návodu na používání terminálu</a>,
+<a href="/course/meta/git/git-collaboration-2in1/">návodu na používání Gitu</a>
+a v <a href="/course/meta/fast-track/yaml/">úvodu k YAMLu</a>.</p>
+<h2 id="naklonovani_zakladu">Naklonování základu
+<a href="#naklonovani_zakladu" class="header-link">#</a>
+</h2>
+<p>Kurz můžeš vytvořit úplně od začátku, ale pro začátek lepší varianta je vyjít
+z nějakého už existujícího.
+Naklonuj si buď základní začátečnický kurz z <a href="https://github.com/pyvec/naucse-python">https://github.com/pyvec/naucse-python</a>,
+nebo si na naucse.python.cz vyber jiný základ.
+(Odkaz na repozitář najdeš v patičce stránky kurzu.
+Historické kurzy ale můžou být už zaarchivované a nejnovější verze v repozitáři
+nemusí odpovídat tomu co je na webu.)</p>
+<h2 id="kontrola_nastaveni_projektu">Kontrola nastavení projektu
+<a href="#kontrola_nastaveni_projektu" class="header-link">#</a>
+</h2>
+<p>Zkontroluj si, že naklonovaný kurz obsahuje soubor <code>pyproject.toml</code>
+s verzí <code>naucse = 0.5.0</code> nebo vyšší a <code>naucse-render = 1.8</code> nebo vyšší.
+Třeba takto:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>grep<span class="w"> </span>^naucse<span class="w"> </span>pyproject.toml
+<span class="go">pyproject.toml:11:naucse = "^0.5.1"</span>
+<span class="go">pyproject.toml:12:naucse-render = "^1.8"</span>
+</pre></div><p>Jestli soubor <code>pyproject.toml</code> vůbec nemáš, zkopíruj si ho
+<a href="https://github.com/pyvec/naucse-python/blob/main/pyproject.toml">z repozitáre naucse-python</a>.
+Jestli máš starší verzi <code>naucse</code>, aktualizuj příkazem <code>poetry add naucse@latest</code>.</p>
+<h2 id="lokalni_spusteni">Lokální spuštění
+<a href="#lokalni_spusteni" class="header-link">#</a>
+</h2>
+<p>Po naklonování si zkontroluj, že kurz u tebe „jede“.</p>
+<p>Nainstaluj protřebné závislosti:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>poetry<span class="w"> </span>install
+</pre></div><p>A spusť vývojový server:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>naucse<span class="w"> </span>serve
+</pre></div><p>Program vypíše adresu (např. <code>http://127.0.0.1:8003/</code>); tu navštiv v prohlížeči.
+Tam se „doklikej“ na kurz, ze kterého budeš vycházet.</p>
+<h2 id="struktura_repozitare">Struktura repozitáře
+<a href="#struktura_repozitare" class="header-link">#</a>
+</h2>
+<p>V repozitáři s kurzem najdeš následující soubory a adresáře:</p>
+<h3 id="codelessonscode_texty_lekci"><code>lessons/</code>: Texty lekcí
+<a href="#codelessonscode_texty_lekci" class="header-link">#</a>
+</h3>
+<p>Jednotlivé lekce jsou rozděleny do „kategorií“, aby se dalo lépe „smíchat“
+několik kurzů dohromady.
+Každá lekce má vlastní adresář se dvěma soubory:</p>
+<ul>
+<li><p><code>info.yml</code> obsahuje metadata, například:</p>
+<div class="highlight"><pre><span></span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Vytvoření lokálního kurzu</span>
+<span class="nt">style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">md</span>
+<span class="nt">attribution</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Napsal Mikuláš Poul, 2018</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Napsal Petr Viktorin, 2022</span>
+<span class="nt">license</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cc-by-sa-40</span>
+<span class="nt">license_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cc0</span>
+</pre></div><ul>
+<li><code>title</code> je titulek stránky, který se objeví v obsahu.</li>
+<li><code>style</code> je typ obsahu: <code>md</code> pro Markdown nebo <code>ipynb</code> pro
+Jupyter Notebooka</li>
+<li><code>attribution</code> je seznam autorů, který se objeví v patičce stránky.</li>
+<li><code>license</code> je kód licence, pod kterou lze šířit obsah lekce.
+(Stránky naucse.python.cz mají seznam přípustných licencí. Chceš-li
+použít jinou, kontaktuj Petra.)</li>
+<li><code>licence_code</code> je kód licence, pro ukázky kódu v textu. Je dobré
+použít <code>cc0</code>, aby čtenáři mohli kód používat bez omezení. Pokud je ale
+kód např. založený na dokumentaci Pythonu (nebo jiného projektu),
+je potřeba dodržet podmínky daného zdroje.</li>
+<li><code>pages</code> je seznam <em>podstránek</em>, které se používají např. pokud má být
+obsah lekce různý pro různé systémy.
+Viz např. lekce <a href="/course/meta/beginners/install/">instalace Pythonu</a>.</li>
+</ul>
+</li>
+<li><p><code>index.md</code> (resp. <code>index.ipynb</code>) obsahuje zdrojový text lekce ve formátu
+Markdown (resp. Jupyter Notebook JSON).</p>
+</li>
+<li><p>Adresář <code>static/</code> obsahuje obrázky nebo jiné statické soubory k lekci.</p>
+</li>
+</ul>
+<h3 id="codecourseymlcode_codecoursescode_coderunscode_definice_kurzu"><code>course.yml</code>, <code>courses</code>, <code>runs</code>: Definice kurzu
+<a href="#codecourseymlcode_codecoursescode_coderunscode_definice_kurzu" class="header-link">#</a>
+</h3>
+<p>Definice kurzu je uložena v souboru YAML.
+Jsou dvé možnosti, kde tenhle soubor může být:</p>
+<ul>
+<li><code>course.yml</code>: Jestli spravuješ jen jeden kurz, dej jeho definici do souboru
+<code>course.yml</code>.</li>
+<li><code>courses/*.yml</code>: Jestli plánuješ mít v jednom repozitáři více kurzů,
+které budou sdílet obsah lekcí, tak pro každý vymysli identifikátor
+(malá písmena bez diakritiky, čísla, pomlčka, např. <code>zacatecnici-jaro</code>)
+a definici kurzu dej do souboru
+<code>courses/<var>identifikator</var>.yml</code>.
+Různým nástrojúm pro práci s kurzy pak budeš předávat přepínač
+<code>--slug <var>identifikator</var></code>.</li>
+</ul>
+<p>Existuje i třetí možnost, spíš historická:</p>
+<ul>
+<li><code>runs/<var>rok</var>/<var>identifikator</var>.yml</code>.
+Ta se hodí pokud chceš mít v repozitáři kurzy pro několik let.
+Většinou je ale lepší spravovat jen aktuální kurzy a ty staré archivovat.</li>
+</ul>
+<p>Když zakládáš nový kurz, můžeš zkopírovat existující definici na nové místo,
+nebo ji nechat kde je a změnit ji.</p>
+<h3 id="codegithubworkflowsmainymlcode_instrukce_pro_github_actions"><code>.github/workflows/main.yml</code>: Instrukce pro GitHub Actions
+<a href="#codegithubworkflowsmainymlcode_instrukce_pro_github_actions" class="header-link">#</a>
+</h3>
+<p>Tenhle soubor obsahuje instrukce pro GitHub Actions pomocí kterých se
+kurz publikuje. Obsahuje kromě instalace a <em>cache</em> tři hlavní kroky:</p>
+<ul>
+<li>"kompilaci" kurzu do HTML a JSON souborů v adresáři <code>_compiled</code>,</li>
+<li>přidání adresáře <code>_compiled</code> do Gitu (pomocí nástroje <code>ghp_import</code>),</li>
+<li>notifikaci hooks.nauc.se,naucse.python.cz, aby se nová verze kurzu nasadila.</li>
+</ul>
+<p>Tyhle instrukce můžou být pro každou sadu kurzů jiné.
+Až budeš kurz přidávat na naucse.python.cz, měly by se zkontrolovat,
+ale do té doby se s tímto souborem netrap.</p>
+<p>Pravděpodobně je tvůj kurz <em>forkem</em> jiného kurzu, a proto je potřeba <em>GitHub
+Actions</em> explicitně povolit (v záložce <em>Actions</em>). Potom se musí v <em>Settings -&gt;
+Actions -&gt; General -&gt; Workflow permissions</em> nastavit <em>Read and write
+permissions - Workflows have read and write permissions in the repository for
+all scopes</em>. Pouze tak se ti po ručním spuštění <em>GitHub Action</em> úspěšně vytvoří
+nová větev s prefixem <code>compiled/</code> s obsahem pro publikaci na web.</p>
+<h3 id="codelicensescode"><code>licenses/</code>
+<a href="#codelicensescode" class="header-link">#</a>
+</h3>
+<p>Tenhle adresář obsahuje licence, pod kterými obsah může být.
+Neměň ho.</p>
+<h3 id="codepyprojecttomlcode_codepoetrylockcode_codegithubcode_definice_projektu_a_zavislosti"><code>pyproject.toml</code>, <code>poetry.lock</code>, <code>.github</code>: Definice projektu a závislostí
+<a href="#codepyprojecttomlcode_codepoetrylockcode_codegithubcode_definice_projektu_a_zavislosti" class="header-link">#</a>
+</h3>
+<p>Tyhle soubory definují jaké nástroje se použijí pro publikování kurzu.</p>
+<h2 id="definice_kurzu">Definice kurzu
+<a href="#definice_kurzu" class="header-link">#</a>
+</h2>
+<p>Soubor <code>course.yml</code> nebo <code>courses/*.yml</code> obsahuje všechny informace
+o kurzu – název, popisek, kde a kdy se koná a pak samozřejmě plán jednotlivých lekcí.</p>
+<p>Celá definice kurzu je jeden velký slovník, který si postupně popíšeme a vyplníme.
+Pro potřeby kurzu je <a href="/course/meta/meta/local-run/static/info.yml">připravena šablona</a>, kterou můžeš použít.</p>
+<h3 id="povinne_informace">Povinné informace
+<a href="#povinne_informace" class="header-link">#</a>
+</h3>
+<p>Nejdřív prvních pár základních povinných údajů:</p>
+<ul>
+<li><code>title</code> slouží pro název kurzu (nepovinně lze dodefinovat pomocí <code>subtitle</code>)</li>
+<li><code>description</code> slouží pro krátký popis kurzu (který se zobrazí v seznamu kurzů)</li>
+<li><code>long_description</code> slouží pro dlouhý popis kurzu, který se zobrazí na stránce kurzu</li>
+</ul>
+<p>A teď už jen nepovinné údaje.</p>
+<h3 id="misto_a_cas">Místo a čas
+<a href="#misto_a_cas" class="header-link">#</a>
+</h3>
+<p>Přidáváš-li kurz s instruktorem, kdy se na každou lekci budete scházet,
+přidej informace o místu a času.
+U kurzu pro samouky je naopak vynech.</p>
+<ul>
+<li><code>place</code> slouží pro označení místa</li>
+<li><code>time</code> slouží pro informaci o času, kdy se budou lekce konat.
+Je to popisek „pro lidi“, takže není nutný žádný specifický formát:
+můžeš napsat třeba <code>'Vždy půl hodiny před západem slunce'</code>.</li>
+</ul>
+<p>Jestli chceš, aby pro kurz šel vygenerovat iCal soubor s plánem lekcí, přidej údaj <code>default_time</code>.
+Tato hodnota musí být slovník, který obsahuje dva klíče <code>start</code> a <code>end</code>, kde bude čas lekcí.
+Čas musí být ve formátu <code>HH:MM</code> a musí být obalen uvozovkami nebo apostrofy (kvůli té dvojtečce, aby si YAML nemyslel, že je to další slovník).</p>
+<p>Kromě toho je potřeba zadat časovou zónu, kde se lekce odehrávají.
+Pro ČR a Slovensko použij <code>Europe/Prague</code> (největší město v oblasti).</p>
+<p>Takže třeba takhle:</p>
+<div class="highlight"><pre><span></span><span class="nt">default_time</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">start</span><span class="p">:</span><span class="w"> </span><span class="s">'18:00'</span>
+<span class="w">  </span><span class="nt">end</span><span class="p">:</span><span class="w"> </span><span class="s">'20:00'</span>
+<span class="nt">timezone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Europe/Prague</span>
+</pre></div><p>Tohle výchozí čas.
+U každé lekce se dá zvlášť nastavit jiný začátek a konec.</p>
+<h3 id="promenne">Proměnné
+<a href="#promenne" class="header-link">#</a>
+</h3>
+<p>Poslední nepovinná hodnota, než se dostaneme k obsahu kurzu, jsou proměné, které se definují klíčem <code>vars</code> a musí být také slovníkem.
+Proměné mohou upravovat obsah lekcí a stránek kurzu, a pokud budeš vytvářet nebo upravovat materiály, můžeš si i definovat vlastní.</p>
+<p>První proměnou, kterou můžeš použít je <code>user-gender</code>.
+Pokud víš, že na tvém kurzu budou lidé jen jednoho pohlaví, můžeš nastavit materiály (které tak byly napsány), aby je správně oslovovaly.
+Nastavíš to pomocí písmenka <code>f</code> pro ženy, <code>m</code> pro muže.
+Pokud proměnou nevyplníš, materiály se přizpůsobí pro obě varianty.</p>
+<p>Další proměnné závisí na konkrétních materiálech.
+Začátečnický kurz používá tyto:</p>
+<ul>
+<li><p><code>coach-present</code>: Pokud je tvůj kurz s lektorem nebo koučem, nastav tuto proměnou na <code>true</code>.
+Materiály pak budou místo hledání na internetu doporučovat rady od živých lidí.</p>
+</li>
+<li><p><code>pyladies</code> nastav na hodnotu <code>true</code>, pokud organizuješ kurz PyLadies.
+Tato proměná aktivuje v materiálech nějaké popisky navíc, například o tahácích, nebo také sjednotí názvy složek na <code>pyladies</code>.</p>
+</li>
+</ul>
+<h3 id="plan_lekci">Plán lekcí
+<a href="#plan_lekci" class="header-link">#</a>
+</h3>
+<p>A teď už zbývá poslední věc, a to je sestavení programu kurzu.
+Kurz se skládá z jednotlivých lekcí (<em>sessions</em>) a každá lekce obsahuje seznam materiálů.
+Lekce nadefinuješ klíčem <code>sessions</code> v definici kurzu.
+Ten musí být seznam dalších slovníků. Každý z nich představuje jednu lekci.</p>
+<h4 id="definice_lekce">Definice lekce
+<a href="#definice_lekce" class="header-link">#</a>
+</h4>
+<p>Datum lekce nastavíš klíčem <code>date</code>, ve formátu <code>YYYY-MM-DD</code>.
+Čas nastavovat nemusíš, použije se čas z <code>default_time</code>, ale můžeš ho přenastavit
+pomocí klíče <code>time</code>, který bude mít jako hodnotu další slovník s hodnotami <code>start</code> a/nebo <code>end</code> (ve formátu <code>HH:MM</code> obalené uvozovkami).</p>
+<p>Každá lekce má svůj identifikátor, který napiš do klíče <code>slug</code>.
+Identifikátor musí být unikátní (v rámci kurzu).
+Použije se v adrese (URL) lekce.</p>
+<p>Dalším povinným údajem je <code>title</code> – název lekce.</p>
+<p>Základní definice lekce tedy vypadá následovně:</p>
+<div class="highlight"><pre><span></span><span class="nt">sessions</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">slug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">first-lesson</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Název první lekce</span>
+<span class="w">  </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2018-03-07</span>
+</pre></div><p>Většina lekcí bude mít navíc obsah – seznam materiálů.
+Ty se nastavují pomocí klíče <code>materials</code>.</p>
+<p>Existují tři druhy materiálů:</p>
+<ul>
+<li><p><strong>Interní materiály</strong> se definují pomocí klíče <code>lesson</code>, do kterého patří
+identifikátor interního materiálu,
+tedy jméno podsložky ve složce <code>lessons</code>.
+Identifikátor materiálu je <code>&lt;název kategorie&gt;/&lt;název materiálu z kategorie&gt;</code>.
+Takže například materiál `beginners/install by se zadal takto:</p>
+<div class="highlight"><pre><span></span><span class="nt">sessions</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">slug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">first-lesson</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Název první lekce</span>
+<span class="w">  </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2018-03-07</span>
+<span class="w">  </span><span class="nt">materials</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">lesson</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">beginners/install</span>
+</pre></div></li>
+<li><p><strong>Externí odkazy</strong> se definují pomocí klíčů <code>url</code> a <code>title</code>.
+Do <code>url</code> patří kompletní odkaz na materiál, do <code>title</code> patří název odkazu.
+Příklad použítí:</p>
+<div class="highlight"><pre><span></span><span class="nt">sessions</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">slug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">first-lesson</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Název první lekce</span>
+<span class="w">  </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2018-03-07</span>
+<span class="w">  </span><span class="nt">materials</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Úvodní prezentace</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://example.com/uvod.pdf</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tahák na příkazovou řádku</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://example.com/tahak.pdf</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cheatsheet</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Domácí projekty (PDF)</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://example.com/ukol.pdf</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">homework</span>
+</pre></div></li>
+<li><p><strong>Materiály bez odkazu</strong> se definují stejně jako externí odkazy,
+jen se do klíče <code>url</code> dá hodnota <code>null</code>. Například:</p>
+<div class="highlight"><pre><span></span><span class="nt">sessions</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">slug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">last-lesson</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Název lekce</span>
+<span class="w">  </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019-03-07</span>
+<span class="w">  </span><span class="nt">materials</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Přehlídka závěrečných projektů</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Předání diplomů</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+</pre></div></li>
+</ul>
+<p>U všech druhú materiálú lze nastavit typ, který určuje ikonku která se použije v seznamu materiálů vedle názvu.</p>
+<p>Podporované typy jsou následující:</p>
+<ul>
+<li><code>page</code> – výchozí typ pro druh interní materiály</li>
+<li><code>url</code> – výchozí typ pro odkazy</li>
+<li><code>cheatsheet</code> – pro taháky</li>
+<li><code>homework</code> – pro domácí úkoly</li>
+<li><code>special</code> – pro všechno ostatní</li>
+</ul>
+<p>Poslední věc, která jde definovat u materiálů, jsou proměné, pomocí klíče <code>vars</code>.
+Definují se stejně jako u celého kurzu, ale mají účinek jen pro specifický materiál.
+Například takhle:</p>
+<div class="highlight"><pre><span></span><span class="nt">sessions</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">slug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">first-lesson</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Název první lekce</span>
+<span class="w">  </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2018-03-07</span>
+<span class="w">  </span><span class="nt">materials</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">lesson</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">beginners/install</span>
+<span class="w">    </span><span class="nt">vars</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">bonus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div><h2 id="otestovani_kurzu">Otestování kurzu
+<a href="#otestovani_kurzu" class="header-link">#</a>
+</h2>
+<p>Po vytvoření definice kurzu s povinnými položkami se můžeš podívat na to, jak tvůj kurz bude vypadat.
+Spusť si vývojový server:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>naucse<span class="w"> </span>serve
+</pre></div><p>Otevři si adresu, kterou ti příkaz napíše. Měl by na ní být seznam nadefinovaných kurzů.</p>
+<p>Pokud se stránka s kurzy nevykreslí, tak uvidíš Python vyjímku, která ti může pomoct, ale také může být pěkne matoucí.
+Nejprve si zkontroluj, jeslti jsi vážně vyplnil/a všechny povinné údaje.
+Jestli si myslíš, že ano, tak se nám ozvi přes <a href="https://github.com/pyvec/naucse.python.cz/issues">issues na našem GitHubu</a> a my ti rádi pomůžeme.
+(Ozvi se i v případě že se ti podaří matoucí nebo nic neříkající chybu pochopit, ať ji můžeme opravit.)</p>
+<p>Když stránku s kurzy uvidíš, rozklikni svůj kurz.
+Pokud se ti nevykreslí detail kurzu, nejspíš jsi udělal/a nějakou chybu v definici lekcí nebo materiálů – zkontroluj si, jestli například nemáš dvě lekce se stejným identifikátorem, jestli není překlep v nějakém klíčí a jestli například neodkazuješ na materiál který neexistuje.</p>
+<p>Dále si pak můžeš proklikat všechny jednotlivé materiály, jestli vše funguje a vypadá jak má.</p>
+<p>Pokud máš lekce naplánované na určité dny, rozklikni si na stránce kurzu
+Kalendář a zkontroluj že odpovídá tvé představě.</p>
+<p>Jako další test může posloužit druhý režim spuštění, <code>freeze</code> místo <code>serve</code>, který projde všechny stránky a zkontroluje jestli fungují:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>naucse<span class="w"> </span>freeze
+</pre></div><h2 id="upravovani_a_vytvareni_materialu">Upravování a vytváření materiálů
+<a href="#upravovani_a_vytvareni_materialu" class="header-link">#</a>
+</h2>
+<p>Na závěr této části ještě trochu k materiálům.
+Jak bylo zmíněno výše, obsah materiálů je definován ve složce <code>lessons</code>.
+Kromě toho, že si můžeš sestavit vlastní kurz, můžeš si i upravit materiály, které využíváš, nebo si napsat úplně nové.</p>
+<p>Většina materiálů je napsaná v formátu <a href="https://cs.wikipedia.org/wiki/Markdown">Markdown</a> a pár je napsaných v <a href="/course/meta/intro/notebook/">Jupyter Noteboocích</a>.
+Upravování je jednoduché, stačí se podívat do složky s daným specifickým materiálem a upravit, co je potřeba, v souboru s obsahem.</p>
+<p>Vytváření je trošku složitější v tom, že člověk musí vybrat správnou kategorii a vymyslet název lekce a pak vytvořit ve složce kromě obsahu i soubor informacích o materiálech.
+Soubor se znovu jmenuje <code>info.yml</code> a má povinné tři údaje, <code>title</code>, <code>style</code> a <code>license</code>:</p>
+<ul>
+<li><code>title</code> nastavuje název,</li>
+<li><code>style</code> může být <code>md</code> nebo <code>ipynb</code> podle toho, jaký formát bude mít text,</li>
+<li><code>license</code> nastavuje licenci, pod kterou materiály píšeš – identifikátor ze složky <code>licenses</code>: doporučujeme použít <code>cc-by-sa-40</code>.</li>
+</ul>
+<p>Dále má soubor nepovinné položky, první <code>attributions</code> – buď jednoduchý text, nebo seznam textů s informacemi o tom, kdo a proč materiál napsal.
+Nakonec lze použít jinou licenci na ukázky kódu pomocí <code>license_code</code>: doporučujeme použít <code>cc0</code>.</p>
+<p>Obecně je dobrý nápad se při psaní materiálů inspirovat již existujícími řešeními v ostatních materiálech a přebírat jejich styl a způsoby formátování.
+Materiály z jedné kategorie byly většinou psány pro jeden typ kurzu a mají specifický styl:
+v <code>beginners</code> jsou texty pro začátečníky psané kamarádsky, texty pro studenty v <code>intro</code> čtenářům vykají (v množném čísle),
+úvody z <code>fast-track</code> jsou zkratkovité.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/course/meta/sessions/adding-a-run/">↑ <span class="d-none d-sm-inline">Lekce: Přidání kurzu</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/course/meta/meta/submitting-a-run/"><span class="d-none d-sm-inline">Přidání kurzu na Nauč se Python</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse-python/blob/main/lessons/meta/local-run/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Napsal Mikuláš Poul, 2018</p>
+    
+        <p>Upravil Petr Viktorin, 2022</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+        <p>
+            Licence ukázek kódu:
+            <a href="https://creativecommons.org/publicdomain/zero/1.0/">
+                CC0 1.0 Universal Public Domain Dedication
+            </a>
+        </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
