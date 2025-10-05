@@ -1,0 +1,3644 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Pandas - práce s indexy a analýza dat po skupinách
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2024/pydata-praha-podzim/">Datový kurz PyLadies</a>
+
+> <a href="/2024/pydata-praha-podzim/sessions/eda5/">Explorativní datová analýza - agregace a transformace</a>
+
+> <a href="/2024/pydata-praha-podzim/pydata/pandas_groupby/">Pandas - práce s indexy a analýza dat po skupinách</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eda_5_pokrocilejsi_manipulace_a_agregace">EDA 5: Pokročilejší manipulace a agregace
+<a class="header-link" href="#eda_5_pokrocilejsi_manipulace_a_agregace">#</a>
+</h1>
+<p>Další čtení pro dlouhé večery v tomto ročním období:</p>
+<ul>
+<li>https://github.com/alanderex/pydata-pandas-workshop/tree/master/notebooks</li>
+<li>https://github.com/TomAugspurger/pandas-head-to-tail/blob/master/notebooks/03-Iterators-Groupby.ipynb</li>
+<li>https://realpython.com/pandas-groupby/</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="analyza_dat_po_skupinach">Analýza dat po skupinách
+<a class="header-link" href="#analyza_dat_po_skupinach">#</a>
+</h2>
+<p>Jedním ze základních postupů v datové analýze je rozdělení dat do skupin, aplikace nějaké operace na jednotlivé skupiny a nakonec kombinace výsledků do vhodného datasetu. Anglicky se tento postup označuje jako <em>split-apply-combine</em>. Skupiny jsou často, byť ne nutně, definovány nějakou (kategorickou) proměnnou, např. by to mohla být barva, pohlaví nebo kontinent. Skupiny lze ale vytvářet i odvozováním, např. pomocí rozsahu nebo nebo vlastností časových řad. Oboje už jsme vlastně viděli v EDA 3, kdy jsme skupiny vytvářeli pro deštivé dny nebo jednotlivé roky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pojďme si to vysvětlit prakticky. Použijeme k tomu hezký dataset s výsledky voleb do českého horní komory parlamentu, do Senátu ČR. Data pochází z <a href="https://volby.cz/opendata/senat_vse/senat_vse_opendata.htm">webu ČSÚ</a>. Na tomto webu najdeme i <a href="https://volby.cz/opendata/senat_vse/SENATregPopis.pdf">podrobnou dokumentaci</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">"serk.csv"</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s2">"https://raw.githubusercontent.com/PyDataCZ/pyladies-kurz/main/lessons/pydata/pandas_groupby/serk.csv"</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">";"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"windows-1250"</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">"DATUMVOLEB"</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[3]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>DATUMVOLEB</th>
+<td>1996-11-16 00:00:00</td>
+<td>1996-11-16 00:00:00</td>
+<td>1996-11-16 00:00:00</td>
+</tr>
+<tr>
+<th>OBVOD</th>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<th>CKAND</th>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<th>VSTRANA</th>
+<td>7</td>
+<td>2</td>
+<td>47</td>
+</tr>
+<tr>
+<th>JMENO</th>
+<td>Igor</td>
+<td>Josef</td>
+<td>Jan</td>
+</tr>
+<tr>
+<th>PRIJMENI</th>
+<td>Savič</td>
+<td>Havlíček</td>
+<td>Blažek</td>
+</tr>
+<tr>
+<th>TITULPRED</th>
+<td>Ing.</td>
+<td>Mgr.</td>
+<td>Ing.</td>
+</tr>
+<tr>
+<th>TITULZA</th>
+<td>NaN</td>
+<td>NaN</td>
+<td>CSc.</td>
+</tr>
+<tr>
+<th>VEK</th>
+<td>59.0</td>
+<td>54.0</td>
+<td>60.0</td>
+</tr>
+<tr>
+<th>POVOLANI</th>
+<td>primátor</td>
+<td>advokát</td>
+<td>projektant</td>
+</tr>
+<tr>
+<th>BYDLISTEN</th>
+<td>Karlovy Vary</td>
+<td>Karlovy Vary</td>
+<td>Ostrov</td>
+</tr>
+<tr>
+<th>BYDLISTEK</th>
+<td>554961.0</td>
+<td>554961.0</td>
+<td>555428.0</td>
+</tr>
+<tr>
+<th>PSTRANA</th>
+<td>7.0</td>
+<td>2.0</td>
+<td>47.0</td>
+</tr>
+<tr>
+<th>NSTRANA</th>
+<td>7.0</td>
+<td>2.0</td>
+<td>47.0</td>
+</tr>
+<tr>
+<th>PLATNOST</th>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+</tr>
+<tr>
+<th>HLASY_K1</th>
+<td>4435</td>
+<td>503</td>
+<td>3260</td>
+</tr>
+<tr>
+<th>PROC_K1</th>
+<td>17.01</td>
+<td>1.93</td>
+<td>12.5</td>
+</tr>
+<tr>
+<th>URIZ_PR_K1</th>
+<td>17.00602</td>
+<td>1.928755</td>
+<td>12.500479</td>
+</tr>
+<tr>
+<th>ZVOLEN_K1</th>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<th>LOS_K1</th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<th>HLASY_K2</th>
+<td>9301</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<th>PROC_K2</th>
+<td>38.69</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>URIZ_PR_K2</th>
+<td>38.686465</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>ZVOLEN_K2</th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<th>LOS_K2</th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<th>NAZEV_VS</th>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="krok_1_split">Krok 1: Split
+<a class="header-link" href="#krok_1_split">#</a>
+</h3>
+<p>Na rozdělení dat do skupin slouží metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.groupby.html?highlight=groupby#pandas.DataFrame.groupby"><code>groupby</code></a>. Nejjednodušší a možná i nejčastější použití je seskupení podle existujícího sloupce v tabulce. Třeba podle <code>OBVOD</code> nebo <code>DATUMVOLEB</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">districts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"OBVOD"</span><span class="p">)</span>
+<span class="n">districts</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[4]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x12f4fb9b0&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dostali jsme objekt typu <a href="https://pandas.pydata.org/pandas-docs/stable/reference/groupby.html"><code>GroupBy</code></a>. Pokud vám to připomíná <code>DatetimeIndexResampler</code> z <a href="https://naucse.python.cz/2020/pydata-praha-jaro/pydata/eda-univariate-timeseries/">Explorativní analýzy a statistiky jedné proměnné</a>, je to velice dobrá asociace. Tato operace totiž data jen rozdělila do skupin, ještě jsme ale neřekli, co s těmi skupinami chceme dělat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="krok_2__3_apply__combine">Krok 2 + 3: Apply + Combine
+<a class="header-link" href="#krok_2__3_apply__combine">#</a>
+</h3>
+<p>Na skupiny, které jsme vytvořili pomocí <code>groupby</code>, teď můžeme aplikovat nějakou operaci. To je právě krok <em>apply</em>. Nemá pro nás moc cenu oddělovat tento krok od třetího kroku <em>combine</em>, protože když už nějakou opraci aplikujeme, tak bychom rádi výsledek sestavili do výsledného datasetu. Pandas navíc tyto kroky sám nijak neodděluje.</p>
+<p><em>Pozn.: Apply a combine začne být více odděleno v nástrojích na zpracování velkých dat, které už se nevejdou pohodlně do operační paměti počítače a pandas na ně už nestačí. Apply pak probíhá po částech, třeba i distribuovaně na oddělených serverech, a výsledné combine se provádí sesbíráním částečných výsledků.</em></p>
+<p>Použijeme teď jednoduchou agregační metodu <code>count</code>, která nám vrátí počet hodnot (po skupinách samozřejmě).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">districts</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[5]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>DATUMVOLEB</th>
+<th>CKAND</th>
+<th>VSTRANA</th>
+<th>JMENO</th>
+<th>PRIJMENI</th>
+<th>TITULPRED</th>
+<th>TITULZA</th>
+<th>VEK</th>
+<th>POVOLANI</th>
+<th>BYDLISTEN</th>
+<th>...</th>
+<th>PROC_K1</th>
+<th>URIZ_PR_K1</th>
+<th>ZVOLEN_K1</th>
+<th>LOS_K1</th>
+<th>HLASY_K2</th>
+<th>PROC_K2</th>
+<th>URIZ_PR_K2</th>
+<th>ZVOLEN_K2</th>
+<th>LOS_K2</th>
+<th>NAZEV_VS</th>
+</tr>
+<tr>
+<th>OBVOD</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>1</th>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>51</td>
+<td>51</td>
+<td>33</td>
+<td>3</td>
+<td>51</td>
+<td>51</td>
+<td>51</td>
+<td>...</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>39</td>
+</tr>
+<tr>
+<th>2</th>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>24</td>
+<td>1</td>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>...</td>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>40</td>
+<td>31</td>
+</tr>
+<tr>
+<th>3</th>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>27</td>
+<td>1</td>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>...</td>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>39</td>
+<td>32</td>
+</tr>
+<tr>
+<th>4</th>
+<td>49</td>
+<td>49</td>
+<td>49</td>
+<td>48</td>
+<td>48</td>
+<td>34</td>
+<td>1</td>
+<td>48</td>
+<td>48</td>
+<td>48</td>
+<td>...</td>
+<td>49</td>
+<td>49</td>
+<td>49</td>
+<td>49</td>
+<td>49</td>
+<td>49</td>
+<td>49</td>
+<td>49</td>
+<td>49</td>
+<td>38</td>
+</tr>
+<tr>
+<th>5</th>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>36</td>
+<td>1</td>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>...</td>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>53</td>
+<td>45</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>77</th>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>14</td>
+<td>2</td>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>...</td>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>32</td>
+<td>26</td>
+</tr>
+<tr>
+<th>78</th>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>38</td>
+<td>7</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>...</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>52</td>
+<td>44</td>
+</tr>
+<tr>
+<th>79</th>
+<td>43</td>
+<td>43</td>
+<td>43</td>
+<td>42</td>
+<td>42</td>
+<td>29</td>
+<td>3</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>...</td>
+<td>43</td>
+<td>43</td>
+<td>43</td>
+<td>43</td>
+<td>43</td>
+<td>43</td>
+<td>43</td>
+<td>43</td>
+<td>43</td>
+<td>31</td>
+</tr>
+<tr>
+<th>80</th>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>33</td>
+<td>4</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>...</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>42</td>
+<td>36</td>
+</tr>
+<tr>
+<th>81</th>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>32</td>
+<td>3</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>...</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>31</td>
+</tr>
+</tbody>
+</table>
+<p>81 rows × 25 columns</p>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Na levé straně v indexu vidíme skupiny, podle kterých se dataset agregoval a do sloupců se daly všechny sloupce, na které bylo možné aplikovat naši agregační funkci (v tom případě na všechny zbylé).</p>
+<p>Z čísel si můžeš všimnout, že u některých chybí údaje o titulech.</p>
+<p>Než aplikujeme krok <em>apply</em>, můžeme si vybrat, na který ze sloupců tak učiníme, trochu si tím zpřehledníme výstup. Pokud si vybereme jen jeden sloupec, dostaneme Series.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">districts</span><span class="p">[</span><span class="s2">"JMENO"</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[6]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>OBVOD
+1     51
+2     40
+3     39
+4     48
+5     53
+      ..
+77    32
+78    52
+79    42
+80    42
+81    41
+Name: JMENO, Length: 81, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tento krok si můžeme trochu zjednodušit - než abychom se doptávali na <code>count</code> nad jedním sloupcem v rámci agregace, můžeme se doptat na <em>velikost</em> každé ze skupin.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">districts</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[7]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>OBVOD
+1     52
+2     40
+3     39
+4     49
+5     53
+      ..
+77    32
+78    52
+79    43
+80    42
+81    41
+Length: 81, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[8]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>DATUMVOLEB</th>
+<th>OBVOD</th>
+<th>CKAND</th>
+<th>VSTRANA</th>
+<th>JMENO</th>
+<th>PRIJMENI</th>
+<th>TITULPRED</th>
+<th>TITULZA</th>
+<th>VEK</th>
+<th>POVOLANI</th>
+<th>...</th>
+<th>PROC_K1</th>
+<th>URIZ_PR_K1</th>
+<th>ZVOLEN_K1</th>
+<th>LOS_K1</th>
+<th>HLASY_K2</th>
+<th>PROC_K2</th>
+<th>URIZ_PR_K2</th>
+<th>ZVOLEN_K2</th>
+<th>LOS_K2</th>
+<th>NAZEV_VS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>1996-11-16</td>
+<td>1</td>
+<td>1</td>
+<td>7</td>
+<td>Igor</td>
+<td>Savič</td>
+<td>Ing.</td>
+<td>NaN</td>
+<td>59.0</td>
+<td>primátor</td>
+<td>...</td>
+<td>17.01</td>
+<td>17.006020</td>
+<td>2</td>
+<td>0</td>
+<td>9301</td>
+<td>38.69</td>
+<td>38.686465</td>
+<td>0</td>
+<td>0</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>1</th>
+<td>1996-11-16</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>Josef</td>
+<td>Havlíček</td>
+<td>Mgr.</td>
+<td>NaN</td>
+<td>54.0</td>
+<td>advokát</td>
+<td>...</td>
+<td>1.93</td>
+<td>1.928755</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0.00</td>
+<td>0.000000</td>
+<td>0</td>
+<td>0</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>2</th>
+<td>1996-11-16</td>
+<td>1</td>
+<td>3</td>
+<td>47</td>
+<td>Jan</td>
+<td>Blažek</td>
+<td>Ing.</td>
+<td>CSc.</td>
+<td>60.0</td>
+<td>projektant</td>
+<td>...</td>
+<td>12.50</td>
+<td>12.500479</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0.00</td>
+<td>0.000000</td>
+<td>0</td>
+<td>0</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+<p>3 rows × 26 columns</p>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Rozděl data podle data voleb (<code>DATUMVOLEB</code>) a vypiš počet záznamů v každé skupině. Dokážeš výsledek setřídit podle velikosti skupin?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Možná sis všimla, jaký je u výsledku index. Pokud ne, nevadí, určitě si všimneš teď. Zkusíme totiž vytvořit skupiny ne z jednoho sloupce, ale ze dvou. Pojďme si rozdělit volby podle data a obvodu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">date_district_counts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"DATUMVOLEB"</span><span class="p">,</span> <span class="s2">"OBVOD"</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">date_district_counts</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[9]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th></th>
+<th>CKAND</th>
+<th>VSTRANA</th>
+<th>JMENO</th>
+<th>PRIJMENI</th>
+<th>TITULPRED</th>
+<th>TITULZA</th>
+<th>VEK</th>
+<th>POVOLANI</th>
+<th>BYDLISTEN</th>
+<th>BYDLISTEK</th>
+<th>...</th>
+<th>PROC_K1</th>
+<th>URIZ_PR_K1</th>
+<th>ZVOLEN_K1</th>
+<th>LOS_K1</th>
+<th>HLASY_K2</th>
+<th>PROC_K2</th>
+<th>URIZ_PR_K2</th>
+<th>ZVOLEN_K2</th>
+<th>LOS_K2</th>
+<th>NAZEV_VS</th>
+</tr>
+<tr>
+<th>DATUMVOLEB</th>
+<th>OBVOD</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th rowspan="5" valign="top">1996-11-16</th>
+<th>1</th>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>5</td>
+<td>1</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>...</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>0</td>
+</tr>
+<tr>
+<th>2</th>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>4</td>
+<td>0</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>...</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>0</td>
+</tr>
+<tr>
+<th>3</th>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>3</td>
+<td>0</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>...</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>0</td>
+</tr>
+<tr>
+<th>4</th>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>4</td>
+<td>0</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>...</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>0</td>
+</tr>
+<tr>
+<th>5</th>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>5</td>
+<td>0</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>...</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>0</td>
+</tr>
+<tr>
+<th>...</th>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th rowspan="5" valign="top">2022-09-23</th>
+<th>67</th>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>4</td>
+<td>3</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>...</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+</tr>
+<tr>
+<th>70</th>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>1</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>...</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+</tr>
+<tr>
+<th>73</th>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>3</td>
+<td>1</td>
+<td>6</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>...</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+</tr>
+<tr>
+<th>76</th>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>1</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>...</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+</tr>
+<tr>
+<th>79</th>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>2</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>...</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+</tr>
+</tbody>
+</table>
+<p>447 rows × 24 columns</p>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Máme tedy skupiny, které jsou definované dvojicí hodnot datum a obvod (<code>DATUMVOLEB</code>, <code>OBVOD</code>). A to je přesně důvod, proč existuje v Pandas <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.html"><code>MultiIndex</code></a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="co_je_ten_codedataframegroupby_objectcode">Co je ten <code>DataFrameGroupBy object</code>?
+<a class="header-link" href="#co_je_ten_codedataframegroupby_objectcode">#</a>
+</h2>
+<p>Na začátku jsme si udělali základní agregaci bez aplikace funkcí a dostali jsme jakýsi objekt. Je možné s ním něco dělat, aniž bychom agregovali? Ukazuje se, že ano.</p>
+<p>Než se k tomu dostaneme, zkusme jeden <strong>úkol</strong>: Rozděl náš dataframe podle stran - tzn. pro každou stranu vytvoř dataframe a ten ulož do zvláštního souboru. Např. <code>Democrat</code> půjde do Democrat.csv atd.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'DATUMVOLEB'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[10]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x11396bcb0&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jedna klíčová funkce, kterou nám tento objekt nabízí, je iterace.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">groups</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'DATUMVOLEB'</span><span class="p">)</span>
+
+<span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span> <span class="c1"># timhle ziskame prvni element pri iteraci (for cyklu)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[11]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>(Timestamp('1996-11-16 00:00:00'),
+     DATUMVOLEB  OBVOD  CKAND  VSTRANA     JMENO  PRIJMENI   TITULPRED TITULZA  \
+ 0   1996-11-16      1      1        7      Igor     Savič        Ing.     NaN   
+ 1   1996-11-16      1      2        2     Josef  Havlíček        Mgr.     NaN   
+ 2   1996-11-16      1      3       47       Jan    Blažek        Ing.    CSc.   
+ 3   1996-11-16      1      4       53  Vladimír  Kulhánek         NaN     NaN   
+ 4   1996-11-16      1      5       37     Karel     Masný       MUDr.     NaN   
+ ..         ...    ...    ...      ...       ...       ...         ...     ...   
+ 583 1996-11-16     81      6       53  Jaroslav  Zapletal       PhDr.     NaN   
+ 584 1996-11-16     81      7       81  Jaroslav     Mlčák       MUDr.     NaN   
+ 585 1996-11-16     81      8        7     Josef    Vacula        Ing.     NaN   
+ 586 1996-11-16     81      9       80   Vojtěch     Ondra        Mgr.     NaN   
+ 587 1996-11-16     81     10      345       Jan     Jegla  JUDr.,Ing.     NaN   
+ 
+       VEK              POVOLANI  ... PROC_K1  URIZ_PR_K1  ZVOLEN_K1  LOS_K1  \
+ 0    59.0              primátor  ...   17.01   17.006020          2       0   
+ 1    54.0               advokát  ...    1.93    1.928755          0       0   
+ 2    60.0            projektant  ...   12.50   12.500479          0       0   
+ 3    57.0            podnikatel  ...   41.74   41.738564          2       0   
+ 4    54.0      lékař - neurolog  ...    2.94    2.941064          0       0   
+ ..    ...                   ...  ...     ...         ...        ...     ...   
+ 583  53.0            ředitel KZ  ...   20.92   20.918202          2       0   
+ 584  58.0    diplomatický prac.  ...    1.51    1.510743          0       0   
+ 585  45.0          ředitel a.s.  ...   14.79   14.789995          0       0   
+ 586  70.0  středoškol. profesor  ...    2.27    2.271992          0       0   
+ 587  51.0          ředitel a.s.  ...    4.71    4.705640          0       0   
+ 
+     HLASY_K2  PROC_K2  URIZ_PR_K2  ZVOLEN_K2  LOS_K2  NAZEV_VS  
+ 0       9301    38.69   38.686465          0       0       NaN  
+ 1          0     0.00    0.000000          0       0       NaN  
+ 2          0     0.00    0.000000          0       0       NaN  
+ 3      14741    61.31   61.313535          1       0       NaN  
+ 4          0     0.00    0.000000          0       0       NaN  
+ ..       ...      ...         ...        ...     ...       ...  
+ 583     8356    34.04   34.042206          0       0       NaN  
+ 584        0     0.00    0.000000          0       0       NaN  
+ 585        0     0.00    0.000000          0       0       NaN  
+ 586        0     0.00    0.000000          0       0       NaN  
+ 587        0     0.00    0.000000          0       0       NaN  
+ 
+ [588 rows x 26 columns])</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>K čemu nám to může být? Při agregaci se data drasticky zjednodušují a nemusíme si vždy být jisti, že naše agregace jsou napsané správně. Pomocí iterace nad skupinami si můžeme zobrazit všechna data před agregací.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">date</span><span class="p">,</span> <span class="n">sdf</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'DATUMVOLEB'</span><span class="p">):</span>
+    <span class="n">sdf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">date</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'.csv'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tuto funkcionalitu asi tolik neoceníte, když jde jen o jeden sloupec, zde <code>DATUMVOLEB</code>, tedy alternativa není tak složitá. Ale jakmile začnete agregovat nad více sloupci, začne být iterace čím dál užitečnější.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="dalsi_agregacni_funkce">Další agregační funkce
+<a class="header-link" href="#dalsi_agregacni_funkce">#</a>
+</h2>
+<p>Dosud jsme agregovali jen pomocí <code>.size</code> nebo <code>.count</code>, ale existuje spousta další agregačních metod, zejm. těch numerických.</p>
+<p>Pro snadnější práci s agregacemi budeme používat metodu <code>.agg</code>, která akceptuje slovník. Tento slovník udává, <em>co</em> chceme agregovat (klíč) a <em>jak</em> to chceme agregovat (hodnota). S tím, že způsobů agregace pro jeden sloupec může být více naráz. Ukážeme si.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'DATUMVOLEB'</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">'VEK'</span><span class="p">:</span> <span class="s1">'max'</span><span class="p">})</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[13]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>VEK</th>
+</tr>
+<tr>
+<th>DATUMVOLEB</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>1996-11-16</th>
+<td>91.0</td>
+</tr>
+<tr>
+<th>1998-11-14</th>
+<td>73.0</td>
+</tr>
+<tr>
+<th>1999-08-28</th>
+<td>74.0</td>
+</tr>
+<tr>
+<th>2000-11-12</th>
+<td>70.0</td>
+</tr>
+<tr>
+<th>2002-10-25</th>
+<td>87.0</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'DATUMVOLEB'</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span>
+    <span class="s1">'VEK'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'min'</span><span class="p">,</span> <span class="s1">'max'</span><span class="p">],</span>
+    <span class="s1">'VSTRANA'</span><span class="p">:</span> <span class="s1">'nunique'</span><span class="p">}</span>
+<span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[14]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead tr th {
+    text-align: left
+    }
+.lesson-content .dataframe thead tr:last-of-type th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr>
+<th></th>
+<th colspan="2" halign="left">VEK</th>
+<th>VSTRANA</th>
+</tr>
+<tr>
+<th></th>
+<th>min</th>
+<th>max</th>
+<th>nunique</th>
+</tr>
+<tr>
+<th>DATUMVOLEB</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>1996-11-16</th>
+<td>40.0</td>
+<td>91.0</td>
+<td>33</td>
+</tr>
+<tr>
+<th>1998-11-14</th>
+<td>40.0</td>
+<td>73.0</td>
+<td>18</td>
+</tr>
+<tr>
+<th>1999-08-28</th>
+<td>45.0</td>
+<td>74.0</td>
+<td>8</td>
+</tr>
+<tr>
+<th>2000-11-12</th>
+<td>40.0</td>
+<td>70.0</td>
+<td>20</td>
+</tr>
+<tr>
+<th>2002-10-25</th>
+<td>40.0</td>
+<td>87.0</td>
+<td>33</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="transformace_sloupcu">Transformace sloupců
+<a class="header-link" href="#transformace_sloupcu">#</a>
+</h2>
+<p>Většinu času jsme pracovali s daty, které jsme načetli ze souboru a krom nějakého základního čištění jsme je žádným způsobem neměnili. Teď si ukážeme, jak udělat některé základní transformace.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Může nás například zajímat, které hodnoty máme či nemáme v daném sloupci. K získání takové informace sloužít metody <code>.isnull</code> a <code>.notnull</code>, které jsou navzájem inverzní.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'POVOLANI'</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[15]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0       False
+1       False
+2       False
+3       False
+4       False
+        ...  
+3449    False
+3450    False
+3451    False
+3452    False
+3453    False
+Name: POVOLANI, Length: 3454, dtype: bool</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Series má metodu <code>isnull</code>, která nám vrátí True/False hodnoty podle toho, jestli daná hodnota chybí nebo ne (NULL v SQL). Pro snadnější pochopení je možné použít inverzní metodu <code>notnull</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Může náš též zajímat, zda řádky nabývají některou z vybraných hodnot.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'JMENO'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">'Jan'</span><span class="p">,</span> <span class="s1">'Jana'</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[16]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0       False
+1       False
+2        True
+3       False
+4       False
+        ...  
+3449    False
+3450    False
+3451    False
+3452    False
+3453    False
+Name: JMENO, Length: 3454, dtype: bool</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>... nebo jak se hodnoty liší mezi řádky (dává smysl jen pro číselná data nebo pro sloupce obsahující datum)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'VEK'</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[17]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0        NaN
+1       -5.0
+2        6.0
+3       -3.0
+4       -3.0
+        ... 
+3449     7.0
+3450   -14.0
+3451    16.0
+3452     3.0
+3453   -22.0
+Name: VEK, Length: 3454, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="str_a_dt_metody">.str a .dt metody
+<a class="header-link" href="#str_a_dt_metody">#</a>
+</h3>
+<p>Můžeme též testovat různé vlastnosti stringů a dat (od slova datum). Slouží k tomu <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/text.html#string-methods">.str</a> a <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.dt.html">.dt</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'PRIJMENI'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[18]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0        5.0
+1        8.0
+2        6.0
+3        8.0
+4        5.0
+        ... 
+3449    10.0
+3450     7.0
+3451     7.0
+3452     8.0
+3453     8.0
+Name: PRIJMENI, Length: 3454, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Často používanými metodami v rámci <code>.str</code> je <code>contains</code> nebo <code>.lower/upper</code></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s1">'JOHN'</span><span class="p">,</span> <span class="s1">'Jean-Luc'</span><span class="p">,</span> <span class="s1">'Mary-Jane'</span><span class="p">,</span> <span class="s1">'Kate'</span><span class="p">,</span> <span class="s1">'John'</span><span class="p">])</span>
+<span class="n">names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[19]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0    False
+1     True
+2     True
+3    False
+4    False
+dtype: bool</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">names</span><span class="p">[</span><span class="n">names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[20]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>1     Jean-Luc
+2    Mary-Jane
+dtype: object</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zatímco <code>.str.contains</code> použijeme zpravidla na filtrování, <code>.lower</code> poslouží třeba na unifikaci dat, která se pak lépe agregují (a deduplikují).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">names</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[21]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>JOHN         1
+Jean-Luc     1
+Mary-Jane    1
+Kate         1
+John         1
+Name: count, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[22]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>john         2
+jean-luc     1
+mary-jane    1
+kate         1
+Name: count, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Z <code>.dt</code> si ukážeme jak vytáhnout z data rok.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">election_years</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'DATUMVOLEB'</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span>
+
+<span class="n">election_years</span><span class="c1">#.value_counts()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[23]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0       1996
+1       1996
+2       1996
+3       1996
+4       1996
+        ... 
+3449    2022
+3450    2022
+3451    2022
+3452    2022
+3453    2022
+Name: DATUMVOLEB, Length: 3454, dtype: int32</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> vyfiltruj kandidáty, kterým v době kandidatury bylo 40 let</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="agregace_nad_nesloupci">Agregace nad nesloupci
+<a class="header-link" href="#agregace_nad_nesloupci">#</a>
+</h2>
+<p>Dosud jsme vždy agregovali nad něčím, co jsme měli v DataFramu. Je ale možné agregovat nad daty, které tam vůbec nemáme, alespoň ne explicitně. K tomu budou sloužit transformace, které jsme si právě ukázali.</p>
+<p>Kromě názvu sloupce můžeme do <code>groupby</code> vložit nějakou Series (!), která má stejný tvar jako naše sloupce a pandas podle toho bude umět agregovat. Jaká taková Series se nabízí? Nejlépe transformace nějakého existujícího sloupce.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Můžeme tak agregovat data na základě <em>měsíce</em>, kdy se dané volby konaly. A to aniž bychom tento sloupec přidávali do dataframu. Tato metoda nám tak pomůže dělat kreativní agregace bez nutnosti měnit naše data.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">'DATUMVOLEB'</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+<span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[24]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>DATUMVOLEB
+1       28
+3       10
+4       27
+5        9
+6       11
+8        8
+9      191
+10    2053
+11    1117
+dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Můžeme samozřejmě přidávat další a další (ne)sloupce.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [25]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">'OBVOD'</span><span class="p">],</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">'DATUMVOLEB'</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+<span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[25]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>OBVOD  DATUMVOLEB
+1      9             11
+       10            18
+       11            23
+2      10            26
+       11            14
+                     ..
+80     1             10
+       10            22
+       11            10
+81     10            31
+       11            10
+Length: 199, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Měsíce jsou fajn, je jich jen 12, ale co když budeme chtít agregovat nad roky voleb?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [26]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">'OBVOD'</span><span class="p">],</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">'DATUMVOLEB'</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+<span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[26]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>447</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dostáváme poněkud velký dataset, který nám toho moc neřekne. S tím nám pomůže další kapitola.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="binning">Binning
+<a class="header-link" href="#binning">#</a>
+</h3>
+<p>Sice máme věky lidí, ale přeci jen jich je spousta a moc nám to neřekne, určitě se podle nich nedá dobře agregovat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [27]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'VEK'</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[27]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;Axes: &gt;</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea">
+<img alt="No description has been provided for this image" src="data:image/png;base64,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">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [28]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'VEK'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[28]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>VEK
+56.0    163
+54.0    161
+55.0    159
+52.0    159
+53.0    149
+Name: count, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Ani histogram, ani <code>value_counts</code> nám žádné moc hodnotné informace nepřinesl. Budeme muset data trochu seskupit. Na to v pandas existuje několik možností.</p>
+<p>První z nich je nám již známý <code>.value_counts</code>, kterému můžeme přihodit argument <code>bins</code>, který znamená, že nechceme frekvence jednotlivých hodnot, ale že chceme seskupit data do několika intervalů.</p>
+<p>Podívejme</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [29]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'VEK'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[29]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>(49.0, 55.0]      899
+(55.0, 61.0]      836
+(43.0, 49.0]      679
+(61.0, 67.0]      512
+(37.0, 43.0]      299
+(67.0, 73.0]      176
+(73.0, 79.0]       34
+(79.0, 85.0]        2
+(85.0, 91.0]        2
+(30.939, 37.0]      1
+Name: count, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Co když nám takové samorozdělení nestačí? Na to je <code>pandas.cut</code>, resp. <code>pd.cut</code>. Má spoustu možností, doporučujeme <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.cut.html">projít dokumentaci</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [30]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'VEK'</span><span class="p">],</span> <span class="n">bins</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[30]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0       (50, 60]
+1       (50, 60]
+2       (50, 60]
+3       (50, 60]
+4       (50, 60]
+          ...   
+3449    (50, 60]
+3450    (40, 50]
+3451    (50, 60]
+3452    (60, 70]
+3453    (40, 50]
+Name: VEK, Length: 3454, dtype: category
+Categories (8, interval[int64, right]): [(20, 30] &lt; (30, 40] &lt; (40, 50] &lt; (50, 60] &lt; (60, 70] &lt; (70, 80] &lt; (80, 90] &lt; (90, 100]]</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [31]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'VEK'</span><span class="p">],</span> <span class="n">bins</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[31]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>VEK
+(50, 60]     1476
+(40, 50]     1044
+(60, 70]      752
+(70, 80]       89
+(30, 40]       75
+(80, 90]        3
+(90, 100]       1
+(20, 30]        0
+Name: count, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nevýhodou <code>pd.cut</code> je, že intervaly jsou určeny uživatelem a může chvíli trvat, než je člověk odladí. Více automatická je možnost určit intervaly pomocí statistického rozložení dat, k tomu slouží <code>pd.qcut</code>, ten místo hranic intervalů bere kvantily.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [32]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'VEK'</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mf">.9</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[32]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>VEK
+(44.0, 55.0]      1478
+(55.0, 66.0]      1287
+(30.999, 44.0]     400
+(66.0, 91.0]       275
+Name: count, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><em>Samozřejmostí tohoto seskupování je, že tyto transformované sloupce opět můžeme použít pro agregaci.</em></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Jak se postupem času měnil počet kandidujících lidí důchodového věku (65 let a více)? Spočítej počet lidí pod 65, nad 65 a nad 90 v každém roce, kdy se konaly volby do senátu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="kontingencni_tabulky">Kontingenční tabulky
+<a class="header-link" href="#kontingencni_tabulky">#</a>
+</h3>
+<p>Pokud budeme agregovat nad několika sloupci, může se nám stát, že z DataFramu se nám stane jedna dlouhá nudle. V tom se nedá moc dobře vyznat. Pokud jste s takovými daty někdy pracovali v Excelu, možná vám bude povědomá funkce kontigenčních tabulek, v angličtině <em>pivot tables</em>.</p>
+<p>Než začneme pivotovat, vytvořme si malý dataset - bude to jednoduchá agregace na základě roku voleb a obvodu, ve kterém se kandidovalo.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [33]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">ROK</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">"DATUMVOLEB"</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'ROK'</span><span class="p">,</span> <span class="s1">'OBVOD'</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'size'</span><span class="p">:</span> <span class="s1">'count'</span><span class="p">})</span>
+<span class="n">summary</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[33]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>ROK</th>
+<th>OBVOD</th>
+<th>count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>1996</td>
+<td>1</td>
+<td>8</td>
+</tr>
+<tr>
+<th>1</th>
+<td>1996</td>
+<td>2</td>
+<td>9</td>
+</tr>
+<tr>
+<th>2</th>
+<td>1996</td>
+<td>3</td>
+<td>7</td>
+</tr>
+<tr>
+<th>3</th>
+<td>1996</td>
+<td>4</td>
+<td>6</td>
+</tr>
+<tr>
+<th>4</th>
+<td>1996</td>
+<td>5</td>
+<td>8</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>442</th>
+<td>2022</td>
+<td>67</td>
+<td>7</td>
+</tr>
+<tr>
+<th>443</th>
+<td>2022</td>
+<td>70</td>
+<td>8</td>
+</tr>
+<tr>
+<th>444</th>
+<td>2022</td>
+<td>73</td>
+<td>7</td>
+</tr>
+<tr>
+<th>445</th>
+<td>2022</td>
+<td>76</td>
+<td>6</td>
+</tr>
+<tr>
+<th>446</th>
+<td>2022</td>
+<td>79</td>
+<td>7</td>
+</tr>
+</tbody>
+</table>
+<p>447 rows × 3 columns</p>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Součástí každého <code>pivot</code>u jsou tři faktory - specifikace,</p>
+<ol>
+<li>který se sloupců chceme v indexu</li>
+<li>který bude ve sloupcích</li>
+<li>který sloupec se přiřadí do hodnot v DataFramu</li>
+</ol>
+<p>Hezky je to vidět <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/reshaping.html">na tomto diagramu</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [34]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">summary</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'OBVOD'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'ROK'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">'count'</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[34]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th>ROK</th>
+<th>1996</th>
+<th>1998</th>
+<th>1999</th>
+<th>2000</th>
+<th>2002</th>
+<th>2003</th>
+<th>2004</th>
+<th>2006</th>
+<th>2007</th>
+<th>2008</th>
+<th>2010</th>
+<th>2011</th>
+<th>2012</th>
+<th>2014</th>
+<th>2016</th>
+<th>2017</th>
+<th>2018</th>
+<th>2019</th>
+<th>2020</th>
+<th>2022</th>
+</tr>
+<tr>
+<th>OBVOD</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>1</th>
+<td>8.0</td>
+<td>5.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>10.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>10.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>8.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>11.0</td>
+</tr>
+<tr>
+<th>2</th>
+<td>9.0</td>
+<td></td>
+<td></td>
+<td>5.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>8.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>9.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>9.0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>3</th>
+<td>7.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>8.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>7.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>8.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>9.0</td>
+<td></td>
+</tr>
+<tr>
+<th>4</th>
+<td>6.0</td>
+<td>5.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>9.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>8.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>7.0</td>
+<td>9.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>5.0</td>
+</tr>
+<tr>
+<th>5</th>
+<td>8.0</td>
+<td></td>
+<td></td>
+<td>5.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>10.0</td>
+<td>9.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>12.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>9.0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>77</th>
+<td>6.0</td>
+<td></td>
+<td></td>
+<td>7.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>5.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>8.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>6.0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>78</th>
+<td>8.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>9.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>7.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>12.0</td>
+<td></td>
+<td></td>
+<td>9.0</td>
+<td></td>
+<td>7.0</td>
+<td></td>
+</tr>
+<tr>
+<th>79</th>
+<td>8.0</td>
+<td>4.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>9.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>8.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>7.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>7.0</td>
+</tr>
+<tr>
+<th>80</th>
+<td>6.0</td>
+<td></td>
+<td></td>
+<td>4.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>8.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>7.0</td>
+<td>10.0</td>
+<td></td>
+<td></td>
+<td>7.0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>81</th>
+<td>10.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>9.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>7.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>10.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>5.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>81 rows × 20 columns</p>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Omezením metody <code>pivot</code> je to, že umí jen otáčet DataFrame, ale pokud některému z políček odpovídá více hodnot, vyhodí vám chybu, protože neví, jak je má agregovat. Pivot je opravdu jen pro otáčení.</p>
+<p>Na komplexnější agregace tu je podobně pojmenovaný <code>pivot_table</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [35]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">ROK</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">"DATUMVOLEB"</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'OBVOD'</span><span class="p">,</span> <span class="s1">'ROK'</span><span class="p">,</span> <span class="s1">'TITULPRED'</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'size'</span><span class="p">:</span> <span class="s1">'count'</span><span class="p">})</span>
+<span class="n">summary</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[35]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>OBVOD</th>
+<th>ROK</th>
+<th>TITULPRED</th>
+<th>count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>1</td>
+<td>1996</td>
+<td>Ing.</td>
+<td>2</td>
+</tr>
+<tr>
+<th>1</th>
+<td>1</td>
+<td>1996</td>
+<td>MUDr.</td>
+<td>1</td>
+</tr>
+<tr>
+<th>2</th>
+<td>1</td>
+<td>1996</td>
+<td>Mgr.</td>
+<td>2</td>
+</tr>
+<tr>
+<th>3</th>
+<td>1</td>
+<td>1998</td>
+<td>Ing.</td>
+<td>1</td>
+</tr>
+<tr>
+<th>4</th>
+<td>1</td>
+<td>1998</td>
+<td>MUDr.</td>
+<td>1</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>1707</th>
+<td>81</td>
+<td>2014</td>
+<td>Ing.</td>
+<td>4</td>
+</tr>
+<tr>
+<th>1708</th>
+<td>81</td>
+<td>2014</td>
+<td>doc. PhDr.</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1709</th>
+<td>81</td>
+<td>2014</td>
+<td>doc. RNDr.</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1710</th>
+<td>81</td>
+<td>2020</td>
+<td>Ing.</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1711</th>
+<td>81</td>
+<td>2020</td>
+<td>MUDr.</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>1712 rows × 4 columns</p>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>pivot_table</code> nabízí možnost přiřadit do některé z dimenzí (do indexu či sloupců) vícero sloupců, a následně pak vytvoří víceúrovňový index. Jde též specifikovat, jaká funkce se aplikuje, pokud na buňku připadá více hodnot (jako v Excelu).</p>
+<p>Více detailů najdete <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.pivot_table.html">v dokumentaci</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [36]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">wide</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">'OBVOD'</span><span class="p">,</span> <span class="s1">'TITULPRED'</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'ROK'</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="s1">'count'</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+
+<span class="n">wide</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[36]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>ROK</th>
+<th>1996</th>
+<th>1998</th>
+<th>1999</th>
+<th>2000</th>
+<th>2002</th>
+<th>2003</th>
+<th>2004</th>
+<th>2006</th>
+<th>2007</th>
+<th>2008</th>
+<th>2010</th>
+<th>2011</th>
+<th>2012</th>
+<th>2014</th>
+<th>2016</th>
+<th>2017</th>
+<th>2018</th>
+<th>2019</th>
+<th>2020</th>
+<th>2022</th>
+</tr>
+<tr>
+<th>OBVOD</th>
+<th>TITULPRED</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th rowspan="6" valign="top">1</th>
+<th>Bc.</th>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>Ing.</th>
+<td>2.0</td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>2.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>2.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>5.0</td>
+</tr>
+<tr>
+<th>JUDr.</th>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>2.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>MUDr.</th>
+<td>1.0</td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>3.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>Mgr.</th>
+<td>2.0</td>
+<td>3.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>Mgr. Bc.</th>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+</tr>
+<tr>
+<th rowspan="4" valign="top">2</th>
+<th>Bc.</th>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>Ing.</th>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>6.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>2.0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>JUDr.</th>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>MUDr.</th>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>1.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Kdyby ti přišlo matoucí, že tu jsou dvě podobné funkce na kontigenční tabulky, tak tě ještě víc zmateme, protože existuje ještě <code>pd.crosstab</code>. Do detailů zde už zacházet nebudeme, doporučujeme <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.crosstab.html">dokumentaci</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="inverzni_kontigencni_tabulky">Inverzní kontigenční tabulky
+<a class="header-link" href="#inverzni_kontigencni_tabulky">#</a>
+</h3>
+<p>Zatímco na kontigenční tabulky mnozí narazili, jejich inverzní funkcionalita je celkem neznámá, a zajímavá. Funguje přesně tak, jak píšeme - vezme se široká tabulka, ve které je jedna z dimenzí ve sloupcích, a zúží a prodlouží se tím, že se ony názvy sloupcí překonvertují do samotného sloupce. Příklad bude názornější.</p>
+<p>V pandas se na tuto inverzní operaci používá metoda <code>melt</code>. Její delší výčet argumentů je tradičně <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.melt.html">v dokumentaci</a>.</p>
+<p>Mějme dataset, kde je výkon v různých regionech fiktivní země. Nevýhodou je, že nemůžeme úplně dívat na časové řady, protože roky, ke kterým údaje platí, jsou ve sloupcích, ne v řádcích. Takto široké tabulky jsou celkem populární třeba u dat o počasí.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [37]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">'region'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'North'</span><span class="p">,</span> <span class="s1">'South'</span><span class="p">,</span> <span class="s1">'East'</span><span class="p">,</span> <span class="s1">'West'</span><span class="p">],</span>
+    <span class="s1">'2000'</span><span class="p">:</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>
+    <span class="s1">'2005'</span><span class="p">:</span> <span class="p">[</span><span class="mi">450</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">510</span><span class="p">,</span> <span class="mi">1040</span><span class="p">],</span>
+    <span class="s1">'2010'</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">950</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span>
+    <span class="s1">'2015'</span><span class="p">:</span> <span class="p">[</span><span class="mi">550</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+    <span class="s1">'2020'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+<span class="p">})</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[37]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>region</th>
+<th>2000</th>
+<th>2005</th>
+<th>2010</th>
+<th>2015</th>
+<th>2020</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>North</td>
+<td>200</td>
+<td>450</td>
+<td>10</td>
+<td>550</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1</th>
+<td>South</td>
+<td>100</td>
+<td>10</td>
+<td>500</td>
+<td>20</td>
+<td>1</td>
+</tr>
+<tr>
+<th>2</th>
+<td>East</td>
+<td>50</td>
+<td>510</td>
+<td>950</td>
+<td>50</td>
+<td>5</td>
+</tr>
+<tr>
+<th>3</th>
+<td>West</td>
+<td>1000</td>
+<td>1040</td>
+<td>500</td>
+<td>10</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>pd.melt</code> zajímá, který ze sloupců nějak identifikuje dané řádky (<code>id_vars</code>) a které sloupce obsahují hodnoty (<code>value_vars</code>). Zbylé dva argumenty slouží jen k přejmenování sloupců (<code>var_name</code>, <code>value_name</code>).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [38]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">long</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s1">'region'</span><span class="p">],</span> <span class="n">value_vars</span><span class="o">=</span><span class="p">[</span><span class="s1">'2000'</span><span class="p">,</span> <span class="s1">'2005'</span><span class="p">,</span> <span class="s1">'2010'</span><span class="p">,</span> <span class="s1">'2015'</span><span class="p">,</span> <span class="s1">'2020'</span><span class="p">],</span>
+        <span class="n">var_name</span><span class="o">=</span><span class="s1">'year'</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s1">'output'</span><span class="p">)</span>
+
+<span class="n">long</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[38]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>region</th>
+<th>year</th>
+<th>output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>North</td>
+<td>2000</td>
+<td>200</td>
+</tr>
+<tr>
+<th>1</th>
+<td>South</td>
+<td>2000</td>
+<td>100</td>
+</tr>
+<tr>
+<th>2</th>
+<td>East</td>
+<td>2000</td>
+<td>50</td>
+</tr>
+<tr>
+<th>3</th>
+<td>West</td>
+<td>2000</td>
+<td>1000</td>
+</tr>
+<tr>
+<th>4</th>
+<td>North</td>
+<td>2005</td>
+<td>450</td>
+</tr>
+<tr>
+<th>5</th>
+<td>South</td>
+<td>2005</td>
+<td>10</td>
+</tr>
+<tr>
+<th>6</th>
+<td>East</td>
+<td>2005</td>
+<td>510</td>
+</tr>
+<tr>
+<th>7</th>
+<td>West</td>
+<td>2005</td>
+<td>1040</td>
+</tr>
+<tr>
+<th>8</th>
+<td>North</td>
+<td>2010</td>
+<td>10</td>
+</tr>
+<tr>
+<th>9</th>
+<td>South</td>
+<td>2010</td>
+<td>500</td>
+</tr>
+<tr>
+<th>10</th>
+<td>East</td>
+<td>2010</td>
+<td>950</td>
+</tr>
+<tr>
+<th>11</th>
+<td>West</td>
+<td>2010</td>
+<td>500</td>
+</tr>
+<tr>
+<th>12</th>
+<td>North</td>
+<td>2015</td>
+<td>550</td>
+</tr>
+<tr>
+<th>13</th>
+<td>South</td>
+<td>2015</td>
+<td>20</td>
+</tr>
+<tr>
+<th>14</th>
+<td>East</td>
+<td>2015</td>
+<td>50</td>
+</tr>
+<tr>
+<th>15</th>
+<td>West</td>
+<td>2015</td>
+<td>10</td>
+</tr>
+<tr>
+<th>16</th>
+<td>North</td>
+<td>2020</td>
+<td>1</td>
+</tr>
+<tr>
+<th>17</th>
+<td>South</td>
+<td>2020</td>
+<td>1</td>
+</tr>
+<tr>
+<th>18</th>
+<td>East</td>
+<td>2020</td>
+<td>5</td>
+</tr>
+<tr>
+<th>19</th>
+<td>West</td>
+<td>2020</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> vem tento dlouhý dataset a udělej z něj ten původní, široký. (Neřeš, pokud máš někde index, kde před tím nebyl.)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2024/pydata-praha-podzim/sessions/eda5/">↑ <span class="d-none d-sm-inline">Lekce: Explorativní datová analýza - agregace a transformace</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2024/pydata-praha-podzim/sessions/eda5/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyDataCZ/pyladies-kurz/blob/main/lessons/pydata/pandas_groupby/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsali Jakub Urban a Ondřej Kokeš, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

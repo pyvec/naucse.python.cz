@@ -1,0 +1,581 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Grafika
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/pyglet/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2017/pyladies-brno-jaro-po/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2017/pyladies-brno-jaro-po/sessions/pyglet/">Grafika</a>
+
+> <a href="/2017/pyladies-brno-jaro-po/intro/pyglet/">Grafika</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Grafika</h1>
+<p>Dnes si ukážeme, jak s Pythonem napsat grafickou aplikaci.</p>
+<p>Použijeme knihovnu, která není zabudovaná přímo
+v Pythonu (podobně jako pytest, který používáme na testování).
+Musíme si ji nejdřív nainstalovat a na to použijeme
+v zapnutém virtualenvu modul <code>pip</code> –
+konkrétně příkaz <code>python -m pip install pyglet</code>.
+U mě vypadá instalace nějak takto:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>python -m pip install pyglet
+<span class="go">Collecting pyglet</span>
+<span class="go">  Downloading pyglet-1.2.4-py3-none-any.whl (964kB)</span>
+<span class="go">Installing collected packages: pyglet</span>
+<span class="go">Successfully installed pyglet-1.2.4</span>
+</pre></div><p>Máš-li nainstalováno, zkus napsat a spustit
+následující program. Mělo by se objevit černé
+okýnko:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Hotovo!'</span><span class="p">)</span>
+</pre></div><div class="admonition note"><p>Jestli okýnko není černé ale je v něm nějaký
+„nepořádek“, představuj si zatím, že černé je.
+Stává se to hlavně na počítačích s Mac OS a některými
+druhy Linuxu.
+Než do okýnka začneme kreslit obrázky, nepořádek
+uklidíme.</p>
+</div><p>Hotovo? Pojďme si vysvětlit, co se tu vlastně děje.</p>
+<h2>Interaktivní programy</h2>
+<p>Podívejme se ještě jednou, jak zhruba vypadá hlavní
+program pro Piškvorky, který jsme napsaly
+na projektech.
+V komentářích je napsané, co která část kódu dělá:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">piskvorky1d</span><span class="p">():</span>
+    <span class="n">pole</span> <span class="o">=</span> <span class="s1">'-'</span> <span class="o">*</span> <span class="mi">20</span>                 <span class="c1"># Příprava hry</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>                     <span class="c1"># Pořád dokola:</span>
+        <span class="n">pole</span> <span class="o">=</span> <span class="n">tah_hrace</span><span class="p">(</span><span class="n">pole</span><span class="p">)</span>      <span class="c1"># 1. Zeptej se na tah</span>
+        <span class="k">if</span> <span class="n">vyhodnot</span><span class="p">(</span><span class="n">pole</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">'-'</span><span class="p">:</span>   <span class="c1"># 2. Zpracuj tah</span>
+            <span class="k">break</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">pole</span><span class="p">)</span>                 <span class="c1"># 3. Vypiš stav hry</span>
+
+                                    <span class="c1"># A znova:</span>
+        <span class="n">pole</span> <span class="o">=</span> <span class="n">tah_pocitace</span><span class="p">(</span><span class="n">pole</span><span class="p">)</span>   <span class="c1"># 1. Zeptej se na tah</span>
+        <span class="k">if</span> <span class="n">vyhodnot</span><span class="p">(</span><span class="n">pole</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">'-'</span><span class="p">:</span>   <span class="c1"># 2. Zpracuj tah</span>
+            <span class="k">break</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">pole</span><span class="p">)</span>                 <span class="c1"># 3. Vypiš stav hry</span>
+</pre></div><p>V tomhle programu máme dva druhy akcí, které se pravidelně střídají.
+Jakmile taková akce nastane, ať vstup od člověka nebo
+od počítače, tak se zpracuje a výsledný stav se oznámí.</p>
+<p>Podobnou strukturu „reakcí“ jsme použily už dřív,
+třeba u hry kámen-nůžky-papír:</p>
+<ul>
+<li>Nějaká příprava</li>
+<li>Dokud program nemá skončit:<ul>
+<li>Načti vstup</li>
+<li>Nějak ten vstup vyhodnoť</li>
+<li>Vypiš výstup</li>
+</ul>
+</li>
+</ul>
+<p>A podobně funguje většina programů, které nějakým
+způsobem reagují na vstup od uživatele nebo i na jiné
+události.</p>
+<p>Webový server čeká na <em>požadavek</em> (angl. <em>request</em>)
+o webovou stránku. Když nějaký přijme, zpracuje ho
+(např. přečte příslušnou stránku z disku)
+a jako výstup pošle odpověď.</p>
+<p>Složitější programy reagují na spoustu druhů událostí,
+ne jen na „požadavek“ nebo „tah hráče“/„tah počítače“.
+Co se stane ve „vyhodnocení vstupu“ pak závisí
+na druhu události.</p>
+<p>Webový prohlížeč čeká na kliknutí myši nebo stisk klávesy
+a zachová se podle něj – třeba pošle přes Internet
+požadavek vzdálenému serveru.
+A potom čeká na další akci. Může přijít odpověď od
+serveru, a až ta přijde, vykreslí příslušnou stránku
+na obrazovku. Nebo může uživatel zmáčknout „STOP“
+a požadavek se zruší.</p>
+<p>Textový editor čeká na různé druhy vstupu z klávesnice
+či myši a každý musí nějak zpracovat.</p>
+<p>Prostě, podobná struktura programu – smyčka která
+načte vstup, zpracuje ho a vyprodukuje výstup – je velice užitečná.
+Říká se jí <em>smyčka událostí</em> (angl. <em>event loop</em>)
+a programy na ní postavené jsou
+<em>řízené událostmi</em> (angl. <em>event-driven</em>).</p>
+<p>Programátoři jsou líní.
+Když je něco užitečné pro více programů, nebývá
+zvykem, že to každý programátor v každém programu opakuje.
+Napíše se to jednou a dobře, zabalí se to jako tzv.
+<em>knihovna</em> (angl. <em>library</em>)
+a ostatní to pak můžou používat.</p>
+<h2>Pyglet 🐷</h2>
+<p>Jedna z takových knihoven je Pyglet.
+Obsahuje kromě smyčky událostí taky funkce na
+vykreslování 2D grafiky (pomocí jiné knihovny zvané
+OpenGL) nebo třeba načítání událostí z klávesnice a myši.</p>
+<p>Pojďme se vrátit k prográmku, který ukazuje okno:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Hotovo!'</span><span class="p">)</span>
+</pre></div><p>Celá smyčka událostí se skrývá ve funkci <code>pyglet.app.run()</code>.
+Načtení vstupu (např. z klávesnice) dělá Pyglet sám,
+ale jejich zpracování a vykreslení výsledků
+už je pro každý program jiné, takže si je budeš muset
+naprogramovat sama.</p>
+<p>Zatím pro nás Pyglet zpracovává jen dvě události:
+zavření okna (tlačítkem „✕“, které k okýnkům přidává
+operační systém) a stisk klávesy <kbd>Esc</kbd>,
+který taky zavře okno.
+Po zavření okna skončí smyčka událostí
+(funkce <code>pyglet.app.run()</code>)
+a program může pokračovat.</p>
+<h2>Text</h2>
+<p>Klávesa <kbd>Esc</kbd> není příliš zajímavá.
+Zkusme reagovat i na jiné klávesy.</p>
+<p>V Pygletu se na události reaguje tak, že napíšeš
+funkci a pak ji <em>zaregistruješ</em> (angl. <em>register</em>) – řekneš
+Pygletu, aby ji vždy v pravý čas zavolal.
+Události, která nastane, když uživatel píše na klávesnici,
+se v Pygletu říká <code>on_text</code> a zpracovává se takto:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">zpracuj_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span><span class="n">on_text</span><span class="o">=</span><span class="n">zpracuj_text</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>Co to dělá? <code>window.push_handlers(on_text=zpracuj_text)</code>
+řekne Pygletu, že když uživatel něco napíše do našeho okna,
+má Pyglet zavolat funkci <code>zpracuj_text</code>.
+Tahle funkce pak dostane jako argument text, který uživatel napsal.</p>
+<p>Všimni si, že při registraci nepíšeme
+<code>zpracuj_text</code> se závorkami, ačkoli jsme si
+<a href="/2017/pyladies-brno-jaro-po/beginners/functions/">kdysi</a>
+říkaly, že funkce se mají volat.
+Vzpomínáš na tenhle příklad? Možná ti tehdy připadal zvláštní.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sin</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sin</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sin</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div><p>Teď, když známe kromě čísel, řetězců a
+<code>True</code>/<code>False</code> i soubory, seznamy,
+<var>n</var>-tice a kdo ví jaké jiné typy, si můžeme říct,
+že funkce je v Pythonu hodnota jako každá jiná.
+Čísla se dají násobit, řetězce zapisovat do souboru,
+ze souborů se dá číst – a funkce jsou zvláštní jen tím,
+že se dají zavolat.
+Než ale takovou funkci zavoláme, můžeme ji, tu samotnou
+funkci, třeba přiřadit do proměnné:</p>
+<div class="highlight"><pre><span></span><span class="n">vypis</span> <span class="o">=</span> <span class="nb">print</span>
+<span class="n">vypis</span><span class="p">(</span><span class="s2">"Ahoj světe!"</span><span class="p">)</span>
+</pre></div><p>nebo předat jako argument jiné funkci:</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
+</pre></div><p>No a funkce <code>window.push_handlers</code> je přímo
+dělaná na to, že jí předáš funkci.
+Proč?
+Pyglet nepotřebuje jeden výsledek funkce
+<code>zpracuj_text</code> – ten moc k ničemu není.
+A navíc tu funkci teď ani nemůžeme zavolat; nemáme
+vhodný argument <code>text</code>.
+Proto Pygletu dáme samotnou funkci, kterou bude sám
+volat, kdykoli uživatel stiskne klávesu.</p>
+<h2>Čas ⏲</h2>
+<p>Ještě jednu událost zpracujme, než se přesuneme ke grafice.</p>
+<p>Bude to takzvaný <em>tik</em> hodin
+(angl. <em>clock tick</em>).
+To je událost, která nastává pravidelně po nějakém čase.</p>
+<p>Funkce pro tiky se registruje trochu jinak než <code>on_text</code>:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">tik</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">tik</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">zpracuj_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span><span class="n">on_text</span><span class="o">=</span><span class="n">zpracuj_text</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>Co to dělá? <code>pyglet.clock.schedule_interval(tik, 1/30)</code>
+řekne Pygletu, že má zavolat funkci <code>tik</code> každou
+třicetinu (<code>1/30</code>) vteřiny.</p>
+<p>A funkce <code>tik</code> dostane jeden argument – kolik času
+uplynulo od posledního zavolání.
+Většinou to není přesně 1/30 vteřiny, ale něco víc.
+Počítač má i jiné věci na práci, takže se k naší aplikaci
+nemusí dostat hned; a taky Pythonu trvá nějakou tu
+tisícinu vteřiny než zařídí samotné zavolání naší funkce.</p>
+<div class="admonition note"><p>A proč vlastně třicetina vteřiny?
+Je to kvůli tomu, že potom budeme stavět animace.
+Když se nám před očima vystřídá 30 obrázků za vteřinu,
+mozek si je spojí a vznikne iluze plynulého pohybu.
+<br>
+Většina filmů používá jen 24 obrázků za vteřinu;
+realistické 3D hry až 60.</p>
+</div><h2>Vykreslování 🖌</h2>
+<p><img src="/2017/pyladies-brno-jaro-po/intro/pyglet/static/had.png" alt="" style="display:block;float:right;"></p>
+<p>Program, který vypisuje na terminál spoustu čísel,
+není asi zas tak zajímavý.
+Téma téhle stránky je ale grafika, tak se začněme od
+terminálu odpoutávat. Pojďme kreslit.</p>
+<p>Najdi si na Internetu nějaký obrázek. Ne moc velký,
+tak 3cm, ať je kolem něj v našem černém okýnku dost
+místa, a nejlépe ve formátu PNG. Začni třeba na
+<a href="https://www.google.cz/search?tbs=ift:png&amp;tbm=isch&amp;q=snake+icon">téhle stránce</a>.
+Ale nevybírej obrázek, který je celý černý, protože by v našem černém okně
+nebyl vidět.
+Ulož si ho do adresáře, odkud spouštíš svůj pythonní
+program. Já mám třeba obrázek hada v souboru <code>had.png</code>.</p>
+<p>Pak obrázek vykresli (použij jméno souboru se svým obrázkem):</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">tik</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">tik</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">zpracuj_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">obrazek</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'had.png'</span><span class="p">)</span>
+<span class="n">had</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">obrazek</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">vykresli</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span>
+    <span class="n">on_text</span><span class="o">=</span><span class="n">zpracuj_text</span><span class="p">,</span>
+    <span class="n">on_draw</span><span class="o">=</span><span class="n">vykresli</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>Povedlo se?</p>
+<p>Vysvětleme si, co se tady děje:</p>
+<ul>
+<li><code>obrazek = pyglet.image.load('had.png')</code> načte ze souboru obrázek</li>
+<li><code>had = pyglet.sprite.Sprite(obrazek)</code>
+vytvoří speciální objekt <a href="https://cs.wikipedia.org/wiki/Sprite_%28po%C4%8D%C3%ADta%C4%8Dov%C3%A1_grafika%29">Sprite</a>,
+který určuje, že tento obrázek chceme „posadit“
+na určité místo v černém okýnku.
+Když neuděláme nic dalšího, bude obrázek čekat v levém rohu.</li>
+<li>Funkce <code>vykresli()</code> se stará o vykreslení okna – výstup našeho programu.
+Volá se vždycky, když je potřeba okno překreslit –
+například když okno minimalizuješ a pak vrátíš
+nebo přesuneš částečně ven z obrazovky a pak dáš zase zpět.
+A nebo když budeme něco animovat.</li>
+</ul>
+<div class="admonition note"><p>Některé operační systémy si pamatují i obsah oken,
+které nejsou vidět, ale není radno na to spoléhat.</p>
+</div><ul>
+<li><code>window.clear()</code> vyčistí okno – natře ho černou barvou a smaže
+všechno, co v něm bylo předtím.</li>
+</ul>
+<div class="admonition note"><p>Na spoustě počítačů tohle není potřeba.
+Ale je lepší psát programy tak, aby
+běžely správně kdekoli.</p>
+</div><ul>
+<li><code>had.draw()</code> nakreslí obrázek pomocí předpřipraveného <em>spritu</em> <code>had</code>.</li>
+<li><code>window.push_handlers(on_draw=vykresli)</code> zaregistruje funkci <code>vykresli</code> –
+řekne Pygletu, aby ji volal vždy, když je třeba.
+<br>
+Když potřebuješ zaregistrovat pro jedno okno
+víc funkcí na obsluhu událostí,
+dají se dát funkci <code>push_handlers</code>
+takhle najednou.</li>
+</ul>
+<p>Jakékoli kreslení se <em>musí</em> dělat v rámci kreslící funkce,
+kterou Pyglet volá z <code>on_draw</code>.
+Jinde funkce jako <code>clear</code> a <code>draw</code> nebudou fungovat správně.</p>
+<h2>Animace</h2>
+<p>Pojď si teď se Spritem trochu pohrát.</p>
+<p>Do funkce <code>zpracuj_text</code> dej místo printu tento příkaz:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">zpracuj_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">150</span>
+</pre></div><p>Náš Sprite má <em>atribut</em> (angl. <em>attribute</em>)
+<code>x</code>, který určuje jeho <var>x</var>-ovou souřadnici –
+jak moc je vpravo od okraje okna.
+Tenhle atribut se dá nastavit, jak budeš chtít – nejčastěji
+v reakci na nějakou událost, ale často se nastavuje
+i na začátku programu.</p>
+<p>Zajímavé je zkusit k <code>x</code> něco přičíst při každém tiknutí hodin.
+Dokážeš předpovědět, co udělá tenhle kód?</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">tik</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="mi">20</span>
+</pre></div><p>Nebojíš-li se matematiky, naimportuj <code>math</code>
+a nech obrázek, ať se pohybuje podle nějaké funkce:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">tik</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="mi">20</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">+</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div><p>Co se stane, když začneš měnit ta čísla?</p>
+<p>Co se stane, když zkusíš podobně nastavovat atribut <code>rotation</code>?</p>
+<h2>Zavolej později</h2>
+<p><img src="/2017/pyladies-brno-jaro-po/intro/pyglet/static/had2.png" alt="" style="display:block;float:right;"></p>
+<p>Pyglet umí kromě opakovaného „tikání“ zavolat funkci
+jednorázově, za určitou dobu.</p>
+<p>Stáhni si (nebo vytvoř) druhý obrázek. Já mám druhého
+hada, tentokrát s trochu natočenou hlavou a ocasem.</p>
+<p>Až budeš mít obrázek v adresáři s programem,
+přidej těsně před <code>pyglet.app.run()</code> tenhle kus kódu:</p>
+<div class="highlight"><pre><span></span><span class="n">obrazek2</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'had2.png'</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">zmen</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">obrazek2</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">zmen</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div><p>Volání <code>schedule_once(zmen, 1)</code> říká Pygletu,
+že za jednu vteřinu má zavolat funkci <code>zmen</code>.
+A funkce změní obrázek – stejně jako se předtím měnily
+souřadnice.</p>
+<p><code>schedule_once</code> se dá volat i v rámci obsluhy jiné události. Zkus funkci <code>zmen</code>
+nahradit tímhle:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">zmen</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">obrazek2</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">zmen_zpatky</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">zmen_zpatky</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">obrazek</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">zmen</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+</pre></div><h2>Klik 🐭</h2>
+<p>Poslední věc, na kterou se tady naučíme reagovat, je klikání.
+Těsně před <code>window.push_handlers</code> napiš funkci:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">klik</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tlacitko</span><span class="p">,</span> <span class="n">mod</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+</pre></div><p>… a pak v <code>push_handlers</code> ji zaregistruj
+pomocí řádku <code>on_mouse_press=klik,</code>.</p>
+<p>Co znamená který argument, to zkus zjistit sama.</p>
+<div class="admonition note"><p class="admonition-title">Nápověda</p>
+<ul>
+<li>Dokud příkazovou řádku neopustíš úplně, bude fungovat <code>print</code>!
+Kdykoliv budeš chtít zjistit nějakou hodnotu, prostě si ji vypiš.</li>
+<li>Kolik má myš tlačítek?</li>
+<li>Jak se projeví <kbd>Shift</kbd>+klik?</li>
+</ul>
+</div><h2>Pokračování příště</h2>
+<p>Koukám že kódu už je dnes tak akorát na ukončení lekce:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">tik</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="mi">20</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">tik</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">zpracuj_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">150</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">had</span><span class="o">.</span><span class="n">rotation</span> <span class="o">+</span> <span class="mi">10</span>
+
+<span class="n">obrazek</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'had.png'</span><span class="p">)</span>
+<span class="n">had</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">obrazek</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">vykresli</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">klik</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tlacitko</span><span class="p">,</span> <span class="n">mod</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tlacitko</span><span class="p">,</span> <span class="n">mod</span><span class="p">)</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span>
+    <span class="n">on_text</span><span class="o">=</span><span class="n">zpracuj_text</span><span class="p">,</span>
+    <span class="n">on_draw</span><span class="o">=</span><span class="n">vykresli</span><span class="p">,</span>
+    <span class="n">on_mouse_press</span><span class="o">=</span><span class="n">klik</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">obrazek2</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'had2.png'</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">zmen</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">obrazek2</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">zmen_zpatky</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">zmen_zpatky</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">had</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">obrazek</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">zmen</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">zmen</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>Se vstupem z klávesnice a myši, časováním a vykreslováním
+Spritu si vystačíš u leckteré hry nebo grafické aplikace.</p>
+<p>Až budeš nějakou hru dělat, zkus udržovat
+stav aplikace v seznamech a <var>n</var>-ticích (případně
+slovnících a třídách, které se naučíme později).
+Jedna funkce by měla umět takový stav vykreslit a
+jiné s ním pak budou manipulovat.
+Tyhle dvě sady funkcí můžeš mít i v jiných souborech,
+aby se nezapletly dohromady.</p>
+<p>Zajímá-li tě toto téma, zkus si zahrát přiloženou hru
+<a href="/2017/pyladies-brno-jaro-po/intro/pyglet/static/pong.py">Pong</a>,
+která ukazuje některé další
+možnosti Pygletu: psaní textu, kreslení obdélníků
+a obsluhu jednotlivých kláves (např. šipek).
+Na první pohled může její kód vypadat složitě,
+ale zkus si k němu sednout a s pomocí komentářů ho pochopit.
+Kdyby komentáře nestačily, jsou k Pongu připravené
+i <a href="/2017/pyladies-brno-jaro-po/projects/pong/">podrobné materiály</a>.</p>
+<p>To, co jsme tu probraly a pár věcí navíc,
+je shrnuto v <a href="https://pyvec.github.io/cheatsheets/pyglet/pyglet-basics-cs.pdf">taháku na Pyglet</a>,
+který si můžeš stáhnout a vytisknout.</p>
+<p>A chceš-li se do Pygletu ponořit hlouběji,
+existuje pro něj <a href="http://pyglet.readthedocs.org/en/latest/index.html">dokumentace</a>.
+Nebude-li ti v ní něco jasné, zeptej se!</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/intro/pyglet/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2017/pyladies-brno-jaro-po/sessions/pyglet/">↑ <span class="d-none d-sm-inline">Lekce: Grafika</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2017/pyladies-brno-jaro-po/projects/pong/"><span class="d-none d-sm-inline">Praktické cvičení: Pong (bonus)</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2017-pyladies-brno-jaro-po/lessons/intro/pyglet/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2015-2017.</p>
+    
+        <p>Ikonku hada vytvořil Martin Berube.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

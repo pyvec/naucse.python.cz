@@ -1,0 +1,833 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: MicroPython
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/beginners/micropython/" />
+
+
+        <style>
+            
+    
+        .lesson-content .part-green {
+    outline: 2px solid hsla(113, 100%, 50%, 1);
+    background-color: hsla(113, 100%, 50%, 0.25)
+    }
+.lesson-content .part-cyan {
+    outline: 2px solid hsla(180, 100%, 50%, 1);
+    background-color: hsla(180, 100%, 50%, 0.25)
+    }
+.lesson-content .part-blue {
+    outline: 2px solid hsla(236, 100%, 50%, 1);
+    background-color: hsla(236, 100%, 50%, 0.25)
+    }
+.lesson-content .part-yellow {
+    outline: 2px solid hsla(60, 100%, 50%, 1);
+    background-color: hsla(60, 100%, 50%, 0.25)
+    }
+.lesson-content .part-orange {
+    outline: 2px solid hsla(42, 100%, 50%, 1);
+    background-color: hsla(42, 100%, 50%, 0.25)
+    }
+.lesson-content .part-red {
+    outline: 2px solid hsla(0, 100%, 50%, 1);
+    background-color: hsla(0, 100%, 50%, 0.25)
+    }
+.lesson-content .pull-right, .lesson-content .pull-left {
+    margin: 1em
+    }
+.lesson-content .highlight {
+    background-color: hsla(0, 100%, 50%, 0.1)
+    }
+.lesson-content .img-fluid {
+    max-width: 100%
+    }
+.lesson-content .highlight-nocolor {
+    background-color: hsla(60, 100%, 50%, 0.75)
+    }
+.lesson-content .highlight-red {
+    background-color: hsla(0, 100%, 50%, 0.25)
+    }
+.lesson-content .highlight-green {
+    background-color: hsla(113, 100%, 50%, 0.25)
+    }
+.lesson-content .highlight-blue {
+    background-color: hsla(236, 100%, 50%, 0.25)
+    }
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2017/pyladies-brno-podzim-po/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2017/pyladies-brno-podzim-po/sessions/micropython/">MicroPython</a>
+
+> <a href="/2017/pyladies-brno-podzim-po/beginners/micropython/">MicroPython</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>MicroPython na malém zařízení</h1>
+<div class="admonition note"><p class="admonition-title">Tahle sekce bohužel nejde jednoduše projít z domu.</p>
+<p>Využíváme speciální vybavení, které je potřeba nejdřív
+sehnat. Máš-li možnost se dostat na sraz, nebo
+aspoň kontaktovat organizátory, doporučujeme shánět
+spíš tímto způsobem.
+Případně jde případný hardware objednat přes Internet,
+typicky z čínských e-shopů.</p>
+</div><div class="admonition note"><p>Materiály byly připraveny pro celodenní workshop;
+na kratší lekcích může být něco vynecháno.</p>
+</div><p><span class="figure float-right"><a href="/2017/pyladies-brno-podzim-po/beginners/micropython/static/nodemcu-devkit.jpg"><img src="/2017/pyladies-brno-podzim-po/beginners/micropython/static/nodemcu-devkit.jpg" alt="LoLin NodeMCU v3 – Vývojová deska s čipem ESP8266"></a></span></p>
+<p>Dnes budeme programovat malé zařízení –
+tak malé, že ho pohodlně schováš v ruce.
+Konkrétně budeme používat „chytrou destičku”, modul zvaný
+<em>NodeMCU Devkit</em>, která by měla ležet před tebou.
+Než ji vyndáš z obalu, měla by ses <em>vybít</em>:
+dotkni se něčeho kovového, co je spojeno se zemí,
+třeba radiátoru nebo kovové části schránky nějakého
+spotřebiče, který je zapojený do zásuvky.
+Tím se zbavíš statické elektřiny, která by mohla
+malinké zařízení poškodit.
+Pak přístroj vyndej z obalu. Snaž se ho držet za
+hrany a příliš se nedotýkat elektroniky a kovových
+částí.</p>
+<div class="admonition note"><p>Obal bude nejspíš roztržený, protože organizátoři
+na destičku před začátkem kurzu nainstalovali
+MicroPython.</p>
+</div><p>Teď, když destičku držíš v ruce, si
+pojďme projít její základní součásti.</p>
+<p><br style="clear: both;"></p>
+<p><span class="figure float-left"><a href="/2017/pyladies-brno-podzim-po/beginners/micropython/static/nodemcu-popisky.svg"><img src="/2017/pyladies-brno-podzim-po/beginners/micropython/static/nodemcu-popisky.svg" alt="Obrázek desky NodeMCU DevKit"></a></span></p>
+<p>Nejdůležitější část vývojové desky je v oplechované
+krabičce s logem "Wi-Fi" a "FCC":
+<span class="part-green">mikroprocesor ESP8266</span>.
+To je „mozek” celého zařízení, který – když je
+správně naprogramován – umí provádět pythonní
+příkazy a programy.
+Procesor sedí na malé destičce, na které je ještě
+<span class="part-cyan">anténa</span>, kterou
+přístroj může komunikovat s okolím.</p>
+<p>Tahle malá destička se dá použít i samostatně;
+všechno ostatní, co kolem ní zabírá tolik místa,
+nám jen ulehčí hraní a umožní se zařízením
+jednoduše komunikovat a krmit ho elektřinou.</p>
+<p>Komunikace a „krmení” se děje přes
+<span class="part-red">μUSB konektor</span>,
+do kterého zapojíš kabel ze svého počítače.
+Když je modul naprogramovaný, stačí ho místo do
+počítače zapojit do nabíječky či externího zdroje
+(powerbanky) a bude fungovat samostatně.</p>
+<p>Kolem USB konektoru jsou dvě tlačítka:
+<code class="part-orange">RST</code>, kterým se destička restartuje
+(skoro jako kdybys ho odpojila a zase zapojila, což
+se hodí, když něco uděláš špatně a modul „zamrzne”),
+a <code class="part-yellow">FLASH</code>, o kterém si povíme později.</p>
+<p>Po stranách modulu jsou dvě řady
+<span class="part-blue">„nožiček”</span>, na které
+se dá napojit celá řada nejrůznějších hraček.
+Zkontroluj si, jestli jsou všechny nožičky rovné;
+kdyby byla některá ohnutá, tak ji (nejlépe s pomocí
+kouče) narovnej nebo si vezmi jinou destičku.</p>
+<p><br style="clear: both;"></p>
+<h2>Instalace</h2>
+<p>Bohužel se dnes neobejdeme bez instalace. Musíš naučit
+svůj počítač, aby si s destičkou povídal.</p>
+<p>Nejdřív si do virtuálního prostředí nainstaluj program Ampy od Adafruitu.
+Ten budeme později používat na nahrávání kódu:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(env)</span><span class="gp">$ </span>python -m pip install adafruit-ampy
+</pre></div><p>Pak propoj modul s počítačem přes USB kabel,
+jako kdybys připojovala třeba mobil.</p>
+<div class="admonition note"><p>Je potřeba použít kvalitní datový kabel.
+Nekvalitní kabely (např. spousta kabelů k
+nabíječkám) jsou často nepoužitelné.</p>
+</div><p>Dál postupuj podle operačního systému na svém počítači.
+Kdyby něco nefungovalo, poraď se s koučem.
+Původní (anglický) návod k této části je na
+<a href="http://docs.micropython.org/en/latest/pyboard/pyboard/tutorial/repl.html">stránkách MicroPythonu</a>.</p>
+<h3>Linux</h3>
+<p>Na správně nastaveném počítači stačí zadat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>picocom -b <span class="m">115200</span> --flow n /dev/ttyUSB0
+</pre></div><p>Pokud příkaz neskončí s chybou, stiskni tlačítko <code>RST</code> na modulu.
+Měly by se nakonec objevit tři zobáčky, <code>&gt;&gt;&gt;</code>.</p>
+<p>Většina počítačů ale na komunikaci s malými zařízeními nastavená není.
+Skončí-li příkaz <code>picocom</code> s chybou,
+oprav ji podle následujícího návodu a zkus to znova.
+(Možná bude potřeba vyřešit víc než jednu chybu.)</p>
+<ul>
+<li>Nemáš-li příkaz <code>picocom</code> nainstalovaný,
+je potřeba ho nainstalovat (např.
+<code>sudo dnf install picocom</code> nebo
+<code>sudo apt-get install picocom</code>).</li>
+<li>Pokud <code>picocom</code> skončil s chybou
+<code>No such file or directory</code>, pravděpodobně
+je potřeba k zařízení přistupovat přes jiný soubor.
+Použij příkaz <code>dmesg | tail</code>, který vypíše něco jako:</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="gp">  $ </span>dmesg <span class="p">|</span> tail
+<span class="go">  [703169.886296] ch341 1-1.1:1.0: device disconnected</span>
+<span class="go">  [703176.972781] usb 1-1.1: new full-speed USB device number 45 using ehci-pci</span>
+<span class="go">  [703177.059448] usb 1-1.1: New USB device found, idVendor=1a86, idProduct=7523</span>
+<span class="go">  [703177.059454] usb 1-1.1: New USB device strings: Mfr=0, Product=2, SerialNumber=0</span>
+<span class="go">  [703177.059457] usb 1-1.1: Product: USB2.0-Serial</span>
+<span class="go">  [703177.060474] ch341 1-1.1:1.0: ch341-uart converter detected</span>
+<span class="go">  [703177.062781] usb 1-1.1: ch341-uart converter now attached to ttyUSB0</span>
+</pre></div><p>Máš-li místo <code>ttyUSB0</code> něco jiného, v příkazu <code>picocom</code> to použij místo
+  <code>ttyUSB0</code>.</p>
+<ul>
+<li><p>Pokud <code>picocom</code> skončil s chybou <code>Permission denied</code>, potřebuješ získat
+přístup k souboru zařízení.
+To znamená přidat se do příslušné skupiny:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo usermod -a -G dialout <span class="k">$(</span>whoami<span class="k">)</span>
+</pre></div><p>Poté je potřeba se znovu přihlásit, třeba příkazem:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su - <span class="k">$(</span>whoami<span class="k">)</span>
+</pre></div><p>Pro ověření spusť příkaz <code>groups</code>; v jeho výstupu by mělo být <code>dialout</code>.
+Například:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>groups
+<span class="go">kristyna lp wheel dialout mock</span>
+</pre></div><p>Kdyby to nefungovalo, na srazu ti může pomoci nějaký kouč.
+Jestli procházíš materiály z domu a nepovedlo
+se ti přidat do skupiny, dá se to obejít tak,
+že místo <code>picocom</code> použiješ <code>sudo picocom</code>.</p>
+</li>
+</ul>
+<h3>Windows</h3>
+<p>MicroPython se přihlásí jako COM port. Otevři
+správce zařízení a zjisti, který COM port to je (kouč s tím pomůže).</p>
+<p>Nebylo-li zařízení nalezeno, je potřeba nainstalovat
+<em>driver</em>, který je ke stažení třeba
+<a href="http://kig.re/2014/12/31/how-to-use-arduino-nano-mini-pro-with-CH340G-on-mac-osx-yosemite.html">z tohoto blogu</a>,
+případně z <a href="https://onedrive.live.com/?authkey=%21AKLO1lLajaeTmo4&amp;id=182EF9BC3A8BDDA4%2166743&amp;cid=182EF9BC3A8BDDA4">materiálů pro Arduino workshop</a>.</p>
+<p>Pak si nainstaluj si program
+<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">PuTTY</a>
+(<code>putty.exe</code>) a spusť ho.
+V konfiguračním okýnku zaškrtni <em>Connection Type: Serial</em> a
+do <em>Serial line:</em> zadej svůj COM port.
+Pak přepni v seznamu vlevo na <em>Serial</em> a nastav <em>Speed</em> na <em>115200</em>
+a <em>Flow Control</em> na <em>None</em>:</p>
+<p><span class="figure"><a href="/2017/pyladies-brno-podzim-po/beginners/micropython/static/putty-config.jpg"><img src="/2017/pyladies-brno-podzim-po/beginners/micropython/static/putty-config.jpg" alt="Obrázek nastavení PuTTY"></a></span></p>
+<p>Potom zpátky v kategorii <em>Session</em> můžeš nastavení uložit pro příště:
+do políčka <em>Saved Sessions</em> zadej <em>MicroPython</em> a klikni OK.</p>
+<p>Nakonec klikni <em>Open</em>. Mělo by se otevřít
+okýnko podobné konzoli, kde se, když zmáčkneš
+na modulu <code>RST</code>, objeví nakonec tři zobáčky: <code>&gt;&gt;&gt;</code>.</p>
+<h3>macOS</h3>
+<p>V příkazové řádce zadej:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>screen /dev/tty.usbmodem* <span class="m">115200</span>
+</pre></div><p>a stiskni Enter.
+Pak na modulu zmáčkni <code>RST</code>.
+Měly by se nakonec objevit tři zobáčky, <code>&gt;&gt;&gt;</code>.</p>
+<p>Nejde-li to, je možná potřeba nainstalovat driver. Ten se dá stáhnout
+z <a href="https://tzapu.com/ch340-ch341-serial-adapters-macos-sierra/">tohoto blogu</a>.</p>
+<h2>MicroPython – taky Python</h2>
+<p>Tak jako máš na počítači nainstalovaný operační
+systém, na vývojové desce je takzvaný <em>firmware</em>,
+program, který ovládá všechny ty drátky,
+čipy a světýlka, co v ní jsou.
+My používáme firmware zvaný <em>MicroPython</em>,
+který navíc rozumí jazyku Python a umí provádět pythonní příkazy. Zkus si to!
+Tři zobáčky, které vyskočily v minulém kroku, přišly
+ze zařízení, které teď netrpělivě čeká na příkaz.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">'Hello World'</span><span class="p">)</span>
+<span class="go">Hello World</span>
+</pre></div><p>Téměř vše, co používáš v Pythonu na počítači,
+umí MicroPython taky: čísla, řetězce, seznamy, třídy,
+výjimky, moduly a tak dál.
+Některé detaily ale jsou trochu osekané, aby se všechno
+vešlo do extrémně malého prostoru.
+Zkus si, jak se liší efekt následujících příkazů
+od „velkého” Pythonu:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">math</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+</pre></div><p>Nejdůležitější věc, která je osekaná, je <em>standardní
+knihovna</em> – většina modulů, které na
+počítači můžeš naimportovat, v MicroPythonu chybí.
+U modulů jako <code>turtle</code> je to pochopitelné,
+ale v rámci šetření místem chybí i moduly jako <code>random</code>.
+Většinou to příliš nevadí – malá zařízení se používají
+na jiné věci než ty velké – ale je potřeba si na to
+dát pozor.</p>
+<p>Některé věci ze standardní knihovny se dají najít
+ve zjednodušené formě na jiných místech.
+Například ačkoliv modul <code>random</code> chybí,
+náhodné číslo od 0 do 255 se dá získat pomocí:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">urandom</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">urandom</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">61</span>
+</pre></div><h2>Vstup</h2>
+<p>MicroPython na malé destičce obsahuje některé
+moduly, které jinde nenajdeš. Ten hlavní se jmenuje
+<code>machine</code> a zpřístupňuje základní funkce zařízení. Zkus si:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span>
+<span class="n">pin</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">IN</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pin</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+</pre></div><p>Zmáčkni a drž tlačítko <code>FLASH</code> vedle USB konektoru.
+Přitom pusť <code>print(pin.value())</code> znovu.
+Jak se hodnota změní?</p>
+<p>Jak tomuhle kódu rozumět?
+Třída <code>Pin</code> ti umožňuje ovládat jednotlivé
+„nožičky”, kterými zařízení komunikuje s vnějším
+světem: buď na nich nastavovat napětí, nebo zkoumat
+jestli na nich nějaké napětí je.</p>
+<p><code>Pin(0, Pin.IN)</code> vytvoří objekt třídy Pin,
+který bude načítat data z „nožičky” číslo 0.
+(<code>IN</code> znamená načítání – informace jdou <em>do</em> procesoru).
+Funkce <code>pin.value()</code> změří napětí na dané
+„nožičce” a vrátí buď 1 nebo 0 podle toho, jestli nějaké naměřila.</p>
+<p>No a „nožička” číslo 0 je připojená k tlačítku <code>FLASH</code>,
+kterým se tak dá ono napětí ovládat.
+Informace o tom, která nožička je kam připojená,
+máš na <a href="https://pyvec.github.io/cheatsheets/micropython/nodemcu-cs.pdf">taháku</a> –
+můžeš si zkontrolovat, že Pin(0) u sebe má poznámku FLASH.</p>
+<h2>Obvod</h2>
+<p>Teď na chvíli necháme programování a postavíme si elektrický obvod.
+Vezmi si modrou svítivou diodu (LED, „světýlko”) a
+nepájivé pole („hloupou destičku”).
+Zkusíme světýlko rozsvítit.</p>
+<p>LED rozsvítíš tak, že ji připojíš ke <em>zdroji napětí</em>, například k baterce.</p>
+<p>Jako zdroj napětí můžeme použít i náš modul.
+Ten bere elektřinu přes USB a dává nám ji k dispozici
+na některých svých „nožičkách”:
+konkrétně plus na nožičce označené <code>3V</code>
+a mínus na nožičce označené <code>G</code>.
+Na tyhle nožičky musíš zapojit diodu.</p>
+<p>Připojování diody má jeden háček:
+musíš ji zapojit správným směrem – plus na plus, mínus na mínus.
+Opačně dioda svítit nebude. Dobrá zpráva je, že
+když diodu otočíš špatně, nic se jí nestane.</p>
+<div class="admonition note"><p>Základní vlastnost <em>diody</em> je ta, že pustí
+elektrický proud jen jedním směrem. Svítící dioda
+– <em>angl. Light Emitting Diode, LED</em> – ještě k
+tomu navíc svítí.</p>
+</div><p>Je potřeba rozpoznat rozdíl mezi nožičkami diody.
+<em>Katoda</em> (<code>-</code>) je ta kratší nožička.
+Pouzdro diody je u katody trochu seříznuté
+a vevnitř v pouzdře, když se pozorně podíváš, uvidíš
+u katody větší plíšek.
+Té druhé nožičce se říká anoda (<code>+</code>).</p>
+<p>Tak, teď víš, kam diodu zapojit: katodu (kratší nožičku)
+na <code>G</code> a anodu na <code>3V</code>.</p>
+<p>Držení nožiček diody u nožiček modulu by ti nejspíš
+zaměstnalo obě ruce. Aby sis je uvolnila, použij
+<em>nepájivé pole</em> (angl. <em>breadboard</em>).
+Je v něm spousta dírek, do kterých se dají strkat dráty.
+V rámci každé poloviny destičky je každá řada dírek –
+tedy každá pětice – spojená dohromady.
+Když zapojíš drátky do stejné řady, spojíš je tím.</p>
+<p>Zasuň modul do nepájivého pole. Pak připoj katodu
+do dírky ve stejné řadě, kde je nožička
+<code>3V</code> modulu, a podobně anodu k <code>G</code>.
+Mělo by to vypadat jako na tomto obrázku:</p>
+<p><span class="figure"><a href="/2017/pyladies-brno-podzim-po/beginners/micropython/static/circuits/led_bb.svg"><img src="/2017/pyladies-brno-podzim-po/beginners/micropython/static/circuits/led_bb.svg" alt="diagram zapojení"></a></span></p>
+<p>Potom zapoj USB kabel. Dioda by se měla rozsvítit!</p>
+<p>Zkus si, co se stane, když obě nožičky diody zapojíš ke <code>G</code>.</p>
+<p><span class="figure"><a href="/2017/pyladies-brno-podzim-po/beginners/micropython/static/circuits/led_bb_off.svg"><img src="/2017/pyladies-brno-podzim-po/beginners/micropython/static/circuits/led_bb_off.svg" alt="diagram zapojení"></a></span></p>
+<p>Aby dioda svítila, musí být připojená na dvě místa,
+mezi kterými je takzvaný <em>potenciálový rozdíl</em> — napětí.
+Na nožičce <code>G</code> je 0 voltů; na nožičce
+<code>3V</code> jsou 3,3 volty – je tedy mezi nimi rozdíl 3,3 V, přesně tolik,
+kolik modrá LED potřebuje ke svícení.</p>
+<div class="admonition note"><p>Samotná hodnota napětí nedává smysl – například
+říct, že je na jednom místě 3,3 V je nepřesné.
+Hodnota ve voltech se vždycky musí k něčemu vztahovat;
+vyjadřuje rozdíl mezi dvěma místy.
+V elektronice používáme rozdíl oproti „zemi” – napětí
+na nožičce <code>G</code>. Stanovíme si, že tam je
+0 voltů a ostatní napětí počítáme vzhledem k ní.
+Na nožičce <code>3V</code> je tedy napětí 3,3 V vzhledem k zemi.</p>
+</div><h2>Výstup</h2>
+<p>Proč jsme diodu na to, aby se rozsvítila,
+připojili k modulu a ne jen k baterce?
+Ten modul je trošku složitější zařízení než baterka a jedna důležitá věc,
+kterou umí navíc, je nastavovat napětí na různých nožičkách.
+Umí zařídit, aby se nožička chovala jednou jako <code>3V</code> a jindy jako <code>G</code>.
+Když připojíš diodu mezi <code>G</code> a takovou
+přepínatelnou nožičku, můžeš nastavit, kdy svítí a kdy ne.</p>
+<p>Přepoj anodu diody z <code>3V3</code> na <code>D5</code>. Katodu nech na <code>G</code>.</p>
+<p>Máš-li zapojeno, znovu se připoj k MicroPythonu a zadej následující kód:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span>
+<span class="n">pin</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">pin</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">pin</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div><p>Když objekt Pin vytvoříš s <code>Pin.OUT</code>, MicroPython na něm bude nastavovat
+napětí – buď 3,3 V (<code>value(1)</code>) nebo 0 V (<code>value(0)</code>).
+A tak se dá s diodou blikat.</p>
+<div class="admonition note"><p>Číslování nožiček je bohužel dvojí – nožička
+označená jako <code>D5</code> má v procesoru přiřazené číslo 14.
+Třída <code>Pin</code> v MicroPythonu používá číslování procesoru.
+Naštěstí máš <a href="https://pyvec.github.io/cheatsheets/micropython/nodemcu-cs.pdf">tahák</a>,
+kde snadno dohledáš že <code>D5</code> a <code>Pin(14)</code> jsou dvě jména stejné nožičky.</p>
+</div><p>Zvládneš napsat program, který zařídí, aby dioda
+svítila když je zmáčknuté tlačítko <code>FLASH</code>, jinak ne?</p>
+<div class="admonition note"><p>Nápověda: Můžeš pořád dokola zjišťovat stav tlačítka
+a nastavovat podle něj stav LED.</p>
+</div><div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2017/pyladies-brno-podzim-po/beginners/micropython/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span>
+<span class="n">pin_diody</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">pin_tlacitka</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">IN</span><span class="p">)</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">pin_diody</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pin_tlacitka</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+</pre></div>
+    </div>
+</div><h2>Pouštění kódu ze souboru</h2>
+<p>Jak začneš psát trochu složitější programy,
+mohlo by se stát, že tě konzole MicroPythonu začne trochu štvát.
+Špatně se v ní opravují chyby a automatické odsazování funguje jen většinou.
+Pojďme se podívat, jak naštvání předejít.</p>
+<p>Doporučuji si větší kousky kódu – a určitě takové,
+ve kterých je nějaký cyklus, podmínka či funkce –
+psát v textovém editoru a do modulu pak posílat celý soubor.</p>
+<p>Zkus si to. Do souboru <code>led_podle_tlacitka.py</code> dej následující kód:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="n">pin_diody</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">pin_diody</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">pin_diody</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+</pre></div><p>Potom zavři konzoli (<code>picocom</code>, PuTTY nebo <code>screen</code>).</p>
+<p>K pouštění programu použijeme <code>ampy</code>, který jsi nainstalovala dříve.
+Ke spuštění budeš potřebovat znát port:</p>
+<ul>
+<li>Linux: port používáš v příkazu <code>picocom</code>, např. <code>/dev/ttyUSB0</code></li>
+<li>Windows: port používáš v PuTTY, např. <code>COM13</code></li>
+<li>macOS: port používáš v příkazu <code>screen</code>, např. <code>/dev/tty.usbmodem*</code></li>
+</ul>
+<p><code>ampy</code> spusť následujícím příkazem, jen za <code>PORT</code> doplň svůj port:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>ampy -p PORT run led_podle_tlacitka.py
+</pre></div><p>Program by měl blikat diodou.
+Využívá k tomu funkci <code>time.sleep()</code>, která počká daný počet vteřin –
+tedy <code>time.sleep(1/2)</code> zastaví program na půl sekundy.</p>
+<h2>Velice rychle blikat</h2>
+<p>Jedna z nevýhod „našeho” čipu ESP8266 je, že na svých
+nožičkách umí nastavovat jen dvě hodnoty – 3,3 V a zem, jedničku a nulu.
+Dioda tak buď svítí, nebo nesvítí – nedá se
+nastavit poloviční intenzita, nedá se plynule rozsvěcet nebo zhasínat.</p>
+<p>Tuhle nevýhodu ale můžeme obejít s využitím dvou faktů.
+Ten první je, že diodám – na rozdíl od žárovek nebo
+zářivek – nevadí časté vypínání a zapínání.
+Opotřebovávají se spíš svícením a časem.
+Druhý je, že lidské oko nestačí zaznamenat pohyby a
+změny, které probíhají rychleji než zhruba za
+setinu vteřiny.</p>
+<p>Pojďme tedy velice rychle blikat – a oblafnout tak naše oči a mozky!</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="n">pin_diody</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">pin_diody</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># vypnout LED</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>  <span class="c1"># počkat dvě setiny vteřiny</span>
+    <span class="n">pin_diody</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># zapnout LED</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>  <span class="c1"># počkat jednu setinu vteřiny</span>
+</pre></div><p>Zkus si pohrát s hodnotami pro <code>time.sleep</code>.</p>
+<div class="admonition note"><p>Takhle fungují prakticky všechna stmívatelná LED
+světla – rychlé blikání je ekonomičtější a přesnější
+než např. nastavování nižšího napětí.</p>
+</div><p>Dokážeš napsat program, který diodu postupně, plynule rozsvítí?</p>
+<!-- XXX: Solution? -->
+
+<p>Protože je takovéhle rychlé blikání užitečné ve spoustě
+různých situací, obsahuje MicroPython speciální funkci: umí blikat samostatně.
+Nastavíš, jak rychle má blikat a jak dlouho má trvat
+každé bliknutí, a MicroPython pak bude blikat automaticky,
+zatímco tvůj program se může věnovat něčemu jinému.</p>
+<p>Téhle funkci se říká <em>pulzně šířková modulace</em> –
+angl. <em>Pulse Width Modulation</em>, neboli <em>PWM</em>.
+Z MicroPythonu jde tahle funkce ovládat pomocí třídy
+<code>machine.PWM</code>.
+Každý objekt téhle třídy umí ovládat jednu nožičku
+a dají se u něj nastavit dva parametry:</p>
+<ul>
+<li><code>freq</code> – frekvence, tedy kolikrát za sekundu se LED rozsvítí a zase zhasne a</li>
+<li><code>duty</code> – anglicky <em>duty cycle</em>, česky <em>střída</em>, nastavuje „šířku pulzu”,
+tedy jak dlouho bude dioda při každém bliknutí svítit.
+Hodnota <code>duty</code> může být od 0, kdy LED
+nesvítí vůbec, do 1023, kdy svítí celou dobu.
+Nastavíš-li <code>duty=512</code>, bude dioda
+svítit s poloviční intenzitou (512 = 1024/2).</li>
+</ul>
+<p>Nastavíš-li <code>PWM(freq=50, duty=512)</code>, dioda bude blikat 50× za sekundu.
+Vždycky jednu setinu vteřiny bude svítit a na jednu
+setinu vteřiny zhasne.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span><span class="p">,</span> <span class="n">PWM</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+
+<span class="n">pin_diody</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">pwm</span> <span class="o">=</span> <span class="n">PWM</span><span class="p">(</span><span class="n">pin_diody</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">duty</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span>
+</pre></div><p>Zkus nastavit i nižší frekvenci, třeba 3 nebo 1, ať blikání vidíš přímo!</p>
+<p>PWM se dá zrušit metodou <code>pwm.deinit()</code>.
+Jako s otvíráním souborů, je dobré po sobě uklidit –
+i když zatím můžeš jednoduše restartovat celé zařízení.</p>
+<h2>Tóny a melodie</h2>
+<p>Vezmi si další součástku – piezobudič, neboli „bzučítko”.</p>
+<p>Tahle malá věc obsahuje speciální materiál, který se,
+když ho připojíš ke zdroji napětí, trošku roztáhne.
+Roztažením zatlačí na okolní vzduch a vytvoří tlakovou
+vlnu, která může doputovat až k tvým uším.</p>
+<p>Zkus si to – když bzučítko připojíš na <code>3V</code>
+a <code>G</code> (tentokrát je jedno kterým směrem), uslyšíš tiché lupnutí.
+A podobné lupnutí uslyšíš když součástku zase odpojíš.</p>
+<p>Co se stane, když budeš napětí připojovat a odpojovat, řekněme, 32× za vteřinu?</p>
+<p>Nebo 65×?</p>
+<p>Nebo některou z těchto frekvencí?
+Hz – <a href="https://en.wikipedia.org/wiki/Hertz">Hertz</a> – je jednotka frekvence;
+„49 Hz“ znamená „49× za sekundu“.</p>
+<table>
+<thead><tr>
+<th style="text-align:left">Nota </th>
+<th style="text-align:right">Frekvence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">C1</td>
+<td style="text-align:right">32,70 Hz</td>
+</tr>
+<tr>
+<td style="text-align:left">D</td>
+<td style="text-align:right">36,71 Hz</td>
+</tr>
+<tr>
+<td style="text-align:left">E</td>
+<td style="text-align:right">41,20 Hz</td>
+</tr>
+<tr>
+<td style="text-align:left">F</td>
+<td style="text-align:right">43,65 Hz</td>
+</tr>
+<tr>
+<td style="text-align:left">G</td>
+<td style="text-align:right">49,00 Hz</td>
+</tr>
+<tr>
+<td style="text-align:left">A</td>
+<td style="text-align:right">55,00 Hz</td>
+</tr>
+<tr>
+<td style="text-align:left">H</td>
+<td style="text-align:right">61,74 Hz</td>
+</tr>
+<tr>
+<td style="text-align:left">C2</td>
+<td style="text-align:right">65,41 Hz</td>
+</tr>
+</tbody>
+</table>
+<p>Naprogramuj písničku! Potřebuješ-li víc not, pusť si <a href="/2017/pyladies-brno-podzim-po/beginners/micropython/static/noty.py">program</a>,
+který vypočítá další frekvence.</p>
+<h2>Další ovládání</h2>
+<p>Teď si vezmi dvě tlačítka a připoj je k modulu:
+<code>GND</code> vždycky na <code>G</code>, <code>VCC</code> vždycky na <code>3V</code> a
+<code>OUT</code> u jednoho tlačítka na <code>D1</code> a u druhého na <code>D2</code>.</p>
+<p>Tlačítko funguje tak, že OUT spojí buď s VCC (5V)
+nebo GND, podle toho, jestli je tlačítko stisknuté.
+(A navíc to taky teda svítí, ale to je teď vedlejší.)</p>
+<p>Zkus si, jestli se zvládneš MicroPythonu zeptat, jestli je tlačítko zapnuté.
+Mělo by to být podobné jako u příkladu s tlačítkem FLASH.</p>
+<p>Zvládneš napsat program, který bude bzučet bzučítkem
+a přitom se jedním tlačítkem bude dát zvyšovat tón a druhým snižovat?</p>
+<p>Program si (na svém počítači) ulož, ať se k němu můžeš vrátit.</p>
+<h2>Rotace</h2>
+<p>Čas na další součástku! Tentokrát to bude <em>servomotor</em>.</p>
+<p>Servomotor je součástka, která má v sobě zabudovaný
+ovladač, se kterým si naše zařízení může povídat
+jednoduchým „elektronickým jazykem” – <em>protokolem</em>.
+Motorku můžeš posílat impulzy a podle délky impulzu
+se servomotor natočí.
+Při krátkých impulzech se natočí víc na jednu stranu,
+při dlouhých na druhou.
+Impulzy musíš posílat neustále, jinak se servomotor
+vypne.</p>
+<p>Na rozdíl od bzučítka, kde o výšce tónu rozhodovala
+frekvence (<code>freq</code>) – kolikrát za vteřinu
+se ozve lupnutí – a LED, kde o intenzitě rozhodovala
+střída (<code>duty</code>) – poměr mezi dobou kdy
+dioda svítí a kdy nesvítí, u servomotoru rozhoduje
+tzv. <em>šířka pulzu</em>: jak dlouho se napětí udrží
+na 3,3 V, než se přepne zpátky na 0 V.
+<!-- XXX: Actual typical pulse widths --></p>
+<p>V praxi to znamená, že můžeš nastavit <code>freq</code>
+na 50 Hz, a <code>duty</code> měnit cca od 35
+(úplně vlevo) přes 77 (uprostřed) po 120 (úplně vpravo).</p>
+<p>Dost ale teorie, pojďme si to vyzkoušet! Napřed musíš motorek zapojit:</p>
+<ul>
+<li>hnědý drát (zem) na <code>G</code>,</li>
+<li>červený drát (napájení) na <code>3V</code> a</li>
+<li>oranžový drát (data) na <code>D4</code>.</li>
+</ul>
+<p>Nožička <code>D4</code> odpovídá <code>Pin(2)</code>, takže kód k otáčení motorku je:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span><span class="p">,</span> <span class="n">PWM</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+
+<span class="n">pin_motorku</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">pwm</span> <span class="o">=</span> <span class="n">PWM</span><span class="p">(</span><span class="n">pin_motorku</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">duty</span><span class="o">=</span><span class="mi">77</span><span class="p">)</span>
+<span class="n">pwm</span><span class="o">.</span><span class="n">duty</span><span class="p">(</span><span class="mi">35</span><span class="p">)</span>
+</pre></div><p>Zkus motorkem otáčet nastavováním <code>duty</code> na 35 do 120.
+Kdyby se náhodou stalo, že se modul restartuje a
+konzole přestane fungovat, zkus ho odpojit a znovu
+připojit. Kdyby to nepomohlo, motorek ti dneska
+nebude fungovat. Za chvíli si řekneme proč; zatím (jsi-li na kurzu)
+se přidej do dvojice k někomu, komu to funguje.</p>
+<h2>Poznámka o napájení a napětí</h2>
+<p>K tomu, aby se otočil motor, je potřeba mnohem víc
+energie, než k rozsvícení světýlka.
+Z USB z počítače té energie dostaneš docela málo,
+proto můžou být s motorkem problémy.</p>
+<p>Jak to řešit, až si přestaneš hrát a budeš chtít motorkem otáčet „doopravdy”?</p>
+<p>Elektronika, která je na našem modulu mimo
+malou destičku s „mozkem” má dva hlavní úkoly:</p>
+<ul>
+<li>Převádět <em>komunikaci</em> z USB, která je
+celkem složitě zakódovaná, na něco čemu
+malé zařízení rozumí
+(konkrétně protokol <a href="https://en.wikipedia.org/wiki/UART">UART</a> přes nožičky <code>TX</code> a <code>RX</code>).</li>
+<li>Převádět napětí 5 V, které poskytuje USB,
+na 3,3 V které potřebuje modul.</li>
+</ul>
+<p>Když energie z USB přestane stačit, dá se koupit
+zařízení, které zvládne převádět komunikaci
+a napájení vyřešit z jiného zdroje 5 V.
+Kdybys to někdy zkoušela, příslušné zařízení
+koupíš pod názvem <em>USB-TTL adapter</em> a vypadá
+nejčastěji takhle:</p>
+<p><span class="figure"><a href="/2017/pyladies-brno-podzim-po/beginners/micropython/static/usb-ttl.png"><img src="/2017/pyladies-brno-podzim-po/beginners/micropython/static/usb-ttl.png" alt="USB-TTL adapter"></a></span></p>
+<p>K modulu pak tento převodník a zdroj napětí připojíš takto:</p>
+<p><!-- XXX: obrázek --></p>
+<ul>
+<li><code>GND</code> na převodníku – <code>G</code> na desce</li>
+<li><code>RX</code> na převodníku – <code>TX</code> (!) na desce</li>
+<li><code>TX</code> na převodníku – <code>RX</code> (!) na desce</li>
+<li><code>+5V</code> na zdroji napětí na <code>VIN</code> na desce</li>
+<li>Zem na zdroji napětí na <code>G</code> na desce</li>
+</ul>
+<p>Pozor, 5V nepřipojuj jinam než na <code>VIN</code>!</p>
+<h2>Napětí</h2>
+<p>Další důvod, proč ti servomotor někdy nefunguje dobře,
+je to, že je stavěný na 5 voltů, ne na 3,3 které
+poskytuje modul.</p>
+<p>Když připojíš zařízení k menšímu napětí, než
+potřebuje, většinou buď nebude fungovat, nebo bude
+dělat „míň” než by mělo: LED bude míň svítit,
+reproduktor bude tišší, motorek se bude točit pomaleji nebo s menší silou.</p>
+<p>Když naopak připojíš zařízení k <em>většímu</em> napětí,
+než na jaké je stavěno, nejspíš ho nadobro zničíš.
+Když připojíš červenou LED přímo na 3,3 V, přestane fungovat;
+když připojíš malý servomotorek na zdroj 24 V, může začít hořet.
+A ačkoli lidem malá napětí jako 5 V nevadí,
+když připojíš do zásuvky s 230 V sama sebe, můžeš umřít.
+Takže na velká napětí pozor!</p>
+<p>My motorek připojujeme na malé napětí a zmenšený
+výkon nám příliš nevadí – dokud se to
+otáčí, víc rychlosti ani síly nepotřebujeme.</p>
+<p>Až to ale potřebovat budeš – například až budeš
+servomotorkem pohánět ruku robota, která bude zvedat
+těžké náklady, budeš potřebovat dvě věci:</p>
+<ul>
+<li>Externí napájení – jako předtím bude motorek potřebovat zvláštní zdroj 5V.</li>
+<li>Na datový signál je potřeba použít <em>převodník úrovní</em>
+(angl. <em>logic level converter</em>),
+který převede třívoltový signál na pětivoltový.</li>
+</ul>
+<p>Kdybys to někdy potřebovala, ozvi se koučům – i po
+workshopu ti určitě rádi poradí nebo ti aspoň řeknou
+koho se zeptat!</p>
+<h2>Barevná světýlka</h2>
+<p>Tak, dost teorie; vezmi si novou hračku!
+Tentokrát to bude LED pásek.</p>
+<p>Na pásku máš 8 malých čtverečků.
+Každý z nich obsahuje docela hodně elektroniky:
+tři barevné LED (červenou, zelenou a modrou)
+a čip, který je umí ovládat pomocí informací,
+které dostane přes jediný drátek z modulu.</p>
+<p>Takové pásky se prodávají po metrech a dají se
+nastříhat – mezi jednotlivými světýlky si všimni čárky,
+která naznačuje, kde máš střihnout.
+Energie z USB stačí zhruba na osm světýlek, proto jsi jich dostala tolik.</p>
+<p>Tenhle LED pásek je, podobně jako servomotorek, stavěný
+na pět voltů. Na rozdíl od motorku, který se s 3,3 V
+trochu roztočil, se ale s nižším napětím ani nerozsvítí.
+Naštěstí ale potřebuje 5 V jen na <em>napájení</em>;
+řídící signál s informacemi o barvičkách může mít 3,3 V.</p>
+<p>Pojďme pásek zapojit:</p>
+<ul>
+<li><code>GND</code> pásku (bílý drátek) připoj na <code>G</code></li>
+<li><code>DI</code> (<em>data in</em> – zelený drátek) připoj na <code>D4</code></li>
+<li><code>+5V</code> (červený drátek) připoj:<ul>
+<li>na <code>VU</code>, má-li tvoje destička tuhle nožičku,</li>
+<li>jinak na <code>VIN</code>.</li>
+</ul>
+</li>
+</ul>
+<p>Nožička <code>VU</code>/<code>VIN</code> poskytuje 5 voltů.
+Pozor na ni: nepřipojuj na ni zařízení, které se s pěti volty nevyrovnají.</p>
+<p>Máš-li zapojeno, můžeš začít programovat.
+„Jazyk”, kterým „mluví” tenhle LED pásek je trošku
+složitější než signál PWM, ale MicroPython obsahuje
+speciální knihovnu, která s páskem komunikovat umí.
+Vypadá to nějak takhle:</p>
+<pre>
+from machine import Pin
+from neopixel import NeoPixel
+
+POCET_LED = 8
+pin = Pin(2, Pin.OUT)
+np = NeoPixel(pin, POCET_LED)
+np<span class="highlight-nocolor">[0]</span> = (<span class="highlight-red">255</span>, <span class="highlight-green">255</span>, <span class="highlight-blue">255</span>)
+np.write()
+</pre><p>Co znamenají ta čísla (<code>0</code> a <code>255</code>), na to už jistě přijdeš sama.
+Jen při experimentování nezapomeň zavolat
+<code>np.write()</code>, tím se informace pošlou do LED pásku.</p>
+<p>Zvládneš naprogramovat semafor?</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/beginners/micropython/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2017/pyladies-brno-podzim-po/sessions/micropython/">↑ <span class="d-none d-sm-inline">Lekce: MicroPython</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2017/pyladies-brno-podzim-po/sessions/micropython/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2017-pyladies-brno-podzim-po/lessons/beginners/micropython/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2016-2017.</p>
+    
+        <p>Diagramy s LED vytvořeny pomocí <a href="http://fritzing.org">Fritzing</a>.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

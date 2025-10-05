@@ -1,0 +1,405 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Stahování z internetu a API
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/pyladies-brno-podzim-st/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/pyladies-brno-podzim-st/sessions/solitaire/">Requests</a>
+
+> <a href="/2019/pyladies-brno-podzim-st/fast-track/requests-weather/">Stahování z internetu a API</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Stahování z internetu a API</h1>
+<p>Část těchto materiálů pochází z <a href="https://naucse.python.cz/2019/brno-jaro-knihovny/beginners/kurzovni-listek/">jiného kurzu PyLadies</a>.</p>
+<h2>Requests</h2>
+<p>Začneme seznámením s knihovnou <a href="http://docs.python-requests.org/en/master/">requests</a>. Je to knihovna určená pro HTTP
+požadavky na straně klienta. Poskytuje mnohem pohodlnější rozhraní než
+standardní knihovna Pythonu.</p>
+<p>Prvním krokem by měla být instalace ve virtuálním prostředí:</p>
+<div class="highlight"><pre><span></span><span class="gp">(venv) $ </span>python -m pip install requests
+</pre></div><p>První pokus je ideální provádět v interaktivní konzoli Pythonu. Začneme tím, že
+si naimportujeme modul <code>requests</code>. Komunikace přes protokol HTTP používá model
+požadavek/odpověď (<em>request</em>/<em>response</em>). Klient tedy nejprve pošle požadavek,
+a server potom odpovídá. Takto se střídají, dokud klient nemá vše, co
+potřebuje, nebo nedojde k chybě.</p>
+<p>Pro začátek se podíváme na stránku <code>https://example.com</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"https://example.com/"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span>
+<span class="go">&lt;Response [200]&gt;</span>
+</pre></div><p>Takto vypsaná odpověď není příliš užitečná. To naštěstí není zase takový
+problém. V proměnné <code>response</code> teď máme object, který má potřebná data uložená
+v různých atributech.</p>
+<p>Zkuste si vypsat, co obsahují atributy <code>response.text</code>, <code>response.status_code</code>.
+Taky vyzkoušejte zavolat metodu <code>response.json()</code>. Existuje jich mnohem více,
+ale tyto jsou docela zajímavé a
+relativně často užívané.</p>
+<p>Pojďme se tedy podívat, co dělají zmíněné jednotlivé atributy:</p>
+<p>Atribut <code>text</code> obsahuje tělo odpovědi, tak jak nám ze serveru přišla. Pro
+většinu stránek to bude kód v jazyku HTML, nebo v data v různých formátech.</p>
+<p>Každá odpověď od serveru obsahuje číselný kód, který popisuje výsledek akce.
+Tento kód si můžete přečíst z atributu <code>status_code</code>. <code>1xx</code> jsou informační
+zprávy, na které moc často nenarazíte. <code>2xx</code> jsou úspěšné odpovědi. Někdy se
+může stát, že server místo odpovědi, kterou chcete, odešle <em>přesměrování</em>. To
+má podobu odpovědi s kódem <code>3xx</code>. Přímo tuto odpověď neuvidíte, protože
+knihovna <code>requests</code> ví, že je to přesměrování a proto automaticky půjde na
+adresu, kam vás server poslal.</p>
+<p>Ke každému číselnému kódu existuje i texotvý popis. Ty najdete třeba na
+<a href="">Wikipedii</a>, nebo můžete použít <a href="https://http.cat">https://http.cat</a>.</p>
+<div class="admonition note"><p><a href="https://httpbin.org/">https://httpbin.org/</a> je velice užitečná služba, pokud si potřebujete
+vyzkoušet komunikaci přes HTTP. Bude vám odpovídat na všemožné požadavky
+podle toho, jak si řeknete. Podívejte se v prohlížeči a uvidíte docela pěkný
+seznam všech možností (akorát v angličtině)</p>
+</div><p>Nakonec nám zůstává metoda <code>json()</code>. JSON je datový formát, který používá mnoho
+různých webových služeb. Proto <code>requests</code> nabízí tuto zkratku, jak se k datům
+dostat. Ale pozor! Pokud v odpovědit nejsou data v tomto formátu, dostanete
+chybu!</p>
+<h2>Kurzy měn</h2>
+<p>Začneme zvolna - zkusíme si stáhnout aktuální kurzy měn, které poskyuje <a href="https://www.cnb.cz/">Česká
+národní banka</a> na adrese:</p>
+<p>Výstup pro lidi:</p>
+<p><a href="https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/">https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/</a></p>
+<p>Výstup pro vývojáře:</p>
+<p><a href="https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt">https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt</a></p>
+<h1>Příklad: Jaké bude počasí v Brně?</h1>
+<p>Vyzkoušíme si napsat program, který nám dokáže zjistit předpověď počasí v námi
+vybraném městě.</p>
+<p>Co k tomu budeme potřebovat? Znalosti o proudění vzduchu, historická data,
+srážky... tak ty to nejsou. Ta už pro nás naštěstí připravili jiní lidé a tyto
+informace volně poskytují na internetu. Zbývá tedy se jich akorát správně doptat.</p>
+<h2>OpenWeathermap API</h2>
+<p>Existuje mnoho služeb pro vývojáře, které poskytují data o počasí ve strojově
+čitelné formě. Jedním z nich je například <a href="https://openweathermap.org/">OpenWeatherMap</a></p>
+<h3>Přístup ke službě</h3>
+<p>Data jsou přístupná pro kohokoli volně, jen je třeba poskytovateli dát vědět, že
+je používáte zrovna vy. Častým způsobem této indentifikace je pomocí tzv.
+<em>tokenu</em>, což není nic jiného, než náhodně vygenerovaný řetězec znaků, který
+nahrazuje zadávání uživatelského jména a hesla. Každý uživatel má token jiný.</p>
+<p>Zařiď si tedy účet na <a href="https://home.openweathermap.org">https://home.openweathermap.org</a></p>
+<p>Na webu si udělej registraci (Sign Up) - stačí zatrhnout potvrzení, že jste
+starší 16 let a že souhlasíte s podmínkami použití této služby.</p>
+<p>Po odeslání pak na stránce <em>API keys</em> najdeš v kolonce <em>Key</em> řetězec podobný
+tomuto (může to trvat několik minut, než ti pak reálně povolí přístup k datům):</p>
+<div class="highlight"><pre><code>1faf9fd2f2d64a383e7c0011fa127956</code></pre></div><p>Tento řetězec použijeme pro všechny tvé požadavky na získání dat. Kvůli limitům
+používání této služby si ale nechej vygenerovat vlastní token. Uvedený výše je
+už neplatný.</p>
+<h2>Dotaz na počasí</h2>
+<p>V <a href="https://openweathermap.org/forecast5#JSON">dokumentaci</a> k API se podíváme,
+jak má požadavek vypadat a jaké parametry můžeme předat.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">token</span> <span class="o">=</span> <span class="s1">'1faf9fd2f2d64a383e7c0011fa127956'</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'http://api.openweathermap.org/data/2.5/forecast'</span>
+
+<span class="n">parametry</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'APIKEY'</span><span class="p">:</span> <span class="n">token</span><span class="p">,</span>
+    <span class="s1">'q'</span><span class="p">:</span> <span class="s1">'brno'</span><span class="p">,</span>
+    <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'metric'</span>
+<span class="p">}</span>
+
+<span class="n">odpoved</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">parametry</span><span class="p">)</span>
+</pre></div><p>Server poskytuje data ve formátu JSON, který je velmi rozšířený a knihovna <code>requests</code> pro něj má metodu, která odpověď převede na slovník.</p>
+<div class="highlight"><pre><span></span><span class="n">predpoved</span> <span class="o">=</span> <span class="n">odpoved</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</pre></div><p>V dokumentaci se dočteme s jakou strukturou máme tu čest. Nejsnazší je však si
+ji rovnou vypsat. Vypadá přibližně takto:</p>
+<div class="highlight"><pre><code>{'cod': '200',
+ 'message': 0.0094,
+ 'cnt': 40,
+ 'list': [{'dt': 1557122400,
+   'main': {'temp': 4.95,
+    'temp_min': 4.05,
+    'temp_max': 4.95,
+    'pressure': 1015.8,
+    'sea_level': 1015.8,
+    'grnd_level': 958.41,
+    'humidity': 74,
+    'temp_kf': 0.9},
+   'weather': [{'id': 600,
+     'main': 'Snow',
+     'description': 'light snow',
+     'icon': '13d'}],
+   'clouds': {'all': 90},
+   'wind': {'speed': 5.63, 'deg': 341.687},
+   'snow': {'3h': 0.125},
+   'sys': {'pod': 'd'},
+   'dt_txt': '2019-05-06 06:00:00'},
+  {'dt': 1557133200,
+   'main': {'temp': 8.92,
+    'temp_min': 8.25,
+    'temp_max': 8.92,
+    'pressure': 1015.93,
+    'sea_level': 1015.93,
+    'grnd_level': 959,
+    'humidity': 57,
+    'temp_kf': 0.67},
+   'weather': [{'id': 804,
+     'main': 'Clouds',
+     'description': 'overcast clouds',
+     'icon': '04d'}],
+   'clouds': {'all': 94},
+   'wind': {'speed': 5.99, 'deg': 344.69},
+   'sys': {'pod': 'd'},
+   'dt_txt': '2019-05-06 09:00:00'},
+   ...</code></pre></div><p>Nás budou nejvíce zajímat klíče <code>temp</code> (údaj o teplotě) a <code>dt_txt</code> (tzv. časové
+razítko).</p>
+<p>Vypíšeme si je jednoduše pod sebe.</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">vzorek</span> <span class="ow">in</span> <span class="n">predpoved</span><span class="p">[</span><span class="s1">'list'</span><span class="p">]:</span>
+    <span class="n">datum</span> <span class="o">=</span> <span class="n">vzorek</span><span class="p">[</span><span class="s2">"dt_txt"</span><span class="p">]</span>
+    <span class="n">teplota</span> <span class="o">=</span> <span class="n">vzorek</span><span class="p">[</span><span class="s1">'main'</span><span class="p">][</span><span class="s1">'temp'</span><span class="p">]</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'{datum} {teplota}'</span><span class="p">)</span>
+</pre></div><p>Takto dostaneme:</p>
+<div class="highlight"><pre><code>2019-05-06 06:00:00 6.24
+2019-05-06 09:00:00 9.69
+2019-05-06 12:00:00 9.96
+2019-05-06 15:00:00 9.64
+2019-05-06 18:00:00 6.2
+2019-05-06 21:00:00 3
+2019-05-07 00:00:00 0.62
+...</code></pre></div><p>V řadě číslech se ale moc dobře neorientuje. Proto si z nich uděláme jednoduchý
+textový graf. Zkus si výstup upravit tak, aby se za každý stupeň vypsala jedna
+tečka (3 stupně <code>...</code>, 10 stupňů <code>..........</code>).</p>
+<div class="admonition note"><p>Pro zjednodušení se teďka nebudeme trápit s mrazy (zápornou teplotou) - nad
+tím se můžeš zamyslet potom doma.</p>
+</div><div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/pyladies-brno-podzim-st/fast-track/requests-weather/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">vzorek</span> <span class="ow">in</span> <span class="n">predpoved</span><span class="p">[</span><span class="s1">'list'</span><span class="p">]:</span>
+    <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">sloupek</span> <span class="o">=</span> <span class="s1">'.'</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">teplota</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'{datum} {sloupek} {teplota}'</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Výsledek bude vypadat nějak takto:</p>
+<div class="highlight"><pre><code>2019-05-05 15:00:00 ....... 7.44
+2019-05-05 18:00:00 ..... 5.26
+2019-05-05 21:00:00 .... 4.41
+2019-05-06 00:00:00 ... 3.68
+2019-05-06 03:00:00 .. 2.55
+2019-05-06 06:00:00 .... 4.85
+2019-05-06 09:00:00 ........ 8.65
+2019-05-06 12:00:00 ......... 9.15
+2019-05-06 15:00:00 ......... 9.88
+2019-05-06 18:00:00 ..... 5.92
+2019-05-06 21:00:00 .. 2.11
+2019-05-07 00:00:00  0.39
+2019-05-07 03:00:00  -0.33
+2019-05-07 06:00:00 ..... 5.25
+2019-05-07 09:00:00 ......... 9.21
+...</code></pre></div><h2>Přidáváme obrázky</h2>
+<p>Zatím je naše předpověď složena stále jen z běžných ASCII znaků. Pojďme si tam
+přidat i obrázky oblohy.</p>
+<p>Součástí předpovědi je tento údaj ve formě textu, např. <code>Clear</code>, <code>Rain</code>, <code>Snow</code>,
+<code>Clouds</code>. My se s tím ale nespokojíme a nahradíme si ho obrázky. Můžeme využít
+například ty z Unicode tabulky <a href="http://xahlee.info/comp/unicode_weather_symbols.html">http://xahlee.info/comp/unicode_weather_symbols.html</a></p>
+<div class="admonition note"><p>Písma v příkazové řádce ve Windows stále emoji umí jen ve velmi omezené míře.
+Změň si ho dočasně na <code>MS Gothic</code>, pokud ho máš nainstalované.
+Můžeš použít třeba tyto vyzkoušené znaky z UNICODE tabulky:</p>
+<div class="highlight"><pre><code>SNOWFLAKE
+CLOUD
+UMBRELLA WITH RAIN DROPS
+FLOWER
+WHITE SMILING FACE
+BLACK SMILING FACE</code></pre></div></div><p>Chceme tedy řetězec <code>Snow</code> přeložit na <code>❄</code> a napíšeme si na to funkci.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ziskej_obrazek</span><span class="p">(</span><span class="n">pocasi</span><span class="p">):</span>
+    <span class="n">mapovani</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">'Snow'</span><span class="p">:</span> <span class="s1">'</span><span class="se">\N{SNOWFLAKE}</span><span class="s1">'</span><span class="p">,</span>
+        <span class="s1">'Rain'</span><span class="p">:</span> <span class="s1">'</span><span class="se">\N{UMBRELLA WITH RAIN DROPS}</span><span class="s1">'</span><span class="p">,</span>
+        <span class="s1">'Clouds'</span><span class="p">:</span> <span class="s1">'</span><span class="se">\N{WHITE SUN WITH SMALL CLOUD}</span><span class="s1">'</span><span class="p">,</span>
+        <span class="s1">'Clear'</span><span class="p">:</span> <span class="s1">'</span><span class="se">\N{SUN WITH FACE}</span><span class="s1">'</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">mapovani</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pocasi</span><span class="p">,</span> <span class="s1">'?'</span><span class="p">)</span>
+</pre></div><p>Po zakomponování do kódu:</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">vzorek</span> <span class="ow">in</span> <span class="n">predpoved</span><span class="p">[</span><span class="s1">'list'</span><span class="p">]:</span>
+    <span class="n">datum</span> <span class="o">=</span> <span class="n">vzorek</span><span class="p">[</span><span class="s2">"dt_txt"</span><span class="p">]</span>
+    <span class="n">teplota</span> <span class="o">=</span> <span class="n">vzorek</span><span class="p">[</span><span class="s1">'main'</span><span class="p">][</span><span class="s1">'temp'</span><span class="p">]</span>
+    <span class="n">sloupek</span> <span class="o">=</span> <span class="s1">'.'</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">teplota</span><span class="p">)</span>
+    <span class="n">pocasi</span> <span class="o">=</span> <span class="n">ziskej_obrazek</span><span class="p">(</span><span class="n">vzorek</span><span class="p">[</span><span class="s1">'weather'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">'main'</span><span class="p">])</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'{datum} {pocasi} {sloupek} {teplota} </span><span class="se">\N{DEGREE CELSIUS}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div><p>Finální podoba předpovědi:</p>
+<div class="highlight"><pre><code>2019-05-06 09:00:00 🌤 ........ 8.76 ℃
+2019-05-06 12:00:00 ☔ ......... 9.37 ℃
+2019-05-06 15:00:00 ☔ ......... 9.4 ℃
+2019-05-06 18:00:00 ☔ ...... 6.3 ℃
+2019-05-06 21:00:00 🌤 ... 3 ℃
+2019-05-07 00:00:00 🌤  0.62 ℃
+2019-05-07 03:00:00 🌞  -0.54 ℃
+2019-05-07 06:00:00 🌞 ..... 5.25 ℃
+2019-05-07 09:00:00 🌞 ......... 9.65 ℃
+2019-05-07 12:00:00 ☔ .......... 10.72 ℃
+2019-05-07 15:00:00 ☔ .......... 10.12 ℃
+2019-05-07 18:00:00 ☔ ....... 7.42 ℃
+2019-05-07 21:00:00 ☔ ..... 5.72 ℃
+2019-05-08 00:00:00 🌤 ... 3.52 ℃
+2019-05-08 03:00:00 🌤 .. 2.25 ℃
+2019-05-08 06:00:00 🌤 ...... 6.39 ℃</code></pre></div><p>Služba OpenWeatherMap umí zjistit předpověď počasí nejen pro města, ale libovolné
+místo na Zemi, zadané pomocí GPS souřadnic. Pro převod názvu (např. hory) na
+souřadnice se používá tzv. geocoding. Poskytovatelů této služby je opět mnoho.
+Jedním z nich je například <a href="https://locationiq.com/">https://locationiq.com/</a></p>
+<p>API můžeme kombinovat dohromady: Název místa → GPS souřadnice→ OpenWeatherMap →
+teploty.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/pyladies-brno-podzim-st/fast-track/http/">← <span class="d-none d-sm-inline">Jak funguje internet</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/pyladies-brno-podzim-st/sessions/solitaire/">↑ <span class="d-none d-sm-inline">Lekce: Requests</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/pyladies-brno-podzim-st/intro/json/"><span class="d-none d-sm-inline">JSON</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-pyladies-brno-podzim-st/lessons/fast-track/requests-weather/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro naucse.python.cz napsal Martin Pavlásek, část převzata od Lubomíra Sedláře, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,253 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Hledání: grep a find
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/shell-2/">Bash II</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/grep-find/">Hledání: grep a find</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Hledání</h1>
+<p>Přesuň se do adresáře <code>data-shell/writing</code>, kde se nachází soubor <code>haiku.txt</code></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat haiku.txt 
+<span class="go">The Tao that is seen</span>
+<span class="go">Is not the true Tao, until</span>
+<span class="go">You bring fresh toner.</span>
+
+<span class="go">With searching comes loss</span>
+<span class="go">and the presence of absence:</span>
+<span class="go">"My Thesis" not found.</span>
+
+<span class="go">Yesterday it worked</span>
+<span class="go">Today it is not working</span>
+<span class="go">Software is like that.</span>
+</pre></div><p>(Jsou to básničky ze <a href="http://wiki.c2.com/?ComputerErrorHaiku">soutěže časopisu Salon</a>.)</p>
+<h2>grep</h2>
+<p>Náš úkol je podívat se na řádky, kde se nachází slovo <em>not</em>.
+Existuje program <code>grep</code>, kterému předáš hledané slovo a soubor(y) k prohledání
+– a on řádky s daným slovem vypíše.</p>
+<p>Následující příkaz tedy hledá v souboru <code>haiku.txt</code> řetězec <code>not</code> a vypíše každý řádek s tímto řetězcem:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>grep not haiku.txt 
+<span class="go">Is not the true Tao, until</span>
+<span class="go">"My Thesis" not found.</span>
+<span class="go">Today it is not working</span>
+</pre></div><p>Příkaz <code>grep</code> má spoustu zajímavých přepínačů, například:</p>
+<ul>
+<li><code>-i</code>: Nezáleží na velikosti písmen (<em>case <strong>i</strong>nsensitive</em>).</li>
+<li><code>-n</code>: Vypíše čísla řádků.</li>
+<li><code>-w</code>: Hledá jen celá slova.</li>
+<li><code>-F</code>: Hledá přesně zadaný řetězec (viz níže).</li>
+</ul>
+<p>Takhle můžeš najít všechny řádky se slovem <em>the</em> nebo <em>The</em>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>grep -i the haiku.txt 
+<span class="go">The Tao that is seen</span>
+<span class="go">Is not the true Tao, until</span>
+<span class="go">and the presence of absence:</span>
+<span class="go">"My Thesis" not found.</span>
+</pre></div><p>Jejda, tam je ale něco navíc!
+Jak příkazem odstraníš z výpisu řádek se slovem <em>Thesis</em>?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>grep -iw the haiku.txt 
+<span class="go">The Tao that is seen</span>
+<span class="go">Is not the true Tao, until</span>
+<span class="go">and the presence of absence:</span>
+</pre></div><p><code>grep</code> je velice užitečný program. Pokud pracuješ s Bashem, brzy se z něj stane tvůj nejlepší kamarád. 
+Pozor ale na to, co <code>grep</code> bere jako hledaný řetězec: je to totiž regulární výraz (angl. <em>regular expression</em>, <em>regex</em>).
+Pokud hledáš jen písmenka, nenarazíš na problém, ale u znaků jako tečky, hvězdičky, otazníky apod. může být výstup jiný než očekáváš.</p>
+<p>Zkus několik příkazů:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>grep -i the.i haiku.txt 
+<span class="gp">$ </span>grep -i <span class="s1">'.*'</span> haiku.txt
+<span class="gp">$ </span>grep -iw <span class="s1">'.....'</span> haiku.txt
+</pre></div><p>Regulární výrazy jsou velice užitečné, ale taky jsou nad rámec tohoto kurzu
+(nebo aspoň této lekce).
+Zatím si tedy zapamatuj, že speciální funkce znaků můžeš vypnout pomocí
+přepínače <code>-F</code> (aby je nezpracoval <code>grep</code>) a uzavřením do jednoduchých
+uvozovek (aby je nezpracoval Bash).</p>
+<h2>find</h2>
+<p>Příkaz <code>find</code> je další užitečný hledací příkaz.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>find . -name <span class="s1">'*.txt'</span>
+<span class="go">./haiku.txt</span>
+<span class="go">./data/LittleWomen.txt</span>
+<span class="go">./data/two.txt</span>
+<span class="go">./data/one.txt</span>
+</pre></div><p>Příklad výše hledá v aktuálním adresáři (<code>.</code>) a všech podadresářích soubory,
+které odpovídají masce <code>*.txt</code>.</p>
+<div class="admonition note"><p>Proč je <code>'*.txt'</code> v uvozovkách?
+Vzpomeň si, že znak <code>*</code> zpracovává samotný Bash: kdybys <code>*.txt</code> zadala
+bez uvozovek, <code>find</code> by dostal jako argumenty všechny soubory <code>*.txt</code>
+z aktuálního adresáře.
+Uvozovky říkají Bashi, aby příkazu <code>find</code> předal opravdu <code>*.txt</code>.
+<code>find</code> tak může odpovídající soubory hledat sám – i v podadresářích.</p>
+</div><p>Příkaz <code>find</code> má kromě <code>-name</code> spoustu jiných přepínačů.
+Až je budeš potřebovat, najdeš je v manuálové stránce.</p>
+<p>Podobného výsledku jako výše (ale bez jména adresáře) dosáhneš když zadáš:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls --recursive <span class="p">|</span> grep txt
+<span class="go">haiku.txt</span>
+<span class="go">LittleWomen.txt</span>
+<span class="go">one.txt</span>
+<span class="go">two.txt</span>
+</pre></div><p>I bez jména adresáře se takový výstup občas hodí – třeba když chceš spočítat,
+kolik těch souborů je:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls --recursive <span class="p">|</span> grep txt <span class="p">|</span> wc -l
+<span class="go">4</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/carpentry-unix/loop-nelle/">← <span class="d-none d-sm-inline">Nela a medúzy: Zpracování souborů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-2/">↑ <span class="d-none d-sm-inline">Lekce: Bash II</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/hw/bash-2/"><span class="d-none d-sm-inline">Úkoly - Bash II</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/grep-find/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Petr Viktorin a Karolina Surma, 2020</p>
+    
+        <p>založeno na kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, 2016–2018 Software Carpentry Foundation, 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

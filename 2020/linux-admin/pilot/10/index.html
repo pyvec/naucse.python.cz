@@ -1,0 +1,471 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Zápis – Syscalls, kontejnery
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/containers/">Kontejnery a Automatizovaná konfigurace</a>
+
+> <a href="/2020/linux-admin/pilot/10/">Zápis – Syscalls, kontejnery</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Zápis – Syscalls, kontejnery</h1>
+<h2>"šipečky", <code>&gt;&gt;</code></h2>
+<p>Přesměrování a přidávání už znáš:</p>
+<div class="highlight"><pre><code>$ echo "Ahoj" &gt; pozdrav
+$ cat pozdrav
+Ahoj
+$ echo "Zdravim" &gt;&gt; pozdrav
+$ cat pozdrav
+Ahoj
+Zdravim</code></pre></div><h2>heredoc</h2>
+<p>Slouží k zapsání (zpravidla) z víceřádkového textu jako hodnoty.
+Za dvě šipečky napiš <code>END</code>, pak můžeš psát víceřádkový text, a až ho budeš chtít předat na standardní vstup <code>cat</code>, napiš <code>END</code> a zmáčkni klávesu <kbd>Enter</kbd>. 
+Místo <code>END</code> můžeš použít libovolný řetězec, který pak zopakuješ na konci zadané hodnoty.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat &lt;&lt; END
+<span class="go">...</span>
+<span class="go">ABCD</span>
+<span class="go">efgh</span>
+<span class="go">END</span>
+</pre></div><p>Existují i tři šipečky: To, co za ně napíšeš, se předá na standardní vstup programu.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat <span class="o">&lt;&lt;&lt;</span> <span class="s2">"Abcdef"</span>
+<span class="go">Abcdef</span>
+</pre></div><p>Je to výhodné, pokud chceš předat na standardní vstup proměnnou prostředí.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat <span class="o">&lt;&lt;&lt;</span> <span class="s2">"</span><span class="nv">$HOME</span><span class="s2">"</span>
+<span class="go">/home/user</span>
+</pre></div><h1>syscalls</h1>
+<p><strong>Linuxové jádro</strong>, anglicky <em>kernel</em></p>
+<ul>
+<li>přepíná mezi běžícími procesy, aby to vypadalo, že běží všechny najednou</li>
+<li>zprostředkovává např. otevírání souborů<ul>
+<li>komunikace probíhá voláním funkcí, zavolá se funkce <em>otevírání souborů</em>, a vrátí číslo (<em>file descriptor</em>)</li>
+<li>dostane vstup programu: "chci přečíst 20 bajtů ze souboru 3" - pošle je.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre><code>+--------+    +--------+
+|        |    |        |
+| proces |    | proces |
+|        |    |        |
++---+----+    +----+---+
+    ^              ^                +------------------+
+    |              |                |                  |
+    |              |                | Soubory na disku |
+    v              v                |                  |
++---+--------------+---+            +------------------+
+|                      |                   |
+|        jádro         |-------------------+
+|                      |
++----------------------+</code></pre></div><p>Nakresleno pomocí: <a href="http://asciiflow.com/">http://asciiflow.com/</a></p>
+<h2>sledování syscalls pomocí <code>strace</code></h2>
+<p><code>strace</code> vypíše všechna systémová volání, které daný program používá.
+Nástroj <code>strace</code> se používá se jménem nějakého programu, použij ho s příkazem <code>echo</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>strace <span class="nb">echo</span>
+<span class="go">execve("/usr/bin/echo", ["echo"], 0x7ffed87ac530 /* 59 vars */) = 0</span>
+<span class="go">brk(NULL)                               = 0x564fe1290000</span>
+<span class="go">arch_prctl(0x3001 /* ARCH_??? */, 0x7ffd4c975070) = -1 EINVAL (Invalid argument)</span>
+<span class="go">access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)</span>
+<span class="go">openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</span>
+<span class="go">fstat(3, {st_mode=S_IFREG|0644, st_size=109457, ...}) = 0</span>
+<span class="go">mmap(NULL, 109457, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7fdbbd5a9000</span>
+<span class="go">close(3)     </span>
+<span class="go">...</span>
+<span class="go">+++ exited with 0 +++</span>
+</pre></div><p>Na začátku výpisu je <code>execve</code> (spusť program) mimo jiné s argumenty:</p>
+<ul>
+<li>jméno spustitelného souboru</li>
+<li>argumenty příkazové řádky</li>
+</ul>
+<p>Trochu dál následuje volání <code>openat</code>/<code>open</code>, kde dostane to jméno souboru, mód otevření jako argumenty, a návratová hodnota je <em>file descriptor</em> (číslo souboru).
+<code>read(3, [...])</code>, <code>[...]</code> dostane jako argument jméno souboru a místo v paměti, které se má použít. 
+Jádro to místo v paměti přepíše obsahem souboru, a vrátí počet přečtených bajtů.
+Nakonec se zavolá <code>close()</code>, s číslem souboru k uzavření, kde <code>1</code> je standardní výstup, a <code>2</code> je chybový výstup.
+Je to ta nízká úroveň, na které procesy komunikují s jádrem.</p>
+<p>Můžeš se i podívat na něco složitějšího jako <code>strace python</code>.
+Výstup je o dost delší. 
+Pokud zmáčkneš nějaké klávesy, ve výstupu bude vidět volání <code>read</code>, jak se načítají jednotlivé znaky z terminálu.
+Zmáčknutím <kbd>CTRL</kbd> + <kbd>C</kbd> se zruší <code>strace</code>.</p>
+<p>K čemu to může být dobré? 
+Občas se hodí vědět například, které soubory program otevírá.</p>
+<h1>Kontejnery</h1>
+<p>Když vývojář naprogramuje nový program, na jeho počítači to zpravidla funguje dobře. 
+Až ho má hotový a chce se o něj podělit s kolegy, dost často zjistí, že to u kolegů neběží, protože v <code>/etc/něco</code> zapomněl poslat určitý konfigurační soubor. 
+Tento problém se stává natolik často, že zasloužil si vlastní vtip: <em>works on my machine</em>.
+To systémovým administrátorům vadí a kontejnery mají za cíl to řešit.</p>
+<p>Kontejnery řeší <strong>izolaci</strong> prostředí, a taky zajišťují <strong>sjednocené</strong> prostředí pro tvůj program. 
+Na všech systémech poběží stejně.</p>
+<p>Jak je to možné?
+Kontejner ti nedodá jen program, on dodává celý souborový systém se všemi knihovnami, zabalený pěkné do jednoho souboru.
+Potom řekne linuxovému jádru: <em>já jsem speciální proces a můj kořenový adresář (/) nebude celý ten disk, ale jen určený adresář</em>. 
+Pro tento proces adresář <code>/</code> bude obsahovat úplně jiné soubory, než pro zbytek systému. 
+Podle toho, jaký má kořenový adresář, interpretuje si ostatní cesty, o které si tvůj program řekne. 
+Co to znamená? Můžeš vzít tento kousek souborového systému, ten obraz disku s programem a poslat ho jinam. 
+Nemusíš se dál starat o nastavení <code>/etc/</code>, protože to nastavení bude stejné všude, kde někdo spustí daný kontejner.
+Tato vlastnost kontejnerů umožňuje jejich <strong>distribuci</strong>.</p>
+<p>Má to další využití!
+Pokud nějakému programu nevěříš stoprocentně a nechceš, aby ti napáchal problémy v počítači, můžeš ho spustit v kontejneru, který zařídí, že se ty vrstvy odizolují. 
+Takový proces, cokoli by se snažil provést, provede jen v izolovaném prostředí kontejneru.</p>
+<p>Kvůli výše popsaným vlastnostem je to i dost složitější.
+V kontejneru se můžou izolovat nejen <strong>soubory</strong> a souborové systémy, ale i <strong>uživatelé</strong>. 
+Uživatel číslo 0, tj. <code>root</code> může být jiný pro systém, a jiný pro proces kontejneru. 
+To znamená, že můžeš zařídit: <em>uživateli hanka dej č. 0, dej mu všechna práva v tom kontejneru a ten si může dělat systémová nastavení, ale ven se nedostane</em>.
+Můžeš změnit <strong>síťování</strong> - nastavit, že proces nemůže komunikovat s Internetem, ale jen s nějakými jinými programy, se kterými mu to dovolíš. 
+Můžeš určit hranici <strong>zásob</strong>, které proces smí spotřebovat, např. max. 2kB paměti, a pokud bude chtít víc, tak ho systém ukončí. 
+Nebo spustit program na maximálně 5 vteřin, a pokud bude chtít víc, ukončí se.</p>
+<p>Teoreticky by tedy kontejnery měly být bezpečné: mají svůj vlastní píseček a neměly by sahat na zbytek systému.</p>
+<p>Díky kontejneru můžeš vzít program a dát ho na další systém. 
+Zde bývá problém, protože operační systémy bývají velké.
+Představ si, že všechny knihovny, co máš na počítači, potřebuješ mít stejně, aby program fungoval, tzn. musí být součástí kontejneru.
+Nemůžeš prostě použít základní knihovnu C z hostitelského počítače: všechno kromě jádra se musí nakopírovat do kontejnerů. 
+Teď si představ, že máš na počítači 10 různých služeb, tři databáze, dva webové servery a aplikaci, a pro každý druh této služby potřebuješ mít zvlášť celý souborový systém. 
+Je toho celkem hodně.</p>
+<h2><code>overlayfs</code></h2>
+<p>A proto <code>docker</code> používá tzv. <code>overlayfs</code>. 
+Ukazovali jsme si, jak fungují souborové systémy (TODO: link na lekci o FS) a že existuje spousta jejich druhů.</p>
+<p>Jeden ze způsobu, jak zařídit souborový systém, je <code>overlayfs</code>. Je zvláštní v tom, že má data uložená ve dvou souborových systémech pod ním. 
+(Analogie se šifrovaným diskem).</p>
+<p><code>overlayfs</code> funguje tak, že jsou dvě vrstvy:</p>
+<ul>
+<li>první - základní souborový systém (např. adresář na disku), pouze pro čtení</li>
+<li>druhá - zde se ukládají změny (rozdíl oproti základnímu systému)</li>
+</ul>
+<p>Soubor se hledá nejprve na druhé vrstvě, a pokud se tam najde, přečte se z ní. 
+Pokud se nenajde, přečte se z první vrstvy.
+Základ je jen pro čtení a nemění se, a všechny zápisy jdou do druhé vrstvy.</p>
+<blockquote><p>Paralela se změnami v zákonech: Existuje základní zákon, který se nemění. 
+Pokud vznikne potřeba změnit určitý paragraf v určitém odstavci, zveřejňuje se aktualizace toho paragrafu. 
+A pokud se chceš tímto zákonem řídit, musíš se podívat do obou dokumentů.</p>
+</blockquote>
+<p>K čemu to je dobré? 
+Když máš ten systém, na němž má běžet 10 kontejnerů, z nichž 3 jsou databáze a 2 webové servery, můžeš mít jeden základ pro všechny, a pak nad tím můžeš použít několik <code>overlays</code>. 
+Představ si, že jedna z webových aplikací je napsaná v knihovně Flask a druhá v Djangu. 
+Vezmeš tak základní webový server, postavíš nad tím <code>overlay</code> a nainstaluješ si tam Django. 
+Pak vezmeš ten základ, a postavíš něco jiného. 
+Základ můžeš sdílet mezi několika kontejnery.</p>
+<p>// zde byl obrázek na tabuli, ale nemám ho k dispozici :(//</p>
+<h2>Docker</h2>
+<p>Docker je jedna z implementací kontejnerů.
+Je to první produkt, který se úspěšně prosadil v oblasti kontejnerizace a pro spoustu společností je dnes synonym pro kontejnery. 
+Existují ale i jiné technologie, které dělají v podstatě to samé.</p>
+<p>Podívejme se webovou stránku jménem <a href="https://hub.docker.com/">Docker Hub</a>. 
+Jsou zde ke stažení obrazy kontejnerů.</p>
+<p>Podíváme se na kontejner s <code>httpd</code>.</p>
+<ul>
+<li>Jaký je rozdíl mezi instalaci programu do systému (např. z repozitáře linuxové distribuce) a instalaci jako obraz Docker?</li>
+</ul>
+<p>Instalace do systému samozřejmě bude fungovat. 
+Ale když si to nainstaluješ do jiného systému, tak to bude fungovat jinak. 
+Základní nastavení programu na Fedoře je jiné než na Ubuntu.
+Když pak budeš chtít ten program odinstalovat ze systému, on po sobě uklidí nebo ne - záleží, jak je napsaný. 
+Za to když to spustíš z kontejneru, je tam vždy stejný operační systém a celé nastavení bude stejné, ať už ho spustíš na Fedoře, Ubuntu nebo jiném systému.
+Odstranění kontejneru zajistí, že se se vždy uklidí všechno, co s tím programem souviselo.</p>
+<p>Má to blízko k <em>virtuálnímu počítači</em>. 
+Hlavní rozdíl je v tom, že virtuální počítač používá procesy, které se navenek tváří jako procesor, disk atd. Má vlastní systém a vlastní procesy.
+U Dockeru se ty věci používají v rámci systému, na kterém to spouštíš. 
+V tomhle se Docker spíš podobá virtuálnímu prostředí (jako to, které používáš pro izolaci Pythonu na svém počítači).</p>
+<h2>Instalace <code>docker</code></h2>
+<p>Pokud používáš Fedoru 31, podívej se na <code>podman</code> v návodu níže.</p>
+<p>Pro ostatní distribuce platí tento postup.
+Nainstaluj si balíček <code>docker</code> a pusť <code>docker daemon</code>.
+<em>Daemon</em> se pustí:</p>
+<div class="highlight"><pre><span></span><span class="go">sudo systemctl start docker</span>
+</pre></div><p>Když budeš spouštět příkazy <code>docker ...</code>, bude po tobě pravděpodobně chtít to spustit jako uživatel <code>root</code>. 
+Ten pak komunikuje s <code>docker daemonem</code> .</p>
+<p>Raději se ale přidej do skupiny <code>docker</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo usermod -a -G docker <span class="k">$(</span>whoami<span class="k">)</span>
+<span class="gp">$ </span>su - <span class="k">$(</span>whoami<span class="k">)</span>
+</pre></div><p>S nainstalovaným dockerem můžeš stáhnout obraz <code>httpd</code> z Docker Hubu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker pull httpd
+<span class="gp gp-VirtualEnv">(... stahování vrstev ...)</span>
+</pre></div><h2>Instalace <code>podman</code></h2>
+<p>Jedná se o implementaci typickou pro Fedoru.
+Na rozdíl od <code>docker</code> nepotřebuje práva roota a pro naši potřebu to bude fungovat stejně.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf install podman
+<span class="gp">$ </span>podman pull httpd
+</pre></div><h2>Obraz a kontejner</h2>
+<p>Příkaz <code>pull</code> stáhl spoustu <em>blobů</em>. 
+To jsou jednotlivé vrstvy. 
+Pokud už nějakou máš staženou z dřívějška, rovnou se použije, nebude se stahovat podruhé.</p>
+<p>Než se podíváme na <code>httpd</code>, začneme s jiným operačním systémem.
+Stáhni například Ubuntu. Pokud sis instalovala podman, vyměň <code>docker</code> v příkazech níže za <code>podman</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker run -it ubuntu
+<span class="gp">root@934745e0585a:/#
+</span></pre></div><p>Příkaz výše stáhne a spustí příkazovou řádku z kontejneru Ubuntu.</p>
+<p>Tam si zkus spustit:</p>
+<div class="highlight"><pre><span></span><span class="gp">root@934745e0585a:/# </span>cat
+<span class="go">abc</span>
+<span class="go">abc</span>
+</pre></div><p>Vše funguje, jak má.</p>
+<p>Otevři si v jiném terminálu (svého systému) příkaz <code>htop</code> a pomocí <kbd>F5</kbd> si zobraz stromový výpis. 
+Ve výpisu najdeš běžící proces <code>cat</code> z toho kontejneru.</p>
+<p>Pokud bys to samé udělala ve virtuálním počítači, najdeš jen jeden proces, který dělá virtuální procesor, ale už ne procesy, které se na něm spouští.</p>
+<p>Proto je možné např. ukončit proces v kontejneru z hlavního systému.
+Kontejner ale vidí jiný souborový systém - podívej se do <code>/home</code> - bude nejspíš prázdný. 
+Když se pokusíš použit příkaz <code>ping</code> v kontejneru, zjistíš, že tady není a musí se doinstalovat. Na obyčejném Ubuntu by ovšem byl k dispozici.
+Systém určený pro kontejnery je „ořezaný“ – mnohem menší než "plná" distribuce. Všechno, co systémový administrátor potřebuje, aby mu běžely konkrétní služby, ale může bez problémů doinstalovat.
+Údržba takového systému je pak mnohem méně náročná než velkého „kombajnu“. Čím méně nainstalovaných programů v kontejneru, tím bezpečnější by to mělo být.</p>
+<p>Pro vyskočení z ubuntí příkazové řádky stačí ukončit terminál, například příkazem <code>exit</code>.</p>
+<p>Vypiš seznam všech stažených obrazů:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker images
+<span class="go">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span>
+<span class="go">httpd               latest              2ae34abc2ed0        13 days ago         165MB</span>
+<span class="go">ubuntu              latest              775349758637        5 weeks ago         64.2MB</span>
+</pre></div><p><em>Image</em>, neboli obraz, je obraz disku nějakého toho systému, tzn. <code>overlay</code>. 
+Kdy uděláš nový kontejner, tzn. použiješ příkaz <code>run</code>:</p>
+<ul>
+<li>vezmou se informace z toho obrazu, </li>
+<li>nad tím se vytvoří vrstva na to, co se uloží na tom kontejneru, kdybys změnila nějaké soubory </li>
+<li>pustí se nějaký program, v našem případě <em>bash</em>.</li>
+</ul>
+<p>Vypiš seznam všech právě běžících kontejnerů. Pokud ti právě běží Ubuntu, uvidíš ve výpisu něco podobného:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker ps
+<span class="go">CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                      PORTS               NAMES</span>
+<span class="go">c9f835211bbb        ubuntu              "/bin/bash"         39 seconds ago      Up 38 seconds                                   focused_khayyam</span>
+</pre></div><p>Vypiš seznam všech kontejnerů, které máš na disku (i těch, které právě neběží):</p>
+<div class="highlight"><pre><code>$ docker ps --all
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                      PORTS               NAMES
+4a523c41344d        ubuntu              "/bin/bash"         10 minutes ago      Exited (0) 2 minutes ago                        nostalgic_williams
+697cccb2c307        ubuntu              "/bin/bash"         12 minutes ago      Exited (0) 11 minutes ago                       jovial_keller</code></pre></div><p>Kontejnery můžeš klidně smazat pomocí:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker rm &lt;container-id&gt;
+</pre></div><p>Obdobně smažeš obrazy:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker image rm &lt;image-id&gt;
+</pre></div><p>Jaký je rozdíl mezi kontejnerem a <em>image</em>?</p>
+<ul>
+<li><em>image</em> je obraz disku, nedá se změnit</li>
+<li><em>kontejner</em> je proces, běží s informacemi, které obsahuje image; navíc může zapisovat data, může se změnit; je instanci obrazu</li>
+</ul>
+<p><em>Image</em> můžou být sdílené mezi vícero kontejnery.
+<em>Image</em> se mohu smazat jedině pokud neběží žádný kontejner, který je na nich založeny.
+<em>Image</em> může být založen i na jiném <em>image</em>, slouží k tomu vrstvy, aby základ systému se dal sdílet a neplýtvalo se místem na disku.</p>
+<h2>Webový server v kontejneru</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker run -it httpd
+<span class="go">AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message</span>
+<span class="go">AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message</span>
+<span class="go">[Sun Dec 13 15:35:46.045992 2020] [mpm_event:notice] [pid 1:tid 139871236002944] AH00489: Apache/2.4.41 (Unix) configured -- resuming normal operations</span>
+<span class="go">[Sun Dec 13 15:35:46.057586 2020] [core:notice] [pid 1:tid 139871236002944] AH00094: Command line: 'httpd -D FOREGROUND'</span>
+</pre></div><p>Image <code>httpd</code> je nastaven tak, že nepustí <code>bash</code>, ale spustí přímo server <code>httpd</code> hned na popředí. 
+Nejsou třeba žádní démoni.
+Jediný úkol toho kontejneru je pustit webový server, a přesně to dělá. 
+Když zrušíš kontejner, všechno v něm se smaže. 
+Říká se, že ideálně v jednom kontejneru by měl běžet jeden proces.</p>
+<p>Kontejner můžeš taky spustit s přepínačem <code>-d</code>, čili <em>detached</em>, což znamená, že se spustí na pozadí.
+Můžeš tak spustit dokonce těch kontejnerů víc.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker run -d httpd
+<span class="gp">$ </span>docker run -d httpd
+<span class="gp">$ </span>docker run -d httpd
+<span class="gp">$ </span>docker run -d httpd
+</pre></div><p>Až je budeš chtít smazat, použij příkazy</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker stop &lt;container-ip&gt;
+<span class="gp">$ </span>docker rm &lt;container-ip&gt;
+</pre></div><p>My se ale chceme podívat do webového serveru, takže spustíme v kontejneru <code>bash</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker run -it httpd bash
+<span class="gp">root@f0a4bf04ccc6:/usr/local/apache2#
+</span></pre></div><p><code>-it</code> říká, že chceš kontejner spustit interaktivně a na popředí, což se nám hodí pro <code>bash</code>.</p>
+<p>Podívej se do adresáře <code>htdocs</code>. Je v něm soubor <code>index.html</code>, který obsahuje větu <em>It works!</em></p>
+<div class="highlight"><pre><span></span><span class="gp">root@8933505e2865:/usr/local/apache2# </span>ls
+<span class="go">bin  build  cgi-bin  conf  error  htdocs  icons  include  logs  modules</span>
+<span class="gp">root@8933505e2865:/usr/local/apache2# </span><span class="nb">cd</span> htdocs/
+<span class="gp">root@8933505e2865:/usr/local/apache2/htdocs# </span>ls
+<span class="go">index.html</span>
+<span class="gp">root@8933505e2865:/usr/local/apache2/htdocs# </span>cat index.html 
+<span class="go">&lt;html&gt;&lt;body&gt;&lt;h1&gt;It works!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</span>
+</pre></div><p>Kontejner teď zavři, napiš do příkazové řádky <code>exit</code>.</p>
+<p>Na tu stránku s <em>It works</em> se chceme podívat ze svého opravdového počítače. 
+Proto spusť <code>httpd</code> s přepínačem <code>-p</code>, který nadefinuje porty:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker run -p <span class="m">8080</span>:80 httpd
+</pre></div><p>Port <code>80</code> je port na straně kontejneru, který se zpřístupní na portu <code>8080</code> na tvém (hostitelském) počítači.
+Pokud tedy zadáš do svého prohlížeče adresu <code>localhost:8080</code> uvidíš stránku <em>It works!</em>.</p>
+<p>Dále si zkusíme připojit nějaký vlastní adresář dovnitř souborového systému v kontejneru.
+Zruš běžící <code>httpd</code> kontejner.</p>
+<p>Nejdříve si vytvoř prázdný adresář a v něm soubor <code>index.html</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> Ahoj! &gt; index.html
+</pre></div><p>A teď spusť kontejner s přepínačem <code>-v</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker run -p <span class="m">8080</span>:80 -v <span class="s2">"</span><span class="nv">$PWD</span><span class="s2">"</span>:/usr/local/apache2/htdocs/:Z httpd
+</pre></div><p>Někdy na Fedoře je potřeba použít na konci cesty <code>:Z</code>, což ti zpřístupní soubory z domovského adresáře (standardně to totiž je zakázané).</p>
+<p>Když teď obnovíš stránku v prohlížeči, uvidíš <strong>Ahoj!</strong>.</p>
+<h2>Dockerfile</h2>
+<p>Existují způsoby, jak udělat nový kontejner, do kterého místo standardního <code>index.html</code> dáš vlastní soubor.
+Jeden z nich je pomocí souborů Dockerfile.</p>
+<p>Vytvoř si <code>Dockerfile</code> (musí být psané s velkým písmenem na začátku). 
+Do toho souboru si zapíšeme, jak takový kontejner vyrobit.
+Má své vlastní příkazy, jako: <em>začni s kontejnerem A, na tohle místo dej soubor B, doinstaluj balíček C atd</em>.</p>
+<p>Uděláme si Dockerfile z <code>httpd</code>, a v něm spustíme jeden příkaz:</p>
+<div class="highlight"><pre><code>FROM httpd
+RUN echo Ahoj &gt; /usr/local/apache2/htdocs/index.html</code></pre></div><p>Tím vznikne nový obraz disku, jehož většina je stejná jako u <code>httpd</code>.</p>
+<p>Soubor ulož a vytvoř nový image příkazem <code>build</code> s několika argumenty:</p>
+<ul>
+<li>výsledek se otaguje (<code>-t</code>) jménem <code>mujhttpd</code>, </li>
+<li>tečka na konci příkazu znamená místo, ve kterém se nachází Dockerfile, který se má použít k vytvoření nového image.
+Co to udělá? Provedou se postupně všechny příkazy z Dockerfile.</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker build -t mujhttpd .
+<span class="go">Sending build context to Docker daemon  3.072kB</span>
+<span class="go">Step 1/2 : FROM httpd</span>
+<span class="go"> ---&gt; 2ae34abc2ed0</span>
+<span class="go">Step 2/2 : RUN echo Ahoj &gt; /usr/local/apache2/htdocs/index.html</span>
+<span class="go"> ---&gt; Using cache</span>
+<span class="go"> ---&gt; 47e1060cde54</span>
+<span class="go">Successfully built 47e1060cde54</span>
+<span class="go">Successfully tagged mujhttpd:latest</span>
+</pre></div><p>Když teď spustíš svůj kontejner stejně jako před chvíli oficiální <code>httpd</code>, v prohlížeči na svém počítači uvidíš stránku s textem <strong>Ahoj!</strong></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>docker run -p <span class="m">8080</span>:80 mujhttpd
+</pre></div><p>Takový hotový kontejner se dá pak nahrát na Docker Hub.</p>
+<p>Jde to dokonce spustit na Windows, kde není linuxové jádro.
+Vytvoří se v něm virtuální stroj s Linuxem, na němž je možné kontejnery bez problému spustit.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/pilot/09/">← <span class="d-none d-sm-inline">Zápis z minula – cron, Ansible, barvičky</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/containers/">↑ <span class="d-none d-sm-inline">Lekce: Kontejnery a Automatizovaná konfigurace</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/sessions/containers/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/pilot/10/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsala Karolina Surma, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

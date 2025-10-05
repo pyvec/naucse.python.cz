@@ -1,0 +1,360 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Poznámky – Bash II
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/shell-2/">Bash II</a>
+
+> <a href="/2020/linux-admin/notes/02/">Poznámky – Bash II</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="admonition warning"><p>Toto jsou <em>zhuštěné poznámky z prvního běhu</em>, nikoli materiály k samostudiu.</p>
+</div><h1>Linuxová administrace - 2. sraz</h1>
+<ul>
+<li>opakovaní</li>
+</ul>
+<div class="highlight"><pre><code>ls *.txt
+ls *[AB].txt
+ls *A.txt *B.txt</code></pre></div><p><code>head -n3 *.dat</code> získá první 3 řádky všech souborů končící na .dat</p>
+<h2>Proměnná</h2>
+<p><code>jmeno=minotaur.dat</code> !nesmí být mezery vedle rovnítka
+<code>echo $jmeno</code> vypíše proměnnou jmeno na stdout</p>
+<p>příklad použití:
+<code>head -n2 $jmeno | tail -n1</code> získáme druhý řádek ze souboru minotaur.dat, který je uložený v proměnné jmeno</p>
+<p>moje_skrolovatko=head
+$moje_skrolovatko unicorn.dat</p>
+<p><code>PAGER=more git log</code> PAGER - proměnná prostředí
+<code>env</code> vypíše všechny proměnné prostředí</p>
+<ul>
+<li>podstatné proměnné SHELL, HOSTNAME, PATH, PWD, VISUAL, DISPLAY</li>
+</ul>
+<p><code>PS1</code> do této proměnné se dá zapsat, čím nám bude začínat každý řádek v bashi, můžeme přepsat např. jen na <code>PS1='$ '</code>
+<code>PS2</code> je pokračovací znak (při víceřádkovém zadávání v shellu)</p>
+<p><code>$?</code> návratová hodnota posledního příkazu</p>
+<ul>
+<li>pokud vypíše '0', pak proběhl příkaz v pořádku</li>
+<li>hodnota jiná než '0', příkaz skončil chybou</li>
+</ul>
+<p><code>$$</code> hodnota procesu</p>
+<p><code>echo ${jmeno}abc</code> výstup: minotaur.databc
+složené závorky je potřeba použít pokud skládáme proměnnou s řetězcem</p>
+<p><code>$@</code> použije všechny argumenty, nejlépe dávat do uvozovek</p>
+<h2>Cykly</h2>
+<h3>For</h3>
+<div class="highlight"><pre><code>for jmeno in a b c
+do
+    echo $jmeno
+done</code></pre></div><p>Cyklus se dá také zapsat na jeden řádek, v tom případě musí být jednotlivé příkazy odděleny středníkem:</p>
+<div class="highlight"><pre><code>for jmeno in a b c; do echo $jmeno; done</code></pre></div><p>V našem případě budeme chtít vypsat druhý řádek ze souborů creatures:</p>
+<div class="highlight"><pre><code>for x in *.dat
+do
+    head -n 2 $x | tail -n 1
+done</code></pre></div><h3>While</h3>
+<div class="highlight"><pre><code>while true; do head /dev/urandom|sha256sum; done</code></pre></div><h2>Historie</h2>
+<p>pomocí PageUp / PageDn můžu listovat v historii
+např. zadám <code>cat</code> a pak procházím všemi zadanými příkazy</p>
+<p>ctrl-R: stisknu ctrl-R, pak zadám část příkazu a zobrazí se mi nejbližší příkaz který vyhovuje podmínce. Pokud chci procházet dále, pak opakovaně použiji ctrl-R.</p>
+<p>history - zobrazení historie</p>
+<p>ctrl-D ukončí zadávání vstupu
+ctrl-L vyčistí obrazovku
+ctrl-W smaže slovo
+ctrl-šipky přesunují mezi slovy
+ctrl-s pozastaví výstup (jakoby terminál zamrznul), ale příkazy se provádí
+ctrl-q zobrazí vše, co bylo stisknuto po ctrl-s
+ctrl-Z pozastaví právě prováděný příkaz a vrátí vás zpět do příkazové řádky, k zastavenému příkazu se lze vrátit pomocí 
+<code>[1]+  Stopped                 python</code></p>
+<p>jobs - jaké jsou pozastavené příkazy
+fg - vrátí se k poslednímu zastavenému příkazu
+bg - spustí se zastavený program na pozadí
+kill %1 - můžu ukončit konkrétní proces (zastavený příkaz číslo 1)</p>
+<p>pokud spustím příkaz s &amp; na konci, spustí se proces přímo na pozadí
+<code>gitk --all &amp;</code></p>
+<h2>Bash skript</h2>
+<p>Do souboru můžu zapisovat bash příkazy, které se postupně provedou.</p>
+<p><code>touch klasifikace</code>
+do souboru zapíšeme:</p>
+<div class="highlight"><pre><code>for x in *.dat
+do
+    head -n 2 $x | tail -n 1
+done</code></pre></div><p>Následně skript spustím. Musím být ve složce, která obsahuje tento soubor.
+<code>bash klasifikace</code></p>
+<p>Na začátek skriptu by se měl zapsat <em>shebang</em>, který říká jakým program se soubor bude spouštět. V našem případě chci spouštět bash:
+<code>#! /bin/bash</code></p>
+<p>ls -l klasifikace zobrazí informaci o souboru, důležitá jsou práva:
+rw-rw-r--</p>
+<ul>
+<li>r - právo pro čtení</li>
+<li>w - právo na zápis</li>
+<li>x - právo na spuštění</li>
+</ul>
+<p>tyto práva se opakují 3x za sebou, pro ...</p>
+<p>přidat právo na spuštění:</p>
+<ul>
+<li><code>chmod +x klasifikace</code></li>
+</ul>
+<p>shebang:</p>
+<p>v souboru:</p>
+<div class="highlight"><pre><code>#! /usr/bin/cat
+
+
+Tady jsou informace</code></pre></div><div class="highlight"><pre><code>$ cat README</code></pre></div><p>při zadání pouze $ klasifikace nebude fungovat, protože cesta ke klasifikaci není v $PATH</p>
+<div class="highlight"><pre><code>$ echo $PATH
+
+/home/user/.local/bin:/home/user/bin:/usr/share/Modules/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/var/lib/snapd/snap/bin</code></pre></div><p>v <code>/home/user/bin</code> můžeme definovat vlastní příkazy
+<code>~/.bashrc</code> soubor ve kterém je možné definovat úpravy v prostředí, např. přidat cesty do Path, upravit PS1, atd.</p>
+<p>klasifikuj:</p>
+<div class="highlight"><pre><code>#! /bin/bash
+
+head -n2 "$1" | tail -n1</code></pre></div><p>uvozovky - argument dávat do uvozovek, protože v případě kdy je převzatém argumentu mezera, vzala by se jinak pouze část
+$0 - nultý argument, tedy název programu
+./klasifikuj minotaur.dat</p>
+<h2>Hledání</h2>
+<h3>grep</h3>
+<p><code>grep not haiku.txt</code> hledá v souboru haiku.txt řetězec not a vypíše každý řádek s tímto řetězcem</p>
+<p>přepínače:</p>
+<ul>
+<li>i - nezáleží na velikosti písmen</li>
+<li>n - vypíše čísla řádků</li>
+<li>w - </li>
+</ul>
+<p>regulární výrazy grep -i .+ haiku.txt
+grep -i '.*' haiku.txt</p>
+<h3>find</h3>
+<p>find . -name '*.txt'
+hledá v tomto adresáři a všech podadresářích .txt soubory</p>
+<h2>Úkol</h2>
+<p>Inspirace Bashe: <a href="https://github.com/encukou/bin">https://github.com/encukou/bin</a></p>
+<p>Naklonuj si tyto repozitáře (přímo v adresáři pro tento kurz; <code>git clone</code> udělá nový podadresář):</p>
+<div class="highlight"><pre><code>$ git clone https://github.com/pyladiescz/pyladies.cz
+$ git clone https://github.com/pyvec/pyvo-data
+
+</code></pre></div><p>Data si prohlédni a zjisti, co se v nich skrývá za informace. Zvlášť doporučuju třeba soubor <code>pyvo-data/series/brno-pyvo/events/2018-10-25-casove.yaml</code>.</p>
+<p>Použij základní shellové příkazy (ne Python) na zodpovězení těchto otázek:</p>
+<ul>
+<li><p>Kolik bylo kurzů/srazů PyLadies?</p>
+</li>
+<li><p>Kolik bylo Pyv v Brně?</p>
+</li>
+<li>Kolik bylo Pyv celkem?</li>
+<li>Z kolika přednášek na Pyvech jsou videa?  <em>(Předpokládej že kazdá přednáška může mít max. 1 video)</em></li>
+<li><p>Z kolika Pyv jsou videa?</p>
+</li>
+<li><p>Vypiš všechna místa konání Pyv (stačí identifikátor jako <code>artbar</code>) a kolikrát tam Pyvo bylo.</p>
+</li>
+<li>Jaké jsou 3 nejčastější křestní jména organizátorů/koučů/atd. PyLadies?</li>
+</ul>
+<p>YAML soubory by se správně měl číst knihovnou na YAML, aby byla zachována struktura. Ty je ale ber jako "čistý text", kde hledané informace jsou na čádcích ve tvaru <code>klíč: hodnota</code> (příp. s nějakýma mezerama a/nebo pomlčkama navíc). Odpovědi tak nemusí být 100% přesné.</p>
+<hr>
+<p>V Pythonu napiš funkci, která bere řetězec a vrátí "obrácený" řetězec: znaky jsou v něm pozpátku a podle následujícího slovníku. Znaky, které ve slovníku nejsou, program vypíše nezměněné.</p>
+<p>(Nápověda k Pythonu je níže.)</p>
+<div class="highlight"><pre><code>{'a': 'ɐ', 'b': 'q', 'c': 'ɔ', 'd': 'p', 'e': 'ǝ', 'f': 'ɟ', 'g': 'ƃ',
+'h': 'ɥ', 'i': 'ᴉ', 'j': 'ɾ', 'k': 'ʞ', 'l': 'l', 'm': 'ɯ', 'n': 'u',
+'o': 'o', 'p': 'd', 'q': 'b', 'r': 'ɹ', 's': 's', 't': 'ʇ', 'u': 'n',
+'v': 'ʌ', 'w': 'ʍ', 'x': 'x', 'y': 'ʎ', 'z': 'z', 'A': '∀', 'B': 'B',
+'C': 'Ɔ', 'D': 'D', 'E': 'Ǝ', 'F': 'Ⅎ', 'G': 'פ', 'H': 'H', 'I': 'I',
+'J': 'ſ', 'K': 'ʞ', 'L': '˥', 'M': 'W', 'N': 'N', 'O': 'O', 'P': 'Ԁ',
+'Q': 'Q', 'R': 'R', 'S': 'S', 'T': '┴', 'U': '∩', 'V': 'Λ', 'W': 'M',
+'X': 'X', 'Y': '⅄', 'Z': 'Z', '0': '0', '1': 'Ɩ', '2': 'ᄅ', '3': 'Ɛ',
+'4': 'ㄣ', '5': 'ϛ', '6': '9', '7': 'ㄥ', '8': '8', '9': '6', ',': "'",
+'.': '˙', '?': '¿', '!': '¡', '"': '„', "'": ',', '`': ',', '(': ')',
+')': '(', '[': ']', ']': '[', '{': '}', '}': '{', '&lt;': '&gt;', '&gt;': '&lt;',
+'&amp;': '⅋', '_': '‾'}
+
+</code></pre></div><p>Např.:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; obrat("Ahoj, brněnské PyLadies!")
+'¡sǝᴉpɐ˥ʎԀ éʞsuěuɹq 'ɾoɥ∀'
+
+</code></pre></div><p>Udělej z toho program pro příkazovou řádku, který bere soubory k obrácení. Když nedostane žádný argument, použije standardní vstup. Argument <code>-</code> taky znamená standardní vstup.</p>
+<div class="highlight"><pre><code>$ echo Ahoj | obrat
+ɾoɥ∀
+$ echo Ahoj | obrat -
+ɾoɥ∀
+
+
+$ echo 'Ahoj,
+&gt; PyLadies!' &gt; pozdrav.txt
+$ obrat pozdrav.txt
+'ɾoɥ∀
+¡sǝᴉpɐ˥ʎԀ
+$ echo haha | echo obrat pozdrav.txt - pozdrav.txt
+'ɾoɥ∀
+¡sǝᴉpɐ˥ʎԀ
+ɐɥɐɥ
+'ɾoɥ∀
+¡sǝᴉpɐ˥ʎԀ
+
+</code></pre></div><p>Zařiď, aby s přepínačem <code>--help</code> program vypsal krátkou nápovědu (a ignoroval ostatní argumenty).
+Je-li použit jiný přepínač (začínající <code>-</code>), program by měl učivateli vynadat (na chybovém výstupu), vrátit chybovou návratovou hodnotu a ignorovat ostatní argumenty.</p>
+<p>Nakonec program změň tak, aby vracel chybovou návratovou hodnotu když některý znak chybí ve slovníku.</p>
+<div class="highlight"><pre><code>$ echo Ahoj | obrat
+ɾoɥ∀
+$ echo $?
+0
+$ echo Čau | obrat
+nɐČ
+$ echo $?
+1
+
+</code></pre></div><p>Naimportuješ-li <code>sys</code> a <code>os</code>, pak:</p>
+<ul>
+<li><code>sys.argv</code> je seznam argumentů (včetně jména programu)</li>
+<li><code>sys.stdin</code> je <em>už otevřený</em> soubor se std. vstupem (netřeba <code>with</code> či <code>close</code>)</li>
+<li>Podobně <code>sys.stdout</code> je soubor se standardním výstupem (tam píše <code>print</code>) a <code>sys.stderr</code> je soubor chybovým výstupem.</li>
+<li><code>os.environ</code> je slovník* s proměnnýma prostředí</li>
+<li><code>exit(1)</code> ukončí program s danou hodnotou</li>
+</ul>
+<p>(* přesněji řečeno, objekt který se chová jako slovník)</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/shell-2/">↑ <span class="d-none d-sm-inline">Lekce: Bash II</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/pilot/02/"><span class="d-none d-sm-inline">Zápis z pilotního kurzu</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/notes/02/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsala Karolina Surma, 2020</p>
+    
+        <p>založeno na kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, 2016–2018 Software Carpentry Foundation, 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

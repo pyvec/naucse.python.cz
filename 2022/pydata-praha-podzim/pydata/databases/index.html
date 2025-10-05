@@ -1,0 +1,3102 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Databáze a SQL
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2022/pydata-praha-podzim/">Datový kurz PyLadies</a>
+
+> <a href="/2022/pydata-praha-podzim/sessions/databases/">Databáze a SQL</a>
+
+> <a href="/2022/pydata-praha-podzim/pydata/databases/">Databáze a SQL</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="databaze_a_sql">Databáze a SQL
+<a href="#header-databaze_a_sql" class="header-link">#</a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Obsah:</strong></p>
+<ul>
+<li>Úvod do databází a SQL</li>
+<li>Jak s SQL databázemi pracovat v Pythonu</li>
+<li>SQL 101 a cvičení</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="uvod_do_databazi">Úvod do databází
+<a href="#header-uvod_do_databazi" class="header-link">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Doteď jsme na kurzu pracovali se <strong>soubory</strong> - odněkud soubor stáhli na svůj počítač, a tam ho zpracovali, a pak třeba zase výsledek někam nahráli. Tento postup ale nestačí, pokud jsou data příliš veliká, s těmito daty pracuje naráz více lidí najednou a zároveň je i aktualizuje. To se řeší tak, že spustíte <strong>databázový systém</strong> (DBMS), ten data u sebe spravuje a vy se na tento systém připojujete přes klienta. DBMS může běžet na stejném počítači jako váš Python - nebo také úplně jinde.</p>
+<p>Např. e-shop bude pracovat s databází, ve které jsou uloženy informace o prodávaném zboží, rozdělení zboží do kategorií, objednávky, reklamace, registrovaní uživatelé... Takovou databázi můžeme označit za "transakční". Vy jako datoví analytici, inženýři apod. se pravděpodobně budete chtít do takovéto databáze připojit a stáhnout si z ní část dat pro svou další práci. Nebo dokonce může být vaším úkolem vytvořit novou "analytickou" databázi, která obsahuje data v jiné podobě, např. prodávané zboží bez popisků, bez fotografií, ale zato se statistikami návštěvnosti a prodejnosti.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="vlastnosti_databazi">Vlastnosti databází
+<a href="#header-vlastnosti_databazi" class="header-link">#</a>
+</h3>
+<p>Od databáze (resp. databázového systému) očekáváme několik vlastností:</p>
+<ul>
+<li>Že bude uchovávat data :) Data musí zůstat beze ztráty uložena i v případě výpadku napájení, když dojde místo na disku...</li>
+<li>Práce s daty "z různých úhlů". Např. v e-shopu chceme jednou vypsat zboží podle kategorie, jindy podle stavu skladových zásob, jindy na základě full-textového vyhledávání..</li>
+<li>Podpora uživatelů, rolí, oprávnění a kontroly přístupu k datům, security.</li>
+<li>Rychlost, výkon, propustnost, latence</li>
+<li>Škálovatelnost - jak do velikosti (gigabajty, terabajty, petabajty), tak do počtu prováděných operací za sekundu</li>
+</ul>
+<p>Když se nad tím zamyslíte, jedná se o protichůdné požadavky. Tvůrci databázových systémů tak musí zvolit nějaký kompomis. Žádná databáze není "nejlepší" a vhodná na všechno. Zrovna co se týče rozdílu mezi "transakční" a "analytickou" databází, tak často pro tyto oblasti jsou vhodné odlišné systémy a přístupy.</p>
+<p>Na začátku budeme pro jednoduchost pracovat s databází <a href="https://www.sqlite.org/">SQLite</a>. Ta je poněkud specifická tím, že je uložena v jednom souboru (s příponou <code>.sqlite</code> nebo <code>.db</code>), není to tedy samostatně běžící server, ke kterému byste se připojovali. O to snadněji se ale s SQLite pracuje. A SQL jazyk, který si zde osvojíte je stejný (nebo minimálně velmi podobný) jako u složitějších databázových systémů jako <a href="https://www.mysql.com/">MySQL</a> nebo <a href="https://www.postgresql.org/">PostgreSQL</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sql">SQL
+<a href="#header-sql" class="header-link">#</a>
+</h3>
+<p>SQL je jazyk, kterým komunikujeme s databází. Umí vyjádřit různé operace nad tabulkami - výběr sloupců, řádků, vztahy mezi více tabulkami, agregace hodnot z více řádků... Tedy něco, co jsem v Pythonu</p>
+<p>Příklad:</p>
+<div class="highlight"><pre><code>SELECT title, year FROM movies;
+
+UPDATE directors SET birthdate = "1950-01-02" WHERE director_id = 3;</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="jak_s_sql_databazemi_pracovat_v_pythonu">Jak s SQL databázemi pracovat v Pythonu
+<a href="#header-jak_s_sql_databazemi_pracovat_v_pythonu" class="header-link">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Každá databáze se používá trochu jinak - liší se název modulu, který je potřeba importovat, mírně se liší způsob předávání dat použitých v SQL dotazech, může se lišit forma dat vrácených ve výsledku...</p>
+<p>Tento problém řeší knihovna <a href="https://www.sqlalchemy.org/">SQLAlchemy</a>, která poskytuje stejné rozhraní pro všechny širokou třídu databází. Nejprve si ji tedy nainstalujte.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># smažte # na následujícím řádku pro instalaci balíčku sqlalchemy</span>
+<span class="c1"># %pip install sqlalchemy</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Knihovnu SQLAlchemy naimportujeme následovně</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sqlalchemy</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>a jako vždy, importujeme i <a href="https://pandas.pydata.org/pandas-docs/stable/reference/index.html">Pandas</a>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro první ukázku práce s databází použijeme data od Míry Brabence.
+Jde o databázi typu <a href="https://cs.wikipedia.org/wiki/SQLite">SQLite</a> - skládá se z jediného souboru, ve kterém jsou všecha data. To znamená, že se nepřipojujeme k žádnému serveru pomocí jména a hesla jako u "klasických" databází.
+Databáze v podobě SQLite souboru má výhodu v tom, že když něco rozbijete, tak ten soubor prostě smažete a uděláte si nový :)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># smažte # na následujících řádcích pro stažení dat movies.sqlite</span>
+<span class="c1">#from pathlib import Path</span>
+<span class="c1">#import requests</span>
+<span class="c1">#db_data = requests.get('https://github.com/PyDataCZ/pyladies-kurz/raw/main/lessons/pydata/databases/movies.sqlite').content</span>
+<span class="c1">#Path('movies.sqlite').write_bytes(db_data)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="otevreni_databaze_pruzkum_struktury">Otevření databáze, průzkum struktury
+<a href="#header-otevreni_databaze_pruzkum_struktury" class="header-link">#</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="s1">'sqlite:///movies.sqlite'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Objekt <code>engine</code> obsahuje připojení do databáze a skrz něj budeme provádět operace s danou databází.</p>
+<p>Začneme tím, že se podíváme, jaká je struktura té databáze - jaké tabulky obsahuje a co obsahují ty tabulky. Každá databáze na to má jiné finty, jak toto zjistit (někdy funguje SQL příkaz <code>SHOW TABLES</code>, jindy je zase potřeba <code>SELECT</code> z metadat), naštěstí SQLAlchemy nám s tím pomůže.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">inspect</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span><span class="o">.</span><span class="n">get_table_names</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>['actor', 'casting', 'movie']</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro <em>průzkum</em> databáze jsem připravil funkci <code>prozkoumat</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">prozkoumat</span><span class="p">(</span><span class="n">engine</span><span class="p">):</span>
+    <span class="n">inspector</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">inspect</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">inspector</span><span class="o">.</span><span class="n">get_schema_names</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Schema:'</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">inspector</span><span class="o">.</span><span class="n">get_table_names</span><span class="p">(</span><span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'  Table:'</span><span class="p">,</span> <span class="n">table_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">inspector</span><span class="o">.</span><span class="n">get_columns</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">'      Column:'</span><span class="p">,</span> <span class="n">column</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span> <span class="n">column</span><span class="p">[</span><span class="s1">'type'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prozkoumat</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Schema: main
+
+  Table: actor
+
+      Column: id           INTEGER
+      Column: name         VARCHAR(50)
+
+  Table: casting
+
+      Column: movieid      INTEGER
+      Column: actorid      INTEGER
+      Column: ord          INTEGER
+
+  Table: movie
+
+      Column: id           INTEGER
+      Column: title        VARCHAR(50)
+      Column: yr           INTEGER
+      Column: director     INTEGER
+      Column: budget       INTEGER
+      Column: gross        INTEGER
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Celou tabulku stáhneme pomocí funkce <code>pd.read_sql_table</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_table</span><span class="p">(</span><span class="s1">'actor'</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3</td>
+      <td>Richard Brooks</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>Warren Beatty</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>5</td>
+      <td>Goldie Hawn</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>6</td>
+      <td>Gert FrÃ¶be</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>48143</th>
+      <td>48162</td>
+      <td>David Kernan</td>
+    </tr>
+    <tr>
+      <th>48144</th>
+      <td>48163</td>
+      <td>Peter Gill</td>
+    </tr>
+    <tr>
+      <th>48145</th>
+      <td>48164</td>
+      <td>Dickie Owen</td>
+    </tr>
+    <tr>
+      <th>48146</th>
+      <td>48165</td>
+      <td>Dennis Folbigge</td>
+    </tr>
+    <tr>
+      <th>48147</th>
+      <td>48166</td>
+      <td>Douglas Hickox</td>
+    </tr>
+  </tbody>
+</table>
+<p>48148 rows × 2 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Reálná databáze ale může obsahovat tak velké, že je celé stáhnout nemůžete nebo nechcete. Stáhnete tedy pouze jejich část určenou pomocí SQL příkazu SELECT (funkce <code>pd.read_sql_query</code>). Takže pokud např. chcete zjistit údaje k filmu "Chasing Amy".</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s1">'SELECT title, yr, budget, gross FROM movie WHERE title = "Chasing Amy"'</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>yr</th>
+      <th>budget</th>
+      <th>gross</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Chasing Amy</td>
+      <td>1997</td>
+      <td>250000</td>
+      <td>12021272</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="sql_101">SQL 101
+<a href="#header-sql_101" class="header-link">#</a>
+</h2>
+<p>Jedna hodina je příliš málo na to, abychom probrali SQL a databáze do hloubky. Soustředíme se tedy na nejčastější případ použití: databázi nespravujete vy, ale nějaký <em>datový inženýr</em> z firmy a vy jste dostali práva pro čtení (nikoli pro zápis). Z databáze potřebujete získat data, abyste s nimi dále pracovali.</p>
+<p>Učite se budeme na příkladech. Budeme však potřeboval ještě několik datových sad.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># ostraňte # na začátku následujících řádků pro stažení souboru world.sqlite</span>
+<span class="c1">#db_data = requests.get('https://github.com/PyDataCZ/pyladies-kurz/raw/main/lessons/pydata/databases/world.sqlite').content</span>
+<span class="c1">#Path('world.sqlite').write_bytes(db_data)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">engine_world</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="s1">'sqlite:///world.sqlite'</span><span class="p">)</span>
+
+<span class="n">prozkoumat</span><span class="p">(</span><span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Schema: main
+
+  Table: world
+
+      Column: name         VARCHAR(50)
+      Column: continent    VARCHAR(60)
+      Column: area         DECIMAL(10, 0)
+      Column: population   DECIMAL(11, 0)
+      Column: gdp          DECIMAL(14, 0)
+      Column: capital      VARCHAR(60)
+      Column: tld          VARCHAR(5)
+      Column: flag         VARCHAR(255)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s1">'SELECT * FROM world LIMIT 3'</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>continent</th>
+      <th>area</th>
+      <th>population</th>
+      <th>gdp</th>
+      <th>capital</th>
+      <th>tld</th>
+      <th>flag</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Afghanistan</td>
+      <td>Asia</td>
+      <td>652230</td>
+      <td>25500100</td>
+      <td>20364000000</td>
+      <td>Kabul</td>
+      <td>.af</td>
+      <td>//upload.wikimedia.org/wikipedia/commons/9/9a/...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Albania</td>
+      <td>Europe</td>
+      <td>28748</td>
+      <td>2821977</td>
+      <td>12044000000</td>
+      <td>Tirana</td>
+      <td>.al</td>
+      <td>//upload.wikimedia.org/wikipedia/commons/3/36/...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Algeria</td>
+      <td>Africa</td>
+      <td>2381741</td>
+      <td>38700000</td>
+      <td>207021000000</td>
+      <td>Algiers</td>
+      <td>.dz</td>
+      <td>//upload.wikimedia.org/wikipedia/commons/7/77/...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="select">SELECT
+<a href="#header-select" class="header-link">#</a>
+</h3>
+<p>Upravte následující příklady a zkontrolujte, že jste dostali očekávaný výsledek. Nulté cvičení projdeme společně.</p>
+<p><strong>Cvičení 0:</strong> Kód níže získá z databáze počet obyvatel Francie. Upravte jej a zjistěte počet obyvatel Německa (řešení 80716000).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT population FROM world</span>
+<span class="s2">  WHERE name = 'France'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>65906000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 1</strong>: Pomocí operátoru <em>IN</em> můžete testovat, jestli sloupec nabývá jedné z několika hodnot. Kód níže získá z databáze tabulku se jménem státu a počtem obyvatel pro Brazílii, Rusko, Indii a Čínu.</p>
+<p>Upravte jej a získejte počet obyvatel pro skandinávské země ('Sweden', 'Norway', 'Denmark'). Která z těchto tří zemí má nejméně obyvatel? (řešení: Norsko - 5124383)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name, population FROM world</span>
+<span class="s2">  WHERE name IN ('Brazil', 'Russia', 'India', 'China');</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Brazil</td>
+      <td>202794000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>China</td>
+      <td>1365370000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>India</td>
+      <td>1246160000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Russia</td>
+      <td>146000000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 2:</strong> Které státy nejsou příliš malé, ani příliš velké? Funkce BETWEEN umožňuje zadat rozsah (hraniční hodnoty). Níže uvedený příklad zobrazuje státy o rozloze 200 000-250 000 km². Upravte jej tak, aby zobrazoval jméno státu a jeho plochu pro státy s rozlohou mezi 250 000 a 300 000 km². (řešení: Burkina Faso, Ecuador, Gabon, New Zealand)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name, area FROM world</span>
+<span class="s2">  WHERE area BETWEEN 200000 AND 250000</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>area</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Belarus</td>
+      <td>207600</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Ghana</td>
+      <td>238533</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Guinea</td>
+      <td>245857</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Guyana</td>
+      <td>214969</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Laos</td>
+      <td>236800</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Romania</td>
+      <td>238391</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Uganda</td>
+      <td>241550</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>United Kingdom</td>
+      <td>242900</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 3</strong>: K nalezení států začínajících na písmeno B můžete použít <code>WHERE name LIKE 'B%'</code> (<code>%</code> nahradí cokoli).</p>
+<p>Kolik je v tabulce států začínajících na Y? (řešení: je právě jeden)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name FROM world</span>
+<span class="s2">  WHERE name LIKE 'F%'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Fiji</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Finland</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>France</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 4</strong>: Kolik je států, jejichž jméno končí písmenem y? (řešení: osm)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name FROM world</span>
+<span class="s2">  WHERE name LIKE 'F%'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Fiji</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Finland</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>France</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 5</strong>: Kolik států má ve jméně písmeno x? Kolik jich končí -land? A kolik jich začíná písmenem C a končí -ia? (řešení: 2, 8, 3)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name FROM world</span>
+<span class="s2">  WHERE name LIKE 'F%'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Fiji</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Finland</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>France</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 6</strong>: Indie a Angola mají jako druhý znak písmeno n. Podtržítko můžete použít jako zástupný znak pro právě jeden znak.</p>
+<p>Kolik států má jako druhý znak písmeno t? (řešení: dva)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name FROM world</span>
+<span class="s2"> WHERE name LIKE '_n%'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Andorra</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Angola</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Antigua and Barbuda</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>India</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Indonesia</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>United Arab Emirates</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>United Kingdom</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>United States</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 7</strong>: Kolik názvů států má právě 4 písmena? (řešení: 10)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name FROM world</span>
+<span class="s2"> WHERE name LIKE '___'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 8</strong>: Hlavní město Luxembourg je Luxembourg. Kolik je států, kde se hlavní město jmenuje stejně jako stát sám? (řešení: čtyři)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name, capital, continent FROM world</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>capital</th>
+      <th>continent</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Afghanistan</td>
+      <td>Kabul</td>
+      <td>Asia</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Albania</td>
+      <td>Tirana</td>
+      <td>Europe</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Algeria</td>
+      <td>Algiers</td>
+      <td>Africa</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Andorra</td>
+      <td>Andorra la Vella</td>
+      <td>Europe</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Angola</td>
+      <td>Luanda</td>
+      <td>Africa</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>190</th>
+      <td>Venezuela</td>
+      <td>Caracas</td>
+      <td>South America</td>
+    </tr>
+    <tr>
+      <th>191</th>
+      <td>Vietnam</td>
+      <td>Hanoi</td>
+      <td>Asia</td>
+    </tr>
+    <tr>
+      <th>192</th>
+      <td>Yemen</td>
+      <td>Sana‘a</td>
+      <td>Asia</td>
+    </tr>
+    <tr>
+      <th>193</th>
+      <td>Zambia</td>
+      <td>Lusaka</td>
+      <td>Africa</td>
+    </tr>
+    <tr>
+      <th>194</th>
+      <td>Zimbabwe</td>
+      <td>Harare</td>
+      <td>Africa</td>
+    </tr>
+  </tbody>
+</table>
+<p>195 rows × 3 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="vnoreny_select_select_uvnitr_selectu">Vnořený SELECT (SELECT uvnitř SELECTu)
+<a href="#header-vnoreny_select_select_uvnitr_selectu" class="header-link">#</a>
+</h3>
+<p>Pro komplexní dotazy potřebujeme často porovnat hodnotu s hodnotou, kterou samotnou musíme z databáze získat. K tomu slouží možnost vnořit jeden SELECT do druhého.</p>
+<p><strong>Cvičení 0</strong>: Které státy mají více obyvatel než Rusko? To už umíme - na dva dotazy... (povšimněte si použití ORDER - seřadí výsledek podle jednoho či více sloupců)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name, population FROM world</span>
+<span class="s2">      WHERE name='Russia'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Russia</td>
+      <td>146000000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name FROM world</span>
+<span class="s2">  WHERE population &gt; 146000000</span>
+<span class="s2">  ORDER by name</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[24]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Bangladesh</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Brazil</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>China</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>India</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Indonesia</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Nigeria</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Pakistan</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>United States</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Ale s vnořeným SELECT nám stačí dotaz jeden:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name FROM world</span>
+<span class="s2">  WHERE population &gt;</span>
+<span class="s2">     (SELECT population FROM world</span>
+<span class="s2">      WHERE name='Russia')</span>
+<span class="s2">  ORDER BY name</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[25]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Bangladesh</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Brazil</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>China</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>India</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Indonesia</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Nigeria</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Pakistan</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>United States</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 1</strong>: Vypište <strong>evropské</strong> země, které mají HDP na osobu vyšší než Dánsko. (řešení: je jich šest)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name, gdp/population FROM world</span>
+<span class="s2">  WHERE continent = 'Asia' AND population &gt;</span>
+<span class="s2">     (SELECT population FROM world</span>
+<span class="s2">      WHERE name='Russia')</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[26]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>gdp/population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Bangladesh</td>
+      <td>812</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>China</td>
+      <td>6121</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>India</td>
+      <td>1504</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Indonesia</td>
+      <td>3482</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Pakistan</td>
+      <td>1144</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Můžeme použít MAX, MIN, SUM, AVG, COUNT pro maximum, minimum, součet, průměr a počet hodnot. Zemi s nejvyšším počtem obyvatel tedy nalezneme následovně.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name, population</span>
+<span class="s2">  FROM world</span>
+<span class="s2">  WHERE population = (SELECT MAX(population) FROM world)</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[27]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>China</td>
+      <td>1365370000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 2</strong>: Nalezněte státy, které mají HDP vyšší než libovolný evropský stát. (řešení: jsou tři)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT name, gdp FROM world</span>
+<span class="s2">  WHERE gdp &gt;</span>
+<span class="s2">     (SELECT gdp FROM world</span>
+<span class="s2">      WHERE name='Japan')</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[28]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>gdp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>China</td>
+      <td>8358400000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>United States</td>
+      <td>16244600000000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="group_by_a_having">GROUP BY a HAVING
+<a href="#header-group_by_a_having" class="header-link">#</a>
+</h3>
+<p>Pokud chceme spočítat počet obyvatel Asie, můžeme použít <code>SUM</code> a <code>WHERE</code> z minulého oddílu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT continent, SUM(population)</span>
+<span class="s2">  FROM world</span>
+<span class="s2">  WHERE continent = "Asia"</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[29]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>continent</th>
+      <th>SUM(population)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Asia</td>
+      <td>4342955676</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Přehled všech kontinentů můžeme dostat pomocí funkce <code>DISTINCT</code> (v Pythonu existuje podobné <code>unique</code>).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT DISTINCT(continent)</span>
+<span class="s2">  FROM world</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[30]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>continent</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Africa</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Asia</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Caribbean</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Eurasia</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Europe</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>North America</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Oceania</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>South America</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jak to ale udělat, abychom dostali počet obyvatel každého kontinentu a nemuseli to dělat naosmkrát? Řešení je stejně jako v Pandas použití <code>GROUP BY</code> i s podobnout syntaxí.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT continent, SUM(population)</span>
+<span class="s2">  FROM world</span>
+<span class="s2">  GROUP BY continent</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[31]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>continent</th>
+      <th>SUM(population)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Africa</td>
+      <td>1016091005</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Asia</td>
+      <td>4342955676</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Caribbean</td>
+      <td>36149204</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Eurasia</td>
+      <td>149017400</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Europe</td>
+      <td>610261850</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>North America</td>
+      <td>518755156</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Oceania</td>
+      <td>37783477</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>South America</td>
+      <td>407618970</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud bychom chtěli vyloučit malé kontinenty jako Oceania a Caribbean, filtrování výsledků po <code>GROUP BY</code> se provádí pomocí <code>HAVING</code>, tedy například...</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT continent, SUM(population)</span>
+<span class="s2">  FROM world</span>
+<span class="s2">  GROUP BY continent</span>
+<span class="s2">  HAVING SUM(population) &gt; 100000000</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[32]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>continent</th>
+      <th>SUM(population)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Africa</td>
+      <td>1016091005</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Asia</td>
+      <td>4342955676</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Eurasia</td>
+      <td>149017400</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Europe</td>
+      <td>610261850</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>North America</td>
+      <td>518755156</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>South America</td>
+      <td>407618970</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 1:</strong> Kolik je pro každý kontinent států v databázi? Použijte funkci <code>COUNT</code> (řešení: např. pro Evropu 44)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT continent, SUM(population)</span>
+<span class="s2">  FROM world</span>
+<span class="s2">  GROUP BY continent</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[33]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>continent</th>
+      <th>SUM(population)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Africa</td>
+      <td>1016091005</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Asia</td>
+      <td>4342955676</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Caribbean</td>
+      <td>36149204</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Eurasia</td>
+      <td>149017400</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Europe</td>
+      <td>610261850</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>North America</td>
+      <td>518755156</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Oceania</td>
+      <td>37783477</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>South America</td>
+      <td>407618970</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 2</strong>: Některé státy jsou velmi malé. Zkuste modifikovat kód na Cvičení 1 tak, aby počítal jen státy, které mají alespoň 10 milionů obyvatel. A kdybychom filtrovali nikoli malé státy, ale malé kontinenty? Kdy se použije WHERE, kdy HAVING, a proč? (řešení: např. pro Evropu 14)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT continent, SUM(population)</span>
+<span class="s2">  FROM world</span>
+<span class="s2">  GROUP BY continent</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine_world</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[34]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>continent</th>
+      <th>SUM(population)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Africa</td>
+      <td>1016091005</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Asia</td>
+      <td>4342955676</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Caribbean</td>
+      <td>36149204</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Eurasia</td>
+      <td>149017400</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Europe</td>
+      <td>610261850</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>North America</td>
+      <td>518755156</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Oceania</td>
+      <td>37783477</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>South America</td>
+      <td>407618970</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="join">JOIN
+<a href="#header-join" class="header-link">#</a>
+</h2>
+<p>Spojování tabulek je velmi podobné jako v Pandas. Vraťme se nyní k databázi <code>movie</code>. Obsahuje tři tabulky, které jsou propojené následovně...</p>
+<p><img src="https://sqlzoo.net/w/images/1/10/Movie-er.png" alt=""></p>
+<p><strong>Cvičení 0</strong>: Vypište všechny herce, kteří hráli ve filmu Vetřelec (Alien).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT actor.name</span>
+<span class="s2">  FROM movie</span>
+<span class="s2">  JOIN casting ON movie.id = casting.movieid</span>
+<span class="s2">  JOIN actor ON actor.id = casting.actorid</span>
+<span class="s2">  WHERE title = 'Alien'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[35]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>John Hurt</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Sigourney Weaver</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Yaphet Kotto</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Harry Dean Stanton</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Ian Holm</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Tom Skerritt</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Veronica Cartwright</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 1</strong>: Vypište všechny filmy, v kterých hrála 'Hilary Swank'. (řešení: je jich 16)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT actor.name</span>
+<span class="s2">  FROM movie</span>
+<span class="s2">  JOIN casting ON movie.id = casting.movieid</span>
+<span class="s2">  JOIN actor ON actor.id = casting.actorid</span>
+<span class="s2">  WHERE title = 'Alien'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[36]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>John Hurt</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Sigourney Weaver</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Yaphet Kotto</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Harry Dean Stanton</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Ian Holm</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Tom Skerritt</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Veronica Cartwright</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 2</strong>: Vypište všechny filmy, v kterých hrál 'Brad Pitt', ale ne v hlavních dvou rolích (<code>ord</code> v casting listu je větší než 2). (řešení: je jich 12)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT actor.name</span>
+<span class="s2">  FROM movie</span>
+<span class="s2">  JOIN casting ON movie.id = casting.movieid</span>
+<span class="s2">  JOIN actor ON actor.id = casting.actorid</span>
+<span class="s2">  WHERE title = 'Alien'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[37]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>John Hurt</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Sigourney Weaver</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Yaphet Kotto</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Harry Dean Stanton</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Ian Holm</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Tom Skerritt</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Veronica Cartwright</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Cvičení 3</strong>: Vypište název filmů, které byly uvedeny do kin v roce 1903, společně s hlavní hvězdou (<code>ord</code> v castingu je rovno jedné). (řešení: je jich pět, hlavní roli v Alice in Wonderland hrála May Clark)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sql_statement</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">SELECT actor.name</span>
+<span class="s2">  FROM movie</span>
+<span class="s2">  JOIN casting ON movie.id = casting.movieid</span>
+<span class="s2">  JOIN actor ON actor.id = casting.actorid</span>
+<span class="s2">  WHERE title = 'Alien'</span>
+<span class="s2">"""</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">sql_statement</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[38]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>John Hurt</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Sigourney Weaver</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Yaphet Kotto</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Harry Dean Stanton</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Ian Holm</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Tom Skerritt</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Veronica Cartwright</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="obtiznejsi_cviceni">Obtížnější cvičení:
+<a href="#header-obtiznejsi_cviceni" class="header-link">#</a>
+</h4>
+<p><strong>Cvičení 4:</strong> Vypište všechny filmy, v kterých hrála Julie Andrews, a ke každému z nich uveďte i herce v hlavní roli.</p>
+<p><strong>Cviření 5:</strong> Najděte všechny herce, kteří hráli alespoň patnáctkrát v hlavní roli.</p>
+<p><strong>Cvičení 6:</strong> Vypište všechny filmy z roku 1978 seřazené podle počtu herců, kteří v nich hráli. V případě rovnosti řaďte podle názvu filmu.</p>
+<p><strong>Cvičení 7:</strong> Nalezněte všechny herce, kteří hráli ve filmu, v kterém hrál též Art Garfunkel.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="zaver">Závěr
+<a href="#header-zaver" class="header-link">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li><p>Pokud se chcete dozvědět o SQL více, velmi doporučuji stránku <a href="https://sqlzoo.net/">https://sqlzoo.net/</a>, z které jsem převzal databáze a většinu cvičení.</p>
+</li>
+<li><p>Většina databázových serverů není z bezpečnostních důvodů veřejně dostupných a přistupujete k nim skrz nějakou API službu (o těch si budeme vykládat příště). Pokud byste si ale chtěli vyzkoušet, jaké to je připojit se ke vzdálenému serveru, jeden z mála dostupných je <a href="https://plants.ensembl.org/info/data/mysql.html">Ensembl</a> poskytující genomická data.</p>
+</li>
+<li><p>Možná vám přišlo, že dnešní SQL lekce byla velmi podobná prvním lekcím na Pandách. Jeden z významných rozdílů SQL tabulky je, že může obsahovat více indexů, zadímco pandas DataFrame má jen jeden. Dalším rozdílem je, že <code>NA</code> se v jazyce SQL nazývá <code>NULL</code> - testuje se na něj IS NULL, podobně jako v Pythonu.</p>
+</li>
+<li><p>Pokud vám SQL přijde intuitivní a chtěli byste takto pracovat i s Pandas tabulkami, je to možné pomocí knihovny <a href="https://github.com/yhat/pandasql/">pandasql</a>.</p>
+</li>
+<li><p>A naopak, ve všech příkladech zde jsme používali SQLAlchemy v kombinaci s pandas. To ale vůbec není nutné, můžeme použít <code>engine.execute(...)</code> a dostaneme iterátor reprezentující výsledek SQL dotazu. Například...</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">'SELECT id, title, yr FROM movie LIMIT 5'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">'id'</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">'title'</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">'yr'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>10001 $ 1971
+10002 "Crocodile" Dundee 1986
+10003 "Crocodile" Dundee II 1988
+10004 'Til There Was You 1997
+10005 'Til We Meet Again 1940
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2022/pydata-praha-podzim/sessions/databases/">↑ <span class="d-none d-sm-inline">Lekce: Databáze a SQL</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2022/pydata-praha-podzim/sessions/databases/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyDataCZ/pyladies-kurz/blob/main/lessons/pydata/databases/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Petr Šimeček, 2022, původní verze Petr Messner, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,692 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Interaktivní vizualizace a aplikace II.
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-praha-jaro/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-praha-jaro/sessions/dashboards/">Interaktivní vizualizace a aplikace (virtuální)</a>
+
+> <a href="/2020/pydata-praha-jaro/pydata/dashboards-2/">Interaktivní vizualizace a aplikace II.</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Pokročilejší možnosti pro dashboardy</h1>
+<h2>Dashboard jako třída</h2>
+<p>Použití <code>interact</code> bylo opravdu přímočaré. Pro složitější aplikace už by ale byl samotný <code>interact</code> příliš omezující. Proto jsou v knihovně <code>panel</code> další možnosti, jak naprogramovat interaktivní aplikaci.</p>
+<p>My teď použijeme modul <a href="https://panel.holoviz.org/user_guide/Param.html"><code>param</code></a>. Další, ještě flexibilnější možnosti, jsou pak popsány v <a href="https://panel.holoviz.org/user_guide/Links.html">https://panel.holoviz.org/user_guide/Links.html</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Vytvoříme třídu <code>CovidDashboard</code>, která bude funkcionalitou stejná jako dashboard s předchozí části. Čeho si hlavně všimněte:</p>
+<ul>
+<li>Naše třída dědí od <code>param.Parameterized</code>.</li>
+<li>Atributy, které se mění interaktivně pomocí widgetů (<code>countries</code>, <code>plotted_variable</code>, <code>use_log_scale</code>, <code>plot_type</code>), jsou na úrovní třídy (class attributes), tj. nevytvářejí se v metodě <code>__init__</code>.</li>
+<li>V těchto atributech jsou objekty z modulu <code>param</code>, které nepopisují přímo widgety, ale typ dat (<code>Selector</code>, <code>Boolean</code>, <code>ListSelector</code>).</li>
+<li>Pro získání hodnoty našich atributů neoptřebujeme <code>.value</code> jako u widgetů.</li>
+<li>Nepotřebujeme vlastní <code>__init__</code>.</li>
+</ul>
+<p>Závislost na stavu jednotlivých atributů vyjadřujeme pomocí dekorátoru <code>param.depends</code>, který funguje podobně jako <code>interact</code>.</p>
+<p>Aplikaci vytváříme až v metodě <code>view</code> (jméno metody je libovolné). To je také jediná metoda, kde se přímo použije modul <code>panel</code> (<code>pn</code>). V této metodě je pár pozoruhodných věcí:</p>
+<ul>
+<li>Do <code>pn.Row</code> dáváme funkce aniž bychom je volali (nejsou tam závorky) - <code>panel</code> si je volá vnitřně až když potřebuje vykreslit aplikaci.</li>
+<li>Objevuje se metoda <code>self.param</code>, kterou jsme nijak nedefinovali. To je metoda třídy <code>Parameterized</code>, která vytvoří widgety ze všech těch atributů typu <code>Selector</code>, <code>Boolean</code> atd., v závislosti na jejich typech a vlastnostech.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">param</span>
+<span class="kn">import</span> <span class="nn">panel</span> <span class="k">as</span> <span class="nn">pn</span>
+<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+
+<span class="n">pn</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="s2">"plotly"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># staré známé načítání dat</span>
+<span class="n">covid_data_raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+    <span class="s2">"https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv"</span><span class="p">,</span>
+    <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">"Date"</span><span class="p">],</span>
+<span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"Province/State"</span><span class="p">:</span> <span class="s2">"State"</span><span class="p">,</span> <span class="s2">"Country/Region"</span><span class="p">:</span> <span class="s2">"Country"</span><span class="p">})</span>
+
+<span class="n">covid_data</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">covid_data_raw</span>
+    <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"Country"</span><span class="p">,</span> <span class="s2">"Date"</span><span class="p">])[[</span><span class="s2">"Confirmed"</span><span class="p">,</span> <span class="s2">"Recovered"</span><span class="p">,</span> <span class="s2">"Deaths"</span><span class="p">]]</span>
+    <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="s2">"sum"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">CovidDashboard</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">Parameterized</span><span class="p">):</span>
+    <span class="sd">"""Simple COVID-19 dashboard</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># atributy na úrovni třídy - popisují data použitá pro interaci</span>
+    <span class="n">countries</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">ListSelector</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s2">"Czechia"</span><span class="p">],</span> <span class="n">objects</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">covid_data</span><span class="p">[</span><span class="s2">"Country"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+    <span class="p">)</span>
+    <span class="n">plotted_variable</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"Confirmed"</span><span class="p">,</span> <span class="n">objects</span><span class="o">=</span><span class="p">[</span><span class="s2">"Confirmed"</span><span class="p">,</span> <span class="s2">"Recovered"</span><span class="p">,</span> <span class="s2">"Deaths"</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">use_log_scale</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Boolean</span><span class="p">(</span><span class="n">doc</span><span class="o">=</span><span class="s2">"Use log scale"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">plot_type</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span>
+        <span class="n">doc</span><span class="o">=</span><span class="s2">"Plot type"</span><span class="p">,</span> <span class="n">objects</span><span class="o">=</span><span class="p">{</span><span class="s2">"bar"</span><span class="p">:</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">,</span> <span class="s2">"line"</span><span class="p">:</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># param.depends zařizuje interaktivní závislot</span>
+    <span class="nd">@param</span><span class="o">.</span><span class="n">depends</span><span class="p">(</span><span class="s2">"countries"</span><span class="p">,</span> <span class="s2">"plotted_variable"</span><span class="p">,</span> <span class="s2">"use_log_scale"</span><span class="p">,</span> <span class="s2">"plot_type"</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Plot data using plotly</span>
+<span class="sd">        """</span>
+        <span class="c1"># tady už používáme self.countries atd., kde jsou k dispozici aktuální hodnoty</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span><span class="p">(</span>
+            <span class="n">covid_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">covid_data</span><span class="p">[</span><span class="s2">"Country"</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">)],</span>
+            <span class="n">x</span><span class="o">=</span><span class="s2">"Date"</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plotted_variable</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"Country"</span><span class="p">,</span>
+            <span class="n">log_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_log_scale</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Create panel interactive application</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Když vytvoříme instanci této třídy, ještě žádnou aplikaci nevytvoříme.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">covid_dashboard</span> <span class="o">=</span> <span class="n">CovidDashboard</span><span class="p">()</span>
+<span class="n">covid_dashboard</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>CovidDashboard(countries=['Czechia'], name='CovidDashboard00006', plot_type=&lt;function bar at 0x111fef440&gt;, plotted_variable='Confirmed', use_log_scale=False)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Až teprve metoda <code>view</code> vytváří aplikaci, v našem případě (skoro) stejnou jako jsme vytvořili pomocí <code>interact</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">covid_dashboard</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Změňte typ atributu <code>countries</code>, aby šla vybrat pouze jedna země.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Vylepšený dashboard</h2>
+<p>Pojďme náš dashboard trochu vylepšit.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Odkomentujte pro instalaci iso3166 - potřebujeme pro ISO kódy států</span>
+<span class="c1"># %pip install iso3166</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">iso3166</span>
+
+
+<span class="k">def</span> <span class="nf">country_alpha3</span><span class="p">(</span><span class="n">country</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">iso3166</span><span class="o">.</span><span class="n">countries</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">country</span><span class="p">)</span><span class="o">.</span><span class="n">alpha3</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Načítání dat si zabalíme do funkce - použijeme poté v třídě pro dashboard.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_covid_data</span><span class="p">():</span>
+    <span class="n">covid_data_raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="s2">"https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv"</span><span class="p">,</span>
+        <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">"Date"</span><span class="p">],</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"Province/State"</span><span class="p">:</span> <span class="s2">"State"</span><span class="p">,</span> <span class="s2">"Country/Region"</span><span class="p">:</span> <span class="s2">"Country"</span><span class="p">})</span>
+
+    <span class="n">covid_data</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">covid_data_raw</span>
+        <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"Country"</span><span class="p">,</span> <span class="s2">"Date"</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">"Confirmed"</span><span class="p">:</span> <span class="s2">"sum"</span><span class="p">,</span> <span class="s2">"Recovered"</span><span class="p">:</span> <span class="s2">"sum"</span><span class="p">,</span> <span class="s2">"Deaths"</span><span class="p">:</span> <span class="s2">"sum"</span><span class="p">,</span> <span class="s2">"Lat"</span><span class="p">:</span> <span class="s2">"first"</span><span class="p">,</span> <span class="s2">"Long"</span><span class="p">:</span> <span class="s2">"first"</span><span class="p">})</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">iso_alpha</span><span class="o">=</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">"Country"</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">country_alpha3</span><span class="p">))</span>
+    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">covid_data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V aplikacích, které jsou spuštěné někde v oblacích, je velmi užitečné <em>logovat</em> co se děje. Pomůže nám to při odhalováních chyb, ladění rychlosti nebo obecně sledování kdo / jak aplikaci používá.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Do našeho vylepšeného dashboardu přidáme následující:</p>
+<ul>
+<li>Přehledovou tabulku.</li>
+<li>Zobrazení dat na mapě.</li>
+<li>Výběr datumu (pro přehledovou tabulku a mapu).</li>
+<li>Chytřejší načítání dat.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">GreatCovidDashboard</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">Parameterized</span><span class="p">):</span>
+    <span class="sd">"""Almost the best COVID dashboard, (C) PyDataLadies 2020</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># výběr zemí - možnosti doplníme podle dat</span>
+    <span class="n">countries</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">ListSelector</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s2">"Czechia"</span><span class="p">],</span> <span class="n">objects</span><span class="o">=</span><span class="p">[</span><span class="s2">"Czechia"</span><span class="p">])</span>
+    <span class="c1"># výběr zobrazené veličiny</span>
+    <span class="n">plotted_variable</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"Confirmed"</span><span class="p">,</span> <span class="n">objects</span><span class="o">=</span><span class="p">[</span><span class="s2">"Confirmed"</span><span class="p">,</span> <span class="s2">"Recovered"</span><span class="p">,</span> <span class="s2">"Deaths"</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="c1"># přepínání logaritmického měřítka</span>
+    <span class="n">use_log_scale</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Boolean</span><span class="p">(</span><span class="n">doc</span><span class="o">=</span><span class="s2">"Use log scale"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># výběr typu grafu</span>
+    <span class="n">plot_type</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span>
+        <span class="n">doc</span><span class="o">=</span><span class="s2">"Plot type"</span><span class="p">,</span> <span class="n">objects</span><span class="o">=</span><span class="p">{</span><span class="s2">"bar"</span><span class="p">:</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">,</span> <span class="s2">"line"</span><span class="p">:</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="c1"># výběr datumu pro zobrazení dat na mapě</span>
+    <span class="n">map_plot_date</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Date</span><span class="p">(</span>
+        <span class="c1"># vybrané datum i meze změníme v update_covid_data na základě dat</span>
+        <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="c1"># vytvoříme si logger pro tuto třídu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"GreatCovidDashboard"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Initializing"</span><span class="p">)</span>
+        <span class="c1"># musíme zavolat i __init__ mateřské třídy</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="c1"># "skrytý" atributu _covid_data aktualizujeme v metodě update_covid_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_covid_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_covid_data</span><span class="p">()</span>
+        <span class="c1"># na začátek vybereme poslední datum k zobrazení</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">map_plot_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid_data</span><span class="p">[</span><span class="s2">"Date"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Initialized"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update_covid_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># načteme aktuální data do "skrytého" atributu _covid_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Loading COVID data"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_covid_data</span> <span class="o">=</span> <span class="n">get_covid_data</span><span class="p">()</span>
+        <span class="c1"># a změníme parametry vybírátka data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">map_plot_date</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_covid_data</span><span class="p">[</span><span class="s2">"Date"</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_covid_data</span><span class="p">[</span><span class="s2">"Date"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">countries</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_covid_data</span><span class="p">[</span><span class="s2">"Country"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+
+    <span class="c1"># propery nám pomůže udělat "chytrý" atribut covid_data</span>
+    <span class="c1"># který používá "skrytý" _covid_data a aktualizuje ho pokud je třeba</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">covid_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># načítat data chci jen pokud jsou zastaralá</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid_data</span><span class="p">[</span><span class="s2">"Date"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_covid_data</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid_data</span>
+
+    <span class="nd">@param</span><span class="o">.</span><span class="n">depends</span><span class="p">(</span><span class="s2">"countries"</span><span class="p">,</span> <span class="s2">"plotted_variable"</span><span class="p">,</span> <span class="s2">"use_log_scale"</span><span class="p">,</span> <span class="s2">"plot_type"</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Plot time evolution for one or more countries</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">covid_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">covid_data</span><span class="p">[</span><span class="s2">"Country"</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">)],</span>
+            <span class="n">x</span><span class="o">=</span><span class="s2">"Date"</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plotted_variable</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"Country"</span><span class="p">,</span>
+            <span class="n">log_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_log_scale</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@param</span><span class="o">.</span><span class="n">depends</span><span class="p">(</span><span class="s2">"plotted_variable"</span><span class="p">,</span> <span class="s2">"use_log_scale"</span><span class="p">,</span> <span class="s2">"map_plot_date"</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">map_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Map-plot of COVID data on a specific date</span>
+<span class="sd">        """</span>
+        <span class="c1"># vytvoříme si pomocný dataframe jen pro vybrané datum</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">covid_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">covid_data</span><span class="p">[</span><span class="s2">"Date"</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_plot_date</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_log_scale</span><span class="p">:</span>
+            <span class="c1"># přidáme sloupec log(plotted_variable)</span>
+            <span class="n">color_column</span> <span class="o">=</span> <span class="n">f</span><span class="s2">"log(</span><span class="si">{self.plotted_variable}</span><span class="s2">)"</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">color_column</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">plotted_variable</span><span class="p">])})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">color_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotted_variable</span>
+            
+        <span class="k">return</span> <span class="n">px</span><span class="o">.</span><span class="n">choropleth</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">locations</span><span class="o">=</span><span class="s2">"iso_alpha"</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">color_column</span><span class="p">,</span>
+            <span class="n">hover_name</span><span class="o">=</span><span class="s2">"Country"</span><span class="p">,</span>
+            <span class="n">hover_data</span><span class="o">=</span><span class="p">[</span><span class="s2">"Confirmed"</span><span class="p">,</span> <span class="s2">"Recovered"</span><span class="p">,</span> <span class="s2">"Deaths"</span><span class="p">],</span>
+            <span class="n">color_continuous_scale</span><span class="o">=</span><span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">sequential</span><span class="o">.</span><span class="n">Plasma</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@param</span><span class="o">.</span><span class="n">depends</span><span class="p">(</span><span class="s2">"map_plot_date"</span><span class="p">,</span> <span class="s2">"countries"</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">selected_day_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Overview table for the selected date</span>
+<span class="sd">        """</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">covid_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covid_data</span><span class="p">[</span><span class="s2">"Date"</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_plot_date</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covid_data</span><span class="p">[</span><span class="s2">"Country"</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">))</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">pane</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">f</span><span class="s2">"Situation on </span><span class="si">{self.map_plot_date}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">pane</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"Country"</span><span class="p">)[[</span><span class="s2">"Confirmed"</span><span class="p">,</span> <span class="s2">"Recovered"</span><span class="p">,</span> <span class="s2">"Deaths"</span><span class="p">]]</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Creating dashboard view"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">pane</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="s2">"&lt;h1&gt;Great COVID-19 Dashboard&lt;/h1&gt;"</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected_day_numbers</span><span class="p">,</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span>
+                <span class="n">pn</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">,</span> <span class="n">widgets</span><span class="o">=</span><span class="p">{</span><span class="s2">"map_plot_date"</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">DatePicker</span><span class="p">,}),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">map_plot</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A teď už můžeme dashboard vytvořit.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">great_covid_dashboard</span> <span class="o">=</span> <span class="n">GreatCovidDashboard</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO:GreatCovidDashboard:Initializing
+INFO:GreatCovidDashboard:Loading COVID data
+INFO:GreatCovidDashboard:Initialized
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A nakonec zobrazit.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">great_covid_dashboard</span><span class="o">.</span><span class="n">view</span><span class="p">()</span><span class="o">.</span><span class="n">servable</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Great COVID-19 Dashboard"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Úkoly</h2>
+<p>Zkuste teď náš nový krásný dashboard vylepšit a zprovoznit na internetu.</p>
+<ol>
+<li>Přidejte widget pro výběr projekce mapy. Projekce se mení pomocí parametru <code>location</code> funkce <a href="https://plotly.github.io/plotly.py-docs/generated/plotly.express.choropleth.html"><code>choropleth</code></a>.</li>
+<li>Spusťte aplikaci na Heroku. Nejjednodušší bude nahradit předchozí dashboard.</li>
+</ol>
+<p>A pokud bude zbyde čas, zkuste třeba</p>
+<ol>
+<li>Změnit widget na výběr zemí na <a href="https://panel.holoviz.org/reference/widgets/MultiChoice.html#widgets-gallery-multichoice"><code>MultiChoice</code></a>.</li>
+<li>Přidat vybírátko začátku časové osy.</li>
+<li>Přidat graf vývoje smrtnosti, tj. podílu zemřelých k nakaženým.</li>
+</ol>
+<p>Anebo vymyslete a naprogramujte vlastní vylepšení :)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-praha-jaro/pydata/dashboards/">← <span class="d-none d-sm-inline">Interaktivní vizualizace a aplikace I.</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-praha-jaro/sessions/dashboards/">↑ <span class="d-none d-sm-inline">Lekce: Interaktivní vizualizace a aplikace (virtuální)</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-praha-jaro/sessions/dashboards/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2020-pydata-praha-jaro/lessons/pydata/dashboards-2/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Jakub Urban, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

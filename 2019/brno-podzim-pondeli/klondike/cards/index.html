@@ -1,0 +1,427 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Klondike: Karty
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/brno-podzim-pondeli/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/brno-podzim-pondeli/sessions/solitaire/">Sekvence</a>
+
+> <a href="/2019/brno-podzim-pondeli/klondike/cards/">Klondike: Karty</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Klondike Solitaire: Karty</h1>
+<p>Pojďme vytvořit karetní hru <em>Klondike Solitaire</em>, kterou možná znáš v nějaké
+počítačové verzi.</p>
+<p><span class="figure"><a href="/2019/brno-podzim-pondeli/klondike/cards/static/klondike.png"><img src="/2019/brno-podzim-pondeli/klondike/cards/static/klondike.png" alt="Jedna z grafických podob hry"></a></span></p>
+<p>Naše hra bude ze začátku jednodušší – nebudeme se zabývat grafikou,
+ale logikou hry.
+„Grafiku“ zatím zajistí textová konzole. Obrázek výše se dá ukázat jako:</p>
+<div class="highlight"><pre><code>   U     V          W     X     Y     Z
+ [???] [   ]      [   ] [   ] [   ] [   ]
+
+   A     B     C     D     E     F     G
+ [3♣ ] [???] [???] [???] [???] [???] [???]
+       [5 ♥] [???] [???] [???] [???] [???]
+             [6♣ ] [???] [???] [???] [???]
+                   [5♠ ] [???] [???] [???]
+                         [Q ♥] [???] [???]
+                               [4♠ ] [???]
+                                     [3 ♦]</code></pre></div><h2>Pasiáns</h2>
+<p><em>Klondike Solitaire</em> je <a href="https://cs.wikipedia.org/wiki/Pasi%C3%A1ns">Pasiáns</a>
+– karetní hra pro jednoho hráče.
+Tyto hry obecně fungují takto:</p>
+<ul>
+<li>Karty se určitým způsobem <em>rozdají</em> do několika balíčků, hromádek nebo
+jiných skupin</li>
+<li>Dokud hráč <em>nevyhrál</em>:<ul>
+<li>Hráč <em>udělá tah</em>: podle určitých pravidel přesune karty z jedné hromádky
+na druhou</li>
+</ul>
+</li>
+</ul>
+<p>Než ale počítač naučíš hrát hru, je potřeba ho naučit pár základních věcí,
+aby pak instrukce pro samotnou hru dávaly smysl.
+Základní věci, které je potřeba počítač „naučit“, jsou:</p>
+<ul>
+<li>Co je to <em>karta</em>?</li>
+<li>Co je to <em>balíček</em>?</li>
+</ul>
+<p>Odpovědí na tyhle otázky bude spousta vysvětlování a taky několik Pythonních
+funkcí, které použiješ i ve zbytku hry.</p>
+<p>Tady bych rád podotknul, že tyhle materiály ukazují předem vyzkoušený způsob,
+jak napsat karetní hru.
+Reálné projekty takhle nefungují: zahrnují spoustu plánování, slepých uliček,
+oprav špatně navrženého kódu a jiných frustrací.
+Neděláme tu reálný softwarový projekt – zatím stále <em>zkoušíme základy</em>,
+jen z nich pak vyleze něco hezkého.</p>
+<h2>Karta a balíček</h2>
+<p>Co je to <em>karta</em> a <em>balíček</em>?
+Jak tyhle koncepty <em>reprezentovat</em> v Pythonu – tedy pomocí čísel, řetězců,
+seznamů, <var>n</var>-tic a jiných datových typů – abys s nimi mohla
+dál pracovat?</p>
+<p>Možností jak to udělat je více.
+Dobrý návrh <em>datového modelu</em> je základ úspěšného projektu: odpověď na otázku
+výše je základ k tomu, aby se pak program hezky psal.
+Až budeš potřebovat dobrý návrh datového modelu pro nějaký svůj projekt,
+doporučuju se ze začátku poradit se zkušenějším programátorem.</p>
+<p>Pro Solitaire je tento úkol za tebe vyřešený: hrou Klondike si procvičíš
+seznamy a <var>n</var>-tice (a později slovníky).</p>
+<h3>Karta</h3>
+<p>O <em>kartě</em> potřebuješ znát tři kousky informace: hodnotu, barvu a to, jestli
+je otočená rubem nebo lícem nahoru.</p>
+<p><em>Hodnoty</em> karet jsou čísla 2-10 a navíc <code>J</code>, <code>Q</code>, <code>K</code>, <code>A</code>.
+Hodnoty „obrázkových“ karet je dobré převést na čísla: J=11, Q=12, K=14, A=1.
+Hodnoty se tak budou dát jednoduše porovnávat, nebo zjišťovat následující kartu
+(např. po desítce je jedenáct – <code>J</code>).
+V programu budeme tedy pro hodnoty používat jen čísla, a teprve když bude
+potřeba kartu „ukázat“ člověku, převedeme ji na písmenko.</p>
+<p>Pro <em>barvu</em> jsou čtyři možnosti: ♥, ♦, ♣ nebo ♠.
+Dají se reprezentovat v podstatě jakýmikoli čtyřmi různými hodnotami.
+Různí programátoři by mohli použít čísla 0-3, symboly jako <code>♥</code>, nebo třeba jako
+čtyři různé funkce.
+My použijeme krátké řetězce bez diakritiky, aby se to dobře psalo:
+<code>'Sr'</code> (srdce), <code>'Pi'</code> (piky), <code>'Ka'</code> (káry), <code>'Kr'</code> (kříže).
+Použij prosím stejné řetězce (včetně velkých písmen), abys pak mohla
+kopírovat ukázkový kód.
+Jako u hodnoty platí že tyhle řetězce budeme používat ve většině programu,
+jen když bude potřeba kartu „ukázat“ člověku, převedeme je na hezčí symbol.</p>
+<p>Pro <em>otočení</em> karty jsou dvě možné hodnoty: buď lícem nebo rubem nahoru.
+Když dvě hodnoty, je dobré použít <code>True</code> a <code>False</code>.
+Jen je pak potřeba vybrat (a dodržovat) která je která.
+Řekněme že <code>True</code> znamená lícem nahoru; <code>False</code> rubem.
+Ideální je podle toho důsledně pojmenovávat proměnné: v programu vždy
+používej <code>je_licem_nahoru=True</code>, ne <code>otoceni=True</code>.</p>
+<p>Samotná karta pak bude trojice těchto hodnot: (hodnota, barva, je_licem_nahoru).
+Například:</p>
+<ul>
+<li><code>(12, 'Sr', True)</code> je 🂽 – srdcová královna otočená lícem nahoru</li>
+<li><code>(7, 'Pi', False)</code> je 🂠 – piková sedma otočená rubem nahoru</li>
+</ul>
+<h3>Balíček</h3>
+<p>A balíček? Balíček bude seznam karet, tedy seznam trojic.
+Jakákoli sekvence karet ve hře bude bude seznam trojic: dobírací a odkládací
+balíčky, „sloupečky“ karet na herní ploše i „hromádky“ sežazených karet.</p>
+<p>Například jeden ze sloupečků z obrázku výše obsahuje 4 karty rubem nahoru
+a na konci srdcovou královnu.
+Jako seznam by to mohlo být:</p>
+<div class="highlight"><pre><span></span><span class="p">[(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">'Pi'</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">'Kr'</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">'Pi'</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="s1">'Sr'</span><span class="p">,</span> <span class="bp">True</span><span class="p">)]</span>
+</pre></div><h3>Seznamy a <var>n</var>-tice</h3>
+<p>Na balíčckích a kartách je vidět rozdíl v použití seznamů a <var>n</var>-tic:</p>
+<ul>
+<li><var>N</var>-tice má pevně dané <var>N</var>: karta je trojice, ne čtveřice
+ani dvojice.
+Oproti tomu seznamy nemívají pevně danou délku: hromádka karet může být velká,
+malá, nebo dokonce prázdná.
+Dokonce může během hry růst nebo se zmenšovat, třeba když si „lízneš“ kartu
+nebo balíček rozdělíš na dvě části.</li>
+<li>Seznamy často dává smysl zamíchat nebo seřadit.
+Když zamíchám balíček karet, je to stále baliček karet.
+Když ale zamíchám pořadím prvků ve trojici <em>(hodnota, barva, je_licem_nahoru)</em>,
+bude to sice pořád trojice, ale už to nejspíš nebude <em>karta</em>.</li>
+<li>S tím souvisí to, že v seznamy bývají tzv. <em>homogenní</em>: každý prvek stejný
+typ. Máme balíček karet (trojic), ale karty jsou trojice
+(číslo, řetězec, pravdivostní hodnota).</li>
+</ul>
+<div class="admonition note"><p>Ne ve všech programech to bude takhle jednoznačné. Karta a balíček jsou
+skoro ideální příklady na seznamy a <var>n</var>-tice  :)</p>
+</div><p>V Pythonu z použitých typů vyplývá, co se s nimi dá dělat.</p>
+<p><var>N</var>-tice nejdou měnit: abys změnila např. otočení karty, bude
+potřeba udělat úplně novou trojici (podobně jako např u tahu
+z <code>--------------------</code> na <code>-------------o------</code> v 1D piškvorkách).</p>
+<p>Seznamy ale měnit jdou. Seznamové operace dokonce často dávají smysl:</p>
+<ul>
+<li><em>append</em> je přiložení karty na vršek hromádky.</li>
+<li><em>pop</em> je líznutí karty (z balíčku zmizí, ale karta zůstane v ruce – jako návratová hodnota).</li>
+<li><em>extend</em> je přidání jednoho balíčku ke druhému.</li>
+<li><em>random.shuffle</em> je zamíchání karet.</li>
+<li><em>sort</em> je seřazení karet.</li>
+</ul>
+<p>Pozor ale na to, že se seznamem trojic toho jde dělat víc než s fyzickým
+balíčkem karet.
+Pro počítač není problém udělat kopii karty.</p>
+<h2>Pomocné funkce</h2>
+<p>Označovat dsrdcovou dámu jako <code>(12, 'Sr', True)</code> je skvělé pro počítač,
+ale pro lidi je to nepřehledné.
+Bude tedy vhodné napsat funkci, která kartu „ukáže“ trochu srozumitelněji.
+Taková funkce by měla vyřeši i to, že kartu, která je rubem nahoru
+– jako <code>(5, 'Kr', False)</code>, je potřeba před hráčem skrýt.</p>
+<p>Napsat tuhle funkci je docela otrava, a později bude potřeba
+aby se chovala <em>přesně</em> podle mých očekávání
+(včetně např. velkých písmen a mezer).
+Proto ti ji dám k dispozici. Hlavičku má takovouhle:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">popis_kartu</span><span class="p">(</span><span class="n">karta</span><span class="p">):</span>
+    <span class="sd">"""Vrátí popis karty, např. [Q ♥] nebo [6♣ ] nebo [???]</span>
+
+<span class="sd">    Trojice čísla (2-13), krátkého řetězce ('Sr', 'Ka', 'Kr' nebo 'Pi')</span>
+<span class="sd">    a logické hodnoty (True - lícem nahoru; False - rubem) se jednoduše</span>
+<span class="sd">    zpracovává v Pythonu, ale pro "uživatele" není nic moc.</span>
+<span class="sd">    Proto je tu tahle funkce, která kartu hezky "popíše".</span>
+
+<span class="sd">    Aby měly všechny hodnoty jen jeden znak, desítka se vypisuje jako</span>
+<span class="sd">    římská číslice "X".</span>
+
+<span class="sd">    Aby se dalo rychle odlišit červené (♥♦) karty od černých (♣♠),</span>
+<span class="sd">    mají červené mezeru před symbolem a černé za ním.</span>
+<span class="sd">    """</span>
+</pre></div><p>Druhá užitečná funkce umí otočit karu buď rubem nebo lícem nahoru.
+Podobně jako <code>tah</code> z piškvorek vezme „starou“ hodnotu, rozloží ji
+části a výsledek slepí z kombinace „starých“ a „nových“ hodnot.</p>
+<p>Projdi si ji řádek po řádku, abys věděla jak funguje:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">otoc_kartu</span><span class="p">(</span><span class="n">karta</span><span class="p">,</span> <span class="n">pozadovane_otoceni</span><span class="p">):</span>
+    <span class="sd">"""Vrátí kartu otočenou lícem nahoru (True) nebo rubem nahoru (False)</span>
+
+<span class="sd">    Nemění původní trojici; vytvoří a vrátí novou.</span>
+<span class="sd">    (Ani by to jinak nešlo – n-tice se, podobně jako řetězce čísla, měnit</span>
+<span class="sd">    nedají.)</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># Rozbalení n-tice</span>
+    <span class="n">hodnota</span><span class="p">,</span> <span class="n">barva</span><span class="p">,</span> <span class="n">stare_otoceni</span> <span class="o">=</span> <span class="n">karta</span>
+
+    <span class="c1"># Vytvoření nové n-tice (kombinací staré hodnoty/barvy a nového otočení)</span>
+    <span class="n">nova_karta</span> <span class="o">=</span> <span class="n">hodnota</span><span class="p">,</span> <span class="n">barva</span><span class="p">,</span> <span class="n">pozadovane_otoceni</span>
+
+    <span class="c1"># Vrácení nové n-tice</span>
+    <span class="k">return</span> <span class="n">nova_karta</span>
+</pre></div><p>Funkce najdeš v souboru <a href="/2019/brno-podzim-pondeli/klondike/cards/static/karty.py"><code>karty.py</code></a>. Projdi si je; rozumíš jim?</p>
+<p>Testy k nim jsou v <a href="/2019/brno-podzim-pondeli/klondike/cards/static/test_karty.py"><code>test_karty.py</code></a> – ty procházet nemusíš.</p>
+<p>Oba soubory si ulož.</p>
+<h3>Testy a úkoly</h3>
+<p>Další pomocné funkce už napíšeš sama.
+Aby sis ověřila že fungují, mám pro tebe předpřipravené testy.</p>
+<p>Stáhni si soubor s testy, <a href="/2019/brno-podzim-pondeli/klondike/cards/static/test_klondike.py">test_klondike.py</a>, a dej ho do adresáře,
+kde budeš tvořit hru a kde máš <code>karty.py</code>.</p>
+<p>Na ulehčení testování si nainstaluj modul <code>pytest-level</code>.
+Ten umožňuje pouštět jen určité testy – podle toho, jak jsi daleko.</p>
+<div class="highlight"><pre><code>python -m pip install pytest pytest-level
+
+</code></pre></div><p>Zkus pustit všechny testy. Asi ti neprojdou:</p>
+<div class="highlight"><pre><code>python -m pytest -v
+
+</code></pre></div><p>Pak zkus pustit testy pro úroveň 0:</p>
+<div class="highlight"><pre><code>python -m pytest -v --level 0
+
+</code></pre></div><p>Teď se nepustí žádné testy – všechny nové testy se přeskočí;
+projdou jen testy z <code>test_karty.py</code>.
+Uvidíš něco jako:</p>
+<div class="highlight"><pre><span></span><span class=" -Color -Color-Bold -Color-Bold-Green">===== 20 passed, 99 deselected in 0.06s ====</span>
+</pre></div><p>Zadáš-li v posledním příkazu <code>--level 1</code>, aktivuje se první z testů. Pravděpodobně neprojde – v dalším úkolu ho spravíš!</p>
+<h3>Vytvoření balíčku</h3>
+<p>Do modulu <code>klondike</code> (tedy do nového souboru <code>klondike.py</code>) napiš
+následující funkci:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">vytvor_balicek</span><span class="p">():</span>
+    <span class="sd">"""Vrátí balíček 52 karet – od esa (1) po krále (13) ve čtyřech barvách</span>
+
+<span class="sd">    Všechny karty jsou otočené rubem nahoru.</span>
+<span class="sd">    """</span>
+</pre></div><p>Zkus si funkci pustit a podívej se, co vrací.</p>
+<p>Aby sis ověřila, že se chová správně, pusť na ni testy:</p>
+<ul>
+<li>level 10: Funkce existuje</li>
+<li>level 11: V balíčku je 52 karet, žádné se neopakují.</li>
+<li>level 12: V balíčku jsou všechny požadované karty.</li>
+<li>level 13: Balíček je zamíchaný.</li>
+</ul>
+<h3>Rozepsání balíčku</h3>
+<p>Když výsledek funkce <code>vytvor_balicek</code>  vypíšeš, je docela nepřehledný.
+Aby se ti s balíčky lépe pracovalo, vytvoř následující funkci:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">popis_balicek</span><span class="p">(</span><span class="n">karty</span><span class="p">):</span>
+    <span class="sd">"""Vrátí popis všech karet v balíčku. Jednotlivé karty odděluje mezerami.</span>
+<span class="sd">    """</span>
+</pre></div><p>Funkce by měla vracet řetězec složený z popisů jednotlivých karet.
+Například:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">karty</span> <span class="o">=</span> <span class="p">[</span>
+<span class="go">        (13, 'Pi', True),</span>
+<span class="go">        (12, 'Sr', True),</span>
+<span class="go">        (11, 'Ka', True),</span>
+<span class="go">        (10, 'Kr', False),</span>
+<span class="go">    ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">popis_balicek</span><span class="p">(</span><span class="n">karty</span><span class="p">)</span>
+<span class="go">[K♠ ] [Q ♥] [J ♦] [???]</span>
+</pre></div><p>Jak na to?
+Vytváření celého řetězce najednouby bylo složité, ale lze si to rozdělit
+na kroky, které už znáš:</p>
+<ul>
+<li>Vytvoř prázdný seznam.</li>
+<li>Postupně do senamu přidej popisy jednotlivých karet.
+(Využij funkci <code>popis_kartu</code> z modulu <code>karty</code>!)</li>
+<li>Vrať popisky oddělené mezerami. (Koukni na tahák k seznamům!)</li>
+</ul>
+<p>Funkci opět můžeš otestovat:</p>
+<ul>
+<li>level 20: Funkce existuje</li>
+<li>level 21: Funkce správně popisuje balíček</li>
+<li>level 22: Funkce umí popsat i prázdný balíček</li>
+</ul>
+<h3>Popis balíčku</h3>
+<p>Občas je z balíčku vidět jen vrchní karta.
+Napiš následující funkci, která popíše takový balíček:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">popis_vrchni_kartu</span><span class="p">(</span><span class="n">balicek</span><span class="p">):</span>
+    <span class="sd">"""Vrátí popis daného balíčku karet -- tedy vrchní karty, která je vidět."""</span>
+</pre></div><p>Funkci nezapomeň otestovat:</p>
+<ul>
+<li>level 30: Funkce existuje</li>
+<li>level 31: Funkce vrátí popis poslední karty. (Bude se hodit funkce <code>popis_kartu</code> z modulu <code>karty</code>.)</li>
+<li>level 32: Funkce popíše prázdný balíček jako <code>[   ]</code> (3 mezery v hranatých závorkách).</li>
+</ul>
+<p>Pokračování příště...</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-podzim-pondeli/beginners/range/">← <span class="d-none d-sm-inline">Range - sekvence čísel</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-podzim-pondeli/sessions/solitaire/">↑ <span class="d-none d-sm-inline">Lekce: Sekvence</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/brno-podzim-pondeli/sessions/solitaire/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-brno-podzim-pondeli/lessons/klondike/cards/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2014-2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

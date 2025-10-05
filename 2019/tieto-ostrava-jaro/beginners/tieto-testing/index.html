@@ -1,0 +1,581 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz v Tieto Czech: Testing
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/tieto-ostrava-jaro/">Začátečnický kurz v Tieto Czech</a>
+
+> <a href="/2019/tieto-ostrava-jaro/sessions/testing/">Testování</a>
+
+> <a href="/2019/tieto-ostrava-jaro/beginners/tieto-testing/">Testing</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h2>Testing</h2>
+<h3>Test Driven Development (TDD)</h3>
+<blockquote><p>TDD is a process where the developer takes personal responsibility for the quality of his code.</p>
+</blockquote>
+<p>Steps:</p>
+<ul>
+<li>Unit tests are written before production code</li>
+<li>Don't write all tests or production code at once</li>
+<li>Small chunks of production code and tests are written together</li>
+</ul>
+<p>Benefits:</p>
+<ul>
+<li>Gives you confidence to change a code</li>
+<li>Gives you immediate feedback</li>
+<li>Documents what the code is doing</li>
+<li>Drives good object oriented design</li>
+</ul>
+<h3>TDD Work Flow</h3>
+<ul>
+<li>Write a failing unit test (red phase)</li>
+<li>Make the test pass (green phase)</li>
+<li>Refactor the code to make it clean (refactor phase)</li>
+<li>Repeat until the feature is complete</li>
+</ul>
+<p>Different kind of tests:</p>
+<ul>
+<li>Unit tests: Make sure a class or a function works as expected in isolation</li>
+<li>Functional tests: Verify that the service does what it says from the consumer's point of view, and behaves correctly even on bad requests</li>
+<li>Integration tests: Verify how (a service) integrates with all its network dependencies</li>
+<li>Load tests: Measure the service performances</li>
+<li>End-to-end tests: Verify that the whole system works with an end-to-end test</li>
+</ul>
+<p>Workflow of testing:</p>
+<ul>
+<li>Think about your new function or method. What feauture should provide?</li>
+<li>Write some skeleton of the code, so your program won't break. Your test should fail, so you are sure, that your test code is able to fail.</li>
+<li>Write dummy code for your skeleton, so your new code will pass the test. It doesn't have to fully functional code.</li>
+<li>Rewrite your code, so it does what suppose to do and make that test(s) passes.</li>
+</ul>
+<h3>Example code</h3>
+<p><strong>unnecessary_math.py</strong></p>
+<div class="highlight"><pre><code>'''
+Module showing how doctests can be included with source code
+Each '&gt;&gt;&gt;' line is run as if in a python shell, and counts as a test.
+The next line, if not '&gt;&gt;&gt;' is the expected output of the previous line.
+If anything doesn't match exactly (including trailing spaces), the test fails.
+'''
+
+def multiply(a, b):
+    """
+    &gt;&gt;&gt; multiply(4, 3)
+    12
+    &gt;&gt;&gt; multiply('a', 3)
+    'aaa'
+    """
+    return a * b</code></pre></div><h3>Type of test</h3>
+<h4>doctests</h4>
+<p>The doctest test framework is a python module that comes prepackaged with Python.</p>
+<p>Running doctest:</p>
+<div class="highlight"><pre><code>python -m doctest -v &lt;file&gt;</code></pre></div><div class="highlight"><pre><code>$ python -m doctest -v unnecessary_math.py
+Trying:
+    multiply(4, 3)
+Expecting:
+    12
+ok
+Trying:
+    multiply('a', 3)
+Expecting:
+    'aaa'
+ok
+1 items had no tests:
+    unnecessary_math
+1 items passed all tests:
+   2 tests in unnecessary_math.multiply
+2 tests in 2 items.
+2 passed and 0 failed.
+Test passed.</code></pre></div><p>Running doctest in seperate file:</p>
+<p><strong>test_unnecessary_math.txt</strong></p>
+<div class="highlight"><pre><code>This is a doctest based regression suite for unnecessary_math.py
+Each '&gt;&gt;' line is run as if in a python shell, and counts as a test.
+The next line, if not '&gt;&gt;' is the expected output of the previous line.
+If anything doesn't match exactly (including trailing spaces), the test fails.
+
+&gt;&gt;&gt; from unnecessary_math import multiply
+&gt;&gt;&gt; multiply(3, 4)
+12
+&gt;&gt;&gt; multiply('a', 3)
+'aaa'</code></pre></div><p>Output:</p>
+<div class="highlight"><pre><code>$ python -m doctest -v test_unnecessary_math.txt
+Trying:
+    from unnecessary_math import multiply
+Expecting nothing
+ok
+Trying:
+    multiply(3, 4)
+Expecting:
+    12
+ok
+Trying:
+    multiply('a', 3)
+Expecting:
+    'aaa'
+ok
+1 items passed all tests:
+   3 tests in test_unnecessary_math.txt
+3 tests in 1 items.
+3 passed and 0 failed.
+Test passed.</code></pre></div><h4>unittest</h4>
+<p>The unittest test framework is python’s xUnit style framework.
+It is a standard module that you already have if you’ve got python version 2.1 or greater.</p>
+<p>We will be using same unnecessary_math.py module as earlier.</p>
+<p><strong>test_um_unittest.py</strong></p>
+<div class="highlight"><pre><code>import unittest
+from unnecessary_math import multiply
+
+class TestUM(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_numbers_3_4(self):
+        self.assertEqual( multiply(3,4), 12)
+
+    def test_strings_a_3(self):
+        self.assertEqual( multiply('a',3), 'aaa')
+
+if __name__ == '__main__':
+    unittest.main()</code></pre></div><p>Run code:</p>
+<div class="highlight"><pre><code>$ python test_um_unittest.py -v
+test_numbers_3_4 (__main__.TestUM) ... ok
+test_strings_a_3 (__main__.TestUM) ... ok</code></pre></div><h3>Nose</h3>
+<p>Nose’s tagline is “nose extends unittest to make testing easier”.
+It’s is a fairly well known python unit test framework, and can run doctests, unittests, and “no boilerplate” tests.</p>
+<p>You have to install nose:</p>
+<div class="highlight"><pre><code>pip install nose</code></pre></div><p>Example:</p>
+<p><strong>test_um_nose.py</strong></p>
+<div class="highlight"><pre><code>from unnecessary_math import multiply
+
+def test_numbers_3_4():
+    assert multiply(3,4) == 12 
+
+def test_strings_a_3():
+    assert multiply('a',3) == 'aaa'</code></pre></div><p>Run code:</p>
+<div class="highlight"><pre><code>$ nosetests -v test_um_nose.py
+test_um_nose.test_numbers_3_4 ... ok
+test_um_nose.test_strings_a_3 ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.003s
+
+OK</code></pre></div><p>Nose extends unittests possibilities. We can add specific code to run:</p>
+<ul>
+<li><p>at the beginning and end of a module of test code (setup_module/teardown_module)
+To get this to work, you just have to use the right naming rules.</p>
+</li>
+<li><p>at the beginning and end of a class of test methods (setup_class/teardown_class)
+To get this to work, you have to use the right naming rules, and include the ‘@classmethod’ decorator.</p>
+</li>
+<li><p>before and after a test function call (setup_function/teardown_function)
+You can use any name. You have to apply them with the ‘@with_setup’ decorator imported from nose.
+You can also use direct assignment, which I’ll show in the example.</p>
+</li>
+<li><p>before and after a test method call (setup/teardown)
+To get this to work, you have to use the right name.</p>
+</li>
+</ul>
+<p>Full example:</p>
+<div class="highlight"><pre><code>from nose import with_setup # optional
+
+from unnecessary_math import multiply
+
+def setup_module(module):
+    print("") # this is to get a newline after the dots
+    print("setup_module before anything in this file")
+
+def teardown_module(module):
+    print("teardown_module after everything in this file")
+
+def my_setup_function():
+    print("my_setup_function")
+
+def my_teardown_function():
+    print("my_teardown_function")
+
+@with_setup(my_setup_function, my_teardown_function)
+def test_numbers_3_4():
+    print('test_numbers_3_4  &lt;============================ actual test code')
+    assert multiply(3,4) == 12
+
+@with_setup(my_setup_function, my_teardown_function)
+def test_strings_a_3():
+    print('test_strings_a_3  &lt;============================ actual test code')
+    assert multiply('a',3) == 'aaa'
+
+
+class TestUM:
+
+    def setup(self):
+        print("TestUM:setup() before each test method")
+
+    def teardown(self):
+        print("TestUM:teardown() after each test method")
+
+    @classmethod
+    def setup_class(cls):
+        print("setup_class() before any methods in this class")
+
+    @classmethod
+    def teardown_class(cls):
+        print("teardown_class() after any methods in this class")
+
+    def test_numbers_5_6(self):
+        print('test_numbers_5_6()  &lt;============================ actual test code')
+        assert multiply(5,6) == 30
+
+    def test_strings_b_2(self):
+        print('test_strings_b_2()  &lt;============================ actual test code')
+        assert multiply('b',2) == 'bb'</code></pre></div><p>Result:</p>
+<div class="highlight"><pre><code>$ nosetests -s test_um_nose_fixtures.py
+
+setup_module before anything in this file
+setup_class() before any methods in this class
+TestUM:setup() before each test method
+test_numbers_5_6()  &lt;============================ actual test code
+TestUM:teardown() after each test method
+.TestUM:setup() before each test method
+test_strings_b_2()  &lt;============================ actual test code
+TestUM:teardown() after each test method
+.teardown_class() after any methods in this class
+my_setup_function
+test_numbers_3_4  &lt;============================ actual test code
+my_teardown_function
+.my_setup_function
+test_strings_a_3  &lt;============================ actual test code
+my_teardown_function
+.teardown_module after everything in this file
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.002s
+
+OK</code></pre></div><h4>pytest</h4>
+<p>First, you have to install pytest:</p>
+<div class="highlight"><pre><code>pip install pytest</code></pre></div><p>Unit test counterpart code:</p>
+<div class="highlight"><pre><code>import unittest
+from unnecessary_math import multiply
+
+class TestUM(unittest.TestCase):
+
+    def test_numbers_3_4(self):
+        self.assertEqual( multiply(3,4), 12)</code></pre></div><p>Pytest version:</p>
+<div class="highlight"><pre><code>from unnecessary_math import multiply
+
+def test_numbers_3_4():
+    assert( multiply(3,4) == 12 )</code></pre></div><p>There is no need to import unnittest.</p>
+<p>There is no need to derive from TestCase.</p>
+<p>There is no need to for special self.assertEqual(), since we can use Python’s built in assert statement.</p>
+<p><strong>test_um_pytest.py</strong></p>
+<div class="highlight"><pre><code>from unnecessary_math import multiply
+
+def test_numbers_3_4():
+    assert multiply(3,4) == 12 
+
+def test_strings_a_3():
+    assert multiply('a',3) == 'aaa'</code></pre></div><p>Run tests:</p>
+<div class="highlight"><pre><code>python -m pytest -v test_um_pytest.py
+py.test -v test_um_pytest.py</code></pre></div><p>Result:</p>
+<div class="highlight"><pre><code>py.test -v test_um_pytest.py
+============================================================================================================ test session starts =============================================================================================================
+platform darwin -- Python 3.7.0, pytest-3.8.0, py-1.6.0, pluggy-0.7.1 -- /Users/jasiplum/Development/Projects/Tieto/Python/naucse/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/jasiplum/Development/Projects/Tieto/Python/naucse, inifile:
+collected 2 items
+
+test_um_pytest.py::test_numbers_3_4 PASSED                                                                                                                                                                                             [ 50%]
+test_um_pytest.py::test_strings_a_3 PASSED                                                                                                                                                                                             [100%]
+
+========================================================================================================== 2 passed in 0.07 seconds ==========================================================================================================</code></pre></div><h4>pytest setup and teardown</h4>
+<p>Although unittest does allow us to have setup and teardown, pytest extends this quite a bit.
+We can add specific code to run:</p>
+<ul>
+<li>at the beginning and end of a module of test code (setup_module/teardown_module)</li>
+<li>at the beginning and end of a class of test methods (setup_class/teardown_class)</li>
+<li>alternate style of the class level fixtures (setup/teardown)</li>
+<li>before and after a test function call (setup_function/teardown_function)</li>
+<li>before and after a test method call (setup_method/teardown_method)</li>
+</ul>
+<p>Full example <strong>test_um_pytest2.py</strong>:</p>
+<div class="highlight"><pre><code>from unnecessary_math import multiply
+
+def setup_module(module):
+    print("setup_module      module:%s" % module.__name__)
+
+def teardown_module(module):
+    print("teardown_module   module:%s" % module.__name__)
+
+def setup_function(function):
+    print("setup_function    function:%s" % function.__name__)
+
+def teardown_function(function):
+    print("teardown_function function:%s" % function.__name__)
+
+def test_numbers_3_4():
+    print('test_numbers_3_4  &lt;============================ actual test code')
+    assert multiply(3,4) == 12
+
+def test_strings_a_3():
+    print('test_strings_a_3  &lt;============================ actual test code')
+    assert multiply('a',3) == 'aaa'
+
+
+class TestUM:
+
+    def setup(self):
+        print("setup             class:TestStuff")
+
+    def teardown(self):
+        print("teardown          class:TestStuff")
+
+    def setup_class(cls):
+        print("setup_class       class:%s" % cls.__name__)
+
+    def teardown_class(cls):
+        print("teardown_class    class:%s" % cls.__name__)
+
+    def setup_method(self, method):
+        print("setup_method      method:%s" % method.__name__)
+
+    def teardown_method(self, method):
+        print("teardown_method   method:%s" % method.__name__)
+
+    def test_numbers_5_6(self):
+        print('test_numbers_5_6  &lt;============================ actual test code')
+        assert multiply(5,6) == 30
+
+    def test_strings_b_2(self):
+        print('test_strings_b_2  &lt;============================ actual test code')
+        assert multiply('b',2) == 'bb'
+``
+
+Expected result:</code></pre></div><p>$ py.test -v test_um_pytest2.py
+============================================================================================================ test session starts =============================================================================================================
+platform darwin -- Python 3.7.0, pytest-3.8.0, py-1.6.0, pluggy-0.7.1 -- /Users/jasiplum/Development/Projects/Tieto/Python/naucse/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/jasiplum/Development/Projects/Tieto/Python/naucse, inifile:
+collected 4 items</p>
+<p>test_um_pytest2.py::test_numbers_3_4 PASSED                                                                                                                                                                                            [ 25%]
+test_um_pytest2.py::test_strings_a_3 PASSED                                                                                                                                                                                            [ 50%]
+test_um_pytest2.py::TestUM::test_numbers_5_6 PASSED                                                                                                                                                                                    [ 75%]
+test_um_pytest2.py::TestUM::test_strings_b_2 PASSED                                                                                                                                                                                    [100%]</p>
+<p>========================================================================================================== 4 passed in 0.08 seconds ==========================================================================================================</p>
+<div class="highlight"><pre><code>
+You can also run unittests and doctest with pytest.
+
+
+### Other testing tools
+
+#### Unit tests
+
+pytest-cov: display the test coverage of your project
+
+pytest-flake8: linter to make sure that your code is following the PEP8 style
+
+Tox: http://tox.readthedocs.io - Tox can automate the creation of separate environments to run your tests.
+
+#### Functional tests
+
+WebTest: http://webtest.readthedocs.io
+
+#### Load tests
+
+Apache Bench
+
+Boom: https://github.com/tarekziade/boom
+
+Molotov: https://github.com/tarekziade/molotov
+
+locust.io: http://docs.locust.io
+
+#### End-to-end tests
+
+Selenium: http://docs.seleniumhq.org/
+
+
+#### Tests coverage
+
+coverage: https://coverage.readthedocs.io
+
+### Developer documentation
+
+Sphinx: http://www.sphinx-doc.org/
+
+The following is a full example of a project documentation using Sphinx:</code></pre></div><h1>Myservice</h1>
+<p><strong>myservice</strong> is a simple JSON Flask application that uses <strong>Flakon</strong>.</p>
+<p>The application is created with :func:<code>flakon.create_app</code>: 
+.. literalinclude:: ../../myservice/app.py</p>
+<p>The :file:<code>settings.ini</code> file which is passed to :func:<code>create_app</code>
+contains options for running the Flask app, like the DEBUG flag: 
+.. literalinclude:: ../../myservice/settings.ini
+   :language: ini</p>
+<p>Blueprint are imported from :mod:<code>myservice.views</code> and one 
+Blueprint and view example was provided in :file:<code>myservice/views/home.py</code>:</p>
+<p>.. literalinclude:: ../../myservice/views/home.py 
+   :name: home.py 
+   :emphasize-lines: 13</p>
+<p>Views can return simple mappings (as highlighted in the example above), 
+in that case, they will be converted into a JSON response. 
+```</p>
+<p><span class="figure"><a href="/2019/tieto-ostrava-jaro/beginners/tieto-testing/static/sphinx.png"><img src="/2019/tieto-ostrava-jaro/beginners/tieto-testing/static/sphinx.png" alt="Sphinx"></a></span></p>
+<h3>Homework</h3>
+<p>Write simple production function and their unit tests with following test cases:</p>
+<ul>
+<li>Function leap_year()</li>
+<li>Function leap_year will return True/False based on status of year, if is leap or not</li>
+<li>Returns false for not divisible by 4</li>
+<li>Returns true for divisible by 4 but not 100 and 400</li>
+<li>Returns false for divisible by 4 but is divisible by 100 but not 400</li>
+<li>Returns true for divisible by 4, divisible by 100 and divisible by 400</li>
+</ul>
+<p>Use PyTest framework.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/tieto-ostrava-jaro/sessions/testing/">↑ <span class="d-none d-sm-inline">Lekce: Testování</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/tieto-ostrava-jaro/sessions/testing/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-tieto-ostrava-jaro/lessons/beginners/tieto-testing/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro Tieto Czech s.r.o. napsal Lumír Jasiok, 2018</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

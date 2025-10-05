@@ -1,0 +1,386 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Webový server
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/mount/">Služby a webový server</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/httpd-service/">Webový server</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h2>Webový server</h2>
+<div class="admonition warning"><p>Toto jsou jen poznámky, ne materiály k samostudiu</p>
+</div><p>Už víš, jak a odkud instalovat, tak je vhodný čas na dnešní úkol.
+Nainstalujeme si tradiční webový server, <a href="http://httpd.apache.org/">Apache</a> neboli <code>httpd</code>.
+Existují různé alternativy k Apachi, dnes se často používá <code>nginx</code>, který je rychlejší a štíhlejší;
+Apache je starší a robustnější.
+Je to dobrý příklad toho, jak konfigurovat systémové služby a jak se o takové procesy starat.</p>
+<h2>Služby a démoni</h2>
+<p>Webový server je služba (angl. <em>service</em>): něco co lze zapnout a vypnout,
+spouštět při zapnutí počítače, u čeho lze zkontrolovat stav (běží/neběží)
+a podobně.
+Kromě webových serverů existují služby pro e-mailové servery,
+grafické systém pro vykreslování okýnek, řízení tiskových úloh, atd.</p>
+<p>Většina služeb spouští takzvaný <em>démon</em> (angl. <em>dæmon</em>),
+dlouho běžící proces, který je spuštěný „na pozadí“.
+Nepouští se ze shellu, který by čekal na to, až takový proces skončí.</p>
+<p>Démoni jsou typicky „odpoutaní“
+od shellu a terminálu který ho spustil (aby např. nešel ovládat
+pomocí <kbd>Ctrl</kbd>+<kbd>C</kbd> nebo <code>kill %1</code>
+nebo aby se nevypnul po ukončení terminálu).
+Historicky se o tohle každý démon staral sám; dnes se o to většinou stará
+proces který služby spouští.</p>
+<p>Na Fedoře se o služby stará systémový proces, který se jmenuje <code>systemd</code>. 
+My jako uživatelé máme k dispozici příkaz <code>systemctl</code>,
+který říká <code>systemd</code> co má dělat.</p>
+<p>Když spustíš jen příkaz <code>systemctl</code>, uvidíš dlouhý seznam věcí,
+které na počítači „běží“ a o které se <code>systemd</code> stará: nejen služby
+(<em>service</em>) ale i, zařízení (device), připojené souborové systémy (mount),
+logování, nastavení automatického času, internetové připojení, atd.</p>
+<p>Proces <code>systemd</code> se spouští jako první po zapnutí počítače
+a stará se o to, aby se ve správném pořadí zapnuly všechny služby,
+připojily všechny disky a podobně.
+Ověř si, že má PID 1:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps -A <span class="p">|</span> head
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">      1 ?        00:00:06 systemd</span>
+</pre></div><p>Příkaz <code>pstree</code> ti ukáže, že všechny ostatní procesy jsou mu „podřízené“.
+Zkus si v <code>pstree -T | less</code> najít <code>pstree</code>: zjistíš, že <code>pstree</code> byl zpuštěn
+z Bashe, který byl spuštěn z <code>gnome-terminal</code>, který byl spuštěn
+(možná s několika mezikroky) ze <code>systemd</code>.
+Kdybys <code>gnome-terminal</code> zavřela, <code>less</code> i <code>pstree</code> se ukončí.</p>
+<p>Ve výstupu <code>pstree</code> najdeš i démony: třeba <code>firewalld</code> je démon
+(dlouho běžící proces), který se stará o firewall; <code>cupsd</code> je démon který
+se stará o tisk a tiskárny (CUPS je zkratka Common Unix Printing System),
+<code>sssd</code> se stará o přihlašovací účty (SSS je zkratka System Security Services),
+<code>chronyd</code> zařizuje automatické nastavení hodin počítače podle internetu,
+Všimni si konvence démony pojmenovávat s <code>d</code> na konci.
+<code>systemd</code> tady není výjimkou, ale např. <code>NetworkManager</code>, který se stará o síť,
+je démon bez <code>d</code> v názvu.</p>
+<p>Webový server ale potřebuje víc než jen démona (tedy dlouho běžící proces,
+který něco sdílí na internetu). Například:</p>
+<ul>
+<li>nastavení např. toho, co se má na webu zveřejnit</li>
+<li>služby na kterých závisí (např. webový server potřebuje funkční síť)</li>
+<li>nástroj na ovládání (např. vypnutí a zapnutí) démona</li>
+<li>nástroj na zjištění, jestli démon běží</li>
+<li>nějaký způsob na hlášení chyb nebo zjišťování návštěvnosti</li>
+<li>a tak dále.</li>
+</ul>
+<p>Všechno tohle je nastavené v rámci <em>služby</em> (angl. <em>service</em>).
+Jako administrátoři budeme spouštět, nastavovat a ovládat <em>služby</em>;
+což typicky (ale ne vždy) zahrnuje spouštění, nastavování a ovládání
+nějakého démona – procesu který danou službu zajišťuje.</p>
+<div class="admonition note"><p>Termín <em>Daemon</em> nemá nic společného s okultismem.
+Je to jméno bytosti která pracuje v pozadí,
+podobně jako fyzikům známý Maxwellův démon.
+Více viz <a href="https://en.wikipedia.org/wiki/Daemon_%28computing%29#Terminology">Wikipedia</a>.</p>
+</div><h2>Instalace httpd</h2>
+<p>Nainstaluj <code>httpd</code> pomocí příkazu <code>dnf install httpd</code>.</p>
+<p>Když se podíváš na všechny soubory, které tento balíček obsahuje, uvidíš dlouhý seznam:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q -l httpd
+<span class="go">/etc/httpd/conf</span>
+<span class="go">/etc/httpd/conf.d/autoindex.conf</span>
+<span class="go">/etc/httpd/conf.d/userdir.conf</span>
+<span class="go">/etc/httpd/conf.d/welcome.conf</span>
+<span class="go">/etc/httpd/conf.modules.d</span>
+<span class="go">/etc/httpd/conf.modules.d/00-base.conf</span>
+<span class="go">/etc/httpd/conf.modules.d/00-dav.conf</span>
+<span class="go">...</span>
+</pre></div><h2>Správa služby httpd</h2>
+<p>Některé linuxové distribuce (např. Ubuntu) typicky službu po instalaci rovnou
+spustí s nějakým výchozím nastavením, nebo umožňují základní nastavení
+už při instalaci.</p>
+<p>Fedora má filosofii jinou. Nově nainstalovaný software je
+sice k dispozici, ale většinou se automaticky nespouští.
+Správce si ho musí nastavit a spustit sám.</p>
+<p>Protože budeme nastavovat systémovou službu – a tedy měnit nastavení
+celého systému – musíš být přihlášena jako superuživatel (<code>root</code>).
+Udělej to pomocí <code>sudo -i</code>.
+Příklady níže na nutnost být superuživatel upozorňují
+použitím výzvy <code>#</code> místo <code>$</code>.</p>
+<p>Software který spravuje systémové služby na Fedoře se jmenuje <code>systemd</code>.
+Ten je dnes zdaleka nejrozšířenější, ale existují i jiné
+(např. Upstart nebo Sys-V init), které fungují jinak.</p>
+<h3>Start, stop, enable, disable</h3>
+<p>Spusť službu <code>httpd</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>systemctl start httpd
+</pre></div><p>To spustí proces (démona) <code>httpd</code>.
+Ověř si, že proces opravdu běží:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>ps -A <span class="p">|</span> grep httpd
+<span class="go">   3955 ?        00:00:00 httpd</span>
+<span class="go">   3956 ?        00:00:00 httpd</span>
+<span class="go">   3958 ?        00:00:00 httpd</span>
+<span class="go">   3959 ?        00:00:00 httpd</span>
+<span class="go">   3960 ?        00:00:00 httpd</span>
+</pre></div><p>Vida, je jich hned několik.</p>
+<p>V čem je tohle lepší než pouštět proces <code>httpd</code> přímo?</p>
+<ul>
+<li><code>systemd</code> se stará o „démonizaci“ – odpoutání od terminálu a shellu,
+nastavení aktuálního adresáře, spuštění pod příslušným uživatelským účtem
+a podobně,</li>
+<li><code>systemd</code> proces kontrolovat, takže kdyby např. skončil s chybou,
+<code>systemd</code> se ho pokusí znovu nastartovat.</li>
+</ul>
+<p>Můžeš si nechat zobrazit stav služby – jestli běží,
+jaké má PID, seznam spuštěných procesů, kolik využívá paměti, atp:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>systemctl status httpd
+</pre></div><p>Nyní můžeš načíst webovou stránku webového serveru přímo ve virtuálce.
+Jako adresu zadej svoji IP adresu.
+Máš-li dost silný počítač, můžeš ji otevřít v prohlížeči.
+Ale jde to i v terminálu: zadej příkaz <code>curl</code> a IP adresu uveď jako argument.</p>
+<p><code>curl</code> je příkaz, který umí stahovat webové stránky.
+Jako argument mu můžeš dát libovolnou webovou adresu,
+např. <code>curl https://github.com</code>.</p>
+<div class="admonition note"><p><code>curl</code> ukáže jen HTML kód, stránku „nevykreslí“.
+Jestli ale chceš, můžeš si nainstalovat do virtuálního počítače textový
+webový prohlížeč, např. <code>links</code>: <code>dnf install links</code>,
+spustí se pak příkazem <code>links &lt;adresa&gt;</code>.
+a ukončí se pomocí <kbd>Q</kbd>.</p>
+</div><p>Webová stránka by ale měla být k dispozici i z jiného počítače –
+„venku“ z toho virtuálního.
+Jestli máš správně nastavenou síť a firewall, mělo by to jít:
+zadej IP adresu virtuálního počítače do prohlížeče na svém počítači a
+měla by se ti načíst testovací webová stránka.</p>
+<p>Webserver budeš mít k dispozici tak dlouho, dokud máš zapnutou službu <code>httpd</code>.
+Jakmile ji vypneš, služba se ukončí.
+Zkus si to:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>systemctl stop httpd
+</pre></div><p>A samozřejmě musíš mít zapnutý i (virtuální) počítač, na kterém služba běží.
+Když ho vypneš a znovu zapneš, webserver se zatím nezapne sám.
+Na to potřebuješ ještě jeden příkaz,
+který nastaví že se služba zapne vždy po startu systému:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>systemctl <span class="nb">enable</span> httpd
+</pre></div><p>Otestovat jestli máš službu korektně nastavenou můžeš restartováním počítače
+(příkazem <code>reboot</code>).
+Pokud potom běží tak jak jsi ji naplánovala, je vše v pořádku.</p>
+<div class="admonition note"><p>Existuje příkaz, který „stav po zapnutí počítače“ nastolí bez restartu.
+Bohužel ale vypne nesouvisející procesy, takže nejspíš ukončí terminál
+do kterého příkaz zadáváš. Je to příkaz <code>systemctl isolate graphical</code>,
+resp. <code>systemctl isolate multi-user</code> pro systém bez grafického prostředí.</p>
+</div><p>Zapínání při startu systému lze vypnout pomocí <code>systemctl disable httpd</code>.</p>
+<div class="admonition note"><p>Příkaz <code>systemctl start</code> a <code>systemctl stop</code> se týkají jen <em>aktuálního stavu</em>:
+nastartují/vypnou službu tady a teď.
+Příkazy <code>syatemctl enable</code> a <code>syatemctl disable</code> službu nespouští:
+jen nastavují co se zapne při startu systému.</p>
+</div><h3>Restart a reload</h3>
+<p>Se službami se pojí ještě dva příkazy, které se hodí znát. Jsou to:</p>
+<ul>
+<li><code>systemctl restart httpd</code> </li>
+<li><code>systemctl reload httpd</code></li>
+</ul>
+<p>Když změníš konfiguraci, server se o tom nedozví automaticky za svého běhu. 
+Musíš mu říct, že se má restartovat a při startu si načte aktualizovanou konfiguraci.
+Rozdíl mezi <code>restart</code> a <code>reload</code> je, že v případě <code>reload</code> se pouze načtou změny v konfiguračních souborech, ale existující připojení k webserveru zůstanou aktivní.
+V případě restartu se celá služba ukončí (a připojení se zavřou) a znovu spustí.</p>
+<p>A kde najdeš nastavení webového serveru? 
+Je v <code>/etc/httpd/conf.d/</code>, kde najdeš několik souborů. 
+Můžeš provést změnu v <code>/etc/httpd/conf.d/welcome.conf</code>, například vše zakomentovat (s použitím znaku <code>#</code>). 
+Tento soubor definuje obsah stránky, kterou dostaneš, když se zeptáš na IP adresu počítače s běžícím webovým serverem.
+Po zakomentování by se mělo začít zobrazovat něco jiného.
+Když se ale teď podíváš do prohlížeče, nebude žádná změna.
+Server si zatím změny nevšiml.
+Můžeš teď buď vypnout a zapnout server, nebo mu říct, aby si načetl nové nastavení. 
+Půjdeme druhou variantou, použij <code>systemctl reload httpd</code> (příp. <code>restart</code>) pro zobrazení změn.</p>
+<h3>Log</h3>
+<p>Když je se službou něco špatně, je dobré se podívat do <em>logu</em>
+(<em>log</em> je anglicky <em>lodní deník</em> – místo kam se zapisují záznamy o stavu).
+Poslední část logu – několik posledních hlášek, které server ohlásil –
+je vidět ve výstupu <code>systemctl status httpd</code>.
+Více jich ale uloženo do systému, který se jmenuje <code>journal</code>.
+Prohlíží se příkazem <code>journalctl</code>; přepínač <code>-u</code> filtruje hlášky z dané služby:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>journalctl -u httpd
+<span class="go">-- Journal begins at Mon 2021-10-04 16:34:05 CEST, ends at Mon 2021-11-29 16:34:26 CET. --</span>
+<span class="go">lis 29 15:40:22 fedora systemd[1]: Starting The Apache HTTP Server...</span>
+<span class="go">lis 29 15:40:22 fedora httpd[3955]: AH00558: httpd: Could not reliably determine the server's fully qualified domai&gt;</span>
+<span class="go">lis 29 15:40:22 fedora httpd[3955]: Server configured, listening on: port 80</span>
+<span class="go">lis 29 15:40:22 fedora systemd[1]: Started The Apache HTTP Server.</span>
+<span class="go">lis 29 15:59:24 fedora systemd[1]: Stopping The Apache HTTP Server...</span>
+<span class="go">lis 29 15:59:25 fedora systemd[1]: httpd.service: Deactivated successfully.</span>
+<span class="go">lis 29 15:59:25 fedora systemd[1]: Stopped The Apache HTTP Server.</span>
+<span class="go">lis 29 15:59:25 fedora systemd[1]: httpd.service: Consumed 1.087s CPU time.</span>
+<span class="go">lis 29 16:13:58 fedora systemd[1]: Starting The Apache HTTP Server...</span>
+<span class="go">lis 29 16:13:58 fedora httpd[8265]: AH00558: httpd: Could not reliably determine the server's fully qualified domai&gt;</span>
+<span class="go">lis 29 16:13:58 fedora httpd[8265]: Server configured, listening on: port 80</span>
+<span class="go">lis 29 16:13:58 fedora systemd[1]: Started The Apache HTTP Server.</span>
+</pre></div><h3>A jiné služby</h3>
+<p>Příkazy <code>systemctl</code> fungují i pro ostatní služby na systému.
+Až budeš místo webového serveru nastavovat server e-mailový,
+spouštění a podobná správa služby bude fungovat obdobně.
+Ale nastavení bude jinde – a v jiném formátu – než <code>/etc/httpd</code>.</p>
+<h2>DocumentRoot a UserDir</h2>
+<p>Zpět ke konkrétní službě – webovému serveru.</p>
+<p>To, co a jak dává <code>httpd</code> (Apache) k dispozici, se dá nastavit.</p>
+<p>V <code>/etc/httpd/conf/httpd.conf</code> je základní nastavení.
+To hlavní v něm je <code>DocumentRoot</code>: adresář kde jsou uloženy dokumenty které server servíruje.
+Typicky je to <code>/var/www/html/</code>.
+Vytvoř si v něm soubor <code>hello.txt</code> a napiš do něj <em>Hello, World!</em>
+Podívej se na stránku a zkontroluj, že se ten soubor objeví v prohlížeči.
+Na rozdíl od konfugurace (jako u <code>welcome.conf</code> výše) si obsah adresáře <code>/var/www/html</code> server „nepamatuje“ mezi jednotlivými připojeními.
+Když tedy přijde nový dotaz, zobrazí se aktuální obsah, i kdyby se od posledního <code>reload</code> změnil.
+Zkus to: změň <code>hello.txt</code> a pošli nový dotaz (obnovením stránky – klávesou <kbd>Ctrl</kbd>+<kbd>R</kbd>; v grafickém prohlížeči i <kbd>F5</kbd>).</p>
+<p>V souboru <code>/etc/httpd/conf.d/autoindex.conf</code> je nastavení toho, jak se generují výpisy adresářů.
+Zkus zakomentovat <code>IndexOptions</code> a kouknout jak se změní „hlavní“ stránka serveru po <code>systemctl reload</code>.</p>
+<p>V <code>/etc/httpd/conf/httpd.conf</code> je ještě jedno nastavení, a to <code>UserDir</code>. 
+Nastavuje, že pokud má uživatel vytvořený adresář <code>public_html</code>, pak tento adresář lze zobrazit pod <code>/~user/</code>, kde <em>user</em> je jméno uživatelského účtu.
+Na prvních unixových systémech to bylo skvělé – každý si mohl jednoduše dát na web co chtěl.
+Pak se zjistilo, že je to bezpečnostní riziko, protože se podle toho dá velmi jednoduše zjistit, jestli uživatel daného jména existuje na tom počítači a zkoušet se na ně připojit.
+Z tohoto důvodu je to standardně vypnuté, ale v případě potřeby můžeš tuto funkcionalitu opět zapnout.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/set-firewall/">← <span class="d-none d-sm-inline">Nastavení firewallu</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/mount/">↑ <span class="d-none d-sm-inline">Lekce: Služby a webový server</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/hw/httpd/"><span class="d-none d-sm-inline">Úkol</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/httpd-service/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Karolina Surma a Petr Viktorin, 2020-2021</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

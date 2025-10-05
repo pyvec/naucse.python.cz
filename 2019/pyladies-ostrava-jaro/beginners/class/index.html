@@ -1,0 +1,460 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Třídy
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/beginners/class/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/pyladies-ostrava-jaro/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/pyladies-ostrava-jaro/sessions/class/">Třídy</a>
+
+> <a href="/2019/pyladies-ostrava-jaro/beginners/class/">Třídy</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Hodnoty a objekty</h1>
+<p>Než se dnes začneme zabývat třídami,
+podíváme na objekty.</p>
+<p>Co pro programátory znamená slovo <em>objekt</em>?</p>
+<p>V Pythonu je to jednoduché – každá hodnota
+(tj. něco, co můžeš uložit do proměnné, vrátit
+z funkce nebo třeba seznamu) je objekt.
+Některé jazyky (třeba Javascript, C++ nebo Java) mají
+i jiné hodnoty než objekty, v některých
+jazycích (třeba v C) objekty vůbec nejsou.
+Ale v Pythonu mezi hodnotou a objektem není rozdíl,
+takže je na jednu stranu trošku složitější pochopit,
+v čem spočívá ta „objektovitost“, ale na druhou stranu
+to zase není potřeba vědět do detailů.</p>
+<p>Základní vlastnost objektů je to, že obsahují jak data
+(informace), tak <em>chování</em> – instrukce nebo metody,
+které s těmito daty pracují.
+Třeba řetězce v Pythonu obsahují jak informace
+(nějakou sekvenci znaků), tak užitečné metody jako
+<code>upper</code> nebo <code>count</code>.
+Kdyby řetězce nebyly objekty, musel by Python mít
+spoustu funkcí jako <code>str_upper</code> a <code>str_count</code>.
+Objekty spojují data a funkčnost dohromady.</p>
+<div class="admonition note"><p>Možná namítneš, že třeba <code>len</code> je funkce.
+Je to tak, Python není „stoprocentně“ objektový jazyk.
+Funkce <code>len</code> ale funguje i na
+objektech, které s řetězci nemají nic společného.</p>
+</div><h1>Třídy</h1>
+<p>Data každého objektu jsou specifická pro konkrétní
+objekt (<code>"abc"</code> obsahuje jiné znaky než
+<code>"def"</code>), ale funkčnost – metody – bývají
+společné pro všechny objekty daného typu.
+Třeba řetězcová metoda <code>count()</code> by se dala
+napsat zhruba jako:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="n">retezec</span><span class="p">,</span> <span class="n">znak</span><span class="p">):</span>
+    <span class="n">pocet</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">retezec</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="n">znak</span><span class="p">:</span>
+            <span class="n">pocet</span> <span class="o">=</span> <span class="n">pocet</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">pocet</span>
+</pre></div><p>… a ačkoliv bude vracet jinou hodnotu pro každý řetězec,
+samotná metoda je společná všem řetězcům.</p>
+<p>Tohle společné chování určuje
+<em>typ</em> (angl. <em>type</em>) neboli <em>třída</em> (angl. <em>class</em>) daného objektu.</p>
+<div class="admonition note"><p>V historických verzích Pythonu byl rozdíl mezi „typem“
+a „třídou“, ale dnes už jsou to synonyma.</p>
+</div><p>Typ objektu umí zjistit funkce <code>type</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">&lt;class 'int'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&lt;class 'bool'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="s2">"abc"</span><span class="p">)</span>
+<span class="go">&lt;class 'str'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'soubor.txt'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">&lt;class '_io.TextIOWrapper'&gt;</span>
+</pre></div><p>Takže <code>type</code> vrací nějaké třídy.
+A co je to třída? Popis, jak se chovají všechny objekty
+daného typu.</p>
+<p>Většinu tříd jde navíc v Pythonu zavolat, jako by
+to byly funkce, a vytvořit tak nový objekt dané třídy:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">trida_retezcu</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s2">"abc"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trida_retezcu</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="go">'8'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trida_retezcu</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">'[1, 2, 3]'</span>
+</pre></div><p>Chová se to stejně jako funkce <code>str</code>! Není to podivné?</p>
+<p>Tady se musím omluvit:
+<a href="/2019/pyladies-ostrava-jaro/beginners/functions/">materiály k funkcím</a>
+tak trochu lhaly. Funkce <code>str</code>, <code>int</code>, <code>float</code> apod. totiž vůbec
+nejsou funkce – jsou to právě třídy.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span>
+<span class="go">&lt;class 'str'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="s1">'abcdefgh'</span><span class="p">)</span>
+<span class="go">&lt;class 'str'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="s1">'abcdefgh'</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span>
+<span class="go">True</span>
+</pre></div><p>Ale dají se, podobně jako funkce, zavolat.
+Třída tedy většinou obsahuje nejen „popis“, jak se
+objekty daného typu budou chovat, ale umí i objekty
+daného typu vytvořit.</p>
+<h2>Vlastní třídy</h2>
+<p>A proč najednou tolik informací o třídách?
+Protože si zkusíme napsat třídu vlastní.</p>
+<p>Třídu se hodí napsat, když plánuješ mít ve svém
+programu více objektů s podobným chováním.
+Třeba karetní hra by mohla mít třídu Karta,
+webová aplikace třídu Uživatel,
+tabulkový procesor třídu Řádek.</p>
+<p>My teď potřebujeme napsat program o zvířátkách.
+Začni tím, že napíšeš třídu pro koťátka, která umí mňoukat:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kotatko</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">zamnoukej</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"Mňau!"</span><span class="p">)</span>
+</pre></div><p>Tak jako se funkce definují pomocí <code>def</code>,
+třídy mají klíčové slovo <code>class</code>,
+za které napíšeš jméno třídy, dvojtečku,
+a pak odsazené tělo třídy.
+Podobně jako <code>def</code> dělá funkce, příkaz
+<code>class</code> udělá novou třídu a přiřadí ji
+do proměnné daného jména (tady <code>Kotatko</code>).</p>
+<p>Třídy se tradičně pojmenovávají s velkým písmenem,
+aby se nepletly s „normálními“ hodnotami.</p>
+<div class="admonition note"><p>Základní třídy (<code>str</code>, <code>int</code> atd.)
+velká písmena nemají, a to hlavně z historických
+důvodů – původně to byly opravdu funkce.</p>
+</div><p>V těle třídy můžeš definovat metody, které vypadají
+úplně jako funkce – jen mají první argument <code>self</code>.
+Ten si ale vysvětlíme později – zamňoukání má přednost:</p>
+<div class="highlight"><pre><span></span><span class="c1"># Vytvoření konkrétního objektu</span>
+<span class="n">kotatko</span> <span class="o">=</span> <span class="n">Kotatko</span><span class="p">()</span>
+
+<span class="c1"># Volání metody</span>
+<span class="n">kotatko</span><span class="o">.</span><span class="n">zamnoukej</span><span class="p">()</span>
+</pre></div><p>V tomhle příkladu si dej pozor na velikost písmen:
+<code>Kotatko</code> (s velkým K) je třída – popis, jak
+se koťátka chovají. <code>kotatko</code> (s malým k)
+je konkrétní objekt (angl. <em>instance</em>) té třídy:
+hodnota, která reprezentuje kotě.
+Onen konkrétní objekt vytvoříme zavoláním třídy,
+stejně jako zavoláním <code>str()</code> se dá vytvořit
+konkrétní řetězec.</p>
+<p>Mňau!</p>
+<h2>Atributy</h2>
+<p>Objekty vytvořené z „vlastních“ tříd mají jednu
+vlastnost, kterou třídy jako <code>str</code>
+nedovolují: možnost si definovat vlastní
+<em>atributy</em> – informace, které se uloží k danému
+objektu.
+Atributy se označují tak, že mezi hodnotu a jméno
+jejího atributu napíšeš tečku:</p>
+<div class="highlight"><pre><span></span><span class="n">mourek</span> <span class="o">=</span> <span class="n">Kotatko</span><span class="p">()</span>
+<span class="n">mourek</span><span class="o">.</span><span class="n">jmeno</span> <span class="o">=</span> <span class="s1">'Mourek'</span>
+
+<span class="n">micka</span> <span class="o">=</span> <span class="n">Kotatko</span><span class="p">()</span>
+<span class="n">micka</span><span class="o">.</span><span class="n">jmeno</span> <span class="o">=</span> <span class="s1">'Micka'</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">mourek</span><span class="o">.</span><span class="n">jmeno</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">micka</span><span class="o">.</span><span class="n">jmeno</span><span class="p">)</span>
+</pre></div><p>Na začátku jsme si řekly, že objekty spojují chování
+a data.
+Chování je definováno ve třídě, data se schovávají
+právě v atributech jednotlivých objektů.
+Podle atributů jako jméno můžeš jednotlivá koťátka
+rozlišit.</p>
+<div class="admonition note"><p>Asi sis všimla, že tečkou se dostaneš jak k metodám
+převzaným z třídy, tak k atributům specifickým
+pro konkrétní objekt.
+Co se stane, když má atribut stejné jméno jako
+metoda z třídy? Vyzkoušej si to:</p>
+<div class="highlight"><pre><span></span><span class="n">micka</span> <span class="o">=</span> <span class="n">Kotatko</span><span class="p">()</span>
+<span class="n">micka</span><span class="o">.</span><span class="n">zamnoukej</span> <span class="o">=</span> <span class="mi">12345</span>
+<span class="n">micka</span><span class="o">.</span><span class="n">zamnoukej</span><span class="p">()</span>
+</pre></div></div><h2>Parametr <code>self</code></h2>
+<p>A teď se na chvíli vrátíme k metodám,
+konkrétně k parametru <code>self</code>.</p>
+<p>Každá metoda má přístup ke konkrétnímu objektu, na
+kterém pracuje, právě přes argument <code>self</code>.
+Teď, když máš koťátka pojmenovaná,
+můžeš pomocí <code>self</code> rozjet dialog:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kotatko</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">zamnoukej</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Mňau!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jmeno</span><span class="p">))</span>
+
+<span class="n">mourek</span> <span class="o">=</span> <span class="n">Kotatko</span><span class="p">()</span>
+<span class="n">mourek</span><span class="o">.</span><span class="n">jmeno</span> <span class="o">=</span> <span class="s1">'Mourek'</span>
+
+<span class="n">micka</span> <span class="o">=</span> <span class="n">Kotatko</span><span class="p">()</span>
+<span class="n">micka</span><span class="o">.</span><span class="n">jmeno</span> <span class="o">=</span> <span class="s1">'Micka'</span>
+
+<span class="n">mourek</span><span class="o">.</span><span class="n">zamnoukej</span><span class="p">()</span>
+<span class="n">micka</span><span class="o">.</span><span class="n">zamnoukej</span><span class="p">()</span>
+</pre></div><p>Co se stalo? Výraz <code>mourek.zamnoukej</code> udělá <em>metodu</em>, která, když ji zavoláš,
+předá objekt <code>mourek</code> jako první argument
+funkce <code>zamnoukej</code>.</p>
+<div class="admonition note"><p>Tohle je to, čím se <em>metoda</em> liší od normální <em>funkce</em>:
+metoda si „pamatuje“ objekt, na kterém pracuje.</p>
+</div><p>A takový první argument, který obsahuje konkrétní
+objekt právě definované třídy, se tradičně pojmenovává <code>self</code>.
+(Když ho pojmenuješ jinak, ostatní programátoři se na tebe budou koukat hodně
+divně.)</p>
+<p>A může taková metoda brát víc než jeden argument?
+Může – <code>self</code> se doplní na první místo,
+a zbytek argumentů se vezme z volání metody.
+Třeba:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kotatko</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">zamnoukej</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Mňau!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jmeno</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">snez</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jidlo</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Mňau mňau! {} mi chutná!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jmeno</span><span class="p">,</span> <span class="n">jidlo</span><span class="p">))</span>
+
+<span class="n">mourek</span> <span class="o">=</span> <span class="n">Kotatko</span><span class="p">()</span>
+<span class="n">mourek</span><span class="o">.</span><span class="n">jmeno</span> <span class="o">=</span> <span class="s1">'Mourek'</span>
+<span class="n">mourek</span><span class="o">.</span><span class="n">snez</span><span class="p">(</span><span class="s1">'ryba'</span><span class="p">)</span>
+</pre></div><h2>Metoda <code>__init__</code></h2>
+<p>A když jsme u argumentů, je ještě jedno místo,
+kde můžeš třídě poslat argumenty: když vytváříš
+nový objekt (voláním třídy).
+Dá se tak hezky vyřešit problém, který možná vidíš
+v předchozím kódu: aktuálně každé koťátko potřebuje,
+aby se mu po vytvoření nastavilo jméno, jinak
+metoda <code>zamnoukej</code> nebude fungovat.
+Třída se ale dá udělat i tak, že půjde jméno nastavit
+už při vytváření, takhle:</p>
+<div class="highlight"><pre><span></span><span class="n">mourek</span> <span class="o">=</span> <span class="n">Kotatko</span><span class="p">(</span><span class="n">jmeno</span><span class="o">=</span><span class="s1">'Mourek'</span><span class="p">)</span>
+</pre></div><p>Na tohle používá Python metodu,
+která se jmenuje <code>__init__</code> (dvě podtržítka,
+<code>init</code>, dvě podtržítka).
+To „opodtržítkování“ znamená, že tohle jméno je nějakým způsobem speciální.
+Metoda <code>__init__</code> se totiž zavolá
+automaticky, když se vytvoří nový objekt.
+Dá se tedy napsat:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kotatko</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jmeno</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jmeno</span> <span class="o">=</span> <span class="n">jmeno</span>
+
+    <span class="k">def</span> <span class="nf">zamnoukej</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Mňau!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jmeno</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">snez</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jidlo</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Mňau mňau! {} mi chutná!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jmeno</span><span class="p">,</span> <span class="n">jidlo</span><span class="p">))</span>
+
+<span class="n">mourek</span> <span class="o">=</span> <span class="n">Kotatko</span><span class="p">(</span><span class="s1">'Mourek'</span><span class="p">)</span>
+<span class="n">mourek</span><span class="o">.</span><span class="n">zamnoukej</span><span class="p">()</span>
+</pre></div><p>A teď už není možnost, jak vytvořit koťátko bez jména,
+takže <code>zamnoukej</code> bude vždycky fungovat.</p>
+<p>Podobných „opodtržítkovaných“ metod je víc,
+třeba <code>__str__</code> se volá, když je potřeba
+převést objekt na řetězec:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kotatko</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jmeno</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jmeno</span> <span class="o">=</span> <span class="n">jmeno</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">'&lt;Kotatko jmenem {}&gt;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jmeno</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">zamnoukej</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Mňau!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jmeno</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">snez</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jidlo</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Mňau mňau! {} mi chutná!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jmeno</span><span class="p">,</span> <span class="n">jidlo</span><span class="p">))</span>
+
+<span class="n">mourek</span> <span class="o">=</span> <span class="n">Kotatko</span><span class="p">(</span><span class="s1">'Mourek'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">mourek</span><span class="p">)</span>
+</pre></div><h2>Cvičení: Kočka</h2>
+<p>Teď, když už umíš dělat koťátka, zkus vytvořit třídu pro kočku.</p>
+<ul>
+<li>Kočka umí mňoukat metodou <code>zamnoukej</code>.</li>
+<li>Kočka má na začátku (při vytvoření) 9 životů
+(nemůže mít nikdy víc než 9 nebo míň než 0!).</li>
+<li>Kočka umí říct, jestli je živá (nemá 0 životů), metodou <code>je_ziva</code>.</li>
+<li>Kočka může ztratit život metodou <code>uber_zivot</code>.</li>
+<li>Kočku můžeš nakrmit metodou <code>snez</code>, která bere 1 argument -
+nějaké konkrétní jídlo (řetězec). Pokud je toto jídlo <code>"ryba"</code>, kočce se obnoví
+jeden život (pokud teda už není mrtvá, nebo nemá maximální počet životů).</li>
+</ul>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/pyladies-ostrava-jaro/beginners/class/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kocka</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>         <span class="c1"># Init funkce nemusi brat jako parametr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pocet_zivotu</span> <span class="o">=</span> <span class="mi">9</span>   <span class="c1"># pocet zivotu, ten je pokazde 9.</span>
+
+    <span class="k">def</span> <span class="nf">zamnoukej</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"Mnau, mnau, mnauuu!"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">je_ziva</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pocet_zivotu</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">uber_zivot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">je_ziva</span><span class="p">():</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">"Nemuzes zabit uz mrtvou kocku!"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pocet_zivotu</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">snez</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jidlo</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">je_ziva</span><span class="p">():</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">"Je zbytecne krmit mrtvou kocku!"</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">jidlo</span> <span class="o">==</span> <span class="s2">"ryba"</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">pocet_zivotu</span> <span class="o">&lt;</span> <span class="mi">9</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pocet_zivotu</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">"Kocka spapala rybu a obnovil se ji jeden zivot."</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">"Kocka se krmi."</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>A to je o samotných třídách zatím vše.
+<a href="/2019/pyladies-ostrava-jaro/beginners/inheritance/">Příště</a> si něco řekneme o dědičnosti.
+A o štěňátkách.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/beginners/class/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/pyladies-ostrava-jaro/sessions/class/">↑ <span class="d-none d-sm-inline">Lekce: Třídy</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/pyladies-ostrava-jaro/homework/ostrava11/"><span class="d-none d-sm-inline">Domácí projekty</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-pyladies-ostrava-jaro/lessons/beginners/class/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2015-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

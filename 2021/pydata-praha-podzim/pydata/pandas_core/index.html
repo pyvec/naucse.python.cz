@@ -1,0 +1,3845 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Knihovna pandas a základní manipulace s tabulkovými daty
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/pydata-praha-podzim/">Datový kurz PyLadies</a>
+
+> <a href="/2021/pydata-praha-podzim/sessions/eda1/">Představení, Jupyter notebook, základy pandas</a>
+
+> <a href="/2021/pydata-praha-podzim/pydata/pandas_core/">Knihovna pandas a základní manipulace s tabulkovými daty</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Knihovna pandas a základní manipulace s tabulkovými daty</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Před jakoukoli složitější analýzou je třeba naučit se základy práce se zpracovávanými daty. Data můžou být různého charakteru - jednorozměrná, dvourozměrná, strukturovaná, nestrukturovaná, obrazová, zvuková... V lekcích explorativní datové analýzy budeme pracovat s daty převážně <strong>tabulkovými</strong> - tedy takovými, které jistě znáš ze svého oblíbeného (nebo neoblíbeného) tabulkového procesoru ("spreadsheetu"). Obvykle každý <strong>řádek</strong> takové tabulky odpovídá nějaké věci, exempláři čehosi, případně nějakému pozorování. V jednotlivých <strong>sloupcích</strong> se pak nacházejí jednotlivé vlastnosti či měřené veličiny pro tyto věci charakteristické.</p>
+<p>Ve světě Pythonu se pro zpracování tabulkových dat nejčastěji používá knihovna <strong>pandas</strong>. Ta umožňuje načítat data z mnohých formátů (včetně sešitů XLS(x)), různě je upravovat, velice efektivně počítat se sloupci, přímo zkoumat některé statistické ukazatele a v neposlední řadě výsledky pěkně vizualizovat. Tato lekce tě seznámí se základními používanými koncepty a naučí tě přistupovat k jednotlivým sloupcům, řádkům a buňkám.</p>
+<p>Více o knihovně pandas najdeš na jejích domovských stránkách: <a href="https://pandas.pydata.org/">https://pandas.pydata.org/</a></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Import knihovny <code>pandas</code></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>     <span class="c1"># K pandas budeme přistupovat pomocí aliasu pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 Tento příkaz sice importuje modul (resp. knihovnu) <code>pandas</code>, ale ta nebude dostupná pod svým obvyklým jménem, nýbrž pod <strong>aliasem</strong> <code>pd</code>. Naopak jméno <code>pandas</code> nebude nadále definováno. Při běžném programování se snažíme aliasům vyhýbat, protože snižují čitelnost kódu pro další programátory. U datové analytiky je to jinak, protože použití jednoho aliasu, který je navíc velmi běžný, nám ušetří spoustu psaní.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># pandas   -&gt; Vyvolalo by NameError</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Načtení tabulky s daty</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Skočíme do pandas rovnýma nohama a ukážeme si typický příklad dat, která s touto knihovnou budeme zpracovávat.</p>
+<p>Pro čtení dat má Pandas celou řadu funkcí <code>read_*</code>, díky kterým si poradí s mnoha různými formáty. Poměrně častým je formát CSV ("comma-separated values" - <a href="https://cs.wikipedia.org/wiki/CSV">wiki</a>), ve kterém každému záznamu odpovídá jeden řádek, jednotlivé vlastnosti záznamu pak jsou odděleny čárkami (případně jiným znakem).</p>
+<p>Pro práci s tímto notebookem si nejdříve stáhni soubor s daty z <a href="/2021/pydata-praha-podzim/pydata/pandas_core/static/pokemon.csv">tohoto odkazu</a>. Data pro pokusy jsou vytvořena z <a href="https://github.com/veekun/pokedex">komplexního Pokedexu na Githubu</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tabulka_pokemonu</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"static/pokemon.csv"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Data (ať už to je cokoliv) jsou nyní načtená v paměti, odkazuje na ně proměnná <code>tabulka_pokemonu</code>. Pojďme se podívat, co se v nich ukrývá.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tabulka_pokemonu</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>name</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>1</td>
+      <td>bulbasaur</td>
+      <td>0.7</td>
+      <td>6.9</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>45</td>
+      <td>49</td>
+      <td>49</td>
+      <td>45</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>ivysaur</td>
+      <td>1.0</td>
+      <td>13.0</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>60</td>
+      <td>62</td>
+      <td>63</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>venusaur</td>
+      <td>2.0</td>
+      <td>100.0</td>
+      <td>green</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Poison</td>
+      <td>80</td>
+      <td>82</td>
+      <td>83</td>
+      <td>80</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4</td>
+      <td>charmander</td>
+      <td>0.6</td>
+      <td>8.5</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>39</td>
+      <td>52</td>
+      <td>43</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>5</td>
+      <td>charmeleon</td>
+      <td>1.1</td>
+      <td>19.0</td>
+      <td>red</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>NaN</td>
+      <td>58</td>
+      <td>64</td>
+      <td>58</td>
+      <td>80</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>802</td>
+      <td>803</td>
+      <td>poipole</td>
+      <td>0.6</td>
+      <td>1.8</td>
+      <td>purple</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>NaN</td>
+      <td>67</td>
+      <td>73</td>
+      <td>67</td>
+      <td>73</td>
+    </tr>
+    <tr>
+      <td>803</td>
+      <td>804</td>
+      <td>naganadel</td>
+      <td>3.6</td>
+      <td>150.0</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Dragon</td>
+      <td>73</td>
+      <td>73</td>
+      <td>73</td>
+      <td>121</td>
+    </tr>
+    <tr>
+      <td>804</td>
+      <td>805</td>
+      <td>stakataka</td>
+      <td>5.5</td>
+      <td>820.0</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Rock</td>
+      <td>Steel</td>
+      <td>61</td>
+      <td>131</td>
+      <td>211</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <td>805</td>
+      <td>806</td>
+      <td>blacephalon</td>
+      <td>1.8</td>
+      <td>13.0</td>
+      <td>white</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Fire</td>
+      <td>Ghost</td>
+      <td>53</td>
+      <td>127</td>
+      <td>53</td>
+      <td>107</td>
+    </tr>
+    <tr>
+      <td>806</td>
+      <td>807</td>
+      <td>zeraora</td>
+      <td>1.5</td>
+      <td>44.5</td>
+      <td>yellow</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>88</td>
+      <td>112</td>
+      <td>75</td>
+      <td>143</td>
+    </tr>
+  </tbody>
+</table>
+<p>807 rows × 13 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud vše zafungovalo, jak má, měl(a) bys před sebou mít relativně pěkně naformátovanou tabulku. Základní zobrazení v notebooku ti ukáže prvních pět a posledních pět řádků (kdo by riskoval, že mu tisíce řádků zahltí okno prohlížeče?) v tabulce společně s informací o celkovém počtu řádků a sloupců. V tomto případě tabulka obsahuje celkem 13 vlastností (pojmenovaných sloupců) pro 807 různých pokémonů (očíslovaných řádků).</p>
+<p>⚠️ <strong>Varování:</strong> V tomto jednoduchém případě se tabulka načetla správně hned na první pokus, bez jakýchkoliv specifických parametrů, všechny sloupce se zdají obsahovat použitelné hodnoty. To je (zejména u formátu CSV) vlastně z pekla štěstí. Obvykle jsou se vstupními daty problémy - kupříkladu nemají popsané sloupce (případně je mají popsané podivně), používají zvláštní oddělovače záznamů nebo desetinné části čísel, v mnoha řádcích chybějí hodnoty (nebo jsou špatně opsané), ... <strong>Čištění dat</strong> se budeme věnovat někdy příště.</p>
+<p>Co je ten objekt uložený v proměnné <code>tabulka_pokemonu</code> vlastně zač? Jaké je třídy?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Základní třídy v <code>pandas</code> - DataFrame, Series, Index</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">tabulka_pokemonu</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>pandas.core.frame.DataFrame</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Odpověď zní <code>DataFrame</code>. Tento termín (používaný i v dalších oblíbených statistických jazycích, například <a href="https://www.r-project.org/">R</a>) je nespíš bez českého ekvivalentu, a tak nadále budeme mluvit o tabulkách či o instancích třídy DataFrame. Pokusme se nyní náš první DataFrame rozpitvat.</p>
+<p>⚠️ <strong>Varování:</strong> Jistě si brzy všimneš, že se <code>DataFrame</code> svými funkcemi hodně podobná sešitu v tabulkovém procesoru, ale je potřeba si uvědomit, kde tato paralela končí. Na rozdíl od sešitů v Excelu nebo LibreOffice Calcu DataFrame obsahuje "pouze" suchá data, neukládá žádné formátování a nenabízí žádný "editor". Pěkná vizuální reprezentace je jen otázkou souhry <code>pandas</code> s Jupyter notebookem, případně si pro to můžeš napsat vlastní kód.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vysky</span> <span class="o">=</span> <span class="n">tabulka_pokemonu</span><span class="p">[</span><span class="s2">"height"</span><span class="p">]</span>
+<span class="n">vysky</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0      0.7
+1      1.0
+2      2.0
+3      0.6
+4      1.1
+      ... 
+802    0.6
+803    3.6
+804    5.5
+805    1.8
+806    1.5
+Name: height, Length: 807, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 DataFrame se mimo jiné chová podobně jako slovník (<code>dict</code>) - když do hranatých závorek vložíš nějaký klíč, získáš takto pojmenovaný sloupec. Ve skutečnosti hranaté závorky (square brackets) umožňují vybírat z tabulek na základě různých dalších kritérií, ale k tomu se ještě dostaneme.</p>
+<p>Naše pitva pokračuje zjištěním, co je zač proměnná <code>vysky</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">vysky</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>pandas.core.series.Series</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Series</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Sloupce jsou typu <code>Series</code> (česky řada, ale ani toto slovo nebudeme používat). Tento typ vypadá jako seznam (<code>list</code>). Ověříme si, jestli se tak i chová:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vysky</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>     <span class="c1"># První výška? ✓</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.7</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vysky</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span>   <span class="c1"># Posledních pět výšek? ✓</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>802    0.6
+803    3.6
+804    5.5
+805    1.8
+806    1.5
+Name: height, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Zkus ještě nějaké další operace se seznamy, které už umíš, aplikovat i na <code>vysky</code>. Někdy to půjde, někdy ne.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Není také žádný problém mezi seznamy a <code>Series</code> převádět. Vůbec nejjednodušší způsob, jak můžeš vytvořit vlastní Series (pomni, že mimo kontext tabulky), je vytvořit instanci této třídy s nějakým seznamem jako argumentem:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cisla</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">cisla</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0    1
+1    2
+2    3
+dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A jde to i naopak:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cisla</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>     <span class="c1"># Varianta 1 (preferovaná, rychlejší)</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">cisla</span><span class="p">)</span>        <span class="c1"># Varianta 2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[1, 2, 3]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Čím se tedy <code>Series</code> od seznamu liší a v čem spočívá jeho výhoda?</p>
+<p>Každý sloupec má především následujících pět základních vlastností:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="static/series.svg" style="max-height: 20em;"></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4>1) hodnoty</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vysky</span><span class="p">[:</span><span class="mi">50</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>    <span class="c1"># Z estetických důvodů si sloupec trochu zkrátíme</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([0.7, 1. , 2. , 0.6, 1.1, 1.7, 0.5, 1. , 1.6, 0.3, 0.7, 1.1, 0.3,
+       0.6, 1. , 0.3, 1.1, 1.5, 0.3, 0.7, 0.3, 1.2, 2. , 3.5, 0.4, 0.8,
+       0.6, 1. , 0.4, 0.8, 1.3, 0.5, 0.9, 1.4, 0.6, 1.3, 0.6, 1.1, 0.5,
+       1. , 0.8, 1.6, 0.5, 0.8, 1.2, 0.3, 1. , 1. , 1.5, 0.2])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">vysky</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>numpy.ndarray</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 Hodnoty jsou v <code>Series</code> uloženy ve speciálním formátu postaveném na typu <code>ndarray</code> z knihovny <code>numpy</code>. Té se věnovat nebudeme, ale zejména v případě numerických hodnot ušetří místo v paměti a zrychlí matematické operace (například sečíst všechny hodnoty v Series je výrazně rychlejší než v seznamu).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4>2) typ hodnot</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vysky</span><span class="o">.</span><span class="n">dtype</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>dtype('float64')</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 Na rozdíl od seznamů by všechny prvky <code>Series</code> měly být stejného typu (pokud nejsou, zvolí se nejbližší společný nadtyp). <code>pandas</code> má vlastní sadu typů, tzv. <strong>dtypes</strong>, která částečně kopíruje výchozí datové typy v Pythonu, ale (především u numerických typů) se blíží více k tomu, jak s nimi pracuje procesor. A nehledejte u nich dědičnost (dobrá zpráva?). Nejběžnější typy si představíme příště - společně s operacemi, které se se sloupci dají dělat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4>3) index</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vysky</span><span class="o">.</span><span class="n">index</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>RangeIndex(start=0, stop=807, step=1)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 K prvkům seznamu přistupuješ pomocí číselného pořadí (0 - první prvek, 1 - druhý, ...), ze slovníku vybíráš podle klíče, pandas zavádí zobecněný <strong>index</strong>, který může být číselný, řetězcový, ale třeba i postavený na datu/času. O různých indexech viz níže.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4>4) jméno</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vysky</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'height'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 <code>Series</code> může, ale nemusí mít jméno. Pozor, je to hodnota uložená uvnitř samotného objektu, nijak nesouvisí se jménem proměnné, do které ho uložíš (ale u sloupce v tabulce se použije pro přístup k němu).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4>5) velikost</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vysky</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>807</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 Tato vlastnost říká, kolik je v <code>Series</code> prvků. Není nijak magická, chová se jako <code>len</code> u seznamu (a ostatně <code>len</code> lze použít i na <code>Series</code>). Pro úplnost uvádíme, že na rozdíl od ostatních vlastností je tato jen pro čtení.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Zjisti hodnoty atributů <code>.name</code>, <code>.index</code>, <code>.dtype</code>, <code>.values</code> a <code>size</code> u objektu <code>cisla</code>. Všimneš si něčeho zajímavého? Případně se podívej na totéž u některých dalších sloupců z <code>tabulka_pokemonu</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Při vytváření objektů <code>Series</code> lze tyto atributy (až na <code>size</code> a v omezené míře <code>dtype</code>) explicitně uvést:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vek</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="p">[</span><span class="mi">27</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">14</span><span class="p">],</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"Věk"</span><span class="p">,</span>
+    <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">"Karla"</span><span class="p">,</span> <span class="s2">"Martina"</span><span class="p">,</span> <span class="s2">"Žofie"</span><span class="p">],</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">vek</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Karla      27.0
+Martina    65.0
+Žofie      14.0
+Name: Věk, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Vytvoř objekt Series, který bude obsahovat seznam barev, zvířat, čísel nebo nějaké jiné kategorie věcí, které máš rád/a.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Index</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Ve výchozím stavu je u sloupců i tabulek použit bezejmenný číselný index, který řadí prvky po sobě od nuly výše:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vysky</span><span class="o">.</span><span class="n">index</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>RangeIndex(start=0, stop=807, step=1)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nicméně existují i další typy indexů (většinou výčtové):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vek</span><span class="o">.</span><span class="n">index</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Index(['Karla', 'Martina', 'Žofie'], dtype='object')</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">udalosti</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">"Nezávislost Československa"</span><span class="p">,</span> <span class="s2">"Konec druhé světové války"</span><span class="p">,</span> <span class="s2">"Sametová revoluce"</span><span class="p">],</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">([</span><span class="mi">1918</span><span class="p">,</span> <span class="mi">1945</span><span class="p">,</span> <span class="mi">1989</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">"rok"</span><span class="p">)</span>   <span class="c1"># Index může mít i jméno</span>
+<span class="p">)</span>
+<span class="n">udalosti</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>rok
+1918    Nezávislost Československa
+1945     Konec druhé světové války
+1989             Sametová revoluce
+dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">udalosti</span><span class="o">.</span><span class="n">index</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Int64Index([1918, 1945, 1989], dtype='int64', name='rok')</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tento index je číselný, ale hodnoty nejsou (resp. jsou, ale nemusely by být) srovnané a jsou "děravé".</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">udalosti_presne</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">"Nezávislost Československa"</span><span class="p">,</span> <span class="s2">"Konec druhé světové války"</span><span class="p">,</span> <span class="s2">"Sametová revoluce"</span><span class="p">],</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">([</span><span class="s1">'1918-10-28'</span><span class="p">,</span> <span class="s1">'1945-05-08'</span><span class="p">,</span> <span class="s1">'1989-11-17'</span><span class="p">])</span>
+<span class="p">)</span>
+<span class="n">udalosti_presne</span><span class="o">.</span><span class="n">index</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>DatetimeIndex(['1918-10-28', '1945-05-08', '1989-11-17'], dtype='datetime64[ns]', freq=None)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Hodnoty indexu potom lze použít v hranatých závorkách pro přístup k prvkům <code>Series</code>, podobně jako u slovníku. Možnosti jsou ale mnohem širší, ukážeme si je za chvíli v kontextu DataFrame.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vek</span><span class="p">[</span><span class="s2">"Martina"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[24]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>65.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Jaký index má tabulka pokémonů?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>DataFrame</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="static/df.svg" style="max-height: 25em;"></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Když už jsme se seznámili se sloupci a indexy, můžeme se vrátit k tabulce, resp. <code>DataFrame</code>.</p>
+<p>Podobně jako je <code>Series</code> kontejnerem hodnot spojených s indexem, <code>DataFrame</code> je dvojrozměrným kontejnerem, který kromě hodnot (<code>.values</code>) obsahuje hned dva indexy - jeden pro řádky a jeden pro sloupce:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tabulka_pokemonu</span><span class="o">.</span><span class="n">columns</span>    <span class="c1"># Seznam sloupců</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[25]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Index(['id', 'name', 'height', 'weight', 'color', 'shape', 'is baby', 'type 1',
+       'type 2', 'hp', 'attack', 'defense', 'speed'],
+      dtype='object')</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tabulka_pokemonu</span><span class="o">.</span><span class="n">index</span>      <span class="c1"># Index (seznam řádků)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[26]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>RangeIndex(start=0, stop=807, step=1)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tabulka_pokemonu</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[27]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[1, 'bulbasaur', 0.7, ..., 49, 49, 45],
+       [2, 'ivysaur', 1.0, ..., 62, 63, 60],
+       [3, 'venusaur', 2.0, ..., 82, 83, 80],
+       ...,
+       [805, 'stakataka', 5.5, ..., 131, 211, 13],
+       [806, 'blacephalon', 1.8, ..., 127, 53, 107],
+       [807, 'zeraora', 1.5, ..., 112, 75, 143]], dtype=object)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tabulka_pokemonu</span><span class="o">.</span><span class="n">shape</span>       <span class="c1"># Velikost (počet řádků x počet sloupců)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[28]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(807, 13)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zkonstruovat novou tabulku lze (kromě načtení dat z externího souboru) několika způsoby, z nichž asi nejčastější jsou ze seznamu slovníků nebo slovníku seznamů. Podobně jako u <code>Series</code>, některé atributy lze dodat jako další argumenty.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">"cislo"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="s2">"pismeno"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">]</span>
+<span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[29]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>cislo</th>
+      <th>pismeno</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>1</td>
+      <td>a</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>b</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>c</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+        <span class="p">{</span><span class="s2">"jmeno"</span><span class="p">:</span> <span class="s2">"máslo"</span><span class="p">,</span> <span class="s2">"cena"</span><span class="p">:</span> <span class="mf">42.90</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"jmeno"</span><span class="p">:</span> <span class="s2">"sýr"</span><span class="p">,</span> <span class="s2">"cena"</span><span class="p">:</span> <span class="mf">31.90</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"jmeno"</span><span class="p">:</span> <span class="s2">"kečup"</span><span class="p">,</span> <span class="s2">"cena"</span><span class="p">:</span> <span class="mf">49.90</span> <span class="p">},</span>   
+    <span class="p">],</span>
+    <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">"artikl1"</span><span class="p">,</span> <span class="s2">"artikl2"</span><span class="p">,</span> <span class="s2">"artikl3"</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[30]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>jmeno</th>
+      <th>cena</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>artikl1</td>
+      <td>máslo</td>
+      <td>42.9</td>
+    </tr>
+    <tr>
+      <td>artikl2</td>
+      <td>sýr</td>
+      <td>31.9</td>
+    </tr>
+    <tr>
+      <td>artikl3</td>
+      <td>kečup</td>
+      <td>49.9</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Vytvoř tabulku (<code>DataFrame</code>), která bude obsahovat sloupce "jméno", "příjmení" a "věk" pro postavy z nějakého tvého oblíbeného románu či filmu. Můžeš, ale nemusíš v ní použít index.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Indexování</h2>
+<p>Řádky, sloupce, číselné pořadí, klíče, rozsahy... Objekty pandas se někdy chovají jako seznamy, někdy jako slovníky. Jak z nich tedy dostat hodnoty? Je toho hodně, a proto přistupování k částem tabulky nevystačíme s prostými hranatými závorkami <code>[]</code>.</p>
+<p>Pro začátek si upravíme naši tabulku s pokémony tak, aby měla zajímavý a snadno uchopitelný index. Použijeme k tomu dvě metody třídy <code>DataFrame</code> (obě vrací novou instanci <code>DataFrame</code>, odvozenou od instance, na které je voláme):</p>
+<ul>
+<li><p><code>set_index</code> vrací tabulku, ve které je některý ze sloupců použit jako index</p>
+</li>
+<li><p><code>sort_index</code> vrací tabulku, která obsahuje stejný index, ale seřazený</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span> <span class="o">=</span> <span class="n">tabulka_pokemonu</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+<span class="n">pokemoni</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[31]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>abomasnow</td>
+      <td>460</td>
+      <td>2.2</td>
+      <td>135.5</td>
+      <td>white</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Ice</td>
+      <td>90</td>
+      <td>92</td>
+      <td>75</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>abra</td>
+      <td>63</td>
+      <td>0.9</td>
+      <td>19.5</td>
+      <td>brown</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Psychic</td>
+      <td>NaN</td>
+      <td>25</td>
+      <td>20</td>
+      <td>15</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>absol</td>
+      <td>359</td>
+      <td>1.2</td>
+      <td>47.0</td>
+      <td>white</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>65</td>
+      <td>130</td>
+      <td>60</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>accelgor</td>
+      <td>617</td>
+      <td>0.8</td>
+      <td>25.3</td>
+      <td>red</td>
+      <td>arms</td>
+      <td>False</td>
+      <td>Bug</td>
+      <td>NaN</td>
+      <td>80</td>
+      <td>70</td>
+      <td>40</td>
+      <td>145</td>
+    </tr>
+    <tr>
+      <td>aegislash</td>
+      <td>681</td>
+      <td>1.7</td>
+      <td>53.0</td>
+      <td>brown</td>
+      <td>blob</td>
+      <td>False</td>
+      <td>Steel</td>
+      <td>Ghost</td>
+      <td>60</td>
+      <td>50</td>
+      <td>150</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>zoroark</td>
+      <td>571</td>
+      <td>1.6</td>
+      <td>81.1</td>
+      <td>gray</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>60</td>
+      <td>105</td>
+      <td>60</td>
+      <td>105</td>
+    </tr>
+    <tr>
+      <td>zorua</td>
+      <td>570</td>
+      <td>0.7</td>
+      <td>12.5</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>40</td>
+      <td>65</td>
+      <td>40</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>zubat</td>
+      <td>41</td>
+      <td>0.8</td>
+      <td>7.5</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Flying</td>
+      <td>40</td>
+      <td>45</td>
+      <td>35</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <td>zweilous</td>
+      <td>634</td>
+      <td>1.4</td>
+      <td>50.0</td>
+      <td>blue</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>Dragon</td>
+      <td>72</td>
+      <td>85</td>
+      <td>70</td>
+      <td>58</td>
+    </tr>
+    <tr>
+      <td>zygarde</td>
+      <td>718</td>
+      <td>5.0</td>
+      <td>305.0</td>
+      <td>green</td>
+      <td>squiggle</td>
+      <td>False</td>
+      <td>Dragon</td>
+      <td>Ground</td>
+      <td>108</td>
+      <td>100</td>
+      <td>121</td>
+      <td>95</td>
+    </tr>
+  </tbody>
+</table>
+<p>807 rows × 12 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">index</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[32]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Index(['abomasnow', 'abra', 'absol', 'accelgor', 'aegislash', 'aerodactyl',
+       'aggron', 'aipom', 'alakazam', 'alomomola',
+       ...
+       'zapdos', 'zebstrika', 'zekrom', 'zeraora', 'zigzagoon', 'zoroark',
+       'zorua', 'zubat', 'zweilous', 'zygarde'],
+      dtype='object', name='name', length=807)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><code>[]</code></h3>
+<p>Začneme s hranatými závorkami:</p>
+<ul>
+<li>U <code>Series</code> vrací hodnotu, jíž přináleží příslušný klíč v indexu (to jsme si ukázali výše).</li>
+<li>U <code>DataFrame</code> vrací sloupec s příslušným jménem</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="p">[</span><span class="s2">"height"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[33]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+abomasnow    2.2
+abra         0.9
+absol        1.2
+accelgor     0.8
+aegislash    1.7
+            ... 
+zoroark      1.6
+zorua        0.7
+zubat        0.8
+zweilous     1.4
+zygarde      5.0
+Name: height, Length: 807, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud do závorek u <code>DataFrame</code> vložíš několik hodnot v seznamu, dostaneš více sloupců (a tedy <code>DataFrame</code>!):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="p">[[</span><span class="s2">"height"</span><span class="p">,</span> <span class="s2">"weight"</span><span class="p">]]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[34]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>height</th>
+      <th>weight</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>abomasnow</td>
+      <td>2.2</td>
+      <td>135.5</td>
+    </tr>
+    <tr>
+      <td>abra</td>
+      <td>0.9</td>
+      <td>19.5</td>
+    </tr>
+    <tr>
+      <td>absol</td>
+      <td>1.2</td>
+      <td>47.0</td>
+    </tr>
+    <tr>
+      <td>accelgor</td>
+      <td>0.8</td>
+      <td>25.3</td>
+    </tr>
+    <tr>
+      <td>aegislash</td>
+      <td>1.7</td>
+      <td>53.0</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>zoroark</td>
+      <td>1.6</td>
+      <td>81.1</td>
+    </tr>
+    <tr>
+      <td>zorua</td>
+      <td>0.7</td>
+      <td>12.5</td>
+    </tr>
+    <tr>
+      <td>zubat</td>
+      <td>0.8</td>
+      <td>7.5</td>
+    </tr>
+    <tr>
+      <td>zweilous</td>
+      <td>1.4</td>
+      <td>50.0</td>
+    </tr>
+    <tr>
+      <td>zygarde</td>
+      <td>5.0</td>
+      <td>305.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>807 rows × 2 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Co se stane, když totéž učiníš se <code>Series</code>?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Který z posledních 5 pokemonů (abecedně seřazených) je nejrychlejší?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><code>.loc[]</code></h3>
+<p>Když chceme získat nějaký řádek, použijeme atribut <code>loc</code>, takzvaný indexer. Pozor, není to metoda a nepoužívají se závorky kulaté, nýbrž hranaté. (Má to své důvody - jedině tak můžeme elegantně používat zkrácený dvojtečkový zápis pro rozsahy).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"abra"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[35]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>id              63
+height         0.9
+weight        19.5
+color        brown
+shape      upright
+is baby      False
+type 1     Psychic
+type 2         NaN
+hp              25
+attack          20
+defense         15
+speed           90
+Name: abra, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zajímal nás řádek s indexem "abra" a dostali jsme očekávaný výsledek - <code>Series</code>, kde každá hodnota je oindexovaná jménem sloupce.</p>
+<p>Ovšem situace začne být zajímavá, když začneme v indexu používat rozsahy (pomni, že něco takového slovníky neumí):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"z"</span><span class="p">:]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[36]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>zangoose</td>
+      <td>335</td>
+      <td>1.3</td>
+      <td>40.3</td>
+      <td>white</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>73</td>
+      <td>115</td>
+      <td>60</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>zapdos</td>
+      <td>145</td>
+      <td>1.6</td>
+      <td>52.6</td>
+      <td>yellow</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>Flying</td>
+      <td>90</td>
+      <td>90</td>
+      <td>85</td>
+      <td>100</td>
+    </tr>
+    <tr>
+      <td>zebstrika</td>
+      <td>523</td>
+      <td>1.6</td>
+      <td>79.5</td>
+      <td>black</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>75</td>
+      <td>100</td>
+      <td>63</td>
+      <td>116</td>
+    </tr>
+    <tr>
+      <td>zekrom</td>
+      <td>644</td>
+      <td>2.9</td>
+      <td>345.0</td>
+      <td>black</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Dragon</td>
+      <td>Electric</td>
+      <td>100</td>
+      <td>150</td>
+      <td>120</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>zeraora</td>
+      <td>807</td>
+      <td>1.5</td>
+      <td>44.5</td>
+      <td>yellow</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>88</td>
+      <td>112</td>
+      <td>75</td>
+      <td>143</td>
+    </tr>
+    <tr>
+      <td>zigzagoon</td>
+      <td>263</td>
+      <td>0.4</td>
+      <td>17.5</td>
+      <td>brown</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>38</td>
+      <td>30</td>
+      <td>41</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>zoroark</td>
+      <td>571</td>
+      <td>1.6</td>
+      <td>81.1</td>
+      <td>gray</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>60</td>
+      <td>105</td>
+      <td>60</td>
+      <td>105</td>
+    </tr>
+    <tr>
+      <td>zorua</td>
+      <td>570</td>
+      <td>0.7</td>
+      <td>12.5</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>40</td>
+      <td>65</td>
+      <td>40</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>zubat</td>
+      <td>41</td>
+      <td>0.8</td>
+      <td>7.5</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Flying</td>
+      <td>40</td>
+      <td>45</td>
+      <td>35</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <td>zweilous</td>
+      <td>634</td>
+      <td>1.4</td>
+      <td>50.0</td>
+      <td>blue</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>Dragon</td>
+      <td>72</td>
+      <td>85</td>
+      <td>70</td>
+      <td>58</td>
+    </tr>
+    <tr>
+      <td>zygarde</td>
+      <td>718</td>
+      <td>5.0</td>
+      <td>305.0</td>
+      <td>green</td>
+      <td>squiggle</td>
+      <td>False</td>
+      <td>Dragon</td>
+      <td>Ground</td>
+      <td>108</td>
+      <td>100</td>
+      <td>121</td>
+      <td>95</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pandas inteligentně pochopil, že chceme všechny klíče v nějakém rozsahu, dokonce aniž by byly v indexu přítomny.</p>
+<p>⚠️ Toto ovšem lze učinit jen se seřazeným indexem. Pokud index seřazený není, vybírá se rozsah existujících klíčů v pořadí, jak jdou za sebou, včetně obou krajních hodnot, tedy takto:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"zangoose"</span><span class="p">:</span><span class="s2">"zygarde"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[37]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>zangoose</td>
+      <td>335</td>
+      <td>1.3</td>
+      <td>40.3</td>
+      <td>white</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>73</td>
+      <td>115</td>
+      <td>60</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>zapdos</td>
+      <td>145</td>
+      <td>1.6</td>
+      <td>52.6</td>
+      <td>yellow</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>Flying</td>
+      <td>90</td>
+      <td>90</td>
+      <td>85</td>
+      <td>100</td>
+    </tr>
+    <tr>
+      <td>zebstrika</td>
+      <td>523</td>
+      <td>1.6</td>
+      <td>79.5</td>
+      <td>black</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>75</td>
+      <td>100</td>
+      <td>63</td>
+      <td>116</td>
+    </tr>
+    <tr>
+      <td>zekrom</td>
+      <td>644</td>
+      <td>2.9</td>
+      <td>345.0</td>
+      <td>black</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Dragon</td>
+      <td>Electric</td>
+      <td>100</td>
+      <td>150</td>
+      <td>120</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>zeraora</td>
+      <td>807</td>
+      <td>1.5</td>
+      <td>44.5</td>
+      <td>yellow</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>88</td>
+      <td>112</td>
+      <td>75</td>
+      <td>143</td>
+    </tr>
+    <tr>
+      <td>zigzagoon</td>
+      <td>263</td>
+      <td>0.4</td>
+      <td>17.5</td>
+      <td>brown</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>38</td>
+      <td>30</td>
+      <td>41</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>zoroark</td>
+      <td>571</td>
+      <td>1.6</td>
+      <td>81.1</td>
+      <td>gray</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>60</td>
+      <td>105</td>
+      <td>60</td>
+      <td>105</td>
+    </tr>
+    <tr>
+      <td>zorua</td>
+      <td>570</td>
+      <td>0.7</td>
+      <td>12.5</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>40</td>
+      <td>65</td>
+      <td>40</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>zubat</td>
+      <td>41</td>
+      <td>0.8</td>
+      <td>7.5</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Flying</td>
+      <td>40</td>
+      <td>45</td>
+      <td>35</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <td>zweilous</td>
+      <td>634</td>
+      <td>1.4</td>
+      <td>50.0</td>
+      <td>blue</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>Dragon</td>
+      <td>72</td>
+      <td>85</td>
+      <td>70</td>
+      <td>58</td>
+    </tr>
+    <tr>
+      <td>zygarde</td>
+      <td>718</td>
+      <td>5.0</td>
+      <td>305.0</td>
+      <td>green</td>
+      <td>squiggle</td>
+      <td>False</td>
+      <td>Dragon</td>
+      <td>Ground</td>
+      <td>108</td>
+      <td>100</td>
+      <td>121</td>
+      <td>95</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Když se chceš dostat ke konkrétní hodnotě, použiješ v hranatých závorkách dva klíče v pořadí <em>řádek</em>, <em>sloupec</em>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"zorua"</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[38]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'gray'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pozor ale na počet závorek. Pokud se v závorce vyskytne seznam s klíči, vyberou se v dané dimenzi všechny odpovídající řádky či hodnoty:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="s2">"zorua"</span><span class="p">,</span> <span class="s2">"zubat"</span><span class="p">]]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[39]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>zorua</td>
+      <td>570</td>
+      <td>0.7</td>
+      <td>12.5</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>40</td>
+      <td>65</td>
+      <td>40</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>zubat</td>
+      <td>41</td>
+      <td>0.8</td>
+      <td>7.5</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Flying</td>
+      <td>40</td>
+      <td>45</td>
+      <td>35</td>
+      <td>55</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Přístupy lze samozřejmě (nebo ne tak samozřejmě?) kombinovat, a tak můžeš vybírat rozsahy i seznamy v řádcích a sloupcích nezávisle na sobě:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [40]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"j"</span><span class="p">:</span><span class="s2">"k"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"color"</span><span class="p">,</span> <span class="s2">"attack"</span><span class="p">]]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[40]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>color</th>
+      <th>attack</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>jangmo-o</td>
+      <td>gray</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <td>jellicent</td>
+      <td>white</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>jigglypuff</td>
+      <td>pink</td>
+      <td>45</td>
+    </tr>
+    <tr>
+      <td>jirachi</td>
+      <td>yellow</td>
+      <td>100</td>
+    </tr>
+    <tr>
+      <td>jolteon</td>
+      <td>yellow</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>joltik</td>
+      <td>yellow</td>
+      <td>47</td>
+    </tr>
+    <tr>
+      <td>jumpluff</td>
+      <td>blue</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <td>jynx</td>
+      <td>red</td>
+      <td>50</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Jakou barvu mají (všichni) pokémoni, jejichž jméno začíná na "z"?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Kolik pokemonů existuje se jménem mezi písmeny "d" a "f"?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Ze seznamu všech pokemonů jsi vyber 5 s jménem tobě sympatickým (vyhni se prvním a posledním pěti). Jakého jsou typu? Který je nejvyšší a který nejtěžší?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><code>.iloc[]</code></h3>
+<p>Když chceme na chvíli zapomenout na to, jaký index je u tabulky nebo sloupce použit, můžeme k prvkům přistupovat přímo přes jejich pořadí (čísla řádku nebo sloupce). Toto je v zásadě intuitivní a odpovídá indexování, na které jsi zvyklá/ý z práce se seznamy.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [41]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">44</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[41]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>id                15
+height             1
+weight          29.5
+color         yellow
+shape      bug-wings
+is baby        False
+type 1           Bug
+type 2        Poison
+hp                65
+attack            90
+defense           40
+speed             75
+Name: beedrill, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[42]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>zapdos</td>
+      <td>145</td>
+      <td>1.6</td>
+      <td>52.6</td>
+      <td>yellow</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>Flying</td>
+      <td>90</td>
+      <td>90</td>
+      <td>85</td>
+      <td>100</td>
+    </tr>
+    <tr>
+      <td>zebstrika</td>
+      <td>523</td>
+      <td>1.6</td>
+      <td>79.5</td>
+      <td>black</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>75</td>
+      <td>100</td>
+      <td>63</td>
+      <td>116</td>
+    </tr>
+    <tr>
+      <td>zekrom</td>
+      <td>644</td>
+      <td>2.9</td>
+      <td>345.0</td>
+      <td>black</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Dragon</td>
+      <td>Electric</td>
+      <td>100</td>
+      <td>150</td>
+      <td>120</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>zeraora</td>
+      <td>807</td>
+      <td>1.5</td>
+      <td>44.5</td>
+      <td>yellow</td>
+      <td>humanoid</td>
+      <td>False</td>
+      <td>Electric</td>
+      <td>NaN</td>
+      <td>88</td>
+      <td>112</td>
+      <td>75</td>
+      <td>143</td>
+    </tr>
+    <tr>
+      <td>zigzagoon</td>
+      <td>263</td>
+      <td>0.4</td>
+      <td>17.5</td>
+      <td>brown</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>38</td>
+      <td>30</td>
+      <td>41</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>zoroark</td>
+      <td>571</td>
+      <td>1.6</td>
+      <td>81.1</td>
+      <td>gray</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>60</td>
+      <td>105</td>
+      <td>60</td>
+      <td>105</td>
+    </tr>
+    <tr>
+      <td>zorua</td>
+      <td>570</td>
+      <td>0.7</td>
+      <td>12.5</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>40</td>
+      <td>65</td>
+      <td>40</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>zubat</td>
+      <td>41</td>
+      <td>0.8</td>
+      <td>7.5</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Flying</td>
+      <td>40</td>
+      <td>45</td>
+      <td>35</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <td>zweilous</td>
+      <td>634</td>
+      <td>1.4</td>
+      <td>50.0</td>
+      <td>blue</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>Dragon</td>
+      <td>72</td>
+      <td>85</td>
+      <td>70</td>
+      <td>58</td>
+    </tr>
+    <tr>
+      <td>zygarde</td>
+      <td>718</td>
+      <td>5.0</td>
+      <td>305.0</td>
+      <td>green</td>
+      <td>squiggle</td>
+      <td>False</td>
+      <td>Dragon</td>
+      <td>Ground</td>
+      <td>108</td>
+      <td>100</td>
+      <td>121</td>
+      <td>95</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I tady jde kombinovat. A tak, až tě někdo požádá o hodnotu, která se nachází "vlevo dole", můžeš zkusit:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[43]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>718</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Na závěr, jen pro úplnost si představíme tři pohodlné funkce, které vybírají první, poslední nebo náhodné řádky z tabulky (všechny tři mají nepovinný parametr udávající počet požadovaných řádků):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [44]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>    <span class="c1"># Prvních několik řádků</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[44]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>abomasnow</td>
+      <td>460</td>
+      <td>2.2</td>
+      <td>135.5</td>
+      <td>white</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Grass</td>
+      <td>Ice</td>
+      <td>90</td>
+      <td>92</td>
+      <td>75</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>abra</td>
+      <td>63</td>
+      <td>0.9</td>
+      <td>19.5</td>
+      <td>brown</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Psychic</td>
+      <td>NaN</td>
+      <td>25</td>
+      <td>20</td>
+      <td>15</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>absol</td>
+      <td>359</td>
+      <td>1.2</td>
+      <td>47.0</td>
+      <td>white</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>65</td>
+      <td>130</td>
+      <td>60</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>accelgor</td>
+      <td>617</td>
+      <td>0.8</td>
+      <td>25.3</td>
+      <td>red</td>
+      <td>arms</td>
+      <td>False</td>
+      <td>Bug</td>
+      <td>NaN</td>
+      <td>80</td>
+      <td>70</td>
+      <td>40</td>
+      <td>145</td>
+    </tr>
+    <tr>
+      <td>aegislash</td>
+      <td>681</td>
+      <td>1.7</td>
+      <td>53.0</td>
+      <td>brown</td>
+      <td>blob</td>
+      <td>False</td>
+      <td>Steel</td>
+      <td>Ghost</td>
+      <td>60</td>
+      <td>50</td>
+      <td>150</td>
+      <td>60</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [45]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>     <span class="c1"># Posledních několik řádků</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[45]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>zoroark</td>
+      <td>571</td>
+      <td>1.6</td>
+      <td>81.1</td>
+      <td>gray</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>60</td>
+      <td>105</td>
+      <td>60</td>
+      <td>105</td>
+    </tr>
+    <tr>
+      <td>zorua</td>
+      <td>570</td>
+      <td>0.7</td>
+      <td>12.5</td>
+      <td>gray</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>NaN</td>
+      <td>40</td>
+      <td>65</td>
+      <td>40</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <td>zubat</td>
+      <td>41</td>
+      <td>0.8</td>
+      <td>7.5</td>
+      <td>purple</td>
+      <td>wings</td>
+      <td>False</td>
+      <td>Poison</td>
+      <td>Flying</td>
+      <td>40</td>
+      <td>45</td>
+      <td>35</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <td>zweilous</td>
+      <td>634</td>
+      <td>1.4</td>
+      <td>50.0</td>
+      <td>blue</td>
+      <td>quadruped</td>
+      <td>False</td>
+      <td>Dark</td>
+      <td>Dragon</td>
+      <td>72</td>
+      <td>85</td>
+      <td>70</td>
+      <td>58</td>
+    </tr>
+    <tr>
+      <td>zygarde</td>
+      <td>718</td>
+      <td>5.0</td>
+      <td>305.0</td>
+      <td>green</td>
+      <td>squiggle</td>
+      <td>False</td>
+      <td>Dragon</td>
+      <td>Ground</td>
+      <td>108</td>
+      <td>100</td>
+      <td>121</td>
+      <td>95</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Umíš napsat obdobu funkce <code>.tail()</code> pomocí indexování?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [46]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemoni</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>    <span class="c1"># Náhodný řádek</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[46]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>height</th>
+      <th>weight</th>
+      <th>color</th>
+      <th>shape</th>
+      <th>is baby</th>
+      <th>type 1</th>
+      <th>type 2</th>
+      <th>hp</th>
+      <th>attack</th>
+      <th>defense</th>
+      <th>speed</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>totodile</td>
+      <td>158</td>
+      <td>0.6</td>
+      <td>9.5</td>
+      <td>blue</td>
+      <td>upright</td>
+      <td>False</td>
+      <td>Water</td>
+      <td>NaN</td>
+      <td>50</td>
+      <td>65</td>
+      <td>64</td>
+      <td>43</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol (bonusový):</strong> Umíš napsat obdobu funkce <code>sample()</code> pomocí indexování (a modulu <code>random</code>)?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Shrnutí</h2>
+<p>V této lekci jsme si ukázali tři základní typy knihovny <code>pandas</code>:</p>
+<ul>
+<li><code>Series</code> coby jednorozměrný objekt obsahující hodnoty stejného typu</li>
+<li><code>DataFrame</code> coby dvojrozměrná tabulka složená z více <code>Series</code></li>
+<li><code>Index</code> coby zobecněný popis, jak přistupovat k prvkům <code>Series</code> nebo <code>DataFrame</code></li>
+</ul>
+<p>Kromě toho jsme se naučili z tabulek vybírat sloupce, řádky, i jednotlivé hodnoty.</p>
+<p>V další lekci si ukážeme, jaké datové typy (přesněji <code>dtypes</code>) lze v <code>pandas</code> použít, začneme počítat a vůbec napodobovat funkce tabulkových procesorů.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Cvičení</h2>
+<p>Místní zoo zvažuje investici do nového pavilonu vyhrazeného pro Pokemony. Ředitel zoo, pan Felix, si ale není jist, jestli by se tato investice vyplatila a co všechno by to pro zoo znamenalo. Někdo mu doporučil, aby si na pomoc pozval tebe (my za to nemůžeme, přísaháme - pozn. autoři kurzu). Pan ředitel sepsal seznam otázek, na které by chtěl znát odpověd.</p>
+<ol>
+<li>(pro opakování opět načti data ze souboru <code>pokemon.csv</code>)</li>
+<li>Pro kolik nových zvířátek by zoo potřebovala potravu? Pan ředitel by chtěl jednoho samce a jednu samičku od každého druhu (jména).</li>
+<li>Marketingové oddělení se chystá vytvořiť nové letáčky o Pokemonech pro návštěvníky zoo. Pro všechny Pokemony by potřebovali informace o jejich výšce, váze, délce, barvě a typu. Jsou všechny informace k dispozici?</li>
+<li>Provoz zoo považuje za ideální, kdyby Pokemony přivážely postupně, ve skupinách po osmi tak, jak jsou uvedeni v tabulce <code>pokemon.csv</code>. Kteří Pokemoni by byli v první, v druhé a v poslední skupině?</li>
+<li>Provoz zoo také upozornil na speciální podmínky nutné pro 3 nejvyšší Pokemony. V tabulce <code>pokemon.csv</code> jsou na pozicích 207, 320 a 796, nikto si však nepamatuje, o které Pokemony se jednalo. Jak se jmenují?</li>
+<li>Pan ředitel miluje Onixe. Chtěl by pro něho vybudovat speciální vyhlídku pro kamenné Pokemony s rychlostí vyšší než 50. Líbilo by se tam Onixovi?</li>
+<li>Pan ředitel by také chtěl vytvořit sekci pro všechny Pokemony začínající na "i". Temní Pokemoni ale nemohou být s normálními, ohniví s vodními nebo travnatými a elektrický s psychickými. Bude možné tuto sekci vytvořit? (tip: pro zobrazení všech Pokemonů na "i" budeš potřebovat mít index seřazen abecedně)</li>
+</ol>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/pydata-praha-podzim/pydata/notebook/">← <span class="d-none d-sm-inline">Základy práce s Jupyter Notebookem</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/pydata-praha-podzim/sessions/eda1/">↑ <span class="d-none d-sm-inline">Lekce: Představení, Jupyter notebook, základy pandas</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/pydata-praha-podzim/sessions/eda1/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyDataCZ/naucse.python.cz/blob/praha-podzim2021/lessons/pydata/pandas_core/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsali Jan Pipek &amp; Lumír Balhar, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

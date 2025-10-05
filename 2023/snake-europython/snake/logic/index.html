@@ -1,0 +1,690 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Snake Workshop for PyLadies: Game logic
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/snake/logic/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/2023/snake-europython/">Snake Workshop for PyLadies</a>
+
+> <a href="/2023/snake-europython/sessions/workshop/">The Snake</a>
+
+> <a href="/2023/snake-europython/snake/logic/">Game logic</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="admonition warning"><p>This is a machine-generated translation, meant to support the in-person workshop.</p>
+</div><h1 id="game_logic">Game logic
+<a href="#game_logic" class="header-link">#</a>
+</h1>
+<p>You can already draw a snake from a list of coordinates. But the snake video game won't just be a "picture". The list will change and the snake will move!</p>
+<h1 id="lets_move_the_snake">Let's move the snake
+<a href="#lets_move_the_snake" class="header-link">#</a>
+</h1>
+<p>Your program now, I hope, looks something like this:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="k">class</span> <span class="nc">GameState</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+            <span class="n">before</span> <span class="o">=</span> <span class="s1">'end'</span>     
+            <span class="n">after</span> <span class="o">=</span> <span class="s1">'end'</span>      
+            <span class="n">key</span> <span class="o">=</span> <span class="n">before</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">after</span>
+            <span class="n">snake_tiles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                                  <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="n">apple_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                             <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">GameState</span><span class="p">()</span>
+<span class="n">state</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="n">apple_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'apple.png'</span><span class="p">)</span>
+<span class="n">green_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'green.png'</span><span class="p">)</span>
+<span class="n">snake_tiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'bottom'</span><span class="p">,</span> <span class="s1">'end'</span><span class="p">,</span> <span class="s1">'left'</span><span class="p">,</span> <span class="s1">'right'</span><span class="p">,</span> <span class="s1">'top'</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">end</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'bottom'</span><span class="p">,</span> <span class="s1">'end'</span><span class="p">,</span> <span class="s1">'left'</span><span class="p">,</span> <span class="s1">'right'</span><span class="p">,</span> <span class="s1">'top'</span><span class="p">,</span> <span class="s1">'dead'</span><span class="p">,</span> <span class="s1">'tongue'</span><span class="p">]:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">end</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake-tiles/'</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">'.png'</span><span class="p">)</span>
+        <span class="n">snake_tiles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="c1"># Better drawing (for us magic for now)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glBlendFunc</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_ONE_MINUS_SRC_ALPHA</span><span class="p">)</span>
+
+    <span class="n">state</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>Try to add to class GameState method that adds an tile to snake.</p>
+<div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+        <span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+</pre></div><p>And just above the row <code>pyglet.app.run</code> tell Pyglet, that it should be called every 1/6 second:</p>
+<div class="highlight"><pre><span></span><span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">move</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+</pre></div><p>Does it work?
+So add <code>del snake[0]</code> to that method so that the snake does not grow infinitely. 
+Do you know what this command does? If not, take a look at the notes on lists again!</p>
+<p>Can you modify the function to make the snake crawl upwards? Or downwards?</p>
+<p>If yes, congratulations! The remaining part is to control the direction of the snake using the arrow keys on the keyboard, and most of the game will be done!</p>
+<p>For sure, I am attaching my solution:</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/logic/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>In the <code>move</code> method, it is necessary to set the variables <code>new_x</code> and <code>new_y</code> differently:</p>
+<p>For upward movement:</p>
+<div class="highlight"><pre><span></span><span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span>
+<span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div><p>"And down:"</p>
+<div class="highlight"><pre><span></span><span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span>
+<span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">-</span> <span class="mi">1</span>
+</pre></div><p>This code sets the value of <code>new_x</code> to be the same as <code>old_x</code>, and sets the value of <code>new_y</code> to be one less than the value of <code>old_y</code>.</p>
+    </div>
+</div><h2 id="control">Control
+<a href="#control" class="header-link">#</a>
+</h2>
+<p>Now to the promised control. Specifically, first to the direction changes.</p>
+<p>The snake in the game crawls in the same direction until the player presses a key and changes the direction.</p>
+<p>To make sure that the snake "remembers" where it is crawling, it is necessary to have a direction as part of the game state. Let's save it in an attribute called <code>snake_direction</code>.</p>
+<p>What exactly should be stored there? 
+How to represent direction in Python - using numbers, tuples, and so on?</p>
+<p><span class="figure"><a href="/2023/snake-europython/snake/logic/static/coord-vectors.svg"><img src="/2023/snake-europython/snake/logic/static/coord-vectors.svg" alt="Mřížka s X a Y souřadnicemi"></a></span></p>
+<p>The most convenient solution is probably to store how many squares the snake should move, separately in the <var>x</var> and <var>y</var> directions. So, as a pair:</p>
+<p>(<code>1, 0</code>) = right (by one square in the positive <var>x</var> direction; do not move in the <var>y</var> direction)
+(<code>-1, 0</code>) = left (by one square in the negative <var>x</var> direction)
+(<code>0, 1</code>) = up (+<var>y</var>, but do not move in the <var>x</var> direction)
+(<code>0, -1</code>) = down (-<var>y</var>)</p>
+<p>Add the new attribute to the <code>initialize</code> method.</p>
+<div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+</pre></div><p>In the <code>move</code> method, change the setting of <code>new_x</code> and <code>new_y</code> according to the new attribute.</p>
+<div class="highlight"><pre><span></span><span class="n">dir_x</span><span class="p">,</span> <span class="n">dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>
+<span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="n">dir_x</span>
+<span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="n">dir_y</span>
+</pre></div><p>You can now change the direction of the snake by changing the <code>snake_direction</code> in the <code>initialize</code> function. Does it work? (If not, fix it - and if you can't, call someone for help!)</p>
+<p>Now, the only thing left is to change the <code>snake_direction</code> attribute when the user presses something on the keyboard. That is already the domain of Pyglet.</p>
+<p>It is necessary to add a function that responds to a key press. For Pyglet to find and be able to call this function, it must be named 'on_key_press', it must have the decorator '@window.event', and it must take two parameters: the number of the key that was pressed and information about modifiers such as <kbd>Shift</kbd> or <kbd>Ctrl</kbd>.</p>
+<div class="highlight"><pre><span></span><span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="n">key_code</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div><p>The first parameter is important. It sets the current direction of the snake. The key codes are defined in the module <a href="https://pyglet.readthedocs.io/en/pyglet-1.3-maintenance/modules/window_key.html#key-constants"><code>pyglet.window.key</code></a> as constants with names like <code>LEFT</code>, <code>ENTER</code>, <code>Q</code>, or <code>AMPERSAND</code>. We will use arrows - <code>LEFT</code>, <code>RIGHT</code>, <code>UP</code>, and <code>DOWN</code>.</p>
+<div class="highlight"><pre><span></span><span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="n">key_code</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+</pre></div><p>The second parameter will not be needed in our game, but it must be in the function header.</p>
+<p>The function <code>on_key_press</code> needs to be placed somewhere after setting up the <code>window</code> (so that <code>window.event</code> is available) and before <code>pyglet.app.run()</code> (because setting up controls after the game has started is unnecessary). The best way is to place it next to another function with the <code>@window.event</code> decorator, so that they are nicely together.</p>
+<p>Does it work?
+Can you control the direction of the snake?
+That's great!
+However, during testing, you will definitely come across a few things that need to be finished.</p>
+<ul>
+<li>The snake shouldn't have the opportunity to climb out of the window.</li>
+<li>The snake should eat food and grow.</li>
+<li>The game should end when the snake hits itself or the edge of the window.</li>
+</ul>
+<p>Let's solve them one by one.</p>
+<h2 id="so_far_so_good_but_now_we_will_hit_a_bump">So far so good, but now we will hit a bump
+<a href="#so_far_so_good_but_now_we_will_hit_a_bump" class="header-link">#</a>
+</h2>
+<p>"Snake" games like ours have two variations: either there is a "wall" around the playground and the player loses when hitting the edge, or the playground is "endless" - the snake crawls through the edge and appears on the other side. We will program the first variation - the wall.</p>
+<p>To find out if the snake "crawled out" of the left edge of the window, it is necessary to check if the <var>x</var>-coordinate of the head is less than 0. This should be done immediately after obtaining the new coordinates of the head - specifically, right after the line <code>new_head = new_x, new_y</code> in the <code>move</code> method.</p>
+<p>And what to do in such a crash?
+To start with, the easiest thing to do is to end the game.
+For this, Python has the <code>exit()</code> function, which works similarly to when an error occurs in the program.
+Instead of a long error message, it shows the given text.</p>
+<p>The end of the program is not a very pleasant way to tell the player that they lost. However, we will change this part soon, so for now this simple way will suffice.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Get the current position of the snake's head</span>
+    <span class="n">dir_x</span><span class="p">,</span> <span class="n">dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>  <span class="c1"># Get the direction in which the snake is moving</span>
+    <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="n">dir_x</span>  <span class="c1"># Calculate the new x-coordinate of the snake's head</span>
+    <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="n">dir_y</span>  <span class="c1"># Calculate the new y-coordinate of the snake's head</span>
+    <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>  <span class="c1"># Create a tuple with the new coordinates as the new head of the snake</span>
+
+    <span class="c1"># New code - checking if the player has gone out of the playing area</span>
+    <span class="k">if</span> <span class="n">new_x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div><p>I believe that you can manage to do the same check for climbing out from the bottom edge.</p>
+<p>But how to treat the remaining edges - the right and the top ones? It is necessary to know the size of the window. And Pyglet knows it; the class with state should not have access to the window!</p>
+<p>The behavior of the game depends on the size of the game board. This information will therefore have to be part of the state. For starters, set a size - say 10x10 - in <code>initialize</code>.</p>
+<div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">10</span>
+</pre></div><p>And then arrange for the game to end after hitting an invisible wall around the large 10x10 square field. Test all variants thoroughly - the northern, southern, eastern and western wall. The snake is virtual, so you don't have to worry about creating a bump on it by hitting the walls.</p>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/logic/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>def move(self):
+    old_x, old_y = self.snake[-1]
+    dir_x, dir_y = self.snake_direction
+    new_x = old_x + dir_x
+    new_y = old_y + dir_y</p>
+<div class="highlight"><pre><code># Checking if the player has gone outside of the game area
+if new_x &lt; 0:
+    exit('GAME OVER')
+if new_y &lt; 0:
+    exit('GAME OVER')
+if new_x &gt;= self.width:
+    exit('GAME OVER')
+if new_y &gt;= self.height:
+    exit('GAME OVER')
+
+new_head = new_x, new_y
+self.snake.append(new_head)
+del self.snake[0]</code></pre></div>
+    </div>
+</div><p>And then in the file with the game, right after you create the state (<code>state = GameState()</code>) and the window, set the <em>actual</em> size. Use integer division so that the number of tiles is in whole numbers.</p>
+<div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">//</span> <span class="n">TILE_SIZE</span>
+<span class="n">state</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">//</span> <span class="n">TILE_SIZE</span>
+</pre></div><h2 id="feeding">Feeding
+<a href="#feeding" class="header-link">#</a>
+</h2>
+<p>So. The snake is in the cage, it can't climb out anymore. What's next?</p>
+<p>Now you have to take care of the snake: feed it regularly. But before that, it is necessary to teach it how to eat at all - it is not yet accustomed to our food. When you manage to do that, it will grow like crazy!</p>
+<p>Specifically, you must ensure that when the snake crawls onto a square with food, the food disappears. To achieve this, you can use:</p>
+<ul>
+<li>the <code>in</code> operator, which determines whether something (such as coordinates) is in a list (such as a list of food coordinates), and</li>
+<li>the <code>remove</code> method, which removes a specified element from a list (based on the <em>value</em> of the element - as opposed to <code>del</code>, which removes based on position).</li>
+</ul>
+<p>To check the climb out of the playing area, you need to enter a code that does the following:"</p>
+<ul>
+<li>If the new position of the head is in the list of food coordinates:<ul>
+<li>Remove this position from the list of food coordinates."</li>
+</ul>
+</li>
+</ul>
+<p>Can you write it?</p>
+<div class="solution" id="solution-2">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/logic/index/solutions/2/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Try to see if it works. The snake should eat food.</p>
+<p>But there is still a need to arrange so that after each bite it grows a bit. But how? Which direction should it grow?</p>
+<p>Here it is good to look at the existing code and realize what it does.</p>
+<p>Our snake crawls in such a way that it first grows in the front (using <code>append</code>) and then shrinks in the back (using <code>del self.snake[0]</code>).</p>
+<p>So in order for the snake to grow after eating, it is enough to <em>skip</em> the shrinking! And by <em>skip</em> I mean to condition it using <code>if</code>. The logic of eating and shrinking of the snake will be:</p>
+<ul>
+<li>When a snake eats food, the food disappears. The snake does not get smaller. </li>
+<li>Otherwise (when the snake does not eat food), the snake will shrink (and thus not grow).</li>
+</ul>
+<p>Translated into Python:</p>
+<div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div><p>For those who are beginning to get lost, I will provide the entire 'move' method. But woe to those who copy the code without trying to understand it!</p>
+<div class="solution" id="solution-3">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/logic/index/solutions/3/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dir_x</span><span class="p">,</span> <span class="n">dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="n">dir_x</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="n">dir_y</span>
+        <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+
+        <span class="c1"># Kontrola vylezení z hrací plochy</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
+            <span class="n">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+            <span class="n">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+    </div>
+</div><h2 id="new_food">New food
+<a href="#new_food" class="header-link">#</a>
+</h2>
+<p>When a snake already knows how to eat, it is necessary to provide it with a regular supply of food. Ideally, each eaten meal should be replaced with a new one.</p>
+<p>Add the following new method to the <code>GameState</code> class, which is able to add food:</p>
+<div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">add_food</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+</pre></div><p>Then call this method - find the code in the program that is executed when a new food needs to be added, and add the following line there:</p>
+<div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+</pre></div><p>This method adds food at position (0, 0), which is always in the same corner. It's good just for... well, for verifying that the food is really being added to the list. It would be nice if the new food always appeared somewhere else, at a random location. You can use the <code>random.randrange</code> function for that. Remember that calling <code>randrange(N)</code> returns a random integer from 0 to <var>N</var> - 1.</p>
+<p>What range of numbers do you need for snake food?</p>
+<p>When you realize it, try adding chance to the program: the food should appear on a <em>completely random</em> square on the game board.</p>
+<p>Don't forget about <code>import random</code> - it belongs at the very beginning of the file. But make any further changes only in the <code>add_food</code> method.</p>
+<div class="solution" id="solution-4">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/logic/index/solutions/4/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">add_food</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>When you test it, you will probably find out that a <em>completely random</em> tile is not ideal. Sometimes food appears on a tile with a snake, or even on another piece of food. It is therefore good to check this situation, and when the choice falls on a full tile, do not add food.</p>
+<div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+</pre></div><p>When you try <em>this</em>, you will find out that sometimes no new food is added at all. That's not a good option either - the snake would still be hungry. What to do about it?</p>
+<p>Surprisingly good (although not <em>completely</em> ideal) solution is to try selecting the square several times. When an empty square falls, put the food there; when a full square falls, just try again.</p>
+<p>However, it is necessary to limit the number of attempts so that in a situation where the field is <em>completely</em> full, the computer does not keep selecting endlessly. Let's say that if we don't manage to select an empty field after 100 attempts, we give up. There is probably enough food already.</p>
+<p>The method <code>add_food</code> after all modifications will look like this:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_food</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">try_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+            <span class="c1"># End of the function ("jumps out" of the for loop as well)</span>
+            <span class="k">return</span>
+</pre></div><p>If it works for you, also arrange for food to be at random positions at the start of the game.</p>
+<div class="solution" id="solution-5">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/logic/index/solutions/5/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>In the <code>initialize</code> method, instead of setting <code>self.food</code> to a list with food positions, you can write:</p>
+<div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">food</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+</pre></div><p>Then at the beginning of the game, two random foods will be waiting for the snake.</p>
+    </div>
+</div><h2 id="end">End
+<a href="#end" class="header-link">#</a>
+</h2>
+<p>The snake can now grow to enormous dimensions - and the only way to lose is by hitting the wall. Make sure the game ends even if it hits itself.</p>
+<p>How to do it?
+For the <code>move</code> method, in addition to checking if the player has climbed out of the playing area, provide code that will do the following:</p>
+<ul>
+<li>If the coordinates of the new head are already part of the snake: <ul>
+<li>End the game (similarly to hitting the wall).</li>
+</ul>
+</li>
+</ul>
+<p>Can you translate it into Python?</p>
+<div class="solution" id="solution-6">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/logic/index/solutions/6/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>        <span class="c1"># Checking if the snake has collided</span>
+        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+            <span class="n">exit</span><span class="p">(</span><span class="s1">'GAME OVER'</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Done!</p>
+<h2 id="pause">Pause
+<a href="#pause" class="header-link">#</a>
+</h2>
+<p>However, it is not good to end the whole program and close the window at the end of the game.</p>
+<p>It's better to "pause" the game and show the player the situation in which the unfortunate snake ended up, so that they can learn from it for next time.</p>
+<p>To make it possible, we will add another attribute to the game: 'alive'. It will be set to 'True' as long as the snake is alive. When the snake hits something, 'alive' will be set to 'False', and from then on the snake will not move anymore. It is also good to show graphically that the snake is not doing well - the player will then be more likely to feel guilty.</p>
+<p>Try to think where in the code the following pieces of code, which implement the game loss, belong.</p>
+<div class="highlight"><pre><span></span>        <span class="c1"># Initial setting of the attribute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div><div class="highlight"><pre><span></span>        <span class="c1"># Stopping the snake</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div><div class="highlight"><pre><span></span>        <span class="c1"># Preventing movement</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive</span><span class="p">:</span>
+            <span class="k">return</span>
+</pre></div><div class="highlight"><pre><span></span>        <span class="c1"># Graphic indication</span>
+        <span class="k">if</span> <span class="n">after</span> <span class="o">==</span> <span class="s1">'end'</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">alive</span><span class="p">:</span>
+            <span class="n">after</span> <span class="o">=</span> <span class="s1">'dead'</span>
+</pre></div><div class="solution" id="solution-7">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/logic/index/solutions/7/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <ul>
+<li>"Initial attribute setting" to the <code>initialize</code> method.</li>
+<li>"Stopping the snake" instead of <em>all</em> occurrences of <code>raise("Game Over")</code>.</li>
+<li>"Preventing movement" at the very beginning of the <code>move</code> method (the <code>return</code> statement will immediately terminate the execution of the method).</li>
+<li>"Graphic indication" after the section for selecting the image for the snake piece.</li>
+</ul>
+    </div>
+</div><h2 id="and_thats_it">And that's it?
+<a href="#and_thats_it" class="header-link">#</a>
+</h2>
+<p>Congratulations, you have a functional and playable game! I hope you are proud of yourself!</p>
+<p>Have something sweet, you deserve it.</p>
+<hr>
+
+<p>Here is my solution. It may differ quite a bit from yours at this time - that is completely normal.
+Don't look here until you program the snake yourself/yourself. A person learns from mistakes and constant testing - and especially a programmer. Learning from already solved problems is harder.</p>
+<div class="solution" id="solution-8">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/logic/index/solutions/8/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="k">class</span> <span class="nc">GameState</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+            <span class="n">before</span> <span class="o">=</span> <span class="s1">'end'</span>     <span class="c1"># (Tady případně je nějaké</span>
+            <span class="n">after</span> <span class="o">=</span> <span class="s1">'end'</span>      <span class="c1">#  složitější vybírání políčka)</span>
+            <span class="k">if</span> <span class="n">after</span> <span class="o">==</span> <span class="s1">'end'</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">alive</span><span class="p">:</span>
+                <span class="n">after</span> <span class="o">=</span> <span class="s1">'dead'</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">before</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">after</span>
+            <span class="n">snake_tiles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                                  <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="n">apple_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+                <span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">old_x</span><span class="p">,</span> <span class="n">old_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dir_x</span><span class="p">,</span> <span class="n">dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake_direction</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">old_x</span> <span class="o">+</span> <span class="n">dir_x</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">old_y</span> <span class="o">+</span> <span class="n">dir_y</span>
+
+        <span class="c1"># Kontrola vylezení z hrací plochy</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">new_x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">new_y</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">new_head</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">new_head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">new_head</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_food</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">add_food</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">try_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+                <span class="k">return</span>
+
+<span class="n">apple_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'apple.png'</span><span class="p">)</span>
+<span class="n">snake_tiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'bottom'</span><span class="p">,</span> <span class="s1">'end'</span><span class="p">,</span> <span class="s1">'left'</span><span class="p">,</span> <span class="s1">'right'</span><span class="p">,</span> <span class="s1">'top'</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">end</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'bottom'</span><span class="p">,</span> <span class="s1">'end'</span><span class="p">,</span> <span class="s1">'left'</span><span class="p">,</span> <span class="s1">'right'</span><span class="p">,</span> <span class="s1">'top'</span><span class="p">,</span> <span class="s1">'dead'</span><span class="p">,</span> <span class="s1">'tongue'</span><span class="p">]:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">end</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake-tiles/'</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">'.png'</span><span class="p">)</span>
+        <span class="n">snake_tiles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">GameState</span><span class="p">()</span>
+<span class="n">state</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+<span class="n">state</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">//</span> <span class="n">TILE_SIZE</span>
+<span class="n">state</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">//</span> <span class="n">TILE_SIZE</span>
+
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glBlendFunc</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_ONE_MINUS_SRC_ALPHA</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="n">key_code</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">snake_direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+
+
+<span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">move</span><span class="p">()</span>
+
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">move</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><h2 id="whats_next">What's next?
+<a href="#whats_next" class="header-link">#</a>
+</h2>
+<p>Can you find any other improvements that could be made?</p>
+<p>Try the following extensions, for example. They are roughly sorted by complexity:</p>
+<ul>
+<li><p>Improve the controls (and gameplay!) according to the <a href="/2023/snake-europython/snake/handling/">manual</a>.</p>
+</li>
+<li><p>Every 30 seconds of the game, new food will be added automatically, so there will be more of them on the playing field.</p>
+</li>
+<li><p>When the snake crawls out of the window, instead of the end of the game, it appears on the other side. (See <a href="/2023/snake-europython/snake/toroid/">instructions</a>.)</p>
+</li>
+<li><p>There will be two snakes; the second one is controlled by the keys <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>. (It's best to create a new class, <code>Snake</code>, and move all the snake's state from <code>GameState</code> to it. Then keep a list of snakes in <code>GameState</code>. This change needs to be adapted throughout the entire program.)</p>
+</li>
+<li><p>The game will gradually speed up. (It is best to modify the 'move' function so that it automatically plans when to call itself. The use of 'schedule_interval' will no longer be necessary.)</p>
+</li>
+</ul>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2023/snake-europython/snake/drawing/">← <span class="d-none d-sm-inline">Drawing the snake</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2023/snake-europython/sessions/workshop/">↑ <span class="d-none d-sm-inline">Lekce: The Snake</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2023/snake-europython/sessions/workshop/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/snake-workshop/blob/snake-ep-2023/lessons/snake/logic/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Written by Petr Viktorin for PyLadies Brno, 2018.</p>
+    
+        <p>Initial translation to English by Petra Vidnerová, based on ChatGPT</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

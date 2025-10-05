@@ -1,0 +1,255 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Motorky
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/brno-jaro-2019-pondeli/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/brno-jaro-2019-pondeli/sessions/tmp5/">MicroPython II – Projekty</a>
+
+> <a href="/2019/brno-jaro-2019-pondeli/micropython/motors/">Motorky</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Motorky</h1>
+<p>Pojďme ovládat stejnosměrné motory!</p>
+<p>Motory potřebují, na rozdíl od počítače a LED světýlek, celkem hodně elektrické
+energie, a navíc můžou dokonce energii vyrábět (fungují jako dynamo).
+Kdybys je připojila přímo k destičce, která na tolik proudu není
+připravená, mohla by se destička zničit.</p>
+<p>Představ si náramkové hodninky a traktor: obě zařízení něčím točí (ručičkami
+nebo koly), ale kdybys připojila motor z traktoru na mechanismus hodinek,
+moc dlouho by správný čas neukazovaly.
+A motůrek z hodinek by zase nepohohl při orání pole.</p>
+<p>Proto použijeme čip s názvem L293D, který elektřinu potřebnou pro “hrubou sílu”
+motorku odstínit od logických signálů z destičky.</p>
+<p>Potřebnou energii dodáme z baterií.</p>
+<p>Čip je černá krabička, která na sobě má trochu textu, ale ne dost na to,
+abys poznala co dělá.
+To je deteilně popsáno v takzvaném <em>datasheetu</em> – PDF, které vypadne když
+zadáš „L293D“ do vyhledávače.
+Tam lze najít kompletní popis této součástky včetně diagramy, který ukazuje
+kde najít kterou nožičku:</p>
+<p><span class="figure"><a href="/2019/brno-jaro-2019-pondeli/micropython/motors/static/l293d.svg"><img src="/2019/brno-jaro-2019-pondeli/micropython/motors/static/l293d.svg" alt="L293D pinout"></a></span></p>
+<p>Všimni si, že nahoře je znázorněné „vykousnutí“ (zde oranžově),
+které najdeš i na součástce.
+Je důležité mít čip správně otočený, jinak nebudeš zapojovat správné nožičky.</p>
+<p>Čip posílá do své nožičky <code>1Y</code> energii z_<code>Vpower</code>, pokud je signál na
+<code>1A</code> i <code>1,2EN</code> současně. Jinak nožičku <code>1Y</code> spojí se zemí (<code>GND</code>).
+Podobně pro <code>2Y</code> (<code>2A</code> i <code>1,2EN</code>), <code>3Y</code> (<code>3A</code> i <code>3,4EN</code>), <code>4Y</code> (<code>4A</code> i <code>3,4EN</code>).
+Co to pro nás znamená, je vysvětleno níže.)</p>
+<h1>Zapojení</h1>
+<p>Čip a motorky zapoj následovně:</p>
+<ul>
+<li>Napájení<ul>
+<li>V<sub>logic</sub> čipu k 5V – <code>Vin</code> na destičce</li>
+<li>V<sub>power</sub> čipu k <code>+</code> na baterii</li>
+<li>GND (jedno který) čipu k <code>GND</code> na destičce</li>
+<li>GND (jedno který) čipu k <code>-</code> na baterii</li>
+</ul>
+</li>
+<li>První motorek:<ul>
+<li><code>1A</code> čipu na <code>D1</code> na destičce</li>
+<li><code>2A</code> čipu na <code>D2</code> na destičce</li>
+<li><code>1,2EN</code> čipu na <code>D3</code> na destičce</li>
+<li><code>1Y</code> a <code>2Y</code> čipu k dvěma kontaktům motorku</li>
+</ul>
+</li>
+<li>Druhý motorek:<ul>
+<li><code>3A</code> čipu na <code>D6</code> na destičce</li>
+<li><code>4A</code> čipu na <code>D7</code> na destičce</li>
+<li><code>3,4EN</code> čipu na <code>D8</code> na destičce</li>
+<li><code>3Y</code> a <code>4Y</code> čipu k dvěma kontaktům motorku</li>
+</ul>
+</li>
+</ul>
+<p><span class="figure"><a href="/2019/brno-jaro-2019-pondeli/micropython/motors/static/motors_bb.svg"><img src="/2019/brno-jaro-2019-pondeli/micropython/motors/static/motors_bb.svg" alt="L293D pinout"></a></span></p>
+<h1>Ovládání</h1>
+<p>Motorek se točí, pokud je na jeho kontaktech rozdíl napětí: pro první motorek
+musí být na <code>1Y</code> jiná hodnota než na <code>2Y</code>.
+Pro obě musí být aktivní nožička <code>1,2EN</code>, a pak <code>1A</code> ovládá <code>1Y</code> a
+<code>2A</code> ovládá <code>2Y</code>.</p>
+<div class="highlight"><pre><code>from machine import Pin
+
+pin_1a = Pin(5, Pin.OUT)  # D1 na destičce, 1A na čipu
+pin_2a = Pin(4, Pin.OUT)  # D2 na destičce, 2A na čipu
+pin_12en = Pin(0, Pin.OUT)  # D3 na destičce, 1,2EN na čipu
+
+pin_1a.value(1)
+pin_2a.value(0)
+pin_12en.value(1)</code></pre></div><p>Když prohodíš hodnoty <code>pin_1a</code> a <code>pin_2a</code>, motorek se začne točit opačným
+směrem.</p>
+<p>Pro nastavení rychlosti otáčení se hodí použít obdélníkovou vlnu, PWM,
+nastavenou na nožičce <code>1,2EN</code>:</p>
+<div class="highlight"><pre><code>from machine import Pin
+
+pwm_1 = PWM(pin_12en, freq=100, duty=512)
+...
+pwm_1.duty(1024)
+...
+pwm_1.duty(256)</code></pre></div><p>Druhý motorek se dá ovládat podobně, jen s jinými čísly pinů.
+Tady jsou:</p>
+<div class="highlight"><pre><code>pin_3a = Pin(12, Pin.OUT)  # D6 na destičce, 3A na čipu
+pin_4a = Pin(13, Pin.OUT)  # D7 na destičce, 4A na čipu
+pin_34en = Pin(15, Pin.OUT)  # D8 na destičce, 3,4EN na čipu</code></pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-jaro-2019-pondeli/micropython/oled/">← <span class="d-none d-sm-inline">OLED displej</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-jaro-2019-pondeli/sessions/tmp5/">↑ <span class="d-none d-sm-inline">Lekce: MicroPython II – Projekty</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/brno-jaro-2019-pondeli/sessions/tmp5/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-brno-jaro-2019-pondeli/lessons/micropython/motors/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies CZ napsal Petr Viktorin 2019.</p>
+    
+        <p>Diagramy s LED vytvořeny pomocí <a href="http://fritzing.org">Fritzing</a>.</p>
+    
+        <p>NodeMCU © 2015 <a href="https://blog.squix.org/2015/05/esp8266-nodemcu-v10-part-created-for.html">Daniel Eichhorn z blog.squix.org</a> pod licencí MIT</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

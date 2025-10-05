@@ -1,0 +1,256 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz v Tieto Czech: JSON
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/tieto-ostrava-jaro/">Začátečnický kurz v Tieto Czech</a>
+
+> <a href="/2019/tieto-ostrava-jaro/sessions/databasis-json-yaml/">Working with databasis, logging, JSON and Yaml</a>
+
+> <a href="/2019/tieto-ostrava-jaro/beginners/tieto-json/">JSON</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h2>JSON</h2>
+<p>In Python, the json module provides an API similar to convert in-memory Python objects to a serialized representation known as JavaScript Object Notation (JSON) and vice-a-versa.</p>
+<h3>Encode Python objects as JSON strings</h3>
+<div class="highlight"><pre><code>json.dump(obj, fp,
+                  skipkeys=False,
+                  ensure_ascii=True,
+          check_circular=True,
+          allow_nan=True,
+          cls=None,
+          indent=None,
+          separators=None,
+          default=None,
+          sort_keys=False, **kw)</code></pre></div><p>The above method serialize obj as a JSON formatted stream to fp (a .write()-supporting file-like object) using the following conversion table.</p>
+<div class="highlight"><pre><code>Python                                          JSON
+dict                                            object
+list, tuple                                     array
+str                                             string
+int, float, int- &amp; float-derived Enums          number
+True                                            true
+False                                           false
+None                                            null</code></pre></div><h3>Python Dictionaries to JSON strings</h3>
+<div class="highlight"><pre><code>import json
+student = {"101":{"class":'V', "Name":'Rohit',  "Roll_no":7},
+           "102":{"class":'V', "Name":'David',  "Roll_no":8},
+           "103":{"class":'V', "Name":'Samiya', "Roll_no":12}}
+print(json.dumps(student));</code></pre></div><p>Output:</p>
+<div class="highlight"><pre><code>{"103": {"class": "V", "Name": "Samiya", "Roll_no": 12}, 
+"102": {"class": "V", "Name": "David", "Roll_no": 8}, 
+"101": {"class": "V", "Name": "Rohit", "Roll_no": 7}}</code></pre></div><h3>Python Dictionaries to JSON strings (sorted by key)</h3>
+<div class="highlight"><pre><code>import json
+student = {"101":{"class":'V', "Name":'Rohit',  "Roll_no":7},
+           "102":{"class":'V', "Name":'David',  "Roll_no":8},
+           "103":{"class":'V', "Name":'Samiya', "Roll_no":12}}
+print(json.dumps(student, sort_keys=True));</code></pre></div><p>Ooutput:</p>
+<div class="highlight"><pre><code>{"101": {"Name": "Rohit", "Roll_no": 7, "class": "V"}, 
+"102": {"Name": "David", "Roll_no": 8, "class": "V"}, 
+"103": {"Name": "Samiya", "Roll_no": 12, "class": "V"}}</code></pre></div><h3>Python tuple to JSON array</h3>
+<div class="highlight"><pre><code>import json
+tup1 = 'Red', 'Black', 'White';
+print(json.dumps(tup1));</code></pre></div><p>Output:</p>
+<div class="highlight"><pre><code>["Red", "Black", "White"]</code></pre></div><h3>Python list to JSON array</h3>
+<div class="highlight"><pre><code>import json
+list1 = [5, 12, 13, 14];
+print(json.dumps(list1));</code></pre></div><p>Output:</p>
+<div class="highlight"><pre><code>[5, 12, 13, 14]</code></pre></div><h3>Python string to JSON string</h3>
+<div class="highlight"><pre><code>import json
+string1 = 'Python and JSON';
+print(json.dumps(string1));</code></pre></div><p>Output:</p>
+<div class="highlight"><pre><code>"Python and JSON"</code></pre></div><h3>Python int, float, int- &amp; float-derived Enums to JSON number</h3>
+<div class="highlight"><pre><code>import json
+x = -456;
+y = -1.406;
+z =  2.12e-10
+print(json.dumps(x));
+print(json.dumps(y));
+print(json.dumps(z));</code></pre></div><p>Output:</p>
+<div class="highlight"><pre><code>-456
+-1.406
+2.12e-10</code></pre></div><h3>Decode JSON strings into Python objects</h3>
+<p>Basic usage:</p>
+<div class="highlight"><pre><code>json.load(fp, 
+          cls=None, 
+          object_hook=None, 
+          parse_float=None, 
+          parse_int=None, 
+          parse_constant=None, 
+          object_pairs_hook=None, **kw)</code></pre></div><div class="highlight"><pre><code>JSON                Python
+object              dict
+array               list
+string              str
+number (int)        int
+number (real)       float
+true                True
+false               False
+null                None</code></pre></div><h3>JSON strings to Python Dictionaries</h3>
+<div class="highlight"><pre><code>import json
+json_data = '{"103": {"class": "V", "Name": "Samiya", "Roll_n": 12}, "102": {"class": "V", "Name": "David", "Roll_no": 8}, "101": {"class": "V", "Name": "Rohit", "Roll_no": 7}}';
+print(json.loads(json_data));</code></pre></div><p>Output:</p>
+<div class="highlight"><pre><code>{"103": {"class": "V", "Name": "Samiya", "Roll_no": 12}, 
+"102": {"class": "V", "Name": "David", "Roll_no": 8}, 
+"101": {"class": "V", "Name": "Rohit", "Roll_no": 7}}</code></pre></div><h3>Python list to JSON array</h3>
+<div class="highlight"><pre><code>import json
+list1 = '[ "Ford", "BMW", "Fiat" ]'
+print(json.loads(list1));</code></pre></div><h3>JSON string to Python string</h3>
+<div class="highlight"><pre><code>import json 
+Json_string = "Python and JSON" 
+print(json.dumps(Json_string));</code></pre></div><p>Output:</p>
+<div class="highlight"><pre><code>"Python and JSON"</code></pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-yaml/">← <span class="d-none d-sm-inline">YAML</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/tieto-ostrava-jaro/sessions/databasis-json-yaml/">↑ <span class="d-none d-sm-inline">Lekce: Working with databasis, logging, JSON and Yaml</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/tieto-ostrava-jaro/sessions/databasis-json-yaml/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-tieto-ostrava-jaro/lessons/beginners/tieto-json/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro Tieto Czech s.r.o. napsal Lumír Jasiok, 2018</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

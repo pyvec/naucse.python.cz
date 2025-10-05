@@ -1,0 +1,842 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Python a jeho knihovny: Web Scraping
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/brno-jaro-knihovny/">Python a jeho knihovny</a>
+
+> <a href="/2019/brno-jaro-knihovny/sessions/scraping/">Scraping</a>
+
+> <a href="/2019/brno-jaro-knihovny/beginners/scraping/">Web Scraping</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Web Scraping</h1>
+<h2>Co je cílem tohoto cvičení?</h2>
+<p>Jak říká <a href="https://xkcd.com/903/">XKCD #903</a>, pokud na Wikipedii budete klikat
+na první odkaz v textu článku, který není v závorkách nebo kurzívou, dříve nebo
+později se dostanete na článek o filosofii.</p>
+<p>Dneska si to ověříme v praxi. Během tohoto ověřování se naučíme používat
+knihovnu <a href="https://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> a
+procvičíme si <a href="http://docs.python-requests.org/en/master/">requests</a>.</p>
+<h2>Předpoklady</h2>
+<p>Předpokládáme základní znalost Pythonu. Měli byste mít počítač s nainstalovaným
+interpretem jazyka Python ve verzi aspoň 3.6. Pro začátek si také vytvořte nové
+virtuální prostředí (na kurzu s lektorem můžete použít prostředí z <a href="/2019/brno-jaro-knihovny/beginners/kurzovni-listek/">minulé
+lekce</a>.</p>
+<h2>Teorie do začátku</h2>
+<p>Webové stránky jsou super, pokud je čtete v prohlížečí, jako je třeba Firefox
+nebo Chrome. Občas ale potřebuje vytáhnout nějaké informace, a potom s nimi
+dále pracovat. Ruční kopírování je moc náročné.</p>
+<p>Některé webové služby poskytují API, přes které je možné se k datům dostat v
+nějakém civilizovaném formátu. Toto bohužel není až tak časté, a obvykle je
+potřeba data vytáhnout ze samotné stránky, tak jak je určená pro prohlížeče.</p>
+<p>Webové stránky jsou napsané v jazyku HTML. Je to značkovací jazyk, kde se míchá
+text určený pro lidi se značkami (<em>tagy</em>) určenými pro prohlížeč. Tyto <em>tagy</em>
+definují, jak se má text zobrazovat.</p>
+<h2>Instalace</h2>
+<div class="highlight"><pre><span></span><span class="gp">(venv) $ </span>python -m pip install beautifulsoup4 requests
+</pre></div><p>Knihovna <code>beautifulsoup</code> existuje v několika verzích. My chceme tu poslední,
+verzi 4. Protože hodně existujících programů pořád používá starší verzi 3, jsou
+pro instalaci stále dostupné obě.</p>
+<h2>Použití</h2>
+<p>Hodně zjednodušený pohled na knihovnu <code>beautifulsoup</code> vypadá takto: z textu
+reprezentujícího HTML kód můžete vytvořit strukturu, ve které je potom možné
+hledat požadované značky a pracovat s nimi.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="s2">"&lt;html&gt;&lt;body&gt;&lt;h1&gt;Ahoj&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">soup</span>
+<span class="go">&lt;html&gt;&lt;body&gt;&lt;h1&gt;Ahoj&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">soup</span><span class="o">.</span><span class="n">name</span>
+<span class="go">'[document]'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">soup</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">h1</span><span class="o">.</span><span class="n">text</span>
+<span class="go">'Ahoj'</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div><p>Vyzkoušíme si nejdřív prohledávání malého dokumentu:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">html_doc</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="gp">... </span><span class="s2">&lt;html&gt;&lt;head&gt;&lt;title&gt;O třech prasátkách&lt;/title&gt;&lt;/head&gt;</span>
+<span class="gp">... </span><span class="s2">&lt;body&gt;</span>
+<span class="gp">... </span><span class="s2">&lt;p class="title"&gt;&lt;b&gt;O třech prasátkách&lt;/b&gt;&lt;/p&gt;</span>
+<span class="gp">... </span><span class="s2">&lt;p class="story"&gt;Byla nebyla tři prasátka. Postavila si domky ze</span>
+<span class="gp">... </span><span class="s2">&lt;a href="http://example.com/slama" class="material"&gt;slámy&lt;/a&gt;,</span>
+<span class="gp">... </span><span class="s2">&lt;a href="http://example.com/drevo" class="material"&gt;dřeva&lt;/a&gt; a</span>
+<span class="gp">... </span><span class="s2">&lt;a href="http://example.com/cihly" class="material"&gt;cihel&lt;/a&gt;.</span>
+<span class="gp">... </span><span class="s2">&lt;/p&gt;</span>
+<span class="gp">... </span><span class="s2">&lt;p class="story"&gt;...&lt;/p&gt;</span>
+<span class="gp">... </span><span class="s2">&lt;/body&gt;</span>
+<span class="gp">... </span><span class="s2">&lt;/html&gt;</span>
+<span class="gp">... </span><span class="s2">"""</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div><p>Nejdříve ho zpracujeme. Druhý argument upřesňuje, že se jedná o HTML.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html_doc</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div><p>Přístup přes název tagu už jsme viděli. Dostaneme tak první tag s daným jménem.
+Můžeme se ale zeptat na všechny.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">soup</span><span class="o">.</span><span class="n">a</span>
+<span class="go">&lt;a class="material" href="http://example.com/slama"&gt;slámy&lt;/a&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"a"</span><span class="p">)</span>
+<span class="go">[&lt;a class="material" href="http://example.com/slama"&gt;slámy&lt;/a&gt;, &lt;a class="material" href="http://example.com/drevo"&gt;dřeva&lt;/a&gt;, &lt;a class="material" href="http://example.com/cihly"&gt;cihel&lt;/a&gt;]</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div><p>Můžeme taky zkoumat obsah tagů:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hlavicka</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">head</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hlavicka</span>
+<span class="go">&lt;head&gt;&lt;title&gt;O třech prasátkách&lt;/title&gt;&lt;/head&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hlavicka</span><span class="o">.</span><span class="n">contents</span>
+<span class="go">[&lt;title&gt;O třech prasátkách&lt;/title&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">titulek</span> <span class="o">=</span> <span class="n">hlavicka</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">titulek</span>
+<span class="go">&lt;title&gt;O třech prasátkách&lt;/title&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">titulek</span><span class="o">.</span><span class="n">contents</span>
+<span class="go">['O třech prasátkách']</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div><p>Pokud chceme iterovat v cyklu přes všechny věci uvnitř nějakého tagu, je lepší
+použít <code>children</code> než <code>contents</code>. Ušetříme si tak vytváření seznamu.</p>
+<p>Pokud element obsahuje jenom text, můžeme se k němu dostat přes atribut <code>string</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">titulek</span><span class="o">.</span><span class="n">string</span>
+<span class="go">'O třech prasátkách'</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div><p>Ve stromu značek se můžeme pohybovat nejenom dolů, ale i nahoru a do stran.</p>
+<ul>
+<li><code>parent</code> – nadřazený element</li>
+<li><code>parents</code> – iterátor, přes který můžeme vylézt až ke kořenovému elementu</li>
+<li><code>next_sibling</code>, <code>previous_sibling</code> – skok na další nebo předchozí element,
+který má stejného rodiče (v reálném dokumentu soused většiny elementů bude
+pravděpodobně text plný mezer)</li>
+</ul>
+<h3>Vyhledávání</h3>
+<p>Už jsme zmínili metodu <code>find_all</code>. Podle čeho všecho můžeme vyhledávat? Zatím
+jsme viděli vyhledávání podle názvu elementu. Můžeme ale hledat i podle seznamu
+elementů, případně podle regulárního výrazu.</p>
+<p>Můžeme taky udělat <code>find_all(True)</code>. Tím dostaneme všechny elementy, ale ne
+text.</p>
+<p>Taky můžeme hledat podle funkce. Tato funkce dostane jako argument jeden
+element, a pokud vrátí <code>True</code>, element bude považovaný za nalezený.</p>
+<p>Jakýkoli pojmenovaný argument bude fungovat jako filtr na atributy elementu.
+Často se hodí vyhledávat podle atributu <code>class</code>, který ale nejde použít pro
+argument funkce v Pythonu. Naštěstí <code>class_</code> se dá použít jako náhrada.</p>
+<h2>Nepraktický příklad z neživota</h2>
+<div class="admonition note"><p>Na tomto místě je asi fajn zmínit, že na <em>scraping</em> neexistuje univerzální
+návod. Typický vývoj programu vypadá tak, že ho ladíme na datech, dokud se
+nechová rozumně. První aktualizace stránek ho typicky rozbije a můžeme začít
+ladit znovu. Je to možná ale jednodušší než se snažit vymyslet něco
+dokonalého.</p>
+</div><p>Jak to bude celé fungovat: budeme postupně stahovat stránky z Wikipedie.
+Začneme náhodnou stránkou. Na každé stránce najdeme první vhodný odkaz a
+budeme na něj pokračovat. Program skončí, až se znovu dostane na stránku, kde
+už byl, nebo pokud nenajde žádný pěkný odkaz.</p>
+<p>Není ale úplně dobrý nápad napsat velký program na první pokus. Budeme postupně
+přidávat malé kousky funkcionality, abychom mohli pořád opakovaně testovat, že
+všechno dělá to, co má.</p>
+<h3>Krok 1 – kostra programu</h3>
+<p>Začneme jednoduchou kostrou, kde si v komentářích vyznačíme, co se bude dít.</p>
+<div class="highlight"><pre><span></span><span class="n">URL</span> <span class="o">=</span> <span class="s2">"https://en.wikipedia.org"</span>
+<span class="n">START</span> <span class="o">=</span> <span class="s2">"/wiki/Special:Random"</span>
+
+
+<span class="k">def</span> <span class="nf">stahuj</span><span class="p">(</span><span class="n">stranka</span><span class="p">):</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="c1"># 1. Stáhni stránku</span>
+        <span class="c1"># 2. Napiš titulek</span>
+        <span class="c1"># 3. Vytáhni další odkaz</span>
+        <span class="k">break</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">stahuj</span><span class="p">(</span><span class="n">START</span><span class="p">)</span>
+</pre></div><h3>Krok 2 – stažení stránky</h3>
+<p>První úkol: nahraďte první komentář kódem, který stáhne stránku, zkontroluje
+připadné chyby a vypíše text odpovědi od serveru. Adresu stránky ke stažení
+dostanete spojením proměnných <code>URL</code> a <code>stranka</code>.</p>
+<p>Očekávané chování po tomto kroku: program vypíše dlouhý kus HTML kódu a skončí.
+Při každém běhu bude výstup jiný (pracujeme s náhodnou stránkou).</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-knihovny/beginners/scraping/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">"https://en.wikipedia.org"</span>
+<span class="n">START</span> <span class="o">=</span> <span class="s2">"/wiki/Special:Random"</span>
+
+
+<span class="k">def</span> <span class="nf">stahuj</span><span class="p">(</span><span class="n">stranka</span><span class="p">):</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">odpoved</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span> <span class="o">+</span> <span class="n">stranka</span><span class="p">)</span>
+        <span class="n">odpoved</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">odpoved</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="c1"># 2. Napiš titulek</span>
+        <span class="c1"># 3. Vytáhni další odkaz</span>
+        <span class="k">break</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">stahuj</span><span class="p">(</span><span class="n">START</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><h3>Krok 3 – hledání titulku</h3>
+<p>Úkol: doplňte tělo funkce <code>najdi_titulek()</code> a upravte funkci <code>stahuj()</code> tak,
+aby místo celé stránky vypsala jenom titulek stránky.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">najdi_titulek</span><span class="p">(</span><span class="n">html</span><span class="p">):</span>
+    <span class="sd">"""Najde titulek v HTML kódu. Titulek je v elementu s identifikátorem</span>
+<span class="sd">    `firstHeading`. Budeme předpokládat, že tento element vždycky existuje.</span>
+
+<span class="sd">    Funkce vrátí titulek jako řetězec.</span>
+<span class="sd">    """</span>
+</pre></div><p>Očekávané chování: program vypíše titulek náhodné stránky a skončí.</p>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-knihovny/beginners/scraping/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">"https://en.wikipedia.org"</span>
+<span class="n">START</span> <span class="o">=</span> <span class="s2">"/wiki/Special:Random"</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_titulek</span><span class="p">(</span><span class="n">html</span><span class="p">):</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"firstHeading"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+
+<span class="k">def</span> <span class="nf">stahuj</span><span class="p">(</span><span class="n">stranka</span><span class="p">):</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">odpoved</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span> <span class="o">+</span> <span class="n">stranka</span><span class="p">)</span>
+        <span class="n">odpoved</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">najdi_titulek</span><span class="p">(</span><span class="n">odpoved</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+        <span class="c1"># 3. Vytáhni další odkaz</span>
+        <span class="k">break</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">stahuj</span><span class="p">(</span><span class="n">START</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><h3>Krok 4 – úklid před další funkcionalitou</h3>
+<p>V dalším kroku konečně budeme hledat odkaz na další stránku. K tomu vytvoříme
+ještě jednu funkci: <code>najdi_odkaz()</code>. Ta bude velmi podobná funkci
+<code>najdi_titulek()</code>.</p>
+<p>Volání <code>BeautifulSoup()</code> je pomerně náročný výpočet, a asi ho nechceme dělat
+dvakrát.</p>
+<p>Úkoly:</p>
+<ol>
+<li>Upravte program tak, aby se polévka elementů vytvořila už ve funkci
+<code>stahuj()</code>, a do <code>najdi_titulek()</code> se předala jako argument.</li>
+<li>Vytvořte funkci <code>najdi_odkaz()</code>. Bude mít stejný argument jako
+<code>najdi_titulek()</code>. Prozatím bude vždycky vracet <code>None</code>.</li>
+<li>Přidejte volání <code>najdi_odkaz()</code> do <code>stahuj()</code>. Vrácený odkaz uložte do
+ proměnné <code>stranka</code>.</li>
+<li>Zavolejte <code>break</code> jenom tehdy, když <code>stranka</code> je <code>None</code></li>
+<li>Na konec <code>while</code> cyklu přidejte volání <code>time.sleep(1)</code>. Nezapomeňte
+ naimportovat modul <code>time</code>.</li>
+</ol>
+<div class="admonition note"><p><code>time.sleep(1)</code> náš program zastaví na 1 sekundu po zpracování každé stránky.
+Chceme si totiž procvičit programování, ne zbytečně vytěžovat cizí servery.</p>
+</div><p>Očekávané chování: žádná změna oproti předchozímu kroku.</p>
+<div class="solution" id="solution-2">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-knihovny/beginners/scraping/index/solutions/2/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">"https://en.wikipedia.org"</span>
+<span class="n">START</span> <span class="o">=</span> <span class="s2">"/wiki/Special:Random"</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"firstHeading"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">stahuj</span><span class="p">(</span><span class="n">stranka</span><span class="p">):</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">odpoved</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span> <span class="o">+</span> <span class="n">stranka</span><span class="p">)</span>
+        <span class="n">odpoved</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">odpoved</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">))</span>
+
+        <span class="n">stranka</span> <span class="o">=</span> <span class="n">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stranka</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">stahuj</span><span class="p">(</span><span class="n">START</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><h3>Krok 5 – hledání odkazů</h3>
+<ol>
+<li>Nejdříve na stránce najdeme element s atributem <code>class</code> s hodnotou
+<code>mw-parser-output</code>. To je box s hlavním textem článku.</li>
+<li>V cyklu projdeme přes každý odstavec (<code>p</code>) v tomto elementu.</li>
+<li>Vytiskneme odstavec.</li>
+<li>Pro každý odkaz (<code>a</code>) v tomto odstavci:</li>
+<li>vytiskneme tento odkaz,</li>
+<li>a vytáhneme z odkazu hodnotu atributu <code>href</code> a vrátíme ji. Tady se bude
+hodit metoda <code>get()</code>.</li>
+</ol>
+<p>Očekávané chování: program vytiskne titulek náhodné stránky, první odstavec na
+ní, potom první odkaz v tomto odstavci. Pak vytiskne další nadpis, odstavec,
+odkaz a tak dále. Nikdy neskončí. Ukončit ho bude třeba ručně klávesovou
+zkratkou Ctrl-C.</p>
+<div class="solution" id="solution-3">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-knihovny/beginners/scraping/index/solutions/3/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">"https://en.wikipedia.org"</span>
+<span class="n">START</span> <span class="o">=</span> <span class="s2">"/wiki/Special:Random"</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"firstHeading"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="n">hlavni_text</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">class_</span><span class="o">=</span><span class="s2">"mw-parser-output"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">odstavec</span> <span class="ow">in</span> <span class="n">hlavni_text</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">odstavec</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">odkaz</span> <span class="ow">in</span> <span class="n">odstavec</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"a"</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">odkaz</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">odkaz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"href"</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">stahuj</span><span class="p">(</span><span class="n">stranka</span><span class="p">):</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">odpoved</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span> <span class="o">+</span> <span class="n">stranka</span><span class="p">)</span>
+        <span class="n">odpoved</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">odpoved</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">))</span>
+
+        <span class="n">stranka</span> <span class="o">=</span> <span class="n">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stranka</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">stahuj</span><span class="p">(</span><span class="n">START</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><h3>Krok 6 – ukončení programu</h3>
+<p>Úkol: zajistíme, aby program někdy skončil. Pokud se dostaneme na stránku, kde
+už jsme byli, můžeme skončit.</p>
+<ol>
+<li>Na začátku funkce <code>stahuj()</code> si vytvořte proměnnou <code>navstivene</code>. Začne
+jako prázdná množina (<code>set()</code>).</li>
+<li>Jako první věc uvnitř <code>while</code> cyklu zkontrolujte, jestli <code>stranka</code> je v
+navštívených. Pokud ano, ukončete cyklus.</li>
+<li>Přidejte stránku mezi navštívené.</li>
+</ol>
+<p>Očekávané chování: program bude vypisovat spoustu textu jako předtím, ale
+časem by měl skončit. Pořád začíná na náhodné stránce, takže to někdy může
+chvilku trvat.</p>
+<div class="solution" id="solution-4">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-knihovny/beginners/scraping/index/solutions/4/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">"https://en.wikipedia.org"</span>
+<span class="n">START</span> <span class="o">=</span> <span class="s2">"/wiki/Special:Random"</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"firstHeading"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="n">hlavni_text</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">class_</span><span class="o">=</span><span class="s2">"mw-parser-output"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">odstavec</span> <span class="ow">in</span> <span class="n">hlavni_text</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">odstavec</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">odkaz</span> <span class="ow">in</span> <span class="n">odstavec</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"a"</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">odkaz</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">odkaz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"href"</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">stahuj</span><span class="p">(</span><span class="n">stranka</span><span class="p">):</span>
+    <span class="n">navstivene</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">stranka</span> <span class="ow">in</span> <span class="n">navstivene</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">navstivene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">stranka</span><span class="p">)</span>
+
+        <span class="n">odpoved</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span> <span class="o">+</span> <span class="n">stranka</span><span class="p">)</span>
+        <span class="n">odpoved</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">odpoved</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">))</span>
+
+        <span class="n">stranka</span> <span class="o">=</span> <span class="n">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stranka</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">stahuj</span><span class="p">(</span><span class="n">START</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><h3>Krok 7 – odstranění textu v závorkách</h3>
+<p>Úkol: teď odstraníme text v závorkách. Začneme pomocnou funkci
+<code>odstran_zavorky()</code>, která by se měla chovat podle přiloženého dokumentačního
+komentáře.</p>
+<p>Zavolejte tuto funkci v <code>najdi_odkaz()</code>. Jako argument jí dáte odstavec
+převedený na řetězec (pomocí <code>str(odstavec)</code>). Vrácený výsledek vypíšete hned
+potom, co se vypisuje odstavec.</p>
+<p>Očekávané chování: stejné jako dřív, akorát odstavec bude vypsaný vždy dvakrát.
+Poprvé tak, jak se nachází na stránce. Podruhé bez ozávorkovaných částí.</p>
+<div class="admonition note"><p>Vzhledem k tomu, že v tomto kroku akorát pracujeme s řetězci, můžete ho
+přeskočit a rovnou se podívat na řešení. Ale je to relativně zajímavý
+problém.</p>
+</div><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">odstran_zavorky</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">"""Odstraní uzávorkované výrazy z textu. HTML elementy mimo závorky budou</span>
+<span class="sd">    zachované. Funkce předpokládá, že každá otevírací závorka má i uzavírací</span>
+<span class="sd">    závorku, a že závorky a HTML elementy se nekříží.</span>
+
+<span class="sd">    &gt;&gt;&gt; odstran_zavorky("Ahoj (nazdar)!")</span>
+<span class="sd">    'Ahoj !'</span>
+<span class="sd">    &gt;&gt;&gt; odstran_zavorky("&lt;b&gt;Ahoj&lt;/b&gt;")</span>
+<span class="sd">    '&lt;b&gt;Ahoj&lt;/b&gt;'</span>
+<span class="sd">    &gt;&gt;&gt; odstran_zavorky("A (&lt;i&gt;písmeno&lt;/i&gt;) B")</span>
+<span class="sd">    'A  B'</span>
+<span class="sd">    &gt;&gt;&gt; odstran_zavorky("a (b (c) d) e")</span>
+<span class="sd">    'a  e'</span>
+<span class="sd">    """</span>
+</pre></div><div class="solution" id="solution-5">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-knihovny/beginners/scraping/index/solutions/5/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">"https://en.wikipedia.org"</span>
+<span class="n">START</span> <span class="o">=</span> <span class="s2">"/wiki/Special:Random"</span>
+
+
+<span class="k">def</span> <span class="nf">odstran_zavorky</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="c1"># V kolika závorkách jsme vnoření. 0 = mimo závorky</span>
+    <span class="n">hloubka</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># Jsme zrovna uvnitř nějakého HTML elementu?</span>
+    <span class="n">v_tagu</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">vysledek</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="k">for</span> <span class="n">znak</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="c1"># Pokud jsme v nějakém elementu…</span>
+        <span class="k">if</span> <span class="n">v_tagu</span><span class="p">:</span>
+            <span class="c1"># …chceme zachovat veškerý text.</span>
+            <span class="n">vysledek</span> <span class="o">+=</span> <span class="n">znak</span>
+            <span class="c1"># Končí tady značka?</span>
+            <span class="k">if</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">"&gt;"</span><span class="p">:</span>
+                <span class="n">v_tagu</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">"("</span><span class="p">:</span>
+                <span class="c1"># Pokud vstupujeme do uzávorkovaného výrazu, jsme o jednu</span>
+                <span class="c1"># úroveň hlouběji.</span>
+                <span class="n">hloubka</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">")"</span><span class="p">:</span>
+                <span class="c1"># Pokud vystupujeme, úroveň o jedna zmenšíme.</span>
+                <span class="n">hloubka</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">hloubka</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Jsme mimo závorky, chceme si znak nechat.</span>
+                <span class="n">vysledek</span> <span class="o">+=</span> <span class="n">znak</span>
+                <span class="c1"># Ale musíme zkontrolovat, jestli nevstupujeme do nějakého HTML</span>
+                <span class="c1"># elementu.</span>
+                <span class="k">if</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">"&lt;"</span><span class="p">:</span>
+                    <span class="n">v_tagu</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">return</span> <span class="n">vysledek</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"firstHeading"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="n">hlavni_text</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">class_</span><span class="o">=</span><span class="s2">"mw-parser-output"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">odstavec</span> <span class="ow">in</span> <span class="n">hlavni_text</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">odstavec</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">odstran_zavorky</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">odstavec</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">odkaz</span> <span class="ow">in</span> <span class="n">odstavec</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"a"</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">odkaz</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">odkaz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"href"</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">stahuj</span><span class="p">(</span><span class="n">stranka</span><span class="p">):</span>
+    <span class="n">navstivene</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">stranka</span> <span class="ow">in</span> <span class="n">navstivene</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">navstivene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">stranka</span><span class="p">)</span>
+
+        <span class="n">odpoved</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span> <span class="o">+</span> <span class="n">stranka</span><span class="p">)</span>
+        <span class="n">odpoved</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">odpoved</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">))</span>
+
+        <span class="n">stranka</span> <span class="o">=</span> <span class="n">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stranka</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">stahuj</span><span class="p">(</span><span class="n">START</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><h3>Krok 8 – použití nové funkce</h3>
+<p>Úkol: Místo vypisování odstavce bez závorek ho znovu převeďte na značkovou
+polévku. Odkazy hledejte v ní. Teď už je na čase odstranit vypisování odstavce
+i odkazu.</p>
+<p>Očekávané chování: program bude vypisovat titulky stránek a následovat odkazy
+na nich. Až dojde na stránku, kde už byl (nebo kde není žádný odkaz), tak
+skončí.</p>
+<div class="solution" id="solution-6">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-knihovny/beginners/scraping/index/solutions/6/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">"https://en.wikipedia.org"</span>
+<span class="n">START</span> <span class="o">=</span> <span class="s2">"/wiki/Special:Random"</span>
+
+
+<span class="k">def</span> <span class="nf">odstran_zavorky</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">hloubka</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">v_tagu</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">vysledek</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="k">for</span> <span class="n">znak</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">v_tagu</span><span class="p">:</span>
+            <span class="n">vysledek</span> <span class="o">+=</span> <span class="n">znak</span>
+            <span class="k">if</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">"&gt;"</span><span class="p">:</span>
+                <span class="n">v_tagu</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">"("</span><span class="p">:</span>
+                <span class="n">hloubka</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">")"</span><span class="p">:</span>
+                <span class="n">hloubka</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">hloubka</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">vysledek</span> <span class="o">+=</span> <span class="n">znak</span>
+                <span class="k">if</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">"&lt;"</span><span class="p">:</span>
+                    <span class="n">v_tagu</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">return</span> <span class="n">vysledek</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"firstHeading"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="n">hlavni_text</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">class_</span><span class="o">=</span><span class="s2">"mw-parser-output"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">odstavec</span> <span class="ow">in</span> <span class="n">hlavni_text</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">odstran_zavorky</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">odstavec</span><span class="p">))</span>
+        <span class="n">odstavec</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">odkaz</span> <span class="ow">in</span> <span class="n">odstavec</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"a"</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">odkaz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"href"</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">stahuj</span><span class="p">(</span><span class="n">stranka</span><span class="p">):</span>
+    <span class="n">navstivene</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">stranka</span> <span class="ow">in</span> <span class="n">navstivene</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">navstivene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">stranka</span><span class="p">)</span>
+
+        <span class="n">odpoved</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span> <span class="o">+</span> <span class="n">stranka</span><span class="p">)</span>
+        <span class="n">odpoved</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">odpoved</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">))</span>
+
+        <span class="n">stranka</span> <span class="o">=</span> <span class="n">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stranka</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">stahuj</span><span class="p">(</span><span class="n">START</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><h3>Krok 9 – filtrování pouze pěkných odkazů</h3>
+<p>Úkol: Někdy první odkaz nevede na jinou stránku (typicky odkazy na zdroje
+uvedené na konci stránky). Upravte funkci <code>najdi_odkaz()</code> tak, aby vracela
+adresu stránky jenom tehdy, pokud ta vracená hodnota začíná řetězecem <code>/wiki/</code>.</p>
+<p>Očekávané chování: program se bude chovat stejně jako dřív, ale bude trochu
+chytřejší v hledání správného odkazu.</p>
+<h3>Finální řešení</h3>
+<p>Na anglické wikipedii by tento program měl poměrně spolehlivě dojít na stránku
+<em>Philosophy</em>. Pokud to zkusíte s českou verzí, až tak slavné to není. Ale i tam
+jsou výsledky relativně zajímavé.</p>
+<div class="solution" id="solution-7">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-knihovny/beginners/scraping/index/solutions/7/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">"https://en.wikipedia.org"</span>
+<span class="n">START</span> <span class="o">=</span> <span class="s2">"/wiki/Special:Random"</span>
+<span class="c1"># Česká wikipedie:</span>
+<span class="c1"># URL = "https://cs.wikipedia.org"</span>
+<span class="c1"># START = "/wiki/Speciální:Náhodná_stránka"</span>
+
+
+<span class="k">def</span> <span class="nf">odstran_zavorky</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">hloubka</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">v_tagu</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">vysledek</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="k">for</span> <span class="n">znak</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">v_tagu</span><span class="p">:</span>
+            <span class="n">vysledek</span> <span class="o">+=</span> <span class="n">znak</span>
+            <span class="k">if</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">"&gt;"</span><span class="p">:</span>
+                <span class="n">v_tagu</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">"("</span><span class="p">:</span>
+                <span class="n">hloubka</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">")"</span><span class="p">:</span>
+                <span class="n">hloubka</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">hloubka</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">vysledek</span> <span class="o">+=</span> <span class="n">znak</span>
+                <span class="k">if</span> <span class="n">znak</span> <span class="o">==</span> <span class="s2">"&lt;"</span><span class="p">:</span>
+                    <span class="n">v_tagu</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">return</span> <span class="n">vysledek</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"firstHeading"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+
+<span class="k">def</span> <span class="nf">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">):</span>
+    <span class="n">hlavni_text</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">class_</span><span class="o">=</span><span class="s2">"mw-parser-output"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">odstavec</span> <span class="ow">in</span> <span class="n">hlavni_text</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">odstran_zavorky</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">odstavec</span><span class="p">))</span>
+        <span class="n">odstavec</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">odkaz</span> <span class="ow">in</span> <span class="n">odstavec</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"a"</span><span class="p">):</span>
+            <span class="n">href</span> <span class="o">=</span> <span class="n">odkaz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"href"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">href</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"/wiki/"</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">href</span>
+
+
+<span class="k">def</span> <span class="nf">stahuj</span><span class="p">(</span><span class="n">stranka</span><span class="p">):</span>
+    <span class="n">navstivene</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">stranka</span> <span class="ow">in</span> <span class="n">navstivene</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">navstivene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">stranka</span><span class="p">)</span>
+
+        <span class="n">odpoved</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="s2">"{URL}{stranka}"</span><span class="p">)</span>
+        <span class="n">odpoved</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">odpoved</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">najdi_titulek</span><span class="p">(</span><span class="n">soup</span><span class="p">))</span>
+
+        <span class="n">stranka</span> <span class="o">=</span> <span class="n">najdi_odkaz</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stranka</span><span class="p">:</span>
+            <span class="k">break</span>
+</pre></div>
+    </div>
+</div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-jaro-knihovny/sessions/scraping/">↑ <span class="d-none d-sm-inline">Lekce: Scraping</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/brno-jaro-knihovny/sessions/scraping/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-brno-jaro-knihovny/lessons/beginners/scraping/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Lubomír Sedlář, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,348 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Zápis – Balíčkovací systémy a httpd
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/mount/">Služby a HTTPD</a>
+
+> <a href="/2020/linux-admin/pilot/08/">Zápis – Balíčkovací systémy a httpd</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>8. Linuxová administrace - balíčkovací systémy a httpd</h1>
+<p>Nainstaluj virtuální stroj ze stránek <a href="https://alt.fedoraproject.org/en/">https://alt.fedoraproject.org/en/</a> (<em>Network Installer Fedora Server</em>).
+Vytvoř uživateli <code>root</code> při instalaci heslo, které si dokážeš zapamatovat pro účely této hodiny.</p>
+<h2>Instalace balíčků</h2>
+<p>Jakým způsobem instaluješ software na linuxovém systému?</p>
+<p>Pravděpodobně máš k dispozici grafický program, kde si můžeš dostupné programy prohlédnout, přečíst jejich popisky, kouknout na obrázky, jak vypadají, a zakliknout tlačítko "Instaluj". 
+Grafický instalátor se postará o vše potřebné a zpřístupní ti ikonku nového programu v nabídce aplikací.</p>
+<p>My se ale dnes podíváme hlouběji, na systémy, díky kterým můžeš instalovat balíčky jednotným způsobem.</p>
+<h3>Balíčkovací systémy</h3>
+<p>Linuxové systémy používají tak zvané balíčkovací systémy. 
+Filozofie pod nimi je přímočará - je to vlastně o tom, že stáhneš balíček kódu a rozbalíš si ho na disk (podobně jak ZIP-ový adresář).
+Balíček může obsahovat příkazy, konfigurace apod.
+Samotný balíček obsahuje:</p>
+<ul>
+<li>soubory</li>
+<li>metadata - např. jméno, verze balíčku</li>
+<li>závislosti (ang. <em>dependencies</em>) - co všechno je potřeba, aby mohl balíček fungovat</li>
+</ul>
+<p>Pokud si stáhneš kupříkladu textový editor, bude potřebovat knihovnu na vykreslení okének. 
+Tu knihovnu musíš mít nainstalovanou, aby fungoval editor. 
+Grafická knihovna pak potřebuje např. standardní knihovnu jazyka C atd.
+Instalace jednoho balíčku tak často znamená, že ve skutečnosti stáhneš mnohem víc balíčků - ten "hlavní" a všechny ostatní, na kterých závisí.</p>
+<p>Fedora používá balíčkovací systém <code>rpm</code>. 
+<code>rpm</code> umí různé akce s balíčky, mj.:</p>
+<ul>
+<li>instalaci </li>
+<li>zjištění obsahu</li>
+<li>odinstalaci</li>
+</ul>
+<p><code>rpm</code> neřeší stahování balíčků z internetu. 
+Pokud máš balíček a řekneš <code>rpm</code>, aby ho nainstaloval, on dokáže říct: <em>nenainstaluji ho, protože potřebuje k svému běhu ještě 5 dalších, které nejsou nainstalované</em>.
+Je ale na tobě, abys tyto chybějící závislosti vyřešila.
+A protože je to úkol, se kterým se uživatelé systémů nechtějí měřit sami, vznikla nástavba nad <code>rpm</code>, která se jmenuje <code>dnf</code>, a která pomáhá řešit závislosti a stahování. 
+Když chceš nainstalovat balíček pomocí <code>dnf</code>, zachová se trochu jinak. Řekne například: <em>OK, ale potřebuješ ještě dalších 5 balíčků, zde máš seznam, stáhnu všechny položky a nainstaluji všechny závislosti</em>.</p>
+<p>Pomocí <code>rpm -q</code> se zeptáš na informace o balíčku, který už je nainstalovaný na daném systému.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q bash
+<span class="go">bash-5.0.7-1.fc30.x86_64</span>
+</pre></div><p><code>rpm -q -l bash</code> - zobrazí všechny soubory, jaké balíček instaluje.
+Vyzkoušej si to, seznam těch souborů je velký.
+Najdeš mezi nimi např. soubory v <code>/etc/skel</code> - adresáři, který se zkopíruje do adresářů všech nově vytvořených uživatelů.
+Nový uživatel dostane hned v domovském adresáři <code>.bashrc</code>, <code>.bash_logout</code>...</p>
+<p><code>rpm -q --requires bash</code> - jaké balíčky potřebuje <code>bash</code>, aby mohl být nainstalován:</p>
+<ul>
+<li>potřebuje <code>sh</code></li>
+<li>konfiguraci</li>
+<li>souborový systém v nějaké verzi</li>
+<li>knihovnu C (libc)
+atd.</li>
+</ul>
+<p><code>sudo dnf install [package]</code> - instalace balíku
+<code>sudo dnf remove [package]</code> - odinstalace balíčku
+<code>sudo dnf update</code> - <code>dnf</code> se podívá na internet, zjistí nejnovější verze všech balíčků, které máš na svém počítači a nabídne ty, které je možné aktualizovat</p>
+<h3>Repozitář</h3>
+<p>Repozitář je místo na internetu, kde jsou ke stažení balíčky.
+Ruzné repozitáře obsahují různé balíčky. 
+Pro jednu linuxovou distribuci si jich můžeš přidat několik. 
+Když chceš nainstalovat nový balíček, systém se podívá na všechny repozitáře, které má na svém seznamu, jestli v nich najde hledaný balíček.</p>
+<p>Na Fedoře se repozitáře nacházejí v <code>/etc/yum.repos.d/</code>.</p>
+<p>Linuxové distribuce se liší svým přístupem k softwaru.
+Fedora, kupříkladu, nemá ve svých repozitářích přehrávač videa.
+Ten se dá doinstalovat z repozitáře <code>rpmfusion</code>, který, technicky vzato, obsahuje dva repozitáře:</p>
+<ul>
+<li>free - balíčky s programy s otevřeným zdrojovým kódem</li>
+<li>nonfree - balíčky s uzávřeným zdrojovým kódem: Skype, Steam etc.
+Na stránkách <a href="https://rpmfusion.org/">rpmfusion</a> najdeš návod, jak přidat repozitář do svého systému.</li>
+</ul>
+<h2>Firewall</h2>
+<p>Ještě než půjdeme na náš dnešní úkol, musíme pozměnit nastavení firewallu na naší Fedoře.
+Firewall je síťové zařízení, které povoluje/blokuje připojení podle zadaných parametrů.
+Dnes spustíme webový server.
+Webové servery poslouchají na portu 80, který musíš povolit. 
+Port je číslo, které říká, k jaké službě se chceš připojit. 
+Každá služba má přiřazený port, na kterém pracuje</p>
+<ul>
+<li>webserver má port 80 (<code>http</code>), 443 (<code>https</code>).</li>
+</ul>
+<p>Pokud ti běží server (teď ještě ne, ale už za chvilku) a chceš na něho vidět zvenku, z jiného počítače, je třeba otevřít port 80.</p>
+<p>Když nainstaluješ nový systém, nainstaluje se ti s ním firewall, který defaultně všechny tyto porty uzavře.
+Na konfiguraci firewallu existuje nástroj.
+Webový server na virtuálním počítači povolíš příkazem:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>firewall-cmd --add-service<span class="o">=</span>http
+<span class="go">success</span>
+</pre></div><p>A zapiš, že má být povolen port pro <code>http</code> po dalším startu:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>firewall-cmd --permanent --add-service<span class="o">=</span>http 
+<span class="go">success</span>
+</pre></div><h2>Webový server</h2>
+<p>Už víš, jak a odkud instalovat, tak je vhodný čas na dnešní úkol.
+Nainstalujeme si tradiční webový server, <code>Apache</code>, neboli <code>httpd</code>.
+Existují různé alternativy k Apachi, dnes se často používá <code>nginx</code>, který je rychlejší a štíhlejší. 
+Apache je starší a robustnější. 
+Je to dobrý příklad, aby sis vyzkoušela fungování démona, procesu, který běží na pozadí a zprostředkovává nějakou službu.
+Je to zároveň dobrý příklad toho, jak konfigurovat podobné systémové služby a jak se o takové procesy starat.</p>
+<h3>Instalace httpd</h3>
+<p>Příklady níže předpokládají, že jsi do systému přihlášena jako <code>root</code>.</p>
+<p>Nainstaluj <code>httpd</code> pomocí příkazu <code>dnf install httpd</code> a potvrď po vyzvání klávesou <kbd>Y</kbd>.</p>
+<p>Když se podíváš na všechny soubory, které ti nainstaloval tento balíček, uvidíš dlouhý seznam. Zkus:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rpm -q -l httpd
+<span class="go">/etc/httpd/conf</span>
+<span class="go">/etc/httpd/conf.d/autoindex.conf</span>
+<span class="go">/etc/httpd/conf.d/userdir.conf</span>
+<span class="go">/etc/httpd/conf.d/welcome.conf</span>
+<span class="go">/etc/httpd/conf.modules.d</span>
+<span class="go">/etc/httpd/conf.modules.d/00-base.conf</span>
+<span class="go">/etc/httpd/conf.modules.d/00-dav.conf</span>
+<span class="go">...</span>
+</pre></div><h3>Správa služby httpd</h3>
+<p>Fedora se řídí filozofií, že nově nainstalované balíčky jsou sice k dispozici, ale se automaticky nenakonfigurují ani nespouští.
+Správce si je musí nakonfigurovat a spustit sám.
+Existují linuxové distribuce, jako Ubuntu, které se zaměřují na to, aby systém vyžadoval malé množství konfigurace, kde by se ta stejná služba rovnou spustila s nějakou výchozí konfigurací.</p>
+<h4>Start, stop, enable, disable</h4>
+<p><code>httpd</code> je démon. O démonech jsme si povídali v minulé hodině.
+O démony se stará systémový proces, který se jmenuje <code>systemd</code>. 
+<code>systemd</code> dává k dispozici příkaz <code>systemctl</code> na spouštění a správu procesů.</p>
+<p>Když spustíš jen příkaz <code>systemctl</code>, uvidíš velký seznam věcí, co běží na počítači (procesy, zařízení, připojené souborové systémy, logování, nastavení automatického času, internetové připojení, atd.).</p>
+<p>Spusť službu (proces) <code>httpd</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>systemctl start httpd
+</pre></div><p>Nastartovanou službu máš teď k dispozici. Kdyby proces spadl s chybou, <code>systemd</code> ho nastartuje znova.</p>
+<p>Pro vypnutí služby <code>httpd</code> existuje příkaz (zatím ji nevypínej, budeme s ní dál pracovat):</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>systemctl stop httpd
+</pre></div><p>Zobraz stav služby (jestli běží, na jakém portu poslouchá, seznam procesů, atp.):</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>systemctl status httpd
+</pre></div><p>Nyní můžeš načíst webovou stránku webového serveru přímo v terminálu virtuálky, pokud zadáš příkaz <code>curl</code> a jako argument uvedeš svou IP adresu. Zkus to.
+<code>curl</code> je příkaz, který umí stahovat webové stránky. 
+Jako argument mu můžeš dát i libovolnou www adresu, např. <code>curl https://github.com</code>.</p>
+<p>Můžeš si dokonce nainstalovat verzi textového prohlížeče do virtuálního počítače, např. <code>links</code>: <code>dnf install links</code>, spustí se pak příkazem <code>links &lt;adresa&gt;</code>.</p>
+<p>Zkus zobrazit stránku nainstalovaného webserveru:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>links IP_adresa_virtualniho_pocitace
+</pre></div><p>Pomocí klávesy <kbd>q</kbd> <code>links</code> opustíš.</p>
+<p>My ale chceme se na tu webovou stránku podívat z jiného počítače, od sebe, graficky. 
+Nyní, pokud zadáš IP adresu virtuálního počítače do prohlížeče na svém počítači, měla by se ti načíst webová stránka. 
+Zde je důležité, abys měla správně nakonfigurovaný firewall. Pokud máš problém s načtením obsahu stránky, ještě jednou zkontroluj nastavení firewallu.</p>
+<p>Webserver budeš mít k dispozici tak dlouho, dokud máš zapnutý virtuální počítač. 
+Jakmile ho vypneš, služba se ukončí. 
+Po opětovném startu systému se webserver nezapne sám.
+Na to potřebuješ ještě jeden příkaz, který znamená, že se služba zapne vždy po startu systému.</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>systemctl <span class="nb">enable</span> httpd
+</pre></div><div class="admonition note"><p>Příkaz <code>start</code> se týká jen tohoto běhu počítače, nastartuje službu pro tebe tady a teď. 
+<code>enable</code> s tím nesouvisí, ten řídí jen zapínání při startu systému. 
+Pokud zastavíš službu příkazem <code>stop</code> a restartuješ počítač, služba bude po restartu opět zapnutá.</p>
+</div><p>Dobrý test, jestli máš službu korektně nastavenou, je restartování počítače (provedeš příkazem <code>reboot</code>). Pokud potom běží tak, jak jsi ji naplánovala, je vše v pořádku.</p>
+<h4>Restart a reload</h4>
+<p>Se službami se pojí ještě dva příkazy, které se hodí znát. Jsou to:</p>
+<ul>
+<li><code>systemctl restart httpd</code> </li>
+<li><code>systemctl reload httpd</code></li>
+</ul>
+<p>Když změníš konfiguraci, server se o tom nedozví automaticky za svého běhu. 
+Musíš mu říct, že se má restartovat a při startu si načte aktualizovanou konfiguraci.
+Rozdíl mezi <code>restart</code> a <code>reload</code> je, že v případě <code>reload</code> se pouze načtou změny v konfiguračních souborech a připojení k webserveru zůstanou aktivní. 
+V případě restartu se ukončí vše.</p>
+<p>Kde najdeš nastavení webového serveru? 
+Tam, kde bys ho nejspíš čekala :).
+Je v <code>/etc/httpd/conf.d/</code>, kde najdeš několik souborů. 
+Můžeš provést změnu v <code>/etc/httpd/conf.d/welcome.conf</code>, například vše zakomentovat (s použitím znaku <code>#</code>). 
+Tento soubor definuje obsah stránky, kterou dostaneš, když se zeptáš na IP adresu počítače s běžícím webovým serverem.
+Po zakomentování by se mělo začít zobrazovat něco jiného.
+Když se ale teď podíváš do prohlížeče, nebude žádná změna.
+Server si zatím změny nevšiml.
+Můžeš teď buď vypnout a zapnout server, nebo mu říct, aby si načetl nové nastavení. 
+Půjdeme druhou variantou, použij <code>systemctl reload httpd</code> (příp. <code>restart</code>) pro zobrazení změn.</p>
+<h5>DocumentRoot a UserDir</h5>
+<p>Apache servíruje obsah adresáře určitým způsobem.
+V souboru <code>/etc/httpd/conf.d/autoindex.conf</code> je nastavení toho, jak se generují výpisy adresářů.
+V <code>/etc/httpd/conf/httpd.conf</code> je základní nastavení a to hlavní v něm je <code>DocumentRoot</code>, kde by mělo být řečeno, kde jsou uloženy dokumenty, kterými disponuje webový server.
+Typicky je to <code>/var/www/html/</code>.
+Vytvoř si v něm soubor <code>hello.txt</code> a napiš do něj <em>Hello, World!</em>
+Podívej se na stránku a zkontroluj, že se ten soubor objeví v prohlížeči.
+Obsah <code>/var/www/html</code> už není nastavení serveru. Když přijde dotaz, co je na té hlavní stránce, zobrazí se obsah toho adresáře. Tohle bude fungovat i bez reloadu serveru, stačí obnovení stránky (klávesou <kbd>F5</kbd>.</p>
+<p>V <code>/etc/httpd/conf/httpd.conf</code> je ještě jedno nastavení, a to <code>UserDir</code>. 
+Nastavuje, že pokud má uživatel vytvořený adresář <code>public_html</code>, pak tento adresář lze zobrazit pod <code>/~user/</code>, kde <em>user</em> je jméno uživatelského účtu. 
+Na prvních unixových systémech to bylo skvělé, každý si mohl jednoduše dát na web, co chtěl.
+Pak se zjistilo, že je to bezpečnostní riziko, protože se podle toho dá velmi jednoduše zjistit, jestli uživatel daného jména existuje na tom počítači a zkoušet se na ně připojit.
+Z tohoto důvodu je to standardně vypnuté, ale v případě potřeby můžeš tuto funkcionalitu opět zapnout .</p>
+<h2>DÚ</h2>
+<ul>
+<li>vytvořit si nového uživatele</li>
+<li>Povolit uživatelské webové stránky</li>
+<li>Zveřejnit nějaký obsah pomocí webového serveru</li>
+</ul>
+<p>Dokumentace je v komentářích v <code>/etc/httpd/userdir.conf</code></p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/notes/httpd/">← <span class="d-none d-sm-inline">Poznámky – HTTPD</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/mount/">↑ <span class="d-none d-sm-inline">Lekce: Služby a HTTPD</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/sessions/mount/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/pilot/08/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsala Karolina Surma, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

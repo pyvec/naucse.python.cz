@@ -1,0 +1,328 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Advanced lessons: Inheritance
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/2019/advanced-en-prague/">Advanced lessons</a>
+
+> <a href="/2019/advanced-en-prague/beginners-en/inheritance/">Inheritance</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Inheritance</h1>
+<p>We already know what classes are, and we have seen the class for kitties
+as an example:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kittie</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">meow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow meow! I like {} very much!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">food</span><span class="p">))</span>
+</pre></div><p>Now create a similar class for dogs:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Doggie</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">woof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Woof!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Woof woof! I like {} very much!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">food</span><span class="p">))</span>
+</pre></div><p>Most of the code is the same!
+If you would have to write a class for chicks, ducks, and rabbits, 
+it would be quite boring task without Ctrl+C.
+And because programmers are lazy to write the same piece of
+code multiple times (and mostly maintain it) they created
+mechanism how to avoid that. How?</p>
+<p>Kitties and doggies are animals.
+So you can create a class for all animals, and write
+into it everything that applies to all animals.
+And in the classes about each animal, you just
+write the specifics.
+That's how it's done in Python:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Animal</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: I like {} very much!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">food</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">Kittie</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">meow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">Doggie</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">woof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Woof!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="n">smokey</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">(</span><span class="s1">'Smokey'</span><span class="p">)</span>
+<span class="n">doggo</span> <span class="o">=</span> <span class="n">Doggie</span><span class="p">(</span><span class="s1">'Doggo'</span><span class="p">)</span>
+<span class="n">smokey</span><span class="o">.</span><span class="n">meow</span><span class="p">()</span>
+<span class="n">doggo</span><span class="o">.</span><span class="n">woof</span><span class="p">()</span>
+<span class="n">smokey</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="s1">'mouse'</span><span class="p">)</span>
+<span class="n">doggo</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="s1">'bone'</span><span class="p">)</span>
+</pre></div><p>How does it work?
+With the command <code>class Kittie(Animal)</code> you are
+telling Python that the class <code>Kittie</code> <em>inherits</em>
+behaviour from the class <code>Animal</code>.
+In other programming languages they say
+that <code>Kittie</code> is <em>derived from</em> <code>Animal</code> 
+or it <em>extends</em> <code>Animal</code>.
+Derived classes are called <em>subclasses</em> and the main one
+is the <em>superclass</em></p>
+<p>When Python searches for a method/function (or other attribute),
+for example <code>smokey(eat)</code>, and it doesn't find it in the class itself
+it will look into the superclass. So everything that has been
+defined for Animal applies to Kittie (unless you
+tell Python otherwise).</p>
+<h2>Overwriting methods and <code>super()</code></h2>
+<p>If you don't like some behaviour of the superclass, you can
+define a method with the same name in the subclass:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kittie</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: I don't like {} at all!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">food</span><span class="p">))</span>
+
+
+<span class="n">smokey</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">(</span><span class="s1">'Smokey'</span><span class="p">)</span>
+<span class="n">smokey</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="s1">'dry food'</span><span class="p">)</span>
+</pre></div><div class="admonition python"><p>It's similar to what we did in the previous lesson with
+<code>misty.meow = 12345</code>. Python searches for the attributes in the object,
+then in the class, and then in the superclass (and then in superclass' superclass).</p>
+</div><p>Sometimes it can happen that you need some behaviour from the original method
+in the overwritten method. You can call it with the special function <code>super()</code>,
+which allows calling methods in a superclass.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kittie</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"({} is looking at {} for a while)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">food</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="n">food</span><span class="p">)</span>
+
+<span class="n">smokey</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">(</span><span class="s1">'Smokey'</span><span class="p">)</span>
+<span class="n">smokey</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="s1">'dry food'</span><span class="p">)</span>
+</pre></div><p>Keep in mind that you have to pass everything that this <code>super()</code> method
+needs (apart from <code>self</code>, which is passed automatically).
+You can use this - you can pass different values
+than the original function received (in this case, a <code>snake</code> class will
+receive the name <code>Stanley</code>, but you want to change it to <code>Ssstanley</code>):</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">snake</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'s'</span><span class="p">,</span> <span class="s1">'sss'</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'S'</span><span class="p">,</span> <span class="s1">'Sss'</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+
+<span class="n">stanley</span> <span class="o">=</span> <span class="n">snake</span><span class="p">(</span><span class="s1">'Stanley'</span><span class="p">)</span>
+<span class="n">stanley</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="s1">'mouse'</span><span class="p">)</span>
+</pre></div><p>As you can see, you can use <code>super()</code> even with special methods
+like <code>__init__</code>.</p>
+<h2>Polymorphism</h2>
+<p>Programmers didn't invent inheritance only because they are lazy
+to write the same code multiple times. That is, of course, one
+good reason, but superclasses have also another
+important feature: When we know that <code>Kittie</code> and <code>Doggie</code>
+and any other similar class are animals, we can create a list
+of animals, but we don't care what animals they are 
+specifically:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Animal</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: I like {} very much!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">food</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">Kittie</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">meow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">Doggie</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">woof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Woof!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+<span class="n">animals</span> <span class="o">=</span> <span class="p">[</span><span class="n">Kittie</span><span class="p">(</span><span class="s1">'Smokey'</span><span class="p">),</span> <span class="n">Doggie</span><span class="p">(</span><span class="s1">'Doggo'</span><span class="p">)]</span>
+
+<span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="n">animals</span><span class="p">:</span>
+    <span class="n">animal</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="s1">'meat'</span><span class="p">)</span>
+</pre></div><p>This is some quite important behaviour of subclasses:
+When you have a <code>Kittie</code>, you can use it anywhere
+where a program expects <code>Animal</code>, because each kittie
+<em>is</em> an animal.</p>
+<div class="admonition note"><p>This is a good approach when you won't know which class should be
+inherited in which class.
+Each <em>kittie</em> or <em>doggie</em> is an <em>animal</em>,
+each <em>cabin</em> or <em>house</em> is a <em>building</em>.
+In those examples, heredity makes sense.</p>
+<p>But sometimes our approach fails - for example if we would say
+each <em>car</em> is a <em>steering wheel</em>, then we know that
+we shouldn't use inheritance.
+Even if we can "rotate" both cars and steering wheels, it means a different thing, 
+and we definitely can't use cars everywhere where we would want to
+use steering wheels. So in this case we should say to ourselves:
+Each kittie <em>has</em> a name and each car <em>has</em> a steering wheel, so we
+should create two different classes, and in the car class, we 
+use steering wheel as default variable:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Car</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wheel</span> <span class="o">=</span> <span class="n">Wheel</span><span class="p">()</span>
+</pre></div><p>(And when some programmer gets mad at you that you
+are breaking <a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov_substitution_principle</a>
+it's because of this problem.)</p>
+</div><h2>Generalization</h2>
+<p>When you look back at the functions <code>meow</code> and <code>woof</code>, you will maybe find out
+that they can be named better, so they can be used for each animal, similarly
+as <code>eat</code>.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Animal</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: I like {} very much!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">food</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">Kittie</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">speak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">Doggie</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">speak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Woof!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+<span class="n">animals</span> <span class="o">=</span> <span class="p">[</span><span class="n">Kittie</span><span class="p">(</span><span class="s1">'Smokey'</span><span class="p">),</span> <span class="n">Doggie</span><span class="p">(</span><span class="s1">'Doggo'</span><span class="p">)]</span>
+
+<span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="n">animals</span><span class="p">:</span>
+    <span class="n">animal</span><span class="o">.</span><span class="n">speak</span><span class="p">()</span>
+    <span class="n">animal</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="s1">'meat'</span><span class="p">)</span>
+</pre></div><p>As this example shows, writing superclasses from which we can easily inherit
+methods is not easy. It is definitely not easy when we want to create a 
+subclass in a different program than where the superclass is.
+So that's why you should inherit classes within your code:
+We do not recommend to inherit classes that someone else wrote,
+unless the author of the superclass explicitly mentions that (and
+mainly how) you can inherit from their class.</p>
+<p>And that's all about classes. Now you know enough to create
+your own zoo :)</p>
+
+
+        </div>
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-advanced-en-prague/lessons/beginners-en/inheritance/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Translated by Marketa Muzikova</p>
+    
+        <p>Originally written by Petr Viktorin, 2014-2017 for <a href="https://naucse.python.cz/course/pyladies/beginners/inheritance/">PyLadies CZ</a>.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

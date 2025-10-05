@@ -1,0 +1,640 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Uživatelé a práva
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/users/">Správa uživatelů</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/users/">Uživatelé a práva</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Poznámky – správa uživatelů</h1>
+<p>Dnes se podíváme na uživatelské účty.
+Na Linuxovém systému může mít účet více uživatelů.</p>
+<p>Dokonce může systém používat několik uživatelů zároveň.
+U počítačů, které mají jednu obrazovku a jednu klávesnici se to moc nevidí,
+ale i existují systémy s více obrazovkami – a častěji servery bez obrazovky,
+kam se uživatelé připojují vzdáleně.
+Nebo se živí uživatelé nepřipojují a procesy běží jejich jménem automaticky.</p>
+<p>Každý uživatel má své uživatelské jméno.
+To svoje jsi zadávala při instalaci systému.
+Když chceš zjistit jaké je, můžeš použít příkaz <code>whoami</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>whoami
+<span class="go">hanka</span>
+</pre></div><h2>Uživatelé</h2>
+<p>Už víš, že u procesů a souborů je vždy uvedeno jméno uživatele.
+Většinou je to tvoje uživatelské jméno nebo <code>root</code>, ale občas zahlédneš i jiné.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps -Af <span class="p">|</span> tail -n6
+<span class="go">hanka       2835    2474  0 11:02 pts/1    00:00:00 bash</span>
+<span class="go">root        3179       2  0 11:02 ?        00:00:00 [kworker/0:3-cgroup_destroy]</span>
+<span class="go">root        3239     972  0 11:04 ?        00:00:00 systemd-userwork</span>
+<span class="go">root        3242     972  0 11:05 ?        00:00:00 systemd-userwork</span>
+<span class="go">root        3243     972  0 11:05 ?        00:00:00 systemd-userwork</span>
+<span class="go">hanka       3288    2835  0 11:06 pts/1    00:00:00 ps -Af</span>
+<span class="gp">$ </span>ls -l <span class="p">|</span> tail -n6
+<span class="go">drwxr-xr-x. 1 hanka hanka   0  4. říj 16.35 Obrázky</span>
+<span class="go">drwxr-xr-x. 1 hanka hanka   0  4. říj 16.35 Plocha</span>
+<span class="go">drwxr-xr-x. 1 hanka hanka   0  4. říj 16.35 Stažené</span>
+<span class="go">drwxr-xr-x. 1 hanka hanka   0  4. říj 16.35 Šablony</span>
+<span class="go">drwxr-xr-x. 1 hanka hanka   0  4. říj 16.35 Veřejné</span>
+<span class="go">drwxr-xr-x. 1 hanka hanka   0  4. říj 16.35 Videa</span>
+<span class="gp">$ </span>ls -l /usr/bin <span class="p">|</span> tail -n6
+<span class="go">-rwxr-xr-x. 1 root root       70416 29. led  2021 zipnote</span>
+<span class="go">-rwxr-xr-x. 1 root root       66256 29. led  2021 zipsplit</span>
+<span class="go">-rwxr-xr-x. 1 root root        2210 26. led  2021 zless</span>
+<span class="go">-rwxr-xr-x. 1 root root        1846 26. led  2021 zmore</span>
+<span class="go">-rwxr-xr-x. 1 root root        4557 26. led  2021 znew</span>
+<span class="go">lrwxrwxrwx. 1 root root           6 17. bře  2021 zsoelim -&gt; soelim</span>
+</pre></div><p>U souborů, ve výstupu <code>ls -l</code>, je jméno zopakováno.
+První jméno označuje vlastníka souboru; druhé je jméno <em>skupiny</em>
+která soubor vlastní.
+Každý uživatel má svoji vlastní skupinu, která se používá když
+něco není potřeba sdílet skupinově.</p>
+<p>Uživatel může být členem více skupin.
+Podívej se, v jakých skupinách jsi ty:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>groups
+<span class="go">hanka wheel</span>
+</pre></div><p>Skupina <code>wheel</code> je pro uživatele, kteří mají přístup k admistrátorským
+oprávněním. Můžou tak např. přidávat další uživatele.</p>
+<p>Příkaz <code>groups</code> bere i argumenty – uživatele, jejichž skupiny vypíše.
+Koukni se třeba, že uživate <code>root</code> není ve skupině <code>wheel</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>groups hanka root
+<span class="go">hanka : hanka wheel</span>
+<span class="go">root : root</span>
+</pre></div><p>Ještě víc informacíti dá příkaz <code>id</code>, který u každého jména
+(uživatele nebo skupiny) ukáže i číslo.
+Systém používá tyhle čísla.
+Jména jsou „pro lidi“ – používají se při výpisech a nastavování.</p>
+<div class="highlight"><pre><code>$ id
+uid=1000(hanka) gid=1000(hanka) skupiny=1000(hanka),10(wheel) kontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+$ id hanka root
+uid=1000(hanka) gid=1000(hanka) skupiny=1000(hanka),10(wheel)
+uid=0(root) gid=0(root) skupiny=0(root)</code></pre></div><div class="admonition note"><p>Informace o „kontextu“ má co dělat s podsystémem SELinux, používaným pro
+lepší zabezpečení systému.
+Pro teď ji ignoruj.</p>
+</div><h2>Kam nemůžeš</h2>
+<p>Už víš, že si můžeš dávat vlastní příkazy do <code>~/bin</code>.
+Tenhle adresář je ve tvém domovském adresáři, do kterého ostatní uživatelé
+počítače nemají přístup.</p>
+<p>Kdybys chtěla dát svůj program k dispozici všem uživatelům,
+do adresáře <code>/usr/bin/</code> (nebo jiného sdíleného adresáře v <code>$PATH</code>),
+narazíš.
+Na podobných sdílených místech nemázádný tvůj proces právo soubory vytvářet,
+měnit ani mazat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cp ~/bin/mujprogram /usr/bin/mujprogram
+<span class="go">cp: nelze vytvořit obyčejný soubor '/usr/bin/mcd': Operace zamítnuta</span>
+
+<span class="gp">$ </span><span class="nb">echo</span> <span class="s2">"..."</span> &gt; /usr/bin/mujprogram
+<span class="go">bash: /usr/bin/mujprogram: Operace zamítnuta</span>
+
+<span class="gp">$ </span>nano /usr/bin/mujprogram   <span class="c1"># obdobná chyba nastane při uložení</span>
+</pre></div><p>Když budeš chtít podobně měnit systém, musíš poprosit administrátora systému,
+aby změny udělal.
+A když jsi administrátorkou ty, budeš na tyhle změny
+muset proces pustit pod administrátorským uživatelským účtem.
+Ten je oddělený od toho obyčejného uživatelského, což má dobrý důvod:
+je menší šance že systém změníš (nebo zničíš) nechtěně.</p>
+<p>Jak to udělat, to si řekneme za chvíli; teď ještě něco k oprávněním.</p>
+<h2>Práva souborů</h2>
+<p>„Práva“ u souborů zobrazuje <code>ls -l</code> v prvním sloupečku:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ~/Dokumenty/data-shell/
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-rw-r--r--. 1 hanka hanka    32 Aug  8  2019 pizza.cfg</span>
+</pre></div><div class="admonition note"><p>Pro <code>ls -l</code> bývá nastavený alias <code>ll</code>, který klidně použij.
+Nemusí ale být na všech systémech (a na všech účtech),
+proto budu <code>ls -l</code> rozepisovat.</p>
+</div><p>Práva (angl. <em>permissions</em>) jsou součástí <em>módu</em> (angl. <em>mode</em>),
+který je zobrazen jako ta zkratkovitá sada symbolů: <code>-rw-r--r--.</code>
+Pojďme rozluštit, co to znamená.</p>
+<p>První znak udává typ souboru:</p>
+<ul>
+<li><code>-</code> znamená normální soubor;</li>
+<li><code>d</code> uvidíš u adresářů;</li>
+<li>další písmenka značí speciální soubory: <code>p</code> je roura (<em>pipe</em>), <code>c</code> nebo
+<code>d</code> označují „zařízení“ značí jako <code>/dev/null</code> nebo terminály (<code>/dev/tty*</code>),
+o odkazech (<code>l</code>) si řekneme později.</li>
+</ul>
+<p>Po prvním písmenku jsou samotná práva: tři trojice písmen <code>rwx</code>,
+kde každé může být nahrazeno pomlčkou: <code>rwx</code>, <code>rw-</code>, <code>r--</code>, <code>-w-</code> apod.
+První trojice se vztahuje k vlastníkovi, druhá ke skupině a třetí k ostatním
+uživatelům.
+Podívejme se napřed na první trojici.</p>
+<h3>Čtení – <code>r</code></h3>
+<p>Když je první písmenko trojice, <code>r</code>, udává právo ke čtení.
+Pomlčka znamená, že nemá právo soubor přečíst.</p>
+<p>Můžeš si to vyzkoušet příkazem <code>chmod</code> (z angl. <em>change mode</em>, změnit mód):</p>
+<ul>
+<li><code>chmod -r <var>jméno_souboru</var></code> právo odebere,</li>
+<li><code>chmod +r <var>jméno_souboru</var></code> právo naopak přidá.</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-rw-r--r--. 1 hanka hanka    32 Aug  8  2019 pizza.cfg</span>
+<span class="gp">$ </span>chmod -r pizza.cfg
+<span class="gp">$ </span>cat pizza.cfg
+<span class="go">cat: pizza.cfg: Operace zamítnuta</span>
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">--w-------. 1 hanka hanka 32 Aug  8  2019 pizza.cfg</span>
+<span class="gp">$ </span>chmod +r pizza.cfg
+<span class="gp">$ </span>ls -l pizza.cfg 
+<span class="go">-rw-r--r--. 1 hanka hanka 32  8. srp  2019 pizza.cfg</span>
+</pre></div><p>Všimni si že právo ke čtení se vztahuje na <em>obsah</em> souboru.
+Jméno, mód, vlastníka a ostatní vlastnosti souboru můžeš zjistit i bez práva
+ke čtení obsahu.</p>
+<h3>Zápis – <code>w</code></h3>
+<p>Druhé písmenko udává právo ke čtení.
+Když je zde místo <code>w</code> pomlčka, vlastník do souboru nesmí zapisovat.
+Toto oprávnění se dá změnit pomocí <code>chmod -w</code> a <code>chmod +w</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod -w pizza.cfg
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-r--r--r--. 1 hanka hanka 32  8. srp  2019 pizza.cfg</span>
+<span class="gp">$ </span><span class="nb">echo</span> Nový řádek &gt;&gt; pizza.cfg
+<span class="go">bash: pizza.cfg: Operace zamítnuta</span>
+<span class="gp">$ </span>chmod +w pizza.cfg
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-rw-rw-r--. 1 hanka hanka 32  8. srp  2019 pizza.cfg</span>
+<span class="gp">$ </span><span class="nb">echo</span> Nový řádek &gt;&gt; pizza.cfg
+<span class="gp">$ </span>cat pizza.cfg
+<span class="go">alpha: 0.5</span>
+<span class="go">beta: 0.2</span>
+<span class="go">gamma: off</span>
+<span class="go">Nový řádek</span>
+</pre></div><h3>Spuštění – <code>x</code></h3>
+<p>Poslední z trojice je právo spuštění, <code>x</code>, které už znáš:
+pomocí <code>chmod +x</code> označuješ spustitelné soubory.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>./pizza.cfg 
+<span class="go">bash: ./pizza.cfg: Operace zamítnuta</span>
+<span class="gp">$ </span>chmod +x pizza.cfg 
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-r-xr-xr-x. 1 hanka hanka 32  8. srp  2019 pizza.cfg</span>
+<span class="gp">$ </span>./pizza.cfg  <span class="c1"># Soubor bez "shebangu" se Bash pokusí spustit jako skript</span>
+<span class="go">./pizza.cfg: řádek 1: alpha:: příkaz nenalezen</span>
+<span class="go">./pizza.cfg: řádek 2: beta:: příkaz nenalezen</span>
+<span class="go">./pizza.cfg: řádek 3: gamma:: příkaz nenalezen</span>
+<span class="gp">$ </span>chmod -x pizza.cfg 
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-r--r--r--. 1 hanka hanka 32  8. srp  2019 pizza.cfg</span>
+</pre></div><p>Všechny soubory s příkazy jsou spustitelné:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> cat gedit
+<span class="go">cat je zahashován (/usr/bin/cat)</span>
+<span class="go">gedit je /usr/bin/gedit</span>
+<span class="gp">$ </span>ls -l /usr/bin/cat
+<span class="go">-rwxr-xr-x. 1 root root 37032 26. bře  2021 /usr/bin/cat</span>
+<span class="gp">$ </span>ls -l /usr/bin/gedit
+<span class="go">-rwxr-xr-x. 1 root root 16072  2. dub  2021 /usr/bin/gedit</span>
+</pre></div><h3><code>x</code> u adresářů</h3>
+<p>Zvláštní význam má právo <code>x</code> u adresářů, u kterých je téměř vždy nastaveno.</p>
+<p>Když se budeš dívat na adresáře, bude se hodit přepínač <code>-d</code>,
+se kterým <code>ls</code> místo <em>obsahu</em> adresáře popíše <em>adresář</em> samotný.
+Vyzkoušej si:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l .
+<span class="gp">$ </span>ls -l -d .
+<span class="go">drwxr-xr-x. 8 hanka hanka 4096  6. říj 23.40 .</span>
+</pre></div><p>A co znamená to <code>x</code>?
+To je právo adresář <em>procházet</em>, tedy přistupovat k tomu, co je v něm.
+Když <code>x</code> pro nějaký adresář odebereš, přijdeš o právo jakkoli pracovat se
+soubory (a podadresáři) v něm:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod -x .
+<span class="gp">$ </span>ls .
+<span class="go">ls: nelze přistoupit k '.': Operace zamítnuta</span>
+<span class="gp">$ </span>cat pizza.cfg
+<span class="go">cat: pizza.cfg: Operace zamítnuta</span>
+<span class="gp">$ </span>cat ~/Dokumenty/data-shell/pizza.cfg
+<span class="go">cat: /home/hanka/Dokumenty/data-shell/pizza.cfg: Operace zamítnuta</span>
+</pre></div><p>To se vztahuje i na adresář <code>.</code> (neboli <code>./.</code>), takže nejde jen tak
+aktuálnímu adresáři právo <code>x</code> zpět přidat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod +x .
+<span class="go">chmod: nelze přistoupit k '.': Operace zamítnuta</span>
+</pre></div><p>V tomhle případě můžeš do <em>nadřazeného</em> adresáře – to ještě smíš.
+Z něj sice nemůžeš “zpět” do <code>data-shell</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ..
+<span class="gp">$ </span><span class="nb">cd</span> data-shell/
+<span class="go">bash: cd: data-shell/: Operace zamítnuta</span>
+</pre></div><p>Ale můžeš pro <code>data-shell</code> přidat právo <code>x</code> a situaci vrátit „do normálu“:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod +x data-shell
+<span class="gp">$ </span><span class="nb">cd</span> data-shell/
+<span class="gp">$ </span>ls
+<span class="go">creatures  diplomka_archiv  north-pacific-gyre  plan.txt   writing</span>
+<span class="go">data       molecules        pizza.cfg           solar.pdf</span>
+<span class="gp">$ </span>ls -ld . pizza.cfg
+<span class="go">drwxr-xr-x. 8 hanka hanka 4096  6. říj 23.40 .</span>
+<span class="go">-r--r--r--. 1 hanka hanka   32  8. srp  2019 pizza.cfg</span>
+</pre></div><h3>Vlastník, skupina a ostatní</h3>
+<p>'rwx' se opakuje 3× – pro <em>vlastníka</em>, <em>skupinu</em> a <em>ostatní</em>.
+Vlastník i skupina, která soubor vlastní, jsou ve výstupu <code>ls -l</code> vidět:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-rw-rw-r--. 1 hanka hanka 36  8. lis 14.59 pizza.cfg</span>
+</pre></div><p>Práva pro konkrétní kategoriii z těchto tří můžeš nastavit tak, že příkazu
+<code>chmod</code> dáš před <code>+</code> nebo <code>-</code> jedno z písmen
+<code>u</code> (<em>user</em> – uživatel, vlastník), <code>g</code> (<em>group</em> – skupina)
+a <code>o</code> (<em>others</em>, ostatní) nebo <code>a</code> (<em>all</em> – všechny tři). Například:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod u+x .
+<span class="gp">$ </span>chmod g+x .
+<span class="gp">$ </span>chmod o+x .
+<span class="gp">$ </span>chmod a-x .
+</pre></div><p>Kromě <code>+</code> a <code>-</code> rozumí <code>chmod</code> symbolu <code>=</code>, které práva nastaví na danou sadu
+(tj. zadaná přidá a nezadaná odebere).
+A několik specifikací se dá spojit pomocí čárky, takže můžeš konkrétní práva nastavit třeba takto:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod <span class="nv">u</span><span class="o">=</span>rw,g<span class="o">=</span>r,o<span class="o">=</span> pizza.cfg
+</pre></div><p>Když so podíváš na svůj domovský adresář, zjistíš že to do něj nikdo jiný
+nevleze: <code>rwx</code> je tu jen pro tebe.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -ld ~
+<span class="go">drwx------. 25 hanka hanka 4096  2. lis 14.31 /home/hanka</span>
+</pre></div><p>Když tahle práva odebereš i sobě (<code>chmod u-rwx ~</code>),
+bude tvůj systém podobně nepoužitelný jako kdyby chtěl tvůj uživatelský učet
+používat někdo jiný.
+Běžící procesy se neukončí, ale můžeš mít problém například
+otevřít nový terminál nebo prohlížeč.
+Příkaz <code>chmod u+rwx ~</code> ale vše vrátí do pořádku.</p>
+<h3>Změna skupiny</h3>
+<p>Skupinu můžeš u souboru který vlastníš změnit příkazem
+<code>chgrp</code> (z angl. <em>change group</em>, změň skupinu):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chgrp wheel pizza.cfg
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">--w-rw----. 1 hanka wheel 36  8. lis 14.59 pizza.cfg</span>
+</pre></div><p>To ovšem pro tebe nic nezmění.
+Vždy totiž platí jen první trojice <code>rwx</code>, která se na soubor vztahuje, takže:</p>
+<ul>
+<li>první <code>rwx</code> platí pro vlastníka,</li>
+<li>druhé <code>rwx</code> platí pro všechny ze skupiny <em>kromě</em> vlastníka,</li>
+<li>třetí <code>rwx</code> platí pro všechny ostatní – ty, kdo nejsou ani vlastníkem ani
+nepatří do skupiny.</li>
+</ul>
+<p>A vlastníka souboru změnit nemůžeš.
+Tuhle operaci bys totiž nemohla vzít zpět
+(to by musel provést nový vlastník), takže tohle lze udělat jen
+z administrátorského účtu.
+Tam k tomu slouží příkaz <code>chown</code> (z angl. <em>change owner</em>, změň vlastníka)</p>
+<p>Pojďme se podívat jak se přihlásit pod jiným účtem;
+za domácí úkol si pak s <code>chgrp</code> a <code>chown</code> pohraj.</p>
+<h2>Změna uživatele</h2>
+<p>Kdo jsi – tedy pod jakým účtem jsi přihlášena – ti řekne příkaz <code>id</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>id
+</pre></div><p>Chceš-li se přihlásit pod jiným účtem, můžeš použít příkaz <code>su</code>.
+Kdyby na systému existoval uživatel <code>pepa</code>, mohla bys napsat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su pepa
+</pre></div><p>(<code>su</code> je z angl. <em>set user</em>, ale lépe
+se to pamatuje jako moravské „od včil <em>su Pepa</em>“).</p>
+<p>Pojď si to vyzkoušet s účtem <code>root</code>, který jsi už viděla ve výstupu
+<code>ps</code> a <code>ls</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su root
+<span class="go">Heslo:</span>
+</pre></div><p>Zjistíš že k účtu <code>root</code> neznáš heslo.
+Tak to ukonči pomocí <kbd>Ctrl</kbd>+<kbd>C</kbd>, zkusíme to jinak.</p>
+<h2>Nový uživatel</h2>
+<p>V nastavení GNOME Shell (tom „klikacím“, z menu vpravo nahoře)
+vyber sekci <strong>Uživatelé</strong>.
+Tady můžeš přidávat nové uživatelské účty.
+Aktuálně tam bude jen jeden – systémové účty jako <code>root</code> jsou skryté.</p>
+<p>Při instalaci systému jsi nastavila, že jsi správce.
+To znamená že si tvoje procesy můžou <em>zažádat</em> o administrátorská práva;
+typicky je ale dostanou až po zadání hesla.</p>
+<p>Klikni tedy na tlačítko <strong>Odemknout</strong> a zadej svoje heslo.</p>
+<div class="admonition note"><p>Kdykoli se tě systém zeptá na heslo, znamená to že se buď přihlašuješ,
+nebo dělat něco, co ovlivní celý systém (tj. víc než jen tvůj účet) – a je
+to tedy potenciálně nebezpečné.
+Přidání uživatele zas tak nebezpečné není, ale rozhodně to ovlivní víc než
+jen tvůj účet.</p>
+</div><p>Přes tlačítko <strong>Přidat uživatele</strong> teď přidej nového uživatele
+s uživatelským jménem <code>test1</code>.
+Heslo k novému účtu musí být složitější než <code>1234</code>; zapiš si ho na papír.</p>
+<p>Když teď Nastavení zavřeš a otevřeš znovu, možnost měnit ostatní účty budeš
+muset znovu „odemknout“ a zadat svoje heslo.</p>
+<p>Gnome GUI na uživatele.
+Jsem administrátor.
+Vytvořit nového uživatele <code>test1</code> – chce to heslo, i když jsem "administrátor".
+Co je to administrátor?</p>
+<p>Zavřít nastavení, otevřít znovu – chce to heslo znovu.
+Administrátor – systém mi přidělí oprávnění, když zadám <em>své</em> heslo.
+„Být“ administrátor chci co nejmíň.</p>
+<p>Přepni se teď do příkazové řádky a přepni se na nový účet <code>test</code>.
+Když budeš vyplňovat heslo, na obrazovku se nic nevypíše (ani hvězdičky/tečky
+jako když zadáváš heslo grafických aplikací).
+To je u zadávání hesel do příkazové řádky normální:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su test1
+<span class="go">Heslo:</span>
+<span class="gp">$ </span>whoami
+<span class="go">test1</span>
+</pre></div><p>Pak se porozhlédni.
+Zjistíš, že se nezměnil aktuální adresář;
+dokud v něm budeš, můžeš se dívat na soubory – když už někde „jsi“
+systém nekontroluje, jestli tam máš přístup:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">pwd</span>
+<span class="go">/home/hanka/Dokumenty/data-shell</span>
+<span class="gp">$ </span>ls
+<span class="go">creatures  molecules           notes.txt  solar.pdf</span>
+<span class="go">data       north-pacific-gyre  pizza.cfg  writing</span>
+<span class="gp">$ </span>ps -al
+<span class="go">F S   UID     PID    PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD</span>
+<span class="go">0 S  1000    1624    1614  0  80   0 - 118849 -     tty2     00:00:00 gnome-sess</span>
+<span class="go">4 S     0   11788    2835  0  80   0 - 63928 -      pts/1    00:00:00 su</span>
+<span class="go">4 S  1001   11794   11788  0  80   0 - 58240 -      pts/1    00:00:00 bash</span>
+<span class="go">4 S  1001   12107   12034  0  80   0 - 56507 -      pts/1    00:00:00 ps</span>
+</pre></div><p>Když se ale přepneš do domovského adresáře uživatele <code>test1</code>, zjistíš,
+že se nejde přepnout zpátky:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span>
+<span class="gp">$ </span><span class="nb">pwd</span>
+<span class="go">/home/test1</span>
+<span class="gp">$ </span><span class="nb">cd</span> -
+<span class="go">bash: cd: /home/hanka/Dokumenty/data-shell: Operace zamítnuta</span>
+</pre></div><p>Navíc tu chybí adresáře jako <code>Obrázky</code> a <code>Video</code>.
+Ty totiž vytváří grafické rozhraní – GNOME – které uživatel <code>test</code>
+ještě nespustil:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls
+<span class="gp">$ </span>ls -a
+<span class="go">.   .bash_logout   .bashrc   .xauthf9T9mu</span>
+<span class="go">..  .bash_profile  .mozilla  .xauthIdeOEt</span>
+</pre></div><p>Přepni tedy uživatele „graficky“: v menu vpravo nahoře vyber
+<strong>Přepnout uživatele</strong> (NE „odhlásit“).
+Přihláění bude trvat déle – například o vytvoření výše zmíněných adresářů.</p>
+<p>Když si teď pustíš <strong>Nastavení</strong> a budeš chtít odemknout nastavení uživatelů,
+bude to po tobě chtít heslo <em>správce</em>, nikoli heslo uživatele <code>test1</code>.
+Test totiž nemá právo přidávat účty; na to musí poprosit administrátora.</p>
+<p>Přepni se teď zpátky na svůj hlavní účet (přes <strong>Přepnout uživatele</strong>,
+ne „odhlásit“).</p>
+<p>Zpátky ke konzoli.
+Jsi-li v ní stále přihlášena jako <code>test1</code>, napiš <code>exit</code>.
+(Příkaz <code>su</code> pouští nový shell; když ho ukončíš, vrátíš se do shellu
+ve kterém jsi pustila <code>su</code>.)</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">exit</span>
+<span class="gp">$ </span>whoami
+<span class="go">hanks</span>
+</pre></div><p>Superuživatel <code>root</code> nemá heslo, takže <code>su root</code> nebude fungovat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su root
+</pre></div><div class="admonition warning"><p>Zbytek tohoto textu jsou zatím jen zkratkovité poznámky.
+Dopíšu je pro další běh kurzu.</p>
+</div><h2>Kde ti uživatelé jsou</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>less /etc/passwd
+<span class="gp">$ </span>less /etc/shadow
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l /etc/passwd /etc/shadow
+</pre></div><p>Za zmínku stojí <em>superuživatel</em> <code>root</code>, který má zvláštní postavení:
+může na systému dělat <em>cokoli</em>.
+Oprávnění se na něj nevztahují.</p>
+<h2>Přihlášení</h2>
+<p>Změnit uživatele může <em>jen</em> administrátor.
+Jak tedy funguje <code>su</code>?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su test1
+<span class="gp">$ </span>ps -au
+<span class="go">USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span>
+<span class="go">hanka        1504  0.0  0.1 371584  2812 tty2     Ssl+ 13:37   0:00 /usr/libe...</span>
+<span class="go">hanka        1507  1.1  3.3 1723936 67372 tty2    Sl+  13:37   1:03 /usr/libe...</span>
+<span class="go">hanka        1570  0.0  0.1 467944  3192 tty2     Sl+  13:37   0:00 /usr/libe...</span>
+<span class="go">hanka       15640  0.0  0.3 227968  6084 pts/0    Ss   14:31   0:00 bash</span>
+<span class="go">root       18130  0.0  0.4 246780  8444 pts/0    S    15:10   0:00 su test1</span>
+<span class="go">test1      18140  0.1  0.2 227404  5396 pts/0    S    15:10   0:00 -bash</span>
+<span class="go">test1      18171  0.0  0.1 228432  3980 pts/0    R+   15:10   0:00 ps -a -u</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> su
+<span class="go">su je /usr/bin/su</span>
+<span class="gp">$ </span>ls -l /usr/bin/su
+<span class="go">-rwsr-xr-x. 1 root root 58384 12. úno  2021 /usr/bin/su</span>
+</pre></div><p>Všimni si zvláštních písmenek v módu: <code>rws</code> – to <code>s</code> místo <code>x</code> znamená
+<em>setuid</em>, program se spouští s právy vlastníka.
+Je tedy jedno kdo <code>su</code> spustí; proces bude mít vždycky práva superuživatele
+<code>root</code>, tj. může dělat <em>cokoli</em>.
+Program <code>su</code> ale umí dělat jen jednu věc: zeptá na heslo a spustí shell pod
+jiným uživatelským účtem.</p>
+<p>Programy s módem <em>setuid</em> jsou napsány zvlášť opatrně,
+aby umožnily opravdu jen to k čemu slouží.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">exit</span>
+<span class="gp">$ </span>whoami
+<span class="go">hanka</span>
+</pre></div><h2>Sudo</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l /usr/bin/sudo
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>whoami
+<span class="go">hanka</span>
+<span class="gp">$ </span>sudo whoami
+<span class="go">root</span>
+<span class="gp">$ </span>sudo ps -a -u
+<span class="gp">$ </span>sudo ll
+<span class="gp">$ </span>sudo ls -l
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo less /etc/shadow
+</pre></div><p>Jsme ve virtuálním počítači, pojďme ho trochu rozbít:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>nano /usr/bin/zkouska
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo nano /usr/bin/zkouska
+</pre></div><p>Když jsem (přes <code>sudo</code>) superuživatelem, <code>su</code> se mě neptá na heslo:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo su test1
+</pre></div><p>Ale <code>sudo</code> funguje to jen pro <em>administrátory</em> (<code>wheel</code>):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo su hanka
+</pre></div><p>Uživatel pro kterého funguje <code>sudo</code> se ovšem může přihlásit jako superuživatel!</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo su root
+<span class="gp"># </span><span class="nb">pwd</span>
+<span class="gp"># </span><span class="nb">exit</span>
+</pre></div><p>Všimni si výzvy (promptu) <code>#</code> místo <code>$</code> – občas ho najdeš v tutoriálech;
+znamená, že musíš <em>být root</em>.
+Dnes se častěji používá <code>sudo</code> před každým příkazem – být administrátorem
+je nebezpečné.
+Navíc <code>sudo</code> se dá nastavovat – pro každého uživatele říct, jaké příkazy
+je oprávněn přes <code>sudo</code> spouštět.</p>
+<p>Potřebuješ-li pustit příkaz jako <code>root</code>,
+všimni si, že se <code>sudo</code> neptá na heslo pokaždé.
+Pro konkrétní terminál si ho vždy nějakou dobu pamatuje, a to i mezi spuštěními.</p>
+<p>Potřebuješ-li opravdu pustit nový shell jako <code>root</code>
+(např. zachraňuješ počítač),
+lepší než <code>sudo su root</code> je <code>sudo -i</code> (interaktivní):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo -i
+<span class="gp"># </span><span class="nb">pwd</span>
+<span class="gp"># </span><span class="nb">exit</span>
+</pre></div><h2>Změna hesla</h2>
+<p>Další věc, kterou může dělat jen administrátor, je změna hesla.
+Existuje ale příkaz <code>passwd</code> který heslo mění – a má příznak <em>setuid</em>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> passwd
+<span class="go">passwd je /usr/bin/passwd</span>
+<span class="gp">[test1@fedora data-shell]$ </span>ls -l /usr/bin/passwd
+<span class="go">-rwsr-xr-x. 1 root root 32712 30. led  2021 /usr/bin/passwd</span>
+</pre></div><p>Zkus si změnit heslo na něco jednoduchého:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>passwd
+<span class="go">Změna hesla uživatele hanka.</span>
+<span class="go">Current password: </span>
+<span class="go">Nové heslo: </span>
+<span class="go">ŠPATNÉ HESLO: Heslo je kratší než 8 znaků</span>
+<span class="go">passwd: Chyba manipulace s autentizačním tokenem</span>
+</pre></div><p>Nejde to!
+Stejně tak nesmíš měnit heslo jiného uživatele:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>passwd test1
+<span class="go">passwd: Pouze root smí zadat uživatelské jméno.</span>
+</pre></div><p>Ale <code>root</code> může vše!</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo passwd test1
+<span class="go">Změna hesla uživatele test1.</span>
+<span class="go">Nové heslo: </span>
+<span class="go">ŠPATNÉ HESLO: Heslo je kratší než 8 znaků</span>
+<span class="go">Opakujte nové heslo: </span>
+<span class="go">passwd: všechny autentizační tokeny byly úspěšně změněny.</span>
+</pre></div><p>(Hláška <code>ŠPATNÉ HESLO</code> se sice objeví, ale je jen informační – heslo může
+být klidně jednopísmenné.)</p>
+<h2>Přidání uživatele v konzoli</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>useradd test2
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo useradd test2
+<span class="gp">$ </span>sudo ls -l /home/test2
+<span class="gp">$ </span>sudo ls -al /home/test2
+<span class="gp">$ </span>sudo ls -al ~test2
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>cat /etc/passwd
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>userdel test2
+<span class="gp">$ </span>sudo ls -al ~test2
+<span class="gp">$ </span>sudo ls -al /home/test2
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo useradd test2
+</pre></div><h2>Skupiny</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>groups
+<span class="gp">$ </span>groups test1
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo groupadd editors
+<span class="gp">$ </span>sudo usermod test1 -aG editors
+<span class="gp">$ </span>groups test1
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo usermod hanka -aG editors
+<span class="gp">$ </span>groups hanka
+<span class="gp">$ </span>groups
+</pre></div><p>Uživatel a skupiny pro daný proces jsou vždy nastavené <em>při přihlášení</em>.
+Aby se změny členství ve skupinách projevily, musíš se znovu přihlásit:</p>
+<div class="highlight"><pre><code>$ groups
+$ su hanka
+$ groups
+$ ps a</code></pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/users/">↑ <span class="d-none d-sm-inline">Lekce: Správa uživatelů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/notes/fhs/"><span class="d-none d-sm-inline">Adresářová struktura</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/users/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsal Petr Viktorin, 2020-2012</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

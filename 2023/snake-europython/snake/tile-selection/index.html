@@ -1,0 +1,534 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Snake Workshop for PyLadies: Snake tile selection
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/2023/snake-europython/">Snake Workshop for PyLadies</a>
+
+> <a href="/2023/snake-europython/sessions/extensions/">Extensions</a>
+
+> <a href="/2023/snake-europython/snake/tile-selection/">Snake tile selection</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="admonition warning"><p>This is a machine-generated translation, meant to support the in-person workshop.</p>
+</div><h1 id="picking_pieces_of_a_snake">Picking pieces of a snake
+<a href="#picking_pieces_of_a_snake" class="header-link">#</a>
+</h1>
+<p>Instead of having the same piece of snake everywhere, we will always want to choose the right one.</p>
+<p>How to do it? According to what should I choose it?</p>
+<p>Pictures with pieces of snake are named <code><var>from</var>-<var>to</var></code>. This is not a coincidence - it shows what you need to know in order to choose the right piece.</p>
+<p>When you have a snake according to the following picture, the piece belongs on the tile (3,2) on which the snake crawls from left to up - therefore <code>snake_tiles['left-top']</code>.
+<span class="figure"><a href="/2023/snake-europython/snake/tile-selection/static/tile-selection.svg"><img src="/2023/snake-europython/snake/tile-selection/static/tile-selection.svg" alt="Had na „šachovnici“ se souřadnicemi. Políčko (3, 2) je zvýrazněné a vedou z něj šipky doleva a nahoru, kudy had pokračuje."></a></span></p>
+<p>At the ends of the snake, in the names of the pictures, the direction 'end' is replaced.</p>
+<p>For each square, you will need to determine where the snake is crawling on it - that is, the direction to the <em>previous</em> and <em>next</em> coordinate.</p>
+<table class="table">
+    <tr>
+        <th>Coordinate</th>
+        <th>Previous</th>
+        <th>Direction to previous</th>
+        <th>Next</th>
+        <th>Direction to next</th>
+        <th></th>
+    </tr>
+
+
+        <tr>
+            <td>(1, 2)</td>
+            <td><em>not</em></td>
+            <td><code>end</code></td>
+            <td>
+                (2, 2)
+            </td>
+            <td><code>right</code></td>
+            <td>
+                <img src="/2023/snake-europython/snake/tile-selection/static/snake-tiles/end-right.png" style="width: 1em" alt="end-right.png">
+            </td>
+        </tr>
+
+        <tr>
+            <td>(2, 2)</td>
+            <td>
+                (1, 2)
+            </td>
+            <td><code>left</code></td>
+            <td>
+                (3, 2)
+            </td>
+            <td><code>right</code></td>
+            <td>
+                <img src="/2023/snake-europython/snake/tile-selection/static/snake-tiles/left-right.png" style="width: 1em" alt="left-right.png">
+            </td>
+        </tr>
+
+        <tr>
+            <td>(3, 2)</td>
+            <td>
+                (2, 2)
+            </td>
+            <td><code>left</code></td>
+            <td>
+                (3, 3)
+            </td>
+            <td><code>top</code></td>
+            <td>
+                <img src="/2023/snake-europython/snake/tile-selection/static/snake-tiles/left-top.png" style="width: 1em" alt="left-top.png">
+            </td>
+        </tr>
+
+        <tr>
+            <td>(3, 3)</td>
+            <td>
+                (3, 2)
+            </td>
+            <td><code>bottom</code></td>
+            <td>
+                (3, 4)
+            </td>
+            <td><code>top</code></td>
+            <td>
+                <img src="/2023/snake-europython/snake/tile-selection/static/snake-tiles/bottom-top.png" style="width: 1em" alt="bottom-top.png">
+            </td>
+        </tr>
+
+        <tr>
+            <td>(3, 4)</td>
+            <td>
+                (3, 3)
+            </td>
+            <td><code>bottom</code></td>
+            <td>
+                (3, 5)
+            </td>
+            <td><code>top</code></td>
+            <td>
+                <img src="/2023/snake-europython/snake/tile-selection/static/snake-tiles/bottom-top.png" style="width: 1em" alt="bottom-top.png">
+            </td>
+        </tr>
+
+        <tr>
+            <td>(3, 5)</td>
+            <td>
+                (3, 4)
+            </td>
+            <td><code>bottom</code></td>
+            <td>
+                (4, 5)
+            </td>
+            <td><code>right</code></td>
+            <td>
+                <img src="/2023/snake-europython/snake/tile-selection/static/snake-tiles/bottom-right.png" style="width: 1em" alt="bottom-right.png">
+            </td>
+        </tr>
+
+        <tr>
+            <td>(4, 5)</td>
+            <td>
+                (3, 5)
+            </td>
+            <td><code>left</code></td>
+            <td><em>not</em></td>
+            <td><code>end</code></td>
+            <td>
+                <img src="/2023/snake-europython/snake/tile-selection/static/snake-tiles/left-end.png" style="width: 1em" alt="left-end.png">
+            </td>
+        </tr>
+
+</table><p>This is a <strong>difficult task</strong>. Even though you theoretically know all the necessary information and tools for it now, it is necessary to put them together in the right way. This putting together, <em>algorithm design</em>, is the most complex programming discipline.</p>
+<p>Try to think about it, let it settle in your head maybe overnight, go back to the materials from previous lessons (especially the introduction to Python), experiment and discover... And eventually you will figure it out.</p>
+<p>If you don't have time, let's see how we can arrange it.</p>
+<h1 id="this_is_not_the_bible">This is not the bible.
+<a href="#this_is_not_the_bible" class="header-link">#</a>
+</h1>
+<p>I am describing one possible solution here. There are many other correct ways to choose the snake's squares. Perhaps you will even find another solution easier - and maybe it will even be <em>your</em> solution!</p>
+<h3 id="simpler_subproblems">Simpler subproblems
+<a href="#simpler_subproblems" class="header-link">#</a>
+</h3>
+<p>Complicated problems are usually appropriately divided into several simpler problems by programmers. Each one is then solved separately and then put together.</p>
+<p>What simpler tasks could be found here?</p>
+<ol>
+<li>Go through all the coordinates and for each of them, determine the previous and next coordinate of the square.</li>
+<li>When you have two coordinates, determine the direction from one to the other.</li>
+</ol>
+<p>The solution to the first one in the table above is to "fill in" the columns with coordinates. The solution to the second one will give you <em>directions</em>, parts of the image name, from this information.</p>
+<p>You will need to solve both problems. However, the second one is easier, so let's focus on it.</p>
+<h3 id="to_find_out_the_direction">To find out the direction
+<a href="#to_find_out_the_direction" class="header-link">#</a>
+</h3>
+<p>You need to tell the computer how to determine the direction from one to the other of two adjacent squares, based on their coordinates.</p>
+<p>For example, the direction from (3, 2) to (2, 2) is <em>left</em>.
+The direction from (3, 2) to (3, 3) is <em>up</em>.
+(See the picture or the third row of the table above.)</p>
+<p><span class="figure"><a href="/2023/snake-europython/snake/tile-selection/static/tile-selection.svg"><img src="/2023/snake-europython/snake/tile-selection/static/tile-selection.svg" alt="Had na „šachovnici“ se souřadnicemi. Políčko (3, 2) je zvýrazněné a vedou z něj šipky doleva a nahoru, kudy had pokračuje."></a></span></p>
+<p>In Python, you write it as a <em>function</em> that takes two arguments (coordinates) and returns the English name of the direction - a string that can be used in the file name of the image.</p>
+<p>When this function is completed, it should be used as follows:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">direction</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">'left'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">direction</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">'bottom'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">direction</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s1">'end'</span><span class="p">)</span>
+<span class="go">'end'</span>
+</pre></div><p>At the ends of the snake, instead of a pair of numbers, something else will be needed as the second coordinate. The string <code>'end'</code> works well, but anything that is not a coordinate could be used, such as <code>False</code>, <code>-1</code>, or even <code>[]</code>. An experienced Pythonista would use the value <code>None</code>.</p>
+<p>How to write such a function?
+If you take a closer look at the first three columns of the table above, you may figure out how the coordinates that are to the <em>left</em> of each other differ. Or <em>above</em> each other.</p>
+<p>How to determine the direction between two coordinates:</p>
+<ul>
+<li>When the second one is not a coordinate:<ul>
+<li>the result is <code>'end'</code></li>
+</ul>
+</li>
+<li>When the <var>x</var> of the first one equals the second one's <var>x</var>+1:<ul>
+<li>the result is <code>'left'</code></li>
+</ul>
+</li>
+<li>When the <var>x</var> of the first one equals the second one's <var>x</var>-1:<ul>
+<li>the result is <code>'right'</code></li>
+</ul>
+</li>
+<li>When the <var>y</var> of the first one equals the second one's <var>y</var>+1:<ul>
+<li>the result is <code>'bottom'</code></li>
+</ul>
+</li>
+<li>When the <var>y</var> of the first one equals the second one's <var>y</var>-1:<ul>
+<li>the result is <code>'top'</code></li>
+</ul>
+</li>
+</ul>
+<p>An experienced programmer will now pay attention and ask: "But what if neither of those conditions is true?" Such a situation may not occur in the game (or maybe it will?), but it is still good to catch it and add, for example, "Otherwise, the result is <code>'end'</code>" at the end of the process.</p>
+<p>Coming up with this procedure is the more complicated part of solving our problem. The rest is just a nearly literal translation  to Python.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">direction</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="s1">'end'</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'end'</span>
+
+    <span class="c1"># split coordinates to values (a, b)</span>
+    <span class="n">x_a</span><span class="p">,</span> <span class="n">y_a</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="n">x_b</span><span class="p">,</span> <span class="n">y_b</span> <span class="o">=</span> <span class="n">b</span>
+
+    <span class="c1"># ... and logic continues</span>
+    <span class="k">if</span> <span class="n">x_a</span> <span class="o">==</span> <span class="n">x_b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'left'</span>
+    <span class="k">elif</span> <span class="n">x_a</span> <span class="o">==</span> <span class="n">x_b</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'right'</span>
+    <span class="k">elif</span> <span class="n">y_a</span> <span class="o">==</span> <span class="n">y_b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'bottom'</span>
+    <span class="k">elif</span> <span class="n">y_a</span> <span class="o">==</span> <span class="n">y_b</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'top'</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'end'</span>
+
+<span class="c1"># Try it</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'this should be "left":'</span><span class="p">,</span> <span class="n">direction</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'this should be "bottom":'</span><span class="p">,</span> <span class="n">direction</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'this shoudl be "top":'</span><span class="p">,</span> <span class="n">direction</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'this should be "right":'</span><span class="p">,</span> <span class="n">direction</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'this should be "end":'</span><span class="p">,</span> <span class="n">direction</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s1">'end'</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'this should be "end":'</span><span class="p">,</span> <span class="n">direction</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">80</span><span class="p">)))</span>
+</pre></div><h2 id="go_through_all_coordinates">Go through all coordinates.
+<a href="#go_through_all_coordinates" class="header-link">#</a>
+</h2>
+<p>Now let's go back to the first problem: how to go through all the squares of the snake and find out the previous and next square for each?</p>
+<p>Because the difference between coordinates such as (1, 2) and (2, 2) is not very readable at first glance, I will label the pieces of the snake with letters. I will write A instead of (1, 2); B instead of (2, 2); and so on.</p>
+<p><span class="figure"><a href="/2023/snake-europython/snake/tile-selection/static/lettered.svg"><img src="/2023/snake-europython/snake/tile-selection/static/lettered.svg" alt="Had na „šachovnici“. Každý kousek hada má písmenko: A, B, C, ..., G"></a></span></p>
+<p>I will draw such a snake as follows:</p>
+<ul>
+<li>I will draw box A (for which I need to know that it is the beginning and after it is B)</li>
+<li>I will draw box B (for which I need to know that before it is A and after it is B)</li>
+<li>I will draw box C (for which I need to know that before it is B and after it is D)</li>
+<li>...and so on:</li>
+</ul>
+<table class="table">
+
+    <tr>
+        <th>To draw</th>
+
+            <td>A</td>
+
+            <td>B</td>
+
+            <td>C</td>
+
+            <td>D</td>
+
+            <td>E</td>
+
+            <td>F</td>
+
+            <td>G</td>
+
+    </tr>
+    <tr>
+        <th>Previous</th>
+
+            <td>
+            ×
+            </td>
+
+            <td>
+
+                A
+
+            </td>
+
+            <td>
+
+                B
+
+            </td>
+
+            <td>
+
+                C
+
+            </td>
+
+            <td>
+
+                D
+
+            </td>
+
+            <td>
+
+                E
+
+            </td>
+
+            <td>
+
+                F
+
+            </td>
+
+    </tr>
+    <tr>
+        <th>Next</th>
+
+            <td>
+
+                B
+
+            </td>
+
+            <td>
+
+                C
+
+            </td>
+
+            <td>
+
+                D
+
+            </td>
+
+            <td>
+
+                E
+
+            </td>
+
+            <td>
+
+                F
+
+            </td>
+
+            <td>
+
+                G
+
+            </td>
+
+            <td>
+            ×
+            </td>
+
+    </tr>
+</table><p>How to do it? You already have the first row of the table, the list [A, B, C, D, E, F, G] - these are the coordinates of the snake. When you manage to prepare lists with the second row, [×, A, B, C, D, E, F], and the third one, [B, C, D, E, F, G, ×], you can then combine them using the <code>zip</code> function. Do you remember it? It goes through several "conversing" lists and gives a tuple of the first elements, then a tuple of the second elements, then the third...</p>
+<p>Our example was:</p>
+<div class="highlight"><pre><span></span><span class="n">Items</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'grass'</span><span class="p">,</span> <span class="s1">'sun'</span><span class="p">,</span> <span class="s1">'carrot'</span><span class="p">,</span> <span class="s1">'river'</span><span class="p">]</span>
+<span class="n">Colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'green'</span><span class="p">,</span> <span class="s1">'yellow'</span><span class="p">,</span> <span class="s1">'orange'</span><span class="p">,</span> <span class="s1">'blue'</span><span class="p">]</span>
+<span class="n">Places</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'on the ground'</span><span class="p">,</span> <span class="s1">'up above'</span><span class="p">,</span> <span class="s1">'on the plate'</span><span class="p">,</span> <span class="s1">'behind the wall'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">place</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">places</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="s1">'is'</span><span class="p">,</span> <span class="n">place</span><span class="p">)</span><span class="s2">" in English.</span>
+</pre></div><p>But you can use the same way:</p>
+<div class="highlight"><pre><span></span><span class="n">snake</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">,</span> <span class="s1">'D'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'F'</span><span class="p">,</span> <span class="s1">'G'</span><span class="p">]</span>
+<span class="n">prevs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'x'</span><span class="p">,</span> <span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">,</span> <span class="s1">'D'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'F'</span><span class="p">]</span>
+<span class="n">nexts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'B'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">,</span> <span class="s1">'D'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'F'</span><span class="p">,</span> <span class="s1">'G'</span><span class="p">,</span> <span class="s1">'x'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">coords</span><span class="p">,</span> <span class="n">prev</span><span class="p">,</span> <span class="nb">next</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">snake</span><span class="p">,</span> <span class="n">prevs</span><span class="p">,</span> <span class="n">nexts</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'on the field'</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="s1">'the snake crawls from'</span><span class="p">,</span> <span class="n">prev</span><span class="p">,</span> <span class="s1">'to'</span><span class="p">,</span> <span class="nb">next</span><span class="p">)</span>
+</pre></div><p>The two additional lists need to be "created" from the first one: select the correct piece and add the "missing" element to the correct side.</p>
+<div class="highlight"><pre><span></span><span class="n">snake</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">,</span> <span class="s1">'D'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'F'</span><span class="p">,</span> <span class="s1">'G'</span><span class="p">]</span>
+<span class="n">prevs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'end'</span><span class="p">]</span> <span class="o">+</span> <span class="n">snake</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">nexts</span> <span class="o">=</span> <span class="n">snake</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">'end'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">coords</span><span class="p">,</span> <span class="n">prev</span><span class="p">,</span> <span class="nb">next</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">snake</span><span class="p">,</span> <span class="n">prevs</span><span class="p">,</span> <span class="n">nexts</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'on field'</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="s1">'snake crawls from'</span><span class="p">,</span> <span class="n">prev</span><span class="p">,</span> <span class="s1">'to'</span><span class="p">,</span> <span class="nb">next</span><span class="p">)</span>
+</pre></div><p>Or, with "real" coordinates and the <code>direction</code> function:</p>
+<div class="highlight"><pre><span></span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+
+<span class="k">for</span> <span class="n">coords</span><span class="p">,</span> <span class="n">prev</span><span class="p">,</span> <span class="nb">next</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">snake</span><span class="p">,</span> <span class="p">[</span><span class="s1">'end'</span><span class="p">]</span> <span class="o">+</span> <span class="n">snake</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">snake</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">'end'</span><span class="p">]):</span>
+    <span class="n">before</span> <span class="o">=</span> <span class="n">direction</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">prev</span><span class="p">)</span>  <span class="c1"># direction from current field to previous</span>
+    <span class="n">after</span> <span class="o">=</span> <span class="n">direction</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="nb">next</span><span class="p">)</span>   <span class="c1"># direction from current field to next</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">before</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">after</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'draw'</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="s1">'at'</span><span class="p">,</span> <span class="n">coords</span><span class="p">)</span>
+</pre></div><p>If you've made it this far, I hope you won't have too much trouble "transplanting" this code into your game.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2023/snake-europython/snake/toroid/">← <span class="d-none d-sm-inline">Snake extension: Infinite playground</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2023/snake-europython/sessions/extensions/">↑ <span class="d-none d-sm-inline">Lekce: Extensions</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2023/snake-europython/sessions/extensions/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/snake-workshop/blob/snake-ep-2023/lessons/snake/tile-selection/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Written by Petr Viktorin for PyLadies Brno, 2018-2019.</p>
+    
+        <p>Initial translation to English by Petra Vidnerová, based on ChatGPT</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

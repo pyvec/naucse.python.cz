@@ -1,0 +1,547 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz v Tieto Czech: Final Assignment
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/tieto-ostrava-jaro/">Začátečnický kurz v Tieto Czech</a>
+
+> <a href="/2019/tieto-ostrava-jaro/sessions/regular-expressions/">Regulární výrazy, balíky, Fabric</a>
+
+> <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/">Final Assignment</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h2>Final Assignment</h2>
+<p>Your task is to create simple web application which will track your sport activity.</p>
+<h3>Assignment steps</h3>
+<ol>
+<li>Create GitHub repository for your project</li>
+<li>Install locally on your laptop Flask</li>
+</ol>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>python -m venv venv
+<span class="nb">source</span> venv/bin/activate
+pip install flask
+</pre></div>
+    </div>
+</div><ol>
+<li>Create project structure for Flask application</li>
+</ol>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="p">|</span>-activity
+  <span class="p">|</span>-app/
+    <span class="p">|</span>-templates/
+    <span class="p">|</span>-static/
+    <span class="p">|</span>-main/
+      <span class="p">|</span>-__init__.py
+      <span class="p">|</span>-errors.py
+      <span class="p">|</span>-forms.py
+      <span class="p">|</span>-views.py
+    <span class="p">|</span>-__init__.py
+    <span class="p">|</span>-email.py
+    <span class="p">|</span>-models.py
+  <span class="p">|</span>-migrations/
+  <span class="p">|</span>-tests/
+    <span class="p">|</span>-__init__.py
+    <span class="p">|</span>-test*.py
+  <span class="p">|</span>-venv/
+  <span class="p">|</span>-requirements.txt
+  <span class="p">|</span>-config.py
+  <span class="p">|</span>-activity.py
+
+
+mkdir <span class="o">{</span>app,migrations,tests<span class="o">}</span>
+mkdir app/<span class="o">{</span>templates,static,main<span class="o">}</span>
+touch requirements.txt
+touch config.py
+touch activity.py
+touch app/__init__.py
+touch app/main/__init__.py
+</pre></div>
+    </div>
+</div><p>Content of config.py</p>
+<div class="solution" id="solution-2">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/2/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">basedir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+<span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'SECRET_KEY'</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">'hard to guess string'</span>
+    <span class="n">MAIL_SERVER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'MAIL_SERVER'</span><span class="p">,</span> <span class="s1">'smtp.googlemail.com'</span><span class="p">)</span>
+    <span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'MAIL_PORT'</span><span class="p">,</span> <span class="s1">'587'</span><span class="p">))</span>
+    <span class="n">MAIL_USE_TLS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'MAIL_USE_TLS'</span><span class="p">,</span> <span class="s1">'true'</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> \
+        <span class="p">[</span><span class="s1">'true'</span><span class="p">,</span> <span class="s1">'on'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">]</span>
+    <span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'MAIL_USERNAME'</span><span class="p">)</span>
+    <span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'MAIL_PASSWORD'</span><span class="p">)</span>
+    <span class="n">ACTIVITY_MAIL_SUBJECT_PREFIX</span> <span class="o">=</span> <span class="s1">'[Activity]'</span>
+    <span class="n">ACTIVITY_MAIL_SENDER</span> <span class="o">=</span> <span class="s1">'Activity Admin &lt;activity@example.com&gt;'</span>
+    <span class="n">ACTIVITY_ADMIN</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'ACTIVITY_ADMIN'</span><span class="p">)</span>
+    <span class="n">SQLALCHEMY_TRACK_MODIFICATIONS</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">DevelopmentConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'DEV_DATABASE_URL'</span><span class="p">)</span> <span class="ow">or</span> \
+        <span class="s1">'sqlite:///'</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="s1">'data-dev.sqlite'</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">TestingConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+    <span class="n">TESTING</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'TEST_DATABASE_URL'</span><span class="p">)</span> <span class="ow">or</span> \
+        <span class="s1">'sqlite://'</span>
+
+<span class="k">class</span> <span class="nc">ProductionConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'DATABASE_URL'</span><span class="p">)</span> <span class="ow">or</span> \
+        <span class="s1">'sqlite:///'</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="s1">'data.sqlite'</span><span class="p">)</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'development'</span><span class="p">:</span> <span class="n">DevelopmentConfig</span><span class="p">,</span>
+    <span class="s1">'testing'</span><span class="p">:</span> <span class="n">TestingConfig</span><span class="p">,</span>
+    <span class="s1">'production'</span><span class="p">:</span> <span class="n">ProductionConfig</span><span class="p">,</span>
+
+    <span class="s1">'default'</span><span class="p">:</span> <span class="n">DevelopmentConfig</span>
+<span class="p">}</span>
+</pre></div>
+    </div>
+</div><ol>
+<li>Integrate Travis CI/CD with your GitHub project</li>
+</ol>
+<p>Content of .travis.yml</p>
+<div class="solution" id="solution-3">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/3/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>dist: xenial   <span class="c1"># required for Python &gt;= 3.7</span>
+language: python
+python:
+  - <span class="s2">"3.7"</span>
+<span class="c1"># command to install dependencies</span>
+install:
+  - pip install -r requirements.txt
+<span class="c1"># command to run tests</span>
+script:
+  - pytest
+</pre></div>
+    </div>
+</div><p>Content of tests/test_math.py:</p>
+<div class="solution" id="solution-4">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/4/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span>import math
+
+def test_sqrt<span class="o">()</span>:
+   <span class="nv">num</span> <span class="o">=</span> <span class="m">25</span>
+   assert math.sqrt<span class="o">(</span>num<span class="o">)</span> <span class="o">==</span> <span class="m">5</span>
+</pre></div>
+    </div>
+</div><p>Content of app/__init__.py:</p>
+<div class="solution" id="solution-5">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/5/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span>
+<span class="kn">from</span> <span class="nn">flask_bootstrap</span> <span class="kn">import</span> <span class="n">Bootstrap</span>
+<span class="kn">from</span> <span class="nn">flask_mail</span> <span class="kn">import</span> <span class="n">Mail</span>
+<span class="kn">from</span> <span class="nn">flask_moment</span> <span class="kn">import</span> <span class="n">Moment</span>
+<span class="kn">from</span> <span class="nn">flask_sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemy</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">config</span>
+
+<span class="n">bootstrap</span> <span class="o">=</span> <span class="n">Bootstrap</span><span class="p">()</span>
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">()</span>
+<span class="n">moment</span> <span class="o">=</span> <span class="n">Moment</span><span class="p">()</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">SQLAlchemy</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">create_app</span><span class="p">(</span><span class="n">config_name</span><span class="p">):</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">config_name</span><span class="p">])</span>
+    <span class="n">config</span><span class="p">[</span><span class="n">config_name</span><span class="p">]</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+    <span class="n">bootstrap</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">moment</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+    <span class="c1"># attach routes and custom error pages here</span>
+
+    <span class="k">return</span> <span class="n">app</span>
+</pre></div>
+    </div>
+</div><p>Content of activity.py</p>
+<div class="solution" id="solution-6">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/6/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">from</span> <span class="nn">flask_migrate</span> <span class="kn">import</span> <span class="n">Migrate</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">create_app</span><span class="p">,</span> <span class="n">db</span>
+
+<span class="nd">@pytest.fixture</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">'FLASK_CONFIG'</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">'default'</span><span class="p">)</span>
+<span class="n">migrate</span> <span class="o">=</span> <span class="n">Migrate</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
+
+<span class="nd">@app.shell_context_processor</span>
+<span class="k">def</span> <span class="nf">make_shell_context</span><span class="p">():</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s2">"Hello World!"</span>
+</pre></div>
+    </div>
+</div><p>Content of app/models.py</p>
+<div class="solution" id="solution-7">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/7/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>from werkzeug.security import generate_password_hash, check_password_hash
+from . import db</p>
+<p>class Role(db.Model):
+    <strong>tablename</strong> = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+    users = db.relationship('User', backref='role', lazy='dynamic')</p>
+<div class="highlight"><pre><code>def __repr__(self):
+    return '&lt;Role %r&gt;' % self.name
+
+
+</code></pre></div><p>class User(db.Model):
+    <strong>tablename</strong> = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    password_hash = db.Column(db.String(128))</p>
+<div class="highlight"><pre><code>@property
+def password(self):
+    raise AttributeError('password is not a readable attribute')
+
+@password.setter
+def password(self, password):
+    self.password_hash = generate_password_hash(password)
+
+def verify_password(self, password):
+    return check_password_hash(self.password_hash, password)
+
+def __repr__(self):
+    return '&lt;User %r&gt;' % self.username</code></pre></div>
+    </div>
+</div><p>Content of test/test_user_model.py:</p>
+<div class="solution" id="solution-8">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/8/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>import unittest
+from app.models import User</p>
+<p>class UserModelTestCase(unittest.TestCase):
+    def test_password_setter(self):
+        u = User(password = 'cat')
+        self.assertTrue(u.password_hash is not None)</p>
+<div class="highlight"><pre><code>def test_no_password_getter(self):
+    u = User(password = 'cat')
+    with self.assertRaises(AttributeError):
+        u.password
+
+def test_password_verification(self):
+    u = User(password = 'cat')
+    self.assertTrue(u.verify_password('cat'))
+    self.assertFalse(u.verify_password('dog'))
+
+def test_password_salts_are_random(self):
+    u = User(password='cat')
+    u2 = User(password='cat')
+    self.assertTrue(u.password_hash != u2.password_hash)</code></pre></div>
+    </div>
+</div><p>Content of app/auth/__init.py:</p>
+<div class="solution" id="solution-9">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/9/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>from flask import Blueprint</p>
+<p>auth = Blueprint('auth', <strong>name</strong>)</p>
+<p>from . import views</p>
+    </div>
+</div><p>Content of app/auth/views.py:</p>
+<div class="solution" id="solution-10">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/10/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>from flask import render_template
+from . import auth</p>
+<p>@auth.route('/login')
+def login():
+    return render_template('auth/login.html')</p>
+    </div>
+</div><p>Content of app/auth/forms.py:</p>
+<div class="solution" id="solution-11">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/11/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import DataRequired, Length, Email</p>
+<p>class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                             Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Keep me logged in')
+    submit = SubmitField('Log In')</p>
+    </div>
+</div><p>Content of app/templates/base.html:</p>
+<div class="solution" id="solution-12">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/12/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="x">&lt;ul class="nav navbar-nav navbar-right"&gt;</span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">current_user.is_authenticated</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    &lt;li&gt;&lt;a href="</span><span class="cp">{{</span> <span class="nv">url_for</span><span class="o">(</span><span class="s1">'auth.logout'</span><span class="o">)</span> <span class="cp">}}</span><span class="x">"&gt;Log Out&lt;/a&gt;&lt;/li&gt;</span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    &lt;li&gt;&lt;a href="</span><span class="cp">{{</span> <span class="nv">url_for</span><span class="o">(</span><span class="s1">'auth.login'</span><span class="o">)</span> <span class="cp">}}</span><span class="x">"&gt;Log In&lt;/a&gt;&lt;/li&gt;</span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;/ul&gt;</span>
+</pre></div>
+    </div>
+</div><p>Content of apps/templates/auth/login.html</p>
+<div class="solution" id="solution-13">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/index/solutions/13/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">extends</span> <span class="s2">"base.html"</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">import</span> <span class="s2">"bootstrap/wtf.html"</span> <span class="k">as</span> <span class="nv">wtf</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}</span><span class="x">Flasky - Login</span><span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">page_content</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;div class="page-header"&gt;</span>
+<span class="x">    &lt;h1&gt;Login&lt;/h1&gt;</span>
+<span class="x">&lt;/div&gt;</span>
+<span class="x">&lt;div class="col-md-4"&gt;</span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nv">wtf.quick_form</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">&lt;/div&gt;</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="cp">{%</span> <span class="k">endfilter</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="cp">{%</span> <span class="k">filter</span> <span class="nf">solution</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">extends</span> <span class="s2">"base.html"</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}</span><span class="x">Flasky</span><span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">page_content</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;div class="page-header"&gt;</span>
+<span class="x">    &lt;h1&gt;Hello, </span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">current_user.is_authenticated</span> <span class="cp">%}{{</span> <span class="nv">current_user.username</span> <span class="cp">}}{%</span> <span class="k">else</span> <span class="cp">%}</span><span class="x">Stranger</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">!&lt;/h1&gt;</span>
+<span class="x">&lt;/div&gt;</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+    </div>
+</div><ol>
+<li>Create test case for first function (route)</li>
+<li>Create first function</li>
+<li>Create basic application that will do following:<ul>
+<li>Allow users to log-in</li>
+<li>Use Templates</li>
+<li>Use   Web Forms</li>
+<li>Use SQLite or PostreSQL/MySQL</li>
+<li>Error Handling</li>
+<li>Use Bootstrap 4</li>
+<li>Use logging to the console and log file</li>
+<li>Email Support (sending notification about new sport activity)</li>
+<li>Allow user to add new kind of sport (like running)</li>
+<li>Allow user to add new activity and assign it to the sport type</li>
+<li>Display last ten activities on Dashboard</li>
+</ul>
+</li>
+</ol>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-regular-expressions/">← <span class="d-none d-sm-inline">Regular expressions</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/tieto-ostrava-jaro/sessions/regular-expressions/">↑ <span class="d-none d-sm-inline">Lekce: Regulární výrazy, balíky, Fabric</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/tieto-ostrava-jaro/sessions/regular-expressions/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-tieto-ostrava-jaro/lessons/beginners/tieto-final-assignment/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro Tieto Czech s.r.o. napsal Lumír Jasiok, 2019</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

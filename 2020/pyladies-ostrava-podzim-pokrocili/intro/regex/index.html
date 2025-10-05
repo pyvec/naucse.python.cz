@@ -1,0 +1,383 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Python a jeho knihovny: Regulární výrazy
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/">Python a jeho knihovny</a>
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/regex/">Regulární výrazy</a>
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/intro/regex/">Regulární výrazy</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Regulární výrazy</h1>
+<p>Dnes si budeme povídat o zdánlivě složitých a nesmyslných zápisech, jako je například tento:</p>
+<div class="highlight"><pre><code>r"^\w+([\.-]?\w)+@\w+([\.]?\w)+(\.[a-zA-Z]{2,3})+$"</code></pre></div><h2>Obecná definice</h2>
+<p>Regulární výraz (<em>regular expression</em>, <em>regex</em> či <em>regexp</em>) je řetězec, který s pomocí znaků se speciálním významem definuje vzor pro vyhledávání v textu.</p>
+<p>Obecně řečeno pochází regulární výrazy z oblasti teoretické informatiky a teorie formálních jazyků. Teorie a formální definice jsou k nalezení na <a href="https://cs.wikipedia.org/wiki/Regul%C3%A1rn%C3%AD_v%C3%BDraz#Form%C3%A1ln%C3%AD_definice">české</a> i <a href="https://en.wikipedia.org/wiki/Regular_expression#Formal_language_theory">anglické Wikipedii</a> a obsahují spoustu odkazů pro zvídavé. Je to zajímavé a velmi obsáhlé téma.</p>
+<p>Regulární výrazy se při práci s textem nejčastěji používají v těchto případech:</p>
+<ul>
+<li>zjištění, zda nějaký text vyhovuje regulárnímu výrazu (validace vstupů)</li>
+<li>hledání v textu – zjištění, kde se v textu nachází hledaný podřetězec</li>
+<li>záměna podřetězce v řetězci (najít a nahradit)</li>
+<li>extrakce všech výskytů podřetězce</li>
+</ul>
+<h2>Zápis regulárních výrazů</h2>
+<p>Regulární výrazy se v Pythonu zapisují do tzv. raw stringu <code>r""</code>, který zajistí, že speciální sekvence jako např. <code>\n</code> nebudou mít svůj speciální význam.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">"hello</span><span class="se">\n</span><span class="s2">world"</span><span class="p">)</span>
+<span class="go">hello</span>
+<span class="go">world</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">r</span><span class="s2">"hello\nworld"</span><span class="p">)</span>
+<span class="go">hello\nworld</span>
+</pre></div><p>Stejně tak to funguje i v případě, že se Python marně snaží dopídit speciálního významu nějaké sekvence.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">"hello\xworld"</span><span class="p">)</span>
+  File <span class="nb">"&lt;stdin&gt;"</span>, line <span class="m">1</span>
+<span class="gr">SyntaxError</span>: <span class="n">(unicode error) 'unicodeescape' codec can't decode bytes in position 5-6: truncated \xXX escape</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">r</span><span class="s2">"hello\xworld"</span><span class="p">)</span>
+<span class="go">hello\xworld</span>
+</pre></div><p>Raw stringy jsou obyčejné řetězce jen s jinou formou zápisu. Regulární výrazy můžeme psát i jako obyčejné řetězce,
+ale budeme si pak muset sami pohlídat interpretaci speciálních sekvencí, což nám regulární výraz často zbytečně zkomplikuje
+řadou zdvojených lomítek.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">x</span><span class="se">\\</span><span class="s2">n</span><span class="se">\\</span><span class="s2">x"</span><span class="p">)</span>
+<span class="go">\x\n\x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\x\n\x"</span><span class="p">)</span>
+<span class="go">\x\n\x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">"</span><span class="se">\\</span><span class="s2">x</span><span class="se">\\</span><span class="s2">n</span><span class="se">\\</span><span class="s2">x"</span> <span class="o">==</span> <span class="sa">r</span><span class="s2">"\x\n\x"</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">x</span><span class="se">\\</span><span class="s2">n</span><span class="se">\\</span><span class="s2">x"</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\x\n\x"</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div><h2>Znaky se speciálním významem</h2>
+<p>Následující znaky mají při zápisu regulárních výrazů speciální význam. To mimo jiné znamená, že pokud je chceme použít bez jejich speciálního významu, je nutné dát před znak <code>\</code> (tzv. je escapovat).</p>
+<p>Například <code>.</code> je zástupným znakem pro jakýkoli jiný znak. Regulární výraz pro libovolné dva znaky, mezi kterými je tečka, by tedy
+vypadal následovně: <code>.\..</code>. Podobně <code>\\</code> znamená jedno zpětné lomítko.</p>
+<div class="admonition note"><p>Výčet není kompletní, může se lišit v různých implementacích a programovacích jazycích,
+může záviset na nastavení systému a užití znaků z Unicode.
+Je to zkrátka komplexní technologie.
+Pro co nejlepší přehled samozřejmě doporučujeme <a href="https://docs.python.org/3/library/re.html">dokumentaci</a>.</p>
+</div><h3>Kvantifikátory</h3>
+<p>Kvantifikátor je znak, který nám určuje, kolikrát se v řetězci může opakovat znak, který je před kvantifikátorem.</p>
+<p>Kvantifikátory máme následující:</p>
+<ul>
+<li><code>?</code> znamená žádný nebo 1 výskyt</li>
+<li><code>*</code> znamená žádný a více výskytů</li>
+<li><code>+</code> znamená 1 a více výskytů</li>
+<li><code>{cislo}</code> znamená přesný počet výskytů</li>
+<li><code>{min,max}</code> znamená počet výskytů mezi horní a dolní mezí (včetně obou mezí samotných)</li>
+</ul>
+<h4>Příklady</h4>
+<ul>
+<li>Zápisu <code>ab?c</code> odpovídají jen řetězce <code>ac</code> a <code>abc</code></li>
+<li>Zápisu <code>ab*c</code> odpovídají řetězce <code>ac</code>, <code>abc</code>, <code>abbc</code>, <code>abbbc</code> …</li>
+<li>Zápisu <code>ab+c</code> odpovídají řetězce <code>abc</code>, <code>abbc</code>, <code>abbbc</code> …</li>
+<li>Zápisu <code>ab{2}c</code> odpovídá jen jeden řetězec <code>abbc</code></li>
+<li>Zápisu <code>ab{2,4}c</code> odpovídají jen tyto řetězce <code>abbc</code>, <code>abbbc</code> a <code>abbbbc</code></li>
+</ul>
+<h3>Zástupné znaky</h3>
+<ul>
+<li><code>.</code> je zástupným znakem pro jakýkoli jiný znak</li>
+<li><code>^</code> označuje začátek řetězce (případně řádku)</li>
+<li><code>$</code> označuje konec řetězce (případně řádku)</li>
+</ul>
+<h4>Příklady</h4>
+<ul>
+<li>Zápisu <code>a.c</code> odpovídá mnoho řetězců, např.: <code>a c</code>, <code>a!c</code>, <code>a/c</code>, <code>a0c</code>, <code>a1c</code>, <code>a2c</code>, <code>a3c</code>, <code>aAc</code>,<code>aBc</code>, <code>aCc</code>, <code>aac</code>, <code>abc</code>, <code>acc</code>, <code>azc</code></li>
+<li>Zápisu <code>^abc.*</code> bude odpovídat jen řetězec, který začíná na <code>abc</code>, tedy <code>abccc</code> ano, ale <code>abbcc</code> už ne</li>
+</ul>
+<h3>Skupiny znaků</h3>
+<p>Skupiny znaků v regulárních výrazech lze zadat několika způsoby:</p>
+<ul>
+<li>výčtem – např. <code>[abc]</code></li>
+<li>rozsahem – např. <code>[a-z]</code></li>
+<li>kombinací – např. <code>[abcx-z1-3]</code></li>
+<li>sekvencí zastupující celou skupinu znaků – těch je hned několik:<ul>
+<li><code>\d</code> označuje číslice – ekvivalent pro <code>[0-9]</code> v ASCII a řadu dalších znaků z Unicode (např. <code>٩</code>)</li>
+<li><code>\D</code> označuje vše kromě číslic (množina obsahující všechny znaky kromě těch z předchozí skupiny)</li>
+<li><code>\s</code> označuje tzv. bílé znaky (whitespace) – mezeru, tabulátor atp.</li>
+<li><code>\S</code> označuje vše kromě bílých znaků (množina obsahující všechny znaky kromě těch z předchozí skupiny)</li>
+<li><code>\w</code> označuje všechny alfanumerické znaky a podtržítko – ekvivalent s <code>[a-zA-Z0-9_]</code> z ASCII a obrovskou spoustu dalších znaků z Unicode včetně českých znaků s diakritikou</li>
+<li><code>\W</code> označuje vše kromě znaků z <code>\w</code> (množina obsahující všechny znaky kromě těch z předchozí skupiny)</li>
+</ul>
+</li>
+</ul>
+<p>Pokud je v hranatých závorkách jako první znak <code>^</code>, musí na daném místě být znak, ale nesmí to být žádný z těch uvedených v závorkách.
+Tedy například zápis <code>[^567]</code> odpovídá jakémukoli znaku kromě pětky, šestky a sedmičky.</p>
+<p>Další možnost označení skupiny představují kulaté závorky. Obsah takto označené skupiny je
+posléze možné získat samostatně jako výsledek vyhledávání přip. použít v kombinaci s kvantifikátory.
+Skupiny jsou v rámci regulárního výrazu automaticky číslované od jedničky, takže je můžeme použít vícekrát
+pomocí <code>\cislo</code> bez nutnosti se opakovat.</p>
+<p>Například zápisu <code>(a{3}) \1</code> odpovídá jen jeden řetězec <code>aaa aaa</code>, protože <code>\1</code> je odkaz na skupinu se třemi výskyty znaku "a".</p>
+<p>Snad posledním znakem často používaným v kombinaci se skupinou v kulatých závorkách je <code>|</code> (svislá čára). Ta
+umožňuje od sebe oddělit několik regulárních výrazů nebo jejich částí, přičemž může platit kterýkoli z nich.</p>
+<p>Například zápisu <code>aaa|bbb</code> odpovídají řetězce <code>aaa</code> nebo <code>bbb</code>. Složitějšímu zápisu <code>([ab]{2}|z)k</code> odpovídají buď
+dva znaky z výčtu <code>[ab]</code> následované znakem <code>k</code> nebo znak <code>z</code> následovaný znakem <code>k</code> – celkový výčet je tedy následující
+<code>aak</code>, <code>abk</code>, <code>bak</code>, <code>bbk</code> a <code>zk</code>.</p>
+<h2>Použití regulárních výrazů</h2>
+<p>Pojďme teď teorii přetavit v praxi a ukázat si použití regulárních výrazů s modulem <code>re</code> ze standardní knihovny Pythonu.</p>
+<h3>Validace</h3>
+<p>Validace je jedno ze základních použití regulárních výrazů. V podstatě se ptáme, jestli řetězec odpovídá zadanému předpisu.</p>
+<p>V různých organizacích mají uživatelská jména často přesně danou strukturu. Na VŠB v Ostravě je uživatelské jméno studentů a zaměstnanců složeno
+ze tří malých písmen bez diakritiky a dvou až čtyř číslic. Jeho validace by tedy mohla vypadat následovně:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[a-z]</span><span class="si">{3}</span><span class="s2">[0-9]{2,4}"</span><span class="p">,</span> <span class="s2">"cap096"</span><span class="p">)</span>
+<span class="go">&lt;re.Match object; span=(0, 6), match='cap096'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[a-z]</span><span class="si">{3}</span><span class="s2">[0-9]{2,4}"</span><span class="p">,</span> <span class="s2">"cape096"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[a-z]</span><span class="si">{3}</span><span class="s2">[0-9]{2,4}"</span><span class="p">,</span> <span class="s2">"ca096"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[a-z]</span><span class="si">{3}</span><span class="s2">[0-9]{2,4}"</span><span class="p">,</span> <span class="s2">"cap0096"</span><span class="p">)</span>
+<span class="go">&lt;re.Match object; span=(0, 7), match='cap0096'&gt;</span>
+</pre></div><p>Na příkladu je vidět, že pokud <code>match</code> najde shodu, vrátí speciální objekt, v opačném případě vrátí <code>None</code>.
+<code>Match</code> objekt má spoustu užitečných metod, které umožňují pracovat s nalezenou shodou. Mimo jiné můžeme s jeho pomocí získat
+jednotlivé skupiny označené v regulárním výrazu kulatými závorkami metodou <code>groups</code>, metodami <code>start</code> a <code>end</code> získat indexy
+prvního a posledního znaku shody či metodou <code>span</code> oba indexy najednou.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"([a-z]</span><span class="si">{3}</span><span class="s2">)([0-9]{2,4})"</span><span class="p">,</span> <span class="s2">"cap0096"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+<span class="go">(0, 7)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+<span class="go">('cap', '0096')</span>
+</pre></div><p>Samotné kulaté závorky nám regulární výraz nijak nezmění, ale rozdělí jej do skupin pro snadnější zpracování.</p>
+<p>Problém nastane, když bude porovnávaný řetězec delší než dovoluje náš regulární výraz:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[a-z]</span><span class="si">{3}</span><span class="s2">[0-9]{2,4}"</span><span class="p">,</span> <span class="s2">"cap00096"</span><span class="p">)</span>
+<span class="go">&lt;re.Match object; span=(0, 7), match='cap0009'&gt;</span>
+</pre></div><p>V tomto případě je rovněž nalezena shoda, ale jen na prvních sedmi znacích. Vypořádat se s tímto problémem
+nám pomůže kotva označující konec řádku <code>$</code> na konci regulárního výrazu. Tím označíme, že za poslední číslicí už nesmí řetězec pokračovat dále
+a vyřešíme tím náš problém.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[a-z]</span><span class="si">{3}</span><span class="s2">[0-9]{2,4}$"</span><span class="p">,</span> <span class="s2">"cap00096"</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div><div class="admonition note"><p>Funkce <code>match</code> kontroluje shodu s regulárním výrazem od začátku řetězce, a proto nepotřebujeme
+zadat i <code>^</code> jako označení začátku.
+Funkce <code>search</code> naproti tomu hledá shodu kdekoli v řetězci a jak už její název napovídá,
+hodí se více pro vyhledávání než validaci.</p>
+</div><h3>Vyhledávání</h3>
+<p>Vyhledávat můžeme buď první část řetězce, která odpovídá regulárnímu výrazu, pomocí <code>search</code>, všechny
+odpovídající podřetězce pomocí <code>findall</code> nebo jednotlivé shody pomocí <code>finditer</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">".y"</span><span class="p">,</span> <span class="s2">"Naše staré hodiny bijí čtyři hodiny."</span><span class="p">)</span>
+<span class="go">&lt;re.Match object; span=(15, 17), match='ny'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">".y"</span><span class="p">,</span> <span class="s2">"Naše staré hodiny bijí čtyři hodiny."</span><span class="p">)</span>
+<span class="go">['ny', 'ty', 'ny']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="sa">r</span><span class="s2">".y"</span><span class="p">,</span> <span class="s2">"Naše staré hodiny bijí čtyři hodiny."</span><span class="p">))</span>
+<span class="go">[&lt;re.Match object; span=(15, 17), match='ny'&gt;, &lt;re.Match object; span=(24, 26), match='ty'&gt;, &lt;re.Match object; span=(33, 35), match='ny'&gt;]</span>
+</pre></div><p>Je třeba mít se na pozoru, pokud by se části našeho řetězce, které odpovídají regulárnímu výrazu, navzájem překrývaly.
+U funkce <code>search</code> to není problém, protože ta vrací jen první nalezený výskyt. Funkce <code>findall</code> a <code>finditer</code> však
+ignorují znaky, které už vyhodnotily jako součást předešlé shody při průchodu řetězcem zleva doprava.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">".y"</span><span class="p">,</span> <span class="s2">"yyy yyy"</span><span class="p">)</span>
+<span class="go">['yy', ' y', 'yy']</span>
+</pre></div><h3>Nahrazování</h3>
+<p>Nahrazení funkcí <code>sub</code> funguje velmi podobně jako řetězcová metoda <code>replace</code>. Samozřejmě s tím rozdílem, že nahrazená část musí
+odpovídat regulárnímu výrazu.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\s+and\s+"</span><span class="p">,</span> <span class="s2">" &amp; "</span><span class="p">,</span> <span class="s2">"Bread  and butter and    ham  and  spam"</span><span class="p">)</span>
+<span class="go">'Bread &amp; butter &amp; ham &amp; spam'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\s+and\s+"</span><span class="p">,</span> <span class="s2">" &amp; "</span><span class="p">,</span> <span class="s2">"Bread  and butter and    ham  and  spam"</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">'Bread &amp; butter and    ham  and  spam'</span>
+</pre></div><p>V příkladu výše nahrazujeme slovo <code>and</code> obklopené jedním nebo více bílými znaky z obou stran znakem <code>&amp;</code> s jednou mezerou na každé straně. Parametrem <code>count</code> můžeme nastavit maximální počet nahrazení.</p>
+<h2>Nastavení chování (flags)</h2>
+<p>Jedním ze základních způsobů, jak ovlivnit chování funkcí v modulu <code>re</code>, jsou tzv. flagy. Jedná se o různá nastavení,
+která je možné v případě potřeby zapnout.</p>
+<ul>
+<li><code>re.DEBUG</code> zobrazí ladící hlášky týkající se zpracování regulárního výrazu</li>
+<li><code>re.IGNORECASE</code> (zkráceně <code>re.I</code>) způsobí, že regulární výraz nebude brát ohled na velikost písmen</li>
+<li><code>re.MULTILINE</code> (zkráceně <code>re.M</code>) umožní zpracování víceřádkových řetězců. <code>^</code> a <code>$</code> začnou označovat začátek a konec každého řádku místo začátku a konce celého řetězce.</li>
+<li><code>re.DOTALL</code> (zkráceně <code>re.S</code>) způsobí, že se tečka stane zástupným znakem i za nový řádek <code>\n</code>, což v základním nastavení neplatí.</li>
+<li>… a další k nalezení v dokumentaci.</li>
+</ul>
+<p>Nejlepší je předávat flagy jako pojmenovaný argument výše zmíněným funkcím. Vyhneme se tím chybám vzniklým kvůli různým počtům pozičních argumentů funkcí v modulu <code>re</code>.
+Pokud jich potřebujeme předat více najednou, nakombinujeme je pomocí operátoru <code>|</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">".y"</span><span class="p">,</span> <span class="s2">"Naše staré hodiny bijí čtyři HODINY."</span><span class="p">)</span>
+<span class="go">['ny', 'ty']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">".y"</span><span class="p">,</span> <span class="s2">"Naše staré hodiny bijí čtyři HODINY."</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+<span class="go">['ny', 'ty', 'NY']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">".y"</span><span class="p">,</span> <span class="s2">"Naše staré hodiny bijí čtyři HODINY."</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="o">|</span><span class="n">re</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="go">ANY None</span>
+<span class="go">LITERAL 121</span>
+
+<span class="go">0. INFO 4 0b0 2 2 (to 5)</span>
+<span class="go">5: ANY</span>
+<span class="go">6. LITERAL_UNI_IGNORE 0x79 ('y')</span>
+<span class="go">8. SUCCESS</span>
+<span class="go">['ny', 'ty', 'NY']</span>
+</pre></div><h2>Optimalizace</h2>
+<p>Jednou z možností optimalizace fungování regulárních výrazů je jejich kompilace. Nejdříve si regulární výraz zkompilujete a pak místo
+funkcí z modulu <code>re</code> použijete stejnojmenné metody tohoto nového objektu.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">".y"</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">regex</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">"Naše staré hodiny bijí čtyři HODINY."</span><span class="p">)</span>
+<span class="go">['ny', 'ty', 'NY']</span>
+</pre></div><p>Kompilace se ale děje i automaticky na pozadí při používání funkcí, takže pokud používáte jen několik stále se opakujících
+regulárních výrazů, není třeba si je předem ručně kompilovat.</p>
+<h2>Příklad z úvodu lekce</h2>
+<p>Teď se můžeme společně podívat, jestli se nám podaří rozšifrovat kryptický zápis z úvodu této lekce. V ideálním případě bychom k tomu měli znát vše potřebné.</p>
+<div class="highlight"><pre><code>r"^\w+([\.-]?\w)+@\w+([\.]?\w)+(\.[a-zA-Z]{2,3})+$"</code></pre></div><p>Vezmeme to postupně:</p>
+<ul>
+<li><code>^</code> označení začátku hledaného řetězce</li>
+<li><code>\w+</code> 1 nebo více alfanumerických znaků</li>
+<li><code>([\.-]?\w)+</code> skupina alfanumerických znaků, která může začínat tečkou nebo spojovníkem a může se jednou nebo vícekrát opakovat</li>
+<li><code>@</code> znak zavináče – nemá žádný speciální význam</li>
+<li><code>\w+</code> 1 nebo více alfanumerických znaků</li>
+<li><code>([\.]?\w)+</code> skupina alfanumerických znaků, která může začínat tečkou a může se jednou nebo vícekrát opakovat</li>
+<li><code>(\.[a-zA-Z]{2,3})+</code> skupina obsahující dvě nebo tři malá/velká písmena anglické abecedy nebo číslice, která musí začínat tečkou a může se jednou nebo vícekrát opakovat</li>
+<li><code>$</code> tady by měl validovaný řetězec skončit a neměl by obsahovat nic navíc</li>
+</ul>
+<p>Pokud to ještě nedává smysl, jedná se o regulární výraz pro validaci emailových adres. Není ovšem bez chyby, protože nám nedovolí použít před zavináčem znak <code>+</code>, který je možnou validní součástí emailové adresy. Napsat regulární výraz pro dokonalou validaci emailové adresy není možné. Více info poskytne <a href="https://emailregex.com/">emailregex.com</a>.</p>
+<p>Pokud by nás z emailu zajímala jen jedna jeho část (např. název schránky před zavináčem), můžeme si tu část označit
+kulatými závorkami a pak ji ve výsledné shodě po úspěné validaci najít jako jednu ze skupin – v tomto případě jako úplně první.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(^\w+([\.-]?\w)+)@\w+([\.]?\w)+(\.[a-zA-Z]{2,3})+$"</span><span class="p">,</span> <span class="s2">"example.user@example.com"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+<span class="go">('example.user', 'r', 'e', '.com')</span>
+</pre></div><h2>Online pomocníci</h2>
+<p>Pokud si budete s regulárními výrazy hrát, doporučuji aplikace jako <a href="https://regex101.com/">regex101.com</a> nebo <a href="https://www.regextester.com/">regextester.com</a>, které umí nejen otestovat regulární výraz a obarvit řetězce, které mu vyhovují (včetně různých barev pro různé skupiny), ale také zvládnou celý regulární výraz rozložit na jednotlivé části a každou zvlášť vysvětlit.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/regex/">↑ <span class="d-none d-sm-inline">Lekce: Regulární výrazy</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/regex/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyLadiesCZ/naucse.python.cz/blob/autumn2020-ostrava-advanced/lessons/intro/regex/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz Python a jeho knihovny PyLadies Ostrava napsal Lumír Balhar, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+        <p>
+            Licence ukázek kódu:
+            <a href="https://creativecommons.org/publicdomain/zero/1.0/">
+                CC0 1.0 Universal Public Domain Dedication
+            </a>
+        </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

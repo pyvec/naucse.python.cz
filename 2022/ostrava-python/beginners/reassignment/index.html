@@ -1,0 +1,264 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz Pythonu: Přepisování proměnných
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/beginners/reassignment/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2022/ostrava-python/">Začátečnický kurz Pythonu</a>
+
+> <a href="/2022/ostrava-python/sessions/loops/">Želva 🐢 a cykly</a>
+
+> <a href="/2022/ostrava-python/beginners/reassignment/">Přepisování proměnných</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1 id="prepisovani_promennych">Přepisování proměnných
+<a href="#header-prepisovani_promennych" class="header-link">#</a>
+</h1>
+<p>Už víš, že hodnota proměnné se může v čase měnit:
+když přiřadíš do už existující proměnné, stará hodnota se zahodí
+a použije se nová.</p>
+<div class="highlight"><pre><span></span><span class="n">oblibena_barva</span> <span class="o">=</span> <span class="s1">'modrá'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">oblibena_barva</span><span class="p">)</span>
+
+<span class="n">oblibena_barva</span> <span class="o">=</span> <span class="s1">'žlutá'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">oblibena_barva</span><span class="p">)</span>
+
+<span class="c1"># Na tomhle místě programu už se k řetězci 'modrá' nedostaneš...</span>
+</pre></div><p>Trošku zajímavější (nebo složitější?) je situace, kdy hodnotu proměnné
+přepíšeš výrazem, který používá tu stejnou proměnnou.
+Zkus si to:</p>
+<div class="highlight"><pre><span></span><span class="n">oblibene_cislo</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">oblibene_cislo</span><span class="p">)</span>
+
+<span class="n">oblibene_cislo</span> <span class="o">=</span> <span class="n">oblibene_cislo</span> <span class="o">*</span> <span class="mi">6</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">oblibene_cislo</span><span class="p">)</span>
+</pre></div><p>Co se tady děje?
+Python vyhodnotí výraz za <code>=</code> se <em>starou</em> hodnotou proměnné, a teprve když
+zná výsledek, přiřadí ho (a na starou hodnotu zapomene).
+V našem příkladu postupuje takhle:</p>
+<div class="highlight"><pre><span></span><span class="n">oblibene_cislo</span> <span class="o">=</span> <span class="n">oblibene_cislo</span> <span class="o">*</span> <span class="mi">6</span>
+<span class="c1">#                ╰──────────┬─╯</span>
+<span class="n">oblibene_cislo</span> <span class="o">=</span>            <span class="mi">7</span>   <span class="o">*</span> <span class="mi">6</span>
+<span class="c1">#                           ╰─┬───╯</span>
+<span class="n">oblibene_cislo</span> <span class="o">=</span>             <span class="mi">42</span>
+<span class="c1">#         ▲                  |</span>
+<span class="c1">#         ╰──────────────────╯</span>
+</pre></div><h2 id="prepisovani_vcyklu">Přepisování v cyklu
+<a href="#header-prepisovani_vcyklu" class="header-link">#</a>
+</h2>
+<p>Ještě „zajímavější“ je použít podobné přepisování v cyklu.</p>
+<p>Zopakuj si, že <code>for</code> cyklus jako:</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Tady je pár čísel:"</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">cislo</span> <span class="ow">in</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">21</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cislo</span><span class="p">)</span>
+</pre></div><p>opakuje <em>přiřazení do proměnné</em> a <em>tělo cyklu</em>; můžeš si ho rozepsat jako:</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Tady je pár čísel:"</span><span class="p">)</span>
+
+<span class="n">cislo</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cislo</span><span class="p">)</span>
+
+<span class="n">cislo</span> <span class="o">=</span> <span class="mi">45</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cislo</span><span class="p">)</span>
+
+<span class="n">cislo</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cislo</span><span class="p">)</span>
+
+<span class="n">cislo</span> <span class="o">=</span> <span class="mi">21</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cislo</span><span class="p">)</span>
+</pre></div><p>Zkus podobně rozepsat cyklus v následujícím programu
+a popsat, co se děje:</p>
+<div class="highlight"><pre><span></span><span class="n">celkem</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">for</span> <span class="n">delka_trasy</span> <span class="ow">in</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">21</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Jdu'</span><span class="p">,</span> <span class="n">delka_trasy</span><span class="p">,</span> <span class="s1">'km do další vesnice.'</span><span class="p">)</span>
+    <span class="n">celkem</span> <span class="o">=</span> <span class="n">celkem</span> <span class="o">+</span> <span class="n">delka_trasy</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Celkem jsem ušla'</span><span class="p">,</span> <span class="n">celkem</span><span class="p">,</span> <span class="s1">'km'</span><span class="p">)</span>
+</pre></div><div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2022/ostrava-python/beginners/reassignment/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="n">celkem</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">delka_trasy</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Jdu'</span><span class="p">,</span> <span class="n">delka_trasy</span><span class="p">,</span> <span class="s1">'km do další vesnice.'</span><span class="p">)</span>
+<span class="n">celkem</span> <span class="o">=</span> <span class="n">celkem</span> <span class="o">+</span> <span class="n">delka_trasy</span>
+
+<span class="n">delka_trasy</span> <span class="o">=</span> <span class="mi">45</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Jdu'</span><span class="p">,</span> <span class="n">delka_trasy</span><span class="p">,</span> <span class="s1">'km do další vesnice.'</span><span class="p">)</span>
+<span class="n">celkem</span> <span class="o">=</span> <span class="n">celkem</span> <span class="o">+</span> <span class="n">delka_trasy</span>
+
+<span class="n">delka_trasy</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Jdu'</span><span class="p">,</span> <span class="n">delka_trasy</span><span class="p">,</span> <span class="s1">'km do další vesnice.'</span><span class="p">)</span>
+<span class="n">celkem</span> <span class="o">=</span> <span class="n">celkem</span> <span class="o">+</span> <span class="n">delka_trasy</span>
+
+<span class="n">delka_trasy</span> <span class="o">=</span> <span class="mi">21</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Jdu'</span><span class="p">,</span> <span class="n">delka_trasy</span><span class="p">,</span> <span class="s1">'km do další vesnice.'</span><span class="p">)</span>
+<span class="n">celkem</span> <span class="o">=</span> <span class="n">celkem</span> <span class="o">+</span> <span class="n">delka_trasy</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Celkem jsem ušla'</span><span class="p">,</span> <span class="n">celkem</span><span class="p">,</span> <span class="s1">'km'</span><span class="p">)</span>
+</pre></div><p>Příkaz <code>celkem = celkem + delka_trasy</code> vypočítá hodnotu
+<code>celkem + delka_trasy</code>, tedy přičte aktuální číslo k součtu.
+Výsledek uloží opět do proměnné <code>celkem</code>.
+Nová hodnota <code>celkem</code> se pak použije v dalším průchodu cyklem.</p>
+<p>Na začátku je <code>celkem</code> 0 a na konci se celkový součet všech čísel vypíše.</p>
+    </div>
+</div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2022/ostrava-python/beginners/while/">← <span class="d-none d-sm-inline">Cyklus While</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2022/ostrava-python/sessions/loops/">↑ <span class="d-none d-sm-inline">Lekce: Želva 🐢 a cykly</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2022/ostrava-python/feedback/fb_ov_lesson3/"><span class="d-none d-sm-inline">Zpětná vazba k domácím projektům</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/petracihalova/naucse-python/blob/ostrava2022_python/lessons/beginners/reassignment/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2014-2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,364 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Klondike: Balíčky
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/brno-podzim-pondeli/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/brno-podzim-pondeli/sessions/dict/">Slovníky</a>
+
+> <a href="/2019/brno-podzim-pondeli/klondike/decks/">Klondike: Balíčky</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Klondike Solitaire: Balíčky</h1>
+<p>Postupně tvoříme hru <em>Klondike Solitaire</em>, která bude nakonec fungovat takto:</p>
+<ul>
+<li>Karty se určitým způsobem <em>rozdají</em> do několika balíčků, hromádek nebo
+jiných skupin</li>
+<li>Dokud hráč <em>nevyhrál</em>:<ul>
+<li>Hráč <em>udělá tah</em>: podle určitých pravidel přesune karty z jedné hromádky
+na druhou</li>
+</ul>
+</li>
+</ul>
+<p>Pro počítačovou verzi to bude potřeba doplnit o zobrazení stavu hry
+a o načítání hráčova tahu:</p>
+<ul>
+<li>Rozdej karty</li>
+<li>Dokud hráč nevyhrál:<ul>
+<li>Zobraz stav hry</li>
+<li>Zeptej se hráče, kam chce hrát</li>
+<li>Je-li to možné:<ul>
+<li>Proveď tah</li>
+</ul>
+</li>
+<li>Jinak:<ul>
+<li>Vynadej hráči, že daný tah nedává smysl</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Pogratuluj hráči</li>
+</ul>
+<p>(Hráč může i prohrát, ale na to může přijít sám a hru ukončit.)</p>
+<p>Minule jsme počítač naučily co to je <em>karta</em>
+a jak vytvořit zamíchaný <em>balíček</em>.
+Pojďme se konečně vrhnout na první krok výše: rozdávání.</p>
+<h2>Rozdání sloupečků</h2>
+<p>Karty se určitým způsobem <em>rozdají</em> do několika balíčků, hromádek nebo
+jiných skupin.
+Pro přehlednost si tyto skupiny označíme písmenky:</p>
+<ul>
+<li>Dobírací balíčky <code>U</code>, <code>V</code>, ze kterých se berou karty.</li>
+<li>Cílové hromádky <code>W</code>-<code>Z</code>, kam se dávají seřazené karty. Cíl hry je do těchto
+hromádek dát všechny karty.</li>
+<li>7 sloupečků <code>A</code>-<code>G</code>, kde hráč může s kartami manipulovat.</li>
+</ul>
+<p>Prvotní rozdání karet spočívá v tom, že rozdáš karty do 7 sloupečků.
+Nerozdané karty zůstanou v balíčku <code>U</code>; ostatní místa na karty budou prázdné:</p>
+<p><span class="figure"><a href="/2019/brno-podzim-pondeli/klondike/decks/static/game.png"><img src="/2019/brno-podzim-pondeli/klondike/decks/static/game.png" alt="Ukázka sloupečků"></a></span></p>
+<div class="highlight"><pre><code>   U     V          W     X     Y     Z
+ [???] [   ]      [   ] [   ] [   ] [   ]
+
+   A     B     C     D     E     F     G
+ [3♣ ] [???] [???] [???] [???] [???] [???]
+       [5 ♥] [???] [???] [???] [???] [???]
+             [6♣ ] [???] [???] [???] [???]
+                   [5♠ ] [???] [???] [???]
+                         [Q ♥] [???] [???]
+                               [4♠ ] [???]
+                                     [3 ♦]</code></pre></div><p>V <var>N</var>-tém sloupečku (počítáno od nuly) je <var>N</var>
+karet rubem nahoru plus jedna karta lícem nahoru.
+Karty do sloupečků se z balíčku rozdávají postupně: vždy se lízne
+vrchní (poslední) karta z balíčku a dá se na konec sloupečku.</p>
+<p>Napiš následující funkci:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">rozdej_sloupecky</span><span class="p">(</span><span class="n">balicek</span><span class="p">):</span>
+    <span class="sd">"""Rozdá z daného balíčku 7 "sloupečků" -- seznamů karet</span>
+
+<span class="sd">    Karty ve sloupečcích jsou odstraněny z balíčku.</span>
+<span class="sd">    Vrátí všechny sloupečky -- tedy seznam (nebo n-tici) sedmi seznamů.</span>
+<span class="sd">    """</span>
+</pre></div><p>Například:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">balicek</span> <span class="o">=</span> <span class="n">priprav_balicek</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sloupecky</span> <span class="o">=</span> <span class="n">rozdej_sloupecky</span><span class="p">(</span><span class="n">balicek</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">popis_seznam_karet</span><span class="p">(</span><span class="n">sloupecky</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">[3♣ ]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">popis_seznam_karet</span><span class="p">(</span><span class="n">sloupecky</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">[???] [5 ♥]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">popis_seznam_karet</span><span class="p">(</span><span class="n">sloupecky</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="go">[???] [???] [6♣ ]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">popis_seznam_karet</span><span class="p">(</span><span class="n">sloupecky</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+<span class="go">[???] [???] [???] [???] [???] [???] [3 ♦]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">balicek</span><span class="p">)</span>    <span class="c1"># Z balíčku zmizely karty, které jsou ve sloupečcích</span>
+<span class="go">24</span>
+</pre></div><p>Jak tahle funkce funguje?</p>
+<ul>
+<li>Vytvoří prázdný seznam sloupečků</li>
+<li>Sedmkrat (pro <var>N</var> od 0 do 6):<ul>
+<li>Vytvoří prázdný sloupeček (seznam)</li>
+<li><var>N</var>-krát za sebou:<ul>
+<li>„Lízne“ (<code>pop</code>) kartu zvrchu balíčku</li>
+<li>Dá líznutou kartu na vršek sloupečku (<code>append</code>)</li>
+</ul>
+</li>
+<li>„Lízne“ (<code>pop</code>) kartu zvrchu balíčku</li>
+<li>Líznutou kartu otočí lícem nahoru (<code>otoc_kartu</code>)
+a dá vršek sloupečku (<code>append</code>)</li>
+<li>Hotový sloupeček přidá do seznamu sloupečků</li>
+</ul>
+</li>
+<li>Výsledné sloupečky vrátí</li>
+</ul>
+<p>Pro ověření spusť testy:</p>
+<ul>
+<li>level 40: Funkce existuje</li>
+<li>level 41: Funkce vrací seznam sedmi seznamů</li>
+<li>level 42:<ul>
+<li>V každém sloupečku je aspoň jedna karta</li>
+<li>Poslední karta je lícem nahoru</li>
+</ul>
+</li>
+<li>level 43: V každém sloupečku je správný počet karet rubem nahoru</li>
+</ul>
+<h2>Vypsání sloupečků</h2>
+<p>Vzpomínáš si na základní schéma hry?</p>
+<ul>
+<li>Rozdej karty</li>
+<li>Dokud hráč nevyhrál:<ul>
+<li>Zobraz stav hry</li>
+<li>Zeptej se hráče, kam chce hrát</li>
+<li>Je-li to možné:<ul>
+<li>Proveď tah</li>
+</ul>
+</li>
+<li>Jinak:<ul>
+<li>Vynadej hráči, že daný tah nedává smysl</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Pogratuluj hráči</li>
+</ul>
+<p>Rozdání balíčku a sloupečků už víceméně máš!
+Pro teď přeskočíme zjišťování, jestli hráč vyhrál, a koukneme se na zobrazení
+stavu hry.</p>
+<p>Například, pokud jsou sloupečky tyto:</p>
+<div class="highlight"><pre><span></span><span class="n">sloupecky</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'Pi'</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">'Sr'</span><span class="p">,</span> <span class="bp">True</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'Sr'</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">,</span> <span class="bp">True</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">'Kr'</span><span class="p">,</span> <span class="bp">False</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'Kr'</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'Pi'</span><span class="p">,</span> <span class="bp">True</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">'Pi'</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">'Sr'</span><span class="p">,</span> <span class="bp">True</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="mi">6</span><span class="p">,</span> <span class="s1">'Sr'</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">,</span> <span class="bp">True</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'Kr'</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">,</span> <span class="bp">True</span><span class="p">)],</span>
+<span class="p">]</span>
+</pre></div><p>… můžeš je vypsat jednotlivě:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">sloupecek</span> <span class="ow">in</span> <span class="n">sloupecky</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">print</span><span class="p">(</span><span class="n">popis_seznam_karet</span><span class="p">(</span><span class="n">sloupecek</span><span class="p">))</span>
+<span class="go">[A♠ ] [7 ♥]</span>
+<span class="go">[2 ♥] [6 ♦]</span>
+<span class="go">[3 ♦] [???]</span>
+<span class="go">[???] [4♠ ]</span>
+<span class="go">[???] [3 ♥]</span>
+<span class="go">[6 ♥] [2 ♦]</span>
+<span class="go">[7 ♦] [A♣ ] [X ♦]</span>
+</pre></div><p>To ale není to, co chceme vypsat ve hře: tam se karty v jednom sloupečku
+ukazují pod sebou.</p>
+<p>Budeš potřebovat na prvním řádku ukázat první karty ze všech sloupečků,
+na druhém řádku druhé karty ze všech sloupečků, na třetím třetí, atd.
+Pro příklad výše by tedy mělo vyjít:</p>
+<div class="highlight"><pre><code>[A♠ ] [2 ♥] [3 ♦] [???] [???] [6 ♥] [7 ♦]
+[7 ♥] [6 ♦] [???] [4♠ ] [3 ♥] [2 ♦] [A♣ ]
+                                    [X ♦]</code></pre></div><p>Znáš funkci, která vezme několik seznamů, a dá ti k dispozici napřed první
+prvky těch seznamů, potom druhé, a tak dál?
+Zkus ji použít!</p>
+<p>Pozor, bude tu potřeba pořádně se zamyslet.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">vypis_sloupecky</span><span class="p">(</span><span class="n">sloupecky</span><span class="p">):</span>
+    <span class="sd">"""Vypíše sloupečky textově.</span>
+
+<span class="sd">    Tato funkce je jen pro zobrazení, používá proto přímo funkci print()</span>
+<span class="sd">    a nic nevrací.</span>
+<span class="sd">    """</span>
+</pre></div><ul>
+<li>level 50: Funkce existuje</li>
+<li>level 51: Funkce vypisuje karty ze věch sloupečků</li>
+<li>level 52: Funkce funguje, když jsou sloupečky nestejně dlouhé. (Na prázdné místo patří 5 mezer.)</li>
+</ul>
+<h2>Práce se sloupečky</h2>
+<p>Aby sis v budoucnu ušetřila práci, a aby sis procvičila seznamy,
+zkus teď napsat dvě funkce, které přesunují karty mezi balíčky.</p>
+<p>Použij na to metody seznamů (<code>append</code>, <code>extend</code>, <code>pop</code>, příkaz <code>del</code>)
+a pomocné funkce, které už máš (<code>otoc_kartu</code>).</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">presun_kartu</span><span class="p">(</span><span class="n">sloupec_odkud</span><span class="p">,</span> <span class="n">sloupec_kam</span><span class="p">,</span> <span class="n">pozadovane_otoceni</span><span class="p">):</span>
+    <span class="sd">"""Přesune vrchní kartu ze sloupce "odkud" do sloupce "kam".</span>
+<span class="sd">    Karta bude otocena lícem nebo rubem nahoru podle "pozadovane_otoceni".</span>
+<span class="sd">    """</span>
+
+<span class="k">def</span> <span class="nf">presun_nekolik_karet</span><span class="p">(</span><span class="n">sloupec_odkud</span><span class="p">,</span> <span class="n">sloupec_kam</span><span class="p">,</span> <span class="n">pocet</span><span class="p">):</span>
+    <span class="sd">"""Přesune "pocet" vrchních karet ze sloupce "odkud" do sloupce "kam".</span>
+<span class="sd">    Karty se přitom neotáčí.</span>
+<span class="sd">    """</span>
+</pre></div><ul>
+<li>level 60: Funkce <code>presun_kartu</code> existuje</li>
+<li>level 61: Funkce <code>presun_kartu</code> funguje dle zadání</li>
+<li>level 70: Funkce <code>presun_nekolik_karet</code> existuje</li>
+<li>level 71: Funkce <code>presun_nekolik_karet</code> funguje dle zadání</li>
+</ul>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-podzim-pondeli/beginners/zip-enumerate/">← <span class="d-none d-sm-inline">Iterátory n-tic</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-podzim-pondeli/sessions/dict/">↑ <span class="d-none d-sm-inline">Lekce: Slovníky</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/brno-podzim-pondeli/beginners/dict/"><span class="d-none d-sm-inline">Slovníky</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-brno-podzim-pondeli/lessons/klondike/decks/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2014-2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

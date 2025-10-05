@@ -1,0 +1,1312 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Interaktivní vizualizace a aplikace I.
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-praha-jaro/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-praha-jaro/sessions/dashboards/">Interaktivní vizualizace a aplikace (virtuální)</a>
+
+> <a href="/2020/pydata-praha-jaro/pydata/dashboards/">Interaktivní vizualizace a aplikace I.</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Interaktivní vizualizace a aplikace</h1>
+<p>Při práci s daty je mnoho příležitostí, kdy se hodí interaktivita. Při vizualici se hodí zvětšování / změnšování měřítka, výběr podoblasti, ukázání vykreslených hodnot apod. Nebo při datové anlýze obecně se může hodit interaktivně v notebooku měnit nějaký parametr (třeba hyperparametr pro strojové učení). Anebo chceme dát výsledky naší skvělé analýzy k dispozici "netechnickým" kolegům nebo kamarádům, kteří (zatím) nedokáží Jupyter notebook spustit.</p>
+<p>Tady si ukážeme, jak si s takovými úkoly poradit pomocí dvou nástrojů: <a href="https://plotly.com/python/">plotly</a>, resp. především <a href="https://plotly.com/python/plotly-express/">plotly express</a>, a <a href="https://panel.holoviz.org/">panel</a>.</p>
+<p>Existují i další nástroje, které poskytují podobné možnosti. Podrobný přehled najdete na <a href="https://pyviz.org/tools.html">https://pyviz.org/tools.html</a>.  Na interaktivní vizualizace jsou to především <a href="http://github.com/pyviz/holoviews">holoviews</a> nebo <a href="http://github.com/altair-viz/altair">altair</a>. Na "dashboarding" pak <a href="http://github.com/plotly/dash">dash</a>, <a href="http://github.com/streamlit/streamlit">streamlit</a>, <a href="http://github.com/QuantStack/voila">voila</a> nebo <a href="https://justpy.io">justpy</a>.</p>
+<p>Každý z těchto nástrojů má, jako obvykle, své výhody a nevýhody. Nejrozšířenějším nástrojem je <a href="http://github.com/plotly/dash">Dash</a> ze stejné dílny jako plotly, který poskytuje i enterprise řešení pro provoz aplikací. Dash je určitě dobrou volbou, jak se můžete dozvědět i na <a href="https://www.youtube.com/watch?v=dewrzMPPLDU">přednášce z pražského PyData Meetupu</a>. Panel (a také Voila) se od Dash liší tím, že je lze použít i v Jupytere notebooku a pak notebook použít přímo jako aplikaci - a proto Panel použijeme my v této lekci.</p>
+<p>Pár článků či přednášek, které se tématu týkají:</p>
+<ul>
+<li><a href="https://www.intelligencerefinery.io/post/making-python-apps/">Going beyond Jupyter notebooks</a></li>
+<li><a href="https://towardsdatascience.com/how-to-build-a-complex-reporting-dashboard-using-dash-and-plotl-4f4257c18a7f">How to Build a Reporting Dashboard using Dash and Plotly</a></li>
+<li><a href="https://www.youtube.com/watch?v=L91rd1D6XTA">Turn any Notebook into a Deployable Dashboard | SciPy 2019 | James Bednar</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Pro a proti</h2>
+<p>Je potřeba ale říct, že všechny tyto přístupy mají své výrazné nevýhody a limity a nehodí se pro velké a složité aplikace. Možnosti interakcí v aplikaci jsou omezené a také mohou být pomalé. Robustní škálování pro mnoho uživatelů (velký provoz) je obecně složitější. Kdy tedy především použít co si tady ukážeme?</p>
+<ul>
+<li>Na malou aplikaci pro omezený počet uživatelů (dashboard pro kolegy).</li>
+<li>Na rychlý vývoj prototypu.</li>
+</ul>
+<p>A co když chceme budovat velkou (webovou) aplikaci?</p>
+<ul>
+<li>Zadáme vývojářskému týmu, aby v moderních JavaScript nástrojích typu React nebo Vue.js pro nás vytvořil krásný a rychlý "front-end", zatímco my vytvoříme v Pythonu "back-end", který s front-endem bude komunikovat např. pomocí JSON API, tak jak jsme viděli v <a href="/2020/pydata-praha-jaro/pydata/api/">naší lekci o API</a>.</li>
+<li>Když takový tým nemáme, naučíme se programovat JavaScriptu ... Ne, raději v TypeScriptu ...</li>
+<li>... raději najmeme ten vývojářský tým :-)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Instalace a import grafických knihoven</h2>
+<p>Pokud nemáte nainstalované knihovny plotly a panel, odkomentujte a spusťe příslušné řádky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># instalace plotly</span>
+<span class="c1"># %pip install plotly</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># instalace panel</span>
+<span class="c1"># POZOR: nainstalujte tuto (v době vzniku nejnovější) verzi, </span>
+<span class="c1"># s některými předešlými verzemi byl problém v násleném provozu na heroku</span>
+
+<span class="c1"># %pip install bokeh==2.0.2 panel==0.9.5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro plotly express a panel se vžily zkratky <code>px</code> a <code>pn</code>, pod kterými je naimportujeme i my. 
+Dále je pro použití panelu v notebooku potřeba zavolat <code>pn.extension</code>, v našem případě s argumentem <code>"plotly"</code> aby tyto dvě knihovny správně spolupracovaly.
+Je doporučené to udělat hned na začátku notebooku, resp. před použitím plotly nebo panel, jinak může dojít k problémům v zobrazování notebooku.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="kn">import</span> <span class="nn">panel</span> <span class="k">as</span> <span class="nn">pn</span>
+
+<span class="n">pn</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="s2">"plotly"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>COVID-19 dashboard</h2>
+<p>Z onemocnění COVID-19 je v době vzniku tohoto kurzu většina z nás už dost nešťastná. Poskytuje ale příležitost k analýzám dat a vytváření vizualizací a dashboardů. Jejich přehled a hodnocení přináší např. i článek z MIT: <a href="https://www.technologyreview.com/2020/03/06/905436/best-worst-coronavirus-dashboards/">The best, and the worst, of the coronavirus dashboards</a>. Uvidíme, jestli se do příštího vydání dostane a náš dashboard :)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Data</h3>
+<p>Použijeme data z <a href="https://github.com/datasets/covid-19">https://github.com/datasets/covid-19</a> (lehce přeformátovaná data z Johns Hopkins University: <a href="https://github.com/CSSEGISandData/COVID-19">https://github.com/CSSEGISandData/COVID-19</a>).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">covid_data_raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+    <span class="s2">"https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv"</span><span class="p">,</span>
+    <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">"Date"</span><span class="p">],</span>
+<span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"Province/State"</span><span class="p">:</span> <span class="s2">"State"</span><span class="p">,</span> <span class="s2">"Country/Region"</span><span class="p">:</span> <span class="s2">"Country"</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">covid_data_raw</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Country</th>
+      <th>State</th>
+      <th>Lat</th>
+      <th>Long</th>
+      <th>Confirmed</th>
+      <th>Recovered</th>
+      <th>Deaths</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2020-01-22</td>
+      <td>Afghanistan</td>
+      <td>NaN</td>
+      <td>33.0</td>
+      <td>65.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2020-01-23</td>
+      <td>Afghanistan</td>
+      <td>NaN</td>
+      <td>33.0</td>
+      <td>65.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2020-01-24</td>
+      <td>Afghanistan</td>
+      <td>NaN</td>
+      <td>33.0</td>
+      <td>65.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2020-01-25</td>
+      <td>Afghanistan</td>
+      <td>NaN</td>
+      <td>33.0</td>
+      <td>65.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2020-01-26</td>
+      <td>Afghanistan</td>
+      <td>NaN</td>
+      <td>33.0</td>
+      <td>65.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>28989</th>
+      <td>2020-05-05</td>
+      <td>Zimbabwe</td>
+      <td>NaN</td>
+      <td>-20.0</td>
+      <td>30.0</td>
+      <td>34.0</td>
+      <td>5.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>28990</th>
+      <td>2020-05-06</td>
+      <td>Zimbabwe</td>
+      <td>NaN</td>
+      <td>-20.0</td>
+      <td>30.0</td>
+      <td>34.0</td>
+      <td>5.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>28991</th>
+      <td>2020-05-07</td>
+      <td>Zimbabwe</td>
+      <td>NaN</td>
+      <td>-20.0</td>
+      <td>30.0</td>
+      <td>34.0</td>
+      <td>5.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>28992</th>
+      <td>2020-05-08</td>
+      <td>Zimbabwe</td>
+      <td>NaN</td>
+      <td>-20.0</td>
+      <td>30.0</td>
+      <td>34.0</td>
+      <td>9.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>28993</th>
+      <td>2020-05-09</td>
+      <td>Zimbabwe</td>
+      <td>NaN</td>
+      <td>-20.0</td>
+      <td>30.0</td>
+      <td>35.0</td>
+      <td>9.0</td>
+      <td>4.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>28994 rows × 8 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro některé země je v datech více regionů. My si ale data agregujeme podle zemí dohromady.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">covid_data</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">covid_data_raw</span>
+    <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"Country"</span><span class="p">,</span> <span class="s2">"Date"</span><span class="p">])[[</span><span class="s2">"Confirmed"</span><span class="p">,</span> <span class="s2">"Recovered"</span><span class="p">,</span> <span class="s2">"Deaths"</span><span class="p">]]</span>
+    <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="s2">"sum"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">covid_data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Country</th>
+      <th>Date</th>
+      <th>Confirmed</th>
+      <th>Recovered</th>
+      <th>Deaths</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Afghanistan</td>
+      <td>2020-01-22</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Afghanistan</td>
+      <td>2020-01-23</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Afghanistan</td>
+      <td>2020-01-24</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Afghanistan</td>
+      <td>2020-01-25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Afghanistan</td>
+      <td>2020-01-26</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>20378</th>
+      <td>Zimbabwe</td>
+      <td>2020-05-05</td>
+      <td>34.0</td>
+      <td>5.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>20379</th>
+      <td>Zimbabwe</td>
+      <td>2020-05-06</td>
+      <td>34.0</td>
+      <td>5.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>20380</th>
+      <td>Zimbabwe</td>
+      <td>2020-05-07</td>
+      <td>34.0</td>
+      <td>5.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>20381</th>
+      <td>Zimbabwe</td>
+      <td>2020-05-08</td>
+      <td>34.0</td>
+      <td>9.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>20382</th>
+      <td>Zimbabwe</td>
+      <td>2020-05-09</td>
+      <td>35.0</td>
+      <td>9.0</td>
+      <td>4.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>20383 rows × 5 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Interaktivní vizualizace</h3>
+<p>Zajímá nás průběh jedné konkrétní země - třeba Česka :)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># uložíme si to do proměnné, abychom to pak nespletli</span>
+<span class="n">country</span> <span class="o">=</span> <span class="s2">"Czechia"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">covid_selected_country</span> <span class="o">=</span> <span class="n">covid_data</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">f</span><span class="s1">'Country == "</span><span class="si">{country}</span><span class="s1">"'</span><span class="p">)</span>
+<span class="n">covid_selected_country</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Country</th>
+      <th>Date</th>
+      <th>Confirmed</th>
+      <th>Recovered</th>
+      <th>Deaths</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5118</th>
+      <td>Czechia</td>
+      <td>2020-05-05</td>
+      <td>7896.0</td>
+      <td>4006.0</td>
+      <td>257.0</td>
+    </tr>
+    <tr>
+      <th>5119</th>
+      <td>Czechia</td>
+      <td>2020-05-06</td>
+      <td>7974.0</td>
+      <td>4205.0</td>
+      <td>262.0</td>
+    </tr>
+    <tr>
+      <th>5120</th>
+      <td>Czechia</td>
+      <td>2020-05-07</td>
+      <td>8031.0</td>
+      <td>4371.0</td>
+      <td>270.0</td>
+    </tr>
+    <tr>
+      <th>5121</th>
+      <td>Czechia</td>
+      <td>2020-05-08</td>
+      <td>8077.0</td>
+      <td>4413.0</td>
+      <td>273.0</td>
+    </tr>
+    <tr>
+      <th>5122</th>
+      <td>Czechia</td>
+      <td>2020-05-09</td>
+      <td>8095.0</td>
+      <td>4447.0</td>
+      <td>276.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Určitě bude zajímavé si data vykreslit v grafu. Zatím jsme používali hlavně knihovnu <code>matplotlib</code>. Ta toho umí opravdu hodně, navíc jde používat přímo pomocí <code>DataFrame.plot</code>. Chybí jí ale vlastnost, která je pro datovou analýzu a hlavně pak pro webové aplikace nesmírně užitečná: <em>interaktivita</em>. (Ona tedy nechybí úplně, ale je velmi omezená.)</p>
+<p>Interaktivita nám umožňuje bohatší práci s vizualizacemi. Můžeme si zvětšit nějakou podoblast grafu. Můžeme zvětšovat / zmenšovat měřítko aby byly vidět třeba i malé rozdíly v hodnotách. V <a href="/2020/pydata-praha-jaro/pydata/pca/">lekci a PCA</a> jsme použili interakticní popisky jednotlivých symbolů v grafu na identifikaci příslušného záznamu v datech. A mnoho dalšího.</p>
+<p>S <a href="https://plot.ly">plotly</a>, resp. <a href="https://plotly.com/python/plotly-express/">plotly-express</a>, už jsme trochu pracovali. Pojďme tedy tuto knihovnu rovnou použít!</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+    <span class="n">covid_selected_country</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">"Date"</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">"Confirmed"</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="n">f</span><span class="s2">"Confirmed cases in </span><span class="si">{country}</span><span class="s2">"</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Teď byste měli v notebooku vidět graf - vývoj případů v Česku. Pojďme si s grafem chvilku hrát :)</p>
+<p><strong>Vyzkoušejte:</strong></p>
+<ul>
+<li>Vybrat a vyzkoušet nástroje v pravém horním rohu na zoom (změnu měřítka), pan (posun) nebo reset axis.</li>
+<li>Zkuste se zastavit s kurzorem nad jedním ze slopců v grafu.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong></p>
+<ol>
+<li>Vykreslete průběh počtu nakažených pro Česko, Rakousko a Finsko v jednom grafu, každou zemi jinou barvou (použijte argument <code>color</code>). Na filtrování dat si vzpomeňte na <code>.isin</code>. </li>
+<li>Změňte veličinu na počet uzdravených.</li>
+<li>Změňte typ grafu na čárový (line).</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dokázali jsme si vytvořit celkem pěknou vizualizaci základních veličin, popisujích průběh pandemie COVID-19. Museli jsme si ale ručně vybírat a přepínat parametry vizualizace, např. výběr zemí nebo vykreslované veličiny.</p>
+<p>Praktičtější by určitě bylo mít nějaké "klikátko" - "vybírávátko", které by nám parametry umožnilo nastavit.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Widgets - pomocné "věcičky"</h3>
+<p>V uživatelských grafických rozhraních (GUI), zejména těch používajících webové technologie, se právě pro tyto přiležitosti hodí <em>widgety</em> (český výraz se nepoužívá a ani pořádně neexistuje).</p>
+<p>A jelikož máme to štěstí, že notebook má webové grafické rozhraní, můžeme widgety přidat přímo do něj. Jednou z možností je použít knihovnu <a href="https://panel.pyviz.org">panel</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Vytvoříme si rovnou úplně jednoduchý widget na výběr zěmě:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">country_selection</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">covid_data</span><span class="p">[</span><span class="s2">"Country"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()),</span> <span class="n">name</span><span class="o">=</span><span class="s2">"Country"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A teď si ho zobrazíme přího v notebooku:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">country_selection</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V tuto chvíli můžete vybírat se zeznamu všech zemí, které jsou v našich datech. To je pohled vás jako uživatele. Ale co se stane z pohledu programátora, tedy co se stane v Pythonu?</p>
+<p>Objekt <code>country_selection</code> nám nabízí několik atributů a metod, které nám umožňují zjistit, co uživatel udělal. V tomto případě se nejvíc hodí zjistit, jakou zemi uživatel vybral. A na to je <code>.value</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">country_selection</span><span class="o">.</span><span class="n">value</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'Afghanistan'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Vyberte v buňce nahoře svou (ne)oblíbenou zemi a podívejte se, jestli se změnila hodnota <code>country_selection.value</code>. Je potřeba spouště znovu buňku, která zobrazuje <code>country_selection</code> widget? Co se stane, když jí spustíte znovu (třeba v jiné buňce)?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>country_selection.value</code> už je něco, co můžeme použít pro vykreslení grafu podobně jako před chvilkou:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+    <span class="n">covid_data</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">f</span><span class="s1">'Country == "</span><span class="si">{country_selection.value}</span><span class="s1">"'</span><span class="p">),</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">"Date"</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">"Confirmed"</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="n">f</span><span class="s2">"Confirmed cases in </span><span class="si">{country_selection.value}</span><span class="s2">"</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Teď jsme mohli vybrat jeden parametr. Hodilo by se nám ale vybírat více parametrů různých typů: výběr více zemí, vykreslená veličina, přepínač logaritmické škály nebo třeba typ zobrazení (bar nebo line plot). S volbou vhodných widgetů nám pomůže <a href="https://panel.holoviz.org/reference/index.html">dokumentace panel</a> (pozor, některé widgety nejsou v naší starší verzi dostupné). Abychom nemuseli každý widget zobrazovat zvlášť, použijeme komponenty z kategorie Layouts, nyní konkrétně <code>Column</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># widget pro výběr více možností ze seznamu</span>
+<span class="n">countries_selection</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">CrossSelector</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"Countries"</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">covid_data</span><span class="p">[</span><span class="s2">"Country"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()),</span> <span class="n">value</span><span class="o">=</span><span class="p">[</span><span class="s2">"Czechia"</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="c1"># výběr vykreslené veličiny</span>
+<span class="n">plotted_variable</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"Plotted variable"</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">"Confirmed"</span><span class="p">,</span> <span class="s2">"Recovered"</span><span class="p">,</span> <span class="s2">"Deaths"</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="c1"># přepínač logaritmické škály</span>
+<span class="n">use_log_scale</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">Checkbox</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"Use log scale"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># výběr typu grafu</span>
+<span class="n">plot_type</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"Plot type"</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"bar"</span><span class="p">:</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">,</span> <span class="s2">"line"</span><span class="p">:</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A teď to dáme vše dohromady pro zobrazení nad sebou, tj. do sloupce, a rovnou zobrazíme.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">selections</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">countries_selection</span><span class="p">,</span> <span class="n">plotted_variable</span><span class="p">,</span> <span class="n">use_log_scale</span><span class="p">,</span> <span class="n">plot_type</span><span class="p">)</span>
+
+<span class="n">selections</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud chceme dát dvě komponenty vedle sebe, dáme je do jedné řady nebo <code>Row</code>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">selections</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+    <span class="n">countries_selection</span><span class="p">,</span> <span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="n">plotted_variable</span><span class="p">,</span> <span class="n">plot_type</span><span class="p">),</span> <span class="n">use_log_scale</span>
+<span class="p">)</span>
+
+<span class="n">selections</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A teď už můžeme vybrané možnosti použít:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot_type</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
+    <span class="n">covid_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">covid_data</span><span class="p">[</span><span class="s2">"Country"</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">countries_selection</span><span class="o">.</span><span class="n">value</span><span class="p">)],</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">"Date"</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">plotted_variable</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"Country"</span><span class="p">,</span>
+    <span class="n">log_y</span><span class="o">=</span><span class="n">use_log_scale</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Provázání uživatelských vstupů a výstupu</h3>
+<p>Naší aplikaci teď chybí už jen "maličkost" - provázat uživatelské vstupy s výstupem tak, aby se výstup automaticky aktualizoval. 
+Aby se nám to podařilo, budeme muset náš kód zabalit do funkce, která aplikaci (dashboard) vytváří.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># argumenty funkce NEJSOU widgety</span>
+<span class="k">def</span> <span class="nf">create_dashboard</span><span class="p">(</span><span class="n">countries</span><span class="p">,</span> <span class="n">plot_variable</span><span class="p">,</span> <span class="n">plot_function</span><span class="p">,</span> <span class="n">log_y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">plot_type</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
+        <span class="n">covid_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">covid_data</span><span class="p">[</span><span class="s2">"Country"</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">countries</span><span class="p">)],</span>
+        <span class="n">x</span><span class="o">=</span><span class="s2">"Date"</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">plot_variable</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">"Country"</span><span class="p">,</span>
+        <span class="n">log_y</span><span class="o">=</span><span class="n">log_y</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Funkci můžeme vyzkoušet a předat jí aktuální hodnoty z widgetů. Tím ale stále ještě <em>nemáme interaktivní aplikaci</em>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">create_dashboard</span><span class="p">(</span>
+    <span class="n">countries</span><span class="o">=</span><span class="n">countries_selection</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">plot_variable</span><span class="o">=</span><span class="n">plotted_variable</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">plot_function</span><span class="o">=</span><span class="n">plot_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">log_y</span><span class="o">=</span><span class="n">use_log_scale</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tím zbývajícím kouskem skládačky k interaktivní aplikaci je funkce <code>interact</code>. Ta nám "obalí" naši funkci, v tomto případě <code>create_dashboard</code>, a sváže hodnoty widgetů se vstupními argumenty naší funkce (která generuje grafický výstup na základě hodnot vstupních parametrů).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># nejprve interaktivní dashboard vytvoříme</span>
+<span class="n">interactive_dashboard</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span>
+    <span class="n">create_dashboard</span><span class="p">,</span>
+    <span class="n">countries</span><span class="o">=</span><span class="n">countries_selection</span><span class="p">,</span>
+    <span class="n">plot_variable</span><span class="o">=</span><span class="n">plotted_variable</span><span class="p">,</span>
+    <span class="n">plot_function</span><span class="o">=</span><span class="n">plot_type</span><span class="p">,</span>
+    <span class="n">log_y</span><span class="o">=</span><span class="n">use_log_scale</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># a poté zobrazíme</span>
+<span class="n">interactive_dashboard</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Teď si zkuste měnit hodnoty pomocí widgetů - výstup se bude hned měnit (tedy skoro hned - takto vytvořená aplikace není nejsvižnější - to je drobá daň za jednoduchust implementace).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Z notebooku k samostatné aplikaci</h2>
+<p>Zatím jsi si vše zprovoznil(a) ve svém notebooku. To je výborné, ale má to pořád ještě drobnou nevýhodu - poslat takový notebook někomu, kdo si pod pojmem Python vybaví pouze 🐍, je riskantní. Když totiž jako nápovědu uslyší, že si toho hada má pustit, nejspíš se lekne a uteče. Místo toho bychom raději předali jen odkaz na webovou "stránku", tedy na náš dashboard.</p>
+<p>Začneme tím, že si aplikaci spustíme na svém počítači. To jde naštěstí velice jednoduše, dokonce můžeme použít přímo tento notebook. Jen musíme nějak vysvětlit, co přesně v té aplikaci má být. Na to slouží metoda <code>servable</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">interactive_dashboard</span><span class="o">.</span><span class="n">servable</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Můj COVID-19 dashboard"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V notebooku se nic nezměnilo, můžeme ale spustit notebook jako samostatnou aplikaci. V příkazové řádce to zajistí</p>
+<div class="highlight"><pre><code>bokeh serve dashboards.ipynb</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zobrazí se nám něco jako</p>
+<div class="highlight"><pre><code>2020-04-13 09:31:13,787 Starting Bokeh server version 1.4.0 (running on Tornado 6.0.4)
+2020-04-13 09:31:13,799 User authentication hooks NOT provided (default user enabled)
+2020-04-13 09:31:13,802 Bokeh app running at: http://localhost:5006/dashboards
+2020-04-13 09:31:13,802 Starting Bokeh server with process id: 9220</code></pre></div><p>Na třetím řádku jistě rozeznáte webový odkaz. Pravděpodobně tam bude <a href="http://localhost:5006/dashboards">http://localhost:5006/dashboards</a>. Pokud tuto adresu otevřeš v prohlížeči, zobrazí se poslední verze našeho COVID dashboardu - ta, u které jsme zavolal metodu <code>.servable()</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Publikujeme na internet</h3>
+<p>V principu bychom mohli spustit aplikaci u sebe na počítači tak, aby ji mohli používat i další uživatelé. Na vnitřní síti (domácí, pracovní) by to bylo snadné (i když na pracovní síti a pracovním počítači by tomu mohla bránit bezpečnostní nastavení), přístup z vnějšího internetu by už byl komplikovanější.</p>
+<p>Naštěstí nejsme v podobné situaci sami :) Takže existují více či méně složité a sofistikované způsoby, jak aplikaci spustit na nějakém serveru (v cloudu) a zpřístupnit z internetu. My si ukážeme, jak to funguje na <a href="https://heroku.com">Heroku</a>. Podobné služby nabízí třeba AWS (Elastic Beanstalk), Google App Engine nebo Dokku on Digital Ocean. Výhodou Heroku je jednoduchost a možnost bezplatných služeb, nevýhodou pak rychle rostoucí cena a omezené možnosti.</p>
+<p>Budeme postupovat v podstatě podle průvodce <a href="https://devcenter.heroku.com/articles/getting-started-with-python">Getting started with Python</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Registrace a klient Heroku</h3>
+<p>Než začneme, je potřeba:</p>
+<ol>
+<li>Založit si bezplatný účet na <a href="https://signup.heroku.com/signup/dc">https://signup.heroku.com/signup/dc</a>.</li>
+<li>Nainstalovat Git:<ul>
+<li>Windows: <a href="https://gitforwindows.org/">https://gitforwindows.org/</a></li>
+<li>Mac OS: <a href="https://sourceforge.net/projects/git-osx-installer/files/">https://sourceforge.net/projects/git-osx-installer/files/</a> (případně další možnosti popsané na <a href="https://www.atlassian.com/git/tutorials/install-git">https://www.atlassian.com/git/tutorials/install-git</a>).</li>
+<li>Linux: Nejspíš tam už bude nebo určitě víš jak na to :)</li>
+</ul>
+</li>
+<li>Alespoň základní konfigurace Gitu. V příkazovém řádku (<em>vyplňte své jméno a email</em>):<div class="highlight"><pre><code>git config --global user.name "Moje Jméno"
+git config --global user.email "muj@email.com"</code></pre></div></li>
+<li>Nainstalovat si Heroku klienta:<ul>
+<li>Postupujte podle <a href="https://devcenter.heroku.com/articles/heroku-cli">https://devcenter.heroku.com/articles/heroku-cli</a></li>
+</ul>
+</li>
+</ol>
+<p>Instalaci ověříme v příkazové řádce pomocí:</p>
+<ol>
+<li><p>Git:</p>
+<div class="highlight"><pre><code>git config --list</code></pre></div><p>Mělo by se objevit něco na způsob</p>
+<div class="highlight"><pre><code>user.name=Moje Jméno
+user.email=muj@email.com</code></pre></div></li>
+<li><p>Heroku:</p>
+<div class="highlight"><pre><code>heroku --version</code></pre></div><p>Tady by mělo být výstupem zhruba</p>
+<div class="highlight"><pre><code>heroku/7.39.2 darwin-x64 node-v12.13.0</code></pre></div></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Go-live</h3>
+<p>Teď budeme chvilku pracovat v příkazové řádce. Než začnete psát příkazy, ujistěte se, že jste ve složce s tímto netebookem. Ideálně by v této složce měl být (zatím) jen tento notebook. Pokud to tak není, můžete si vytvořit složku novou a notebook tam přesunout nebo zkopírovat.</p>
+<p>A můžeme začít:</p>
+<ol>
+<li><p>Musíme vytvořit Git repozitář:</p>
+<div class="highlight"><pre><code>git init</code></pre></div></li>
+<li><p>Pro Heroku potřebuje vytvořit soubor s názvem <code>Procfile</code>. Ten velice jednoduše říká, co že to vlastně chceme spustit. Bude tam příkaz <code>bokeh serve</code> (tak jako jsme spouštěli aplikaci lokálně) s pár přepínači navíc. Konkrétně soubor <code>Procfile</code> musí obsahovat tento řádek:</p>
+<div class="highlight"><pre><code>web: bokeh serve --port=$PORT --allow-websocket-origin="*" --address=0.0.0.0 dashboards.ipynb</code></pre></div></li>
+<li><p>Dalším souborem, který potřebujeme, je <code>requirements.txt</code>. O tom jste už možná slyšeli(y) - obsahuje seznam Python balíčků, které potřebuje daný Python projekt. Heroku tento soubor použije, aby před spuštěním aplikace nainstaloval vše potřebné. Pro náš dashboard musí býv v <code>requirements.txt</code> toto:</p>
+<div class="highlight"><pre><code>bokeh==2.0.2
+panel==0.9.5
+pandas==1.0.3
+notebook==6.0.3
+plotly==4.5.4</code></pre></div></li>
+<li><p>Soubory už máme připravené, potřebujeme je teď přidat do Git repozitáře. Na to použij tyto dva příkazy:</p>
+<div class="highlight"><pre><code>git add dashboards.ipynb Procfile requirements.txt
+git commit -v -m "první verze dashboardu"</code></pre></div></li>
+<li><p>A teď už můžeme publikovat. Tedy nejdříve se přihlásit pomocí</p>
+<div class="highlight"><pre><code>heroku login</code></pre></div><p>(Postupujte dle pokynů - otevře se přihlašovací stránka ve webovém prohlížeči, která vás vyzve k zadání přihlašovacích údajů.)</p>
+</li>
+<li><p>Pak ještě vytvořit Heroku aplikaci pomocí</p>
+<div class="highlight"><pre><code>heroku create</code></pre></div></li>
+<li><p>A nakonec už opravdu vypustit aplikaci na internet pomocí</p>
+<div class="highlight"><pre><code>git push heroku master</code></pre></div></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud vše půjde dobře, tento krok bude chvíli trvat. Postupně se bude vypisovat, co pro nás Heroku dělá:</p>
+<div class="highlight"><pre><code>Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 940.72 KiB | 2.40 MiB/s, done.
+Total 4 (delta 2), reused 0 (delta 0)
+remote: Compressing source files... done.
+remote: Building source:
+remote:
+remote: -----&gt; Python app detected
+remote: -----&gt; Clearing cached dependencies
+remote: -----&gt; Installing python-3.8.2
+remote: -----&gt; Installing pip
+remote: -----&gt; Installing SQLite3
+remote: Sqlite3 successfully installed.
+remote: -----&gt; Installing requirements with pip
+remote:        Collecting bokeh==1.4.0
+remote:          Downloading bokeh-1.4.0.tar.gz (32.4 MB)
+remote:        Collecting panel==0.8.3
+...</code></pre></div><p>Nakonec by se mělo objevit něco jako</p>
+<div class="highlight"><pre><code>remote: -----&gt; Launching...
+remote:        Released v20
+remote:        https://banana-sundae-72768.herokuapp.com/ deployed to Heroku
+remote:
+remote: Verifying deploy... done.
+To https://git.heroku.com/banana-sundae-72768.git
+   2652f01..8d65612  master -&gt; master</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Důležitý je odkaz pod řádkem "Released v20". To je totiž adresa, na které je náš dashboard dostupný "odkudkoli z internetu". Buď si ji zkopírujte do prohlížeče nebo použijte příkaz <code>heroku open</code>.</p>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-praha-jaro/sessions/dashboards/">↑ <span class="d-none d-sm-inline">Lekce: Interaktivní vizualizace a aplikace (virtuální)</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-praha-jaro/pydata/dashboards-2/"><span class="d-none d-sm-inline">Interaktivní vizualizace a aplikace II.</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2020-pydata-praha-jaro/lessons/pydata/dashboards/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Jakub Urban, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

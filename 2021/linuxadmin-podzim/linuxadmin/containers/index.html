@@ -1,0 +1,601 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Kontejnery
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/containers/">Kontejnery</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/containers/">Kontejnery</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Kontejnery</h1>
+<p>Když vývojář naprogramuje nový program, na jeho počítači to zpravidla funguje dobře. 
+Až ho má hotový a chce se o něj podělit s kolegy, dost často zjistí, že to u kolegů neběží,
+protože jim zapomněl říct o důležité změně konfigurace v <code>/etc</code> nebo o potřebných balíčcích.
+A nebo mají úplně jiný operační systém.
+Tento problém se stává natolik často, že zasloužil si vlastní vtip: <em>works on my machine</em>.
+Systémovým administrátorům podobné situace vadí a kontejnery mají za cíl to řešit.</p>
+<p>Jak je to možné?
+Kontejner neobsahuje jen program, ale celý souborový systém – <code>/</code> a všechno v něm, se všemi knihovnami a nastavením.
+Při spuštění kontejneru se pak pro konkrétní porces nastaví jiný <em>kořenový adresář</em> (<code>/</code>) než pro zbytek systému.
+Tento tedy uvidí úplně jiné soubory než zbytek systému.</p>
+<p>Tenhle souborový systém pak můžeš vzít, zabalit do archivu a poslat někomu jnému,
+u koho se pak bude spuštěný program chovat stejně.
+V reálu je potřba nasdílet trochu víc informací než jen ten souborový systém,
+ale i „to navíc“ se dá do archivu přidat.</p>
+<h2>Sjednocení a izolace</h2>
+<p>Kontejnery poskytují <strong>sjednocené</strong> prostředí: okolní systém neovlivňuje program, který tak na všech systémech poběží stejně.
+Zároveň řeší i <strong>izolaci</strong> prostředí: puštěný program neovlivňuje zbytek systému.</p>
+<p>Pokud nějakému programu nevěříš stoprocentně a nechceš, aby ti napáchal problémy v počítači,
+můžeš ho spustit v kontejneru, který zařídí izolaci.
+Cokoli se takový proces snaží provést se provede jen v izolovaném prostředí kontejneru.</p>
+<p>Izolace je trochu složitější než jen nastavení jiného kořenového adresáře.
+Programu puštěnému v kontejneru může systém ukázat jiný seznam <strong>uživatelů</strong>:
+<code>root</code> (uživatel číslo 0) v kontejneru může být pro zbytek systému obyčejný uživatel,
+který má jen omezená oprávnění.
+Můžeš změnit <strong>síťování</strong> - nastavit, jestli proces může komunikovat s internetem, nebo jen s konkrétními programy/pčítači.
+Můžeš určit kolik <strong>prostředků</strong> smí procesy v kontejneru spotřebovat,
+třeba max. 2kB paměti a 30s procesorového času.
+Když bude chtít víc, tak ho systém ukončí.</p>
+<p>Všechna omezení kontejneru se pak vztahují i na případné další procesy,
+které ten první spustí.</p>
+<h2>Kontejnery vs. virtuální stroje</h2>
+<p>Teoreticky by tedy kontejnery měly být bezpečné: mají svůj vlastní píseček a neměly by sahat na zbytek systému.
+Je tu ale vždy možnost bezpečnostních chyb v samotném kontejnerovém systému.
+Mnohem bezpečnější je v tomto ohledu virtuální počítač, který <em>simuluje</em> celý stroj – disk, obrazovku, procesor, atd.
+Umožňuje ti spustit jiný operační systém, nebo dokonce systém určený pro jiný procesor.
+(Znáš-li emulátory herních konzolí: to jsou taky virtuální počítače.)</p>
+<p>Virtuální stroje ovšem mají podstatnou nevýhodu: jsou relativně velké (na disku i v paměti) a pomalejší než kontejnery.
+Kontejnery totiž sdílejí jádro operačního systému s „hostitelem“.
+A mezi sebou toho mohou sdílet víc.</p>
+<div class="admonition note"><p class="admonition-title">Jiné operační systémy</p>
+<p>Kontejnery jdou spouštět i na Windows nebo macOS, kde není linuxové jádro.
+Na nich se použije virtuální stroj s Linuxem, ve kterém se pak spouští
+jednotlivé kontejnery.</p>
+</div><h2>Sdílení vrstev</h2>
+<p>Díky kontejneru můžeš vzít program s celým prostředím a pustit ho na jiném systému.
+Zde bývá problém, protože operační systémy bývají velké.
+Například všechny knihovny – všechno v <code>/usr/lib*</code> – které jsou potřeba k běhu programu v kontejneru musí být součástí kontejneru.
+Nemůžeš prostě použít kousky z hostitelského počítače – ty by nemusely být kompatibilní.
+Všechno kromě jádra se musí do kontejneru nakopírovat.</p>
+<p>Teď si představ, že máš na počítači 10 různých služeb, tři databáze,
+dva webové servery a aplikaci, a pro každý druh této služby potřebuješ mít zvlášť celý souborový systém. 
+Je toho celkem hodně.</p>
+<p>A proto kontejnery používají <em>vrstvy</em>.
+Ukazovali jsme si, jak fungují <a href="/2021/linuxadmin-podzim/linuxadmin/mount/">zařízení a souborové systémy</a> a že existuje spousta jejich druhů.</p>
+<p>Jeden ze zvláštních souborových systémů je <code>overlayfs</code>.
+Je zvláštní v tom, že má všechna data uložená ve dvou <em>jiných</em> souborových systémech,
+tzv. vrstvách:</p>
+<ul>
+<li>V první je základní souborový systém, který je pouze pro čtení.</li>
+<li>Do druhé se ukládají změny – rozdíl oproti první vrstvě.</li>
+</ul>
+<p>Když je potřeba v <em>overlayfs</em> přečíst soubor,
+hledá nejprve ve druhé vrstvě, a pokud se tam najde, přečte se z ní.
+Pokud se nenajde, přečte se z první vrstvy.</p>
+<p>Když je potřeba do souboru zapsat, zapisuje se pouze do druhé vrstvy.</p>
+<div class="admonition note"><p class="admonition-title">Paralela s novelizací zákonů</p>
+<p>Zákony se většinou po vydání nemění.
+Pokud vznikne potřeba změnit určitý odstavec (nebo zákon zrušit),
+zveřejňuje se novela – aktualizace konkrétního paragrafu.
+Když chceš znát <em>aktuální znění</em> zákona, musíš se podívat do obou dokumentů.</p>
+</div><p>K čemu to je dobré?
+Představ si že máš systém, na němž má běžet 5 kontejnerů: 1 databáze a 4 webové servery,
+můžeš mít jeden základ pro všechny – základní systém.
+Potom vytvoříš dva <code>overlayfs</code>, které <em>oba</em> používají tuto základní vrstvu, ale v jednom doinstaluješ webový server a ve druhém databázi.
+Teď si představ, že máš dvě webové aplikace:
+dva z webových serverů potřebují knihovnu Flask a zbylé dva Django.
+Vezmeš vrstvu se základním webovým serverem a nad ním vytvoříš další dva <code>overlayfs</code>: jeden pro Flask a druhý pro Django.
+Společné části systému tak můžeš sdílet mezi všemi kontejnery, které je potřebují.</p>
+<div class="highlight"><pre><code>                 +------------------+         +---------------+
+                 |      Flask       |         |     Django    |
+                 +-+--------------+-+         +--+----------+-+
+                   |              |              |          |
+               +---v-+            |              |         +v----+
+               |     |            |              |         |     |
+               +-----+            |              |         +-----+
+                                  |              |
+    +-------------------+      +--v--------------v-+
+    |     Databáze      |      |        Web        |
+    +-+--------------+--+      +-----+----------+--+
+      |              |               |          |
+      |              |               |          |
+      |              |               |          |
++-----v-+          +-v---------------v--+     +-v------+
+|       |          |                    |     |        |
+|       |          |  Základní systém   |     |        |
+|       |          |                    |     |        |
++-------+          +--------------------+     +--------+</code></pre></div><p>Univerzální základní vrstvy, které jsou užitečné více lidem,
+se dají sdílet po internetu.</p>
+<h2>Docker Hub</h2>
+<p>Aktuálně nejpopulárnější implementace kontejnetů je <strong>Docker</strong>.
+Byl to první produkt který se v oblasti kontejnerizace masově prosadil.
+Pro spoustu uživatelů je synonymem pro kontejnery,
+i když existují i jiné technologie které dělají v podstatě to samé.</p>
+<p>Firma Docker, Inc. provozuje portál <a href="https://hub.docker.com/">Docker Hub</a>,
+kde jsou ke stažení obrazy kontejnerů – ony užitečné základní vrstvy.
+Kdokoli si může nějakou vytvořit a na Docker Hubu ji sdílet.</p>
+<p>Podívej se na stránku <a href="https://hub.docker.com/_/httpd">kontejner s <code>httpd</code></a>:
+uvidíš popis, odkazy na dokumentaci a různé verze, a podobně.</p>
+<h2>Docker a Podman</h2>
+<p>Docker můžeš nainstalovat z balíčku <code>docker</code>.
+Po instalaci je potřeba spustit službu stejného jména.</p>
+<p>Jiná implementace kontejnerů se jmenuje <em>Podman</em>.
+Sice není tak populární, ale na Fedoře funguje trošku líp.
+Výhodou je, že nepotřebuje běžící službu (démona), který běží pod
+superuživatelským účetm a k jehož ovládání
+potřebuješ být ve speciální skupině.
+Jinak se ale používá úplně stejně,
+jen si typicky budeš muset vybrat jestli
+chceš kontejnery stahovat z Docker Hubu nebo odjinud.
+Nainstaluj si tedy ten:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf install podman
+</pre></div><p>Všechny příkazy níže budou fungovat i s <code>docker</code> místo <code>podman</code>,
+pokud máš na systému <code>docker</code> nastavený.</p>
+<div class="admonition note"><p class="admonition-title">Instalace Dockeru</p>
+<p>Chceš-li použít Docker, instalace je následující:</p>
+<ul>
+<li>Nainstaluj si balíček <code>docker</code></li>
+<li><p>Pusť příslužnou službu:</p>
+<div class="highlight"><pre><span></span><span class="go"> sudo systemctl start docker</span>
+</pre></div></li>
+<li><p>Přidej se do skupiny <code>docker</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp"> $ </span>sudo usermod -a -G docker <span class="k">$(</span>whoami<span class="k">)</span>
+</pre></div></li>
+<li><p>Znovu se přihlaš, aby se změna skupiny projevila.
+Buď se odhlaš ze systému a znovu přihlaš,
+nebo pro jeden terminál použij <code>su -</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su - <span class="k">$(</span>whoami<span class="k">)</span>
+</pre></div></li>
+</ul>
+<p>Teď můžeš pokračovat dál, jen <code>podman</code> zamněň za <code>docker</code>, např.
+<code>docker pull httpd</code>.</p>
+</div><h2>Stažení obrazu</h2>
+<p>Když máš nainstalováno, můžeš si stáhnout si základní obraz kontejneru
+(základní vrstvu souborového systému), třeba pro webový server – <code>httpd</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman pull httpd
+</pre></div><p>V menu vyber kontejner z Docker Hubu – <code>docker.io</code> (<code>/library/httpd:latest</code>).</p>
+<p>Příkaz <code>pull</code> stáhl spoust tzv. <em>blobů</em>.
+To jsou jednotlivé vrstvy: základní systém, aktualizace k němu, webový server, atd.
+Pokud už nějakou máš staženou z dřívějška (třeba pro jiný kontejner), rovnou se použije, nebude se stahovat podruhé.</p>
+<h2>„Jednosměrná“ izolace</h2>
+<p>Stahování pomocí <code>pull</code> ale často není potřeba: když chceš spustit obraz
+který ještě nemáš stáhne se automaticky.
+Zkus si to s jiným kontejnerem: <code>ubuntu</code>,
+tedy <a href="https://hub.docker.com/_/ubuntu">základním kontejnerem</a>
+pro tuto <a href="https://ubuntu.com/">distribuci Ubuntu</a>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman run -it ubuntu
+<span class="gp">root@934745e0585a:/#
+</span></pre></div><p>Příkaz výše stáhne kontejner Ubuntu a v něm spustí Bash.</p>
+<p>Přepínače <code>-it</code> připojí ke kontejneru aktuální terminál,
+abys Bash mohla ovládat.</p>
+<p>Zkus to – spusť následující příkazy:</p>
+<ul>
+<li><p>Ověření, že vše funguje jak má:</p>
+<div class="highlight"><pre><span></span><span class="gp">root@934745e0585a:/# </span><span class="nb">echo</span> Ahoj!
+<span class="go">Ahoj!</span>
+</pre></div></li>
+<li><p>Kontrola že adresář <code>home</code> je prázdný – jsi v izolovaném prostředí:</p>
+<div class="highlight"><pre><span></span><span class="gp">root@934745e0585a:/# </span>ls -a /home
+<span class="go">.  ..</span>
+</pre></div></li>
+<li><p>Kontrola že jsi <code>root</code>, uživatel číslo 0:</p>
+<div class="highlight"><pre><span></span><span class="gp">root@934745e0585a:/# </span>id
+<span class="go">uid=0(root) gid=0(root) groups=0(root)</span>
+</pre></div></li>
+<li><p>Seznam procesů a PID aktuálního shellu:</p>
+<div class="highlight"><pre><code>root@934745e0585a:/# ps -e
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.1   4116  3560 pts/0    Ss   14:08   0:00 bash
+root           8  0.0  0.1   5904  2944 pts/0    R+   14:17   0:00 ps aux
+root@934745e0585a:/# echo $$
+1</code></pre></div><p>Na systému neběží nic než Bash a to co z něj spustíš.</p>
+<p>Bash má PID 1.
+Na normálním systému by měl PID 1 <code>systemd</code>, ale tady žádní démoni neběží.</p>
+</li>
+</ul>
+<p>A nakonec pusť <code>sleep</code>, na který se podíváme „zvenku“.</p>
+<div class="highlight"><pre><span></span><span class="gp">root@934745e0585a:/# </span>sleep <span class="m">1000</span>
+</pre></div><p>Otevři si v jiném terminálu (svého systému) příkaz <code>htop</code> a pomocí <kbd>F5</kbd> si zobraz stromový výpis. 
+Výpis vyfiltruj aby ukazoval jen program <code>sleep 1000</code> z kontejneru (<kbd>F4</kbd>, <code>sleep</code>, <kbd>Enter</kbd>).
+Všimni si, že běží pod <em>tvým</em> uživatelským účtem, i když uvnitř kontejneru jsi <code>root</code>.</p>
+<div class="admonition note"><p><code>htop</code> jsme instalovali minule; jestli ho nemáš, nainstalij ho:
+<code>sudo dnf install htop</code>.</p>
+</div><p>V kontejneru běží normální procesy, které „vidíš zvenku“.
+Izolace spočívá v tom, že mají nastavený jiný adresář <code>/</code>, přenastavené uživatelské účty, a podobně.</p>
+<p>Pokud bys to samé udělala s virtuálním počítačem, najdeš na hostitelském systému jen jeden proces,
+který simuluje virtuální procesor, disk, jádro systému a <em>všechny</em> procesy v něm.
+Procesy ve virtuálním stroji tedy na hostitelském systému nenajdeš – izolace je tam úplnější.</p>
+<p>Neúplná („jednosměrná“) izolace má svoje výhody.
+Můžeš třeba ukončit proces v kontejneru z hlavního systému:
+přímo v <code>htop</code> zmáčkni <kbd>k</kbd><kbd>Enter</kbd>, což pošle signál <code>SIGTERM</code>.</p>
+<h2>Instalace v Ubuntu</h2>
+<p>Zkus teď zjistit IP adresu kontejneru.</p>
+<p>Když se pokusíš použit příkaz <code>ip a</code>, zjistíš, že tady není a musí se doinstalovat.
+To se na Ubuntu dělá jinak než na Fedoře – dvěma příkazy:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>apt-get update
+<span class="gp"># </span>apt-get install iproute2
+</pre></div><p>Na „normální“ verzi Ubuntu, nainstalované pro uživatele by příkaz <code>ip</code> byl k dispozici.
+Systémy určené pro kontejnery jsou ale „ořezané“ – mnohem menší než "plné" distribuce.
+Všechno co systémový administrátor pro konkrétní použití potřebuje je potřeba doinstalovat.
+(Nebo použít vrstvu kde už je to doinstalované – jako <code>httpd</code>.)
+Údržba takového systému je pak mnohem méně náročná než velkého „kombajnu“.
+Čím méně nainstalovaných programů v kontejneru je, tím bezpečnější by to mělo být.</p>
+<div class="admonition note"><p>V „normální“ verzi Ubuntu potřebuje instalace <code>sudo</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo apt-get update
+<span class="gp">$ </span>sudo apt-get install iproute2
+</pre></div><p>V kontejneru jsi <code>root</code>, takže není potřeba přidávat <code>sudo</code>.
+A navíc tu ani <code>sudo</code> není k dispozici, musí se taky instalovat zvlášť.</p>
+</div><p>Pro vyskočení z ubuntí příkazové řádky stačí ukončit terminál,
+například příkazem <code>exit</code> nebo zkratkou pro konec vstupu, <kbd>Ctrl</kbd>+<kbd>D</kbd>.</p>
+<h2>Správa obrazů a kontejnerů</h2>
+<p>V téhle oblasti se setkáš se dvěma termíny, které se často pletou:</p>
+<ul>
+<li><strong>Obraz</strong> (angl. <em>image</em>) obsahuje souborový systém a další
+informace, které potřebuješ ke spuštění kontejneru.
+(Například program který se má spustit.)
+Obraz můžeš stáhnout nebo s někým nasdílet.
+Jednou vytvořený obraz už se nedá měnit,
+ale dá se zdílet mezi několika kontejnery.</li>
+<li><strong>Kontejner</strong> je něco co běží s daným obrazem.
+Může zapisovat nová data (do vlastní <em>overlayfs</em> vrstvy).
+Kontejner můžeš spustit nebo zastavit.</li>
+</ul>
+<p>Pomocí příkazu <code>podman ps</code> si můžeš vypsat seznam všech stažených obrazů:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman images
+<span class="go">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span>
+<span class="go">httpd               latest              2ae34abc2ed0        13 days ago         165MB</span>
+<span class="go">ubuntu              latest              775349758637        5 weeks ago         64.2MB</span>
+</pre></div><p>A příkaz <code>podman ps</code> vypíše všechny právě běžících kontejnerů.
+Pokud ti právě v jiném terminálu běží Ubuntu, uvidíš něco jako:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman ps
+<span class="go">CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                      PORTS               NAMES</span>
+<span class="go">c9f835211bbb        ubuntu              "/bin/bash"         39 seconds ago      Up 38 seconds                                   focused_khayyam</span>
+</pre></div><p>Když kontejner doběhne, zastaví se, ale zůstane na disku.
+To se může občas hodit – když proces v kontejneru skončí s chybou,
+budeš možná chtít zkopírovat data, která zapsal na disk.</p>
+<p>Výpos všech kontejnerů – i těch které neběží – dostaneš pomocí přepínače <code>--all</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman ps --all
+<span class="go">CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                      PORTS               NAMES</span>
+<span class="go">4a523c41344d        ubuntu              "/bin/bash"         10 minutes ago      Exited (0) 2 minutes ago                        nostalgic_williams</span>
+</pre></div><p>Podle ID můžeš kontejner znovu „oživit“
+(pustit v něm nový proces, pro Ubuntu Bash).
+Slouží k tomu příkaz <code>start</code>.
+Přepínač <code>--attach</code> připojí standardní vstup a výstup:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman start --attach 4a523c41344d
+<span class="gp">4a523c41344d:/# </span>ls
+<span class="go">bin   dev  home  lib32  libx32  mnt  proc  run   srv  tmp  var</span>
+<span class="go">boot  etc  lib   lib64  media   opt  root  sbin  sys  usr</span>
+<span class="gp">4a523c41344d:/# </span><span class="nb">exit</span>
+</pre></div><p>Zastavené kontejnery můžeš smazat pomocí:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman rm &lt;container-id&gt;
+</pre></div><p>Obdobně smažeš obrazy (ale funguje to jen pokud příslušný obraz nic nepoužívá):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman image rm &lt;image-id&gt;
+</pre></div><p>Zastavené kontejnery zabírají místo na disku.
+Když budeš chtít kontejner po doběhnutí rovnou smazat,
+spusť ho (<code>run</code>) s přepínačem <code>--rm</code>.</p>
+<h2>Webový server v kontejneru</h2>
+<p>Zkus místo <code>ubuntu</code> pustitkontejner s webovým serverem:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman run -it --rm httpd
+<span class="go">AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message</span>
+<span class="go">AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message</span>
+<span class="go">[Sun Dec 13 15:35:46.045992 2020] [mpm_event:notice] [pid 1:tid 139871236002944] AH00489: Apache/2.4.41 (Unix) configured -- resuming normal operations</span>
+<span class="go">[Sun Dec 13 15:35:46.057586 2020] [core:notice] [pid 1:tid 139871236002944] AH00094: Command line: 'httpd -D FOREGROUND'</span>
+</pre></div><p>Image <code>httpd</code> je nastaven tak, že nepustí <code>bash</code>, ale spustí přímo server <code>httpd</code> hned na popředí.
+Nejsou tu potřeba žádní démoni: jediný úkol toho kontejneru je pustit webový server, a přesně to dělá. 
+Když <code>httpd</code> ukončíš (<kbd>Ctrl</kbd>+<kbd>C</kbd>), ukončí se i kontejner (a protože používáš přepínač <code>--rm</code>, všechno v něm se smaže).</p>
+<p>Místo <code>-it</code> můžeš kontejner spustit taky s přepínačem <code>-d</code> (z angl. <em>detached</em>, odpojený),
+což znamená, že se spustí na pozadí.
+Můžeš tak spustit kontejnerů víc.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman run -d --rm httpd
+<span class="gp">$ </span>podman run -d --rm httpd
+<span class="gp">$ </span>podman run -d --rm httpd
+<span class="gp">$ </span>podman run -d --rm httpd
+</pre></div><p>Až je budeš chtít smazat, použij příkazy</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman stop &lt;container-id&gt;
+<span class="gp">$ </span>podman rm &lt;container-id&gt;
+</pre></div><p>(ID kontejneru, <code>&lt;container-id&gt;</code>, ti vypsal <code>podman run</code>.
+Můžeš ho zjistit i zpětně z <code>podman ps --all</code>.)</p>
+<p>My se ale chceme podívat do webového serveru, takže spustíme v kontejneru <code>bash</code>.
+Ne na pozadí (<code>-d</code>), ale interaktivně s aktuálním terminálem (<code>-it</code>):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman run -it --rm httpd bash
+<span class="gp">root@f0a4bf04ccc6:/usr/local/apache2#
+</span></pre></div><p>Podívej se do adresáře <code>htdocs</code>. Je v něm soubor <code>index.html</code>, který obsahuje větu <em>It works!</em></p>
+<div class="highlight"><pre><span></span><span class="gp">root@8933505e2865:/usr/local/apache2# </span>ls
+<span class="go">bin  build  cgi-bin  conf  error  htdocs  icons  include  logs  modules</span>
+<span class="gp">root@8933505e2865:/usr/local/apache2# </span><span class="nb">cd</span> htdocs/
+<span class="gp">root@8933505e2865:/usr/local/apache2/htdocs# </span>ls
+<span class="go">index.html</span>
+<span class="gp">root@8933505e2865:/usr/local/apache2/htdocs# </span>cat index.html 
+<span class="go">&lt;html&gt;&lt;body&gt;&lt;h1&gt;It works!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</span>
+</pre></div><p>Kontejner teď zavři, napiš do příkazové řádky <code>exit</code>.
+Díky <code>--rm</code> se kontejner po ukončení automaticky smaže – ale to nevadí,
+nic podstatného jsme v něm nezměnili.
+Stránka <code>index.html</code> je součástí obrazu <code>httpd</code>, takže bude vidět
+z každého kontejneru spuštěného z tohoto obrazu.</p>
+<p>Na tu stránku s <em>It works</em> se chceme podívat „zvenku“,
+z virtuálního počítače na kterém který kontejner pouštíš. 
+Proto spusť <code>httpd</code> s přepínačem <code>-p</code>, který zveřejňuje porty:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman run -p <span class="m">8080</span>:80 --rm httpd
+</pre></div><p>Port <code>80</code> v kontejneru, se teď na tvém (virtuálním) počítači zpřístupní
+jako port <code>8080</code>.
+Když teď zadáš do prohlížeče adresu <code>localhost:8080</code> uvidíš stránku <em>It works!</em>.
+Případně se můžeš podívat z terminálu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>curl localhost:8080
+<span class="go">&lt;html&gt;&lt;body&gt;&lt;h1&gt;It works!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</span>
+</pre></div><h2>Připojení adresáře</h2>
+<p>Dále si zkusíme připojit nějaký vlastní adresář dovnitř souborového systému v kontejneru.
+Zruš běžící <code>httpd</code> kontejner.</p>
+<p>Nejdříve si vytvoř prázdný adresář a v něm soubor <code>index.html</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir ~/container_htdocs
+<span class="gp">$ </span><span class="nb">cd</span> ~/container_htdocs
+<span class="gp">$ </span><span class="nb">echo</span> Ahoj! &gt; index.html
+</pre></div><p>A teď spusť kontejner s přepínačem <code>-v</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman run -p <span class="m">8080</span>:80 -v ~/container_htdocs:/usr/local/apache2/htdocs/:Z --rm httpd
+</pre></div><p>Když teď obnovíš stránku v prohlížeči, uvidíš <code>Ahoj!</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>curl localhost:8080
+<span class="go">Ahoj!</span>
+</pre></div><p>Jak to funguje?
+Pusť si opět Bash, ale se zpřístupněným adresářem, a v něm <code>findmnt</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman run -p <span class="m">8080</span>:80 -v ~/container_htdocs:/usr/local/apache2/htdocs/:Z -it --rm httpd bash
+<span class="gp"># </span>findmnt
+</pre></div><p>Zjistíš, že na cestě <code>/usr/local/apache2/htdocs</code> je <em>připojený</em> speciální
+souborový systém, který dává kontejneru k dispozici adresář
+<code>/home/petr/container_htdocs</code> z hostitelského systému.</p>
+<p>Tenhle soubor můžeš dokonce změnit a změny se v hostitelském systému projeví.</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span><span class="nb">echo</span> ahoj ahoj&gt;/usr/local/apache2/htdocs/index.html
+</pre></div><div class="admonition warning"><p>K nasdílenému adresáři má kontejner přístup i pro zápis.
+Na to si dávej pozor, pokud aplikaci v kontejneru nevěříš.</p>
+</div><div class="admonition note"><p>Kvůli bezpečnostnímu systému SELinux je potřeba použít za nasdílenou cestou
+<code>:Z</code>, což kontejneru zpřístupní soubory z domovského adresáře – standardně to
+totiž je z bezpečnostních důvodů zakázané.
+Nejde takto zpřístupnit <em>celý</em> domovský adresář – opět z bezpečnostních důvodů.</p>
+<p>Když místo <code>Z</code> na konci použiješ <code>O</code>, použije se dočasný <em>overlayfs</em>, takže
+kontejner sice může do daného adresáře zapisovat, ale všechny změny
+se po zastavení kontejneru zahodí.
+Takhle nasdílený adresář (základní vrstvu) ale neměň – to by mohlo mít
+nečekané následky.</p>
+</div><h2>Dockerfile</h2>
+<p>Existují způsoby, jak udělat nový obraz kontejneru.
+Asi nejpoužívanejší používá soubor Dockerfile (nebo neutrálnější <code>Containerfile</code>).</p>
+<p>V <em>novém adresáři</em> si vytvoř si soubor <code>Dockerfile</code> (s velkým písmenem na začátku).
+Do toho souboru zapíšeš jak nový obraz vyrobit.
+Dockerfile má své vlastní příkazy – <em>začni s kontejnerem A</em>, <em>na tohle místo dej soubor B</em>, <em>doinstaluj balíček C</em>, atd.</p>
+<p>Nový obraz bude založený na <code>httpd</code> a pro vytvoření se spustí jeden shellový příkaz:</p>
+<div class="highlight"><pre><span></span><span class="k">FROM</span> <span class="s">httpd</span>
+<span class="k">RUN</span> <span class="nb">echo</span> Ahoj &gt; /usr/local/apache2/htdocs/index.html
+</pre></div><p>Tím vznikne nový obraz disku, který bude až na jeden soubor stejný jako u <code>httpd</code>.</p>
+<p>Soubor ulož a vytvoř nový image příkazem <code>build</code> s několika argumenty:</p>
+<ul>
+<li>výsledek se označí (<code>-t</code>, angl <em>tag</em>) jménem <code>mujhttpd</code>, </li>
+<li>tečka na konci příkazu znamená místo, ve kterém se nachází Dockerfile,
+který se má použít k vytvoření nového image.
+Vstup pro <code>podman build</code> totiž není jen <code>Dockerfile</code>, ale celý adresář,
+který může obsahovat další pomocné soubory.</li>
+</ul>
+<p>Všechny příkazy z Dockerfile se postupně provedou
+a výsledek se uloží jako nový obraz:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman build -t mujhttpd .
+<span class="go">Sending build context to Docker daemon  3.072kB</span>
+<span class="go">Step 1/2 : FROM httpd</span>
+<span class="go"> ---&gt; 2ae34abc2ed0</span>
+<span class="go">Step 2/2 : RUN echo Ahoj &gt; /usr/local/apache2/htdocs/index.html</span>
+<span class="go"> ---&gt; 47e1060cde54</span>
+<span class="go">Successfully built 47e1060cde54</span>
+<span class="go">Successfully tagged mujhttpd:latest</span>
+</pre></div><p>Když teď spustíš svůj kontejner stejně jako před chvíli oficiální <code>httpd</code>,
+pomocí <code>curl</code> nebo prohlížeče si můžeš prohlédnout stránku s textem <strong>Ahoj!</strong>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman run -p <span class="m">8080</span>:80 -d --rm mujhttpd
+<span class="gp">$ </span>curl localhost:8080
+<span class="go">Ahoj!</span>
+</pre></div><p>Takový hotový kontejner se dá pak nahrát třeba na Docker Hub.</p>
+<h3>Build cache</h3>
+<p><code>podman build</code> využívá <em>cache</em> – ukládá si mezivýsledky.
+Po každém příkazu v <code>Dockerfile</code> se výsledný obraz uloží –
+viz identifikační číslo za <code>---&gt;</code> ve výstupu výše.
+Když na konec Dokerfile přidáš nový příkaz nebo změníš něco uprostřed,
+nezměněné příkazy ze začátku se nebudou provádět znovu.</p>
+<p>Můžeš to zkusit tak, že spustíš <code>podman build</code> znovu, beze změn.
+Ve výstupu se po přeskočených krocích objeví hláška <code>Using cache</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman build -t mujhttpd .
+<span class="go">STEP 1/2: FROM httpd</span>
+<span class="go">STEP 2/2: RUN echo Ahoj &gt; /usr/local/apache2/htdocs/index.html</span>
+<span class="go">--&gt; Using cache a72f2b49b848a35242d3b1258de163ea6bbb69a038090f13d76f59966890378c</span>
+<span class="go">COMMIT mujhttpd</span>
+<span class="go">--&gt; a72f2b49b84</span>
+<span class="go">Successfully tagged localhost/mujhttpd:latest</span>
+<span class="go">a72f2b49b848a35242d3b1258de163ea6bbb69a038090f13d76f59966890378c</span>
+</pre></div><h2>Vyčištění systému</h2>
+<p>Kontejnery (a hlavně obrazy) dokážou zabrat docela dost místa na disku,
+i když využívají sdílené vrstvy.
+Když se budeš chtít všeho zbavit, napřed zjisti jaké kontejnery běží:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman ps
+<span class="go">CONTAINER ID  IMAGE                           COMMAND           CREATED         STATUS             PORTS                 NAMES</span>
+<span class="go">0e753eec9815  docker.io/library/httpd:latest  httpd-foreground  32 minutes ago  Up 32 minutes ago                        happy_jennings</span>
+<span class="go">c33b1ebe3707  docker.io/library/httpd:latest  httpd-foreground  32 minutes ago  Up 32 minutes ago                        suspicious_cray</span>
+<span class="go">23649cdaef5c  docker.io/library/httpd:latest  httpd-foreground  32 minutes ago  Up 32 minutes ago                        romantic_allen</span>
+<span class="go">2649abd0dff0  docker.io/library/httpd:latest  httpd-foreground  28 minutes ago  Up 28 minutes ago  0.0.0.0:8080-&gt;80/tcp  ecstatic_mcclintock</span>
+</pre></div><p>Pak je všechny zastav:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman stop 0e753eec9815 c33b1ebe3707 23649cdaef5c 2649abd0dff0
+<span class="go">2649abd0dff0</span>
+<span class="go">0e753eec9815</span>
+<span class="go">c33b1ebe3707</span>
+<span class="go">23649cdaef5c</span>
+</pre></div><p>A pak použij příkaz na smazání všech zastavených kontejnerů,
+nepoužívaných obrazů a dalších dat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>podman system prune --all
+<span class="go">WARNING! This command removes:</span>
+<span class="go">    - all stopped containers</span>
+<span class="go">    - all networks not used by at least one container</span>
+<span class="go">    - all images without at least one container associated with them</span>
+<span class="go">    - all build cache</span>
+
+<span class="go">Are you sure you want to continue? [y/N] y</span>
+<span class="go">Deleted Containers</span>
+<span class="go">0e753eec9815e83d157f62e146a166e6e33f844c53cc22d924bc51ba3950d147</span>
+<span class="go">23649cdaef5cd1edd9159fad36274077312e38ad91969dc10f09f36e03bea722</span>
+<span class="go">337d48c6fdec05e3fc9e3e1a13da8c2ecc85447d88eb0e3f042c5e757560f07f</span>
+<span class="go">c33b1ebe370701b2c0d1df549442517dbd0e3aef857dda311450d68f5937a03c</span>
+<span class="go">Deleted Images</span>
+<span class="go">8362f2615893c70073d4b6576c884eade7f6ce81482780ac989d535b621750f9</span>
+<span class="go">ba6acccedd2923aee4c2acc6a23780b14ed4b8a5fa4e14e252a23b846df9b6c1</span>
+<span class="go">Total reclaimed space: 259.2MB</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/notes/terminal-color/">← <span class="d-none d-sm-inline">Barevný Vánoční bonus</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/containers/">↑ <span class="d-none d-sm-inline">Lekce: Kontejnery</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/sessions/containers/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/containers/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Karolina Surma a Petr Viktorin, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

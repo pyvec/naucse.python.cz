@@ -1,0 +1,682 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Python a jeho knihovny: Řízení paralelních programů — zámky, fronty, semafory
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/">Python a jeho knihovny</a>
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/parallel2/">Paralelní programování podruhé</a>
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/intro/locks_queues_semaphores/">Řízení paralelních programů — zámky, fronty, semafory</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Řízení paralelních programů — zámky, fronty, semafory</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dnes se ponoříme hlouběji do paralelního programování a ukážeme si hned několik způsobů, jak lze souběžně vykonávané úlohy řídit a tím předcházet celkem složitě odhalitelným problémům.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Problémy paralelního programování</h2>
+<h3>Deadlock</h3>
+<p>Deadlock je situace, kdy dokončení jedné akce závisí na dokončení druhé akce, ale druhá akce zase naopak závisí na té první. Takové úlohy na sebe čekají nekonečně dlouho a dojde k tzv. deadlocku.</p>
+<p>Typickým příkladem deadlocku z reálného světa je situace, kdy v dopravní špičce vjede do křižovatky spousta aut, aniž by ji mohli plynule projet. V takovém případě se celá křižovatka zasekne a pokud někdo nevzal rozum do hrsti a nevycouval na chvíli ven, stojí tam v deadlocku dodnes.</p>
+<h3>Vyhladovění (starvation)</h3>
+<p>Vyhladovění je situace, kdy vlákno či proces čeká na nějaké prostředky, které potřebuje k úspěšnému splnění úlohy, ale protože tyto prostředky jsou neustále obsazené, nedočká se jich a program nikdy neskončí.</p>
+<p>Představte si sami sebe stojící na křižovatce se stopkou. Pokud bude opravdu hustý provoz a nikdo vás nepustí, dojde k vyhladovění (a to i doslova :D), protože se nikdy nedostanete na hlavní cestu, která je neustále plně vytížená.</p>
+<h3>Souběh (race condition)</h3>
+<p>Souběh je situace, kdy více vláken najednou přistoupí ke sdíleným proměnným nebo zdrojům. Jednotlivá vlákna si pak mohou navzájem měnit data, což povede k nekonzistentním výsledkům.</p>
+<p>Pečete sušenky pro své kamarády a při ukládání do misky je počítáte, aby se dostalo na každého. V nestřeženém okamžiku vám je ale někdo v průběhu počítání začne ujídat. Počet upečených sušenek sice sedí a miska se zdá plná, ale minimálně jeden kamarád bude bez sušenky.</p>
+<p>Všechny výše zmíněné problémy se velmi těžko odhalují, protože se mimo jiné mohou objevit jen občas a za určitých specifických podmínek. Proto je daleko lepší jejich vzniku předcházet tak, že se naučíme vlákna a procesy řídit.</p>
+<p>Nejdříve si na velmi jednoduchém příkladu ukážeme, jak to vypadá, když vznikne souběh. Pro přehlednost budeme všechna vlákna implementovat jako vlastní třídu, která dědí ze třídy Thread.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Souběh více vláken</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+
+<span class="k">class</span> <span class="nc">Worker</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'|'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Implementace vlastního vlákna je velmi jednoduchá a není o moc delší než použití funkce. Hlavní výhodou je přehlednost a možnost funkcionalitu vlákna rozdělit do více metod.</p>
+<p>Minimální vlákno musí implementovat metodu <code>__init__</code>, která nám jej pomůže vytvořit, a metodu <code>run</code>, která se zavolá při jeho spuštění.</p>
+<p>Každé naše vlákno vypíše vedle sebe desetkrát podtržítko a svislítko a pak se ukončí. Představme si pro tentokrát, že je tohle naše kritická část aplikace a my potřebujeme, aby se tyto dvě operace (výpisy) provedly vždy najednou a nestalo se mezi nimi nic jiného.</p>
+<p>Funguje to?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Worker</span><span class="p">()</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>_|_|_|__|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_||__|_|_|_||_|_|_|_|_|_|_|_|__|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__|_|_|_|_|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|__|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_||__|_|_|_|_|_|_|_|_|_|_|_|_||_|_|_|_|_|__|_|_|_|_|_|_|_|_|_||_|_|_|_|_|__|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__||_|_|_|_|_|_|_|_|_|__|_||_|_|_|_|_|_|_|_|_|_|__|_|_|_|_|_|_||_|__|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__|_|_|_|__|_|_|_||_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|__|_|__|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|__|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_||___|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|___||_|_|_|_|_|_|_|_|_||_|_|__|_|_|___|_|_|_|_|_|_|_|_|_||||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|___|_|_|_|_|_|_|_|_|_||_||_|_|_|_|_|_|_|_|__|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|__||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__||_|_|_|_|_|_|_|__|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__|_|_|_|_|_|_|_|_|_|_|_|_|_||_|_|_|_|_|__|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|__|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|__|_|_||_|___|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__|_|_|_|_||__|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__|__|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|_|_||_|_|_|_|_|_|_|_|_|_|_|_|_|</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nefunguje. I když pro menší množství vláken by se mohlo zdát, že je vše v naprostém pořádku a problém by nám zůstal skryt. Na výpisu je vidět, že se někdy operace více vláken pomíchají a znaky se vypíšou v jiném než žádaném pořadí. A co kdyby se něco podobného stalo při práci s databází?</p>
+<p>S řešením přichází zámek.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Zámek (Lock)</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zámek je speciální objekt, který se určen ke sdílení mezi vlákny a který zajistí, že se pro danou sekci bude vykonávat vždy jen jedno vlákno. Volání <code>lock.acquire()</code> nám zajistí zamknutí zámku a <code>lock.release()</code> nám jej zase odemkne. Když bude chtít vlákno uzamknout zámek, který už uzamčený je, bude v tu chvíli zablokováno, dokud zámek nebude v jiném vláknu uvolněn.</p>
+<p>Zámek se používá pro ohraničení nějaké kritické sekce, kterou nesmí v jednu chvíli vykonávat více vláken. Tato sekce by ale měla být co nejmenší, aby ostatní vlákna mohla dělat práci okolo a nemusela čekat na odemknutí zámku.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+
+<span class="k">class</span> <span class="nc">Worker</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock</span><span class="p">):</span>
+        <span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">lock</span>
+    
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'|'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zámek se předává jako proměnná při vytváření vlákna a v rámci jeho běhu se popsaným způsobem použije.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Lock</span>
+
+<span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Worker</span><span class="p">(</span><span class="n">lock</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zámek se pro všechna vlákna vytvoří jen jeden a předá se jim jako argument.</p>
+<p>Na výsledku je vidět, že naše zámkem ohraničená kritická sekce se nyní opravdu vykonala vždy celá, aniž by byla přerušena jiným vláknem.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Rlock</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Co když se stane, že se v rámci jednoho vlákna zavolá vícekrát <code>lock.acquire()</code>? Problém je na světě, protože zámek je uzamknut, další volání <code>lock.acquire()</code> je tím pádem blokující a najednou je jediné vlákno, které bylo schopno zámek uvolnit zaseknuté v čekání samo na sebe.</p>
+<p>Tento problém řeší <code>Rlock</code>. <code>Rlock</code> je speciální případ zámku, který je možné si v rámci jednoho vlákna uzamknout vícekrát. Je si jen třeba dát pozor na to, že jej v rámci toho samého vlákna musíme i odemknout tolikrát, kolikrát byl uzamčen.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Fronta (Queue)</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zámek je dobrý na ohraničení kritické sekce, ve které se chceme vyhnout souběhu. Dalším palčivým problémem je distribuce práce mezi jednotlivá vlákna tak, aby každý díl práce zpracovalo jen jedno vlákno a nelezly si do zelí. Od toho je tady fronta.</p>
+<p>Fronta je komunikační prostředek, do kterého je možné dávat objekty ke zpracování a z druhé strany je vybírat. Navíc je vkládání i vybírání automaticky uzamčeno, takže si vlákna nelezou do zelí, a v neposlední řadě obsahuje informaci, zda byl daný záznam ve frontě již zpracován, což umožňuje snadno počkat do chvíle, kdy bude vše hotovo.</p>
+<p>Pojďme si to ukázat na klasickém příkladu producer/consumer, ve kterém jedna skupina vláken generuje práci a ukládá ji do fronty a druhá skupina ji z fronty vybírá a zpracovává.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">randint</span><span class="p">,</span> <span class="n">uniform</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+
+
+<span class="k">class</span> <span class="nc">Producer</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+    
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">integer</span> <span class="o">=</span> <span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">integer</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Producer(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">): </span><span class="si">{</span><span class="n">integer</span><span class="si">}</span><span class="s1"> → Q'</span><span class="p">)</span>
+
+            
+<span class="k">class</span> <span class="nc">Consumer</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+    
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">integer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Consumer(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">): </span><span class="si">{</span><span class="n">integer</span><span class="si">}</span><span class="s1"> ← Q'</span><span class="p">)</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Obě vlákna dostávají frontu jako prostředek ke komunikaci. Producer do ní vkládá náhodná čísla a Consumer je vybírá ven a přitom o tom obě vlákna informují. Pokud není co z fronty vybrat, je volání metody <code>get</code> blokující a vlákno se zastaví a čeká na data ke zpracování. Consumer navíc po zpracování čísla a výpisu informace dá vědět pomocí <code>task_done()</code>, že je s danou úlohou hotov.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+
+<span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Producer</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Consumer</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="n">queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Producer(Thread-204): 547 → Q
+Producer(Thread-204): 775 → Q
+Producer(Thread-204): 791 → Q
+Producer(Thread-204): 913 → Q
+Producer(Thread-204): 834 → Q
+Consumer(Thread-205): 547 ← Q
+Producer(Thread-206): 657 → Q
+Producer(Thread-206): 838 → Q
+Producer(Thread-206): 240 → Q
+Producer(Thread-206): 140 → Q
+Producer(Thread-206): 739 → Q
+Consumer(Thread-207): 775 ← Q
+Consumer(Thread-205): 791 ← Q
+Consumer(Thread-207): 913 ← Q
+Consumer(Thread-205): 834 ← Q
+Consumer(Thread-207): 657 ← Q
+Consumer(Thread-205): 838 ← Q
+Consumer(Thread-207): 240 ← Q
+Consumer(Thread-207): 140 ← Q
+Consumer(Thread-205): 739 ← Q
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Na výstupu je vidět, jak to celé probíhá. Vlákna rozlišujeme automaticky generovaným jménem. Navíc, jelikož pracujeme s frontou úloh, nemusíme čekat na konec všech vláken, ale stačí nám počkat, až bude vše ve frontě vyřízeno.</p>
+<p>Fronta se díky své ochraně při zápisu i čtení dá využít i jako prostředek pro sběr výsledků z vláken.</p>
+<p>Nejpoužívanější fronta je typu FIFO (first in, first out) a tedy první vložený prvek je také jako první z fronty vytažen ven. V Pythonu máme k dispozici ještě zásobník neboli <code>LifoQueue</code>frontu (last in, first out), což funguje stejně jako zásobník v pistoli, kde poslední vložený náboj letí jako první ven, a také prioritní frontu <code>PriorityQueue</code>, kde můžeme jednotlivým úlohám zadat při vkládání prioritu a podlé ní je pak dostávají vlákna ke zpracování.</p>
+<p>Všem těmto frontám můžeme také zadat maximální velikost, což způsobí, že vlákno, které se bude snažit něco vložit do fronty metodou <code>put</code>, i když ta už bude plná, bude zastaveno, dokud se ve frontě neuvolní místo.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Semafor (Semaphore)</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zámek je fajn, pokud se chceme omezit jen na jedno běžící vlákno. Co když ale chceme limitovat počet vláken, ale přes to nechat fungovat více než jen jedno? Na to je tady <code>Semaphore</code>.</p>
+<p><code>Semaphore</code> je vlastně jednoduchý čítač, který má na začátku nějakou hodnotu. S každým uzamčením semaforu se tato hodnota sníží o jedničku. Když je semafor na nule, je jeho další uzamčení zablokováno a vlákno si musí počkat až jej jiné vlákno odemkne, čímž se počítadlo zase o jedničku zvýší.</p>
+<p>Tím si můžeme zajistit, že se do určité kritické sekce našeho programu nedostane najednou více než určitý počet vláken daný počáteční hodnotou semaforu.</p>
+<p>Implementace je zde téměř totožná jako v předchozích případech, jen místo fronty či zámku dostávají vlákna sdílený semafor. Na práci pak mají jen vypisovat informace o svém běhu a náhodný čas počkat mezi iteracemi.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">uniform</span>
+
+<span class="k">class</span> <span class="nc">Worker</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">):</span>
+        <span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semaphore</span> <span class="o">=</span> <span class="n">semaphore</span>
+    
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> starting'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semaphore</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is working'</span><span class="p">)</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semaphore</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is done'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nastavením semaforu limitujeme počet pracujících vláken v naší kritické sekci na dvě, i když už od začátku máme nastartovaných všech šest.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Semaphore</span>
+
+<span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">semaphore</span> <span class="o">=</span> <span class="n">Semaphore</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Worker</span><span class="p">(</span><span class="n">semaphore</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Thread-208 starting
+Thread-208 is working
+Thread-209 starting
+Thread-209 is working
+Thread-210 starting
+Thread-211 starting
+Thread-212 starting
+Thread-213 starting
+Thread-209 is working
+Thread-208 is working
+Thread-208 is working
+Thread-209 is working
+Thread-209 is working
+Thread-208 is working
+Thread-209 is done
+Thread-210 is working
+Thread-208 is doneThread-211 is working
+
+Thread-210 is working
+Thread-210 is working
+Thread-211 is working
+Thread-210 is working
+Thread-211 is working
+Thread-210 is doneThread-212 is working
+
+Thread-211 is working
+Thread-212 is working
+Thread-211 is doneThread-213 is working
+
+Thread-212 is working
+Thread-213 is working
+Thread-212 is working
+Thread-213 is working
+Thread-212 is done
+Thread-213 is working
+Thread-213 is done
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>A co procesy?</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dnes jsme si ještě měli povídat i o procesech přeci!</p>
+<p>Ano, měli, ale není to potřeba, protože vše, co jsme si dnes vysvětlili, funguje velmi podobně i pro procesy. Je to podobná situace jako minule, kdy jsme mohli v implementaci snadno vyměnit proces za vlákno a vše fungovalo vesele dál. Jednotlivé mechanismy jsou samozřejmě pro procesy implementovány jinak, ale co se použití týče, jsou rozdílné jen minimálně.</p>
+<p><code>multiprocessing.Queue</code> například neoperuje jako v případě vláken nad sdílenou pamětí, ale používá jednosměrnou komunikační rouru směrem od rodičovského procesu k potomkům. Kvůli tomu nemohou procesy označit úlohu z fronty za vyřešenou a jejich ukončení je třeba řešit jinak.</p>
+<p>Zatímco u vláken v jednom procesu je Python svým pánem a operuje nad jedním kusem sdílené paměti, která procesu náleží, u řízení více procesů a komunikace mezi nimi je obecně podstatně větší závislost na tom, jak jsou jednotlivé mechanismy implementovány na úrovni operačního systému.</p>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/parallel2/">↑ <span class="d-none d-sm-inline">Lekce: Paralelní programování podruhé</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/parallel2/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyLadiesCZ/naucse.python.cz/blob/autumn2020-ostrava-advanced/lessons/intro/locks_queues_semaphores/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz pokročilého Pythonu PyLadies Ostrava napsal Lumír Balhar, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+        <p>
+            Licence ukázek kódu:
+            <a href="https://creativecommons.org/publicdomain/zero/1.0/">
+                CC0 1.0 Universal Public Domain Dedication
+            </a>
+        </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,541 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Snake Workshop for PyLadies: Drawing the snake
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/snake/drawing/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/2023/snake-europython/">Snake Workshop for PyLadies</a>
+
+> <a href="/2023/snake-europython/sessions/workshop/">The Snake</a>
+
+> <a href="/2023/snake-europython/snake/drawing/">Drawing the snake</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="admonition warning"><p>This is a machine-generated translation, meant to support the in-person workshop.</p>
+</div><h1 id="draw_me_a_snake">Draw me a snake.
+<a href="#draw_me_a_snake" class="header-link">#</a>
+</h1>
+<p>Most video games have the entire game world stored as a bunch of numbers, texts, lists, and other data objects that describe everything in the game. This state changes over time, either automatically or based on the player's actions. And quite often - usually about sixty times per second - the state of the game is converted into an image that is shown to the player.</p>
+<p>In order to display a snake, you will first need to define the game state - input what should be rendered.</p>
+<p>Try to think about what the state will contain: what does the computer have to remember about the game to be able to display the current state?</p>
+<p>It will need, for example, the current position of all parts of the snake: where does it start? Does it turn right or left? How long is it? On the other hand, you don't need to save the color of the snake state - every snake in this game will be the same.</p>
+<p>Have you ever wondered how to record the position of a snake using numbers, lists, and other basic data types?</p>
+<h2 id="representation_of_a_snake">Representation of a snake
+<a href="#representation_of_a_snake" class="header-link">#</a>
+</h2>
+<p>Probably the easiest way to "memorize" a game snake on a computer is by using a list of coordinates.</p>
+<p>Do you remember from school the Cartesian coordinates? It's that part of mathematics that may have seemed to have no practical application. However, for computer graphics, coordinates are like letters for the Czech language. Let's refresh our memory.</p>
+<p>Each point in the plane (even on the screen!) can be described by two numbers: the <var>x</var>-coordinate and the <var>y</var>-coordinate. The <var>x</var>-coordinate tells us how far to the left the point is from some origin, and the <var>y</var>-coordinate tells us how far up it is. We will choose the corner of the window in which our snake will crawl as that 'origin'.</p>
+<p>Unlike in school geometry, the snake will crawl on a square grid. It's like on a chessboard - when a pawn goes to D5, D indicates how much it is to the left of the edge and 5 how much "up".</p>
+<p>Here is a snake that starts at coordinates (1, 2) and has its head at (4, 5):</p>
+<p><span class="figure"><a href="/2023/snake-europython/snake/drawing/static/coords.svg"><img src="/2023/snake-europython/snake/drawing/static/coords.svg" alt="Had na „šachovnici“ se souřadnicemi"></a></span></p>
+<p>You may notice that the mathematical notation of the coordinates - (1, 2) - corresponds to the way <var>n</var>-tuples are written in Python. This is not a coincidence! A pair of numbers is a perfect way to store the coordinates of a snake piece.</p>
+<p>The snake has more pieces, and otherwise long snakes will have a different number of them. It is good to use a list for this. A list of coordinates. And because the coordinates for us will be a pair of numbers, the list of coordinates will be a list of pairs of numbers.</p>
+<p>The snake from the picture above will look like this in Python:</p>
+<div class="highlight"><pre><span></span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+</pre></div><p>This is the representation of a snake - what needs to be known about a specific snake in terms of the game.</p>
+<p>To computers (and programmers?) this is enough. But let's try to display it in color, like an image, so that even the snake and the player of our future game understand it. But first, a little bit of staff culture.</p>
+<h2 id="profi_software">Profi software
+<a href="#profi_software" class="header-link">#</a>
+</h2>
+<p>Now, when you start writing professional software, two changes will come compared to how you wrote programs during warm-up.</p>
+<p>The first change will be English. For variable names, functions, and similar, a more universal language than Czech is almost always used so that anyone from around the world can participate in the project. Therefore, a variable with a snake will be named <code>snake</code>.</p>
+<div class="highlight"><pre><span></span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+</pre></div><p>The second change will be the use of a custom class. At this moment, it doesn't make much sense: the snake game could be written using built-in classes (lists, numbers, etc.), but as we go further, you would find out that everything will be easier with a class. In a real project, you would then introduce the class: you would perform refactoring, an improvement of the project structure without changing its functionality.</p>
+<p>However, rewriting an existing project is quite prone to errors, especially if you don't fully understand the program. For this snake project, we will cheat a little and take advantage of the fact that the author of this text knows how the story ends. It will ultimately be easier with the class, trust me.</p>
+<p>The class will be named "GameState" and will contain the game state and methods for its functionality. The first method will be called "initialize" and will set the initial state of the game - that is, the position of the snake.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">GameState</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+
+<span class="c1"># Creating a specific object</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">GameState</span><span class="p">()</span>
+<span class="n">state</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="c1"># Now you can work with the game state - for example, print a list of snake coordinates.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">snake</span><span class="p">)</span>
+</pre></div><p>Notice that within the class <code>self</code> is used, but outside it's <code>state</code>. It should be the same throughout the rest of the program you write. Similarly, in the <code>Kotatko</code> class, you used <code>self</code> but outside it's <code>mourek</code> or <code>micka</code>.</p>
+<p>In the editor, open a new file, save it as 'snake.py' and write this program skeleton into it. We will further develop it.</p>
+<p>Start the program (<code>cd</code> to the directory with the program; <code>python had.py</code>). Does it work? 
+(It is quite important that it works - if you do not see a list output, do not continue reading and rather fix the program.)</p>
+<div class="admonition note"><p>Please use the name <code>GameState</code> for the class and name the attribute <code>snake</code> (and later others) according to the materials.
+It will be useful for you.</p>
+</div><h2 id="logical_and_screen_coordinates">Logical and screen coordinates
+<a href="#logical_and_screen_coordinates" class="header-link">#</a>
+</h2>
+<p>We need to solve one basic problem when rendering a snake: converting <em>logical coordinates</em> to <em>screen coordinates</em>.</p>
+<p>The displays of computers work similarly to our coordinate "chessboard": they are square grids full of squares. Each square - <em>pixel</em> - can be set to a color. The main difference compared to a chessboard is that there are many, many more pixels on the screen.</p>
+<p>If each "game" square was 10x10 pixels in size, then the snake head from the example, which has "game" coordinates (4, 5), will be rendered on the screen on the square that starts at (40, 50).</p>
+<p><span class="figure"><a href="/2023/snake-europython/snake/drawing/static/coords-px.svg"><img src="/2023/snake-europython/snake/drawing/static/coords-px.svg" alt="Had na „šachovnici“ se souřadnicemi obrazovky"></a></span></p>
+<p>The tail with "game" (<em>logical</em>) coordinates (1, 2) is drawn on a square with coordinates (10, 20).</p>
+<h2 id="square_setting">Square setting
+<a href="#square_setting" class="header-link">#</a>
+</h2>
+<p>To draw a snake, we will use the Pyglet window. Here is the basic structure of a Pyglet application, which you should already understand:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>Add the Pyglet application skeleton to your program. The import line conventionally belongs at the very beginning; add the rest <em>after</em> your existing code.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="k">class</span> <span class="nc">GameState</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">GameState</span><span class="p">()</span>
+<span class="n">state</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>Download the file <a href="/2023/snake-europython/snake/drawing/static/green.png">green.png</a> - a green square - and put it in the directory where you write your code.</p>
+<p>Add a line before <code>window = ...</code> that loads this image.</p>
+<div class="highlight"><pre><span></span><span class="n">green_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'green.png'</span><span class="p">)</span>
+</pre></div><p>Then try adding drawing of an image at the coordinates (40, 50) with a size of 10 inside the <code>on_draw</code> function.</p>
+<div class="highlight"><pre><span></span>    <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div><p>Run the program (<code>cd</code> to the directory with the program; <code>python snake.py</code>). Does it work?
+(It is important again that it works - if you do not see a green square,
+do not read further and rather fix the program.)</p>
+<p>As you can see, the square is quite small. We should use larger squares, let's say 64 pixels.</p>
+<p>That number is 'shot from the side'. We will use it several times in the program and you may want to modify it later. Therefore, we will save it as a <em>constant</em> (a variable that we will not change). Constants are traditionally named in capital letters and are written immediately after the <code>import</code> line (although it is not technically necessary). So, add the following line after the <code>import</code> line:</p>
+<div class="highlight"><pre><span></span><span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+</pre></div><p>...and in the call of 'green.blit' take into account the size of the square:</p>
+<div class="highlight"><pre><span></span>    <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                     <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+</pre></div><p>The code is a bit longer now, but when you want to change the size of the square, you just need to do it in one place.</p>
+<p>Did you succeed? Do you have a bigger square?
+If not, try to go through the program line by line and check it.
+Or compare it to the sample solution (which is a faster option, but you will learn less).</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/drawing/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="k">class</span> <span class="nc">GameState</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">GameState</span><span class="p">()</span>
+<span class="n">state</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="n">green_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'green.png'</span><span class="p">)</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                     <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><h2 id="drawing_a_snake">Drawing a snake
+<a href="#drawing_a_snake" class="header-link">#</a>
+</h2>
+<p>We don't want to display a square, but a snake. Actually, we will want to display the whole state of the game - the snake will be just the most important part. Therefore, create a new method called <code>draw</code> in the <code>GameState</code> class and for now, put the drawing of the square (calling <code>green_image.blit</code>) inside it.</p>
+<div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="k">class</span> <span class="nc">GameState</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                         <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div><p>The modified program should do the same thing as before: draw a square. However, now it is drawn in the <code>draw</code> method, which has better access to the coordinates of the snake. Try to draw it!</p>
+<p>Remember that you can 'iterate' through a list of pairs using a 'for' loop and 'unpacking' an <var>n</var>-tuple.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+        <span class="o">...</span>
+        <span class="c1"># (Put the code for drawing a square with coordinates x, y here)</span>
+</pre></div><p>Can you handle it?
+In the end, there should be a snake made up of squares visible - at least roughly.
+<span class="figure"><a href="/2023/snake-europython/snake/drawing/static/coords-blocks.svg"><img src="/2023/snake-europython/snake/drawing/static/coords-blocks.svg" alt="Had na „šachovnici“ a ukázka programu"></a></span></p>
+<p>If it doesn't work, don't despair, check it again and ask for advice. Use the sample solution only as a last resort to move forward. Or for checking!</p>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/drawing/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="k">class</span> <span class="nc">GameState</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+            <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                             <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">GameState</span><span class="p">()</span>
+<span class="n">state</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="n">green_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'green.png'</span><span class="p">)</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><h2 id="feeding">Feeding
+<a href="#feeding" class="header-link">#</a>
+</h2>
+<p>To have something to do in the game, we will need food for the snake. Download the image <a href="/2023/snake-europython/snake/drawing/static/apple.png">apple.png</a> into the project directory and add coordinates for the food to the <code>initialize</code> method.</p>
+<div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">food</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+</pre></div><p>Then try to draw apples on these coordinates using the <code>draw</code> method.</p>
+<p>You will need a few things for that:</p>
+<ul>
+<li>to load the <code>apple_image</code> image similarly to how you load the green square - you set the <code>green_image</code> variable</li>
+<li>to repeatedly draw the <code>apple_image</code> image similarly to how you draw green squares - by calling <code>green_image.blit</code> in a loop.</li>
+</ul>
+<div class="solution" id="solution-2">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/drawing/index/solutions/2/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="k">class</span> <span class="nc">GameState</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+            <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                             <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="n">apple_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                             <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">GameState</span><span class="p">()</span>
+<span class="n">state</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="n">apple_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'apple.png'</span><span class="p">)</span>
+<span class="n">green_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'green.png'</span><span class="p">)</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><p>You may notice that the image in the game has slightly jagged edges. This is due to the way we render in Pyglet. A full explanation would not fit in this guide and requires a deeper understanding of computer graphics. Therefore, I will only provide the solution. In the <code>on_draw</code> function, right after <code>clear</code>, add the following three lines:</p>
+<div class="highlight"><pre><span></span><span class="c1"># Better rendering (a magical spell for us for now)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glBlendFunc</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_ONE_MINUS_SRC_ALPHA</span><span class="p">)</span>
+</pre></div><h2 id="loading_snake_pieces">Loading snake pieces
+<a href="#loading_snake_pieces" class="header-link">#</a>
+</h2>
+<p>Now that you know how to draw a snake from squares, we will try to make it more beautiful. Download the archive <a href="/2023/snake-europython/snake/drawing/static/snake-tiles.zip">snake-tiles.zip</a> and unpack it so that the <code>snake-tiles</code> directory with images is at the same level as the game program. The directory structure should look like this:</p>
+<p><span class="figure"><a href="/2023/snake-europython/snake/drawing/static/screenshot-dir.png"><img src="/2023/snake-europython/snake/drawing/static/screenshot-dir.png" alt="Adresářová struktura"></a></span></p>
+<p>There are many 'pieces' of a snake stored in the archive, which we can draw instead of green squares. The pieces look like this. Notice the names - each piece of the snake either connects two sides of the picture, or a side of the picture with the head or tail. Depending on where the snake crawls from and to on a particular square, the picture is named <code><var>from</var>-<var>to</var>.png</code>.</p>
+<p>{ figure( img=static('snake-tiles.png'), alt="Kousky hada", ) }}</p>
+<div class="admonition note"><p>What are those strange "snake eggs"?
+<img src="/2023/snake-europython/snake/drawing/static/snake-tiles/end-end.png" alt="" style="display:block; float:left; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
+This is in case the snake is only one square long - and thus has its head and tail on the same square.
+In the completed game, we will not get into such a state (the snake will start with a length of 2), but these images will be useful before we finish the game.</p>
+</div><p>Let's now <em>read</em> these pictures. We could do it gradually, for example like this:</p>
+<div class="highlight"><pre><span></span><span class="n">bottom_left</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake-tiles/bottom-left.png'</span><span class="p">)</span>
+<span class="n">bottom_right</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake-tiles/bottom-right.png'</span><span class="p">)</span>
+<span class="n">bottom_top</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake-tiles/bottom-top.png'</span><span class="p">)</span>
+<span class="o">...</span>
+</pre></div><p>But there are a lot of pictures, doing it this way would be tedious and you would probably forget some.</p>
+<p>So we will automatically load the pictures in a cycle and put them into a dictionary.</p>
+<p>The program will look like this:</p>
+<p><em>Start with an empty dictionary.</em>For each <em>beginning</em> (<code>bottom</code>, <code>end</code>, <code>left</code>, <code>right</code>, <code>top</code>):
+  <em>For each </em>end<em> (<code>bottom</code>, <code>end</code>, <code>left</code>, <code>right</code>, <code>top</code>, <code>dead</code>, <code>tongue</code>):
+    </em>We will load the image "<var>beginning</var>-<var>end</var>"; put this
+      <var>key</var> into a variable
+    <em>Load the image <var>key</var>.png
+    </em>Save the image into the dictionary under <var>key</var>.</p>
+<p>Or, translated into Python:</p>
+<div class="highlight"><pre><code>snake_tiles = {} # create an empty dictionary named snake_tiles
+for start in ['bottom', 'end', 'left', 'right', 'top']: # iterate through the list of starting positions
+    for end in ['bottom', 'end', 'left', 'right', 'top', 'dead', 'tongue']: # iterate through the list of ending positions
+        key = start + '-' + end # concatenate the start and end positions with a hyphen
+        image = pyglet.image.load('snake-tiles/' + key + '.png') # load the image file for the current position combination
+        snake_tiles[key] = image # add the image to the dictionary with the key as the position combination</code></pre></div><p>Put this code near the place where you load other images (<code>pyglet.image.load</code>). Then print the entire dictionary for checking: <code>print(snake_tiles)</code>. The output will look quite messy, but maybe you will recognize the dictionary in it - <em>{key: value, key: value, ...}</em>.</p>
+<div class="highlight"><pre><code>{'right-tongue': &lt;ImageData 64x64&gt;, 'top-tongue': &lt;ImageData 64x64&gt;,
+ 'right-top': &lt;ImageData 64x64&gt;, 'left-bottom': &lt;ImageData 64x64&gt;,
+ 'end-left': &lt;ImageData 64x64&gt;, 'bottom-tongue': &lt;ImageData 64x64&gt;,
+ 'left-top': &lt;ImageData 64x64&gt;, 'bottom-bottom': &lt;ImageData 64x64&gt;,
+ ...</code></pre></div><h2 id="caterpillar">Caterpillar
+<a href="#caterpillar" class="header-link">#</a>
+</h2>
+<p>And now try to incorporate image loading into the snake program!</p>
+<p>In the rendering function, use one of the images instead of <code>green_image</code>, for example <code>snake_tiles['end-end']</code>.</p>
+<p>Instead of squares, there will now be balls - instead of a snake, you will have a "caterpillar".</p>
+<p><span class="figure"><a href="/2023/snake-europython/snake/drawing/static/caterpillar.png"><img src="/2023/snake-europython/snake/drawing/static/caterpillar.png" alt="Housenka"></a></span></p>
+<div class="solution" id="solution-3">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/snake/drawing/index/solutions/3/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="k">class</span> <span class="nc">GameState</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">food</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snake</span><span class="p">:</span>
+            <span class="n">snake_tiles</span><span class="p">[</span><span class="s1">'end-end'</span><span class="p">]</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                                        <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">food</span><span class="p">:</span>
+            <span class="n">apple_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                             <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">GameState</span><span class="p">()</span>
+<span class="n">state</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="n">apple_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'apple.png'</span><span class="p">)</span>
+<span class="n">green_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'green.png'</span><span class="p">)</span>
+<span class="n">snake_tiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'bottom'</span><span class="p">,</span> <span class="s1">'end'</span><span class="p">,</span> <span class="s1">'left'</span><span class="p">,</span> <span class="s1">'right'</span><span class="p">,</span> <span class="s1">'top'</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">end</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'bottom'</span><span class="p">,</span> <span class="s1">'end'</span><span class="p">,</span> <span class="s1">'left'</span><span class="p">,</span> <span class="s1">'right'</span><span class="p">,</span> <span class="s1">'top'</span><span class="p">,</span> <span class="s1">'dead'</span><span class="p">,</span> <span class="s1">'tongue'</span><span class="p">]:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">end</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake-tiles/'</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">'.png'</span><span class="p">)</span>
+        <span class="n">snake_tiles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="c1"># Lepší vykreslování (pro nás zatím kouzelné zaříkadlo)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glBlendFunc</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_ONE_MINUS_SRC_ALPHA</span><span class="p">)</span>
+
+    <span class="n">state</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><h2 id="how_to_choose_squares">How to choose squares?
+<a href="#how_to_choose_squares" class="header-link">#</a>
+</h2>
+<p>Instead of having the same piece of fabric everywhere,
+we will always want to choose the right one.</p>
+<p>How to do it? By what criteria to choose it?</p>
+<p>Images with pieces of a snake are named <code><var>from</var>-<var>to</var></code>. This is not a coincidence - it shows what you need to know to be able to choose the right piece.</p>
+<p>When you have a snake according to the following picture, the piece that the snake is crawling on from the left up - that is <code>snake_tiles['left-top']</code> - belongs to the square (3, 2).</p>
+<p><span class="figure"><a href="/2023/snake-europython/snake/drawing/static/tile-selection.svg"><img src="/2023/snake-europython/snake/drawing/static/tile-selection.svg" alt="Had na „šachovnici“ se souřadnicemi. Políčko (3, 2) je zvýrazněné a vedou z něj šipky doleva a nahoru, kudy had pokračuje."></a></span></p>
+<p>For each field of the snake, you will need to know:</p>
+<ul>
+<li>The <var>x</var> and <var>y</var> coordinates of the field</li>
+<li>The direction in which the snake moves - towards the <em>previous</em> and <em>next</em> field.</li>
+</ul>
+<p>The values can then be entered into the program something like this:</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="o">...</span> <span class="ow">in</span> <span class="o">...</span><span class="p">:</span>   <span class="c1"># What will the loop iterate over? The self.snake itself?</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">before</span> <span class="o">=</span> <span class="o">...</span>  <span class="c1"># Direction towards the previous field ('left' or 'top' or ...)</span>
+    <span class="n">after</span> <span class="o">=</span> <span class="o">...</span>   <span class="c1"># Direction towards the next field</span>
+
+<span class="n">key</span> <span class="o">=</span> <span class="n">before</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">after</span>  <span class="c1"># name of the tile image</span>
+<span class="n">snake_tiles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                      <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+</pre></div><p>You need to fill in those missing <code>...</code>!</p>
+<p>This is a <strong>difficult task</strong>. Even though you now theoretically know all the necessary information and tools for it, it is necessary to put them together in the right way. This putting together, <em>algorithm design</em>, is the most complex programming discipline.</p>
+<p>Try to think about it, let it settle in your head, maybe overnight. Go back to the materials from previous lessons (especially the introduction to Python), try and discover... And in time, you will come up with a solution. Your reward for solving it will be a snake instead of a caterpillar.</p>
+<p>Before you figure it out, the rest of the program won't run away from you. The caterpillar is just as playable as the snake, it just looks different. Feel free to switch to <a href="/2023/snake-europython/snake/logic/">writing game logic</a> with the caterpillar.</p>
+<p>Or do you <a href="/2023/snake-europython/snake/tile-selection/">want to know the solution</a>?</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2023/snake-europython/fast-track/pyglet/">← <span class="d-none d-sm-inline">Intro to Pyglet</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2023/snake-europython/sessions/workshop/">↑ <span class="d-none d-sm-inline">Lekce: The Snake</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2023/snake-europython/snake/logic/"><span class="d-none d-sm-inline">Game logic</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/snake-workshop/blob/snake-ep-2023/lessons/snake/drawing/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Written by Petr Viktorin for PyLadies Brno, 2018.</p>
+    
+        <p>Initial translation to English by Petra Vidnerová, based on ChatGPT</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

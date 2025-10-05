@@ -1,0 +1,6051 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Pandas - datové typy a základní operace
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2024/pydata-praha-podzim/">Datový kurz PyLadies</a>
+
+> <a href="/2024/pydata-praha-podzim/sessions/eda2/">Datové typy a základy vizualizace v pandas</a>
+
+> <a href="/2024/pydata-praha-podzim/pydata/pandas_types/">Pandas - datové typy a základní operace</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="pandas_-_datove_typy_a_zakladni_operace">Pandas - datové typy a základní operace
+<a class="header-link" href="#pandas_-_datove_typy_a_zakladni_operace">#</a>
+</h1>
+<p>V minulé lekci jsme si představili knihovnu pandas a její základní třídy: <code>Series</code>, <code>DataFrame</code> a <code>Index</code>. Brali jsme je ovšem jako statické objekty, které jsme si pouze prohlíželi.</p>
+<p>V této lekci začneme upravovat existující tabulky. Ukážeme si:</p>
+<ul>
+<li>jak přidat či ubrat sloupce a řádky</li>
+<li>jak změnit hodnotu konkrétní buňky</li>
+<li>jaké datové typy se hodí pro který účel</li>
+<li>aritmetické a logické operace, které lze se sloupci provádět</li>
+<li>filtrování a řazení řádků</li>
+</ul>
+<p>A jelikož o výsledky práce určitě nechceš přijít, nakonec se bude hodit i ukládání výsledků do externích souborů.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Obligátní import</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="manipulace_s_dataframes">Manipulace s DataFrames
+<a class="header-link" href="#manipulace_s_dataframes">#</a>
+</h2>
+<p>Pro rozehřátí budeme pracovat s malou tabulkou obsahující několik základních informací o planetách, které snadno najdeš např. na <a href="https://en.wikipedia.org/wiki/Planet">wikipedii</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">"jmeno"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Merkur"</span><span class="p">,</span> <span class="s2">"Venuše"</span><span class="p">,</span> <span class="s2">"Země"</span><span class="p">,</span> <span class="s2">"Mars"</span><span class="p">,</span> <span class="s2">"Jupiter"</span><span class="p">,</span> <span class="s2">"Saturn"</span><span class="p">,</span> <span class="s2">"Uran"</span><span class="p">,</span> <span class="s2">"Neptun"</span><span class="p">],</span>
+    <span class="s2">"symbol"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"☿"</span><span class="p">,</span> <span class="s2">"♀"</span><span class="p">,</span> <span class="s2">"⊕"</span><span class="p">,</span> <span class="s2">"♂"</span><span class="p">,</span> <span class="s2">"♃"</span><span class="p">,</span> <span class="s2">"♄"</span><span class="p">,</span> <span class="s2">"♅"</span><span class="p">,</span> <span class="s2">"♆"</span><span class="p">],</span>
+    <span class="s2">"obezna_poloosa"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.39</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">,</span> <span class="mf">1.00</span><span class="p">,</span> <span class="mf">1.52</span><span class="p">,</span> <span class="mf">5.20</span><span class="p">,</span> <span class="mf">9.54</span><span class="p">,</span> <span class="mf">19.22</span><span class="p">,</span> <span class="mf">30.06</span><span class="p">],</span>
+    <span class="s2">"obezna_doba"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.24</span><span class="p">,</span> <span class="mf">0.62</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.88</span><span class="p">,</span> <span class="mf">11.86</span><span class="p">,</span> <span class="mf">29.46</span><span class="p">,</span> <span class="mf">84.01</span><span class="p">,</span> <span class="mf">164.8</span><span class="p">],</span>
+<span class="p">})</span>
+<span class="n">planety</span> <span class="o">=</span> <span class="n">planety</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"jmeno"</span><span class="p">)</span>    <span class="c1"># Se jmenným indexem se ti bude snáze pracovat</span>
+<span class="n">planety</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[2]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="pridani_noveho_sloupce">Přidání nového sloupce
+<a class="header-link" href="#pridani_noveho_sloupce">#</a>
+</h3>
+<p>Když chceme přidat nový sloupec (<code>Series</code>), přiřadíme ho do <code>DataFrame</code> jako hodnotu do slovníku - tedy v hranatých závorkách s názvem sloupce. Dobrá zpráva je, že stejně jako v konstruktoru si <code>pandas</code> poradí jak se <code>Series</code>, tak s obyčejným seznamem.</p>
+<p>V našem konkrétním případě si najdeme a přidáme počet známých měsíců (velkých i malých).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">mesice</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">14</span><span class="p">]</span>      <span class="c1"># Alternativně mesice = pd.Series([...])</span>
+<span class="n">planety</span><span class="p">[</span><span class="s2">"mesice"</span><span class="p">]</span> <span class="o">=</span> <span class="n">mesice</span>
+<span class="n">planety</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[3]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 V tomto případě jsme přímo upravili existující <code>DataFrame</code>. Většina metod / operací v <code>pandas</code> (už znáš např. <code>set_index</code>) ve výchozím nastavení vždy vrací nový objekt s aplikovanou úpravou a ten původní objekt nechá v nezměněném stavu. Je to dobrým zvykem, který budeme dodržovat. Přiřazování sloupců je jednou z akceptovaných výjimek tohoto jinak uznávaného pravidla, zejména když se tabulka upravuje jen v úzkém rozsahu řádků kódu (případně kdyby kopírování bylo příliš náročné na paměť).</p>
+<p><code>DataFrame</code> však nabízí ještě metodu <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.assign.html"><code>assign</code></a>, která nemění tabulku, ale vytváří její kopii s přidanými (nebo nahrazenými) sloupci. Pokud se chceš vyhnout nepříjemnému sledování, kterou tabulku jsi změnil/a či nikoliv, <code>assign</code> ti můžeme jen doporučit.</p>
+<p>Mimochodem, kopii tabulky můžeš kdykoliv vytvořit metodou <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.copy.html"><code>copy</code></a> - to se hodí třeba při psaní funkcí, kde se vstupní tabulka z různých důvodů upravuje.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Nový dočasný DataFrame</span>
+<span class="n">planety</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+    <span class="n">je_stavebnice</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+    <span class="n">ma_vztah_k_vestonicim</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="c1"># Objekt `planety` zůstal nezměněn.</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[4]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+<th>je_stavebnice</th>
+<th>ma_vztah_k_vestonicim</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14</td>
+<td>False</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety2</span> <span class="o">=</span> <span class="n">planety</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">planety2</span><span class="p">[</span><span class="s2">"je_nezdrava_tycinka"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span>
+<span class="n">planety2</span>
+<span class="c1"># Ani teď se původní `planety` nezmění</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[5]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+<th>je_nezdrava_tycinka</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Zkus (jedním či druhým způsobem) přidat sloupec s rokem objevu (<code>"objeveno"</code>). Údaje najdeš např. na https://cs.wikipedia.org/wiki/Slune%C4%8Dn%C3%AD_soustava.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro hodnoty nového sloupce lze použít i jednu skalární hodnotu (v praxi se ale s touto potřebou nepotkáme tak často) - stejná hodnota se pak použije ve všech řádcích:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span><span class="p">[</span><span class="s2">"je_planeta"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">planety</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[6]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+<th>je_planeta</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="pridani_noveho_radku_volitelne">Přidání nového řádku (volitelné)
+<a class="header-link" href="#pridani_noveho_radku_volitelne">#</a>
+</h3>
+<p>🤔 Tohle je něco, co se dělá vlastně dost málo. Obvykle pracujeme na celých sloupcích (nebo slučujeme několik tabulek dohromady), a k přidání nového řádku dojde spíš omylem. Ale pro úplnost uvádíme.</p>
+<p>Když se strojem času vrátíme do dětství (nebo rané dospělosti) autorů těchto materiálů, tedy před rok 2006, kdy se v Praze konal astronomický kongres, který definoval pojem "planeta" (ale ne před rok 1930!), přibude nám nová planeta: Pluto.</p>
+<p>Do naší tabulky ho coby nový řádek vložíme pomocí indexeru <code>loc</code>, který jsme již dříve používali pro "koukání" do tabulky:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"Pluto"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"♇"</span><span class="p">,</span> <span class="mf">39.48</span><span class="p">,</span> <span class="mf">247.94</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span>   <span class="c1"># Seznam hodnot v řádku</span>
+<span class="n">planety</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[7]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+<th>je_planeta</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Pluto</th>
+<td>♇</td>
+<td>39.48</td>
+<td>247.94</td>
+<td>5</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Zkus přidat Slunce nebo nějakou zcela smyšlenou planetu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="zmena_hodnoty_bunky">Změna hodnoty buňky
+<a class="header-link" href="#zmena_hodnoty_bunky">#</a>
+</h3>
+<p>🤔 I toto se nedělá příliš často...</p>
+<p>"Indexery" <code>.loc</code> a <code>.iloc</code> se dvěma argumenty v hranatých závorkách odkazují přímo na konkrétní buňku, a přiřazením do nich (opět, podobně jako ve slovníku) se hodnota na příslušné místo zapíše. Jen je třeba zachovat pořadí (řádek, sloupec).</p>
+<p>Vrátíme se opět do současnosti a Pluto zbavíme jeho statutu:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"Pluto"</span><span class="p">,</span> <span class="s2">"je_planeta"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">planety</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[8]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+<th>je_planeta</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Pluto</th>
+<td>♇</td>
+<td>39.48</td>
+<td>247.94</td>
+<td>5</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>⚠ Pozor:</strong> Podobně jako u slovníku, ale možná poněkud neintuitivně, je možné zapsat hodnotu do řádku i sloupce, které neexistují!</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety_bad</span> <span class="o">=</span> <span class="n">planety</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>     <span class="c1"># Pro jistotu si uděláme kopii</span>
+
+<span class="n">planety_bad</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"Zeme"</span><span class="p">,</span> <span class="s2">"planeta"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">planety_bad</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[9]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+<th>je_planeta</th>
+<th>planeta</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0.0</td>
+<td>True</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0.0</td>
+<td>True</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.0</td>
+<td>True</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2.0</td>
+<td>True</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79.0</td>
+<td>True</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82.0</td>
+<td>True</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27.0</td>
+<td>True</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14.0</td>
+<td>True</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>Pluto</th>
+<td>♇</td>
+<td>39.48</td>
+<td>247.94</td>
+<td>5.0</td>
+<td>False</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>Zeme</th>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 Jistě se ptáš, co znamená <strong>NaN</strong> v tabulce. Hodnota NaN (Not a Number) označuje chybějící, neplatnou nebo neznámou hodnotu. V našem příkladu jsme ji nezadali, tedy se není co divit. O problematice chybějících hodnot a jejich napravování si budeme povídat někdy příště, prozatím se jimi nenech znervóznit.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Přiřazovat je možné i do rozsahů v indexech - jen je potřeba hlídat, abychom přiřazovali buď <em>skalární hodnotu</em> (tedy jedna hodnota pro celou oblast, bezrozměrné ne-pole), nebo vícerozměrný objekt (Series, DataFrame, seznam, ...) stejného tvaru (počtu řádků a sloupců) jako oblast, do které přiřazujeme:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"Merkur"</span><span class="p">:</span><span class="s2">"Mars"</span><span class="p">,</span> <span class="s2">"je_obr"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">planety</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"Jupiter"</span><span class="p">:</span><span class="s2">"Neptun"</span><span class="p">,</span> <span class="s2">"je_obr"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span>
+<span class="n">planety</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[10]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+<th>je_planeta</th>
+<th>je_obr</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Pluto</th>
+<td>♇</td>
+<td>39.48</td>
+<td>247.94</td>
+<td>5</td>
+<td>False</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Shodou okolností (nebo jde o astronomickou nevyhnutelnost?) mají všichni planetární obři alespoň nějaký prstenec. Dokážeš jednoduše vytvořit sloupec <code>"ma_prstenec"</code>?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="odstraneni_radku_volitelne">Odstranění řádku (volitelné)
+<a class="header-link" href="#odstraneni_radku_volitelne">#</a>
+</h3>
+<p>🤔 Obvykle neodstraňujeme řádky podle indexu, ale spíš hromadně na základě nějaké podmínky (viz <a href="#filtrovani">Filtrování</a>), nicméně do základní sady manipulačních nástrojů to patří.</p>
+<p>Pro odebrání sloupce či řádku z DataFrame slouží metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.drop.html"><code>drop</code></a>. Ta umí odstraňovat řádky i sloupce, proto bychom jí explicitně měli říct, ve které ose budeme mazat. Jde to buď pomocí argumentu <code>axis</code> (na výběr je 0 či "index", 1 či "columns"), nebo o něco čitelněji pomocí pojmenovaného argumentu <code>index</code>, který rovnou specifikuje, že se chceme zbavit řádků:</p>
+<p>Když už jsme se vrátili do budoucnosti (resp. současnosti), vypořádejme se nemilosrdně s Plutem:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span> <span class="o">=</span> <span class="n">planety</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s2">"Pluto"</span><span class="p">)</span>
+<span class="n">planety</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[11]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+<th>je_planeta</th>
+<th>je_obr</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14</td>
+<td>True</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Zkus z <code>planety</code> vytvořit tabulku, která nebude obsahovat ani Uran, ani Neptun (jedním příkazem).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="odstraneni_sloupce">Odstranění sloupce
+<a class="header-link" href="#odstraneni_sloupce">#</a>
+</h3>
+<p>U sloupce funguje metoda <code>drop</code> velmi podobně, jen argument se teď jmenuje <code>columns</code>.</p>
+<p>Odstraňme zbytečný sloupec s informační hodnotou na úrovni "stěrače stírají, klakson troubí"...</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span> <span class="o">=</span> <span class="n">planety</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s2">"je_planeta"</span><span class="p">)</span>   
+<span class="n">planety</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[12]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+<th>je_obr</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="datove_typy">Datové typy
+<a class="header-link" href="#datove_typy">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="priprava_dat">Příprava dat
+<a class="header-link" href="#priprava_dat">#</a>
+</h4>
+<p>Nyní opustíme planety a podíváme se na některé zajímavé charakteristiky zemí kolem světa (ježto definice toho, co je to země, je poněkud vágní, bereme v potaz členy OSN), zachycené k jednomu konkrétnímu roku uplynulé dekády (protože ne vždy jsou všechny údaje k dispozici, bereme poslední rok, kde je známo dost ukazatelů). Data pocházejí povětšinou z projektu <a href="https://www.gapminder.org/">Gapminder</a>, doplnili jsme je jen o několik dalších informací z wikipedie.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Soubor otevřeme ho pomocí již známé funkce <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html"><code>read_csv</code></a></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Místo `set_index` vybereme index rovnou při načítání</span>
+<span class="n">countries</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"countries.csv"</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s2">"name"</span><span class="p">)</span>
+
+<span class="n">countries</span> <span class="o">=</span> <span class="n">countries</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+<span class="n">countries</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[13]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>iso</th>
+<th>world_6region</th>
+<th>world_4region</th>
+<th>income_groups</th>
+<th>is_eu</th>
+<th>is_oecd</th>
+<th>eu_accession</th>
+<th>year</th>
+<th>area</th>
+<th>population</th>
+<th>alcohol_adults</th>
+<th>bmi_men</th>
+<th>bmi_women</th>
+<th>car_deaths_per_100000_people</th>
+<th>calories_per_day</th>
+<th>infant_mortality</th>
+<th>life_expectancy</th>
+<th>life_expectancy_female</th>
+<th>life_expectancy_male</th>
+<th>un_accession</th>
+</tr>
+<tr>
+<th>name</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Afghanistan</th>
+<td>AFG</td>
+<td>south_asia</td>
+<td>asia</td>
+<td>low_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>652860.0</td>
+<td>34500000.0</td>
+<td>0.03</td>
+<td>20.62</td>
+<td>21.07</td>
+<td>NaN</td>
+<td>2090.0</td>
+<td>66.3</td>
+<td>58.69</td>
+<td>65.812</td>
+<td>63.101</td>
+<td>1946-11-19</td>
+</tr>
+<tr>
+<th>Albania</th>
+<td>ALB</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>28750.0</td>
+<td>3238000.0</td>
+<td>7.29</td>
+<td>26.45</td>
+<td>25.66</td>
+<td>5.978</td>
+<td>3193.0</td>
+<td>12.5</td>
+<td>78.01</td>
+<td>80.737</td>
+<td>76.693</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Algeria</th>
+<td>DZA</td>
+<td>middle_east_north_africa</td>
+<td>africa</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>2381740.0</td>
+<td>36980000.0</td>
+<td>0.69</td>
+<td>24.60</td>
+<td>26.37</td>
+<td>NaN</td>
+<td>3296.0</td>
+<td>21.9</td>
+<td>77.86</td>
+<td>77.784</td>
+<td>75.279</td>
+<td>1962-10-08</td>
+</tr>
+<tr>
+<th>Andorra</th>
+<td>AND</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2017</td>
+<td>470.0</td>
+<td>88910.0</td>
+<td>10.17</td>
+<td>27.63</td>
+<td>26.43</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>2.1</td>
+<td>82.55</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1993-07-28</td>
+</tr>
+<tr>
+<th>Angola</th>
+<td>AGO</td>
+<td>sub_saharan_africa</td>
+<td>africa</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>1246700.0</td>
+<td>20710000.0</td>
+<td>5.57</td>
+<td>22.25</td>
+<td>23.48</td>
+<td>NaN</td>
+<td>2473.0</td>
+<td>96.0</td>
+<td>65.19</td>
+<td>64.939</td>
+<td>59.213</td>
+<td>1976-12-01</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>Venezuela</th>
+<td>VEN</td>
+<td>america</td>
+<td>americas</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>912050.0</td>
+<td>30340000.0</td>
+<td>7.60</td>
+<td>27.45</td>
+<td>28.13</td>
+<td>7.332</td>
+<td>2631.0</td>
+<td>12.9</td>
+<td>75.91</td>
+<td>79.079</td>
+<td>70.950</td>
+<td>1945-11-15</td>
+</tr>
+<tr>
+<th>Vietnam</th>
+<td>VNM</td>
+<td>east_asia_pacific</td>
+<td>asia</td>
+<td>lower_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>330967.0</td>
+<td>90660000.0</td>
+<td>3.91</td>
+<td>20.92</td>
+<td>21.07</td>
+<td>NaN</td>
+<td>2745.0</td>
+<td>17.3</td>
+<td>74.88</td>
+<td>81.203</td>
+<td>72.003</td>
+<td>1977-09-20</td>
+</tr>
+<tr>
+<th>Yemen</th>
+<td>YEM</td>
+<td>middle_east_north_africa</td>
+<td>asia</td>
+<td>lower_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>527970.0</td>
+<td>26360000.0</td>
+<td>0.20</td>
+<td>24.44</td>
+<td>26.11</td>
+<td>NaN</td>
+<td>2223.0</td>
+<td>33.8</td>
+<td>67.14</td>
+<td>66.871</td>
+<td>63.875</td>
+<td>1947-09-30</td>
+</tr>
+<tr>
+<th>Zambia</th>
+<td>ZMB</td>
+<td>sub_saharan_africa</td>
+<td>africa</td>
+<td>lower_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>752610.0</td>
+<td>14310000.0</td>
+<td>3.56</td>
+<td>20.68</td>
+<td>23.05</td>
+<td>11.260</td>
+<td>1930.0</td>
+<td>43.3</td>
+<td>59.45</td>
+<td>65.362</td>
+<td>59.845</td>
+<td>1964-12-01</td>
+</tr>
+<tr>
+<th>Zimbabwe</th>
+<td>ZWE</td>
+<td>sub_saharan_africa</td>
+<td>africa</td>
+<td>low_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>390760.0</td>
+<td>13330000.0</td>
+<td>4.96</td>
+<td>22.03</td>
+<td>24.65</td>
+<td>20.850</td>
+<td>2110.0</td>
+<td>46.6</td>
+<td>60.18</td>
+<td>63.944</td>
+<td>60.120</td>
+<td>1980-08-25</td>
+</tr>
+</tbody>
+</table>
+<p>193 rows × 20 columns</p>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Namátkou si vybereme nějakou zemi a podíváme se, jaké údaje o ní v tabulce máme.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">countries</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"Czechia"</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[14]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>iso                                             CZE
+world_6region                   europe_central_asia
+world_4region                                europe
+income_groups                           high_income
+is_eu                                          True
+is_oecd                                        True
+eu_accession                             2004-05-01
+year                                           2018
+area                                        78870.0
+population                               10590000.0
+alcohol_adults                                16.47
+bmi_men                                       27.91
+bmi_women                                     26.51
+car_deaths_per_100000_people                   5.72
+calories_per_day                             3256.0
+infant_mortality                                2.8
+life_expectancy                               79.37
+life_expectancy_female                       81.858
+life_expectancy_male                         76.148
+un_accession                             1993-01-19
+Name: Czechia, dtype: object</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Už na první pohled je každé pole jiného typu. Ale jakého? Na to nám odpoví atribut <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.dtypes.html"><code>dtypes</code></a> naší tabulky (u <code>Series</code> použiješ <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.dtype.html"><code>dtype</code></a>, resp. raději <code>dtype.name</code>, pokud chceš stejně pěknou řetězcovou reprezentaci).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">countries</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[15]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>iso                              object
+world_6region                    object
+world_4region                    object
+income_groups                    object
+is_eu                              bool
+is_oecd                            bool
+eu_accession                     object
+year                              int64
+area                            float64
+population                      float64
+alcohol_adults                  float64
+bmi_men                         float64
+bmi_women                       float64
+car_deaths_per_100000_people    float64
+calories_per_day                float64
+infant_mortality                float64
+life_expectancy                 float64
+life_expectancy_female          float64
+life_expectancy_male            float64
+un_accession                     object
+dtype: object</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Typy v pandas vycházejí z toho, jak je definuje knihovna <code>numpy</code> (obecně užitečná pro práci s numerickými poli a poskytující vektorové operace s rychlostí řádově vyšší než v Pythonu jako takovém). Ta potřebuje především vědět, jak alokovat pole pro prvky daného typu na to, aby mohly být seřazeny efektivně jeden za druhým, a tedy i kolik bajtů paměti každý zabírá. Kopíruje přitom "nativní" datové typy, které už můžeš znát z jiných jazyků (např. <a href="https://cs.wikipedia.org/wiki/C_(programovac%C3%AD_jazyk">C</a>)). Umístění v paměti je něco, co v Pythonu obvykle neřešíme, ale rychlé počítání se bez toho neobejde. My nepůjdeme do detailů, ale požadavek na rychlost se nám tu a tam vynoří a my budeme klást důraz na to, aby se operace prováděly na úrovni numpy a nikoliv v Pythonu.</p>
+<p>Poněkud tajuplný systém typů v <code>numpy</code> (popsaný v <a href="https://docs.scipy.org/doc/numpy/user/basics.types.html">dokumentaci</a>) je naštěstí v <code>pandas</code> (mírně) zjednodušen a nabízí jen několik užitečných základních (rodin) typů, které si teď představíme.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 Novější verze <code>pandas</code> umožňují používat pro data tzv. "arrow" backend, který zrychluje a zefektivňuje některé operace. Nicméně je třeba jej explicitně vyžádat a kromě "pouhé" efektivity nepřináší mnoho výhod. My se tím nebudeme zabývat, ale můžete se podívat na příslušnou část <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/pyarrow.html">dokumentace</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="cela_cisla_integers">Celá čísla (integers)
+<a class="header-link" href="#cela_cisla_integers">#</a>
+</h3>
+<p>V Pythonu je pro celá čísla vyhrazen přesně jeden typ: <code>int</code>, který možňuje pracovat s libovolně velkými celými čísly (0, -58 nebo třeba 123456789012345678901234567890). V <code>pandas</code> se můžeš setkat s <code>int8</code>, <code>int16</code>, <code>int32</code>, <code>int64</code>, <code>uint8</code>, <code>uint16</code>, <code>uint32</code> a <code>uint64</code> - všechny mají stejné základní vlastnosti a každý z nich má jen určitý rozsah čísel, která do něj lze uložit. Liší se velikostí paměti, kterou jedno číslo zabere (číslovka v názvu vyjadřuje počet bitů), a tím, zda jsou podporována i záporná čísla (předpona <code>u</code> znamená unsigned (bez znaménka), tedy že počítáme pouze s nulou a kladnými čísly).</p>
+<p>Rozsahy:</p>
+<ul>
+<li><code>int8</code>: -128 až 127</li>
+<li><code>uint8</code>: 0 až 255</li>
+<li><code>int16</code>: -32 768 až 32 767</li>
+<li><code>uint16</code>: 0 až 65 535</li>
+<li><code>int32</code>: -2 147 483 648 až 2 147 483 647 (tedy +/- ~2 miliardy)</li>
+<li><code>uint32</code>: 0 až 4 294 967 295 (tedy až ~4 miliardy)</li>
+<li><code>int64</code>: -9 223 372 036 854 775 808 až 9 223 372 036 854 775 807 (tedy +/- ~9 trilionů)</li>
+<li><code>uint64</code>: 0 až 18 446 744 073 709 551 615 (tedy až ~18 trilionů)</li>
+</ul>
+<p>💡 Aby toho nebylo málo, ke každému <code>int?</code> / <code>uint?</code> typu existuje ještě jeho alternativa, která umožňuje ve sloupci použít chybějící hodnoty, t.j. <code>NaN</code>. Místo malého <code>i</code>, případně <code>u</code> v názvu se použije písmeno velké. Tato vlastnost (tzv. "nullable integer types") je relativně užitečná, ale je dosud poněkud experimentální. My ji nebudeme v kurzu využívat.</p>
+<p>Detailní vysvětlení toho, jak jsou celá čísla v paměti počítače reprezentována, najdeš třeba ve <a href="https://cs.wikipedia.org/wiki/Integer">wikipedii</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V <code>pandas</code> je výchozí celočíselný typ <code>int64</code>, a pokud neřekneš jinak, automaticky se pro celá čísla použije (ve většině případů to bude vhodná volba):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">countries</span><span class="p">[</span><span class="s2">"year"</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[16]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan    2018
+Albania        2018
+Algeria        2018
+Andorra        2017
+Angola         2018
+               ... 
+Venezuela      2018
+Vietnam        2018
+Yemen          2018
+Zambia         2018
+Zimbabwe       2018
+Name: year, Length: 193, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">12345</span><span class="p">])</span>
+
+<span class="c1"># pd.Series([0, 123, 12345], dtype="int64")   # totéž</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[17]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0        0
+1      123
+2    12345
+dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pomocí argumentu <code>dtype</code> můžeš ovšem přesně specifikovat, který typ celých čísel chceš:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">12345</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"int16"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[18]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0        0
+1      123
+2    12345
+dtype: int16</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Když se pokusíš do nějakého typu vložit číslo, které se do něj "nevleze", pandas vyhodí výjimku (dříve to taky nebylo). Zkusme do nejširšího celočíselného typu (<code>int64</code>) vložit veliké číslo (třeba 123456789012345678901234567890) a uvidíme, co se stane:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Toto vyhodí výjimku:</span>
+<span class="c1"># pd.Series([0, 123, 123456789012345678901234567890], dtype="int64")</span>
+
+<span class="c1"># Toto projde, ale už to není int64:</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">123456789012345678901234567890</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[19]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0                                 0
+1                               123
+2    123456789012345678901234567890
+dtype: object</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Když ho budeme explicitně požadovat, vyhodí se výjimka.</li>
+<li>Když <code>pandas</code> necháme dělat jeho práci, použije se obecný typ <code>object</code> a přijdeme o jistou část výhod: sloupec nám zabere násobně více paměti a aritmetické operace s ním jsou o řád až dva pomalejší. Pokud to není naší prioritou, není to zase takový problém.</li>
+</ul>
+<p>Obecně proto doporučujeme držet se <code>int64</code>, resp. nechat <code>pandas</code>, aby jej za nás automaticky použil. Teprve v případě, že si to budou žádat přísné paměťové nároky, se ti vyplatí hledat ten "nejvíce růžový" typ.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Zkus vytvořit <code>Series</code> s datovým typem <code>uint8</code>, obsahující (alespoň) jedno malé záporné číslo. Co se stane?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="cisla_s_plovouci_desetinnou_carkou_floats">Čísla s plovoucí desetinnou čárkou (floats)
+<a class="header-link" href="#cisla_s_plovouci_desetinnou_carkou_floats">#</a>
+</h3>
+<p>Podobně jako u celočíselných hodnot, i jednomu typu v Python (<code>float</code>) odpovídá několik typů v <code>pandas</code>: <code>float16</code>, <code>float32</code>, <code>float64</code>. Součástí názvu je opět počet bitů, které jedno číslo potřebuje ke svému uložení. Naštěstí v tomto případě <code>float64</code> přesně odpovídá svým chováním <code>float</code> z Pythonu, zbylé dva typy nejsou tak přesné a mají menší rozsah - kromě optimalizace paměťových nároků u specifického druhu dat je nejspíš nepoužiješ.</p>
+<p>Více teoretického čtení o reprezentaci čísel s desetinnou čárkou najdeš na <a href="https://cs.wikipedia.org/wiki/Pohybliv%C3%A1_%C5%99%C3%A1dov%C3%A1_%C4%8D%C3%A1rka">wiki</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">countries</span><span class="p">[</span><span class="s2">"bmi_men"</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[20]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan    20.62
+Albania        26.45
+Algeria        24.60
+Andorra        27.63
+Angola         22.25
+               ...  
+Venezuela      27.45
+Vietnam        20.92
+Yemen          24.44
+Zambia         20.68
+Zimbabwe       22.03
+Name: bmi_men, Length: 193, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Docela přesné pí</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mf">3.14159265</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[21]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0    3.141593
+dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Ne už tak přesné pí</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mf">3.14159265</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"float16"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\Users\janpi\Documents\code\collaboration\pyladies-kurz\.venv\Lib\site-packages\pandas\io\formats\format.py:1458: RuntimeWarning: overflow encountered in cast
+  has_large_values = (abs_vals &gt; 1e6).any()
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt output_prompt">Out[22]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0    3.140625
+dtype: float16</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Vytvoř pole typu <code>float64</code> jen ze samých celých čísel. Co se stane?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="logicke_hodnoty_booleans">Logické hodnoty (booleans)
+<a class="header-link" href="#logicke_hodnoty_booleans">#</a>
+</h3>
+<p>Toto je asi nejméně překvapivý datový typ. Chová se v zásadě stejně jako typ <code>bool</code> v Pythonu. Nabírá hodnot <code>True</code> a <code>False</code> (které lze též pokládat za 1 a 0 v některých operacích). Má ještě jednu skvělou vlastnost - objekty <code>Series</code> i <code>DataFrame</code> jde filtrovat právě pomocí sloupce logického typu (o tom viz níže).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">countries</span><span class="p">[</span><span class="s2">"is_oecd"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">20</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[23]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan            False
+Albania                False
+Algeria                False
+Andorra                False
+Angola                 False
+Antigua and Barbuda    False
+Argentina              False
+Armenia                False
+Australia               True
+Austria                 True
+Azerbaijan             False
+Bahamas                False
+Bahrain                False
+Bangladesh             False
+Barbados               False
+Belarus                False
+Belgium                 True
+Belize                 False
+Benin                  False
+Bhutan                 False
+Name: is_oecd, dtype: bool</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Vytvoření nového sloupce</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[24]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0     True
+1    False
+2    False
+dtype: bool</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jde to ovšem i takto:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [25]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"bool"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[25]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0     True
+1    False
+2    False
+dtype: bool</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Co se stane, když vytvoříš <code>Series</code> typu <code>bool</code> z řetězců <code>"True"</code> a <code>"False"</code> (nezapomeň na uvozovky)?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="retezce_a_obecne_objekty_strings_objects">Řetězce a obecné objekty (strings, objects)
+<a class="header-link" href="#retezce_a_obecne_objekty_strings_objects">#</a>
+</h3>
+<p><em>Aktuální verze knihovny <code>pandas</code> (2.2) má k řetězcům poněkud schizofrenní postoj, respektive je v procesu přechodu od ne úplně šťastného přístupu (obecný datový typ <code>object</code>) k o něco lepšímu (speciální typ <code>string</code>) a ještě lepšímu (typ <code>string[pyarrow]</code>) - v dokumentaci se doporučuje používat přístup druhý, přestože to je zároveň označeno za experimentální. Rozdíl je v současnosti víceméně estetický (a my z pohodlnosti obvykle nebudeme sloupce na <code>string</code> převádět).</em></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [26]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">countries</span><span class="p">[</span><span class="s2">"iso"</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[26]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan    AFG
+Albania        ALB
+Algeria        DZA
+Andorra        AND
+Angola         AGO
+              ... 
+Venezuela      VEN
+Vietnam        VNM
+Yemen          YEM
+Zambia         ZMB
+Zimbabwe       ZWE
+Name: iso, Length: 193, dtype: object</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Toto tě pravděpodobně překvapí - ve výchozím stavu řetězce spadají společně s dalšími neurčenými nebo nerozpoznanými hodnotami do kategorie <code>object</code>, která umožňuje v daném sloupci mít cokoliv, co znáš z Pythonu, a chová se tak do značné míry jako obyčejný seznam s výhodami (žádné podivné konverze, sledování rozsahů, ...) i nevýhodami (je to pomalejší, než by mohlo; nikdo ti nezaručí, že ve sloupci budou jen řetězce).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Budeš-li chtít být explicitní či získat navíc trochu typové kontroly, můžeš datový typ <code>string</code> uvést v konstuktoru, případně konvertovat sloupec pomocí metody <code>astype</code>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [27]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># countries["iso"].astype("string")</span>
+
+<span class="c1"># Domácí mazlíčci</span>
+<span class="n">mazlicci</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">"pes"</span><span class="p">,</span> <span class="s2">"kočka"</span><span class="p">,</span> <span class="s2">"křeček"</span><span class="p">,</span> <span class="s2">"tarantule"</span><span class="p">,</span> <span class="s2">"hroznýš"</span><span class="p">],</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="s2">"string"</span>
+<span class="p">)</span>
+<span class="n">mazlicci</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[27]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0          pes
+1        kočka
+2       křeček
+3    tarantule
+4      hroznýš
+dtype: string</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [28]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># mazlicci[0] = 42  # Chyba</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Datový typ objekt je jedinou možností v případě, že máme v <code>Series</code> heterogenní data:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [29]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"dvě"</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>   <span class="c1"># Řetězec a další "smetí"</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[29]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0      1
+1    dvě
+2    3.0
+dtype: object</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pozor, třeba i takový seznam může být hodnotou v sloupci typu <code>object</code>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [30]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Objednávky</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="p">[[</span><span class="s2">"řízek"</span><span class="p">,</span> <span class="s2">"brambory"</span><span class="p">,</span> <span class="s2">"cola"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"smažák"</span><span class="p">,</span> <span class="s2">"hranolky"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"sodovka"</span><span class="p">]],</span>
+    <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">"Eva"</span><span class="p">,</span> <span class="s2">"Evelína"</span><span class="p">,</span> <span class="s2">"Evženie"</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[30]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>Eva        [řízek, brambory, cola]
+Evelína         [smažák, hranolky]
+Evženie                  [sodovka]
+dtype: object</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Co za druh objektu (a jaký <code>dtype</code>) dostaneme, když se pokusíme získat jeden řádek z tabulky <code>planety</code>?</p>
+<p><strong>Úkol:</strong> Co se stane, když sloupec <code>planety["obezna_doba"]</code> převedeš na <code>object</code>, resp. <code>string</code>?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="datum__cas_datetime">Datum / čas (datetime)
+<a class="header-link" href="#datum__cas_datetime">#</a>
+</h3>
+<p>Časovými daty se blíže zabývá jedna z následujících lekcí, nicméně nějaká v tabulce zemí už máme, a tak alespoň pro úplnost uvedeme, co v tomto směru <code>pandas</code> nabízí:</p>
+<ul>
+<li><p>Časové či datumové údaje (<em>datetime</em>) jakožto body na časové ose.</p>
+</li>
+<li><p>Časové údaje s označením časové zóny (<em>datetimes with time zone</em>).</p>
+</li>
+<li><p>Časové úseky (<em>timedeltas</em>) jakožto určení délky nějakého úseku (počítáno v nanosekundách)</p>
+</li>
+<li><p>Období (<em>periods</em>) udávají nějak určená časová období (třeba "únor 2020")</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 Pro převod z nejrůznějších formátů na datum / čas slouží funkce <code>to_datetime</code>, kterou použijeme pro následující ukázku:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [31]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">countries</span><span class="p">[</span><span class="s2">"un_accession"</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[31]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan   1946-11-19
+Albania       1955-12-14
+Algeria       1962-10-08
+Andorra       1993-07-28
+Angola        1976-12-01
+                 ...    
+Venezuela     1945-11-15
+Vietnam       1977-09-20
+Yemen         1947-09-30
+Zambia        1964-12-01
+Zimbabwe      1980-08-25
+Name: un_accession, Length: 193, dtype: datetime64[ns]</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="kategoricke_category">Kategorické (category)
+<a class="header-link" href="#kategoricke_category">#</a>
+</h3>
+<p>Pokud chceme být efektivní při práci se sloupci, kde se často opakují hodnoty (zejména řetězcové), můžeme je zakódovat do kategorií. Tím mnohdy ušetříme zabrané místo a urychlíme některé operace. Při takové konverzi <code>pandas</code> najde všechny unikátní hodnoty v daném sloupci, uloží si je do zvláštního seznamu a do sloupce uloží jenom indexy z tohoto seznamu. Vše se chová transparentně a při používání tak většinou ani nepoznáte, jestli máte sloupec typu <code>object</code> nebo <code>category</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 Pro převod mezi různými datovými typy slouží metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.astype.html"><code>astype</code></a>, která jako svůj argument akceptuje jméno dtype, na který chceme převést:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [32]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">countries</span><span class="p">[</span><span class="s2">"income_groups"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"category"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[32]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan             low_income
+Albania        upper_middle_income
+Algeria        upper_middle_income
+Andorra                high_income
+Angola         upper_middle_income
+                      ...         
+Venezuela      upper_middle_income
+Vietnam        lower_middle_income
+Yemen          lower_middle_income
+Zambia         lower_middle_income
+Zimbabwe                low_income
+Name: income_groups, Length: 193, dtype: category
+Categories (4, object): ['high_income', 'low_income', 'lower_middle_income', 'upper_middle_income']</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Napadne tě, které sloupce z tabulky <code>countries</code> bychom měli překonvertovat na nějaký jiný typ?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="matematika">Matematika
+<a class="header-link" href="#matematika">#</a>
+</h2>
+<p>Počítání se <code>Series</code> v <code>pandas</code> je navrženo tak, aby co nejméně překvapilo. Jednotlivé sloupce se tak můžou stát součástí aritmetických výrazů společně se skalárními hodnotami, s jinými sloupci, <code>numpy</code> poli příslušného tvaru, a dokonce i seznamy.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [33]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Očekávaná doba života ve dnech</span>
+<span class="n">countries</span><span class="p">[</span><span class="s2">"life_expectancy"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">365</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[33]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan    21421.85
+Albania        28473.65
+Algeria        28418.90
+Andorra        30130.75
+Angola         23794.35
+                 ...   
+Venezuela      27707.15
+Vietnam        27331.20
+Yemen          24506.10
+Zambia         21699.25
+Zimbabwe       21965.70
+Name: life_expectancy, Length: 193, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [34]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Hustota obyvatelstva</span>
+<span class="n">countries</span><span class="p">[</span><span class="s2">"population"</span><span class="p">]</span> <span class="o">/</span> <span class="n">countries</span><span class="p">[</span><span class="s2">"area"</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[34]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan     52.844408
+Albania        112.626087
+Algeria         15.526464
+Andorra        189.170213
+Angola          16.611855
+                  ...    
+Venezuela       33.265720
+Vietnam        273.924591
+Yemen           49.927079
+Zambia          19.013832
+Zimbabwe        34.113011
+Length: 193, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [35]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Jak nám podražily obědy</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">109</span><span class="p">,</span> <span class="mi">99</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">"řízek"</span><span class="p">,</span> <span class="s2">"smažák"</span><span class="p">])</span> <span class="o">+</span> <span class="p">[</span><span class="mf">20.9</span><span class="p">,</span> <span class="mf">10.9</span><span class="p">]</span>   <span class="c1"># sčítání se seznamem</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[35]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>řízek     129.9
+smažák    109.9
+dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Spočti celkový počet mrtvých v automobilových haváriích v jednotlivých zemích (použij sloupce "population" a  "car_deaths_per_100000_people" a jednoduchou aritmetiku). Sedí výsledek pro ČR?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [36]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Jak dlouho jsou v OSN?</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">countries</span><span class="p">[</span><span class="s2">"un_accession"</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[36]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan   28431 days 21:11:03.493724
+Albania       25119 days 21:11:03.493724
+Algeria       22629 days 21:11:03.493724
+Andorra       11378 days 21:11:03.493724
+Angola        17461 days 21:11:03.493724
+                         ...            
+Venezuela     28800 days 21:11:03.493724
+Vietnam       17168 days 21:11:03.493724
+Yemen         28116 days 21:11:03.493724
+Zambia        21844 days 21:11:03.493724
+Zimbabwe      16098 days 21:11:03.493724
+Name: un_accession, Length: 193, dtype: timedelta64[ns]</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 Čísla s plovoucí desetinnou čárkou mohou obsahovat i speciální hodnoty "not a number" a plus nebo mínus nekonečno. Vzniknou např. při nevhodném dělení nulou:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [37]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[37]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>0    NaN
+1   -inf
+2    inf
+dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Varování:</strong> Nabádáme tě k opatrnosti při práci s omezenými celočíselnými typy. Podobně jako při jejich nevhodné konverzi, i tady na vás může vyskočit výjimka. O důvod víc, proč se držet <code>int64</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [38]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># pd.Series([7, 14, 149], dtype="int8") * 2</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="porovnavani">Porovnávání
+<a class="header-link" href="#porovnavani">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro <code>Series</code> lze použít nejen operátory početní, ale také logické. Výsledkem pak není jedna logická hodnota, ale sloupec logických hodnot.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [39]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># 15 litrů čistého alkoholu na osobu na rok budeme považovat za hranici nadměrného pití</span>
+<span class="c1"># (nekonzultováno s adiktology!)</span>
+
+<span class="c1"># Kde se hodně pije?</span>
+<span class="n">countries</span><span class="p">[</span><span class="s2">"alcohol_adults"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">15</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[39]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan    False
+Albania        False
+Algeria        False
+Andorra        False
+Angola         False
+               ...  
+Venezuela      False
+Vietnam        False
+Yemen          False
+Zambia         False
+Zimbabwe       False
+Name: alcohol_adults, Length: 193, dtype: bool</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [40]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Skoro nikde. A jak jsme na tom u nás?</span>
+<span class="n">countries</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"Czechia"</span><span class="p">,</span> <span class="s2">"alcohol_adults"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">15</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[40]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>np.True_</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [41]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Jsou muži v jednotlivých zemích tlustší než ženy?</span>
+<span class="n">countries</span><span class="p">[</span><span class="s2">"bmi_men"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">countries</span><span class="p">[</span><span class="s2">"bmi_women"</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[41]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan    False
+Albania         True
+Algeria        False
+Andorra         True
+Angola         False
+               ...  
+Venezuela      False
+Vietnam        False
+Yemen          False
+Zambia         False
+Zimbabwe       False
+Length: 193, dtype: bool</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Zjistěte, jestli se v jednotlivých zemích dožívají více muži nebo ženy.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [42]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Leží země v Africe?</span>
+<span class="n">countries</span><span class="p">[</span><span class="s2">"world_4region"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"africa"</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[42]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan    False
+Albania        False
+Algeria         True
+Andorra        False
+Angola          True
+               ...  
+Venezuela      False
+Vietnam        False
+Yemen          False
+Zambia          True
+Zimbabwe        True
+Name: world_4region, Length: 193, dtype: bool</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Podobně jako v Pythonu lze podmínky kombinovat pomocí operátorů. Vzhledem k jistým syntaktickým požadavkům Pythonu je ale potřeba použít místo vám známých logických operátorů jejich alternativy: <code>&amp;</code> (místo <code>and</code>), <code>|</code> (místo <code>or</code>) a <code>~</code> (místo <code>not</code>). Protože mají jiné priority než jejich klasičtí bratříčci, bude lepší, když při kombinaci s jinými operátory vždycky použiješ závorky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [43]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Kde se ženy i muži dožívají přes 75 let?</span>
+<span class="p">(</span><span class="n">countries</span><span class="p">[</span><span class="s2">"life_expectancy_male"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">75</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">countries</span><span class="p">[</span><span class="s2">"life_expectancy_female"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">75</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[43]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Afghanistan    False
+Albania         True
+Algeria         True
+Andorra        False
+Angola         False
+               ...  
+Venezuela      False
+Vietnam        False
+Yemen          False
+Zambia         False
+Zimbabwe       False
+Length: 193, dtype: bool</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="filtrovani">Filtrování
+<a class="header-link" href="#filtrovani">#</a>
+</h2>
+<p>Pokud chceš z tabulky vybrat řádky, které splňují nějaké kritérium, musíš (není to vždy těžké :-)) toto kritérium převést do podoby sloupce logických hodnot. Potom tento sloupec (sloupec samotný, nikoliv jeho název!) vložíš do hranatých závorek jako index <code>DataFrame</code>.</p>
+<p>Když budeš například chtít informace jen o členech EU, můžeš k tomu přímo použít sloupec "is_eu", který logické hodnoty obsahuje:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [44]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">countries</span><span class="p">[</span><span class="n">countries</span><span class="p">[</span><span class="s2">"is_eu"</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[44]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>iso</th>
+<th>world_6region</th>
+<th>world_4region</th>
+<th>income_groups</th>
+<th>is_eu</th>
+<th>is_oecd</th>
+<th>eu_accession</th>
+<th>year</th>
+<th>area</th>
+<th>population</th>
+<th>alcohol_adults</th>
+<th>bmi_men</th>
+<th>bmi_women</th>
+<th>car_deaths_per_100000_people</th>
+<th>calories_per_day</th>
+<th>infant_mortality</th>
+<th>life_expectancy</th>
+<th>life_expectancy_female</th>
+<th>life_expectancy_male</th>
+<th>un_accession</th>
+</tr>
+<tr>
+<th>name</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Austria</th>
+<td>AUT</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1995-01-01</td>
+<td>2018</td>
+<td>83879.0</td>
+<td>8441000.0</td>
+<td>12.40</td>
+<td>26.47</td>
+<td>25.09</td>
+<td>3.541</td>
+<td>3768.0</td>
+<td>2.9</td>
+<td>81.84</td>
+<td>84.249</td>
+<td>79.585</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Belgium</th>
+<td>BEL</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1952-07-23</td>
+<td>2018</td>
+<td>30530.0</td>
+<td>10820000.0</td>
+<td>10.41</td>
+<td>26.76</td>
+<td>25.14</td>
+<td>5.427</td>
+<td>3733.0</td>
+<td>3.3</td>
+<td>81.23</td>
+<td>83.751</td>
+<td>79.131</td>
+<td>1945-12-27</td>
+</tr>
+<tr>
+<th>Bulgaria</th>
+<td>BGR</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>upper_middle_income</td>
+<td>True</td>
+<td>False</td>
+<td>2007-01-01</td>
+<td>2018</td>
+<td>111000.0</td>
+<td>7349000.0</td>
+<td>11.40</td>
+<td>26.54</td>
+<td>25.52</td>
+<td>9.662</td>
+<td>2829.0</td>
+<td>9.3</td>
+<td>75.32</td>
+<td>78.485</td>
+<td>71.618</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Croatia</th>
+<td>HRV</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>False</td>
+<td>2013-01-01</td>
+<td>2018</td>
+<td>56590.0</td>
+<td>4379000.0</td>
+<td>15.00</td>
+<td>26.60</td>
+<td>25.18</td>
+<td>6.434</td>
+<td>3059.0</td>
+<td>3.6</td>
+<td>77.66</td>
+<td>81.167</td>
+<td>74.701</td>
+<td>1992-05-22</td>
+</tr>
+<tr>
+<th>Cyprus</th>
+<td>CYP</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>False</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>9250.0</td>
+<td>1141000.0</td>
+<td>8.84</td>
+<td>27.42</td>
+<td>25.93</td>
+<td>6.419</td>
+<td>2649.0</td>
+<td>2.5</td>
+<td>80.79</td>
+<td>82.918</td>
+<td>78.734</td>
+<td>1960-09-20</td>
+</tr>
+<tr>
+<th>Czechia</th>
+<td>CZE</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>78870.0</td>
+<td>10590000.0</td>
+<td>16.47</td>
+<td>27.91</td>
+<td>26.51</td>
+<td>5.720</td>
+<td>3256.0</td>
+<td>2.8</td>
+<td>79.37</td>
+<td>81.858</td>
+<td>76.148</td>
+<td>1993-01-19</td>
+</tr>
+<tr>
+<th>Denmark</th>
+<td>DNK</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1973-01-01</td>
+<td>2018</td>
+<td>42922.0</td>
+<td>5611000.0</td>
+<td>12.02</td>
+<td>26.13</td>
+<td>25.11</td>
+<td>3.481</td>
+<td>3367.0</td>
+<td>2.9</td>
+<td>81.10</td>
+<td>82.878</td>
+<td>79.130</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>Estonia</th>
+<td>EST</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>45230.0</td>
+<td>1339000.0</td>
+<td>17.24</td>
+<td>26.26</td>
+<td>25.19</td>
+<td>5.896</td>
+<td>3253.0</td>
+<td>2.3</td>
+<td>77.66</td>
+<td>82.111</td>
+<td>73.201</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Finland</th>
+<td>FIN</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1995-01-01</td>
+<td>2018</td>
+<td>338420.0</td>
+<td>5419000.0</td>
+<td>13.10</td>
+<td>26.73</td>
+<td>25.58</td>
+<td>3.615</td>
+<td>3368.0</td>
+<td>1.9</td>
+<td>82.06</td>
+<td>84.423</td>
+<td>78.934</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>France</th>
+<td>FRA</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1952-07-23</td>
+<td>2018</td>
+<td>549087.0</td>
+<td>63780000.0</td>
+<td>12.48</td>
+<td>25.85</td>
+<td>24.83</td>
+<td>2.491</td>
+<td>3482.0</td>
+<td>3.5</td>
+<td>82.62</td>
+<td>85.747</td>
+<td>79.991</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>Germany</th>
+<td>DEU</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1952-07-23</td>
+<td>2018</td>
+<td>357380.0</td>
+<td>81800000.0</td>
+<td>12.14</td>
+<td>27.17</td>
+<td>25.74</td>
+<td>3.280</td>
+<td>3499.0</td>
+<td>3.1</td>
+<td>81.25</td>
+<td>83.632</td>
+<td>79.060</td>
+<td>1973-09-18</td>
+</tr>
+<tr>
+<th>Greece</th>
+<td>GRC</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1981-01-01</td>
+<td>2018</td>
+<td>131960.0</td>
+<td>11450000.0</td>
+<td>11.01</td>
+<td>26.34</td>
+<td>24.92</td>
+<td>9.175</td>
+<td>3400.0</td>
+<td>3.6</td>
+<td>81.34</td>
+<td>84.071</td>
+<td>79.129</td>
+<td>1945-10-25</td>
+</tr>
+<tr>
+<th>Hungary</th>
+<td>HUN</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>upper_middle_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>93030.0</td>
+<td>9934000.0</td>
+<td>16.12</td>
+<td>27.12</td>
+<td>25.98</td>
+<td>5.234</td>
+<td>3037.0</td>
+<td>5.3</td>
+<td>75.90</td>
+<td>79.557</td>
+<td>72.610</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Ireland</th>
+<td>IRL</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1973-01-01</td>
+<td>2018</td>
+<td>70280.0</td>
+<td>4631000.0</td>
+<td>14.92</td>
+<td>27.65</td>
+<td>26.62</td>
+<td>3.768</td>
+<td>3600.0</td>
+<td>3.0</td>
+<td>81.49</td>
+<td>83.737</td>
+<td>79.885</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Italy</th>
+<td>ITA</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1952-07-23</td>
+<td>2018</td>
+<td>301340.0</td>
+<td>61090000.0</td>
+<td>9.72</td>
+<td>26.48</td>
+<td>24.79</td>
+<td>3.778</td>
+<td>3579.0</td>
+<td>2.9</td>
+<td>82.62</td>
+<td>85.435</td>
+<td>81.146</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Latvia</th>
+<td>LVA</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>64490.0</td>
+<td>2226000.0</td>
+<td>13.45</td>
+<td>26.46</td>
+<td>25.62</td>
+<td>8.275</td>
+<td>3174.0</td>
+<td>6.9</td>
+<td>75.13</td>
+<td>79.498</td>
+<td>69.882</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Lithuania</th>
+<td>LTU</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>65286.0</td>
+<td>3278000.0</td>
+<td>16.30</td>
+<td>26.86</td>
+<td>26.01</td>
+<td>8.090</td>
+<td>3417.0</td>
+<td>3.3</td>
+<td>75.31</td>
+<td>80.060</td>
+<td>69.554</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Luxembourg</th>
+<td>LUX</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1952-07-23</td>
+<td>2018</td>
+<td>2590.0</td>
+<td>530000.0</td>
+<td>12.84</td>
+<td>27.43</td>
+<td>26.09</td>
+<td>5.971</td>
+<td>3539.0</td>
+<td>1.5</td>
+<td>82.39</td>
+<td>84.227</td>
+<td>79.981</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>Malta</th>
+<td>MLT</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>False</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>320.0</td>
+<td>420600.0</td>
+<td>4.10</td>
+<td>27.68</td>
+<td>27.05</td>
+<td>2.228</td>
+<td>3378.0</td>
+<td>5.1</td>
+<td>81.75</td>
+<td>82.724</td>
+<td>79.570</td>
+<td>1964-12-01</td>
+</tr>
+<tr>
+<th>Netherlands</th>
+<td>NLD</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1952-07-23</td>
+<td>2018</td>
+<td>41540.0</td>
+<td>16760000.0</td>
+<td>9.75</td>
+<td>26.02</td>
+<td>25.47</td>
+<td>2.237</td>
+<td>3228.0</td>
+<td>3.2</td>
+<td>81.92</td>
+<td>83.841</td>
+<td>80.440</td>
+<td>1945-12-10</td>
+</tr>
+<tr>
+<th>Poland</th>
+<td>POL</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>312680.0</td>
+<td>38330000.0</td>
+<td>14.43</td>
+<td>26.67</td>
+<td>25.92</td>
+<td>7.675</td>
+<td>3451.0</td>
+<td>4.5</td>
+<td>78.19</td>
+<td>81.732</td>
+<td>74.043</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>Portugal</th>
+<td>PRT</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1986-01-01</td>
+<td>2018</td>
+<td>92225.0</td>
+<td>10700000.0</td>
+<td>13.89</td>
+<td>26.68</td>
+<td>26.18</td>
+<td>5.078</td>
+<td>3477.0</td>
+<td>3.0</td>
+<td>81.30</td>
+<td>84.372</td>
+<td>78.685</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Romania</th>
+<td>ROU</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>upper_middle_income</td>
+<td>True</td>
+<td>False</td>
+<td>2007-01-01</td>
+<td>2018</td>
+<td>238390.0</td>
+<td>21340000.0</td>
+<td>16.15</td>
+<td>25.41</td>
+<td>25.22</td>
+<td>8.808</td>
+<td>3358.0</td>
+<td>9.7</td>
+<td>75.53</td>
+<td>79.158</td>
+<td>72.265</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Slovakia</th>
+<td>SVK</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>49035.0</td>
+<td>5489000.0</td>
+<td>13.31</td>
+<td>26.93</td>
+<td>26.32</td>
+<td>6.746</td>
+<td>2944.0</td>
+<td>5.8</td>
+<td>77.16</td>
+<td>80.511</td>
+<td>73.589</td>
+<td>1993-01-19</td>
+</tr>
+<tr>
+<th>Slovenia</th>
+<td>SVN</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>20270.0</td>
+<td>2045000.0</td>
+<td>14.94</td>
+<td>27.44</td>
+<td>26.58</td>
+<td>5.315</td>
+<td>3168.0</td>
+<td>2.1</td>
+<td>81.12</td>
+<td>84.017</td>
+<td>78.499</td>
+<td>1992-05-22</td>
+</tr>
+<tr>
+<th>Spain</th>
+<td>ESP</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1986-01-01</td>
+<td>2018</td>
+<td>505940.0</td>
+<td>47040000.0</td>
+<td>11.83</td>
+<td>27.50</td>
+<td>26.31</td>
+<td>5.146</td>
+<td>3174.0</td>
+<td>3.5</td>
+<td>83.23</td>
+<td>86.119</td>
+<td>80.694</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Sweden</th>
+<td>SWE</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1995-01-01</td>
+<td>2018</td>
+<td>447420.0</td>
+<td>9546000.0</td>
+<td>9.50</td>
+<td>26.38</td>
+<td>25.15</td>
+<td>2.737</td>
+<td>3179.0</td>
+<td>2.4</td>
+<td>82.37</td>
+<td>84.443</td>
+<td>81.126</td>
+<td>1946-11-19</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nemusíš použít existující sloupec v tabulce, ale i jakoukoliv vypočítanou hodnotu stejného tvaru:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [45]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Prťavé země</span>
+<span class="n">countries</span><span class="p">[</span><span class="n">countries</span><span class="p">[</span><span class="s2">"population"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">100_000</span><span class="p">]</span>   <span class="c1"># Podtržítko pomáhá oddělit tisíce vizuálně</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[45]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>iso</th>
+<th>world_6region</th>
+<th>world_4region</th>
+<th>income_groups</th>
+<th>is_eu</th>
+<th>is_oecd</th>
+<th>eu_accession</th>
+<th>year</th>
+<th>area</th>
+<th>population</th>
+<th>alcohol_adults</th>
+<th>bmi_men</th>
+<th>bmi_women</th>
+<th>car_deaths_per_100000_people</th>
+<th>calories_per_day</th>
+<th>infant_mortality</th>
+<th>life_expectancy</th>
+<th>life_expectancy_female</th>
+<th>life_expectancy_male</th>
+<th>un_accession</th>
+</tr>
+<tr>
+<th>name</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Andorra</th>
+<td>AND</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2017</td>
+<td>470.0</td>
+<td>88910.0</td>
+<td>10.17</td>
+<td>27.63</td>
+<td>26.43</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>2.10</td>
+<td>82.55</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1993-07-28</td>
+</tr>
+<tr>
+<th>Antigua and Barbuda</th>
+<td>ATG</td>
+<td>america</td>
+<td>americas</td>
+<td>high_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>440.0</td>
+<td>91400.0</td>
+<td>8.17</td>
+<td>25.77</td>
+<td>27.51</td>
+<td>NaN</td>
+<td>2417.0</td>
+<td>5.80</td>
+<td>77.60</td>
+<td>79.028</td>
+<td>74.154</td>
+<td>1981-11-11</td>
+</tr>
+<tr>
+<th>Dominica</th>
+<td>DMA</td>
+<td>america</td>
+<td>americas</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2017</td>
+<td>750.0</td>
+<td>67700.0</td>
+<td>8.68</td>
+<td>24.57</td>
+<td>28.78</td>
+<td>NaN</td>
+<td>2931.0</td>
+<td>19.60</td>
+<td>73.01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1978-12-18</td>
+</tr>
+<tr>
+<th>Liechtenstein</th>
+<td>LIE</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2017</td>
+<td>160.0</td>
+<td>36870.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1.76</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1990-09-18</td>
+</tr>
+<tr>
+<th>Marshall Islands</th>
+<td>MHL</td>
+<td>east_asia_pacific</td>
+<td>asia</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2017</td>
+<td>180.0</td>
+<td>56690.0</td>
+<td>NaN</td>
+<td>29.37</td>
+<td>31.39</td>
+<td>1.800</td>
+<td>NaN</td>
+<td>29.60</td>
+<td>65.00</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Monaco</th>
+<td>MCO</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2017</td>
+<td>2.0</td>
+<td>35460.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>2.80</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1993-05-28</td>
+</tr>
+<tr>
+<th>Nauru</th>
+<td>NRU</td>
+<td>east_asia_pacific</td>
+<td>asia</td>
+<td>NaN</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2015</td>
+<td>20.0</td>
+<td>10440.0</td>
+<td>4.81</td>
+<td>33.90</td>
+<td>35.02</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>29.10</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1999-09-14</td>
+</tr>
+<tr>
+<th>Palau</th>
+<td>PLW</td>
+<td>east_asia_pacific</td>
+<td>asia</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2017</td>
+<td>460.0</td>
+<td>20920.0</td>
+<td>9.86</td>
+<td>30.38</td>
+<td>31.85</td>
+<td>10.730</td>
+<td>NaN</td>
+<td>14.20</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1994-12-15</td>
+</tr>
+<tr>
+<th>Saint Kitts and Nevis</th>
+<td>KNA</td>
+<td>america</td>
+<td>americas</td>
+<td>high_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2017</td>
+<td>260.0</td>
+<td>54340.0</td>
+<td>10.62</td>
+<td>28.23</td>
+<td>30.51</td>
+<td>NaN</td>
+<td>2492.0</td>
+<td>8.40</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1983-09-23</td>
+</tr>
+<tr>
+<th>San Marino</th>
+<td>SMR</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2017</td>
+<td>60.0</td>
+<td>32160.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>5.946</td>
+<td>NaN</td>
+<td>2.60</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1992-03-02</td>
+</tr>
+<tr>
+<th>Seychelles</th>
+<td>SYC</td>
+<td>sub_saharan_africa</td>
+<td>africa</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>460.0</td>
+<td>87420.0</td>
+<td>12.11</td>
+<td>25.56</td>
+<td>27.97</td>
+<td>11.700</td>
+<td>NaN</td>
+<td>11.70</td>
+<td>74.23</td>
+<td>78.730</td>
+<td>69.693</td>
+<td>1976-09-21</td>
+</tr>
+<tr>
+<th>Tuvalu</th>
+<td>TUV</td>
+<td>east_asia_pacific</td>
+<td>asia</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2017</td>
+<td>30.0</td>
+<td>9888.0</td>
+<td>2.14</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>22.80</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>2000-09-05</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>...a samozřejmě kombinace:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [46]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Chudší země EU</span>
+<span class="n">countries</span><span class="p">[</span><span class="n">countries</span><span class="p">[</span><span class="s2">"is_eu"</span><span class="p">]</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">countries</span><span class="p">[</span><span class="s2">"income_groups"</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"high_income"</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[46]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>iso</th>
+<th>world_6region</th>
+<th>world_4region</th>
+<th>income_groups</th>
+<th>is_eu</th>
+<th>is_oecd</th>
+<th>eu_accession</th>
+<th>year</th>
+<th>area</th>
+<th>population</th>
+<th>alcohol_adults</th>
+<th>bmi_men</th>
+<th>bmi_women</th>
+<th>car_deaths_per_100000_people</th>
+<th>calories_per_day</th>
+<th>infant_mortality</th>
+<th>life_expectancy</th>
+<th>life_expectancy_female</th>
+<th>life_expectancy_male</th>
+<th>un_accession</th>
+</tr>
+<tr>
+<th>name</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Bulgaria</th>
+<td>BGR</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>upper_middle_income</td>
+<td>True</td>
+<td>False</td>
+<td>2007-01-01</td>
+<td>2018</td>
+<td>111000.0</td>
+<td>7349000.0</td>
+<td>11.40</td>
+<td>26.54</td>
+<td>25.52</td>
+<td>9.662</td>
+<td>2829.0</td>
+<td>9.3</td>
+<td>75.32</td>
+<td>78.485</td>
+<td>71.618</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Hungary</th>
+<td>HUN</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>upper_middle_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>93030.0</td>
+<td>9934000.0</td>
+<td>16.12</td>
+<td>27.12</td>
+<td>25.98</td>
+<td>5.234</td>
+<td>3037.0</td>
+<td>5.3</td>
+<td>75.90</td>
+<td>79.557</td>
+<td>72.610</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Romania</th>
+<td>ROU</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>upper_middle_income</td>
+<td>True</td>
+<td>False</td>
+<td>2007-01-01</td>
+<td>2018</td>
+<td>238390.0</td>
+<td>21340000.0</td>
+<td>16.15</td>
+<td>25.41</td>
+<td>25.22</td>
+<td>8.808</td>
+<td>3358.0</td>
+<td>9.7</td>
+<td>75.53</td>
+<td>79.158</td>
+<td>72.265</td>
+<td>1955-12-14</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [47]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Které země OECD mají očekávanou dobu dožití méně 78 let?</span>
+<span class="n">countries</span><span class="p">[</span><span class="n">countries</span><span class="p">[</span><span class="s2">"is_oecd"</span><span class="p">]</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">countries</span><span class="p">[</span><span class="s2">"life_expectancy"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">78</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[47]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>iso</th>
+<th>world_6region</th>
+<th>world_4region</th>
+<th>income_groups</th>
+<th>is_eu</th>
+<th>is_oecd</th>
+<th>eu_accession</th>
+<th>year</th>
+<th>area</th>
+<th>population</th>
+<th>alcohol_adults</th>
+<th>bmi_men</th>
+<th>bmi_women</th>
+<th>car_deaths_per_100000_people</th>
+<th>calories_per_day</th>
+<th>infant_mortality</th>
+<th>life_expectancy</th>
+<th>life_expectancy_female</th>
+<th>life_expectancy_male</th>
+<th>un_accession</th>
+</tr>
+<tr>
+<th>name</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Estonia</th>
+<td>EST</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>45230.0</td>
+<td>1339000.0</td>
+<td>17.24</td>
+<td>26.26</td>
+<td>25.19</td>
+<td>5.896</td>
+<td>3253.0</td>
+<td>2.3</td>
+<td>77.66</td>
+<td>82.111</td>
+<td>73.201</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Hungary</th>
+<td>HUN</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>upper_middle_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>93030.0</td>
+<td>9934000.0</td>
+<td>16.12</td>
+<td>27.12</td>
+<td>25.98</td>
+<td>5.234</td>
+<td>3037.0</td>
+<td>5.3</td>
+<td>75.90</td>
+<td>79.557</td>
+<td>72.610</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Latvia</th>
+<td>LVA</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>64490.0</td>
+<td>2226000.0</td>
+<td>13.45</td>
+<td>26.46</td>
+<td>25.62</td>
+<td>8.275</td>
+<td>3174.0</td>
+<td>6.9</td>
+<td>75.13</td>
+<td>79.498</td>
+<td>69.882</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Lithuania</th>
+<td>LTU</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>65286.0</td>
+<td>3278000.0</td>
+<td>16.30</td>
+<td>26.86</td>
+<td>26.01</td>
+<td>8.090</td>
+<td>3417.0</td>
+<td>3.3</td>
+<td>75.31</td>
+<td>80.060</td>
+<td>69.554</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Mexico</th>
+<td>MEX</td>
+<td>america</td>
+<td>americas</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>True</td>
+<td>NaN</td>
+<td>2018</td>
+<td>1964380.0</td>
+<td>117500000.0</td>
+<td>8.55</td>
+<td>27.42</td>
+<td>28.74</td>
+<td>9.468</td>
+<td>3072.0</td>
+<td>11.3</td>
+<td>76.78</td>
+<td>79.880</td>
+<td>75.120</td>
+<td>1945-11-07</td>
+</tr>
+<tr>
+<th>Slovakia</th>
+<td>SVK</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>49035.0</td>
+<td>5489000.0</td>
+<td>13.31</td>
+<td>26.93</td>
+<td>26.32</td>
+<td>6.746</td>
+<td>2944.0</td>
+<td>5.8</td>
+<td>77.16</td>
+<td>80.511</td>
+<td>73.589</td>
+<td>1993-01-19</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Protože tento způsob filtrování je poněkud nešikovný, existuje ještě metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.query.html"><code>query</code></a>, která umožňuje vybírat řádky na základě řetězce, který popisuje nějakou (ne)rovnost z názvů sloupců a číselných hodnot (což poměrně často jde, někdy ovšem nemusí).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [48]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Opravdu veliké země (počet obyvatel nad 100 milionů)</span>
+<span class="n">countries</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"population &gt; 100_000_000"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[48]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>iso</th>
+<th>world_6region</th>
+<th>world_4region</th>
+<th>income_groups</th>
+<th>is_eu</th>
+<th>is_oecd</th>
+<th>eu_accession</th>
+<th>year</th>
+<th>area</th>
+<th>population</th>
+<th>alcohol_adults</th>
+<th>bmi_men</th>
+<th>bmi_women</th>
+<th>car_deaths_per_100000_people</th>
+<th>calories_per_day</th>
+<th>infant_mortality</th>
+<th>life_expectancy</th>
+<th>life_expectancy_female</th>
+<th>life_expectancy_male</th>
+<th>un_accession</th>
+</tr>
+<tr>
+<th>name</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Bangladesh</th>
+<td>BGD</td>
+<td>south_asia</td>
+<td>asia</td>
+<td>low_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>147630.0</td>
+<td>1.544000e+08</td>
+<td>0.17</td>
+<td>20.40</td>
+<td>20.55</td>
+<td>4.401</td>
+<td>2450.0</td>
+<td>30.7</td>
+<td>73.41</td>
+<td>74.937</td>
+<td>71.484</td>
+<td>1974-09-17</td>
+</tr>
+<tr>
+<th>Brazil</th>
+<td>BRA</td>
+<td>america</td>
+<td>americas</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>8515770.0</td>
+<td>2.001000e+08</td>
+<td>10.08</td>
+<td>25.79</td>
+<td>25.99</td>
+<td>1.872</td>
+<td>3263.0</td>
+<td>14.6</td>
+<td>75.70</td>
+<td>79.527</td>
+<td>72.340</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>China</th>
+<td>CHN</td>
+<td>east_asia_pacific</td>
+<td>asia</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>9562911.0</td>
+<td>1.359000e+09</td>
+<td>5.56</td>
+<td>22.92</td>
+<td>22.91</td>
+<td>3.590</td>
+<td>3108.0</td>
+<td>9.2</td>
+<td>76.92</td>
+<td>78.163</td>
+<td>75.096</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>India</th>
+<td>IND</td>
+<td>south_asia</td>
+<td>asia</td>
+<td>lower_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>3287259.0</td>
+<td>1.275000e+09</td>
+<td>2.69</td>
+<td>20.96</td>
+<td>21.31</td>
+<td>3.034</td>
+<td>2459.0</td>
+<td>37.9</td>
+<td>69.10</td>
+<td>70.678</td>
+<td>67.538</td>
+<td>1945-10-30</td>
+</tr>
+<tr>
+<th>Indonesia</th>
+<td>IDN</td>
+<td>east_asia_pacific</td>
+<td>asia</td>
+<td>lower_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>1910931.0</td>
+<td>2.472000e+08</td>
+<td>0.56</td>
+<td>21.86</td>
+<td>22.99</td>
+<td>1.232</td>
+<td>2777.0</td>
+<td>22.8</td>
+<td>72.03</td>
+<td>71.742</td>
+<td>67.426</td>
+<td>1950-09-28</td>
+</tr>
+<tr>
+<th>Japan</th>
+<td>JPN</td>
+<td>east_asia_pacific</td>
+<td>asia</td>
+<td>high_income</td>
+<td>False</td>
+<td>True</td>
+<td>NaN</td>
+<td>2018</td>
+<td>377962.0</td>
+<td>1.263000e+08</td>
+<td>7.79</td>
+<td>23.50</td>
+<td>21.87</td>
+<td>1.381</td>
+<td>2726.0</td>
+<td>2.0</td>
+<td>84.17</td>
+<td>87.244</td>
+<td>80.803</td>
+<td>1956-12-18</td>
+</tr>
+<tr>
+<th>Mexico</th>
+<td>MEX</td>
+<td>america</td>
+<td>americas</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>True</td>
+<td>NaN</td>
+<td>2018</td>
+<td>1964380.0</td>
+<td>1.175000e+08</td>
+<td>8.55</td>
+<td>27.42</td>
+<td>28.74</td>
+<td>9.468</td>
+<td>3072.0</td>
+<td>11.3</td>
+<td>76.78</td>
+<td>79.880</td>
+<td>75.120</td>
+<td>1945-11-07</td>
+</tr>
+<tr>
+<th>Nigeria</th>
+<td>NGA</td>
+<td>sub_saharan_africa</td>
+<td>africa</td>
+<td>lower_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>923770.0</td>
+<td>1.709000e+08</td>
+<td>12.72</td>
+<td>23.03</td>
+<td>23.67</td>
+<td>NaN</td>
+<td>2700.0</td>
+<td>69.4</td>
+<td>66.14</td>
+<td>55.158</td>
+<td>53.512</td>
+<td>1960-10-07</td>
+</tr>
+<tr>
+<th>Pakistan</th>
+<td>PAK</td>
+<td>south_asia</td>
+<td>asia</td>
+<td>lower_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>796100.0</td>
+<td>1.832000e+08</td>
+<td>0.05</td>
+<td>22.30</td>
+<td>23.45</td>
+<td>NaN</td>
+<td>2440.0</td>
+<td>65.8</td>
+<td>67.96</td>
+<td>67.869</td>
+<td>65.750</td>
+<td>1947-09-30</td>
+</tr>
+<tr>
+<th>Russia</th>
+<td>RUS</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>17098250.0</td>
+<td>1.426000e+08</td>
+<td>16.23</td>
+<td>26.01</td>
+<td>27.21</td>
+<td>14.380</td>
+<td>3361.0</td>
+<td>8.2</td>
+<td>71.07</td>
+<td>76.882</td>
+<td>65.771</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>United States</th>
+<td>USA</td>
+<td>america</td>
+<td>americas</td>
+<td>high_income</td>
+<td>False</td>
+<td>True</td>
+<td>NaN</td>
+<td>2018</td>
+<td>9831510.0</td>
+<td>3.185000e+08</td>
+<td>9.70</td>
+<td>28.46</td>
+<td>28.34</td>
+<td>9.523</td>
+<td>3682.0</td>
+<td>5.6</td>
+<td>79.14</td>
+<td>81.942</td>
+<td>77.429</td>
+<td>1945-10-24</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [49]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># V kterých zemích EU se hodně jí?</span>
+<span class="n">countries</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"is_eu &amp; (calories_per_day &gt; 3500)"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[49]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>iso</th>
+<th>world_6region</th>
+<th>world_4region</th>
+<th>income_groups</th>
+<th>is_eu</th>
+<th>is_oecd</th>
+<th>eu_accession</th>
+<th>year</th>
+<th>area</th>
+<th>population</th>
+<th>alcohol_adults</th>
+<th>bmi_men</th>
+<th>bmi_women</th>
+<th>car_deaths_per_100000_people</th>
+<th>calories_per_day</th>
+<th>infant_mortality</th>
+<th>life_expectancy</th>
+<th>life_expectancy_female</th>
+<th>life_expectancy_male</th>
+<th>un_accession</th>
+</tr>
+<tr>
+<th>name</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Austria</th>
+<td>AUT</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1995-01-01</td>
+<td>2018</td>
+<td>83879.0</td>
+<td>8441000.0</td>
+<td>12.40</td>
+<td>26.47</td>
+<td>25.09</td>
+<td>3.541</td>
+<td>3768.0</td>
+<td>2.9</td>
+<td>81.84</td>
+<td>84.249</td>
+<td>79.585</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Belgium</th>
+<td>BEL</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1952-07-23</td>
+<td>2018</td>
+<td>30530.0</td>
+<td>10820000.0</td>
+<td>10.41</td>
+<td>26.76</td>
+<td>25.14</td>
+<td>5.427</td>
+<td>3733.0</td>
+<td>3.3</td>
+<td>81.23</td>
+<td>83.751</td>
+<td>79.131</td>
+<td>1945-12-27</td>
+</tr>
+<tr>
+<th>Ireland</th>
+<td>IRL</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1973-01-01</td>
+<td>2018</td>
+<td>70280.0</td>
+<td>4631000.0</td>
+<td>14.92</td>
+<td>27.65</td>
+<td>26.62</td>
+<td>3.768</td>
+<td>3600.0</td>
+<td>3.0</td>
+<td>81.49</td>
+<td>83.737</td>
+<td>79.885</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Italy</th>
+<td>ITA</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1952-07-23</td>
+<td>2018</td>
+<td>301340.0</td>
+<td>61090000.0</td>
+<td>9.72</td>
+<td>26.48</td>
+<td>24.79</td>
+<td>3.778</td>
+<td>3579.0</td>
+<td>2.9</td>
+<td>82.62</td>
+<td>85.435</td>
+<td>81.146</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Luxembourg</th>
+<td>LUX</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>1952-07-23</td>
+<td>2018</td>
+<td>2590.0</td>
+<td>530000.0</td>
+<td>12.84</td>
+<td>27.43</td>
+<td>26.09</td>
+<td>5.971</td>
+<td>3539.0</td>
+<td>1.5</td>
+<td>82.39</td>
+<td>84.227</td>
+<td>79.981</td>
+<td>1945-10-24</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Která jediná země Afriky patří do skupiny s vysokými příjmy?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Ve kterých zemích se pije opravdu hodně (použij výše uvedené nebo jakékoliv jiné kritérium)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="razeni">Řazení
+<a class="header-link" href="#razeni">#</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V úvodní lekci <code>pandas</code> jsme si již ukázali, jak pomocí metody <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.sort_index.html"><code>sort_index</code></a> seřadit řádky podle indexu. Jelikož <code>countries</code> už jsou srovnané, vyzkoušíme si to ještě jednou na planetách:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [50]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[50]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>symbol</th>
+<th>obezna_poloosa</th>
+<th>obezna_doba</th>
+<th>mesice</th>
+<th>je_obr</th>
+</tr>
+<tr>
+<th>jmeno</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Jupiter</th>
+<td>♃</td>
+<td>5.20</td>
+<td>11.86</td>
+<td>79</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Mars</th>
+<td>♂</td>
+<td>1.52</td>
+<td>1.88</td>
+<td>2</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Merkur</th>
+<td>☿</td>
+<td>0.39</td>
+<td>0.24</td>
+<td>0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Neptun</th>
+<td>♆</td>
+<td>30.06</td>
+<td>164.80</td>
+<td>14</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Saturn</th>
+<td>♄</td>
+<td>9.54</td>
+<td>29.46</td>
+<td>82</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Uran</th>
+<td>♅</td>
+<td>19.22</td>
+<td>84.01</td>
+<td>27</td>
+<td>True</td>
+</tr>
+<tr>
+<th>Venuše</th>
+<td>♀</td>
+<td>0.72</td>
+<td>0.62</td>
+<td>0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>Země</th>
+<td>⊕</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro řazení hodnot v <code>Series</code> se použije metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.sort_values.html"><code>sort_values</code></a>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [51]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># 10 zemí s nejmenším počtem obyvatel</span>
+<span class="n">countries</span><span class="p">[</span><span class="s2">"population"</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[51]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Tuvalu                    9888.0
+Nauru                    10440.0
+Palau                    20920.0
+San Marino               32160.0
+Monaco                   35460.0
+Liechtenstein            36870.0
+Saint Kitts and Nevis    54340.0
+Marshall Islands         56690.0
+Dominica                 67700.0
+Seychelles               87420.0
+Name: population, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nepovinný argument <code>ascending</code> říká, kterým směrem máme řadit. Výchozí hodnota je <code>True</code>, změnou na <code>False</code> tedy budeme řadit od největšího k nejmenšímu:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [52]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Největších 10 zemí podle rozlohy</span>
+<span class="n">countries</span><span class="p">[</span><span class="s2">"area"</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[52]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>name
+Russia           17098250.0
+Canada            9984670.0
+United States     9831510.0
+China             9562911.0
+Brazil            8515770.0
+Australia         7741220.0
+India             3287259.0
+Argentina         2780400.0
+Kazakhstan        2724902.0
+Algeria           2381740.0
+Name: area, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V případě tabulky je třeba jako první argument uvést jméno sloupce (nebo sloupců), podle kterých chceme řadit:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [53]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># 10 zemí s největší spotřebou alkoholu na jednoho obyvatele</span>
+<span class="n">countries</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"alcohol_adults"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[53]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>iso</th>
+<th>world_6region</th>
+<th>world_4region</th>
+<th>income_groups</th>
+<th>is_eu</th>
+<th>is_oecd</th>
+<th>eu_accession</th>
+<th>year</th>
+<th>area</th>
+<th>population</th>
+<th>alcohol_adults</th>
+<th>bmi_men</th>
+<th>bmi_women</th>
+<th>car_deaths_per_100000_people</th>
+<th>calories_per_day</th>
+<th>infant_mortality</th>
+<th>life_expectancy</th>
+<th>life_expectancy_female</th>
+<th>life_expectancy_male</th>
+<th>un_accession</th>
+</tr>
+<tr>
+<th>name</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Moldova</th>
+<td>MDA</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>lower_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>33850.0</td>
+<td>3496000.0</td>
+<td>23.01</td>
+<td>24.24</td>
+<td>27.06</td>
+<td>5.529</td>
+<td>2714.0</td>
+<td>13.6</td>
+<td>72.41</td>
+<td>76.090</td>
+<td>67.544</td>
+<td>1992-03-02</td>
+</tr>
+<tr>
+<th>South Korea</th>
+<td>KOR</td>
+<td>east_asia_pacific</td>
+<td>asia</td>
+<td>high_income</td>
+<td>False</td>
+<td>True</td>
+<td>NaN</td>
+<td>2018</td>
+<td>100280.0</td>
+<td>48770000.0</td>
+<td>19.15</td>
+<td>23.99</td>
+<td>23.33</td>
+<td>4.319</td>
+<td>3334.0</td>
+<td>2.9</td>
+<td>81.35</td>
+<td>85.467</td>
+<td>79.456</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Belarus</th>
+<td>BLR</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>upper_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>207600.0</td>
+<td>9498000.0</td>
+<td>18.85</td>
+<td>26.16</td>
+<td>26.64</td>
+<td>8.454</td>
+<td>3250.0</td>
+<td>3.4</td>
+<td>73.76</td>
+<td>78.583</td>
+<td>67.693</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>North Korea</th>
+<td>PRK</td>
+<td>east_asia_pacific</td>
+<td>asia</td>
+<td>low_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>120540.0</td>
+<td>24650000.0</td>
+<td>18.28</td>
+<td>22.02</td>
+<td>21.25</td>
+<td>NaN</td>
+<td>2094.0</td>
+<td>19.7</td>
+<td>71.13</td>
+<td>75.512</td>
+<td>68.450</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Ukraine</th>
+<td>UKR</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>lower_middle_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>603550.0</td>
+<td>44700000.0</td>
+<td>17.47</td>
+<td>25.42</td>
+<td>26.23</td>
+<td>8.771</td>
+<td>3138.0</td>
+<td>7.7</td>
+<td>72.29</td>
+<td>77.067</td>
+<td>67.246</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>Estonia</th>
+<td>EST</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>45230.0</td>
+<td>1339000.0</td>
+<td>17.24</td>
+<td>26.26</td>
+<td>25.19</td>
+<td>5.896</td>
+<td>3253.0</td>
+<td>2.3</td>
+<td>77.66</td>
+<td>82.111</td>
+<td>73.201</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Czechia</th>
+<td>CZE</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>78870.0</td>
+<td>10590000.0</td>
+<td>16.47</td>
+<td>27.91</td>
+<td>26.51</td>
+<td>5.720</td>
+<td>3256.0</td>
+<td>2.8</td>
+<td>79.37</td>
+<td>81.858</td>
+<td>76.148</td>
+<td>1993-01-19</td>
+</tr>
+<tr>
+<th>Uganda</th>
+<td>UGA</td>
+<td>sub_saharan_africa</td>
+<td>africa</td>
+<td>low_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>241550.0</td>
+<td>36760000.0</td>
+<td>16.40</td>
+<td>22.36</td>
+<td>22.48</td>
+<td>13.690</td>
+<td>2130.0</td>
+<td>37.7</td>
+<td>62.86</td>
+<td>62.667</td>
+<td>58.252</td>
+<td>1962-10-25</td>
+</tr>
+<tr>
+<th>Lithuania</th>
+<td>LTU</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>True</td>
+<td>True</td>
+<td>2004-05-01</td>
+<td>2018</td>
+<td>65286.0</td>
+<td>3278000.0</td>
+<td>16.30</td>
+<td>26.86</td>
+<td>26.01</td>
+<td>8.090</td>
+<td>3417.0</td>
+<td>3.3</td>
+<td>75.31</td>
+<td>80.060</td>
+<td>69.554</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Russia</th>
+<td>RUS</td>
+<td>europe_central_asia</td>
+<td>europe</td>
+<td>high_income</td>
+<td>False</td>
+<td>False</td>
+<td>NaN</td>
+<td>2018</td>
+<td>17098250.0</td>
+<td>142600000.0</td>
+<td>16.23</td>
+<td>26.01</td>
+<td>27.21</td>
+<td>14.380</td>
+<td>3361.0</td>
+<td>8.2</td>
+<td>71.07</td>
+<td>76.882</td>
+<td>65.771</td>
+<td>1945-10-24</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 V následující buňce je celý kód uzavřen do závorky. Umožnili jsme si tím roztáhnout jeden výraz na více řádků, abychom jeho části mohli náležitě okomentovat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [54]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="p">(</span>
+    <span class="c1"># Uvažuj jenom EU</span>
+    <span class="n">countries</span><span class="p">[</span><span class="n">countries</span><span class="p">[</span><span class="s2">"is_eu"</span><span class="p">]]</span>
+    
+    <span class="c1"># Seřaď nejdřív podle data vstupu do EU, pak podle vstupu do OSN</span>
+    <span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">"eu_accession"</span><span class="p">,</span> <span class="s2">"un_accession"</span><span class="p">])</span>
+
+    <span class="c1"># Zobraz si jen ty dva sloupce</span>
+    <span class="p">[[</span><span class="s2">"eu_accession"</span><span class="p">,</span> <span class="s2">"un_accession"</span><span class="p">]]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[54]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>eu_accession</th>
+<th>un_accession</th>
+</tr>
+<tr>
+<th>name</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>France</th>
+<td>1952-07-23</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>Luxembourg</th>
+<td>1952-07-23</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>Netherlands</th>
+<td>1952-07-23</td>
+<td>1945-12-10</td>
+</tr>
+<tr>
+<th>Belgium</th>
+<td>1952-07-23</td>
+<td>1945-12-27</td>
+</tr>
+<tr>
+<th>Italy</th>
+<td>1952-07-23</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Germany</th>
+<td>1952-07-23</td>
+<td>1973-09-18</td>
+</tr>
+<tr>
+<th>Denmark</th>
+<td>1973-01-01</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>Ireland</th>
+<td>1973-01-01</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Greece</th>
+<td>1981-01-01</td>
+<td>1945-10-25</td>
+</tr>
+<tr>
+<th>Portugal</th>
+<td>1986-01-01</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Spain</th>
+<td>1986-01-01</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Sweden</th>
+<td>1995-01-01</td>
+<td>1946-11-19</td>
+</tr>
+<tr>
+<th>Austria</th>
+<td>1995-01-01</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Finland</th>
+<td>1995-01-01</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Poland</th>
+<td>2004-05-01</td>
+<td>1945-10-24</td>
+</tr>
+<tr>
+<th>Hungary</th>
+<td>2004-05-01</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Cyprus</th>
+<td>2004-05-01</td>
+<td>1960-09-20</td>
+</tr>
+<tr>
+<th>Malta</th>
+<td>2004-05-01</td>
+<td>1964-12-01</td>
+</tr>
+<tr>
+<th>Estonia</th>
+<td>2004-05-01</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Latvia</th>
+<td>2004-05-01</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Lithuania</th>
+<td>2004-05-01</td>
+<td>1991-09-17</td>
+</tr>
+<tr>
+<th>Slovenia</th>
+<td>2004-05-01</td>
+<td>1992-05-22</td>
+</tr>
+<tr>
+<th>Czechia</th>
+<td>2004-05-01</td>
+<td>1993-01-19</td>
+</tr>
+<tr>
+<th>Slovakia</th>
+<td>2004-05-01</td>
+<td>1993-01-19</td>
+</tr>
+<tr>
+<th>Bulgaria</th>
+<td>2007-01-01</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Romania</th>
+<td>2007-01-01</td>
+<td>1955-12-14</td>
+</tr>
+<tr>
+<th>Croatia</th>
+<td>2013-01-01</td>
+<td>1992-05-22</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Seřaď země světa podle hustoty obyvatel.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Které země mají problémy s nadváhou (průměrné BMI mužů a žen je přes 25)?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> V kterých 20 zemích umře absolutně nejvíc lidí při automobilových haváriích?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="uloz_vysledky">Ulož výsledky!
+<a class="header-link" href="#uloz_vysledky">#</a>
+</h2>
+<p>A tím už pomalu končíme. Jenže jsme udělali (skoro) netriviální množství práce a ta bude do příště ztracená. Naštěstí zapsat <code>DataFrame</code> do externího souboru v některém z typických formátů není vůbec komplikované. K sadě funkcí <code>pd.read_XXX</code> existují jejich protějšky <code>DataFrame.to_XXX</code>. Liší se různými parametry, ale základní použití je velmi jednoduché:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [55]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">"planety.csv"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [56]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s2">"planety.xlsx"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Excel ani CSV nejsou formáty pro ukládání velikých dat zcela vhodné (jako alternativy se nabízí třeba <a href="https://en.wikipedia.org/wiki/Apache_Parquet">parquet</a>), pro naše účely (malé soubory, čitelný textový formát) ale budou CSV postačovat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jednou z možností je i vytvoření HTML tabulky (které lze dodat i různé formátování, což ovšem nechme raději na jindy nebo na doma, viz <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/style.html">dokumentace "Styling"</a>):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [57]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">planety</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="s2">"planety.html"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Podívej se, co ve výstupních souborech najdeš.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Podívej se na seznam možných výstupních formátů a zkus si planety nebo země zapsat do nějakého z nich: https://pandas.pydata.org/pandas-docs/stable/reference/frame.html#serialization-io-conversion</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A to už je opravdu všechno. 👋</p>
+</div>
+</div>
+</div>
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2024/pydata-praha-podzim/sessions/eda2/">↑ <span class="d-none d-sm-inline">Lekce: Datové typy a základy vizualizace v pandas</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2024/pydata-praha-podzim/pydata/visualization_basics/"><span class="d-none d-sm-inline">Základy vizualizace - v pandas a pro pandas</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyDataCZ/pyladies-kurz/blob/main/lessons/pydata/pandas_types/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Jan Pipek, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
