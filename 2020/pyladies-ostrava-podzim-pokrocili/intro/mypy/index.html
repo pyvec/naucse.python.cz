@@ -1,0 +1,436 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Python a jeho knihovny: Mypy — statická typová kontrola pro Python
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/mypy/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/">Python a jeho knihovny</a>
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/mypy/">Kontrola typů — Mypy</a>
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/intro/mypy/">Mypy — statická typová kontrola pro Python</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Mypy</h1>
+<p>Dnes se společně podíváme na knihovnu <code>mypy</code>, která nám do Pythonu přidá
+možnost kontroly typů, jenž je jinak dostupná jen v jiných programovacích
+jazycích.</p>
+<h2>Statická a dynamická typová kontrola</h2>
+<p>Statická typová kontrola v programovacím jazyce počítá s tím, že pro každou
+proměnnou či parametr je uveden datový typ. Proměnná definovaná s konkrétním
+typem pak nemůže obsahovat hodnotu jiného datového typu a pokus o to vyvolá
+výjimku. Jako např. tento kód v Javě:</p>
+<div class="highlight"><pre><span></span><span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"John"</span><span class="p">;</span>
+<span class="n">name</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</pre></div><p>První řádek definuje proměnnou <code>name</code> jako řetězec. Na druhém řádku se
+pokoušíme do této proměnné přiřadit celé číslo, což není povoleno
+a kompilace takového kódu skončí chybou.</p>
+<p>Naproti tomu Python je typickým představitelem jazyků s dynamickou typovou
+kontrolou. Program jako je ten následující bude fungovat naprosto
+bez problémů:</p>
+<div class="highlight"><pre><span></span><span class="n">name</span> <span class="o">=</span> <span class="s2">"John"</span>
+<span class="n">name</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"John"</span><span class="p">,</span> <span class="s2">"Peter"</span><span class="p">,</span> <span class="s2">"Alice"</span><span class="p">]</span>
+</pre></div><p>Python obecně spoléhá na to, že si sám tvůrce dá pozor, aby proměnná
+obsahovala v tom správném čase ten správný obsah a v případě nesrovnalostí
+se s tím program za běhu nějak popasuje.</p>
+<p>Oba přístupy mají své výhody a nevýhody. Statická typová kontrola by možná
+pro začátečníky ubrala na čitelnosti kódu, zbytečně prodloužila krátké
+jednoúčelové programy a nejspíše by ani nenadchla vědce či matematiky, kteří
+v Pythonu tvoří většinu času prototypy a svůj kód zpravidla automaticky netestují.
+Na druhou stranu může přispět k lepší čitelnosti složitějšího kódu,
+editory a IDE mohou díky ní lépe napovídat programátorům a typová kontrola
+může odhalit chyby ještě před spuštěním aplikace či jejich testů.</p>
+<p>Pokud výhody statické typové kontroly znějí slibně, je tady pro vás <code>mypy</code>.</p>
+<h2>Instalace a spuštění</h2>
+<p><code>mypy</code> se instaluje standardním způsobem:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python -m pip install mypy
+</pre></div><p>A spouští se pak stejnojmenným příkazem:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mypy program.py 
+<span class="go">Success: no issues found in 1 source file</span>
+</pre></div><p>První spuštění nejspíše nezahlásí žádný problém, protože program neobsahuje
+informace o typech proměnných a tak nemá <code>mypy</code> co kontrolovat.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">hello</span><span class="p">(</span><span class="s2">"World"</span><span class="p">))</span>
+</pre></div><p>Pokud budeme chtít do budoucna zařídit, aby <code>mypy</code> nepřeskakovala funkce bez
+definovaných typů, dá se to zařídit přepínačem <code>--disallow-untyped-defs</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mypy --disallow-untyped-defs program.py 
+<span class="go">program.py:1: error: Function is missing a type annotation</span>
+<span class="go">Found 1 error in 1 file (checked 1 source file)</span>
+</pre></div><div class="admonition note"><p>Jakmile aplikace používá definice typů, je dobré je kontrolovat
+v rámci testů. Např. pro pytest existuje doplněk <a href="https://pypi.org/project/pytest-mypy/"><code>pytest-mypy</code></a>, který
+se o to postará.</p>
+</div><h2>Definice typů a jejich kontrola</h2>
+<p>Python sám o sobě sice statickou typovou kontrolu neobsahuje, ale od verze 3
+je pro ni v jazyce připravena podpora. Náš moderní program
+s definovanými typy bude vypadat následovně:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">hello</span><span class="p">(</span><span class="s2">"World"</span><span class="p">))</span>
+</pre></div><p>Úpravou jsme definovali, že funkce <code>hello</code> bere jako první a jediný argument
+řetězec a vrací taktéž řetězec.</p>
+<p>Tato úprava nemá na běh programu vůbec žádný vliv, protože Python samotný
+definice typů ignoruje.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python program.py                      
+<span class="go">Hello World!</span>
+</pre></div><p><code>mypy</code> nám ovšem potvrdí, že je vše v pořádku.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mypy --disallow-untyped-defs program.py
+<span class="go">Success: no issues found in 1 source file</span>
+</pre></div><p>Co když se teď naši vylepšenou funkci pokusíme zavolat znovu s nesprávným
+typem argumentu?</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">hello</span><span class="p">(</span><span class="s2">"World"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hello</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>python program.py                      
+<span class="go">Hello World!</span>
+<span class="go">Hello 5!</span>
+</pre></div><p>Funguje to, protože řetězcová metoda <code>.format()</code> si poradí i s argumenty
+jiných typů. Ovšem, co na to <code>mypy</code> a typová kontrola?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mypy --disallow-untyped-defs program.py
+<span class="go">program.py:5: error: Argument 1 to "hello" has incompatible type "int"; expected "str"</span>
+<span class="go">Found 1 error in 1 file (checked 1 source file)</span>
+</pre></div><p>Té se to právem nelíbí, protože v definici jsme si stanovili, že funkce má
+brát jako argument řetězec a místo toho jí na posledním řádku voláme
+s celočíselným argumentem.</p>
+<h3>Vlastní datové typy</h3>
+<p>V Pythonu často používáme vlastní třídy a jejich instance si všemi možnými
+způsoby předáváme do/z funkcí. I s tím si umí mypy poradit.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Animal</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+
+<span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">pet</span><span class="p">:</span> <span class="n">Animal</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Hi, I am </span><span class="si">{}</span><span class="s1">, your pet.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pet</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="n">rooster</span> <span class="o">=</span> <span class="n">Animal</span><span class="p">(</span><span class="s2">"Kokrhac"</span><span class="p">)</span>
+<span class="n">guest</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="s2">"Tichoslapek"</span><span class="p">)</span>
+
+<span class="n">hello</span><span class="p">(</span><span class="n">rooster</span><span class="p">)</span>
+<span class="n">hello</span><span class="p">(</span><span class="n">guest</span><span class="p">)</span>
+</pre></div><p>Když se program pokusíme spustit, bude bez problémů fungovat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python program.py
+<span class="go">Hi, I am Kokrhac, your pet.</span>
+<span class="go">Hi, I am Tichoslapek, your pet.</span>
+</pre></div><p><code>mypy</code> nás ovšem upozorní, že funkci <code>hello</code> v druhém případě nepoužíváme správně:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mypy program.py
+<span class="go">program.py:19: error: Argument 1 to "hello" has incompatible type "Person"; expected "Animal"</span>
+<span class="go">Found 1 error in 1 file (checked 1 source file)</span>
+</pre></div><h3>Alternativní způsoby definice</h3>
+<p>Jak už bylo zmíněno, Python samotný definice typů ignoruje. I přes to ale
+bylo potřeba na ně jazyk připravit, aby dvojtečka za parametrem a šipka za
+definicí funkce nezpůsobily syntaktické chyby. Tyto možnosti však nejsou
+v Pythonu 2, kde je nutné dávat definice typů do komentářů:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>  <span class="c1"># type: (str) -&gt; str</span>
+    <span class="k">return</span> <span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="nb">print</span> <span class="n">hello</span><span class="p">(</span><span class="s2">"World"</span><span class="p">)</span>
+<span class="nb">print</span> <span class="n">hello</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div><p>A říci <code>mypy</code>, že kontroluje kód pro starší verzi Pythonu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mypy --py2 program.py                  
+<span class="go">program.py:5: error: Argument 1 to "hello" has incompatible type "int"; expected "str"</span>
+<span class="go">Found 1 error in 1 file (checked 1 source file)</span>
+</pre></div><p>Poslední možností definice typů je využití tzv. „stub“ souborů. Takový soubor
+má příponu <code>.pyi</code>, stejné jméno jako modul, ke kterému patří, a obsahuje
+jen definice funkcí s definovanými typy. Například takto:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span> <span class="k">pass</span>
+</pre></div><p>To se hodí především pro knihovny, kde je možné definice typů na jednu stranu
+úplně ignorovat a na stranu druhou tyto definice snadno přidat, aniž bychom
+museli měnit zdrojový kód samotný. Je tímto způsobem samozřejmě i možné přidat
+definice typů ke kódu, který jinak nemáte právo upravovat.</p>
+<p>Definice sama o sobě je validní Python kód a funguje ve stejné formě
+pro Python 2 i 3.</p>
+<h2>Složitější definice a modul <code>typing</code></h2>
+<p>Změníme naši jednoduchou funkci tak, aby uměla přímo pozdravit a to hned
+několikrát.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">say_hello</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+<span class="n">say_hello</span><span class="p">([</span><span class="s2">"PyLadies"</span><span class="p">,</span> <span class="s2">"Ostrava"</span><span class="p">])</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>python say_hello.py 
+<span class="go">Hello PyLadies!</span>
+<span class="go">Hello Ostrava!</span>
+</pre></div><p>Program funguje dobře. Přidejme tedy definice typů — seznam pro jména
+na vstupu a protože funkce nic nevrací, tak <code>None</code> jako automatická návratová
+hodnota.</p>
+<p>Označit argument funkce za seznam můžeme pomocí <code>List</code> z modulu <code>typing</code>.
+Modul <code>typing</code> obsahuje takových pomocných objektů celou řadu a my se některé
+z nich postupně podíváme.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="k">def</span> <span class="nf">say_hello</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+<span class="n">say_hello</span><span class="p">([</span><span class="s2">"PyLadies"</span><span class="p">,</span> <span class="s2">"Ostrava"</span><span class="p">])</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>python say_hello.py
+<span class="go">Hello PyLadies!</span>
+<span class="go">Hello Ostrava!</span>
+
+<span class="gp">$ </span>mypy say_hello.py  
+<span class="go">Success: no issues found in 1 source file</span>
+</pre></div><p>Na fungování programu nemá změna žádný vliv a <code>mypy</code> je zdá se také spokojená.
+Máme hotovo? Svým způsobem ano, ale naše funkce je přeci jen univerzálnější
+než dokládá definice typu vstupního argumentu a bude fungovat bez problémů
+i s n-ticí nebo slovníkem:</p>
+<div class="highlight"><pre><span></span><span class="n">say_hello</span><span class="p">([</span><span class="s2">"PyLadies"</span><span class="p">,</span> <span class="s2">"Ostrava"</span><span class="p">])</span>
+<span class="n">say_hello</span><span class="p">((</span><span class="s2">"Tom"</span><span class="p">,</span> <span class="s2">"Peter"</span><span class="p">))</span>
+<span class="n">say_hello</span><span class="p">({</span><span class="s2">"Susan"</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s2">"Carol"</span><span class="p">:</span> <span class="mi">25</span><span class="p">})</span>
+</pre></div><p>Co s tím? U složitějších definic si musíme vzít na pomoc modul <code>typing</code>.
+Ten je u Pythonu 3.5 a novějších dostupný ve standardní knihovně a pro starší
+verze se dá standardním způsobem nainstalovat. Z něj si pak můžeme importovat
+jednotlivé části, které nám pomohou s přesnější definicí typů.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="k">def</span> <span class="nf">say_hello</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+<span class="n">say_hello</span><span class="p">([</span><span class="s2">"PyLadies"</span><span class="p">,</span> <span class="s2">"Ostrava"</span><span class="p">])</span>
+<span class="n">say_hello</span><span class="p">((</span><span class="s2">"Tom"</span><span class="p">,</span> <span class="s2">"Peter"</span><span class="p">))</span>
+<span class="n">say_hello</span><span class="p">({</span><span class="s2">"Susan"</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s2">"Carol"</span><span class="p">:</span> <span class="mi">25</span><span class="p">})</span>
+</pre></div><p>Definice se nám celkem nepříjemně rozrostla, ale i na to najdeme řešení.
+V aktuální podobě specifikuje následující pravidla:</p>
+<ul>
+<li><code>Union</code> — vyber si libovolnou definici z těch následujících
+v hranatých závorkách</li>
+<li><code>List[str]</code> — seznam řetězců</li>
+<li><code>Tuple[str, ...]</code> — n-tice s jedním či více řetězci</li>
+<li><code>Dict[str, Any]</code> — slovník s řetězcovými klíči a libovolnými hodnotami</li>
+</ul>
+<div class="admonition note"><p>U n-tic se počítá s tím, že hodnota na každé z pozic má nějaký specifický
+účel (např. n-tice se třemi souřadnicemi by měla
+<code>Tuple[float, float, float]</code>) a proto vypadá definice pro n-tici
+s libovolnou délkou jinak než pro seznam.</p>
+</div><p>Takové konkrétní definice jsou zdlouhavé a proto modul <code>typing</code> obsahuje mnoho
+užitečných zkratek. V našem případě by se dala definice zobecnit na libovolný
+iterovatelný objekt obsahující řetězce.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+
+<span class="k">def</span> <span class="nf">say_hello</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+<span class="n">say_hello</span><span class="p">([</span><span class="s2">"PyLadies"</span><span class="p">,</span> <span class="s2">"Ostrava"</span><span class="p">])</span>
+<span class="n">say_hello</span><span class="p">((</span><span class="s2">"Tom"</span><span class="p">,</span> <span class="s2">"Peter"</span><span class="p">))</span>
+<span class="n">say_hello</span><span class="p">({</span><span class="s2">"Susan"</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s2">"Carol"</span><span class="p">:</span> <span class="mi">25</span><span class="p">})</span>
+</pre></div><div class="admonition note"><p>Importovat zvláštní <code>List</code>, <code>Dict</code> nebo <code>Tuple</code> jen pro potřeby typových
+anotací se nezdá být úplně praktické. Proto vznikl <a href="https://www.python.org/dev/peps/pep-0585/">PEP 585</a>, který pro složitější
+struktury v typových anotacích umožní použít názvy tříd dostupné přímo v Pythonu.
+Toto je již implementováno v Pythonu od verze 3.9.0, ale mypy tento zápis ještě nepodporuje.
+Brzy si tedy i u složitějších anotací (např.: <code>argument: dict[str: list[int]]</code>) vystačíme
+bez importů z modulu <code>typing</code></p>
+</div><p>U funkcí s argumenty s výchozí hodnotou se definice typů píše mezi jméno
+argumentu a rovnítko.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pow</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">exp</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">exp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base</span> <span class="o">**</span> <span class="n">exp</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base</span> <span class="o">**</span> <span class="mi">2</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+</pre></div><p>Funkce <code>pow</code> ukazuje ještě jeden speciální případ. Často se stává, že funkce
+jako argument může brát nějakou hodnotu daného typu nebo <code>None</code>. V takovém
+případě by psaní <code>Union[str, None]</code> bylo příliš zdlouhavé a modul <code>typing</code>
+proto obsahuje <code>Optional</code>. <code>Optional[str]</code> a <code>Union[str, None]</code> jsou naprosto identické definice.</p>
+<p>V příkladu výše je navíc zápis <code>exp: int = None</code> díky výchozí hodnotě
+argumentu exp automaticky konvertován na <code>Optional[int]</code>.</p>
+<p><code>mypy</code> umí samozřejmě kontrolovat nejen konstanty, ale i návratové hodnoty
+funkcí předané jako argument jiné funkci.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pow</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">exp</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">exp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base</span> <span class="o">**</span> <span class="n">exp</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base</span> <span class="o">**</span> <span class="mi">2</span>
+
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hello</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>mypy program.py
+<span class="go">program.py:11: error: Argument 1 to "hello" has incompatible type "int"; expected "str"</span>
+<span class="go">Found 1 error in 1 file (checked 1 source file)</span>
+</pre></div><h2>Globální proměnné</h2>
+<p>Ne vždy si <code>mypy</code> dokáže odvodit datové typy např. pro globální proměnné.</p>
+<div class="highlight"><pre><span></span><span class="n">global_dict</span> <span class="o">=</span> <span class="p">{}</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>mypy global.py
+<span class="go">global.py:1: error: Need type annotation for 'global_dict' (hint: "global_dict: Dict[&lt;type&gt;, &lt;type&gt;] = ...")</span>
+<span class="go">Found 1 error in 1 file (checked 1 source file)</span>
+</pre></div><p>V takovém případě se dá datový typ definovat velmi podobně jako u funkcí:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="n">global_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</pre></div><h2>A mnohem více</h2>
+<p>Tohle by na úvod mohlo stačit. O <code>mypy</code> se toho dá samozřejmě nejvíce dočíst
+v <a href="https://mypy.readthedocs.io/en/stable/index.html">dokumentaci</a>
+a totéž platí pro modul <code>typing</code> a <a href="https://docs.python.org/3/library/typing.html">dokumentaci standardní knihovny</a>.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/mypy/">↑ <span class="d-none d-sm-inline">Lekce: Kontrola typů — Mypy</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/mypy/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyLadiesCZ/naucse.python.cz/blob/autumn2020-ostrava-advanced/lessons/intro/mypy/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz pokročilého Pythonu PyLadies Ostrava napsal Lumír Balhar, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+        <p>
+            Licence ukázek kódu:
+            <a href="https://creativecommons.org/publicdomain/zero/1.0/">
+                CC0 1.0 Universal Public Domain Dedication
+            </a>
+        </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

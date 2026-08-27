@@ -1,0 +1,363 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Proměnné Bashe a proměnné prostředí
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/descriptors/">Bash III</a>
+
+> <a href="/2020/linux-admin/linuxadmin/env-var/">Proměnné Bashe a proměnné prostředí</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Proměnné Bashe a proměnné prostředí</h1>
+<p>Už víš, že Bash používá <em>proměnné</em>.
+Asi nejčastěji se používají vrámci cyklu <code>for</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ~/Dokumenty/data-shell/creatures/
+<span class="gp">$ </span><span class="k">for</span> jmeno in *.dat<span class="p">;</span>
+<span class="gp">&gt; </span><span class="k">do</span>
+<span class="gp">&gt; </span>    head -n2 <span class="nv">$jmeno</span> <span class="p">|</span> tail -n1
+<span class="gp">&gt; </span><span class="k">done</span>
+<span class="go">CLASSIFICATION: basiliscus vulgaris</span>
+<span class="go">CLASSIFICATION: bos hominus</span>
+<span class="go">CLASSIFICATION: equus monoceros</span>
+</pre></div><p>Spousta proměnných v Bashi je součást takzvaného <em>prostředí</em>,
+které používá jak samotný Bash, tak i programy, které spouští.</p>
+<p>Jedna z takových proměnných je <code>LANG</code> – aktuální jazyk.
+U mě je nastaven na češtinu, takže Bash i programy v něm spuštěné
+vypisují hlášky v češtině:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$LANG</span>
+<span class="go">cs_CZ.UTF-8</span>
+<span class="gp">$ </span>exbho
+<span class="go">bash: exbho: Příkaz nebyl nenalezen...</span>
+<span class="gp">$ </span>cat neexistujuci
+<span class="go">cat: neexistujuci: Adresář nebo soubor neexistuje</span>
+</pre></div><p>Můžu ho ale nastavit i na angličtinu.
+Proměnnou můžeš nastavit pomocí příkazu
+<code><var>jméno</var>=<var>hodnota</var></code>,
+kde před a za rovnítkem <em>nesmí být mezera</em>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">LANG</span><span class="o">=</span>en_US.UTF-8
+<span class="gp">$ </span>exbho
+<span class="go">bash: exbho: command not found...</span>
+<span class="gp">$ </span>cat neexistujuci
+<span class="go">cat: neexistujuci: No such file or directory</span>
+</pre></div><div class="admonition note"><p>Pokud máš anglický systém, je možné, že pouhé nastavení <code>LANG=cs_CZ.UTF-8</code>
+ti jazyk nepřepne – příslušné překlady musí být na systému nainstalovány,
+aby se daly použít.</p>
+</div><p>Aktuální prostředí můžeš spravovat z Pythonu, kde je přístupné jako slovník <code>os.environ</code>:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div><p>To samé dělá příkaz <code>env</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>env <span class="p">|</span> head
+<span class="go">SHELL=/bin/bash</span>
+<span class="go">SESSION_MANAGER=local/unix:@/tmp/.ICE-unix/1742,unix/unix:/tmp/.ICE-unix/1742</span>
+<span class="go">COLORTERM=truecolor</span>
+<span class="go">HISTCONTROL=ignoredups</span>
+<span class="go">XDG_MENU_PREFIX=gnome-</span>
+<span class="go">HISTSIZE=1000</span>
+<span class="go">HOSTNAME=localhost.localdomain</span>
+<span class="go">SSH_AUTH_SOCK=/run/user/1000/keyring/ssh</span>
+<span class="go">XMODIFIERS=@im=ibus</span>
+<span class="go">DESKTOP_SESSION=gnome-xorg</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>env <span class="p">|</span> grep ^LANG<span class="o">=</span>
+<span class="go">LANG=cs_CZ.UTF-8</span>
+</pre></div><div class="admonition note"><p>Příkaz <code>env</code> toho dělá víc; Pythonní program simuluje
+jen <code>env</code> bez argumentů a přepínačů.</p>
+</div><h2>Exportování</h2>
+<p>Proměnné Bashe se ale do prostředí nedostávají automaticky.</p>
+<p>Tento příkaz nastaví proměnnou <code>jmeno</code>.
+Pak můžeš pomocí <code>env</code> zjistit hodnotu proměnné <em>prostředí</em>,
+která se posílá programům jako <code>env</code>;
+<code>echo $jmeno</code> pak vypíše proměnnou Bashe,
+který ji doplňuje v argumentech:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">jmeno</span><span class="o">=</span>minotaur.dat
+<span class="gp">$ </span>env <span class="p">|</span> grep jmeno
+<span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$jmeno</span>
+<span class="go">minotaur.dat</span>
+</pre></div><p>Ačkoli je v Bashi jméno nastavené, programu <code>env</code> se neposlalo.</p>
+<p>Proměnné v Bashi mají určité <em>příznaky</em> (angl. <em>attributes</em>/<em>properties</em>).
+Nejdůležitější z nich je příznak <em>export</em>, který nastavíš příkazem <code>export</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">export</span> jmeno
+<span class="gp">$ </span>env <span class="p">|</span> grep jmeno
+<span class="go">jmeno=minotaur.dat</span>
+<span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$jmeno</span>
+<span class="go">minotaur.dat</span>
+</pre></div><p>Teď Bash předá proměnnou <code>jmeno</code> příkazům, které z něj spustíš.</p>
+<p>Příkaz <code>export</code> nekopíruje hodnotu proměnné do prostředí, ale říká Bashi,
+že má tuto proměnnou předat vždy, když se spouští nový příkaz.
+Když tedy proměnnou nastavíš na něco jiného,
+změna se projeví v dalším příkazu i bez dalšího <code>export</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">jmeno</span><span class="o">=</span>unicorn.dat
+<span class="gp">$ </span>env <span class="p">|</span> grep jmeno
+<span class="go">jmeno=unicorn.dat</span>
+<span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$jmeno</span>
+<span class="go">unicorn.dat</span>
+</pre></div><p>Příznak můžeš vypnout pomocí <code>export -n</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">export</span> -n jmeno
+<span class="gp">$ </span>env <span class="p">|</span> grep jmeno
+<span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$jmeno</span>
+<span class="go">unicorn.dat</span>
+</pre></div><p>A taky můžeš nastavit příznak i hodnotu najednou:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">export</span> <span class="nv">jmeno</span><span class="o">=</span>basilisk.dat
+<span class="gp">$ </span>env <span class="p">|</span> grep jmeno
+<span class="go">jmeno=basilisk.dat</span>
+<span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$jmeno</span>
+<span class="go">basilisk.dat</span>
+</pre></div><div class="admonition note"><p class="admonition-title">Další příznaky</p>
+<p>Proměnné můžou mít i další příznaky, i když většinou nejsou zas tak užitečné.
+Například pomocí <code>declare -u velke</code> můžeš Bashi říct, že v proměnné <code>velke</code>
+můžou být jen velká písmenka:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">declare</span> -u velke
+<span class="gp">$ </span><span class="nv">velke</span><span class="o">=</span>Ahoj
+<span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$velke</span>
+<span class="go">AHOJ</span>
+</pre></div><p>Více příznaků najdeš v nápovědě příkazu <code>export</code>.</p>
+</div><h2>Barvičky pro <code>ls</code></h2>
+<p>Jedna z proměnných, které máš (na Fedoře) v Bashi automaticky exportované,
+se jmenuje <code>LC_COLORS</code>.
+Využívá ji příkaz <code>ls</code> k nastavení barevnosti.</p>
+<p>Zaběhni do nějakého adresáře, kde je mix adresářů a normálních souborů:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ~/Dokumenty/data-shell/data
+</pre></div><p>A zkus si co dělá <code>ls</code> ve výchozím nastavení:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls
+<span class="go">ahoj.txt         animal-counts  archiv    morse.txt  planets.txt  sunspot.txt</span>
+<span class="go">amino-acids.txt  animals.txt    elements  pdb        salmon.txt</span>
+</pre></div><p>Potom nastav proměnnou <code>LS_COLORS</code> na prázdný řetězec a zkus <code>ls</code> znovu.
+Příkaz <code>ls</code> si teď vybere jiný způsob obarvení:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">LS_COLORS</span><span class="o">=</span>
+<span class="gp">$ </span>ls
+</pre></div><p>Když znáš formát (do čehož teď nebudeme zabíhat),
+můžeš si barvičky nastavit podle sebe:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">LS_COLORS</span><span class="o">=</span><span class="s1">'di=38;1;31'</span>
+<span class="gp">$ </span>ls
+</pre></div><div class="admonition note"><p>Kolem hodnoty jsou uvozovky, aby Bash znak <code>;</code> nebral jako oddělovač příkazů.</p>
+</div><p>Proměnnou prostředí můžeš nastavit i pro jeden jediný příkaz,
+a to tak, že nastavení (<code><var>jméno</var>=<var>hodnota</var></code>)
+připíšeš před jméno příkazu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">LS_COLORS</span><span class="o">=</span><span class="s1">'di=38;1;33'</span> ls
+<span class="gp">$ </span>ls
+</pre></div><p>Tím se nastaví pouze proměnná prostředí – nikoli proměnná Bashe.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">pozdrav</span><span class="o">=</span>ahoj env <span class="p">|</span> grep pozdrav
+<span class="go">pozdrav=ahoj</span>
+<span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$pozdrav</span>
+
+<span class="gp">$ </span><span class="nv">pozdrav</span><span class="o">=</span>ahoj <span class="nb">echo</span> <span class="nv">$pozdrav</span>
+</pre></div><p>Stejně jako <code>LS_COLORS</code> se dají použít všechny ostatní proměnné, které
+ovlivňují chování programů, např.</p>
+<ul>
+<li>už zmíněná <code>LANG</code>,</li>
+<li><code>FLASK_APP</code> (pro ty, kdo znají framework Flask),</li>
+<li><code>PYTHONVERBOSE</code> – při nastavení na <code>1</code> vypisuje Python např. detaily všech
+naimportovaných modulů, nebo</li>
+<li><code>PAGER</code> a <code>EDITOR</code> – viz níže.</li>
+</ul>
+<h2>Jméno v závorkách</h2>
+<p>Bash nahrazuje všechny výskyty <code>$<var>jméno</var></code> obsahem dané
+proměnné.
+Dělá to nejen v samostatných argumentech, ale i v jejich částech:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">komparativ</span><span class="o">=</span>lepší
+<span class="gp">$ </span><span class="nb">echo</span> nej<span class="nv">$komparativ</span>
+<span class="go">nejlepší</span>
+</pre></div><p>Občas, když tohle budeš tohle chtít použít, budeš potřebovat Bashi říct,
+co je ještě jméno proměnné.
+Pak můžeš jméno uzavřít do kudrnatých závorek,
+<code>${<var>jméno</var>}</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">majitel</span><span class="o">=</span>Petr
+<span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$majitelovo</span>   <span class="c1"># proměnná jménem "majitelovo" neexistuje</span>
+<span class="gp">$ </span><span class="nb">echo</span> <span class="si">${</span><span class="nv">majitel</span><span class="si">}</span>ovo
+<span class="go">Petrovo</span>
+</pre></div><p>Fuguje to vždy; <code>$<var>jméno</var></code> bez závorek je jen zkratka.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="si">${</span><span class="nv">LANG</span><span class="si">}</span>
+<span class="go">cs_CZ.UTF-8</span>
+</pre></div><p>Proměnné Bash nahrazuje i ve jménech programů, takže můžeš napsat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">zpracuj</span><span class="o">=</span>head
+<span class="gp">$ </span><span class="nv">$zpracuj</span> unicorn.dat
+<span class="go">COMMON NAME: unicorn</span>
+<span class="go">CLASSIFICATION: equus monoceros</span>
+<span class="go">UPDATED: 1738-11-24</span>
+<span class="go">AGCCGGGTCG</span>
+<span class="go">CTTTACCTTA</span>
+<span class="go">AAGCCGAGGG</span>
+<span class="go">GGGTGGTACG</span>
+<span class="go">CCGAACATAA</span>
+<span class="go">ACGCTTTAAC</span>
+<span class="go">GTCCCTCCAG</span>
+<span class="gp">$ </span><span class="nv">zpracuj</span><span class="o">=</span><span class="s1">'wc -l'</span>
+<span class="gp">$ </span><span class="nv">$zpracuj</span> unicorn.dat
+<span class="go">163 unicorn.dat</span>
+<span class="gp">$ </span><span class="nv">zpracuj</span><span class="o">=</span>less
+<span class="gp">$ </span><span class="nv">$zpracuj</span> unicorn.dat
+</pre></div><h2>Rolovátko</h2>
+<p>Víš, proč se třeba <code>man</code> nebo <code>git diff</code> chovají a ovládají stejně jako <code>less</code>?
+Proto, že samy spustí <code>less</code> a pošlou do něho rourou text,
+který chtějí zobrazit.</p>
+<p><span class="figure"><a href="/2020/linux-admin/linuxadmin/env-var/static/man-less.svg"><img src="/2020/linux-admin/linuxadmin/env-var/static/man-less.svg" alt="Diagram spouštění `less` z `man`"></a></span></p>
+<p>Podobné programy většinou respektují proměnnou <code>PAGER</code>,
+kterou můžeš vybrat program, který se použije místo <code>less</code>.
+Zkus si <code>more</code>, starší verzi <code>less</code> která umí <kbd>Enter</kbd>,
+<kbd>Mezerník</kbd> a <kbd>q</kbd>, ale neumí se vracet (<kbd>↑</kbd>):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">PAGER</span><span class="o">=</span>more man bash
+</pre></div><p>Nebo rolování vypni úplně pomocí <code>cat</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">PAGER</span><span class="o">=</span>cat man bash
+</pre></div><p>Nebo jakýkoli jiný filtr – nikdo ti nezakazuje zadávat nesmysly:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">PAGER</span><span class="o">=</span>wc man bash
+<span class="gp">$ </span><span class="nv">PAGER</span><span class="o">=</span>tac man bash
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/linuxadmin/fork-exec/">← <span class="d-none d-sm-inline">Fork a exec</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/descriptors/">↑ <span class="d-none d-sm-inline">Lekce: Bash III</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/linuxadmin/bin-func-alias/"><span class="d-none d-sm-inline">type; alias, skripty, funkce; bashrc</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/linuxadmin/env-var/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsal Petr Viktorin, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

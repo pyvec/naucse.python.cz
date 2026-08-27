@@ -1,0 +1,387 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                MI-PYT (Pokročilý Python): Flask
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/flask/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2017/mipyt-zima/">MI-PYT (Pokročilý Python)</a>
+
+> <a href="/2017/mipyt-zima/sessions/flask/">Webové aplikace – Flask</a>
+
+> <a href="/2017/mipyt-zima/intro/flask/">Flask</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Webové aplikace: Flask</h1>
+<p>Python je víceúčelový jazyk.
+Na minulém cvičení jsme tvořili aplikace pro příkazovou řádku,
+nyní se podíváme na aplikace webové.</p>
+<p>Webových frameworků pro Python je více, mezi nejznámější patří <a href="https://www.djangoproject.com/">Django</a>,
+<a href="http://flask.pocoo.org/">Flask</a> nebo <a href="http://www.pylonsproject.org/">Pyramid</a>.</p>
+<p>Pro naše účely použijeme Flask, protože je nejrychlejší na pochopení a
+nevyžaduje striktně použití <a href="https://cs.wikipedia.org/wiki/Model-view-controller">MVC</a> paradigmatu.</p>
+<h2>Flask</h2>
+<p>Flask opět můžete nainstalovat do virtualenvu, nejlépe použít projekt
+z minulého cvičení:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> project
+<span class="gp">$ </span>. __venv__/bin/activate 
+<span class="gp gp-VirtualEnv">(__venv__)</span> <span class="gp">$ </span>python -m pip install Flask
+</pre></div><p>Základní použití Flasku je poměrně primitivní.
+Do souboru <code>hello.py</code> napište:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'MI-PYT je nejlepší předmět na FITu!'</span>
+</pre></div><p>Pak aplikaci spusťte pomocí následujících příkazů.
+(Na Windows použijte místo <code>export</code> příkaz <code>set</code>.)</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(__venv__)</span> <span class="gp">$ </span><span class="nb">export</span> <span class="nv">FLASK_APP</span><span class="o">=</span>hello.py
+<span class="gp gp-VirtualEnv">(__venv__)</span> <span class="gp">$ </span><span class="nb">export</span> <span class="nv">FLASK_DEBUG</span><span class="o">=</span><span class="m">1</span>
+<span class="gp gp-VirtualEnv">(__venv__)</span> <span class="gp">$ </span>flask run
+<span class="go"> * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)</span>
+<span class="go"> * Restarting with stat</span>
+<span class="go"> * Debugger is active!</span>
+<span class="go"> * Debugger pin code: 189-972-345</span>
+</pre></div><p>Na zmíněné adrese byste měli v prohlížeči vidět použitý text.</p>
+<p>Proměnná prostředí <code>FLASK_APP</code> říká Flasku, kde aplikaci najít.
+V daném souboru Flask hledá automaticky proměnnou jménem <code>app</code>.
+(<a href="http://flask.pocoo.org/docs/0.12/cli/">Jde nastavit</a> i jiná.)</p>
+<p>Proměnná <code>FLASK_DEBUG</code> říká, že se aplikace má spustit v ladícím režimu:
+je zapnutý příjemnější výpis chyb a aplikace se automaticky restartuje
+po změnách.
+Tento mód je užitečný, ale nebezpečný – návštěvníkům stránky může umožnit
+spustit jakýkoli Pythonní kód.
+Navíc aplikaci zpomaluje.
+Používejte ho proto pouze na svém počítači.</p>
+<p>V příkladu jsme vytvořili flaskovou aplikaci (<code>app</code>).
+Argument <code>__name__</code> je jméno modulu – Flask podle něj hledá soubory,
+které k aplikaci patří (viz <code>static</code> a <code>templates</code> níže).</p>
+<p>Pomocí dekorátoru <code>@app.route</code> jsme vytvořili takzvanou routu (cestu).
+Říkáme tím, že na adrese <code>/</code> bude k dispozici obsah, který vrátí
+definovaná funkce.
+Více různých cest lze vytvořit jednoduše přidáním další funkce.</p>
+<div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'Index Page'</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/hello'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'Hello, World'</span>
+</pre></div><p>Na adrese <code>http://127.0.0.1:5000/hello</code> pak uvidíte druhou stránku.</p>
+<h3>Dynamické routy</h3>
+<p>Když vytváříte dynamický web, ne vždy můžete všechna URL znát dopředu.
+Pokud například chcete zobrazit informace o uživatelích na adrese
+<code>/user/hroncok</code> apod., musíte použít dynamické routy:</p>
+<div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/user/&lt;username&gt;'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">'User </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+</pre></div><p>Proměnnou část cesty ohraničíte lomenými závorkami a použijte jako parametr
+funkce. Pokud chcete, můžete specifikovat, na jaký obsah se pravidlo vztahuje:</p>
+<div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/post/&lt;int:post_id&gt;'</span><span class="p">)</span>
+</pre></div><p>Můžete použít různá pravidla, např.:</p>
+<ul>
+<li><code>string</code> akceptuje jakýkoliv text bez lomítek (výchozí)</li>
+<li><code>int</code> akceptuje celá čísla</li>
+<li><code>float</code> akceptuje i desetinná čísla s tečkou</li>
+<li><code>path</code> akceptuje text i s lomítky</li>
+</ul>
+<h3>Získání URL</h3>
+<p>Opačným způsobem jak k routám přistupovat je, když potřebujete získat URL
+nějaké stránky, například protože potřebujete zobrazit odkaz.
+K tomu se používá funkce <code>url_for()</code>, která jako první parametr bere jméno
+routy (neboli jméno funkce, která routu obsluhuje):</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">url_for</span>
+<span class="o">...</span>
+<span class="n">url_for</span><span class="p">(</span><span class="s1">'profile'</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">'hroncok'</span><span class="p">)</span>
+</pre></div><p>Tuto funkci jde použít jen uvnitř funkce obsluhující cestu, pokud ji chcete
+vyzkoušet například v interaktivní konzoli, můžete použít speciální kontext
+manager:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">test_request_context</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">'profile'</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">'hroncok'</span><span class="p">))</span>
+<span class="gp">... </span>
+<span class="go">/user/hroncok</span>
+</pre></div><p>Možná si říkáte, proč tu URL prostě nevytvořit ručně, ale mohli byste narazit
+na problém, pokud cestu později změníte – což se může stát např. i když web
+nasadíte na jiný server.</p>
+<h3>Šablony</h3>
+<p>Zatím jsou naše webové stránky poměrně nudné, protože nepoužívají HTML.
+Klidně byste mohli udělat něco jako:</p>
+<div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'&lt;html&gt;&lt;head&gt;&lt;title&gt;...'</span>
+</pre></div><p>...ale asi by to nebylo příliš příjemné.
+Lepší je použít šablony:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/hello/'</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/hello/&lt;name&gt;'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">'hello.html'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+</pre></div><p>Pak je třeba vedle souboru vytvořit složku <code>templates</code> a v ní <code>hello.html</code>:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;!doctype html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Hello from Flask<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="cp">{%</span> <span class="k">if</span> <span class="nv">name</span> <span class="cp">%}</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hello <span class="cp">{{</span> <span class="nv">name</span> <span class="cp">}}</span>!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">" </span><span class="cp">{{</span> <span class="nv">url_for</span><span class="o">(</span><span class="s1">'hello'</span><span class="o">)</span> <span class="cp">}}</span><span class="s"> "</span><span class="p">&gt;</span>Go back home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+        <span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hello, World!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div><p>Šablony používají v Pythonu velmi oblíbený šablonovací jazyk <a href="http://jinja.pocoo.org/latest/templates/">Jinja2</a>.
+Kompletní popis jazyka najdete v <a href="http://jinja.pocoo.org/latest/templates/">dokumentaci</a>, ale
+pro většinu stránek se obejdete s <code>{% if %}</code> a <code>{{ promenna }}</code> jako výše,
+případně s <code>{% for %}/{% endfor %}</code>.</p>
+<p>Veškerý kontext (proměnné) do šablony musí přijít z volání <code>render_template()</code>,
+navíc můžete automaticky použít např. funkci <code>url_for()</code>.</p>
+<h4>Filtry</h4>
+<p>Není úplně elegantní vzít nějaká data (např. tweety z Twitter API) a ještě před
+předáním šabloně do nich cpát svoje úpravy (např. HTML).
+Od toho jsou tu filtry. Filtr transformuje hodnotu na řetězec,
+který pak ukážeme uživateli.</p>
+<p>Zde je například filtr <code>time</code>, který načte čas v určitém formátu
+a převede ho do jiného:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">template_filter</span><span class="p">(</span><span class="s1">'time'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">convert_time</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">"""Convert the time format to a different one"""</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s1">'</span><span class="si">%a</span><span class="s1"> %b </span><span class="si">%d</span><span class="s1"> %H:%M:%S %z %Y'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'</span><span class="si">%c</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/date_example'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">date_example</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+        <span class="s1">'date_example.html'</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="o">=</span><span class="s1">'Tue Mar 21 15:50:59 +0000 2017'</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div><p>V šabloně <code>date_example.html</code>:</p>
+<div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">created_at</span><span class="o">|</span><span class="nf">time</span> <span class="cp">}}</span>
+</pre></div><h4>Escaping</h4>
+<p>V textu, který se vkládá do šablon, jsou automaticky nahrazeny znaky, které
+mají v HTML speciální význam.
+Zabraňuje se tak bezpečnostním rizikům, kdy se vstup od uživatele interpretuje
+jako HTML.</p>
+<p>Například když v aplikaci výše navštívíme URL <code>/hello/&lt;script&gt;alert("Foo")</code>,
+bude výsledné HTML vypadat takto:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;!doctype html&gt;</span>
+<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Hello from Flask<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hello <span class="ni">&amp;lt;</span>script<span class="ni">&amp;gt;</span>alert(<span class="ni">&amp;#34;</span>Foo<span class="ni">&amp;#34;</span>)!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+</pre></div><p>Někdy je ovšem potřeba do stránky opravdu vložit HTML.
+To se dá zajistit dvěma způsoby. Nejjednodušší je vestavěný filtr <code>safe</code>:</p>
+<div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="s2">"&lt;em&gt;Text&lt;/em&gt;"</span> <span class="o">|</span> <span class="nf">safe</span> <span class="cp">}}</span>
+</pre></div><p>Z Pythonu pak lze použít <a href="http://jinja.pocoo.org/docs/dev/api/#jinja2.Markup">jinja2.Markup</a>,
+čímž se daný text označí jako „bezpečný”.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jinja2</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">template_filter</span><span class="p">(</span><span class="s1">'time'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">convert_time</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">"""Convert the time format to a different one"""</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s1">'</span><span class="si">%a</span><span class="s1"> %b </span><span class="si">%d</span><span class="s1"> %H:%M:%S %z %Y'</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'&lt;strong&gt;</span><span class="si">%c</span><span class="s1">&lt;/strong&gt;'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jinja2</span><span class="o">.</span><span class="n">Markup</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div><h3>Statické soubory</h3>
+<p>Pokud budete potřebovat nějaké statické soubory (např. css soubory nebo
+obrázky), dejte je do složky <code>static</code> a přistupujte k nim pomocí:</p>
+<div class="highlight"><pre><span></span><span class="n">url_for</span><span class="p">(</span><span class="s1">'static'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'style.css'</span><span class="p">)</span>
+</pre></div><p>V šabloně pak například:</p>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">"</span><span class="cp">{{</span> <span class="nv">url_for</span><span class="o">(</span><span class="s1">'static'</span><span class="o">,</span> <span class="nv">filename</span><span class="o">=</span><span class="s1">'style.css'</span><span class="o">)</span> <span class="cp">}}</span><span class="s">"</span> <span class="na">rel</span><span class="o">=</span><span class="s">"stylesheet"</span><span class="p">&gt;</span>
+</pre></div><h3>Vlastní podtřída Flask</h3>
+<p>Třída <code>Flask</code> je uzpůsobena k tomu, aby bylo možné snadno rozšiřovat a přepisovat 
+výchozí chování. Mimo přidávání vlastních metod lze například měnit třídy, které 
+budou použity pro HTTP požadavky a odpovědi, měnit výchozí konfiguraci <code>flask</code> a
+spoustu dalšího. Nezapomeňte volat konstruktor nadtřídy.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">Response</span>
+
+<span class="k">class</span> <span class="nc">MIPYTResponse</span><span class="p">(</span><span class="n">Response</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s1">'MI-PYT'</span><span class="p">,</span> <span class="s1">'best'</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">GreeterApp</span><span class="p">(</span><span class="n">Flask</span><span class="p">):</span>
+    <span class="n">response_class</span> <span class="o">=</span> <span class="n">MIPYTResponse</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">greetings</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">greetings</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="s1">'Hello!'</span>
+
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">GreeterApp</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">current_app</span><span class="o">.</span><span class="n">greet</span><span class="p">()</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">'/number'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">greetings_number</span><span class="p">():</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_app</span><span class="o">.</span><span class="n">greetings</span><span class="p">)</span>
+</pre></div><h3>A další</h3>
+<p>Flask umí i další věci – například zpracování formulářů, chybové stránky nebo
+přesměrování.</p>
+<p>Všechno to najdete
+<a href="http://flask.pocoo.org/docs/0.11/quickstart/">v dokumentaci</a>.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/intro/flask/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2017/mipyt-zima/sessions/flask/">↑ <span class="d-none d-sm-inline">Lekce: Webové aplikace – Flask</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2017/mipyt-zima/intro/deployment/"><span class="d-none d-sm-inline">Deployment webových aplikací</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2017-mipyt-zima/lessons/intro/flask/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Miro Hrončok, Petr Viktorin a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

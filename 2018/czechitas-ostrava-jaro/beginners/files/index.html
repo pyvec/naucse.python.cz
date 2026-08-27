@@ -1,0 +1,298 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Digitální akademie Czechitas - přípravka Pythonu: Soubory
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/beginners/files/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/czechitas-ostrava-jaro/">Digitální akademie Czechitas - přípravka Pythonu</a>
+
+> <a href="/2018/czechitas-ostrava-jaro/sessions/dict-files/">Slovníky, soubory, JSON</a>
+
+> <a href="/2018/czechitas-ostrava-jaro/beginners/files/">Soubory</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Soubory</h1>
+<p>Dnes se podíváme na to, jak v Pythonu číst z
+(a pak i zapisovat do) souborů.</p>
+<p>Vytvoř si v editoru soubor <code>basnicka.txt</code> a napiš do něj libovolnou básničku.
+Soubor ulož.</p>
+<div class="admonition note"><p>Na uložení souboru s básničkou doporučuji použít
+stejný editor, jaký používáš na Pythonní programy.</p>
+<p>Používáš-li jiný editor než Atom, dej si při ukládání pozor na kódování:</p>
+<ul>
+<li>Nabízí-li ti editor při ukládání výběr kódování, vyber UTF-8.</li>
+<li>Je-li k dispozici kódování „UTF-8 bez BOM”, použij to.</li>
+<li>Pokud musíš použít Notepad, který výše uvedené možnosti nemá, pak v kódu
+níže použij místo <code>'utf-8'</code> nestandardní <code>'utf-8-sig'</code>.</li>
+</ul>
+<p>Ono <a href="https://en.wikipedia.org/wiki/UTF-8"><code>utf-8</code></a> je název standardního kódování.
+Zajišťuje, že se případné emoji nebo znaky s diakritikou do souboru uloží
+tak, aby se daly přečíst i na jiném počítači či operačním systému.
+🎉</p>
+</div><p>Potom napiš tento program:</p>
+<div class="highlight"><pre><span></span><span class="n">soubor</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'basnicka.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span>
+<span class="n">obsah</span> <span class="o">=</span> <span class="n">soubor</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">soubor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">obsah</span><span class="p">)</span>
+</pre></div><p>a spusť ho z adresáře, ve kterém je
+<code>basnicka.txt</code> (jinými slovy, aktuální adresář musí být ten, který
+obsahuje soubor s básničkou).</p>
+<p>Obsah souboru se vypíše!</p>
+<p>Co se tu děje?
+Tak jako <code>int()</code> vrací čísla a <code>input()</code> řetězce, funkce
+<code>open()</code> vrací hodnotu, která představuje <em>otevřený soubor</em>.
+Tahle hodnota má vlastní metody.
+Tady používáme metodu <code>read()</code>, která
+najednou přečte celý obsah souboru a vrátí ho jako řetězec.
+Nakonec metoda <code>close()</code> otevřený soubor zase zavře.</p>
+<h2>Automatické zavírání souborů</h2>
+<p>Soubory se dají přirovnat k ledničce: abys něco
+mohla z ledničky vzít, nebo dát dovnitř, musíš
+ji předtím otevřít a potom zavřít.
+Bez zavření to sice na první pohled funguje taky,
+ale pravděpodobně potom brzo něco zplesniví.</p>
+<p>Stejně tak je docela důležité soubor zavřít po tom,
+co s ním přestaneš pracovat.
+Bez zavření to na první pohled funguje, ale složitější programy se můžou dostat
+do problémů.
+Operační systémy mají limity na počet
+současně otevřených souborů, které se nezavíráním
+dají snadno překročit.
+Na Windows navíc nemůžeš soubor, který je stále
+otevřený, otevřít znovu.</p>
+<p>Na korektní zavření souboru ale programátoři často zapomenou.
+Proto Python poskytuje příkaz <code>with</code>, který soubory zavírá automaticky.
+Používá se takhle:</p>
+<div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'basnicka.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor</span><span class="p">:</span>
+    <span class="n">obsah</span> <span class="o">=</span> <span class="n">soubor</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">obsah</span><span class="p">)</span>
+</pre></div><p>Příkaz <code>with</code> vezme otevřený soubor (který vrací funkce <code>open</code>)
+a přiřadí ho do proměnné <code>soubor</code>.
+Pak následuje odsazený blok kódu, kde se souborem můžeš pracovat – v tomhle
+případě pomocí metody <code>read</code> přečíst obsah jako řetězec.
+Když se Python dostane na konec odsazeného bloku, soubor automaticky zavře.</p>
+<p>V naprosté většině případů je pro otevírání souborů nejlepší použít <code>with</code>.</p>
+<h2>Iterace nad soubory</h2>
+<p>Otevřené soubory se, jako např. řetězce či <code>range</code>,
+dají použít s příkazem <code>for</code>.
+Tak jako <code>for i in range</code> poskytuje za sebou jdoucí čísla a <code>for c in 'abcd'</code>
+poskytuje jednotlivé znaky řetězce, <code>for radek in soubor</code> bude do proměnné
+<code>radek</code> dávat jednotlivé řádky čtené ze souboru.</p>
+<p>Například můžeš básničku odsadit,
+aby se vyjímala v textu:</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'Slyšela jsem tuto básničku:'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'basnicka.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">radek</span> <span class="ow">in</span> <span class="n">soubor</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'    '</span> <span class="o">+</span> <span class="n">radek</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Jak se ti líbí?'</span><span class="p">)</span>
+</pre></div><p>Když to zkusíš, zjistíš, že trochu nesedí
+řádkování. Zkusíš vysvětlit, proč tomu tak je?</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/czechitas-ostrava-jaro/beginners/files/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Každý řádek končí znakem nového řádku, <code>'\n'</code>,
+který možná znáš ze <a href="/2018/czechitas-ostrava-jaro/beginners/str/">sekce o řetězcích</a>.
+Při procházení souboru Python tento znak nechává na konci řetězce <code>radek</code> ¹.
+Funkce <code>print</code> pak přidá další nový řádek, protože ta na konci
+výpisu vždycky odřádkovává – pokud nedostane argument <code>end=''</code>.</p>
+<hr>
+<p>¹ Proč to dělá? Kdyby <code>'\n'</code> na konci řádků nebylo,
+nedalo by se např. dobře rozlišit, jestli poslední řádek
+končí na <code>'\n'</code></p>
+    </div>
+</div><p>Ideální způsob, jak odřádkování spravit, je odstranit z konce řetězce
+bílé znaky (mezery a nové řádky) pomocí metody <code>rstrip</code>:</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'Slyšela jsem tuto básničku:'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'basnicka.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">radek</span> <span class="ow">in</span> <span class="n">soubor</span><span class="p">:</span>
+        <span class="n">radek</span> <span class="o">=</span> <span class="n">radek</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'    '</span> <span class="o">+</span> <span class="n">radek</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Jak se ti líbí?'</span><span class="p">)</span>
+</pre></div><h2>Psaní souborů</h2>
+<div class="admonition warning"><p class="admonition-title">Pozor!</p>
+<p>Pro Python není problém smazat obsah jakéhokoli souboru.
+Psaní do souborů si zkoušej v adresáři, ve kterém nemáš uložené
+důležité informace!</p>
+</div><p>Soubory se v Pythonu dají i zapisovat.
+Pro zápis soubor otevři s pojmenovaným
+argumentem <code>mode='w'</code> (z angl. <em>mode</em>, mód a <em>write</em>, psát).</p>
+<p>Pokud soubor už existuje, otevřením s <code>mode='w'</code> se veškerý jeho obsah smaže.
+Po zavření tak v souboru bude jen to, co do něj ve svém programu zapíšeš.</p>
+<p>Informace pak do souboru zapiš známou funkcí <code>print</code>,
+a to s pojmenovaným argumentem <code>file</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'druha-basnicka.txt'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'w'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Naše staré hodiny'</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">soubor</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Bijí'</span><span class="p">,</span> <span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'hodiny'</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">soubor</span><span class="p">)</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/beginners/files/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2018/czechitas-ostrava-jaro/beginners/dict/">← <span class="d-none d-sm-inline">Slovníky</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/czechitas-ostrava-jaro/sessions/dict-files/">↑ <span class="d-none d-sm-inline">Lekce: Slovníky, soubory, JSON</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/czechitas-ostrava-jaro/intro/json/"><span class="d-none d-sm-inline">JSON</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/master/lessons/beginners/files/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2014-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

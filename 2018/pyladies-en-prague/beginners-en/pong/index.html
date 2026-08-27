@@ -1,0 +1,636 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Beginners course PyLadies: Coding game: Pong
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/pyladies-en-prague/">Beginners course PyLadies</a>
+
+> <a href="/2018/pyladies-en-prague/sessions/pong/">Final project I.</a>
+
+> <a href="/2018/pyladies-en-prague/beginners-en/pong/">Coding game: Pong</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Pong</h1>
+<div style="text-align:center;">
+    <img src="/2018/pyladies-en-prague/beginners-en/pong/static/pong.png" alt="">
+</div><p>Now we will deepen the knowledge of programming graphics applications
+which we got in the last <a href="/2018/pyladies-en-prague/intro/pyglet/">lecture about Pyglet</a>,
+by creating real program.</p>
+<p>We will program one of the first video game ever, <a href="https://en.wikipedia.org/wiki/Pong">Pong</a>.
+Pong was released by <a href="https://en.wikipedia.org/wiki/Atari,_Inc.">Atari</a>
+as their first game of year 1972 and it started the gaming industry revolution.</p>
+<p>You can have a look on 
+<a href="https://www.youtube.com/watch?v=fiShX2pTz9A">video, which shows how Pong is played</a>.</p>
+<h2>Constants and state of the game</h2>
+<p>The Pong game has simple rules. But we have to know how
+to express them in Python, and it is not that easy.
+Let's take a look at what have to be in the game.</p>
+<ul>
+<li>Game board in rectangle shape with a net in the middle.</li>
+<li>A ball flying at a certain speed over the game field.</li>
+<li>Two bats moving vertically by the edges of the field.</li>
+<li>Two score counters.</li>
+</ul>
+<p>The game will be for 2 players, we will not program the behavior of the computer.
+Each player can control their bat by pressing the exact key.
+One player can control the bat by up and down arrows and the other one by
+<kbd>W</kbd> and <kbd>S</kbd> keys.</p>
+<p>We can express the state of the game in Python using variables and
+constants. Which makes sense because some things change in the game 
+(bats position, ball position, ball speed, score) and some do not 
+(size of the playing area, size of the bats and
+ball, position and size of score counters).
+From the complex data structures we will use list (which we already know)
+and set, which is similar to set in maths. It's similar to list but
+it doesn't care about the order and there can't be any two or more 
+same elements.</p>
+<p>You might be wondering in what units we can measure
+distance and speed in such game on a computer.
+On the screen, it is not practical to measure the distance
+in centimeters. However, each screen is composed
+from individual luminous points, ie. <em>pixels</em>.
+In a graphical application such as Pong, we can measure the
+distance of two places on the screen as the number of pixels
+between these two places. Coordinate system of Pyglet
+is based on pixels, where the pixel with the [0, 0] 
+coordinates is on the bottom left of the screen.
+The speed can be measured in in pixels per second.</p>
+<p>Create a new file. Together we will define <em>constants</em>, which
+we will need during the game creation. Usually, we would define the 
+constants when we need them, but for simplicity let's do it together 
+and all at once. We'll show you how to start translating the real 
+world problem into Python.</p>
+<div class="highlight"><pre><span></span><span class="c1"># Window size (in pixels)</span>
+<span class="n">WIDTH</span> <span class="o">=</span> <span class="mi">900</span>
+<span class="n">HEIGHT</span> <span class="o">=</span> <span class="mi">600</span>
+
+<span class="n">BALL_SIZE</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">BAT_THICKNESS</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">BAT_LENGTH</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">SPEED</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># pixels per second</span>
+<span class="n">BAT_SPEED</span> <span class="o">=</span> <span class="n">SPEED</span> <span class="o">*</span> <span class="mf">1.5</span>  <span class="c1"># also pixels per second</span>
+
+<span class="n">NET_LENGTH</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">FONT_SIZE</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">TEXT_ALIGN</span> <span class="o">=</span> <span class="mi">30</span>
+</pre></div><p>We will now define <em>variables</em> that we will need: ball coordinates,
+bat coordinates, pressed keys and score of two players.
+Those variables will be global which would made any programmer 
+furious but it will ease our work for now.</p>
+<div class="highlight"><pre><span></span><span class="n">bat_coordinates</span> <span class="o">=</span> <span class="p">[</span><span class="n">HEIGHT</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">HEIGHT</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>  <span class="c1"># vertical position of two bats</span>
+<span class="n">ball_coordinates</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># x, y ball coordinates -- set in reset()</span>
+<span class="n">ball_speed</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># x, y components of ball speed -- set in reset()</span>
+<span class="n">keys_pressed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># set of pressed keys</span>
+<span class="n">score</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># score for 2 players</span>
+</pre></div><h2>Rendering the game board</h2>
+<p>First, we open the window with the same size as the game board.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="o">...</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">WIDTH</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">HEIGHT</span><span class="p">)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># everything is set, let the game begin</span>
+</pre></div><p>Before we start to make an interactive part of the game responding to inputs
+from the user we have to be able to draw everything that should be on the game
+board. Just like in the Pyglet lesson where we had function <code>draw()</code> which
+rendered the python we will have similar function in the Pong which will
+render all elements on the board.</p>
+<p>Most of the shapes are rectangles so let's create
+a function <code>draw_rectangle</code> which will get 4 coordinates
+and which will draw rectangle with the help of module <code>gl</code>
+by drawing two triangles.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyglet</span> <span class="kn">import</span> <span class="n">gl</span>
+<span class="o">...</span>
+<span class="k">def</span> <span class="nf">draw_rectangle</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">):</span>
+    <span class="sd">"""Draw the rectangle to the given coordinates</span>
+
+<span class="sd">    How it should look like::</span>
+
+<span class="sd">         y2 - +-----+</span>
+<span class="sd">              |/////|</span>
+<span class="sd">         y1 - +-----+</span>
+<span class="sd">              :     :</span>
+<span class="sd">             x1    x2</span>
+<span class="sd">    """</span>
+    <span class="c1"># I am calling OpenGL here which is the easiest to use for us at the moment</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glBegin</span><span class="p">(</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_TRIANGLE_FAN</span><span class="p">)</span>   <span class="c1"># draw connected triangles</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glVertex2f</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y1</span><span class="p">))</span>  <span class="c1"># coordinate A</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glVertex2f</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y2</span><span class="p">))</span>  <span class="c1"># coordinate B</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glVertex2f</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y2</span><span class="p">))</span>  <span class="c1"># coordinate C, draw triangle ABC</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glVertex2f</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y1</span><span class="p">))</span>  <span class="c1"># coordinate D, draw triangle BCD</span>
+    <span class="c1"># another coordinate E would draw triangle CDE and so on</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glEnd</span><span class="p">()</span>  <span class="c1"># stop drawing the triangles</span>
+</pre></div><p>We can now start to work on <code>render()</code> function.
+First create it empty and register it with <code>on_draw</code> event.
+That means that it will be called everytime when Pyglet redraws 
+the window. If, for example, the position of the ball has changed the
+function will draw it a bit elsewhere. By this we are creating
+the game dynamics. We also did it with the python, but now we have more 
+graphical elements.</p>
+<div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="k">def</span> <span class="nf">render</span><span class="p">():</span>
+    <span class="sd">"""Render(draw) state of the game"""</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glClear</span><span class="p">(</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_COLOR_BUFFER_BIT</span><span class="p">)</span>  <span class="c1"># clear the window (paint the window black)</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glColor3f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># set the paint to white</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">WIDTH</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">HEIGHT</span><span class="p">)</span>
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span>
+    <span class="n">on_draw</span><span class="o">=</span><span class="n">render</span><span class="p">,</span>  <span class="c1"># for drawing into the window use function `render`</span>
+<span class="p">)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># everything is set, let the game begin</span>
+</pre></div><p>For now we only have cleaning of the window and setting the drawing
+colour to white in the body of our function.</p>
+<p>Try to add to the <code>render()</code> function rendering of the ball in the 
+right position which you will get from the relevant global variable.
+Size of the ball is in our case just small square which size is
+stored in one of the constants.</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/pyladies-en-prague/beginners-en/pong/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">render</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="c1"># ball</span>
+    <span class="n">draw_rectangle</span><span class="p">(</span>
+    <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">BALL_SIZE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">BALL_SIZE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">BALL_SIZE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">BALL_SIZE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>After that try to draw both <em>bats</em>.
+We have the vertical position of one bat stored in the 
+<code>bat_position</code> variable. Horizontal position is a constant.
+What coordinates do you have to pass to <code>draw_rectangle</code> so the bat
+is rendered correctly and on the right position? It is similar to
+drawing the ball.</p>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/pyladies-en-prague/beginners-en/pong/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">render</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="c1"># bats - we will create list of bats coordinates and for each pair of coordinates</span>
+    <span class="c1"># in this list we will draw the bat</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bat_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span> <span class="n">bat_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span> <span class="p">:</span>
+        <span class="n">draw_rectangle</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">-</span> <span class="n">BAT_THICKNESS</span><span class="p">,</span>
+            <span class="n">y</span> <span class="o">-</span> <span class="n">BAT_LENGTH</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">x</span> <span class="o">+</span> <span class="n">BAT_THICKNESS</span><span class="p">,</span>
+            <span class="n">y</span> <span class="o">+</span> <span class="n">BAT_LENGTH</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>The <em>midfield line</em>(also the <em>net</em>) will help the game clarity.
+But how to draw it? We don't have to think about anything 
+difficult. We will just draw it as a series of rectangles from top to bottom.
+This just needs to generate a list of coordinates,
+which will have enough distance, and render a rectangle on each coordinate.
+Which Python function would you use to obtain this list?</p>
+<div class="solution" id="solution-2">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/pyladies-en-prague/beginners-en/pong/index/solutions/2/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">render</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="c1"># midfield line (as net) - composed from couple of small rectangles</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NET_LENGTH</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">HEIGHT</span><span class="p">,</span> <span class="n">NET_LENGTH</span> <span class="o">*</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">draw_rectangle</span><span class="p">(</span>
+            <span class="n">WIDTH</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">y</span><span class="p">,</span>
+            <span class="n">WIDTH</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">y</span> <span class="o">+</span> <span class="n">NET_LENGTH</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>So what's missing? <em>Score counter</em> for both players.
+For that we will have to learn how to draw text with Pyglet.
+There is already <code>text</code> module which contains <code>Label</code> object.
+And that's exactly what we need for drawing the score.
+First we have to create <code>Label</code> object. We will do that by brackets
+after the name of the object, similar to when we are calling a function:
+<code>write = Label()</code>. Usually we would create this object once and then 
+we would just change its text and redraw it but we will do it this way 
+cause it's easier. Finally we have to call <code>draw()</code> method or the
+text won't be rendered.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">draw_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x_position</span><span class="p">):</span>
+    <span class="sd">"""Draw given text on the given coordinates</span>
+
+<span class="sd">    Argument `x_position` can be "left" or "right" - sets where the text will be aligned</span>
+<span class="sd">    """</span>
+    <span class="n">write</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">,</span>
+        <span class="n">font_name</span><span class="o">=</span><span class="s1">'League Gothic'</span><span class="p">,</span>
+        <span class="n">font_size</span><span class="o">=</span><span class="n">FONT_SIZE</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="n">x_position</span><span class="p">)</span>
+    <span class="n">write</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div><p>Now try to use this function in <code>render()</code> function for
+rendering the score. Use constants WIDTH, HEIGHT, TEXT_ALIGN
+and TEXT_SIZE for setting the score coordinates.</p>
+<div class="solution" id="solution-3">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/pyladies-en-prague/beginners-en/pong/index/solutions/3/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">render</span><span class="p">():</span>
+    <span class="o">...</span>
+     <span class="c1"># And finally we will draw the score of both players</span>
+    <span class="n">draw_text</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">score</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                  <span class="n">x</span><span class="o">=</span><span class="n">TEXT_ALIGN</span><span class="p">,</span>
+                  <span class="n">y</span><span class="o">=</span><span class="n">HEIGHT</span> <span class="o">-</span> <span class="n">TEXT_ALIGN</span> <span class="o">-</span> <span class="n">FONT_SIZE</span><span class="p">,</span>
+                  <span class="n">x_position</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
+
+    <span class="n">draw_text</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">score</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                  <span class="n">x</span><span class="o">=</span><span class="n">WIDTH</span> <span class="o">-</span> <span class="n">TEXT_ALIGN</span><span class="p">,</span>
+                  <span class="n">y</span><span class="o">=</span><span class="n">HEIGHT</span> <span class="o">-</span> <span class="n">TEXT_ALIGN</span> <span class="o">-</span> <span class="n">FONT_SIZE</span><span class="p">,</span>
+                  <span class="n">x_position</span><span class="o">=</span><span class="s1">'right'</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>Yay, now we have the whole game board rendered. Let's put it in motion!</p>
+<h2>Game dynamics</h2>
+<p>Now it will start to be interesting. Let's move with bats first,
+because it's easier, and then with the ball.</p>
+<h3>User's input</h3>
+<p>We need to move with the bats regarding to user input.
+As long as they will hold for example key <kbd>S</kbd>, left
+bat will be moving down.
+In previous lesson we learned how to work with event <code>on_text</code>,
+but this one won't be enough. We will need 2 types of events
+which we don't know yet - <code>on_key_press</code> and <code>on_key_release</code>.</p>
+<p>Pyglet calls a function registered to event <code>on_key_press</code>
+the same way it calls function <code>render()</code> registered to
+event <code>on_draw</code>.
+We will add pressed key to the global variable <code>keys_pressed</code>
+as tuple with direction and bat's number, e. g. <code>('up',0)</code>,
+which means that left bat have to go up.
+We will remove the tuple from the <code>keys_pressed</code> set 
+when <code>on_key_release</code> happens. This will ensure that the set <code>keys_pressed</code>
+includes all the keys the user holds and we will be able to move
+the bats according to that.</p>
+<p>Will you try to code <code>key_press(symbol, modifiers)</code> and
+<code>key_release(symbol, modifiers)</code> functions by yourself?
+You can add element to any set by method <code>add(element)</code>
+and delete by <code>discard(element)</code>. Both take an element which we
+want to add or discard as an argument, in our case it will
+be the tuple.</p>
+<p>You will have to find out which key was pressed. Pyglet will
+pass the code of pressed key to our function as first argument
+so in our case it will be a <code>symbol</code>. It will be a number unless
+you import <code>key</code> from <code>puglet.window</code>, which contains constants
+of each key. So you will be able to compare if the key is
+for example up arrow <kbd>↑</kbd> as <code>symbol == key.UP</code>.</p>
+<div class="solution" id="solution-4">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/pyladies-en-prague/beginners-en/pong/index/solutions/4/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyglet.window</span> <span class="kn">import</span> <span class="n">key</span>
+<span class="o">...</span>
+<span class="k">def</span> <span class="nf">key_press</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">modifiers</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">W</span><span class="p">:</span>
+        <span class="n">keys_pressed</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s1">'up'</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">S</span><span class="p">:</span>
+        <span class="n">keys_pressed</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s1">'down'</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+        <span class="n">keys_pressed</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s1">'up'</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+        <span class="n">keys_pressed</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s1">'down'</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">key_release</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">modifiers</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">W</span><span class="p">:</span>
+        <span class="n">keys_pressed</span><span class="o">.</span><span class="n">discard</span><span class="p">((</span><span class="s1">'up'</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">S</span><span class="p">:</span>
+        <span class="n">keys_pressed</span><span class="o">.</span><span class="n">discard</span><span class="p">((</span><span class="s1">'down'</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+        <span class="n">keys_pressed</span><span class="o">.</span><span class="n">discard</span><span class="p">((</span><span class="s1">'up'</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+        <span class="n">keys_pressed</span><span class="o">.</span><span class="n">discard</span><span class="p">((</span><span class="s1">'down'</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="o">...</span>
+</pre></div>
+    </div>
+</div><div class="admonition note"><p>Why are we using <code>dicard()</code> method and not <code>remove()</code>(which
+we already know from lists and sets also have it)? Because
+it won't raise an error when the element is not in the set. So the program
+won't cause an error when user press some of the defined key
+elsewhere and then switch back to our
+window and just after that they will release the key.</p>
+</div><p>Register both functions to events:</p>
+<div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">WIDTH</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">HEIGHT</span><span class="p">)</span>
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span>
+    <span class="n">on_draw</span><span class="o">=</span><span class="n">render</span><span class="p">,</span>  <span class="c1"># for drawing into the window use function `render`</span>
+    <span class="n">on_key_press</span><span class="o">=</span><span class="n">key_press</span><span class="p">,</span>  <span class="c1"># when key is pressed call function `key_press`</span>
+    <span class="n">on_key_release</span><span class="o">=</span><span class="n">key_release</span><span class="p">,</span>  <span class="c1"># when key is released call `key_release`</span>
+    <span class="p">)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><h3>Bat movement</h3>
+<p>Once we were able to process input from the user,
+we can move with bats regarding that.
+We will move the objects in the function <code>revive(dt)</code>,
+which will be registered to the clock. Argument <code>dt</code>
+is time that passed from the last call.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">revive</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">bat_number</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># movement according to pressed keys (function `key_press`)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">'up'</span><span class="p">,</span> <span class="n">bat_number</span><span class="p">)</span> <span class="ow">in</span> <span class="n">keys_pressed</span><span class="p">:</span>
+            <span class="n">bat_coordinates</span><span class="p">[</span><span class="n">bat_number</span><span class="p">]</span> <span class="o">+=</span> <span class="n">BAT_SPEED</span> <span class="o">*</span> <span class="n">dt</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">'down'</span><span class="p">,</span> <span class="n">bat_number</span><span class="p">)</span> <span class="ow">in</span> <span class="n">keys_pressed</span><span class="p">:</span>
+            <span class="n">bat_coordinates</span><span class="p">[</span><span class="n">bat_number</span><span class="p">]</span> <span class="o">-=</span> <span class="n">BAT_SPEED</span> <span class="o">*</span> <span class="n">dt</span>
+
+        <span class="c1"># bottom stop - when bat is down bellow we will set it to the minimum</span>
+        <span class="k">if</span> <span class="n">bat_coordinates</span><span class="p">[</span><span class="n">bat_number</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">BAT_LENGTH</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">bat_coordinates</span><span class="p">[</span><span class="n">bat_number</span><span class="p">]</span> <span class="o">=</span> <span class="n">BAT_LENGTH</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="c1"># top stop - when bat is too high we will set it to the maximum</span>
+        <span class="k">if</span> <span class="n">bat_coordinates</span><span class="p">[</span><span class="n">bat_number</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">HEIGHT</span> <span class="o">-</span> <span class="n">BAT_LENGTH</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">bat_coordinates</span><span class="p">[</span><span class="n">bat_number</span><span class="p">]</span> <span class="o">=</span> <span class="n">HEIGHT</span> <span class="o">-</span> <span class="n">BAT_LENGTH</span> <span class="o">/</span> <span class="mi">2</span>
+</pre></div><p>Let's have a look at this piece of code.
+We are going through both bats in a loop 
+and we ask if there is the tuple of direction
+and number of bat in the set <code>keys_pressed</code>.
+If yes we <em>move</em> with the bat regarding to
+the direction(we add to or deduct from the vertical
+position of the bat the change which is time from
+the last call multiplied by bat speed which we have
+in constants).</p>
+<p>In the second part we have to make sure that bat doesn't
+appear <em>outside</em> of the game board. We know from the last
+lesson when we were playing with the python image that it
+can happen very easily. We are drawing bat from the 
+middle, which means that if the bat <code>y</code> coordinate is lower than 
+<code>BAT_LENGTH / 2</code> it is going outside of the board. 
+In that case we will fix the position to the lowest possible coordinate.
+It is done also for the top edge accordingly.</p>
+<p>Register created function to the clock:</p>
+<div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="n">revive</span><span class="p">)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>and look at the result.</p>
+<h3>Kick off</h3>
+<p>Before we start to bounce the ball from the walls we
+have put it into motion first. We shoot it from the centre 
+of the board to the random direction. This should also
+happen when one player scores and game is starting again.
+That's why we encapsulate this into <code>reset()</code> function.
+Call it before you run the app.</p>
+<p>How will this function look like?
+First you have to move the ball to the centre of the
+board by setting <code>ball_coordinates</code> variable. Then
+we have to randomly select if the ball should go to the
+left or to the right by calling <code>random.randint(0, 1)</code>.
+We have to move the ball in the horizontal direction by adding
+required speed to the <code>ball_speed[0]</code>. The speed in vertical
+<code>ball_speed[1]</code> direction will be random.</p>
+<div class="solution" id="solution-5">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/pyladies-en-prague/beginners-en/pong/index/solutions/5/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="o">...</span>
+<span class="k">def</span> <span class="nf">reset</span><span class="p">():</span>
+    <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">WIDTH</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">HEIGHT</span> <span class="o">//</span> <span class="mi">2</span>
+
+    <span class="c1"># x speed - right or left</span>
+    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">ball_speed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">SPEED</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ball_speed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">SPEED</span>
+    <span class="c1"># y speed - completely random</span>
+    <span class="n">ball_speed</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SPEED</span>
+<span class="o">...</span>
+<span class="c1"># We will set the initial state.</span>
+<span class="n">reset</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><p>Nothing is happening right now because function
+<code>revive(dt)</code> is not working with the time yet.
+We have to set there <code>ball_coordinates</code>. It will be
+based on current coordinates and time from the last call
+regarding to physics equation <var>d</var> = <var>v</var> <var>t</var>,
+which means that the final distance equals to speed
+multiplied by time. So add the following to the
+<code>revive(dt)</code> function:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">obnov_stav</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="c1"># BALL MOVEMENT</span>
+    <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ball_speed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">dt</span>
+    <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ball_speed</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">dt</span>
+</pre></div><p>Now let's have a look at what happens when you run
+the game. The ball should fly into different direction
+each time.</p>
+<h3>Ball bounce</h3>
+<p>The ball is flying uncontrollably out of the field now.
+So we have to make sure that it will bounce back from the walls.
+Because in our case angle of incidence equals angle of deflection
+we will just switch the signs of y part of the speed.
+So we have to add some checks of the ball position and 
+eventually change its direction if it is too low or too high to the
+<code>revive(dt)</code> function.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">revive</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="k">if</span> <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">BALL_SIZE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">ball_speed</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ball_speed</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">HEIGHT</span> <span class="o">-</span> <span class="n">BALL_SIZE</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">ball_speed</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">ball_speed</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div><p>Now we have to code the bounce from the bat, or a 
+game reset if the ball is not hit by one of the player's
+bat(that means that the other one gets a point).
+We will be adding something to our <code>revive(dt)</code>
+function again.</p>
+<p>First step is to set bounds on y axis where the ball can be to be
+successfully hit with a bat - between upper and lower
+edge of a bat:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">revive</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="n">bat_min</span> <span class="o">=</span> <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">BALL_SIZE</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">BAT_LENGTH</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">bat_max</span> <span class="o">=</span> <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">BALL_SIZE</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">BAT_LENGTH</span><span class="o">/</span><span class="mi">2</span>
+</pre></div><p>Now when the ball hits the left or the right wall we can ask
+if the bat it on the right spot so we can <code>bounce</code> ball back or
+if it isn't so one player lost and the other one gets point and
+we can <code>reset</code> the game.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">obnov_stav</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="c1"># bounce to the left</span>
+    <span class="k">if</span> <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">BAT_THICKNESS</span> <span class="o">+</span> <span class="n">BALL_SIZE</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">bat_min</span> <span class="o">&lt;</span> <span class="n">bat_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">bat_max</span><span class="p">:</span>
+            <span class="c1"># bat is at the right spot we can bounce the ball back</span>
+            <span class="n">ball_speed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ball_speed</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># bat is not at the right place the player lost</span>
+            <span class="n">score</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">reset</span><span class="p">()</span>
+
+    <span class="c1"># bounce to the right</span>
+    <span class="k">if</span> <span class="n">ball_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">WIDTH</span> <span class="o">-</span> <span class="p">(</span><span class="n">BAT_THICKNESS</span> <span class="o">+</span> <span class="n">BALL_SIZE</span> <span class="o">/</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">bat_min</span> <span class="o">&lt;</span> <span class="n">bat_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">bat_max</span><span class="p">:</span>
+            <span class="n">ball_speed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">ball_speed</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">score</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">reset</span><span class="p">()</span>
+</pre></div><h2>The end</h2>
+<p>Hooray, we finished the Pong! Now you have fully
+functioning interactive graphical game based
+on real game :)</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/pyladies-en-prague/sessions/pong/">↑ <span class="d-none d-sm-inline">Lekce: Final project I.</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/pyladies-en-prague/sessions/pong/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-pyladies-en-prague/lessons/beginners-en/pong/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Translated by Marketa Muzikova</p>
+    
+        <p>Originally written by Oskar Hollman with Petr Viktorin&#39;s code, 2016 for <a href="https://naucse.python.cz/course/pyladies/iprojects/pong/">PyLadies CZ</a>.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

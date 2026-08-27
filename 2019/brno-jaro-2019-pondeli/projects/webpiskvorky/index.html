@@ -1,0 +1,364 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Webový server - rozhraní k piškvorkám
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/brno-jaro-2019-pondeli/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/brno-jaro-2019-pondeli/sessions/tmp4/">Téma na přání – Webový server</a>
+
+> <a href="/2019/brno-jaro-2019-pondeli/projects/webpiskvorky/">Webový server - rozhraní k piškvorkám</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Webový server - rozhraní k piškvorkám</h1>
+<p>Tato lekce navazuje na dřívější úkoly - 1D piškvorky. Pokud je nemáš udělané,
+můžeš použít ukázkové následující soubory.</p>
+<p>Soubor <code>util.py</code> musí obsahovat funkci <code>tah(pole, index, symbol)</code>, která se
+pokusí umístit hráčův symbol do zadaného hracího pole a vrací nový stav hracího
+pole (neúspěch je indikován vyvoláním výjimky <code>ValueError</code>). Může vypadat
+například takto:</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-2019-pondeli/projects/webpiskvorky/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="c1"># util.py</span>
+<span class="k">def</span> <span class="nf">tah</span><span class="p">(</span><span class="n">pole</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">symbol</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pole</span><span class="p">)</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+    <span class="k">if</span> <span class="n">pole</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">'-'</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+    <span class="k">if</span> <span class="n">symbol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="s1">'o'</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+
+    <span class="k">return</span> <span class="n">pole</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="n">symbol</span> <span class="o">+</span> <span class="n">pole</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+
+
+<span class="k">def</span> <span class="nf">vyhodnot</span><span class="p">(</span><span class="n">pole</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">'xxx'</span> <span class="ow">in</span> <span class="n">pole</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'x'</span>
+    <span class="k">if</span> <span class="s1">'ooo'</span> <span class="ow">in</span> <span class="n">pole</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'o'</span>
+    <span class="k">if</span> <span class="s1">'-'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pole</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'!'</span>
+    <span class="k">return</span> <span class="s1">'-'</span>
+</pre></div>
+    </div>
+</div><p>Podobně s <code>ai.py</code>. Ten musí obsahovat funkci <code>tah_pocitace(pole, symbol)</code>, který
+se pokusí umístit zadaný symbol do hracího pole, vrací nový stav hracího pole.
+použít velmi naivní strategii:</p>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-2019-pondeli/projects/webpiskvorky/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="c1"># ai.py</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">randrange</span>
+<span class="kn">from</span> <span class="nn">util</span> <span class="kn">import</span> <span class="n">tah</span>
+
+<span class="k">def</span> <span class="nf">tah_pocitace</span><span class="p">(</span><span class="n">pole</span><span class="p">,</span> <span class="n">symbol</span><span class="p">):</span>
+    <span class="n">delka</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pole</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">delka</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">tah</span><span class="p">(</span><span class="n">pole</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">symbol</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+</pre></div>
+    </div>
+</div><h1>První seznámení se serverem</h1>
+<p>Pro webový server dneska použijeme knihovnu <code>flask</code>. Již tradičně, nejprve si ji
+nainstalujeme:</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span> $ python -m pip install flask
+</pre></div><p>Začneme s jednoduchou kostrou:</p>
+<div class="highlight"><pre><span></span><span class="c1"># webpiskvorky.py</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hra</span><span class="p">():</span>
+    <span class="n">jmeno_zvirete</span> <span class="o">=</span> <span class="s1">'Andulka na bidýlku'</span>
+
+    <span class="k">return</span> <span class="n">f</span><span class="s1">'Ahoj, jmenuju se {jmeno_zvirete}.'</span>
+</pre></div><h2>Spuštění serveru</h2>
+<p>Aplikace ve Flasku se spouští trochu jinak, než programy, které jsme si doposud
+napsali.  Nejprve je nutné nastavit několik proměnných prostředí a to se dělá na
+různých počítačích jiným způsobem.</p>
+<p>V linuxu/Mac:</p>
+<div class="highlight"><pre><span></span>$ <span class="nb">export</span> <span class="nv">FLASK_APP</span><span class="o">=</span>webpiskvorky.py
+$ <span class="nb">export</span> <span class="nv">FLASK_DEBUG</span><span class="o">=</span><span class="m">1</span>
+</pre></div><p>Pokud pracuješ na Windows:</p>
+<div class="highlight"><pre><span></span>&gt; <span class="nb">set</span> <span class="nv">FLASK_APP</span><span class="o">=</span>webpiskvorky.py
+&gt; <span class="nb">set</span> <span class="nv">FLASK_DEBUG</span><span class="o">=</span><span class="m">1</span>
+</pre></div><p>Tak, tím máme nachystané prostředí a konečně můžeme server spustit:</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span> $ flask run
+ * Serving Flask app <span class="s2">"webpiskvorky.py"</span> <span class="o">(</span>lazy loading<span class="o">)</span>
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://127.0.0.1:5000/ <span class="o">(</span>Press CTRL+C to quit<span class="o">)</span>
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: <span class="m">279</span>-218-554
+</pre></div><p>Otevři si v prohlížeči stránku <a href="http://127.0.0.1:5000">http://127.0.0.1:5000</a> a mělo by se ti zobrazi
+prázdná stránka pouze s textem</p>
+<div class="highlight"><pre><code>Ahoj, jmenuju se Andulka na bidýlku.</code></pre></div><h2>Šablona</h2>
+<p>Psaní obsahu stránky přímo v pythonu je docela nepohodlné. Proto využijeme tzv.
+šablon. To je soubor, do kterého ve kterém se dají nahradit proměnné za jejich
+hodnoty.</p>
+<p>Ve stejné složce, jako se nachází soubor <code>webpiskvorky.py</code> vytvoříme novou
+složku <code>templates</code> a v ní následující <code>piskvorky.html</code>:</p>
+<p>Soubor <code>templates/piskvorky.html</code>:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">"utf-8"</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        Ahoj, jmenuju se {{ jmeno }}
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div><p>Nyní upravíme naši funkci tak, abychom šabloně předali proměnné a výsledný obsah
+vrátili jako odpověd serveru.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hra</span><span class="p">():</span>
+    <span class="n">jmeno_zvirete</span> <span class="o">=</span> <span class="s1">'Andulka na bidýlku'</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">'piskvorky.html'</span><span class="p">,</span> <span class="n">jmeno</span><span class="o">=</span><span class="n">jmeno_zvirete</span><span class="p">)</span>
+</pre></div><p>Pojmenovaný argument funkce <code>render_template</code> uvnitř šablony vezme jako název
+proměnné uvnitř šablony. Hodnotu proměnné v šabloně vypíšeme pomocí dvojitých
+složených závorek.</p>
+<h2>Výsledná aplikace</h2>
+<div class="solution" id="solution-2">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-2019-pondeli/projects/webpiskvorky/index/solutions/2/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="c1"># webpiskvorky.py</span>
+
+<span class="c1"># Spouštění (v příkazové řádce):</span>
+<span class="c1"># export FLASK_APP=webpiskvorky.py</span>
+<span class="c1"># export FLASK_DEBUG=1</span>
+<span class="c1"># flask run</span>
+
+<span class="c1"># (na Windows "set" místo "export")</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span>
+
+<span class="kn">from</span> <span class="nn">util</span> <span class="kn">import</span> <span class="n">tah</span>
+<span class="kn">from</span> <span class="nn">ai</span> <span class="kn">import</span> <span class="n">tah_pocitace</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hra</span><span class="p">():</span>
+    <span class="k">if</span> <span class="s1">'pole'</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+        <span class="n">pole</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">'pole'</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pole</span> <span class="o">=</span> <span class="s1">'-'</span> <span class="o">*</span> <span class="mi">20</span>
+    <span class="k">if</span> <span class="s1">'cislo'</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+        <span class="n">cislo_policka</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">'cislo'</span><span class="p">])</span>
+        <span class="n">pole</span> <span class="o">=</span> <span class="n">tah</span><span class="p">(</span><span class="n">pole</span><span class="p">,</span> <span class="n">cislo_policka</span><span class="p">,</span> <span class="s1">'x'</span><span class="p">)</span>
+        <span class="n">pole</span> <span class="o">=</span> <span class="n">tah_pocitace</span><span class="p">(</span><span class="n">pole</span><span class="p">,</span> <span class="s1">'o'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+        <span class="s1">'hra.html'</span><span class="p">,</span>
+        <span class="n">ocislovane_pole</span><span class="o">=</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">pole</span><span class="p">),</span>
+        <span class="n">pole</span><span class="o">=</span><span class="n">pole</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Piškvorky<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">"utf-8"</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Piškvorky<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">form</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">"hidden"</span> <span class="na">name</span><span class="o">=</span><span class="s">"pole"</span> <span class="na">value</span><span class="o">=</span><span class="s">"{{ pole }}"</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+                {% for cislo, znak in ocislovane_pole %}
+                    {% if znak == '-' %}
+                        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">"radio"</span> <span class="na">name</span><span class="o">=</span><span class="s">"cislo"</span> <span class="na">value</span><span class="o">=</span><span class="s">"{{ cislo }}"</span><span class="p">&gt;</span>
+                    {% else %}
+                        {{ znak }}
+                    {% endif %}
+                {% endfor %}
+            <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">"submit"</span> <span class="na">value</span><span class="o">=</span><span class="s">"Odeslat!"</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">"{{ url_for('hra') }}"</span><span class="p">&gt;</span>Reset<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+    </div>
+</div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-jaro-2019-pondeli/intro/flask/">← <span class="d-none d-sm-inline">Flask</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-jaro-2019-pondeli/sessions/tmp4/">↑ <span class="d-none d-sm-inline">Lekce: Téma na přání – Webový server</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/brno-jaro-2019-pondeli/sessions/tmp4/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-brno-jaro-2019-pondeli/lessons/projects/webpiskvorky/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Martin Pavlásek, 2019</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

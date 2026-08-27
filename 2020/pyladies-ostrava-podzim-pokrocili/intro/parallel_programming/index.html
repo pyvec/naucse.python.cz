@@ -1,0 +1,844 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Python a jeho knihovny: Paralelní programování
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/">Python a jeho knihovny</a>
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/parallel/">Vlákna a procesy — paralelní programování</a>
+
+> <a href="/2020/pyladies-ostrava-podzim-pokrocili/intro/parallel_programming/">Paralelní programování</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Vlákna a procesy</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dnes se společně podíváme na vlákna a procesy. Nejdříve si vysvětlíme hlavní rozdíly mezi nimi a teoreticky si popíšeme základy fungování a pak se vrhneme na ukázku implementace v Pythonu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS575YD23RVDe0_2l7vkMIwqTjs-s3HlMMZoCfx8k2a4ZJn6O37" alt="teorie vs realita"></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Sekvenční, konkurenční a paralelní programy</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nejdříve si vysvětlíme základní pojmy, aby se nám pak dobře chápaly rozdíly mezi koncepty.</p>
+<p><strong>Sekvenční</strong> programy známe ze všech nejlépe. Jejich implementace je sadou příkazů a výpočtů, které se provedou jeden po druhém a na konci je doručen nějaký výsledek.</p>
+<p><strong>Paralelní</strong> programy jsou napsané tak, aby výpočty v nich obsažené mohly běžet paralelně - tedy aby v jednu chvíli mohl probíhat i více než jeden výpočet či nějaká operace.</p>
+<p>Představte si hromadu dřeva ke štípání na zimu. U sekvenčního programování na to bude člověk sám a bude si brát polena jedno po druhém a bude je štípat, dokud nebude hotov. U paralelního přístupu se ke štípání přidá celá rodina a polena jsou tak zpracovávána několika lidmi zároveň.</p>
+<p><strong>Konkurenční</strong> programy jsou něco mezi sekvenčními a paralelními. Jednotlivé úlohy ke zpracování se sice mohou překrývat — v tom smyslu, že mezi začátkem a koncem jedné úlohy se může pracovat i na jiné úloze — ale nikdy není možné pracovat na dvou úlohách v tu samou chvíli.</p>
+<p>Jako dobrý příklad poslouží náš každodenní rytmus. Běžný člověk vždy dělá jen jednu věc, ale může její dělání přerušit a v mezičase se věnovat něčemu jinému, a pak se k původní činnosti zase vrátit. Například začnete pracovat na domácím projektu, v polovině práci přerušíte a jdete si uvařit čaj. Než se ohřeje voda, umyjete nádobí. Pak doděláte čaj a vracíte se zpět k počítači pracovat na domácím projektu. Máme tady tři činnosti, které se mezi sebou překrývají, ale vždy se pracuje jen na jedné z nich.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Proces vs Vlákno</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Proces</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Proces je běžící instance nějakého programu. Každý program běžící na počítači, ať už o něm víte nebo ne, je procesem. Proces musí mít k dispozici celou řadu informací: např. instrukce, které má vykonat, svou paměť, alokované zdroje v počítači a další - souhrně se tento balík informací nazývá kontext. Operační systém pak mezi jednotlivými procesy přepíná a tím umožňuje, aby všechny běžely a mohly vykonávat svou práci. Pokud má procesor více jader, může běžet i více procesů najednou.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Vlákno</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Vlákno je součástí procesu a nemůže existovat bez něj. Jeden proces může typicky spustit několik vláken a ty mohou v závislosti na implementaci a programovacím jazyce fungovat paralelně či konkurenčně. Protože existuje v rámci procesu, sdílí vlákno paměť, alokované zdroje a další informace s ostatními vlákny v témže procesu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Hlavní rozdíly mezi procesem a vláknem</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Vytvoření</h3>
+<ul>
+<li><strong>P</strong>: Vytvoření procesu je náročná operace, protože musí dojít ke kopii původního procesu (rodiče) se vším všudy, což může trvat docela dlouho.</li>
+<li><strong>V</strong>: Vytvoření vlákna je rychlé, protože vše, co má vlákno k dispozici je sdílené v rámci procesu, který vlákno vytvořil.</li>
+</ul>
+<h3>Přepínání</h3>
+<ul>
+<li><strong>P</strong>: Přepnout kontext u procesů je poměrně náročné a „drahé“.</li>
+<li><strong>V</strong>: Přepínání vláken je rychlé a méně náročné.</li>
+</ul>
+<h3>Práce s pamětí</h3>
+<ul>
+<li><strong>P</strong>: Proces má vlastní paměť a nikdo mu v ní nic nemůže změnit. Díky tomu jsou procesy více paměťově náročně, protože i „stejné“ procesy obsahují kopie proměnných svého rodiče. Existuje i výjimka v podobě sdílené paměti, která se používá pro komunikaci mezi procesy.</li>
+<li><strong>V</strong>: Vlákna sdílí paměť v rámci jednoho procesu, takže si ji mohou navzájem přepisovat. Je možné to využít jako výhodu při komunikaci mezi vlákny, ale je potřeba si dát pozor, aby z toho nevznikla chyba a nesmyslné výsledky.</li>
+</ul>
+<h3>Komunikace</h3>
+<ul>
+<li><strong>P</strong>: Procesy mohou mezi sebou sdílet paměť, nebo si zasílat zprávy.</li>
+<li><strong>V</strong>: Vlákna mají sdílenou paměť automaticky, takže si jen v rámci paměti předávají data.</li>
+</ul>
+<p>V obou případech, pokud se jedná o přístup ke sdílené paměti, je potřeba přístupy synchronizovat, aby se nestalo, že jeden proces/vlákno přepisuje data, která potřebuje jiný proces/vlákno.</p>
+<h3>Chyby</h3>
+<ul>
+<li><strong>P</strong>: Chyba v procesu neovlivní žádný další proces (kromě případů zanesení chyby do sdílené paměti).</li>
+<li><strong>V</strong>: Chyba v jednom vlákně může shodit celý proces a ukončit tak všechna běžící vlákna.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>GIL (Global Interpreter Lock)</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Interpret Pythonu napsaný v jazyce C (CPython) — ten nejznámější a nejpoužívanější — spravuje paměť efektivním způsobem, ale jeho správa paměti není tzv. „thread-safe“. To znamená, že by mohlo dojít k situaci, kdy by jedno vlákno rozbíjelo paměť jiného vlákna. Aby se to nestalo, GIL zajistí, že vlákna v Pythonu nikdy nepoběží paralelně.</p>
+<p>Protože GIL existuje hlavně kvůli ochraně paměti, mohou vlákna za určitých předpokladů běžet paralelně, ale nesmí při tom pracovat s (Python) objekty v paměti a spouštět příkazy Pythonu. Dobrým příkladem může být situace, kdy jedno vlákno čeká na informace z nějakého externího zdroje (z internetu například). V takovém případě se GIL odemkne a jiné vlákno může pracovat na svých úkolech a spouštět Python kód i s prací v paměti. Existují i knihovny pro různé výpočty (např. numpy), které při svých kalkulacích neuzamykají GIL a tak mohou běžet paralelně i ve vláknech. Odemykání a zamykání GILu je záležitostí implementace interpretru a není tedy možné to nijak ovlivnit z Pythonu přímo.</p>
+<p>Jiné interpretry Pythonu — např. Jython napsaný v Javě nebo IronPython napsaný v C# — GIL nemají a je v nich tedy možné využít vlákna skutečně naplno i pro paralelní programování.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Konkrétní příklady</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Příklad 1. — Úloha nenáročná na procesor, ale na čas (čekání)</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Prvním příkladem budeme demonstrovat vhodné použití vláken. Stáhneme si z internetu několik <a href="https://www.python.org/dev/peps/">PEP dokumentů</a>. Podstatné je, že v rámci zpracování dávky úloh bude program trávit spoustu času čekáním, takže by nám mohly vlákna pomoci zkrátit jeho běh. Zároveň víme, že při připojování se k webovým serverům bude odemknut GIL.</p>
+<p>Zkusme si to nejdříve bez vláken. Definujeme si funkci, která nám zvládne dokument stáhnout a zjistit z něj titulek stránky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">PEP</span><span class="p">):</span>
+    <span class="n">PEP</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">PEP</span><span class="p">)</span>
+    <span class="n">PEP</span> <span class="o">=</span> <span class="n">PEP</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"https://www.python.org/dev/peps/pep-</span><span class="si">{</span><span class="n">PEP</span><span class="si">}</span><span class="s2">/"</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+    <span class="n">search</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">'&lt;title&gt;(.*)&lt;/title&gt;'</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">search</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A nyní si takových dokumentů stáhneme dvacet pěkně jeden po druhém.</p>
+<p>Máme k dispozici seznam existujících PEP dokumentů resp. jejich čísel, ze kterého si oněch dvacet vždy náhodně vybereme, abychom zabránili vlivu ukládání mezivýsledků na naše měření.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">all_PEPs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">102</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">201</span><span class="p">,</span> <span class="mi">202</span><span class="p">,</span> <span class="mi">203</span><span class="p">,</span> <span class="mi">204</span><span class="p">,</span> <span class="mi">205</span><span class="p">,</span> <span class="mi">206</span><span class="p">,</span> <span class="mi">207</span><span class="p">,</span> <span class="mi">208</span><span class="p">,</span> <span class="mi">209</span><span class="p">,</span> <span class="mi">210</span><span class="p">,</span> <span class="mi">211</span><span class="p">,</span> <span class="mi">212</span><span class="p">,</span> <span class="mi">213</span><span class="p">,</span> <span class="mi">214</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">216</span><span class="p">,</span> <span class="mi">217</span><span class="p">,</span> <span class="mi">218</span><span class="p">,</span> <span class="mi">219</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">221</span><span class="p">,</span> <span class="mi">222</span><span class="p">,</span> <span class="mi">223</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">226</span><span class="p">,</span> <span class="mi">227</span><span class="p">,</span> <span class="mi">228</span><span class="p">,</span> <span class="mi">229</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">231</span><span class="p">,</span> <span class="mi">232</span><span class="p">,</span> <span class="mi">233</span><span class="p">,</span> <span class="mi">234</span><span class="p">,</span> <span class="mi">235</span><span class="p">,</span> <span class="mi">236</span><span class="p">,</span> <span class="mi">237</span><span class="p">,</span> <span class="mi">238</span><span class="p">,</span> <span class="mi">239</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">241</span><span class="p">,</span> <span class="mi">242</span><span class="p">,</span> <span class="mi">243</span><span class="p">,</span> <span class="mi">244</span><span class="p">,</span> <span class="mi">245</span><span class="p">,</span> <span class="mi">246</span><span class="p">,</span> <span class="mi">247</span><span class="p">,</span> <span class="mi">248</span><span class="p">,</span> <span class="mi">249</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">251</span><span class="p">,</span> <span class="mi">252</span><span class="p">,</span> <span class="mi">253</span><span class="p">,</span> <span class="mi">254</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">257</span><span class="p">,</span> <span class="mi">258</span><span class="p">,</span> <span class="mi">259</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">261</span><span class="p">,</span> <span class="mi">262</span><span class="p">,</span> <span class="mi">263</span><span class="p">,</span> <span class="mi">264</span><span class="p">,</span> <span class="mi">265</span><span class="p">,</span> <span class="mi">266</span><span class="p">,</span> <span class="mi">267</span><span class="p">,</span> <span class="mi">268</span><span class="p">,</span> <span class="mi">269</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">271</span><span class="p">,</span> <span class="mi">272</span><span class="p">,</span> <span class="mi">273</span><span class="p">,</span> <span class="mi">274</span><span class="p">,</span> <span class="mi">275</span><span class="p">,</span> <span class="mi">276</span><span class="p">,</span> <span class="mi">277</span><span class="p">,</span> <span class="mi">278</span><span class="p">,</span> <span class="mi">279</span><span class="p">,</span> <span class="mi">280</span><span class="p">,</span> <span class="mi">281</span><span class="p">,</span> <span class="mi">282</span><span class="p">,</span> <span class="mi">283</span><span class="p">,</span> <span class="mi">284</span><span class="p">,</span> <span class="mi">285</span><span class="p">,</span> <span class="mi">286</span><span class="p">,</span> <span class="mi">287</span><span class="p">,</span> <span class="mi">288</span><span class="p">,</span> <span class="mi">289</span><span class="p">,</span> <span class="mi">290</span><span class="p">,</span> <span class="mi">291</span><span class="p">,</span> <span class="mi">292</span><span class="p">,</span> <span class="mi">293</span><span class="p">,</span> <span class="mi">294</span><span class="p">,</span> <span class="mi">295</span><span class="p">,</span> <span class="mi">296</span><span class="p">,</span> <span class="mi">297</span><span class="p">,</span> <span class="mi">298</span><span class="p">,</span> <span class="mi">299</span><span class="p">,</span> <span class="mi">301</span><span class="p">,</span> <span class="mi">302</span><span class="p">,</span> <span class="mi">303</span><span class="p">,</span> <span class="mi">304</span><span class="p">,</span> <span class="mi">305</span><span class="p">,</span> <span class="mi">306</span><span class="p">,</span> <span class="mi">307</span><span class="p">,</span> <span class="mi">308</span><span class="p">,</span> <span class="mi">309</span><span class="p">,</span> <span class="mi">310</span><span class="p">,</span> <span class="mi">311</span><span class="p">,</span> <span class="mi">312</span><span class="p">,</span> <span class="mi">313</span><span class="p">,</span> <span class="mi">314</span><span class="p">,</span> <span class="mi">315</span><span class="p">,</span> <span class="mi">316</span><span class="p">,</span> <span class="mi">317</span><span class="p">,</span> <span class="mi">318</span><span class="p">,</span> <span class="mi">319</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">321</span><span class="p">,</span> <span class="mi">322</span><span class="p">,</span> <span class="mi">323</span><span class="p">,</span> <span class="mi">324</span><span class="p">,</span> <span class="mi">325</span><span class="p">,</span> <span class="mi">326</span><span class="p">,</span> <span class="mi">327</span><span class="p">,</span> <span class="mi">328</span><span class="p">,</span> <span class="mi">329</span><span class="p">,</span> <span class="mi">330</span><span class="p">,</span> <span class="mi">331</span><span class="p">,</span> <span class="mi">332</span><span class="p">,</span> <span class="mi">333</span><span class="p">,</span> <span class="mi">334</span><span class="p">,</span> <span class="mi">335</span><span class="p">,</span> <span class="mi">336</span><span class="p">,</span> <span class="mi">337</span><span class="p">,</span> <span class="mi">338</span><span class="p">,</span> <span class="mi">339</span><span class="p">,</span> <span class="mi">340</span><span class="p">,</span> <span class="mi">341</span><span class="p">,</span> <span class="mi">342</span><span class="p">,</span> <span class="mi">343</span><span class="p">,</span> <span class="mi">344</span><span class="p">,</span> <span class="mi">345</span><span class="p">,</span> <span class="mi">346</span><span class="p">,</span> <span class="mi">347</span><span class="p">,</span> <span class="mi">348</span><span class="p">,</span> <span class="mi">349</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">351</span><span class="p">,</span> <span class="mi">352</span><span class="p">,</span> <span class="mi">353</span><span class="p">,</span> <span class="mi">354</span><span class="p">,</span> <span class="mi">355</span><span class="p">,</span> <span class="mi">356</span><span class="p">,</span> <span class="mi">357</span><span class="p">,</span> <span class="mi">358</span><span class="p">,</span> <span class="mi">359</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">361</span><span class="p">,</span> <span class="mi">362</span><span class="p">,</span> <span class="mi">363</span><span class="p">,</span> <span class="mi">364</span><span class="p">,</span> <span class="mi">365</span><span class="p">,</span> <span class="mi">366</span><span class="p">,</span> <span class="mi">367</span><span class="p">,</span> <span class="mi">368</span><span class="p">,</span> <span class="mi">369</span><span class="p">,</span> <span class="mi">370</span><span class="p">,</span> <span class="mi">371</span><span class="p">,</span> <span class="mi">372</span><span class="p">,</span> <span class="mi">373</span><span class="p">,</span> <span class="mi">374</span><span class="p">,</span> <span class="mi">375</span><span class="p">,</span> <span class="mi">376</span><span class="p">,</span> <span class="mi">377</span><span class="p">,</span> <span class="mi">378</span><span class="p">,</span> <span class="mi">379</span><span class="p">,</span> <span class="mi">380</span><span class="p">,</span> <span class="mi">381</span><span class="p">,</span> <span class="mi">382</span><span class="p">,</span> <span class="mi">383</span><span class="p">,</span> <span class="mi">384</span><span class="p">,</span> <span class="mi">385</span><span class="p">,</span> <span class="mi">386</span><span class="p">,</span> <span class="mi">387</span><span class="p">,</span> <span class="mi">389</span><span class="p">,</span> <span class="mi">390</span><span class="p">,</span> <span class="mi">391</span><span class="p">,</span> <span class="mi">392</span><span class="p">,</span> <span class="mi">393</span><span class="p">,</span> <span class="mi">394</span><span class="p">,</span> <span class="mi">395</span><span class="p">,</span> <span class="mi">396</span><span class="p">,</span> <span class="mi">397</span><span class="p">,</span> <span class="mi">398</span><span class="p">,</span> <span class="mi">399</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">401</span><span class="p">,</span> <span class="mi">402</span><span class="p">,</span> <span class="mi">403</span><span class="p">,</span> <span class="mi">404</span><span class="p">,</span> <span class="mi">405</span><span class="p">,</span> <span class="mi">406</span><span class="p">,</span> <span class="mi">407</span><span class="p">,</span> <span class="mi">408</span><span class="p">,</span> <span class="mi">409</span><span class="p">,</span> <span class="mi">410</span><span class="p">,</span> <span class="mi">411</span><span class="p">,</span> <span class="mi">412</span><span class="p">,</span> <span class="mi">413</span><span class="p">,</span> <span class="mi">414</span><span class="p">,</span> <span class="mi">415</span><span class="p">,</span> <span class="mi">416</span><span class="p">,</span> <span class="mi">417</span><span class="p">,</span> <span class="mi">418</span><span class="p">,</span> <span class="mi">419</span><span class="p">,</span> <span class="mi">420</span><span class="p">,</span> <span class="mi">421</span><span class="p">,</span> <span class="mi">422</span><span class="p">,</span> <span class="mi">423</span><span class="p">,</span> <span class="mi">424</span><span class="p">,</span> <span class="mi">425</span><span class="p">,</span> <span class="mi">426</span><span class="p">,</span> <span class="mi">427</span><span class="p">,</span> <span class="mi">428</span><span class="p">,</span> <span class="mi">429</span><span class="p">,</span> <span class="mi">430</span><span class="p">,</span> <span class="mi">431</span><span class="p">,</span> <span class="mi">432</span><span class="p">,</span> <span class="mi">433</span><span class="p">,</span> <span class="mi">434</span><span class="p">,</span> <span class="mi">435</span><span class="p">,</span> <span class="mi">436</span><span class="p">,</span> <span class="mi">437</span><span class="p">,</span> <span class="mi">438</span><span class="p">,</span> <span class="mi">439</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">441</span><span class="p">,</span> <span class="mi">442</span><span class="p">,</span> <span class="mi">443</span><span class="p">,</span> <span class="mi">444</span><span class="p">,</span> <span class="mi">445</span><span class="p">,</span> <span class="mi">446</span><span class="p">,</span> <span class="mi">447</span><span class="p">,</span> <span class="mi">448</span><span class="p">,</span> <span class="mi">449</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="mi">451</span><span class="p">,</span> <span class="mi">452</span><span class="p">,</span> <span class="mi">453</span><span class="p">,</span> <span class="mi">454</span><span class="p">,</span> <span class="mi">455</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">457</span><span class="p">,</span> <span class="mi">458</span><span class="p">,</span> <span class="mi">459</span><span class="p">,</span> <span class="mi">460</span><span class="p">,</span> <span class="mi">461</span><span class="p">,</span> <span class="mi">462</span><span class="p">,</span> <span class="mi">463</span><span class="p">,</span> <span class="mi">464</span><span class="p">,</span> <span class="mi">465</span><span class="p">,</span> <span class="mi">466</span><span class="p">,</span> <span class="mi">467</span><span class="p">,</span> <span class="mi">468</span><span class="p">,</span> <span class="mi">469</span><span class="p">,</span> <span class="mi">470</span><span class="p">,</span> <span class="mi">471</span><span class="p">,</span> <span class="mi">472</span><span class="p">,</span> <span class="mi">473</span><span class="p">,</span> <span class="mi">474</span><span class="p">,</span> <span class="mi">475</span><span class="p">,</span> <span class="mi">476</span><span class="p">,</span> <span class="mi">477</span><span class="p">,</span> <span class="mi">478</span><span class="p">,</span> <span class="mi">479</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">481</span><span class="p">,</span> <span class="mi">482</span><span class="p">,</span> <span class="mi">483</span><span class="p">,</span> <span class="mi">484</span><span class="p">,</span> <span class="mi">485</span><span class="p">,</span> <span class="mi">486</span><span class="p">,</span> <span class="mi">487</span><span class="p">,</span> <span class="mi">488</span><span class="p">,</span> <span class="mi">489</span><span class="p">,</span> <span class="mi">490</span><span class="p">,</span> <span class="mi">491</span><span class="p">,</span> <span class="mi">492</span><span class="p">,</span> <span class="mi">493</span><span class="p">,</span> <span class="mi">494</span><span class="p">,</span> <span class="mi">495</span><span class="p">,</span> <span class="mi">496</span><span class="p">,</span> <span class="mi">497</span><span class="p">,</span> <span class="mi">498</span><span class="p">,</span> <span class="mi">499</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">501</span><span class="p">,</span> <span class="mi">502</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">504</span><span class="p">,</span> <span class="mi">505</span><span class="p">,</span> <span class="mi">506</span><span class="p">,</span> <span class="mi">507</span><span class="p">,</span> <span class="mi">508</span><span class="p">,</span> <span class="mi">509</span><span class="p">,</span> <span class="mi">510</span><span class="p">,</span> <span class="mi">511</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">513</span><span class="p">,</span> <span class="mi">514</span><span class="p">,</span> <span class="mi">515</span><span class="p">,</span> <span class="mi">516</span><span class="p">,</span> <span class="mi">517</span><span class="p">,</span> <span class="mi">518</span><span class="p">,</span> <span class="mi">519</span><span class="p">,</span> <span class="mi">520</span><span class="p">,</span> <span class="mi">521</span><span class="p">,</span> <span class="mi">522</span><span class="p">,</span> <span class="mi">523</span><span class="p">,</span> <span class="mi">524</span><span class="p">,</span> <span class="mi">525</span><span class="p">,</span> <span class="mi">526</span><span class="p">,</span> <span class="mi">527</span><span class="p">,</span> <span class="mi">528</span><span class="p">,</span> <span class="mi">529</span><span class="p">,</span> <span class="mi">530</span><span class="p">,</span> <span class="mi">531</span><span class="p">,</span> <span class="mi">532</span><span class="p">,</span> <span class="mi">533</span><span class="p">,</span> <span class="mi">534</span><span class="p">,</span> <span class="mi">535</span><span class="p">,</span> <span class="mi">536</span><span class="p">,</span> <span class="mi">537</span><span class="p">,</span> <span class="mi">538</span><span class="p">,</span> <span class="mi">539</span><span class="p">,</span> <span class="mi">540</span><span class="p">,</span> <span class="mi">541</span><span class="p">,</span> <span class="mi">542</span><span class="p">,</span> <span class="mi">543</span><span class="p">,</span> <span class="mi">544</span><span class="p">,</span> <span class="mi">545</span><span class="p">,</span> <span class="mi">546</span><span class="p">,</span> <span class="mi">547</span><span class="p">,</span> <span class="mi">548</span><span class="p">,</span> <span class="mi">549</span><span class="p">,</span> <span class="mi">550</span><span class="p">,</span> <span class="mi">551</span><span class="p">,</span> <span class="mi">552</span><span class="p">,</span> <span class="mi">553</span><span class="p">,</span> <span class="mi">554</span><span class="p">,</span> <span class="mi">555</span><span class="p">,</span> <span class="mi">556</span><span class="p">,</span> <span class="mi">557</span><span class="p">,</span> <span class="mi">558</span><span class="p">,</span> <span class="mi">559</span><span class="p">,</span> <span class="mi">560</span><span class="p">,</span> <span class="mi">561</span><span class="p">,</span> <span class="mi">562</span><span class="p">,</span> <span class="mi">563</span><span class="p">,</span> <span class="mi">564</span><span class="p">,</span> <span class="mi">565</span><span class="p">,</span> <span class="mi">566</span><span class="p">,</span> <span class="mi">567</span><span class="p">,</span> <span class="mi">568</span><span class="p">,</span> <span class="mi">569</span><span class="p">,</span> <span class="mi">570</span><span class="p">,</span> <span class="mi">571</span><span class="p">,</span> <span class="mi">572</span><span class="p">,</span> <span class="mi">573</span><span class="p">,</span> <span class="mi">574</span><span class="p">,</span> <span class="mi">575</span><span class="p">,</span> <span class="mi">576</span><span class="p">,</span> <span class="mi">577</span><span class="p">,</span> <span class="mi">578</span><span class="p">,</span> <span class="mi">579</span><span class="p">,</span> <span class="mi">580</span><span class="p">,</span> <span class="mi">628</span><span class="p">,</span> <span class="mi">666</span><span class="p">,</span> <span class="mi">754</span><span class="p">,</span> <span class="mi">801</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">3001</span><span class="p">,</span> <span class="mi">3002</span><span class="p">,</span> <span class="mi">3003</span><span class="p">,</span> <span class="mi">3099</span><span class="p">,</span> <span class="mi">3100</span><span class="p">,</span> <span class="mi">3101</span><span class="p">,</span> <span class="mi">3102</span><span class="p">,</span> <span class="mi">3103</span><span class="p">,</span> <span class="mi">3104</span><span class="p">,</span> <span class="mi">3105</span><span class="p">,</span> <span class="mi">3106</span><span class="p">,</span> <span class="mi">3107</span><span class="p">,</span> <span class="mi">3108</span><span class="p">,</span> <span class="mi">3109</span><span class="p">,</span> <span class="mi">3110</span><span class="p">,</span> <span class="mi">3111</span><span class="p">,</span> <span class="mi">3112</span><span class="p">,</span> <span class="mi">3113</span><span class="p">,</span> <span class="mi">3114</span><span class="p">,</span> <span class="mi">3115</span><span class="p">,</span> <span class="mi">3116</span><span class="p">,</span> <span class="mi">3117</span><span class="p">,</span> <span class="mi">3118</span><span class="p">,</span> <span class="mi">3119</span><span class="p">,</span> <span class="mi">3120</span><span class="p">,</span> <span class="mi">3121</span><span class="p">,</span> <span class="mi">3122</span><span class="p">,</span> <span class="mi">3123</span><span class="p">,</span> <span class="mi">3124</span><span class="p">,</span> <span class="mi">3125</span><span class="p">,</span> <span class="mi">3126</span><span class="p">,</span> <span class="mi">3127</span><span class="p">,</span> <span class="mi">3128</span><span class="p">,</span> <span class="mi">3129</span><span class="p">,</span> <span class="mi">3130</span><span class="p">,</span> <span class="mi">3131</span><span class="p">,</span> <span class="mi">3132</span><span class="p">,</span> <span class="mi">3133</span><span class="p">,</span> <span class="mi">3134</span><span class="p">,</span> <span class="mi">3135</span><span class="p">,</span> <span class="mi">3136</span><span class="p">,</span> <span class="mi">3137</span><span class="p">,</span> <span class="mi">3138</span><span class="p">,</span> <span class="mi">3139</span><span class="p">,</span> <span class="mi">3140</span><span class="p">,</span> <span class="mi">3141</span><span class="p">,</span> <span class="mi">3142</span><span class="p">,</span> <span class="mi">3143</span><span class="p">,</span> <span class="mi">3144</span><span class="p">,</span> <span class="mi">3145</span><span class="p">,</span> <span class="mi">3146</span><span class="p">,</span> <span class="mi">3147</span><span class="p">,</span> <span class="mi">3148</span><span class="p">,</span> <span class="mi">3149</span><span class="p">,</span> <span class="mi">3150</span><span class="p">,</span> <span class="mi">3151</span><span class="p">,</span> <span class="mi">3152</span><span class="p">,</span> <span class="mi">3153</span><span class="p">,</span> <span class="mi">3154</span><span class="p">,</span> <span class="mi">3155</span><span class="p">,</span> <span class="mi">3156</span><span class="p">,</span> <span class="mi">3333</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="n">PEPs</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">all_PEPs</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="n">time</span>
+
+<span class="k">for</span> <span class="n">PEP</span> <span class="ow">in</span> <span class="n">PEPs</span><span class="p">:</span>
+    <span class="n">download</span><span class="p">(</span><span class="n">PEP</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>PEP 358 -- The &amp;quot;bytes&amp;quot; Object | Python.org
+PEP 523 -- Adding a frame evaluation API to CPython | Python.org
+PEP 335 -- Overloadable Boolean Operators | Python.org
+PEP 471 -- os.scandir() function -- a better and faster directory iterator | Python.org
+PEP 415 -- Implement context suppression with exception attributes | Python.org
+PEP 508 -- Dependency specification for Python Software Packages | Python.org
+PEP 219 -- Stackless Python | Python.org
+PEP 364 -- Transitioning to the Py3K Standard Library | Python.org
+PEP 447 -- Add __getdescriptor__ method to metaclass | Python.org
+PEP 10 -- Voting Guidelines | Python.org
+PEP 489 -- Multi-phase extension module initialization | Python.org
+PEP 450 -- Adding A Statistics Module To The Standard Library | Python.org
+PEP 3101 -- Advanced String Formatting | Python.org
+PEP 529 -- Change Windows filesystem encoding to UTF-8 | Python.org
+PEP 391 -- Dictionary-Based Configuration For Logging | Python.org
+PEP 474 -- Creating forge.python.org | Python.org
+PEP 483 -- The Theory of Type Hints | Python.org
+PEP 296 -- Adding a bytes Object Type | Python.org
+PEP 230 -- Warning Framework | Python.org
+PEP 494 -- Python 3.6 Release Schedule | Python.org
+CPU times: user 696 ms, sys: 71.9 ms, total: 768 ms
+Wall time: 12.2 s
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Při spuštění je celý průběh viditelně sekvenční a jednotlivé titulky se objevují jeden po druhém s prodlevou mezi nimi.</p>
+<p>Nyní necháme stejnou úlohu zpracovat pomocí dvaceti vláken (pro každý náhodný dokument jedno vlákno).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">PEPs</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">all_PEPs</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="n">time</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">PEP</span> <span class="ow">in</span> <span class="n">PEPs</span><span class="p">:</span>
+    <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">download</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">PEP</span><span class="p">,))</span>
+    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+    <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>PEP 333 -- Python Web Server Gateway Interface v1.0 | Python.orgPEP 365 -- Adding the pkg_resources module | Python.org
+
+PEP 327 -- Decimal Data Type | Python.org
+PEP 397 -- Python launcher for Windows | Python.org
+PEP 404 -- Python 2.8 Un-release Schedule | Python.org
+PEP 201 -- Lockstep Iteration | Python.org
+PEP 421 -- Adding sys.implementation | Python.org
+PEP 461 -- Adding % formatting to bytes and bytearray | Python.org
+PEP 372 -- Adding an ordered dictionary to collections | Python.org
+PEP 454 -- Add a new tracemalloc module to trace Python memory allocations | Python.org
+PEP 451 -- A ModuleSpec Type for the Import System | Python.org
+PEP 428 -- The pathlib module -- object-oriented filesystem paths | Python.org
+PEP 382 -- Namespace Packages | Python.org
+PEP 522 -- Allow BlockingIOError in security sensitive APIs | Python.org
+PEP 453 -- Explicit bootstrapping of pip in Python installations | Python.org
+PEP 525 -- Asynchronous Generators | Python.org
+PEP 288 -- Generators Attributes and Exceptions | Python.org
+PEP 264 -- Future statements in simulated shells | Python.org
+PEP 271 -- Prefixing sys.path by command line option | Python.org
+PEP 284 -- Integer for-loops | Python.org
+CPU times: user 591 ms, sys: 114 ms, total: 704 ms
+Wall time: 1.29 s
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pomocí třídy <code>Thread</code> z modulu <code>threading</code> si vytvoříme vlákno. Tomu pomocí dvou parametrů předáme funkci, kterou má spustit, a parametr, který má při spuštění funkci předat. Vlákno spustíme a uložíme do seznamu, abychom se k němu mohli později vrátit.</p>
+<p>Druhý <code>for</code> cyklus nám pak prochází seznam vláken a čeká dokud nejsou jednotlivá vlákna hotova se svou prací. Takto si můžeme zajistit, že program bude pokračovat až poté, co všechna vlákna dokončila své úlohy.</p>
+<p>Jak je vidět, zpracování pomocí vláken trvalo jen zlomek času. Je důležité mít na paměti, že vlákna mohla běžet paralelně jen v určitém okamžiku a jen díky tomu, že všechna vlákna čekala na spojení se serverem a odpovědi od něj. Při zpracování Python kódu už to kvůli GILu nebylo možné a v jednu chvíli fungovalo jen jedno vlákno. Při sekvenčním zpracování se ale spousta času tráví čekáním a tak použití vláken vedlo k razantnímu zrychlení.</p>
+<p>Tato implementace je velice jednoduchá a užitečná především pro jednoduché úlohy, kde si vystačíme se spouštěním jedné funkce v každém vlákně. Druhou možností je implementovat si vlastní třídu jako podtřídu třídy <code>Thread</code> reprezentující vlákno a vše potřebné implementovat do ní.</p>
+<p>Zkusme si tentýž příklad implementovat pomocí procesů.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">PEPs</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">all_PEPs</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="n">time</span>
+
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+<span class="n">processes</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">PEP</span> <span class="ow">in</span> <span class="n">PEPs</span><span class="p">:</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">download</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">PEP</span><span class="p">,))</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">process</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">:</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>PEP 382 -- Namespace Packages | Python.org
+PEP 3141 -- A Type Hierarchy for Numbers | Python.org
+PEP 263 -- Defining Python Source Code Encodings | Python.org
+PEP 212 -- Loop Counter Iteration | Python.org
+PEP 3134 -- Exception Chaining and Embedded Tracebacks | Python.org
+PEP 479 -- Change StopIteration handling inside generators | Python.org
+PEP 503 -- Simple Repository API | Python.org
+PEP 5 -- Guidelines for Language Evolution | Python.org
+PEP 233 -- Python Online Help | Python.org
+PEP 469 -- Migration of dict iteration code to Python 3 | Python.org
+PEP 310 -- Reliable Acquisition/Release Pairs | Python.org
+PEP 431 -- Time zone support improvements | Python.org
+PEP 496 -- Environment Markers | Python.org
+PEP 3145 -- Asynchronous I/O For subprocess.Popen | Python.org
+PEP 3100 -- Miscellaneous Python 3.0 Plans | Python.org
+PEP 580 -- The C call protocol | Python.org
+PEP 467 -- Minor API improvements for binary sequences | Python.org
+PEP 3108 -- Standard Library Reorganization | Python.org
+PEP 437 -- A DSL for specifying signatures, annotations and argument converters | Python.org
+PEP 270 -- uniq method for list objects | Python.org
+CPU times: user 42.9 ms, sys: 78 ms, total: 121 ms
+Wall time: 1.27 s
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Implementace je velmi podobná díky tomu, že moduly <code>threading</code> a <code>multiprocessing</code> mají velmi podobná rozhraní, což umožňuje v určitých fázích vývoje mezi těmito koncepty přepínat bez složitého přepisování kódu.</p>
+<p>Výsledek ale není tak rychlý jako v případě vláken i když procesy nebrzdí žádný GIL (každý proces má vlastní) a mohou běžet skutečně paralelně po celou dobu. Na vině je hlavně vysoká náročnost vytvoření a ukončení každého procesu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Příklad 2. — Úloha náročná na výpočetní výkon</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Druhý příklad bude zcela odlišný. V prvním jsme trávili čas čekáním na externí zdroje, ale druhý bude spíše náročný na náš vlastní výpočetní výkon. Procesor zaměstnáme jednoduchou matematickou kalkulací, která ale bude počítat s vysokými čísly.</p>
+<p>Čísla pro výpočet si opět necháme generovat náhodně, abychom zabránili použití výsledků z předchozích výpočtů.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">calculate</span><span class="p">():</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span> <span class="mi">999999</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">99999</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="n">y</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> ** </span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">result</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="n">time</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">calculate</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>452296 ** 29243 = 3368134854
+990055 ** 61268 = 1135804142
+990913 ** 44484 = 4409007575
+314351 ** 56411 = 4665429890
+648679 ** 38155 = 9965272562
+CPU times: user 4.52 s, sys: 5.5 ms, total: 4.53 s
+Wall time: 4.52 s
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Není překvapením, že takto složitý výpočet nějakou chvíli zabere. Sekvenční zpracování tomu také nepřidá a je znát, že každý výpočet může trvat trochu jinou dobu v závislosti na velikosti čísel, i když mají všechna alespoň stejný řád. Výsledná čísla jsou navíc tak dlouhá, že by jejich vypsání bylo delší než celá dnešní lekce.</p>
+<p>Pojďme opět vyzkoušet vyřešit stejnou úlohu pomocí vláken.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="n">time</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">calculate</span><span class="p">)</span>
+    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+    <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>528619 ** 93678 = 3700798126
+951475 ** 90776 = 1001659490
+366690 ** 95209 = 2237796407
+451949 ** 93646 = 3196998348
+109731 ** 80272 = 2072726100
+CPU times: user 15.3 s, sys: 59.6 ms, total: 15.3 s
+Wall time: 15.3 s
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zdá se, že se zrychlením tohoto příkladu nám vlákna příliš nepomohou. Není se čemu divit. Veškeré operace v naší funkci <code>calculate</code> se provádějí na úrovni Pythonu a není v ní jediný moment, kdy by se dal odemknout GIL. To způsobuje, že všechna vlákna mohou běžet konkurenčně, ale ani chvíli neběží paralelně. Když k tomu ještě přidáme nějaký čas, který vytvoření a ukončení vlákna zabere, máme výsledek ještě o kus horší než v případě sekvenčního zpracování.</p>
+<p>Co na to procesy?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="n">time</span>
+
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+<span class="n">processes</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">calculate</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">process</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">:</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>197028 ** 39557 = 4386064607
+735421 ** 47727 = 1462047894
+128422 ** 86890 = 4786322493
+273042 ** 91750 = 1128828926
+630639 ** 90597 = 5538513813
+CPU times: user 7.81 ms, sys: 17.8 ms, total: 25.6 ms
+Wall time: 3.56 s
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I když je vytvoření a ukončení procesu časově ještě náročnější než u vláken, stihl se výpočet rychleji než v případě sekvenčního zpracování. Paralelní výpočet mocniny totiž dokázal ušetřit tolik času, že výsledný součet časů je lepší než v předchozích dvou příkladech.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Závěr</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Z příkladů je vidět, že je vždy nutné si rozmyslet dopředu, zda budeme chtít pro naši aplikaci použít vlákna či procesy.</p>
+<p><strong>Vlákna</strong> v Pythonu se hodí tam, kde úloha není výpočetně náročná a tráví nějaký čas čekáním na externí zdroje, vstup uživatele nebo spaním. Komunikace mezi nimi je snadná, protože sdílí paměť a jejich vytváření a ukončování není moc časově náročné. Použitím vláken pro tu správnou úlohu se můžeme přiblížit paralelnímu zpracování i s jedním procesem.</p>
+<p><strong>Procesy</strong> se hodí všude tam, kde potřebujeme opravdové paralelní zpracování bez ohledu na GIL. Komunikace mezi nimi není tak jednoduchá a jejich vytváření a ukončování je časově náročné, takže se pro některé úlohy ani nemusí ve výsledku vyplatit.</p>
+<p>V obou případech je nutné mít na paměti režii, paměťovou náročnost a další nevýhody, které z použití vláken či procesů plynou. Často je také fronta úloh ke zpracování obrovská a bylo by velmi nehospodárné vytvářet pro každou úlohu samostatné vlákno/proces, a proto se vytvoří skupina vláken/procesů, které si postupně berou zadání z fronty a vykonávají je.</p>
+<p>Příště si ukážeme složitejší implementace a řízení toku paralelních programů a výměnu informací mezi vlákny/procesy.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Úkol</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zkuste si naimplementovat podobně jednoduchou úlohu, jako jsme udělali dnes společně. Vyberte si pro její implementaci buď vlákna nebo procesy a svůj výběr zdůvodněte. Můžete navíc porovnat svou implementaci se sekvenčním během a zjistit, zda je aplikace méně časově náročná či nikoli.</p>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/parallel/">↑ <span class="d-none d-sm-inline">Lekce: Vlákna a procesy — paralelní programování</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pyladies-ostrava-podzim-pokrocili/sessions/parallel/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyLadiesCZ/naucse.python.cz/blob/autumn2020-ostrava-advanced/lessons/intro/parallel_programming/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz pokročilého Pythonu PyLadies Ostrava napsal Lumír Balhar, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+        <p>
+            Licence ukázek kódu:
+            <a href="https://creativecommons.org/publicdomain/zero/1.0/">
+                CC0 1.0 Universal Public Domain Dedication
+            </a>
+        </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

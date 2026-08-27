@@ -1,0 +1,237 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Úkoly - Bash II
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/shell-2/">Bash II</a>
+
+> <a href="/2021/linuxadmin-podzim/hw/bash-2/">Úkoly - Bash II</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Úkoly – Bash II &amp;c</h1>
+<h2>1. Grepování yamlů</h2>
+<p>Procvič si příkazy jako <code>ls</code>, <code>wc</code>, <code>grep</code> a jak je spojit dohromady.</p>
+<p>Stáhni a rozbal si tyto archivy s informacemi o komunitních akcích: kurzech/srazech PyLadies a srazech Pyvo.</p>
+<div class="highlight"><pre><code>$ wget -O pyladies-cz.zip https://github.com/PyLadiesCZ/pyladies.cz/archive/master.zip
+$ unzip pyladies-cz.zip
+$ wget -O pyvo-data.zip https://github.com/pyvec/pyvo-data/archive/master.zip
+$ unzip pyvo-data.zip
+
+</code></pre></div><p>Data si prohlédni a zjisti, co se v nich skrývá za informace.
+Zvlášť doporučuju prohlédnout soubor <code>pyvo-data-master/series/brno-pyvo/events/2018-10-25-casove.yaml</code>
+který je použit na stránce <a href="https://pyvo.cz/brno-pyvo/2018-10/">pyvo.cz/brno-pyvo/2018-10/</a>,
+a soubor <code>pyladies.cz-master/teams/brno.yml</code>
+který je použit na stránce <a href="https://pyladies.cz/brno/#team">pyladies.cz/brno/#team</a>.</p>
+<p>Použij základní shellové příkazy (ne Python) na zodpovězení otázek níže.
+Hledáš jen orientační hodnoty; nemusí to být na 100% přesné.</p>
+<div class="admonition note"><p>YAML soubory by se správně měly číst knihovnou na YAML, aby byla zachována struktura. Ty je ale ber jako "čistý text", kde hledané informace jsou na řádcích ve tvaru <code>klíč: hodnota</code> (případně s nějakýma mezerama a/nebo pomlčkama navíc).
+Proto odpovědi nemusí být na 100% přesné.</p>
+<p>"Zakomentované" informace (začínající <code>#</code>) můžeš pro jednoduchost počítat
+taky. (I když jich je po COVIDu často víc než těch nezakomentovaných.)</p>
+</div><ol>
+<li>Kolik bylo Pyv v Brně?<ul>
+<li><em>Pro každý sraz existuje soubor.</em></li>
+</ul>
+</li>
+<li>Kolik bylo Pyv celkem?</li>
+<li>Z kolika přednášek na Pyvech jsou videa?  <em>(Předpokládej že každá přednáška může mít max. 1 video)</em><ul>
+<li><em>Videa jsou označena <code>video:</code></em></li>
+</ul>
+</li>
+<li>Kolik bylo kurzů/srazů PyLadies?<ul>
+<li><em>Srazy jsou v adresáři <code>meetups/</code> a každý má jméno, <code>name:</code></em></li>
+</ul>
+</li>
+<li>(Bonusová výzva) Z kolika Pyv jsou videa?</li>
+</ol>
+<h3>Nápověda</h3>
+<p>Šablonami jako <code>adresar/*/podadresar/*</code> můžeš vybrat soubory z více adresářů.</p>
+<p>Příkaz <code>grep</code> má zajímavé přepínače <code>-r</code>, <code>-l</code>/<code>-L</code>, <code>-h</code>/<code>-H</code> a <code>-e</code>.</p>
+<h2>2. Uniq</h2>
+<p>Příkaz <code>uniq</code> odstraní <em>po sobě jdoucí</em> duplikované řádky:</p>
+<div class="highlight"><pre><span></span>$ echo '
+&gt; jedna
+&gt; dva
+&gt; dva
+&gt; tři
+&gt; tři
+&gt; tři
+&gt; jedna
+&gt; ' | uniq
+
+jedna
+dva
+tři
+jedna
+</pre></div><p>Často se používá <code>sort | uniq</code>, aby se stejné řádky z celého souboru dostaly k sobě.</p>
+<p>Použij <code>uniq</code> k zodpovězení těchto otázek:</p>
+<ol>
+<li>Vypiš všechna místa konání Pyv (stačí mít v rámci každého řádku identifikátor jako <code>artbar</code>).</li>
+<li>Přidej informaci o tom, kolikrát na kterém místě Pyvo bylo. </li>
+</ol>
+<p>Příkaz <code>uniq</code> má zajímavý přepínač <code>-c</code>.</p>
+<h3>Bonusová výzva</h3>
+<p>Existuje zajímavý příkaz <code>cut</code>, který má zajímavé přepínače <code>-d</code> a <code>-f</code>.</p>
+<ol>
+<li>Jaké jsou 3 nejčastější křestní jména organizátorů/koučů/atd. PyLadies?</li>
+</ol>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/grep-find/">← <span class="d-none d-sm-inline">Hledání: grep a find</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-2/">↑ <span class="d-none d-sm-inline">Lekce: Bash II</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-2/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/hw/bash-2/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>přeložil Petr Viktorin, 2020</p>
+    
+        <p>Některé úkoly pochází z kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, © 2016–2018 Software Carpentry Foundation, © 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

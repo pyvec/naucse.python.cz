@@ -1,0 +1,374 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Automatizace administrace – lehký úvod k Ansible
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/net-services/">Signály a Automatizovaná konfigurace</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/ansible/">Automatizace administrace – lehký úvod k Ansible</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Automatizace administrace – lehký úvod k Ansible</h1>
+<p>Představ si, že jsi systémová administrátorka
+na serverové farmě.
+Staráš se o 500 počítačů. Každý z nich má nastavený časovač na zálohy.
+Třetina má nastavený webový server, další třetina je velký cluster databází a poslední třetina spravuje e-maily.
+Tvůj úkol je zajistit, aby se na všech těch serverech záloha dělala dvakrát častěji.</p>
+<p>Co uděláš?
+Připojíš se přes <code>ssh</code> k prvnímu serveru, pozměníš nastavení časovače
+a pustíš <code>systemctl daemon-reload</code>.
+Hurá! Jen 499 a můžeš jít domů!</p>
+<p>Jiná varianta je, že si napíšeš v Bashi cyklus, který se sám připojí ke
+každému počítači a interval změní.
+Budeš mít z toho skvělý pocit a práce bude odvedená během chvilky.
+...Jenže pak zjistíš, že u serveru číslo 54 se to jaksi nepovedlo.
+Což znamená, že bys měla zjistit,
+jestli to u ostatních serverů dopadlo dobře, nebo se to taky nepovedlo.</p>
+<p>Teď si představ, že na tvé farmě právě jeden z tvých serverů shořel.
+Nakoupíš nový počítač a chceš aby fungoval úplně stejně jako ten předchozí.
+Potřebuješ určitou verzi databáze s určitou konfigurací, a taky tam potřebuješ
+nastavit časovač včetně poslední změny frekvence záloh.</p>
+<p>Změny konfigurace na vícero strojích se dnes už nedělají tak,
+že jdeš k počítači, přímo na něm upravíš konfigurační soubor
+a následně restartuješ příslušnou službu.
+Používají se na to systémy, kde si do souboru napíšeš,
+jak má tvůj systém vypadat a pustíš program,
+který se připojí na těch 500 serverů a každý nastaví podle toho seznamu.
+Kdž pak server shoří, vyměníš ho za jiný a pustíš ten program znova.</p>
+<p>Velká výhoda takového řešení je to, že se všechno nastavení dá ukládat do Gitu,
+takže na něm můžeš spolupracovat v týmu – stejně jako programátoři
+spolupracují na kódu.</p>
+<p>Drobná nevýhoda je, že je to další systém, který se musíš naučit konfigurovat.
+Dnes je to ovšem čím dál rozšířenější a systémoví administrátoři s Ansiblem
+nebo podobnými systémy běžně pracují.</p>
+<p>Systémů na správu konfigurace je více: například Ansible, Chef, Puppet,
+SaltStack, nebo Terraform.
+Každý funguje trochu jinak, ale základní koncepty bývají podobné.
+Dnes si ukážeme Ansible.</p>
+<h2>Deklarativní zápis</h2>
+<p>Jeden z konceptuálních rozdílů mezi klasickou administrací a Ansible je ten,
+že Ansible je <em>deklarativní</em>.
+Místo toho, že bys spouštěla příkazy které něco udělají,
+popíšeš jaký má být výsledný stav nastavovaného systému.
+Úkol Ansible je potom zkontrolovat, že je systém ve správném stavu – a pokud
+není, tak ho do toho stavu dostat.</p>
+<p>V praxi se tyto přístupy tolik neliší (<code>sudo dnf install httpd</code> taky nedělá
+nic, pokud je <code>httpd</code> už nainstalovaný), ale jde o užitečný úhel pohledu.</p>
+<h2>Idempotence</h2>
+<p>A když už jsme u cizích slov: úkoly pro Ansible by měly být <em>idempotentní</em>,
+když Ansible pustíš dvakrát za sebou, ve druhém běhu se nic nestane.
+Například „zajisti, že je nainstalovaný <code>httpd</code>“ je idempotentní – pokud to
+provedeš několikrát za sebou, výsledek je stejný jako kdybys to provedla
+jen jednou.</p>
+<p>Oproti tomu „vytvoř nový šifrovací klíč pro <code>ssh</code>“ idempotentní není – pokaždé
+se vytvoří jiný klíč.
+Idempotentní úkol by byl „zajisti, že je vytvořený šifrovací klíč pro <code>ssh</code>“.</p>
+<div class="admonition note"><p>Ansible nezaručuje, že všechny úkoly jsou opravdu idempotentní.
+Lze tak například úkol „Napiš zprávu, že je vše OK“, který zapíše novou
+zprávu při každém spuštění.
+Dobře napsané úkoly ale idempotentní jsou.
+Aspoň v těch důležitých aspektech.</p>
+</div><h2>Instalujeme program</h2>
+<p>Nejlepší způsob jak se naučit pracovat s Ansiblem je praxe.
+Zkusme si nainstalovat balíček a nakonfigurovat ho.</p>
+<p>Než začneš, musíš nainstalovat samotní Ansible.
+(Na serverové farmě to je potřeba udělat jen na jednom počítači – na tom,
+který bude řídit ty ostatní.)</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf install ansible
+</pre></div><p>Pak bude potřeba napsat konfigurační soubory.
+Bude jich víc, tak si pro tuto lekci udělej si nový adresář.</p>
+<p>Pro Ansible se píšou tzv. <em>playbooky</em>, což jsou soubory ve formátu
+<a href="https://en.wikipedia.org/wiki/YAML">YAML</a>.
+Podobně jako Python tenhle formát vyžaduje odsazování a bude si stěžovat,
+pokud ho nedodržíš.
+Pozor tedy na mezery a pomlčky na začátcích řádků.</p>
+<p>Pro první playbook si vytvoř soubor s názvem <code>setup.yml</code>.</p>
+<p>První věc, kterou nastavíme, jsou informace o počítačích které chceš
+konfigurovat: které to jsou a jak se k nim připojit.
+Protože máš teď k dispozici jen jeden virtuální počítač,
+nastav <code>hosts</code> na <code>localhost</code> a <code>connection</code> na <code>local</code>.</p>
+<div class="highlight"><pre><span></span><span class="c1"># setup.yml</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">localhost</span>
+  <span class="nt">connection</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">local</span>
+</pre></div><p>V praxi se tahle sekce většinou píše do samostatného souboru,
+<a href="https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html">inventáře</a>,
+kde jsou uvedeny i další informace – třeba které ze strojů mají být webové servery
+a které databázové.</p>
+<p>Abys mohla něco nainstalovat, je třeba býti <code>root</code>em.
+To je potřeba zapsat; později pak řekneme ať k tomu Ansible použije <code>sudo</code>
+a heslo.</p>
+<div class="highlight"><pre><span></span>   <span class="nt">become_user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+</pre></div><p>Dále se píše stav, do jakého chceš dostat svůj systém.
+K tomu slouží seznam <code>tasks</code>.
+V YAML se seznamy definují pomlčkou u každého prvku.</p>
+<p>Každá úloha musí mít jméno.
+Nainstalujeme si třeba <code>htop</code>, což je vylepšený <code>top</code>:
+program na sledování stavu systému.</p>
+<div class="highlight"><pre><span></span>   <span class="nt">tasks</span><span class="p">:</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install htop</span>
+</pre></div><dl>
+<dt></dt><dt>Pro instalaci musíš být `root`, což musíš zadat i v úloze.</dt><dd></dd></dl><div class="highlight"><pre><span></span>     <span class="nt">become</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+</pre></div><p>Tohle <code>become</code> piš pod <code>name</code>: je to další záznam o téhle úloze.
+Pomlčku na začátku řádku, která označuje nový prvek seznamu <code>tasks</code>,
+potřebuješ jen před <code>name</code>. Celý blok <code>tasks</code> bude teď vykadat takhle:</p>
+<div class="highlight"><pre><span></span>   <span class="nt">tasks</span><span class="p">:</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install htop</span>
+     <span class="nt">become</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+</pre></div><p>Přichází čas na instrukci, jak balíček nainstalovat.
+Na Fedoře se instaluje pomocí pluginu <code>dnf</code>, kterému řekneš,
+že balíček <code>htop</code> chceš nainstalovat v poslední dostupné verzi:</p>
+<div class="highlight"><pre><span></span>     <span class="nt">dnf</span><span class="p">:</span>
+        <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">latest</span>
+        <span class="nt">name</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">htop</span>
+</pre></div><p>Celý soubor nakonec vypadá takto. Pozor na odsazení:</p>
+<div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">localhost</span>
+  <span class="nt">connection</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">local</span>
+  <span class="nt">become_user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="nt">tasks</span><span class="p">:</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install htop</span>
+     <span class="nt">become</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+     <span class="nt">dnf</span><span class="p">:</span>
+        <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">latest</span>
+        <span class="nt">name</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">htop</span>
+</pre></div><p>Teď to zkus spustit:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ansible-playbook -K setup.yml
+<span class="go">BECOME password: </span>
+<span class="go">[WARNING]: provided hosts list is empty, only localhost is available. Note that</span>
+<span class="go">the implicit localhost does not match 'all'</span>
+
+<span class="go">PLAY [localhost] ***************************************************************</span>
+
+<span class="go">TASK [Gathering Facts] *********************************************************</span>
+<span class="go">ok: [localhost]</span>
+
+<span class="go">TASK [Install htop] ************************************************************</span>
+<span class="go">changed: [localhost]</span>
+
+<span class="go">PLAY RECAP *********************************************************************</span>
+<span class="go">localhost                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0</span>
+</pre></div><p>Parametr <code>-K</code> říká, aby se tě Ansible nejdřív zeptal na heslo pro <code>sudo</code>
+a s tím pak spouští úkoly označené <code>become: yes</code>.</p>
+<p>Když ten samý příkaz pustíš znova, Ansible ohlásí že je vše v pořádku;
+nic se nezměnilo.</p>
+<h2>A co dál?</h2>
+<p>Co všechno se dá dělat s Ansiblem?</p>
+<ul>
+<li>instalovat balíčky (to jsme si právě zkusili)</li>
+<li>kopírovat soubory - např. konfigurační soubor pro <code>cron</code>.</li>
+<li>přidávat uživatele, skupinu uživatelů</li>
+<li>a mnohem víc...</li>
+</ul>
+<p>Pro každý druh úlohy existuje tzv. <em>pluginy</em>, který danou úlohu řeší.
+Ansible obsahuje základní nabídku pluginů, další se dají doinstalovat,
+a když ani to nestačí, můžeš si v Pythonu napsat další.</p>
+<p>Tedy je malá ukázka toho, co je možné; další možnosti najdeš v dokumentaci.
+(Nebo na dalším kurzu?)</p>
+<div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">localhost</span>
+  <span class="nt">connection</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">local</span>
+  <span class="nt">become_user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="nt">tasks</span><span class="p">:</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install packages</span>
+     <span class="nt">become</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+     <span class="nt">dnf</span><span class="p">:</span>
+        <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">latest</span>
+        <span class="nt">name</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">htop</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Uninstall packages</span>
+     <span class="nt">become</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+     <span class="nt">dnf</span><span class="p">:</span>
+        <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">removed</span>
+        <span class="nt">name</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cowsay</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Add a user</span>
+     <span class="nt">become</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+     <span class="nt">user</span><span class="p">:</span>
+        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">testuser1</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Add a file to serve</span>
+     <span class="nt">become</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+     <span class="nt">copy</span><span class="p">:</span>
+        <span class="nt">dest</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/var/www/html/index.html</span>
+        <span class="c1"># Znak `|` v YAML uvozuje odsazený blok s víceřádkovým textem</span>
+        <span class="nt">content</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+            <span class="no">Hello world!</span>
+            <span class="no">Welcome to my server!</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Start &amp; enable httpd</span>
+     <span class="nt">become</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+     <span class="nt">systemd</span><span class="p">:</span>
+        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+        <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">started</span>
+        <span class="nt">enabled</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Set up RPM fusion</span>
+    <span class="nt">become</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+    <span class="nt">shell</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm</span>
+    <span class="nt">args</span><span class="p">:</span>
+      <span class="nt">creates</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/yum.repos.d/rpmfusion-free.repo</span>
+</pre></div><p>Tento příklad se připojuje pouze k aktuálnímu počítači. 
+Pokud bys to chtěla pouštět i na jiných počítačích,
+je třeba je zapsat do takzvaného <em>inventáře</em> (<em>inventory</em> file)
+a použít pomocí přepínače <code>ansible-playbook -i</code>.
+Návody a příklady opět najdeš v dokumentaci Ansible.</p>
+<h2>Ansible na laptopu</h2>
+<p>Automatizovaná konfigurace počítačů je nejužitečnější pro správu více
+počítačů. Ty ale k nějaké serverové farmě bohužel přístup hned tak nedostaneš.</p>
+<p>Můžeš si ale Ansible zkoušet i na vlastním laptopu.
+Když si oblíbené nastavení uložíš do <em>playbooku</em>, můžeš ho sdílet mezi dvěma
+počítači (např. osobním a firemním), nebo ho použít když si budeš nastavovat
+nový počítač.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/net-services/">↑ <span class="d-none d-sm-inline">Lekce: Signály a Automatizovaná konfigurace</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/notes/signals/"><span class="d-none d-sm-inline">Signály</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/ansible/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Karolina Surma a Petr Viktorin, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

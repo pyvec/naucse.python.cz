@@ -1,0 +1,672 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Python a jeho knihovny: Testování
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/testing/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2017/pyknihovny-brno/">Python a jeho knihovny</a>
+
+> <a href="/2017/pyknihovny-brno/sessions/testing/">Testování</a>
+
+> <a href="/2017/pyknihovny-brno/intro/testing/">Testování</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Testování</h1>
+<p>V tomto cvičení se budeme zabývat automatickým testováním kódu.
+Modul unittest ze standardní knihovny už byste měli znát,
+co to jsou jednotkové testy a k čemu slouží tedy rovnou přeskočím.</p>
+<div class="admonition note"><p>Pokud základy testování neznáte, projděte si
+<a href="/2017/pyknihovny-brno/beginners/testing/">začátečnickou lekci o testování</a>.
+Obsah se zčásti překrývá, ale základní principy jsou tam vysvětleny trošku
+podrobněji.</p>
+</div><p>Pokud si chcete přečíst krátký text o tom, jak testovat, zkuste <a href="http://blog.horejsek.com/matka-moudrosti-jak-testovat">blogový
+zápisek Michala Hořejška</a>.</p>
+<h2>pytest</h2>
+<p>Rovnou se podíváme na velmi oblíbený balíček <a href="http://pytest.org/">pytest</a>, který oproti standardnímu
+unittestu přináší mnoho výhod. Začneme jednoduchou ukázkou z modulu <code>isholiday</code>
+z <a href="/2017/pyknihovny-brno/intro/distribution/">cvičení o modulech</a>.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">isholiday</span>
+
+<span class="k">def</span> <span class="nf">test_xmas_2016</span><span class="p">():</span>
+    <span class="sd">"""Test whether there is Christmas in 2016"""</span>
+    <span class="n">holidays</span> <span class="o">=</span> <span class="n">isholiday</span><span class="o">.</span><span class="n">getholidays</span><span class="p">(</span><span class="mi">2016</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span> <span class="ow">in</span> <span class="n">holidays</span>
+</pre></div><p>Test uložíme někam do projektu, třeba do souboru <code>tests/test_holidays.py</code> a
+nainstalujeme a spustíme <code>pytest</code>:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">(__venv__) $</span> python -m pip install pytest
+<span style="color: #00aaaa">(__venv__) $</span> python -m pytest tests/test_holidays.py
+<span style="font-weight: bold">============================= test session starts ==============================</span>
+platform linux -- Python 3.6.0, pytest-3.0.7, py-1.4.33, pluggy-0.4.0
+rootdir: /tmp/tmp.wGP3zD7HeD, inifile:
+collected 1 items
+
+tests/test_holidays.py .
+
+<span style="color: #00aa00"></span><span style="font-weight: bold; color: #00aa00">=========================== 1 passed in 0.01 seconds ===========================</span></code></pre></div><p>Všimněte si několika věcí:</p>
+<ul>
+<li>V testovacím souboru stačí mít funkci pojmenovanou <code>test_*</code> a <code>pytest</code> pozná,
+že se jedná o test.</li>
+<li>V ukázce je použit obyčejný <code>assert</code>, nikoliv metoda z <code>unittest</code>.</li>
+</ul>
+<p>Co se má testovat, se pytestu dá zadat pomocí argumentů příkazové řádky.
+Můžou to být jednotlivé soubory nebo adresáře, ve kterých pytest
+rekurzivně hledá všechny soubory začínající na <code>test_</code>.
+Vynecháme-li argumenty úplně, hledá rekurzivně v aktuálním adresáři.
+(To se často hodí, ale obsahuje-li aktuální adresář i vaše virtuální prostředí,
+pytest prohledá i to a často v něm najde neprocházející testy.)</p>
+<div class="admonition note"><p>Pokud pytest nemůže naimportovat váš modul, můžete udělat několik věcí:</p>
+<ul>
+<li>Nainstalovat svůj balíček (například v režimu <code>develop</code>).</li>
+<li>Nastavit proměnnou prostředí <code>PYTHONPATH</code> na <code>.</code>.</li>
+</ul>
+<p>Testovat nainstalovaný balíček je výhodnější – ověříte zároveň, že
+nainstalovaný modul se chová dle očekávání. Je dobré testy psát tak, aby
+šly spouštět z jakéhokoliv adresáře, a pro jistotu je spouštět odjinud,
+než z adresáře s kódem. Odhalíte tím často balíčkovací chyby.</p>
+</div><p>Pytest upravuje chování assertu, což oceníte především, pokud test selže:</p>
+<div class="highlight"><pre><span></span>    <span class="o">...</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span> <span class="ow">in</span> <span class="n">holidays</span>
+</pre></div><div class="highlight"><pre><code><span style="color: #00aaaa">(__venv__) $</span> python -m pytest tests/test_holidays.py
+<span style="font-weight: bold">============================= test session starts ==============================</span>
+platform linux -- Python 3.6.0, pytest-3.0.6, py-1.4.32, pluggy-0.4.0
+rootdir: /tmp/tmp.NsIa3sXVQA, inifile: 
+collected 1 items
+
+tests/test_holidays.py F
+
+=================================== FAILURES ===================================
+<span style="color: #aa0000"></span><span style="font-weight: bold; color: #aa0000">________________________________ test_xmas_2016 ________________________________</span>
+
+<span style="font-weight: bold">    def test_xmas_2016():</span>
+<span style="font-weight: bold">        """Test whether there is Christmas in 2016"""</span>
+<span style="font-weight: bold">        holidays = isholiday.getholidays(2016)</span>
+<span style="font-weight: bold">&gt;       assert (23, 12) in holidays</span>
+<span style="font-weight: bold"></span><span style="font-weight: bold; color: #aa0000">E       assert (23, 12) in {(1, 1), (1, 5), (5, 7), (6, 7), (8, 5), (17, 11), ...}</span>
+
+<span style="font-weight: bold"></span><span style="font-weight: bold; color: #aa0000">tests/test_holidays.py</span>:6: AssertionError
+<span style="color: #aa0000"></span><span style="font-weight: bold; color: #aa0000">=========================== 1 failed in 0.04 seconds ===========================</span></code></pre></div><p>S obyčejným assertem si vystačíte pro většinu testovaných případů kromě
+ověření vyhození výjimky. To se dělá takto:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_mytest</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">SystemExit</span><span class="p">):</span>
+        <span class="n">f</span><span class="p">()</span>
+</pre></div><p>Více o základním použití pytestu najdete v <a href="http://docs.pytest.org/en/latest/getting-started.html">dokumentaci</a>.</p>
+<h3>Parametrické testy</h3>
+<p>Jednou z vlastností pytestu, která často přichází vhod, jsou <a href="http://doc.pytest.org/en/latest/parametrize.html">parametrické testy</a>.
+Pokud bychom například chtěli otestovat, jestli je Štědrý den svátkem nejen
+v roce 2016, ale v jiných letech, nemusíme psát testů více, ani použít cyklus.</p>
+<p>Nevýhoda více téměř stejných testů je patrná sama o sobě, nevýhoda cyklu je
+v tom, že celý test selže, i pokud selže jen jeden průběh cyklem. Zároveň se
+průběh testu při selhání ukončí.</p>
+<p>Místo toho tedy použijeme parametrický test:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">isholiday</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">'year'</span><span class="p">,</span> <span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">2016</span><span class="p">,</span> <span class="mi">2017</span><span class="p">,</span> <span class="mi">2033</span><span class="p">,</span> <span class="mi">2048</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">test_xmas</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
+    <span class="sd">"""Test whether there is Christmas"""</span>
+    <span class="n">holidays</span> <span class="o">=</span> <span class="n">isholiday</span><span class="o">.</span><span class="n">getholidays</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span> <span class="ow">in</span> <span class="n">holidays</span>
+</pre></div><p>Zápis je určitým způsobem podobný knihovně <a href="/2017/pyknihovny-brno/intro/click/">click</a>: funkce
+s testem přijímá parametr vytvořený v dekorátoru.
+Test se spustí pro každou uvedenou hodnotu, k jejich definici lze použít
+jakýkoliv objekt, přes který jde iterovat, tedy kromě v ukázce použité
+<var>n</var>-tice např. seznam, množinu, <code>range</code>, vlastní generátor...</p>
+<p>Pro podrobnější výpis výsledku testů můžete použít přepínač <code>-v</code>:</p>
+<div class="highlight"><pre><code><span style="color: #00aaaa">(__venv__) $</span> python -m pytest -v
+...
+tests/test_holidays.py::test_xmas[2015] <span style="color: #00aa00">PASSED</span>
+tests/test_holidays.py::test_xmas[2016] <span style="color: #00aa00">PASSED</span>
+tests/test_holidays.py::test_xmas[2017] <span style="color: #00aa00">PASSED</span>
+tests/test_holidays.py::test_xmas[2033] <span style="color: #00aa00">PASSED</span>
+tests/test_holidays.py::test_xmas[2048] <span style="color: #00aa00">PASSED</span>
+
+<span style="color: #00aa00"></span><span style="font-weight: bold; color: #00aa00">=========================== 5 passed in 0.26 seconds ===========================</span></code></pre></div><p>Jednoduchým způsobem tak lze vyrobit z jednoho testu testů více.
+Výhodou je, že každý se testuje zvlášť, což má vliv na čitelnost
+výstupu, pokud nějaký test selže, a umožňuje to například testy pouštět
+paralelně nebo distribuovaně. (Což s jedním testem, který více podmínek ověřuje
+v cyklu, nejde, tedy alespoň ne jednoduše.)</p>
+<p>Potřebujeme-li parametrizovat více argumentů, můžeme předat seznam jmen
+argumentů a seznam jejich hodnot:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">isholiday</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="p">[</span><span class="s1">'year'</span><span class="p">,</span> <span class="s1">'month'</span><span class="p">,</span> <span class="s1">'day'</span><span class="p">],</span>
+    <span class="p">[(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
+     <span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
+     <span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+     <span class="p">(</span><span class="mi">2033</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+     <span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">)],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_some_holidays</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">):</span>
+    <span class="sd">"""Test a few sample holidays"""</span>
+    <span class="n">holidays</span> <span class="o">=</span> <span class="n">isholiday</span><span class="o">.</span><span class="n">getholidays</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">day</span><span class="p">,</span> <span class="n">month</span><span class="p">)</span> <span class="ow">in</span> <span class="n">holidays</span>
+</pre></div><p>Vždy je dobré pokusit se nějaký test rozbít v samotném kódu, který testujeme,
+abychom se ujistili, že testujeme správně.
+Přidáme tedy dočasně na konec funkce <code>getholidays()</code> tento pesimistický kus kódu:</p>
+<div class="highlight"><pre><span></span>    <span class="k">if</span> <span class="n">year</span> <span class="o">&gt;</span> <span class="mi">2020</span><span class="p">:</span>
+        <span class="c1"># After the Zygon war, the puppet government canceled all holidays</span>
+        <span class="n">holidays</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</pre></div><div class="highlight"><pre><code><span style="color: #00aaaa">(__venv__) $</span> python -m pytest -v
+...
+tests/test_holidays.py::test_xmas[2015] <span style="color: #00aa00">PASSED</span>
+tests/test_holidays.py::test_xmas[2016] <span style="color: #00aa00">PASSED</span>
+tests/test_holidays.py::test_xmas[2017] <span style="color: #00aa00">PASSED</span>
+tests/test_holidays.py::test_xmas[2033] <span style="color: #aa0000">FAILED</span>
+tests/test_holidays.py::test_xmas[2048] <span style="color: #aa0000">FAILED</span>
+...
+<span style="color: #aa0000"></span><span style="font-weight: bold; color: #aa0000">====================== 2 failed, 3 passed in 0.23 seconds ======================</span></code></pre></div><h3>Fixtures</h3>
+<p>Často se stává, že před samotným testem potřebujte spustit nějaký kus kódu,
+abyste získali to, co teprve chcete testovat. Příkladem může být například
+inicializace objektu pro komunikaci s nějakým API.</p>
+<p>V pytestu k tomuto účelu nejlépe slouží tz. <a href="http://doc.pytest.org/en/latest/fixture.html">fixtures</a>, které se v samotných
+testech používají jako argumenty funkcí.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">client</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">twitter</span>
+    <span class="k">return</span> <span class="n">twitter</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_search_python</span><span class="p">(</span><span class="n">client</span><span class="p">):</span>
+    <span class="n">tweets</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">'python'</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">tweets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="s1">'python'</span> <span class="ow">in</span> <span class="n">tweets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</pre></div><p>Fixtures se hledají pomocí jména: když má testovací funkce (nebo i jiná
+fixture) parametr, podle jména tohoto parametru se najde odpovídající fixture.
+Fixtures můžou být definovány v aktuálním souboru,
+v <a href="http://doc.pytest.org/en/latest/plugins.html">pluginu</a>,
+<a href="http://doc.pytest.org/en/latest/writing_plugins.html#conftest-py-local-per-directory-plugins">konfiguračním souboru</a>
+a některé jsou zabudované přímo v pytestu.</p>
+<p>Pokud potřebujete po použití s fixturou ještě něco udělat, můžete místo <code>return</code>
+použít <code>yield</code>.
+Často se to používá u zdrojů, které je po použití potřeba nějak finalizovat či
+zavřít, například u databázových spojení.
+Zde je ilustrační příklad, který si můžete rovnou vyzkoušet:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+
+
+<span class="k">class</span> <span class="nc">DBConnection</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Creating connection for '</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">arg</span>
+
+    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Cleaning up connection'</span><span class="p">)</span>
+        <span class="o">...</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">connection</span><span class="p">():</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">DBConnection</span><span class="p">(</span><span class="s1">'sqlite'</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="n">d</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">'arg'</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">test_with_fixture</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">arg</span> <span class="o">==</span> <span class="n">connection</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+</pre></div><p>Standardní výstup (<code>stderr</code> a <code>stdout</code>) z testů se normálně zobrazuje,
+jen když test selže.
+Chceme-li výstup vidět u všech testů, je třeba použít přepínač <code>-s</code>.</p>
+<p>I fixtury jdou parametrizovat, jen trochu jiným způsobem než testovací funkce:
+parametry předané dekorátoru <code>pytest.fixture</code> získáme ze speciálního parametru
+<code>request</code>, který obsahuje informace o probíhajícím testu:</p>
+<div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="s1">'sqlite'</span><span class="p">,</span> <span class="s1">'postgres'</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">connection</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">DBConnection</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="n">d</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</pre></div><p>Hromadu dalších příkladů použití pytestu najdete dokumentaci v
+<a href="http://doc.pytest.org/en/latest/example/index.html">sekci s příklady</a>.
+Hledáte-li příklady krok za krokem, zkuste <a href="https://github.com/PyConPL/Book/blob/master/2017/workshops/pytest_parametric_tests/text.md">příspěvek ze sborníku konference
+PyCon PL</a>.</p>
+<h2>„Podvádění“</h2>
+<p>Při psaní testů se občas hodí trochu podvádět. Například když nechceme,
+aby testy měly nějaký vedlejší účinek, když chceme testovat něco, co závisí na
+náhodě a podobně. Obecně se tomuto říká <em>mocking</em> * či <em>test doubles</em> a existuje více různých
+knihoven, které to umožňují. Jednou z nich je <a href="https://flexmock.readthedocs.io/">flexmock</a>.</p>
+<p>* <em>mocking</em> je jen jeden druh podvádění, ale obecně se dá tento název použít
+pro funkcionalitu knihoven, které mají v názvu <em>mock</em> :)</p>
+<h3>Falešné objekty (fakes)</h3>
+<p>Při testování často potřebujeme nějaký objekt, který má určité atributy a
+metody. Vytvářet si pro každý takový objekt třídu může být ubíjející:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FakePlane</span><span class="p">:</span>
+    <span class="n">operational</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="s1">'MIG-21'</span>
+    <span class="k">def</span> <span class="nf">fly</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+
+<span class="n">plane</span> <span class="o">=</span> <span class="n">FakePlane</span><span class="p">()</span>  <span class="c1"># this is tedious!</span>
+</pre></div><p>Flexmock umožňuje vytvoření objektu rychle a jednoduše:</p>
+<div class="highlight"><pre><span></span><span class="n">plane</span> <span class="o">=</span> <span class="n">flexmock</span><span class="p">(</span><span class="n">operational</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">model</span><span class="o">=</span><span class="s1">'MIG-21'</span><span class="p">,</span>
+                 <span class="n">fly</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div><h3>Částečně upravené objekty, třídy, moduly (stubs)</h3>
+<p>Stejně tak můžete vzít i nějaký existující objekt nebo třídu a upravit jen část
+atributů nebo metod:</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">flexmock</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">class</span> <span class="nc">Train</span><span class="p">:</span>
+<span class="o">...</span>     <span class="k">def</span> <span class="nf">get_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="o">...</span>         <span class="k">return</span> <span class="mi">0</span>
+<span class="o">...</span> 
+<span class="o">&gt;&gt;&gt;</span> <span class="n">flexmock</span><span class="p">(</span><span class="n">Train</span><span class="p">,</span> <span class="n">get_speed</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">flexmock</span><span class="o">.</span><span class="n">Mock</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f88501d8908</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">train</span> <span class="o">=</span> <span class="n">Train</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">train</span><span class="o">.</span><span class="n">get_speed</span><span class="p">()</span>
+<span class="mi">200</span>
+</pre></div><p>Můžete tak zfalšovat i volání <em>builtin</em> funkcí, jako je například <code>open()</code>:</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sys</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">flexmock</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">builtins</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">flexmock</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="nb">open</span><span class="o">=</span><span class="n">StringIO</span><span class="p">(</span><span class="s1">'fake content'</span><span class="p">))</span>
+<span class="o">&lt;</span><span class="n">module</span> <span class="s1">'builtins'</span> <span class="p">(</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span><span class="p">)</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'/etc/passwd'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="o">...</span>     <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+<span class="o">...</span> 
+<span class="p">[</span><span class="s1">'fake content'</span><span class="p">]</span>
+</pre></div><h3>Očekávání (mocks, spies)</h3>
+<p>Pomocí flexmocku můžete zároveň <a href="http://flexmock.readthedocs.io/en/latest/start/#creating-and-checking-expectations">kontrolovat</a>, že se vaší implementaci něco
+zavolalo, a to dvojím způsobem: buďto zároveň změníte výsledek funkce (mocks),
+nebo jen sledujete, jestli se zavolala (spies).
+(Příklady na odkazu.)</p>
+<h3>Integrace s pytestem</h3>
+<p>Dobrá mockovací knihovna se stará o to, aby platnost vašich změn byla omezená
+kontextem jedné funkce a tedy jednoho testu. Implementovat vlastní <em>test double</em>
+ale není nic těžkého a můžete to udělat sami (bez knihovny).
+Pro přepsání nějaké metody, funkce apod. na omezenou dobu
+můžete využít zabudovanou pytest fixturu
+<a href="https://docs.pytest.org/en/latest/monkeypatch.html">monkeypatch</a>.</p>
+<h3>Varování</h3>
+<p>Podvádění při testech občas vypadá nevyhnutelně. Pokud například vaše funkce
+čte soubor <code>/etc/passwd</code> a vy chcete testovat, že se zachová správně, pokud
+bude obsahovat daný obsah, musíte si trochu zapodvádět, protože nemůžete vědět,
+co v tom souboru je doopravdy na daném systému, v daný čas.</p>
+<p>Je ale jednoduché sklouznout do fáze, kdy jsou vaše testy natolik přemockované,
+že už ani neplní svůj účel. Buďto proto, že příliš podvádíte a testy vždy
+projdou, i když je implementace rozbitá; nebo proto, že při sebemenší úpravě
+vnitřní implementace musíte vždy upravit i testy.</p>
+<p>Mějte toto na paměti a k mockování se uchylujte až po vyčerpání „slušnějších”
+možností.
+Často jde trochu změnit kód, aby byl testovatelnější – například napsat funkci,
+která čte soubor formátu <code>/etc/passwd</code>, ale jméno souboru jí předat argumentem.</p>
+<div class="admonition note"><p>Mohl by vás zajímat záznam z přednášky <a href="https://www.youtube.com/watch?v=-nJ-ZW_LP7s">Should I mock or should I not?</a>
+z konference <a href="https://cz.pycon.org/">PyCon CZ</a> 2017. V přednášce se věnuji různým způsobům podvádění
+při psaní testů.</p>
+</div><h2>Testování HTTP komunikace: betamax</h2>
+<p>Vaše programy často používají webová API. Při testování funkcionality API klientů
+se vynoří řada problémů:</p>
+<ul>
+<li>výsledky volání API mohou být pokaždé různé,</li>
+<li>k některým volání API je potřeba mít přístupové údaje,</li>
+<li>API může být zrovna nedostupné.</li>
+</ul>
+<p>V zásadě můžete omockovat knihovnu requests tak, aby
+jednotlivá volání jako <code>get()</code> apod. vracela předem definovanou odpověď.
+Při ponoření do hloubky ale zjistíte, že komplexita takového mockování může
+velmi přesáhnout komplexitu samotného kódu, který testujete.
+Jednodušší je tak použít již hotové řešení. Jedno z nich je <a href="https://betamax.readthedocs.io/">betamax</a>.</p>
+<p>Betamax umožňuje nahrát HTTP komunikaci do kazet (souborů), které se potom
+použijí při testech. V zásadě to funguje takto:</p>
+<ul>
+<li>Pokud daný HTTP požadavek ještě neproběhl, provede se a nahraje na kazetu.</li>
+<li>Pokud již proběhl, použije se daná kazeta pro simulaci.</li>
+</ul>
+<p>Betamax funguje pouze s knihovnou <a href="/2017/pyknihovny-brno/intro/requests/">requests</a> při použití session.</p>
+<p>V kombinaci s pytestem můžete použít předpřipravenou fixture:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">betamax</span>
+
+<span class="k">with</span> <span class="n">betamax</span><span class="o">.</span><span class="n">Betamax</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span> <span class="k">as</span> <span class="n">config</span><span class="p">:</span>
+    <span class="c1"># tell Betamax where to find the cassettes</span>
+    <span class="c1"># make sure to create the directory</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">cassette_library_dir</span> <span class="o">=</span> <span class="s1">'tests/fixtures/cassettes'</span>
+
+<span class="k">def</span> <span class="nf">test_get</span><span class="p">(</span><span class="n">betamax_session</span><span class="p">):</span>
+    <span class="n">betamax_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'https://httpbin.org/get'</span><span class="p">)</span>
+</pre></div><p>Před spuštěním testu vytvořte složku <code>tests/fixtures/cassettes</code>.
+Po spuštění testu ji prozkoumejte.
+Měla by obsahovat soubor <code>test_filename.test_get.json</code>.
+To je nahraná kazeta. Každý další průběh testu nevykoná GET požadavek,
+ale pouze přehraje danou kazetu. Pokud chcete kazetu opět nahrát, prostě ji
+smažte a pusťte test znovu.</p>
+<p>Celé to ale funguje pouze, pokud kód vykonávaný uvnitř testu použije speciální
+session, kterou máme od betamaxu. Jak to udělat?</p>
+<p>Je třeba, aby implementační část kódu uměla session přejmout, například takto:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Client</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span> <span class="ow">or</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+        <span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">test_clent_foo</span><span class="p">(</span><span class="n">betamax_session</span><span class="p">):</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">betamax_session</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">client</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span> <span class="o">==</span> <span class="mi">42</span>
+</pre></div><p>Pokud budete používat parametrizované testy, použijte
+<code>betamax_parametrized_session</code>, aby kazety měly odlišné jméno při odlišných
+parametrech.</p>
+<div class="admonition note"><p>Pro tip: Abyste nevytvářeli novou instanci třídy ve všech testech, můžete si
+vytvořit vlastní fixture, která použije fixture <code>betamax_session</code>:</p>
+<div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="n">betamax_session</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Client</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">betamax_session</span><span class="p">)</span>
+</pre></div></div><h3>Citlivé údaje</h3>
+<p>Při práci s webovými API často létají vzduchem citlivé údaje jako tokeny apod.</p>
+<p>Vyvstávají dvě otázky:</p>
+<ol>
+<li>Jak umožnit spuštění testů bez vlastního tokenu?</li>
+<li>Jak citlivé údaje skrýt v kazetách a nedávat je do do gitu?</li>
+</ol>
+<p>Na obě otázky se pokusím odpovědět jedním okomentovaným kódem:</p>
+<div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">betamax</span><span class="o">.</span><span class="n">Betamax</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span> <span class="k">as</span> <span class="n">config</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s1">'AUTH_FILE'</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="c1"># If the tests are invoked with an AUTH_FILE environ variable</span>
+        <span class="n">TOKEN</span> <span class="o">=</span> <span class="n">my_auth_parsing_func</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'AUTH_FILE'</span><span class="p">])</span>
+        <span class="c1"># Always re-record the cassetes</span>
+        <span class="c1"># https://betamax.readthedocs.io/en/latest/record_modes.html</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">default_cassette_options</span><span class="p">[</span><span class="s1">'record_mode'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'all'</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">TOKEN</span> <span class="o">=</span> <span class="s1">'false_token'</span>
+        <span class="c1"># Do not attempt to record sessions with bad fake token</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">default_cassette_options</span><span class="p">[</span><span class="s1">'record_mode'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'none'</span>
+
+    <span class="c1"># Hide the token in the cassettes</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">define_cassette_placeholder</span><span class="p">(</span><span class="s1">'&lt;TOKEN&gt;'</span><span class="p">,</span> <span class="n">TOKEN</span><span class="p">)</span>
+    <span class="o">...</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="n">betamax_session</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Client</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">TOKEN</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">betamax_session</span><span class="p">)</span>
+</pre></div><p>Co když ale nevíme, jak bude vypadat citlivá část požadavku, protože se teprve
+někde spočítá a získá, jako v případě Twitter API?
+Na tuto otázku podrobněji odpovídá
+<a href="https://betamax.readthedocs.io/en/latest/configuring.html#filtering-sensitive-data">dokumentace</a>.</p>
+<p>V každém případě je moudré před uložením do gitu zkontrolovat, že se v kazetách
+nenachází žádný citlivý údaj, a pokud tam je, přepsat kód tak, aby se tam nenacházel.</p>
+<h4>Komprimované citlivé údaje</h4>
+<p>Problém může nastat, pokud je token či jiná citlivá informace uložena jako část v těle 
+odpovědi (případně i požadavku) a zároveň je toto tělo zprávy zkomprimováno (defaultní
+chování, viz <a href="http://betamax.readthedocs.io/en/latest/implementation_details.html#gzip-content-encoding">dokumentace</a>). 
+V takovém případě je potřeba k tomu, aby šlo v kazetě nahradit citlivé údaje, upravit 
+hlavičku <code>Accept-Encoding</code> v <code>betamax_session</code> tak, aby neobsahovala <code>*</code>, <code>gzip</code>, 
+<code>compress</code> ani <code>deflate</code>:</p>
+<div class="highlight"><pre><code>betamax_session.headers.update({'Accept-Encoding': 'identity'})</code></pre></div><div class="admonition note"><p>Kódování <code>'identity'</code> má shodné chování jako <code>''</code> a to, že data ve zprávě nejsou 
+nijak transformována, více viz <a href="https://en.wikipedia.org/wiki/HTTP_compression#Content-Encoding_tokens">Wikipedia</a> 
+a <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3">specifikace HTTP</a>)</p>
+</div><h3>Které HTTP požadavky jsou stejné?</h3>
+<p>Podle čeho se vyhodnotí, že HTTP požadavek odpovídá nahrané interakci a má se
+pouze přehrát? Ve výchozím stavu podle HTTP metody a URL.
+Pokud tedy na jedno URL provedete dva POST požadavky s jiným tělem, betamax
+je bude považovat za stejné. Toto chování lze měnit zapnutím (nebo vypnutím)
+různých <em>matcherů</em>. Těch je v betamaxu celá řada a je jednoduché napsat si
+vlastní. Více informací najdete
+v <a href="http://betamax.readthedocs.io/en/latest/matchers.html">dokumentaci</a>.</p>
+<div class="admonition note"><p>Mohl by vás zajímat záznam z přednášky <a href="https://www.youtube.com/watch?v=iFqF5IaWfy0">If it Moves, Test it Anyway</a>
+z konference <a href="https://cz.pycon.org/">PyCon CZ</a> 2016. V přednášce se věnuji různým způsobům, jak
+testovat webové API klienty v Pythonu.</p>
+</div><h2>Testování aplikací ve Flasku</h2>
+<p>Pro testování aplikací ve Flasku se
+<a href="http://flask.pocoo.org/docs/0.12/testing/">používá</a> <code>app.test_client()</code>:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">testapp</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">hello</span> <span class="kn">import</span> <span class="n">app</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TESTING'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">test_hello</span><span class="p">(</span><span class="n">testapp</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="s1">'Hello'</span> <span class="ow">in</span> <span class="n">testapp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)</span>
+</pre></div><p>Pozor, metody na testovacím klientu vrací <a href="http://flask.pocoo.org/docs/0.11/api/#flask.Response">Response</a>, ale trochu jinou, než tu
+z requests.
+Proto nelze použít přímo <code>response.text</code>; text dostaneme pomocí
+<code>response.data.decode('utf-8')</code>.</p>
+<h2>Testování aplikací v clicku</h2>
+<p>Podobně funguje <a href="http://click.pocoo.org/6/testing/">testování aplikací v clikcu</a>.
+Click obsahuje třídu <code>CliRunner</code>, která pomáhá s testováním:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">click.testing</span> <span class="kn">import</span> <span class="n">CliRunner</span>
+
+<span class="k">def</span> <span class="nf">test_push_force</span><span class="p">():</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">CliRunner</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">git_cli_made_in_click</span><span class="p">,</span> <span class="p">[</span><span class="s1">'push'</span><span class="p">,</span> <span class="s1">'--force'</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">exit_code</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="s1">'forced update'</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">output</span>
+</pre></div><h2>Kam dát testy?</h2>
+<p><a href="http://doc.pytest.org/en/latest/goodpractices.html#choosing-a-test-layout-import-rules">Dokumentace pytestu</a>
+uvádí dvě možnosti, kam dát adresář s testy. Buď vedle adresáře s modulem:</p>
+<div class="highlight"><pre><code>setup.py
+mypkg/
+    __init__.py
+    appmodule.py
+tests/
+    test_app.py
+    ...</code></pre></div><p>nebo do něj:</p>
+<div class="highlight"><pre><code>setup.py
+mypkg/
+    __init__.py
+    appmodule.py
+    ...
+    test/
+        test_app.py
+        ...</code></pre></div><p>První způsob je preferovaný, protože pomáhá udržovat kód a testy oddělené.
+Pokud ho použijete, nedávejte do něj <code>__init__.py</code> – není to importovatelný
+Pythonní modul, ale jen sada souborů s testy.</p>
+<p>Ve druhém případě mějte na paměti, že pytest pouští testy jako samostatné
+moduly, ne jako součást vašeho balíčku.
+Relativní importy (<code>from ..appmodule import xyz</code>) v testech nebudou fungovat.</p>
+<p>Pozor na to, aby testy byly součástí archivu s balíčkem (<code>setup.py sdist</code>), ale
+pokud zvolíte první variantu umístění, aby se neinstalovaly (<code>setup.py install</code>),
+protože by tam kolidovaly s ostatními testy z jiných balíčků.</p>
+<p>Případné soubory potřebné k testování bývá zvykem dávat do složky <code>fixtures</code> ve
+složce s testy.</p>
+<h2>Spouštění testů pomocí <code>setup.py test</code></h2>
+<p>Standardně se testy v Pythonu nespouští pomocí <code>python -m pytest</code>, ale
+<code>python setup.py test</code>, což funguje i s jinými nástroji než je pytest.
+Pokud pytest používáme, je proto dobré <code>setup.py</code> naučit spouštět pytest.</p>
+<p>K tomu potřebujeme nakonfigurovat závislosti: v <code>setup_requires</code> musí být
+<code>pytest-runner</code> a v <code>tests_require</code> pak <code>pytest</code> a další testovací závislosti
+(<code>flexmock</code>, <code>betamax</code>...).</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">setup</span>
+
+<span class="n">setup</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">setup_requires</span><span class="o">=</span><span class="p">[</span><span class="s1">'pytest-runner'</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">tests_require</span><span class="o">=</span><span class="p">[</span><span class="s1">'pytest'</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="o">...</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div><p>a přidat následující sekci do <code>setup.cfg</code>:</p>
+<div class="highlight"><pre><code>[aliases]
+test=pytest</code></pre></div><p>Příkaz <code>python setup.py test</code> by měl fungovat, ale neočekává se, že bude
+podporovat další argumenty pytestu (jako <code>-v</code>).
+Na to uživatel spustí pytest samotný.</p>
+<p>Další informace jsou v <a href="http://doc.pytest.org/en/latest/goodpractices.html#integrating-with-setuptools-python-setup-py-test-pytest-runner">dokumentaci pytestu</a>.</p>
+<h2>Travis CI</h2>
+<p>Vaše testy nemusí běžet jen u vás na počítači, ale můžete je pouštět automaticky
+na službě Travis CI při každém pushnutí na GitHub.</p>
+<p>Travis CI je zadarmo pro veřejné repozitáře na <a href="https://travis-ci.org/">travis-ci.org</a>, pro soukromé
+repozitáře je placená verze na <a href="https://travis-ci.com/">travis-ci.com</a>. V rámci studentského balíčku
+můžete i tuto verzi využít zdarma.</p>
+<p>Přihlaste se na <a href="https://travis-ci.com/">travis-ci.com</a> pomocí GitHubu (vpravo nahoře).
+Pak opět vpravo nahoře zvolte <a href="https://travis-ci.com/profile">Accounts</a>
+a povolte Travis pro váš repozitář.</p>
+<p>Do repozitáře přidejte soubor <code>.travis.yml</code>:</p>
+<div class="highlight"><pre><span></span><span class="nt">language</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">python</span>
+<span class="nt">python</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="s">'3.6'</span>
+<span class="nt">install</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python setup.py install</span>
+<span class="nt">script</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python setup.py test</span>
+</pre></div><p>Po pushnutí by se na Travisu měl automaticky spustit test.
+Více informací o použití pro Python najdete
+v <a href="https://docs.travis-ci.com/user/languages/python/">dokumentaci</a>.</p>
+<h2>Kvíz</h2>
+<p>Co je špatně na této testovací sadě k funkci <code>is_even()</code>?</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_even</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">'n'</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">test_is_even</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">is_even</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/intro/testing/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2017/pyknihovny-brno/sessions/testing/">↑ <span class="d-none d-sm-inline">Lekce: Testování</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2017/pyknihovny-brno/sessions/testing/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2017-pyknihovny-brno/lessons/intro/testing/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Miro Hrončok, Petr Viktorin a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

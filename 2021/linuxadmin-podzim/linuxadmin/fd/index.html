@@ -1,0 +1,626 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Soubory a deskriptory
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/shell-3/">Procesy &amp; deskriptory souborů</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/fd/">Soubory a deskriptory</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Soubory a deskriptory</h1>
+<p>Co je to soubor?</p>
+<p>Lehce naivní ale přesto užitečná definice je: soubor je něco,
+z čeho můžeme číst a/nebo do čeho můžeme zapisovat.</p>
+<p>Se soubory se dají dělat i další operace než jen čtení a zápis, ale v tomto
+kurzu se jimi většinou nebudeme zabývat.</p>
+<p>Pravděpodobně máš největší zkušenosti se soubory, které jsou uložené na disku
+pod nějakým jménem.
+Třeba následující příkaz zapisuje do souboru <code>vystup.txt</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps -Af &gt; vystup.txt
+</pre></div><p>Tento příkaz znamená: Bashi, spusť <code>ps -Af</code> a řekni mu aby psal do souboru
+<code>vystup.txt</code>.
+<code>ps</code> píše na svůj standardní výstup, což je soubor – v příkladu výše je to
+soubor <code>vystup.txt</code>.</p>
+<p>Kdybys výstup nepřesměrovala, uviděla bys ho v terminálu.
+Pro program <code>ps</code> se nic nemění: pořád píše na svůj standardní výstup,
+což je <em>soubor</em>.</p>
+<p>Je to soubor, který reprezentuje terminál – něco, do čeho může proces zapisovat
+(a co se pak objeví na obrazovce) a z čeho může číst (když uživatel něco zadá).
+Obsah tohoto souboru není uložen na disku, ale přesto jde o soubor.</p>
+<p>Podívej se na tenhle příkaz:</p>
+<div class="highlight"><pre><code>$ ps -Af | grep -w ps</code></pre></div><p>Příkaz <code>ps -Af</code> stále píše na svůj standardní výstup,
+což je <em>soubor</em>.</p>
+<p>V <em>tomhle</em> případě je to soubor, který reprezentuje „rouru“ – něco, do čeho
+může jeden proces zapisovat a druhý to pak může číst.
+Ani obsah roury není uložen na disku – „proudí“ přímo z jednoho procesu do
+druhého – ale přesto jde o soubor.</p>
+<p>Známe tedy už tři druhy souborů:</p>
+<ul>
+<li>normální souboru uložené na disku,</li>
+<li>terminál,</li>
+<li>rouru.</li>
+</ul>
+<h2>Otevřené soubory procesu</h2>
+<p>Každý proces si může otevírat další soubory - to už znáš z funkce <code>open</code>
+v Pythonu.
+Podíváme se, jak zjistit seznam takto používaných souborů.
+Existuje na to program <code>lsof</code> (z angl. <em>list open files</em>).
+Většinou se spouští s přepínačem <code>-p &lt;číslo procesu&gt;</code>, aby ukázal jen
+otevřené soubory jednoho procesu.</p>
+<p>Použijme PID Bashe, které se jednoduše zjišťuje – je v proměnné <code>$$</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>lsof -p <span class="nv">$$</span>
+<span class="go">COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF    NODE NAME</span>
+<span class="go">bash    5236 user  cwd    DIR    8,1     4096 1310722 /home/user</span>
+<span class="go">bash    5236 user  rtd    DIR    8,1     4096       2 /</span>
+<span class="go">bash    5236 user  txt    REG    8,1  1113504  524393 /bin/bash</span>
+<span class="go">bash    5236 user  mem    REG    8,1    47568 7344943 /lib/x86_64-linux-gnu/libnss_files-2.27.so</span>
+<span class="go">bash    5236 user  mem    REG    8,1    26376 6032184 /usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache</span>
+<span class="gp gp-VirtualEnv">(...)</span>
+<span class="go">bash    5236 user    0u   CHR  136,0      0t0       3 /dev/pts/0</span>
+<span class="go">bash    5236 user    1u   CHR  136,0      0t0       3 /dev/pts/0</span>
+<span class="go">bash    5236 user    2u   CHR  136,0      0t0       3 /dev/pts/0</span>
+<span class="go">bash    5236 user  255u   CHR  136,0      0t0       3 /dev/pts/0</span>
+</pre></div><p>Jak vidíš, je to poměrně velká tabulka.</p>
+<ul>
+<li><code>COMMAND</code> je jméno programu, který otvírá daný soubor
+(bez <code>-p</code> vypisuje <code>lsof</code> soubory pro víc programů najednou).</li>
+<li><code>PID</code> je číslo procesu, náš starý známý.</li>
+<li><code>USER</code> je uživatel, jehož jménem proces běží.</li>
+<li><p><code>FD</code> je zkratka pro <strong>deskriptor souboru</strong> (angl. <em>file descriptor</em>),
+což je číslo otevřeného souboru. Toto číslo nás bude dnes nejvíc zajímat.</p>
+<ul>
+<li><code>cwd</code> je speciální hodnota pro aktuální adresář
+(<em>current working directory</em>) – právě tahle hodnota se dá v Bashi změnit
+pomocí <code>cd</code></li>
+<li><code>rtd</code> je kořenový adresář (<em>root directory</em>) - mělo by to být <code>/</code></li>
+<li><code>txt</code> je kód samotného programu. (Každý program musí být uložený někde
+na disku. Když ho pustíš jako proces, systém soubor načte a začne provádět
+příkazy v něm uložené.)</li>
+<li><code>mem</code> jsou soubory načtené v paměti, většinou další součásti programu.</li>
+<li><code>0</code> a dál jsou konečně normální otevřené soubory.
+Písmenka označují mód, např.:<ul>
+<li><code>1r</code> - otevřeno pro čtení (angl. <em>read</em>)</li>
+<li><code>1w</code> - otevřeno pro zápis (angl. <em>write</em>)</li>
+<li><code>1u</code> - otevřeno „univerzálně“, pro čtení i zápis</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>TYPE</code> může být např.<ul>
+<li><code>DIR</code> - adresář</li>
+<li><code>REG</code> - normální soubor</li>
+<li><code>CHR</code> - speciální soubor, např. terminál</li>
+</ul>
+</li>
+<li><code>DEVICE</code> - číslo zařízení (disku), na kterém soubor je</li>
+<li><code>SIZE/OFF</code> - velikost / pozice v souboru</li>
+<li><code>NODE</code> - číslo souboru (unikátní v rámci <code>DEVICE</code>)</li>
+<li><code>NAME</code> - jméno souboru</li>
+</ul>
+<h2>Terminál jako soubor</h2>
+<p>Soubor, který má Bash otevřený jako <code>0u</code>, <code>1u</code> i <code>2u</code>, je za normálních
+okolností terminál, ve kterém Bash běží.
+Zjisti z výstupu výše, který to je.
+V našem příkladu je to <code>/dev/pts/0</code>, u tebe může být jméno jiné.</p>
+<p>Jak už víš, terminál je soubor, do kterého můžeš zapisovat.
+Otevři si další okno terminálu a zadej následující příkaz. (Za <code>/dev/pts/0</code> doplň „svoje“ jméno terminálu):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> abc &gt; /dev/pts/0
+</pre></div><p>Všimni si, že se <code>abc</code> objeví ve druhém terminálovém okénku!</p>
+<p>Když znáš jméno souboru a víš, jak se do něj dostat (znáš cestu), můžeš do něj zapisovat. 
+Soubor pro terminál není zas tolik zvláštní: jakmile znáš jméno, můžeš do něj zapisovat jako do jakéhokoli jiného souboru.</p>
+<div class="admonition node"><p class="admonition-title">K čemu to je dobré?</p>
+<p>Svého času takhle administrátoři posílali zprávy dalším lidem,
+co zrovna pracovali na tom samém stroji.
+Ale dnes se to už tolik nepoužívá.
+Jen to ukazuje jak věci fungují – „všechno je soubor“.</p>
+</div><h3>Procvičování v Pythonu</h3>
+<p>Procvičme si to trochu v Pythonu.
+Budeš potřebovat textový editor a dva terminály.
+V tomto textu jim budu říkat A a B.</p>
+<div class="admonition note"><p>Budeme používat Python, který je zabudovaný přímo v systému.
+Nevytvářej/neaktivuj si virtuální prostředí – pracuješ na virtuálním stroji,
+to úplně stačí.</p>
+</div><p>V obou terminálech se přepni do adresáře,
+do kterého ukládáš soubory pro dnešní lekci.
+Jestli takový nemáš, vytvoř si ho.</p>
+<p>Otevři si textový editor a následující kód si ulož do souboru
+<code>soubory.py</code>:</p>
+<div class="highlight"><pre><span></span><span class="c1"># soubory.py</span>
+<span class="c1"># modul, kde jsou zpřístupněné služby operačního systému</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># číslo právě běžícího procesu (ne Bashe, ale Pythonu)</span>
+<span class="c1"># Pokaždé, když spustíš soubory.py v příkazové řádce, se toto číslo změní</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+
+<span class="c1"># Nechme program 600 vteřin (10 minut) čekat.</span>
+<span class="c1"># To bude dost času na to, abychom mohli např. analyzovat otevřené soubory.</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">600</span><span class="p">)</span>
+</pre></div><p>A v terminálu A program spusť.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py
+<span class="go">17342</span>
+</pre></div><p>Mělo by se ti vypsat číslo procesu (jiné, než v našem příkladu).</p>
+<p>V terminálu B pusť příkaz:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>lsof -p &lt;číslo procesu z terminálu A&gt;
+<span class="go">COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF    NODE NAME</span>
+<span class="go">python  6503 user  cwd    DIR    8,1     4096 1310722 /home/user</span>
+<span class="go">python  6503 user  rtd    DIR    8,1     4096       2 /</span>
+<span class="go">python  6503 user  txt    REG    8,1  4873376 5773466 /usr/bin/python3.7</span>
+<span class="go">python  6503 user  mem    REG    8,1 11531024 5773943 /usr/lib/locale/locale-archive</span>
+<span class="go">python  6503 user  mem    REG    8,1  1700792 7344916 /lib/x86_64-linux-gnu/libm-2.27.so</span>
+<span class="go">python  6503 user  mem    REG    8,1   116960 7345025 /lib/x86_64-linux-gnu/libz.so.1.2.11</span>
+<span class="gp gp-VirtualEnv">(...)</span>
+<span class="go">python  6503 user    0u   CHR  136,0      0t0       3 /dev/pts/0</span>
+<span class="go">python  6503 user    1u   CHR  136,0      0t0       3 /dev/pts/0</span>
+<span class="go">python  6503 user    2u   CHR  136,0      0t0       3 /dev/pts/0</span>
+</pre></div><p>Zkontroluj, jestli pod <code>txt</code> vidíš nějako verzi Pythonu.
+Vidíš? Skvěle, pojďme o kousek dál.</p>
+<p>V <code>soubory.py</code> změň poslední sekci – dopiš kus kódu, který otevře soubor:</p>
+<div class="highlight"><pre><span></span><span class="c1"># soubory.py</span>
+<span class="c1"># modul, kde jsou zpřístupněné služby operačního systému</span>
+<span class="kn">import</span> <span class="nn">os</span>   
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># číslo právě běžícího procesu (ne Bashe, ale Pythonu)</span>
+<span class="c1"># pokaždé, když spustíš soubory.py v příkazové řádce, se toto číslo změní</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+
+<span class="c1"># Tentokrát čekáme s otevřeným souborem:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'soubory.py'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor</span><span class="p">:</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">600</span><span class="p">)</span>
+</pre></div><p>Po uložení souboru ukonči program v terminálu A (<kbd>CTRL</kbd>+<kbd>C</kbd>)
+a spusť ho znovu. Vypíše se jiné číslo procesu.
+Do terminálu B zadej <em>aktualizovaný</em> příkaz <code>lsof -p &lt;číslo procesu&gt;</code>.
+Podívej se na poslední řádek výpisu. Vidíš tam něco nového?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>lsof -p <span class="m">6604</span>
+<span class="gp gp-VirtualEnv">(...)</span>
+<span class="go">python  6604 user    3r   REG    8,1      333 1314091 /home/user/bash/03/soubory.py</span>
+</pre></div><p>Měl by přibýt záznam o nově otevřeném souboru (<code>soubory.py</code>) s číslem <code>3r</code>.
+Tři je další zatím nevyužité číslo (po 0, 1, a 2);
+<code>r</code> indikuje soubor otevřený pro čtení.</p>
+<p>Řekla jsi Pythonu, aby otevřel pro čtení soubor s vlastním programem.
+Protože příkaz <code>lsof</code> vypíše otevřené soubory procesu,
+vidíš ve výsledcích nově výsledek této operace.</p>
+<p>Zatím všechno v pohodě? Tak otevři jeden soubor pro čtení a nějaký jiný pro zápis. 
+Změn svůj program na příklad níže.</p>
+<div class="highlight"><pre><span></span><span class="c1"># soubory.py</span>
+<span class="c1"># modul, kde jsou zpřístupněné služby operačního systému</span>
+<span class="kn">import</span> <span class="nn">os</span>   
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># číslo právě běžícího procesu (ne Bashe, ale Pythonu)</span>
+<span class="c1"># pokaždé, když spustíš soubory.py v příkazové řádce, se toto číslo změní</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'soubory.py'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'jiny.txt'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'w'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">soubor2</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">soubor</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="n">soubor2</span><span class="o">.</span><span class="n">fileno</span><span class="p">())</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">600</span><span class="p">)</span>
+</pre></div><p>Kromě PID se teď vypíší výsledky metody <code>fileno</code>.
+Jsou to deskriptory souborů – čísla která pro otevřené soubory používá systém,
+a která budou vidět i ve výstupu <code>lsof</code>.</p>
+<p>Ukonči běh předchozího programu v terminálu A (<kbd>CTRL</kbd>+<kbd>C</kbd>) a spusť soubor ještě jednou.
+V terminálu B spusť aktualizovaný příkaz <code>lsof</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>lsof -p <span class="m">6904</span>
+<span class="go">python  6904 user    0u   CHR  136,0      0t0       3 /dev/pts/0</span>
+<span class="go">python  6904 user    1u   CHR  136,0      0t0       3 /dev/pts/0</span>
+<span class="go">python  6904 user    2u   CHR  136,0      0t0       3 /dev/pts/0</span>
+<span class="go">python  6904 user    3r   REG    8,1      373 1314108 /home/user/bash/03/soubory.py</span>
+<span class="go">python  6904 user    4w   REG    8,1        0 1314053 /home/user/bash/03/jiny.txt</span>
+</pre></div><p>Výsledek doufám nepřekvapí.</p>
+<h3>Deskriptory</h3>
+<p>Python nám v mnohém pomáhá, ale taky vzdaluje od systémové vrstvy.
+Pythonní objekty které vrací funkce <code>open</code> nejsou přesně totéž jako způsob,
+jakým soubory zpracovává operační systém. Dělají spoustu věcí navíc.</p>
+<p>My se chceme podívat, jak funguje vevnitř operační systém, nikoliv Pythonní zlepšováky.
+Proto si otevři tyto soubory ještě jednou pomocí modulu <code>os</code>, který umožňuje dělat věci trošku víc „přímo“.</p>
+<p>Zaměň celý blok s <code>with</code> za tento kus kódu:</p>
+<div class="highlight"><pre><span></span><span class="n">fd1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"soubory.py"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_RDONLY</span><span class="p">)</span>
+<span class="n">fd2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"jiny.txt"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fd1</span><span class="p">,</span> <span class="n">fd2</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">600</span><span class="p">)</span>
+</pre></div><p>Takto upravený program spusť v terminálu A. 
+Kromě nového čísla procesu bys měl(a) vidět na dalším řádku dvě čísla. U nás jsou to <code>3, 4</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py
+<span class="go">19257</span>
+<span class="go">3, 4</span>
+</pre></div><p>V terminálu B spusť opět příkaz <code>lsof</code> s novým číslem procesu a podívej se na dva poslední řádky.
+Deskriptory otevřených souborů by měly opět odpovídat číslům z terminálu A.</p>
+<div class="admonition note"><p>Poznámka pro zvídavé: pod složitým <code>os.O_RDONLY</code> a <code>os.O_WRONLY</code> se
+skrývají jenom číselné konstanty <code>0</code> a <code>1</code>.
+Systémové operace (např. <code>open</code>) používají číselné konstant, kterým byla pro
+lepší čitelnost přiřazena krátká jména.</p>
+</div><div class="admonition note"><p>Pokud otevřeš pomocí pythonní funkce
+<code>open</code>  neexistující soubor pro zápis, funkce soubor vytvoří a otevře ho.
+Oproti tomu systémová funkce <code>os.open()</code> ho nevytvoří, ale zahlásí chybu.
+Pokud se ti to stane, můžeš společně s <code>os.O_WRONLY</code> použít <code>os.O_CREAT</code>.
+Kombinují se pomocí operátoru <code>|</code>:</p>
+<div class="highlight"><pre><span></span><span class="go">os.open('jiny.txt', os.O_WRONLY | os.O_CREAT)</span>
+</pre></div><p>Anebo můžeš soubor vytvořit v terminálu pomocí<code>touch jiny.txt</code>.</p>
+</div><p>Přidej do pythonního souboru pod řádky, kde soubory otevíráš, tento řádek:</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fd1</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+</pre></div><p>Tento řádek načte prvních 10 bajtů ze souboru <code>soubory.py</code> a vypíše je do terminálu. 
+V terminálu A spusť <code>soubory.py</code>.
+V našem případě výstup vypadá takto:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py
+<span class="go">20019</span>
+<span class="go">b'# soubory.'</span>
+<span class="go">3, 4</span>
+</pre></div><p>Do souboru můžeš i něco napsat.
+Pozor, to co zapisuješ (a čteš) není Pythonní řetězec (text), ale bajty.
+Když se ale omezíš na anglickou abecedu, hlavní rozdíl mezi nimi je zápis
+s <code>b</code> na začátku.</p>
+<p>Přidej za předchozí řádek tento kód, který do <code>jiny.txt</code> zapíše 4 písmenka.</p>
+<div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fd2</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'abcd</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+</pre></div><p>Nezapomeň na konec dát <code>\n</code>, nový řádek, aby se pak text hezky vypisoval.
+Když teď spustíš program v terminálu A a v terminálu B vypíšeš obsah souboru <code>jiny.txt</code> pomocí programu <code>cat</code>, měl by se ti zobrazit text "abcd".</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat jiny.txt 
+<span class="go">abcd</span>
+</pre></div><p>Jak víš z kurzu Pythonu, otevřené soubory je dobré vždy na konci manipulace zavřít.
+Tak to pojď udělat: na konec, před <code>time.sleep</code>, dopiš:</p>
+<div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd1</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd2</span><span class="p">)</span>
+</pre></div><h3>Standardní deskriptory</h3>
+<p>Celou dobu pracuješ se soubory otevřenými pythonním programem, tedy <code>3</code> a <code>4</code>. 
+Určitě tě zajímá, co jsou vlastně soubory označení <code>0</code>, <code>1</code>, <code>2</code>.</p>
+<p>V textovém editoru smaž <code>time.sleep</code> a místo toho dopiš řádky:</p>
+<div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'Tohle jde do souboru 1</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'Tohle jde do souboru 2</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+</pre></div><p>Kam se to vypíše?</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/fd/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Všechno se to vypíše do terminálu, ve kterém program spouštíš.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py 
+<span class="go">7102</span>
+<span class="go">3 4</span>
+<span class="go">b'# soubory.'</span>
+<span class="go">Tohle jde do souboru 1</span>
+<span class="go">Tohle jde do souboru 2</span>
+</pre></div>
+    </div>
+</div><p>Funguje to?
+Tak zkus přesměrovat výstup <code>soubory.py</code> do <code>jiny.txt</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py &gt; jiny.txt
+<span class="go">Tohle jde do souboru 2</span>
+<span class="gp">$ </span>cat jiny.txt 
+<span class="go">Tohle jde do souboru 1</span>
+<span class="go">7167</span>
+<span class="go">3 4</span>
+<span class="go">b'## soubory'</span>
+</pre></div><p>Když se podíváš do souboru <code>jiny.txt</code>, najdeš v něm text <em>Tohle jde do souboru 1</em>.</p>
+<p>Pokud to tam máš, připiš do programu ještě poslední řádek.</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+</pre></div><p>Spusť ho v terminálu A bez přesměrování.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py
+</pre></div><p>Tdyž teď něco napíšeš do terminálu, Python vypíše prvních 10 bajtů tvého textu.</p>
+<p>Co se tady děje?</p>
+<p>Tyto tři soubory, <code>0</code>, <code>1</code> a <code>2</code>, má každý proces otevřené.</p>
+<p><code>0</code> je náš starý známý <em>standardní vstup</em>.
+Když nepřesměrováváš, je to terminál: ťe se to co napíšeš na klávesnici.
+Ale může to být i jiný soubor – třeba následující <code>grep</code> má pod
+číslem 0 otevřený soubor <code>soubory.py</code>:</p>
+<div class="highlight"><pre><span></span><span class="go">grep print &lt; soubory.py</span>
+</pre></div><p><code>1</code> je standardní výstup – místo, kam program píše informace,
+které chce předat světu.</p>
+<h3>Chybový výstup</h3>
+<p><code>2</code> je ale nové: je to standardní <em>chybový</em> výstup
+(angl. <em>standard error stream</em>, <em>stderr</em>), místo,
+kam programy píší chybové hlášky.
+Často to bývá stejný terminál jako <em>stdout</em>, ale přesměrovává se samostatně.</p>
+<p>Zkus si třeba zkopírovat neexistující soubor pomocí <code>cp</code>.
+Dostaneš chybovou hlášku:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cp a b
+<span class="go">cp: cannot stat a no such file or dir</span>
+</pre></div><p>Když přesměruješ standardní výstup do souboru, chybová hláška se přesto objeví
+v terminálu. Zkus:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cp a b &gt; jiny.txt
+<span class="go">cp: cannot stat a no such file or dir</span>
+</pre></div><p>Zobáček <code>&gt;</code> přesměrovává pouze standardní výstup, zatímco chybový výstup
+nechá nepřesměrovaný.</p>
+<p>A k čemu je to užitečné?</p>
+<p>Na standardní výstup programy většinou píšou výsledky své práce v nějakém
+formátu, který se pak dá automaticky zpracovat. 
+Když nastane chyba, program ji ohlásí, ale ohlásí ji na jiném místě, než kam
+vypíše výstup, aby nekazil další zpracování.</p>
+<p>Když zadáš <code>ps -A | grep ps</code>, tak <code>grep</code> zpracovává výstup z příkazu <code>ps</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$  </span>ps -A <span class="p">|</span> grep ps
+<span class="go">    776 ?        00:00:00 psimon</span>
+<span class="go">    840 ?        00:00:00 cupsd</span>
+<span class="go">   5431 pts/1    00:00:00 ps</span>
+</pre></div><p>Když ale uděláš chybu a vynecháš pomlčku před <code>A</code>,
+tak se chyba vypíše na terminál a <code>grep</code> zpracuje jen prázdný soubor:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps -A <span class="p">|</span> grep top
+<span class="gp">[petr@fedora ~]$ </span>ps A <span class="p">|</span> grep top
+<span class="go">error: unsupported option (BSD syntax)</span>
+<span class="gp gp-VirtualEnv">(...)</span>
+</pre></div><h3>Přesměrovat všechno</h3>
+<p>Vraťme se na chvíli k Pythonu.</p>
+<p>V terminálu A spusť aktuální program.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py
+<span class="go">7305</span>
+<span class="go">3 4</span>
+<span class="go">b'## soubory'</span>
+<span class="go">Tohle jde do souboru 1</span>
+<span class="go">Tohle jde do souboru 2</span>
+</pre></div><p>Měly by se ti vypsat všechny tyto informace na terminál.</p>
+<p>A co se stane, když přesměruješ výstup programu a pak zmáčkneš <kbd>Ctrl</kbd>+<kbd>C</kbd>?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py &gt; jiny.txt
+<span class="go">Tohle jde do souboru 2</span>
+<span class="go">Traceback (most recent call last):</span>
+<span class="go">  File "soubory.py", line 21, in &lt;module&gt;</span>
+<span class="go">    print(os.read(0, 10))</span>
+<span class="go">KeyboardInterrupt</span>
+</pre></div><p>Výstup – všechno kromě chybového výstupu – je v souboru <code>jiny.txt</code>.
+Chybová hláška ale jde do chybového výstupu, tedy stále do terminálu.</p>
+<p>Co kdybys ale přece jen chtěla přesměrovat ten druhý, chybový, výstup?
+Existuje na to speciální operátor <code>2&gt;</code> - tedy přesměrování souboru číslo 2.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubor.py <span class="m">2</span>&gt; jiny.txt
+<span class="go">7388</span>
+<span class="go">3 4</span>
+<span class="go">b'## soubory'</span>
+<span class="go">Tohle jde do souboru 1</span>
+<span class="go">^C</span>
+<span class="gp">$ </span>cat jiny.txt 
+<span class="go">Tohle jde do souboru 2</span>
+<span class="go">Traceback (most recent call last):</span>
+<span class="go">  File "soubory.py", line 21, in &lt;module&gt;</span>
+<span class="go">    print(os.read(0, 10))</span>
+<span class="go">KeyboardInterrupt</span>
+</pre></div><h4>Přesměrování obojího</h4>
+<p>Můžeš přesměrovat i oba výstupy:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py &gt; vystup.txt <span class="m">2</span>&gt; chyby.txt
+<span class="go">^C$ cat vystup.txt </span>
+<span class="go">Tohle jde do souboru 1</span>
+<span class="go">7423</span>
+<span class="go">3 4</span>
+<span class="go">b'## soubory'</span>
+<span class="gp">$ </span>cat chyby.txt 
+<span class="go">Tohle jde do souboru 2</span>
+<span class="go">Traceback (most recent call last):</span>
+<span class="go">  File "soubory.py", line 21, in &lt;module&gt;</span>
+<span class="go">    print(os.read(0, 10))</span>
+<span class="go">KeyboardInterrupt</span>
+</pre></div><p>Když přesměrováváš do různých souborů, tak nezáleží na pořadí <code>&gt;</code> a <code>2&gt;</code>.</p>
+<p>Když ale použiješ dvakrát stejný soubor (např. <code>&gt; jiny.txt 2&gt; jiny.txt</code>),
+narazíš na problém: v souboru se většinou objeví jen jeden z výsledků.
+Když je jeden soubor otevřený pro čtení dvakrát, a zapisuje se do obou
+deskriptorů zároveň, obvykle „vyhraje“ jen jeden.</p>
+<p>Bash má na řešení této situace speciální operátor:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span>python soubory.py &gt; jiny.txt <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<span class="gp">#                               </span>^--- chybový směruje tam, kam první
+</pre></div><p>Kdyby v příkazu nebyl <code>&amp;</code>, výstup se přesměruje do souboru s názvem <code>1</code>.
+<code>&amp;1</code> ale „odkazuje“ na deskriptor 1, tedy <code>jiny.txt</code>.</p>
+<p>Tady už záleží v jakém pořadí se skládají příkazy, protože tohle fungovat nebude:</p>
+<div class="highlight"><pre><code>#                  ,-------- 1. přesměruje stderr na stdout, tedy na terminál
+#                  |    ,--- 2. přesměruje stdout do souboru
+#                  ↓    ↓
+$python soubory.py 2&gt;&amp;1 &gt; jiny</code></pre></div><p>Proto <em>stderr</em> půjde na terminál a <em>stdout</em> do souboru.</p>
+<h3>Přesměrování vstupu</h3>
+<p>Pro úplnost si ukážeme i přesměrování standardnho vstupu.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py &lt; jiny.txt
+<span class="go">7481</span>
+<span class="go">3 4</span>
+<span class="go">b'## soubory'</span>
+<span class="go">Tohle jde do souboru 1</span>
+<span class="go">Tohle jde do souboru 2</span>
+<span class="go">b'abcd\n jde '</span>
+</pre></div><p>Poslední řádek je vstup načtený ze souboru <code>jiny.txt</code>.
+Podívej se na soubor 0 ve výpisu <code>lsof</code> – standardní vstup je nastaven na
+„opravdový“ soubor na disku.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>lsof -p <span class="m">7481</span>
+<span class="go">...</span>
+<span class="go">python  7481 user 0r REG 253,0 150 299463294 /home/user/bash/03/jiny.txt</span>
+<span class="go">...</span>
+</pre></div><p>Když data „přitečou“ rourou, bude standardní vstup vypadat ještě trochu jinak.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat jiny.txt <span class="p">|</span> python soubory.py
+<span class="go">7485</span>
+<span class="go">3 4</span>
+<span class="go">b'## soubory'</span>
+<span class="go">Tohle jde do souboru 1</span>
+<span class="go">Tohle jde do souboru 2</span>
+<span class="go">b'abcd\n jde '</span>
+</pre></div><p>Podívej se na výpis <code>lsof</code>, na soubor číslo 0:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>lsof -p <span class="m">7485</span>
+<span class="go">...</span>
+<span class="go">python  7485 user 0r FIFO 0,12 0t0 1352745 pipe</span>
+<span class="go">...</span>
+</pre></div><p>Ono <code>pipe</code> znamená <em>roura</em>.
+Stejně jako terminál (např. <code>/dev/pts/0</code>) není obsah roury uložený na disku
+(data „proudí“ přímo z jednoho procesu do druhého).
+Na rozdíl od terminálu ale roura ani nemá jméno: nemůžeš udělat
+<code>echo Ahoj &gt; /dev/pts/0</code> jako u terminálu.
+S rourou může pracovat jen proces, který už ji má k dispozici.
+V tomto případě rouru vytvořil Bash, jeden její konec dal procesu <code>cat</code>
+a druhý procesu <code>python</code>.</p>
+<div class="admonition note"><p class="admonition-title">Odbočka pro zvídavé</p>
+<p>Přesměrování funguje i s jinými čísly než 2, a to i se vstupem.
+Například:</p>
+<div class="highlight"><pre><code>console $ python soubory.py 8&lt; jiny.txt</code></pre></div><p>Soubor <code>jiny.txt</code> se takto předá Pythonu na zpracování jako <code>8r</code> (když
+se podíváš do <code>lsof</code>).
+Dá se pak přečíst např. pomocí <code>os.read(8, 10)</code>.
+Jen čísla 0, 1, 2 mají určený význam, ostatní můžeš používat dle libosti.
+Jen pozor že <code>open</code> nebo <code>os.open</code> si nějaké číslo „zamluví“ pro sebe.</p>
+</div><h2>Zahození výstupu</h2>
+<p>Zvláštní případ použití je přesměrování některého výstupu do speciálního
+souboru, který si nic z toho co se do něj píše, neukládá.
+Jmenuje se <code>/dev/null</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python soubory.py <span class="m">2</span>&gt; /dev/null
+</pre></div><p>Celý chybový výstup se tak „vyhodí“.</p>
+<div class="admonition note"><p><code>/dev/null</code> není ani normální soubor, ani terminál, ani roura.
+Je to další druh speciálního souboru.</p>
+</div><p>Jiný příklad - jsou programy, které píšou do terminálu spoustu výstupu.
+Třeba <code>find</code>.
+Pokud chceš vidět jen problémy, ale ne nalezené soubory, můžeš přesměrovat
+standardní výstup do <code>/dev/null</code> a v terminálu uvidíš jen chybová hlášení
+– tady o tom, že k některým souborům nemáš přístup:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>find /var/cache &gt; /dev/null
+<span class="go">find: … Permision denied</span>
+</pre></div><p>Nebo naopak můžeš mít tolik souborů k nimž nemáš přístup,
+že se ti ani nebude chtít o tom číst; chceš jen dostat ty ke kterým přístup máš.
+Pak si do <code>/dev/null</code> přesměruješ chybový výstup:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>find /var/cache <span class="m">2</span>&gt; /dev/null
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/process/">← <span class="d-none d-sm-inline">Procesy</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-3/">↑ <span class="d-none d-sm-inline">Lekce: Procesy &amp; deskriptory souborů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/fork-teaser/"><span class="d-none d-sm-inline">Bonus: Funkce, které ovládají proces</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/fd/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Karolina Surma, Martin Pavlásek a Petr Viktorin, 2020-2021</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,361 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                MI-PYT (Pokročilý Python): Click – Rozhraní pro příkazovou řádku
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/click/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/mipyt-zima/">MI-PYT (Pokročilý Python)</a>
+
+> <a href="/2019/mipyt-zima/sessions/requests-click/">Weboví klienti &amp; CLI – Requests a Click</a>
+
+> <a href="/2019/mipyt-zima/intro/click/">Click – Rozhraní pro příkazovou řádku</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>click</h1>
+<p>Nechme internety na chvíli být a pojďme se podívat na úplně jinou knihovnu,
+<a href="https://click.palletsprojects.com/en/7.x/">click</a>.</p>
+<p>Knihovna <code>click</code> slouží k vytváření rozhraní pro příkazovou řádku
+(angl. <em>command line interface</em>, CLI).
+Primárně to je zpracování argumentů, ale click umí zjednodušit i výstup.</p>
+<p>Click je dobré používat s knihovnou <code>colorama</code>, která se stará o obarvování
+textu na příkazové řádce ve Windows (a na Unixu nedělá nic).
+Nainstalujte si tedy obě:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python -m pip install click colorama
+</pre></div><h2>Argumenty příkazové řádky</h2>
+<p>Nástroje na zpracování argumentů z CLI jsou i přímo ve standardní knihovně,
+a dokonce jich není málo: <a href="https://docs.python.org/3/library/os.html#os.environ">os.environ</a>, <a href="https://docs.python.org/3/library/argparse.html">argparse</a>, <a href="https://docs.python.org/3/library/optparse.html">optparse</a>, <a href="https://docs.python.org/3/library/getopt.html">getopt</a>.
+S knihovnou <code>click</code> je ale práce mnohem příjemnější a výsledky většinou
+lépe odpovídají zavedeným konvencím.</p>
+<div class="admonition note"><p>Cena za jednoduchost a konzistenci je, že některé styly návrhu CLI click
+nepodporuje.
+Máte-li existující rozhraní, které chcete jen převést do Pythonu,
+click nejspíš nebude nejlepší volba.</p>
+</div><p>Takto jednoduše se dá vytvořit aplikace s přepínači:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">click</span>
+
+<span class="nd">@click.command</span><span class="p">()</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">'--count'</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="n">metavar</span><span class="o">=</span><span class="s1">'COUNT'</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">'Number of greetings.'</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">'--name'</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="s1">'Your name'</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">'NAME'</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">'The person to greet.'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">"""Simple program that greets NAME for a total of COUNT times."""</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">f</span><span class="s1">'Hello {name}!'</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">hello</span><span class="p">()</span>
+</pre></div><p>Vyzkoušejte si ji! Máte-li ji uloženou jako <code>hello.py</code>, zkuste:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>python hello.py
+<span class="gp">$ </span>python hello.py --help
+<span class="gp">$ </span>python hello.py --name Pythonista
+<span class="gp">$ </span>python hello.py --count <span class="m">5</span>
+</pre></div><h2>Příkazy a přepínače</h2>
+<p>Funkce s dekorátorem <code>@click.command</code> je <em>příkaz</em> – když ji zavoláte,
+click zpracuje argumenty příkazové řádky a zavolá původní funkci
+s příslušnými pythonními hodnotami.
+Proto se dává do bloku <code>if __name__ == '__main__':</code>, který se spustí, jen
+když se pythonní soubor spoustí „přímo“.
+Když je soubor importován, tenhle blok se neprovede.</p>
+<p>Dekorátory <code>@click.option</code> a <code>@click.argument</code> pak přidávají přepínače
+a argumenty.</p>
+<p><a href="https://click.palletsprojects.com/en/7.x/options/"><em>Přepínače</em></a> (angl. <em>options</em>), přidávané pomocí <code>option</code>, jsou nepovinné
+parametry, kterými se nějak obměňuje chování programu.
+Pokud uživatel nějaký přepínač nezadá, použije se hodnota zadaná jako <code>default</code>
+(nebo <code>None</code>, když <code>default</code> chybí).</p>
+<p>Podle <code>default</code> se řídí i typ argumentu, není-li dán explicitně.
+Takže <code>count</code> v příkladu výše je celé číslo.</p>
+<p>Jména přepínačů začínají, podle Unixové konvence, pomlčkami: jednou pomlčkou
+pro jednopísmenné zkratky, dvěma pomlčkami pro vícepísmenná jména.
+Jeden přepínač může mít i víc jmen.</p>
+<p>Speciální případ jsou booleovské přepínače, které mají jedno jméno
+pro <code>True</code> a jiné pro <code>False</code>. Lze samozřejmě také vytvořit bezhodnotový
+přepínač pomocí <code>is_flag</code>.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">click</span>
+
+<span class="nd">@click.command</span><span class="p">()</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">'-n'</span><span class="p">,</span> <span class="s1">'--name'</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">'world'</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">'Name of the person to greet'</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">'-c/-C'</span><span class="p">,</span> <span class="s1">'--color/--no-color'</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">'Make the output colorful'</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">'-v'</span><span class="p">,</span> <span class="s1">'--verbose'</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">'More verbose output'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">color</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">)</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">f</span><span class="s1">'Hello {name}!'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s1">'Nice to meet you.'</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">hello</span><span class="p">()</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>python hello.py
+<span class="go">Hello world!</span>
+<span class="gp">$ </span>python hello.py --name Guido
+<span class="go">Hello Guido!</span>
+<span class="gp">$ </span>python hello.py --name Jane -v
+<span class="go">Hello Jane!</span>
+<span class="go">Nice to meet you.</span>
+<span class="gp">$ </span>python hello.py -n <span class="s1">'Mr. Git'</span>
+<span class="go">Hello Mr. Git!</span>
+<span class="gp">$ </span>python hello.py --help
+<span class="go">Usage: hello.py [OPTIONS]</span>
+
+<span class="go">Options:</span>
+<span class="go">  -n, --name TEXT               Name of the person to greet</span>
+<span class="go">  -c, --color / -C, --no-color  Make the output colorful</span>
+<span class="go">  --help                        Show this message and exit.</span>
+</pre></div><p>Přepínač <code>--help</code> přidává click sám.</p>
+<h2>Argumenty</h2>
+<p>Kromě přepínačů podporuje click i <a href="https://click.palletsprojects.com/en/7.x/arguments/"><em>argumenty</em></a>.
+Přepínače musí uživatel na řádce pojmenovat; argumenty se zadávají beze jména,
+ale záleží u nich na pořadí.
+Používají se ve dvou případech: pro povinné parametry a pro parametry, kterých
+může být zadán libovolný počet.
+Na všechno ostatní radši použijte přepínače.</p>
+<p>Například příkaz <code>cd</code> potřebuje jeden argument: jméno adresáře,
+do kterého má přepnout.
+Jeho rozhraní by v clicku vypadalo takto:</p>
+<div class="highlight"><pre><span></span><span class="nd">@click.command</span><span class="p">()</span>
+<span class="nd">@click.argument</span><span class="p">(</span><span class="s1">'directory'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">cd</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+    <span class="sd">"""Change the current directory"""</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">f</span><span class="s1">'Changing to directory {directory}'</span><span class="p">)</span>
+</pre></div><p>Proměnný počet argumentů se zadává pomocí <code>nargs=-1</code> (0 nebo víc argumentů)
+nebo <code>nargs=-1, required=True</code> (1 nebo víc).</p>
+<p>Například příkaz <code>mv</code> bere <var>N</var> souborů a adresář, kam je přesune.
+Takové rozhraní by v clicku vypadalo následovně:</p>
+<div class="highlight"><pre><span></span><span class="nd">@click.command</span><span class="p">()</span>
+<span class="nd">@click.argument</span><span class="p">(</span><span class="s1">'source'</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="nd">@click.argument</span><span class="p">(</span><span class="s1">'destination'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">mv</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
+    <span class="sd">"""Move any number of files to one destination"""</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">f</span><span class="s1">'Moving {filename} to {destination}'</span><span class="p">)</span>
+</pre></div><h2>Soubory</h2>
+<p>Má-li uživatel zadat jméno souboru, nepoužívejte řetězce, ale speciální typ
+<a href="https://click.palletsprojects.com/en/7.x/api/#click.File"><code>click.File()</code></a>.
+Click za vás soubor automaticky otevře a zavře.
+Kromě toho podporuje unixovskou konvenci, že <code>-</code> znamená standardní
+vstup/výstup.</p>
+<p>Argument pro <code>File</code> je mód, ve kterém se soubor otevírá, podobně jako pro
+funkci <a href="https://docs.python.org/3/library/functions.html#open"><code>open</code></a>:
+<code>'r'</code> pro čtení, <code>'w'</code> pro zápis.</p>
+<div class="highlight"><pre><span></span><span class="nd">@click.command</span><span class="p">()</span>
+<span class="nd">@click.argument</span><span class="p">(</span><span class="s1">'files'</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">'r'</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">cat</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="sd">"""Print out the contents of the given files"""</span>
+    <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">end</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+</pre></div><p>Existuje i varianta <a href="https://click.palletsprojects.com/en/7.x/api/#click.Path"><code>click.Path()</code></a>,
+která soubor neotvírá. Pomocí ní jde např. zadat jméno adresáře. Click takto 
+poskytuje i jiné <a href="https://click.palletsprojects.com/en/7.x/api/#types">další typy</a>.</p>
+<h2>Validace vstupů</h2>
+<p>Vstupy získané z přepínačů i argumentů lze ověřit pomocí 
+vlastních podmínek a podle toho naprogramovat chování včetně
+chybových hlášek. Click však opět nabízí pohodlnější způsob, 
+a to pomocí <a href="https://click.palletsprojects.com/en/7.x/options/#callbacks-for-validation"><code>callback</code></a>.
+V rámci callback funkce můžete ověřit libovolně hodnotu a/nebo
+ji vhodně transformovat. Pokud hodnota neodpovídá požadavkům, 
+můžete použít vyjímku <a href="https://click.palletsprojects.com/en/7.x/api/#click.UsageError"><code>click.UsageError</code></a>
+nebo <a href="https://click.palletsprojects.com/en/7.x/api/#click.BadParameter"><code>click.BadParameter</code></a>
+(vztahuje-li se přímo ke konkrétnímu parametru). Click se pak 
+sám postará o případné ukončení programu s odpovídající chybovou
+hláškou a kódem.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">validate_username</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">8</span> <span class="ow">and</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">'^[a-zA-Z]+[0-9]*$'</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">'not valid CTU username'</span><span class="p">)</span>
+
+<span class="nd">@click.command</span><span class="p">()</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">'-u'</span><span class="p">,</span> <span class="s1">'--username'</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">validate_username</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">email</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">f</span><span class="s1">'{username}@fit.cvut.cz'</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">email</span><span class="p">()</span>
+</pre></div><h2>Podpříkazy</h2>
+<p>Click má dobrou podporu pro <em>podpříkazy</em> známé z verzovacích systémů jako git:
+příkaz <code>git</code> sám o sobě nedělá nic, jen sdružuje podpříkazy jako <code>git add</code>
+a <code>git commit</code>.</p>
+<p>Umí-li váš program více akcí, souhrnný příkaz označte <code>@click.group()</code>
+a jednotlivé podpříkazy pak přidávejte pomocí <code>command()</code>:</p>
+<div class="highlight"><pre><span></span><span class="nd">@click.group</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">git2</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+<span class="nd">@git2.command</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">commit</span><span class="p">():</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">edit</span><span class="p">(</span><span class="s1">'Made some changes'</span><span class="p">)</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">f</span><span class="s1">'Making commit with message: {message}'</span><span class="p">)</span>
+
+<span class="nd">@git2.command</span><span class="p">()</span>
+<span class="nd">@click.argument</span><span class="p">(</span><span class="s1">'files'</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">f</span><span class="s1">'Adding {file}'</span><span class="p">)</span>
+</pre></div><h2>A další</h2>
+<p>Tahle lekce není popis všeho, co click umí – je to jen ochutnávka,
+abyste věděli, co od téhle knihovny očekávat.</p>
+<p>Click má velice dobrou <a href="https://click.palletsprojects.com/en/7.x/">dokumentaci</a>, ve které najdete detaily i všechny
+ostatní možnosti.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/intro/click/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/mipyt-zima/intro/requests/">← <span class="d-none d-sm-inline">Requests – Weboví klienti</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/mipyt-zima/sessions/requests-click/">↑ <span class="d-none d-sm-inline">Lekce: Weboví klienti &amp; CLI – Requests a Click</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/mipyt-zima/sessions/requests-click/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-mipyt-zima/lessons/intro/click/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Miro Hrončok, Petr Viktorin a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

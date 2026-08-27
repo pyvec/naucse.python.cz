@@ -1,0 +1,306 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz v Tieto Czech: Abstraction - Functions
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/tieto-ostrava-jaro/">Začátečnický kurz v Tieto Czech</a>
+
+> <a href="/2019/tieto-ostrava-jaro/sessions/abstraction-functions/">Abstrakce - Funkce</a>
+
+> <a href="/2019/tieto-ostrava-jaro/beginners/tieto-functions/">Abstraction - Functions</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h2>Abstraction - Functions</h2>
+<p>In Python, function is a group of related statements that perform a specific task.</p>
+<p>Functions help break our program into smaller and modular chunks. As our program grows larger and larger, functions make it more organized and manageable.</p>
+<p>Furthermore, it avoids repetition and makes code reusable.</p>
+<p>A function is something you can call (optionally with some parameters). Function is providing some action and returns some value.</p>
+<p>In Python we can declare function like this:</p>
+<div class="highlight"><pre><code>def name(parameter1, parameter2,...):
+    body</code></pre></div><p>Simple example:</p>
+<div class="highlight"><pre><code>def hello(name):
+     return 'Hello, ' + name + '!'</code></pre></div><p>Function hello returns string with a greeting and name given as a parameter.
+We can call this function like this:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; print(hello('world'))
+Hello, world!
+&gt;&gt;&gt; print(hello('Peter'))
+Hello, Peter!</code></pre></div><h3>Documenting functions</h3>
+<p>You should document your functions, so you (or others!) will later understand, what is the purpose of the functon, which parameters areaccepting and what value returns.</p>
+<p>How to document functions? If you put the documentation string on the line below the function declaration, you will create so called <em>docstring</em>.</p>
+<div class="highlight"><pre><code>def multiple(x):
+    'Multiplication of the number x.'
+    return x * x</code></pre></div><p>You can then access the documentation of the function like this:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; def multiple(x):
+...     'Multiplication of the number x.'
+...     return x * x
+...
+&gt;&gt;&gt; multiple.__doc__
+'Multiplication of the number x.'</code></pre></div><div class="admonition note"><p class="admonition-title">__doc__ is a function attribute.</p>
+</div><h3>The return statement</h3>
+<p>The return statement is used to exit a function and go back to the place from where it was called.</p>
+<p>Syntax:</p>
+<div class="highlight"><pre><code>return [expression_list]</code></pre></div><h3>Types of Functions</h3>
+<p><strong>Build-in</strong></p>
+<p>chr()   -   Returns a Character (a string) from an Integer</p>
+<p>dict()  -   Creates a Dictionary
+...</p>
+<p><strong>User-defined</strong></p>
+<p>User-Defined Functions (UDFs). All the other functions that we write on our own fall under user-defined functions. So, our user-defined function could be a library function to someone else.</p>
+<p><strong>Anonymous functions</strong></p>
+<p>Also called lambda functions, because they are not declared with the standard def keyword.</p>
+<h3>Parameters</h3>
+<p>Your function should do its job with supplied (correct) parameters and fails if the parameters are wrong.</p>
+<p>Assigning a new value to a parameter inside a function won't change the outside code.</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; def try_change_variable(n):
+...  n = 'Hello World'
+...
+&gt;&gt;&gt; name = 'Hello Tieto'
+&gt;&gt;&gt; try_change_variable(name)
+&gt;&gt;&gt; name
+'Hello Tieto'</code></pre></div><div class="admonition note"><p class="admonition-title">Parameters are in *local scope*.</p>
+</div><div class="admonition warning"><p class="admonition-title">Please be careful about changing mutable data structure:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; def change(n):
+...  n[0] = 'Mr. Foo'
+...
+&gt;&gt;&gt; names = ['Mr. Bar', 'Mr. Baz']
+&gt;&gt;&gt; change(names)
+&gt;&gt;&gt; names
+['Mr. Foo', 'Mr. Baz']</code></pre></div></div><p><strong>There are four types of arguments that Python UDFs can take:</strong></p>
+<ul>
+<li>Default arguments</li>
+<li>Required arguments</li>
+<li>Keyword arguments</li>
+<li>Variable number of arguments</li>
+</ul>
+<h4>Default arguments</h4>
+<p>Default arguments are those that take a default value if no argument value is passed during the function call. You can assign this default value by with the assignment operator =, just like in the following example:</p>
+<div class="highlight"><pre><code>def plus(a, b=2):
+  return a + b
+
+# Call `plus()` with only `a` parameter
+plus(a=1)
+
+# Call `plus()` with `a` and `b` parameters
+plus(a=1, b=3)</code></pre></div><h4>Required arguments</h4>
+<p>The required arguments of a UDF are those that have to be in there. These arguments need to be passed during the function call and in exactly the right order, just like in the following example:</p>
+<div class="highlight"><pre><code>def plus(a, b):
+  return a/b</code></pre></div><h4>Keyword Arguments</h4>
+<p>If you want to make sure that you call all the parameters in the right order, you can use the keyword arguments in your function call. You use these to identify the arguments by their parameter name.</p>
+<div class="highlight"><pre><code>def  hello_1(greeting, name):
+     print('{}, {}!'.format(greeting, name))</code></pre></div><div class="highlight"><pre><code>&gt;&gt;&gt; hello_1(greeting='Hello', name='world')
+Hello, world!
+&gt;&gt;&gt; hello_1(name='world', greeting="Hello")
+Hello, world!</code></pre></div><h3>Variable Number of Arguments</h3>
+<p>In cases where you don’t know the exact number of arguments that you want to pass to a function, you can use the following syntax with *args:</p>
+<div class="highlight"><pre><code># Define `plus()` function to accept a variable number of arguments
+def plus(*args):
+  return sum(args)
+
+# Calculate the sum
+&gt;&gt;&gt; plus(1,4,5)
+10</code></pre></div><h3>Usage of *args</h3>
+<p><em>args and **kwargs are mostly used in function definitions. </em>args and *<em>kwargs allow you to pass a variable number of arguments to a function. What does variable mean here is that you do not know before hand that how many arguments can be passed to your function by the user so in this case you use these two keywords. </em>args is used to send a non-keyworded variable length argument list to the function.</p>
+<div class="highlight"><pre><code>def test_var_args(f_arg, *argv):
+    print "first normal arg:", f_arg
+    for arg in argv:
+        print "another arg through *argv :", arg
+
+test_var_args('yasoob','python','eggs','test')</code></pre></div><div class="highlight"><pre><code>first normal arg: yasoob
+another arg through *argv : python
+another arg through *argv : eggs
+another arg through *argv : test</code></pre></div><h3>Usage of **kwargs</h3>
+<p>**kwargs allows you to pass keyworded variable length of arguments to a function. You should use **kwargs if you want to handle named arguments in a function.</p>
+<div class="highlight"><pre><code>def greet_me(**kwargs):
+    if kwargs is not None:
+        for key, value in kwargs.iteritems():
+            print("%s == %s" %(key,value))</code></pre></div><div class="highlight"><pre><code>&gt;&gt;&gt; greet_me(name="yasoob")
+name == yasoob</code></pre></div><h3>Global vs Local Variables</h3>
+<p>In general, variables that are defined inside a function body have a local scope, and those defined outside have a global scope. That means that local variables are defined within a function block and can only be accessed inside that function, while global variables can be accessed by all functions that might be in your script:</p>
+<div class="highlight"><pre><code># Global variable `init`
+init = 1
+
+# Define `plus()` function to accept a variable number of arguments
+def plus(*args):
+  # Local variable `sum()`
+  total = 0
+  for i in args:
+    total += i
+  return total
+
+# Access the global variable
+print("this is the initialized value " + str(init))
+
+# (Try to) access the local variable
+print("this is the sum " + str(total))</code></pre></div><h3>Anonymous Functions</h3>
+<p>Anonymous functions are also called lambda functions in Python because instead of declaring them with the standard def keyword, you use the lambda keyword.</p>
+<div class="highlight"><pre><code>double = lambda x: x*2
+
+double(5)</code></pre></div><p>Another example of lambda function:</p>
+<div class="highlight"><pre><code># `sum()` lambda function
+sum = lambda x, y: x + y;
+
+# Call the `sum()` anonymous function
+sum(4,5)
+
+# UDF equivalent
+def sum(x, y):
+  return x+y</code></pre></div><h4>Using main() as a Function</h4>
+<p>In many programming languages, main function is required in order to execute functions. Not in Python, but you might want to write code like this:</p>
+<div class="highlight"><pre><code># Define `main()` function
+def main():
+  hello()
+  print("This is a main function")
+
+# Execute `main()` function 
+if __name__ == '__main__':
+    main()</code></pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/tieto-ostrava-jaro/sessions/abstraction-functions/">↑ <span class="d-none d-sm-inline">Lekce: Abstrakce - Funkce</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/tieto-ostrava-jaro/sessions/abstraction-functions/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-tieto-ostrava-jaro/lessons/beginners/tieto-functions/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro Tieto Czech s.r.o. napsal Lumír Jasiok, 2018</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

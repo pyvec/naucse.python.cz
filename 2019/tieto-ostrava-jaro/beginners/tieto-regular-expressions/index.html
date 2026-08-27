@@ -1,0 +1,261 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz v Tieto Czech: Regular expressions
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/tieto-ostrava-jaro/">Začátečnický kurz v Tieto Czech</a>
+
+> <a href="/2019/tieto-ostrava-jaro/sessions/regular-expressions/">Regulární výrazy, balíky, Fabric</a>
+
+> <a href="/2019/tieto-ostrava-jaro/beginners/tieto-regular-expressions/">Regular expressions</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h2>Regular expressions</h2>
+<p>A regular expression is a special sequence of characters that helps you match or find other strings or sets of strings, using a specialized syntax held in a pattern. Regular expressions are widely used in UNIX world.</p>
+<p>The module re provides full support for Perl-like regular expressions in Python. The re module raises the exception re.error if an error occurs while compiling or using a regular expression.</p>
+<h3>The match Function</h3>
+<p>Match syntax</p>
+<div class="highlight"><pre><code>re.match(pattern, string, flags=0)</code></pre></div><p><strong>pattern</strong> - This is the regular expression to be matched.</p>
+<p><strong>string</strong> - This is the string, which would be searched to match the pattern at the beginning of string.</p>
+<p><strong>flags</strong> - You can specify different flags using bitwise OR (|).</p>
+<p>The re.match function returns a match object on success, None on failure. We usegroup(num) or groups() function of match object to get matched expression.</p>
+<p><strong>group(num=0)</strong> - This method returns entire match (or specific subgroup num)</p>
+<p><strong>groups()</strong> - This method returns all matching subgroups in a tuple (empty if there weren't any)</p>
+<p>Example:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; import re
+&gt;&gt;&gt;
+&gt;&gt;&gt; line = "Cats are smarter than dogs"
+&gt;&gt;&gt; matchObj = re.match( r'(.*) are (.*?) .*', line, re.M|re.I)
+&gt;&gt;&gt; matchObj
+&lt;re.Match object; span=(0, 26), match='Cats are smarter than dogs'&gt;
+&gt;&gt;&gt; if matchObj:
+...  print("matchObj.group() : ", matchObj.group())
+...  print("matchObj.group(1) : ", matchObj.group(1))
+...  print("matchObj.group(2) : ", matchObj.group(2))
+... else:
+...  print("No match")
+...
+matchObj.group() :  Cats are smarter than dogs
+matchObj.group(1) :  Cats
+matchObj.group(2) :  smarter</code></pre></div><h3>The search Function</h3>
+<p>This function searches for first occurrence of RE pattern within string with optional flags.</p>
+<div class="highlight"><pre><code>re.search(pattern, string, flags=0)</code></pre></div><p>The re.search function returns a match object on success, none on failure. We use group(num) or groups() function of match object to get matched expression.</p>
+<p>Example:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; import re
+&gt;&gt;&gt;
+&gt;&gt;&gt; line = "Cats are smarter than dogs";
+&gt;&gt;&gt;
+&gt;&gt;&gt; searchObj = re.search( r'(.*) are (.*?) .*', line, re.M|re.I)
+&gt;&gt;&gt;
+&gt;&gt;&gt; if searchObj:
+...  print("searchObj.group() : ", searchObj.group())
+...  print("searchObj.group(1) : ", searchObj.group(1))
+...  print("searchObj.group(2) : ", searchObj.group(2))
+... else:
+...  print("Nothing found")
+...
+searchObj.group() :  Cats are smarter than dogs
+searchObj.group(1) :  Cats
+searchObj.group(2) :  smarter</code></pre></div><h3>Matching Versus Searching</h3>
+<p>Python offers two different primitive operations based on regular expressions: match checks for a match only at the beginning of the string, while search checks for a match anywhere in the string (this is what Perl does by default).</p>
+<p>Example:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; import re
+&gt;&gt;&gt;
+&gt;&gt;&gt; line = "Cats are smarter than dogs";
+&gt;&gt;&gt;
+&gt;&gt;&gt; matchObj = re.match( r'dogs', line, re.M|re.I)
+&gt;&gt;&gt;
+&gt;&gt;&gt; if matchObj:
+...  print("match --&gt; matchObj.group() : ", matchObj.group())
+... else:
+...  print("No match")
+...
+No match
+&gt;&gt;&gt; searchObj = re.search( r'dogs', line, re.M|re.I)
+&gt;&gt;&gt; if searchObj:
+...  print("search --&gt; searchObj.group() : ", searchObj.group())
+... else:
+...  print("Nothing found")
+...
+search --&gt; searchObj.group() :  dogs</code></pre></div><h3>Search and Replace</h3>
+<p>One of the most important re methods that use regular expressions is sub.</p>
+<div class="highlight"><pre><code>re.sub(pattern, repl, string, max=0)</code></pre></div><p>This method replaces all occurrences of the RE pattern in string with repl, substituting all occurrences unless max provided. This method returns modified string.</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; import re
+&gt;&gt;&gt;
+&gt;&gt;&gt; phone = "2004-959-559 # This is Phone Number"
+&gt;&gt;&gt; num = re.sub(r'#.*$', "", phone)
+&gt;&gt;&gt; print("Phone Num : ", num)
+Phone Num :  2004-959-559
+&gt;&gt;&gt; num = re.sub(r'\D', "", phone)
+&gt;&gt;&gt; print("Phone Num : ", num)
+Phone Num :  2004959559</code></pre></div><p>First replace deletes Python-style comments, while second remove anything other than digits.</p>
+<h3>Regular Expression Modifiers, Option Flags</h3>
+<p><strong>re.I</strong> - Performs case-insensitive matching.</p>
+<p><strong>re.M</strong> - Makes $ match the end of a line (not just the end of the string) and makes ^ match the start of any line (not just the start of the string).</p>
+<p><strong>re.S</strong> - Makes a period (dot) match any character, including a newline.</p>
+<p><strong>re.U</strong> - Interprets letters according to the Unicode character set. This flag affects the behavior of \w, \W, \b, \B.</p>
+<h3>Regular Expression Patterns</h3>
+<p><strong>^</strong> - Matches beginning of line.</p>
+<p><strong>$</strong> - Matches end of line.</p>
+<p><strong>.</strong> - Matches any single character except newline. Using m option allows it to match newline as well.</p>
+<p><strong>\w</strong> - Matches word characters.</p>
+<p><strong>\W</strong> - Matches word characters.</p>
+<p><strong>\s</strong> - Matches whitespace. Equivalent to [\t\n\r\f].</p>
+<p><strong>\S</strong> - Matches nonwhitespace.</p>
+<p><strong>\d</strong> - Matches digits. Equivalent to [0-9].</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-fabric/">← <span class="d-none d-sm-inline">Paramiko, Netmiko and Fabric</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/tieto-ostrava-jaro/sessions/regular-expressions/">↑ <span class="d-none d-sm-inline">Lekce: Regulární výrazy, balíky, Fabric</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/tieto-ostrava-jaro/beginners/tieto-final-assignment/"><span class="d-none d-sm-inline">Final Assignment</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-tieto-ostrava-jaro/lessons/beginners/tieto-regular-expressions/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro Tieto Czech s.r.o. napsal Lumír Jasiok, 2018</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

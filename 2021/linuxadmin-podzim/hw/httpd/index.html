@@ -1,0 +1,189 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Úkol
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/mount/">Služby a webový server</a>
+
+> <a href="/2021/linuxadmin-podzim/hw/httpd/">Úkol</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Úkol – httpd</h1>
+<p>Nastav webový server tak, aby soubory z adresáře <code>public_html</code> ve tvém domovském adresáři byly k dispozici pod <code>http//:&lt;adresa&gt;/~&lt;jméno&gt;/</code>, např. <code>http://192.168.122.133/~petr/</code>.
+Budeš s tím dva problémy navíc:</p>
+<p>Instrukce jsou v souboru <code>/etc/httpd/conf.d/userdir.conf</code>. Komentář v tomhle souboru používá číselnou reprezentaci práv:</p>
+<ul>
+<li>711 znamená <code>rwx--x--x</code></li>
+<li>755 znamená <code>rwxr-xr-x</code></li>
+<li>příkaz <code>stat -c '%a %A %n' &lt;soubor&gt;</code> ti pro daný soubor vypíše práva v číselné i „normální“ reprezentaci</li>
+<li>Obecně každá číslice ukazuje jednu trojici práv (uživatel, skupina, ostatní) jako součet čísel 1 (<code>x</code>), 2 (<code>w</code>) a 4 (<code>x</code>).</li>
+</ul>
+<p>Na Fedoře je navíc zapnutý systém SELinux (Security Enhanced Linux), který z bezpečnostních důvodů znemožňuje přístup systémových služeb k uživatelským souborům. Budeou tedy potřeba ještě dva příkazy:</p>
+<ul>
+<li><code>sudo setsebool -P httpd_enable_homedirs on</code> povolí přístup <code>apache</code> k <code>/home/~/public_html</code></li>
+<li><code>sudo restorecon -R /home</code> aktualizuje informace u souborů v <code>/home</code></li>
+</ul>
+<p>Zajisti, aby ostatní uživatelé na systému neměli přístup ke tvému domovskému adresáři (kromě <code>public_html</code>).</p>
+<hr>
+<p>Zbývá jen dodat, že takhle se to dnes už nedělá – webové servery bývají
+na zvláštních (např. virtuálních) počítačích, kde běží pouze server.
+Uživatelé na takovém stroji nemají celé své domovské adresáře, ale jen
+obsah ke sdílení přes web.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/httpd-service/">← <span class="d-none d-sm-inline">Webový server</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/mount/">↑ <span class="d-none d-sm-inline">Lekce: Služby a webový server</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/sessions/mount/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/hw/httpd/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsal Petr Viktorin, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

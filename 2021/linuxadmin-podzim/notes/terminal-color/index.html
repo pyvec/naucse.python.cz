@@ -1,0 +1,237 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Barvičky v terminálu
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/containers/">Kontejnery</a>
+
+> <a href="/2021/linuxadmin-podzim/notes/terminal-color/">Barvičky v terminálu</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="admonition warning"><p>Tohle jsou jen poznámky, ne materiály k samostudiu.</p>
+</div><h1>Barvičky v terminálu</h1>
+<p>Když napíšeš <code>ls</code>, vypíše se barevný výstup. Jak to dělá? A hlavně, jak si to uděláš ty?</p>
+<p>Krátká odpověď je, že použiješ knihovnu, například Pythonní <a href="https://click.palletsprojects.com/en/8.0.x/api/#click.style">Click</a>, což je knihovna na uživatelská textová rozhraní.
+Taková knihovna se postará o veškerou správu: bude fungovat na různých terminálech, poradí si i se změnou velikostí okna terminálu a vyřeší spoustu dalších problémů.
+Pokud budeš chtít obarvovat textový výstup, je to nejlepší cesta, jak dosáhnout cíle.</p>
+<p>Je ale dobré vědět, na čem ty knihovny staví a jak to funguje na pozadí.
+Začneme nahlédnutím do prehistorie :)</p>
+<p>Původní terminály byly připojené k tiskárnám. 
+Po zadání příkazu do terminálu se požadovaný výstup vytiskl na papír.
+Neexistovala klávesa <kbd>Backspace</kbd> ani <kbd>ESC</kbd>, protože když jsi udělala překlep, už byl dávno vytisknutý na papíře. 
+Mohla jsi příkaz maximálně zrušit a napsat nový.
+Postupem času terminál získal nové funkce a začal ukazovat vepsaný text na obrazovce. 
+U těch nových, grafických terminálů už by šlo opravit překlep. 
+Jenže s touhle variantou se původně nepočítalo, a tak se řešilo, jak napsat na klávesnici <kbd>ESC</kbd>. 
+To řešení bylo, že když budeš chtít smazat písmeno, pošle se speciální řídící znak, který znamená mazání.
+Tak jako když zmáčkneš <kbd>Enter</kbd>, je to speciální znak <code>\n</code>, který přehodí kurzor na nový řádek, vznikl speciální znak, který posune kurzor o jedno místo zpátky a případně smaže poslední znak.</p>
+<p>Když se podíváš do tabulky ASCII (<code>man ascii</code>), zjistíš, že ta má na začátku spoustu řídících znaků. 
+Prvních 31 znaků na začátku jsou speciální znaky a mají různé významy jako začátek textu, začátek hlavičky, protože ASCII tabulka vychází z telegrafů a jiných forem komunikace ještě před internetem.</p>
+<p>Dnes se jich používá jen pár: nový řádek, tabulátor a pár dalších.</p>
+<p>Podívejme se ale na ten jeden konkrétní znak, 27 - ESC.
+To znamená útěk z toho módu, když se mají vykreslit písmenka na obrazovku, a informaci, že se bude dít něco navíc. 
+ESC uvozuje sekvenci znaku, která říká, co se má stát, např. <em>nastav barvu na červenou</em>.
+Znak s číslem 27 nejspíš na své klávesnici nenajdeš, a proto je čas na ukázku v Pythonu. 
+Hexadecimálně 27 je 1B.</p>
+<p>Vytvoř si soubor <code>barvicky.py</code> s obsahem níže:</p>
+<div class="highlight"><pre><span></span><span class="c1"># barvicky.py</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[1;31m slovo'</span><span class="p">)</span>
+</pre></div><p>Když ho spustíš, výpis v terminálu bude červený.</p>
+<div class="highlight"><pre><code>       +--- tzv. kontrolní sekvence, která nastavuje barvu
+       |
+    ------
+\x1B[1;31m
+----
+  |
+  +--- je jediný znak, a to ASCII ESC</code></pre></div><p>Kdy to přestane psát červeně? 
+Až zavřeš terminál, nebo až napíšeš reset sekvenci.</p>
+<p>Reset vypadá takto:</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[1;31m slovo   </span><span class="se">\x1B</span><span class="s1">[0m'</span><span class="p">)</span>
+</pre></div><p>1 znamená, že nastavuješ barvu, 31 je číslo konkrétní barvy.
+Můžeš si udělat duhu v terminálu - vyzkoušej si skript:</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[1;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">m slovo   </span><span class="se">\x1B</span><span class="s1">[0m'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[1;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">m slovo   </span><span class="se">\x1B</span><span class="s1">[0m'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[38;5;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">mM</span><span class="se">\x1B</span><span class="s1">[0m'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\x1B</span><span class="s1">[48;5;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">mM</span><span class="se">\x1B</span><span class="s1">[0m'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+</pre></div><p>S těmito sekvencemi bývá problém, protože existuje různé terminály a jejich dodavatelé si barvičky implementovali po svém. 
+To se sice standardizovalo do tak zvaných ANSI sekvencí, kterých ukázku vidíš ve skriptu výše, ale i tak nejlepší varianta je použít nějakou knihovnu jako již zmíněný Click.</p>
+<p>Existují další řídící sekvence, které umí pohybovat kurzorem.
+Jedna základní je <code>\r</code>, která posune kurzor na začátek řádku.
+Vykoušej si cyklus v příkladu níže.</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">"="</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">'</span><span class="se">\r</span><span class="s1">'</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div><p>Takto se například dají vykreslovat progress bary.
+Má to ale i svá úskalí – například změna velikosti terminálu nemusí dopadnout dobře.
+Pokud budeš mít za úkol napsát progress bar, určitě si na to nainstaluj knihovnu, která to správně vyřeší za tebe.</p>
+<p>Další sekvence umí smazat obrazovku, pohybovat kurzorem a podobně.</p>
+<p>Právě na tomto principu fungují terminálové editory.
+Kdybys přesvědčila <code>nano</code>, že to na co je napojený je terminál (což bohužel není snadné),
+mohla bys teoreticky udělat něco jako</p>
+<div class="highlight"><pre><code>$ nano &gt; /tmp/nano-vystup</code></pre></div><p>A výsledek si zobrazit třeba přes:</p>
+<div class="highlight"><pre><code>less /tmp/nano-vystup</code></pre></div><p>Zkus si to s příkazem <code>sl</code>, který je potřeba doinstalovat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo dnf install sl
+<span class="gp">$ </span>sl
+<span class="gp">$ </span>sl &gt; /tmp/sl
+<span class="gp">$ </span>cat /tmp/sl
+<span class="gp">$ </span>cat -t /tmp/sl   <span class="c1"># `cat -t` vypíše znak "escape" jako `^[`</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/containers/">↑ <span class="d-none d-sm-inline">Lekce: Kontejnery</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/containers/"><span class="d-none d-sm-inline">Kontejnery</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/notes/terminal-color/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsala Karolina Surma, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,324 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Úkol
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2025/brno-podzim-linuxadmin/">Linuxová administrace</a>
+
+> <a href="/2025/brno-podzim-linuxadmin/sessions/users/">Správa uživatelů</a>
+
+> <a href="/2025/brno-podzim-linuxadmin/hw/sudo/">Úkol</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1 id="ukoly_sprava_uzivatelu_sudo">Úkoly – Správa uživatelů, Sudo
+<a href="#ukoly_sprava_uzivatelu_sudo" class="header-link">#</a>
+</h1>
+<h2 id="_teoreticka_cast">🧠 Teoretická část
+<a href="#_teoreticka_cast" class="header-link">#</a>
+</h2>
+<h3 id="a_prace_se_soubory_a_vystupem">A. Práce se soubory a výstupem
+<a href="#a_prace_se_soubory_a_vystupem" class="header-link">#</a>
+</h3>
+<ol>
+<li>Co udělá příkaz <code>cat</code> a kdy je vhodné ho použít?</li>
+<li>Jaký je rozdíl mezi <code>less</code> a <code>cat</code>?</li>
+<li>K čemu slouží příkaz <code>head</code> a jak určíš, kolik řádků zobrazí?</li>
+<li>Jak bys zjistil, kolik má soubor řádků nebo slov?</li>
+<li>Jaký příkaz bys použil, pokud chceš zobrazit pouze posledních 10 řádků souboru?</li>
+</ol>
+<h3 id="b_uzivatele_skupiny_a_prava">B. Uživatelé, skupiny a práva
+<a href="#b_uzivatele_skupiny_a_prava" class="header-link">#</a>
+</h3>
+<ol>
+<li>Jaký je rozdíl mezi uživatelem a skupinou v Linuxu?</li>
+<li>Co znamenají jednotlivé části výpisu oprávnění u souboru (např. <code>-rw-r--r--</code>)?</li>
+<li>Jaký je rozdíl mezi vlastníkem souboru a skupinou souboru?</li>
+<li>Co obsahují soubory <code>/etc/passwd</code> a <code>/etc/shadow</code>?</li>
+<li>K čemu slouží příkaz <code>chmod</code> a jak se používá?</li>
+<li>K čemu slouží příkazy <code>useradd</code>, <code>groupadd</code>, <code>usermod</code>, <code>passwd</code>, <code>userdel</code> a <code>groupdel</code>?</li>
+</ol>
+<h2 id="_prakticka_cast">💻 Praktická část
+<a href="#_prakticka_cast" class="header-link">#</a>
+</h2>
+<h3 id="ukol_1_vytvoreni_skupin_a_uzivatelu">Úkol 1: Vytvoření skupin a uživatelů
+<a href="#ukol_1_vytvoreni_skupin_a_uzivatelu" class="header-link">#</a>
+</h3>
+<ol>
+<li>Vytvoř skupiny:<ul>
+<li><code>studenti</code></li>
+<li><code>ucitele</code></li>
+</ul>
+</li>
+<li>Vytvoř uživatele:<ul>
+<li><code>eva</code> (člen skupiny <code>studenti</code>)</li>
+<li><code>adam</code> (člen skupiny <code>studenti</code>)</li>
+<li><code>petr</code> (člen skupiny <code>ucitele</code>)</li>
+</ul>
+</li>
+<li>Nastav každému uživateli heslo (např. <code>test123</code>).</li>
+<li>Ověř, do jakých skupin uživatelé patří.</li>
+<li>Přidej uživatele <code>eva</code> také do skupiny <code>ucitele</code>.</li>
+<li>Smaž uživatele <code>adam</code> a skupinu <code>ucitele</code>.</li>
+</ol>
+<h3 id="ukol_2_prava_a_pristup_k_souborum">Úkol 2: Práva a přístup k souborům
+<a href="#ukol_2_prava_a_pristup_k_souborum" class="header-link">#</a>
+</h3>
+<ol>
+<li>Přepni se na uživatele <code>petr</code>.</li>
+<li>V jeho domovské složce vytvoř soubor <code>poznamka.txt</code>.</li>
+<li>Zobraz výpis oprávnění.</li>
+<li>Nastav oprávnění tak, aby:<ul>
+<li>vlastník mohl číst i zapisovat,</li>
+<li>skupina mohla pouze číst,</li>
+<li>ostatní neměli žádný přístup.</li>
+</ul>
+</li>
+<li>Ověř, že změna proběhla správně.</li>
+<li>Změň vlastníka souboru na uživatele <code>eva</code> a skupinu na <code>studenti</code>.</li>
+<li>Ověř, že soubor má nového vlastníka i skupinu.</li>
+</ol>
+<h3 id="ukol_3_sdilena_slozka_pro_skupinu">Úkol 3: Sdílená složka pro skupinu
+<a href="#ukol_3_sdilena_slozka_pro_skupinu" class="header-link">#</a>
+</h3>
+<ol>
+<li>Jako <code>root</code> vytvoř složku <code>/home/spolecne</code>.</li>
+<li>Nastav vlastníka <code>root</code> a skupinu <code>studenti</code>.</li>
+<li>Nastav práva tak, aby:<ul>
+<li>vlastník měl práva <code>rw</code>,</li>
+<li>skupina měla práva <code>rw</code>,</li>
+<li>ostatní neměli žádná.</li>
+</ul>
+</li>
+<li>Nastav <strong>setgid bit</strong>, aby nově vytvořené soubory ve složce zdědily skupinu <code>studenti</code>:<div class="highlight"><pre><span></span>chmod<span class="w"> </span>g+s<span class="w"> </span>/home/spolecne
+</pre></div></li>
+<li>Ve složce <code>/home/spolecne</code> vytvoř soubor <code>zkouska.txt</code> jako uživatel <code>eva</code>.</li>
+<li>Ověř, že soubor má skupinu <code>studenti</code>.</li>
+<li>Přepni se na uživatele <code>adam</code> a zkontroluj, že může tento soubor číst i upravovat.</li>
+</ol>
+<h3 id="ukol_4_struktura_skolni_tym">Úkol 4: Struktura „Školní tým“
+<a href="#ukol_4_struktura_skolni_tym" class="header-link">#</a>
+</h3>
+<ol>
+<li><p>Znovu vytvoř skupinu <code>ucitele</code>.</p>
+</li>
+<li><p>Vytvoř uživatele:</p>
+<ul>
+<li><code>reditel</code></li>
+<li><code>ucitelka</code></li>
+<li><code>student1</code></li>
+<li><code>student2</code></li>
+</ul>
+</li>
+<li><p>Přiřaď uživatele do skupin:</p>
+<ul>
+<li><code>reditel</code>, <code>ucitelka</code> → <code>ucitele</code></li>
+<li><code>student1</code>, <code>student2</code> → <code>studenti</code></li>
+</ul>
+</li>
+<li><p>Vytvoř strukturu složek:</p>
+<div class="highlight"><pre><span></span><span class="go">/opt/skola/</span>
+<span class="go">  ├── ucitele/</span>
+<span class="go">  └── studenti/</span>
+</pre></div></li>
+<li><p>Nastav:</p>
+<ul>
+<li><code>/opt/skola/ucitele</code> → vlastník <code>root</code>, skupina <code>ucitele</code>, práva <code>770</code></li>
+<li><code>/opt/skola/studenti</code> → vlastník <code>root</code>, skupina <code>studenti</code>, práva <code>770</code></li>
+</ul>
+</li>
+<li><p>Do obou složek přidej soubor <code>info.txt</code> s krátkým textem <em>(např. „Vítejte ve složce učitelů“)</em>.</p>
+</li>
+<li><p>Ověř, že:</p>
+<ul>
+<li>Učitelé mají přístup pouze do složky <code>ucitele</code>.</li>
+<li>Studenti pouze do <code>studenti</code>.</li>
+<li>Ostatní uživatelé nemají přístup do žádné z nich.</li>
+</ul>
+</li>
+</ol>
+<h2 id="bonus_sudo_zapomina">Bonus: Sudo zapomíná
+<a href="#bonus_sudo_zapomina" class="header-link">#</a>
+</h2>
+<p><em>(<code>sudo</code> ti dává oprávnění, ale i zodpovědnost. Nauč se před každým použitím <code>sudo</code> přečíst spouštěný příkaz a zamyslet se, jestli ho opravdu chceš spustit. Ale opět, neboj se experimentovat – na virtuálním počítači není co zkazit.)</em></p>
+<p>Co by měl dělat tento příkaz?</p>
+<div class="highlight"><pre><span></span><span class="go">ll /var/db/sudo/lectured/</span>
+</pre></div><p>Příkaz ale pod běžným uživatelským účtem nefunguje; potřebuješ <code>sudo ll /var/db/sudo/lectured/</code>. To ale taky nefunguje. Proč? Jak to spravit?</p>
+<ul>
+<li>Jaké soubory jsou v <code>/var/db/sudo/lectured/</code>? Komu patří? Jak jsou velké?</li>
+<li>Jaké soubory jsou v <code>/var/run/sudo/ts</code>? Komu patří? Jak jsou velké? Kdo k nim má jaká práva?</li>
+<li>Jak by vypadal příkaz, který smaže „tvůj“ soubor v <code>/var/run/sudo/ts</code>?</li>
+</ul>
+<p>Když spustíš příkaz <code>sudo</code>, zeptá se tě na heslo. Když ho spustíš podruhé (ve stejném terminálu), už se neptá – pamatuje si, že jsi heslo před chvilkou zadala.</p>
+<p>Vyzkoušej si ale, že tohle nefunguje s příkazem pro smazání „tvého“ souboru v <code>/var/run/sudo/ts</code>. Když ho pustíš několikrát za sebou, <code>sudo</code> se vždycky znovu zeptá na heslo.</p>
+<ul>
+<li><p>Proč?</p>
+</li>
+<li><p>Zadej tyhle příkazy:</p>
+<ul>
+<li>Smaž „svůj“ soubor z <code>/var/db/sudo/lectured/</code>.</li>
+<li>Smaž „svůj“ soubor z <code>/var/run/sudo/ts</code>.</li>
+<li>Spusť <code>sudo echo</code>.</li>
+</ul>
+<p>A odpověz:</p>
+<ul>
+<li>Co je u <code>sudo echo</code> jinak?</li>
+<li>K čemu slouží soubory ve <code>/var/db/sudo/lectured/</code>?</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2025/brno-podzim-linuxadmin/linuxadmin/users/">← <span class="d-none d-sm-inline">Uživatelé a práva</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2025/brno-podzim-linuxadmin/sessions/users/">↑ <span class="d-none d-sm-inline">Lekce: Správa uživatelů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2025/brno-podzim-linuxadmin/sessions/users/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyLadiesCZ-Brno/linuxadmin/blob/main/lessons/hw/sudo/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsal Petr Viktorin, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,426 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Beginners course PyLadies: Classes
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/pyladies-en-prague/">Beginners course PyLadies</a>
+
+> <a href="/2018/pyladies-en-prague/sessions/class/">Classes</a>
+
+> <a href="/2018/pyladies-en-prague/beginners-en/class/">Classes</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Objects and values</h1>
+<p>Before we start with classes, we will learn about objects.</p>
+<p>What does <em>object</em> mean for programmers?</p>
+<p>It's actually easy with Python - every value (that's something you can "store"
+into a variable) is an object.
+Some programming languages (e.g. JavaScript, C++, Java) also have 
+values other than objects. And for example C doesn't have objects at all.
+But in Python there is no difference between value and object, so
+it's a little bit difficult to understand. On the other hand, you don't have
+to know the details.</p>
+<p>The basic attribute of objects is that they contain data (information) and <em>behaviour</em> -
+instructions and/or methods how to work with data.
+For example, strings contain information (a sequence of characters) as well as
+useful methods such as <code>upper</code> and <code>count</code>.
+If strings were not objects, Python would have to have a lot more
+functions, such as <code>str_upper</code> and <code>str_count</code>.
+Objects connect data and functionality together.</p>
+<div class="admonition note"><p>You will maybe say that, for example, <code>len</code> is a function, and you will be correct.
+Python is not 100% an object oriented language.
+But the function <code>len</code> also works on objects which do not have anything in common with strings.</p>
+</div><h1>Classes</h1>
+<p>The data of each object is specific for each concrete object
+(e.g. <code>"abc"</code> contains different characters than <code>"def"</code>),
+but the functionality - the methods - are the same for all objects of the same 
+type (class). For example, the string method <code>count()</code> could be
+written like this:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">character</span><span class="p">):</span>
+    <span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">string</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="n">character</span><span class="p">:</span>
+            <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="nb">sum</span>
+</pre></div><p>And although a different string will return a different value,
+the method itself is same for all strings.</p>
+<p>This common behaviour is defined by the <em>type</em> or <em>class</em> of the object.</p>
+<div class="admonition note"><p>In previous versions of Python there was a difference between "type"
+and "class", but now they are synonyms.</p>
+</div><p>You can find out type of an object by using the function <code>type</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">&lt;class 'int'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&lt;class 'bool'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="s2">"abc"</span><span class="p">)</span>
+<span class="go">&lt;class 'str'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'file.txt'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">&lt;class '_io.TextIOWrapper'&gt;</span>
+</pre></div><p>The function <code>type</code> returns some classes.
+What is a class? It's a description how every object of the same type
+behaves.</p>
+<p>Most of the classes in Python are callable as if they were functions. 
+This following code will create an object of the class we called:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">string_class</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s2">"abc"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string_class</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="go">'8'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string_class</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">'[1, 2, 3]'</span>
+</pre></div><p>So it's behaving as the function <code>str</code>! Isn't it strange?</p>
+<p>Now I have to apologise:
+<a href="/2018/pyladies-en-prague/beginners-en/functions/">materials for functions</a>
+lied a bit. Functions <code>str</code>, <code>int</code>, <code>float</code>, etc., are actually classes.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span>
+<span class="go">&lt;class 'str'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="s1">'abcdefgh'</span><span class="p">)</span>
+<span class="go">&lt;class 'str'&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="s1">'abcdefgh'</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span>
+<span class="go">True</span>
+</pre></div><p>But we can call them as if they were functions.
+So classes contain not only the "description" how object of the class
+will behave, but they can also create objects.</p>
+<h2>Custom classes</h2>
+<p>Now we will try to create our own class.</p>
+<p>Writing custom classes is useful when you want to use different objects 
+with similar behaviour in your program.
+For example, a card game could have Card class, a web application could 
+have a User class, and a spreadsheet application could have Row class.</p>
+<p>Let's write a program that handles animals.
+First, you create a Kittie class which can meow:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kittie</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">meow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"Meow!"</span><span class="p">)</span>
+</pre></div><p>Just as a function is defined by the <code>def</code> keyword, classes are
+defined by the <code>class</code> keyword. Then of course you have to continue with a colon
+and indentation of the class body.
+Similar as <code>def</code> creates a function, <code>class</code> creates a class and assigns it to the 
+name of the class (in our example to <code>Kittie</code>).</p>
+<p>It's a convention that classes are named with an uppercase first letter so they
+are not easily confused with "normal" variables.</p>
+<div class="admonition note"><p>Basic classes (<code>str</code>, <code>int</code>, etc.)
+don't start with an uppercase letter because of historic
+reasons – originally they were really functions.</p>
+</div><p>In the class body, you define methods, which looks like functions.
+The difference is that class methods have <code>self</code> as the first argument,
+which we will explain later - meowing comes first:</p>
+<div class="highlight"><pre><span></span><span class="c1"># Creation of the object</span>
+<span class="n">kittie</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">()</span>
+
+<span class="c1"># Calling the method</span>
+<span class="n">kittie</span><span class="o">.</span><span class="n">meow</span><span class="p">()</span>
+</pre></div><p>In this case you have to be really careful about uppercase letters:
+<code>Kittie</code> (with uppercase K) is the class - the description how kitties behave.
+<code>kittie</code> (lowercase k) is the object (an <em>instance</em>) of the Kittie class:
+a variable that represents a Kittie.
+That object is created by calling the class (same as we
+can create a string by calling <code>str()</code>).</p>
+<p>Meow!</p>
+<h2>Attributes</h2>
+<p>Objects that are created from custom classes have one feature that
+classes like <code>str</code> don't allow: The ability to define class <em>attributes</em> -
+information that is stored by the instance of the class.
+You can recognise attributes by the period between class instance and the name of its attribute.</p>
+<div class="highlight"><pre><span></span><span class="n">smokey</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">()</span>
+<span class="n">smokey</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">'Smokey'</span>
+
+<span class="n">misty</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">()</span>
+<span class="n">misty</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">'Misty'</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">smokey</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">misty</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div><p>In the beginning we said that objects are connecting behaviour with data.
+Behaviour is defined in the class, data is stored in attributes.
+We can differentiate Kitties, for example, by their names because of the attributes.</p>
+<div class="admonition note"><p>By using a period after a class object, you can access the class methods 
+as well as its attributes.
+What happens if an attribute has the same name as method?
+Try it!</p>
+<div class="highlight"><pre><span></span><span class="n">misty</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">()</span>
+<span class="n">misty</span><span class="o">.</span><span class="n">meow</span> <span class="o">=</span> <span class="mi">12345</span>
+<span class="n">misty</span><span class="o">.</span><span class="n">meow</span><span class="p">()</span>
+</pre></div></div><h2>Parameter <code>self</code></h2>
+<p>Now we will briefly go back to methods, to be specific, we will go back
+to the parameter <code>self</code>.</p>
+<p>Each method has access to any specific object that it's working on just because of
+parameter <code>self</code>.
+Now after you have named your kitties, you can use the <code>self</code> parameter to add the name to meowing.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kittie</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">meow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+<span class="n">smokey</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">()</span>
+<span class="n">smokey</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">'Smokey'</span>
+
+<span class="n">misty</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">()</span>
+<span class="n">misty</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">'Misty'</span>
+
+<span class="n">smokey</span><span class="o">.</span><span class="n">meow</span><span class="p">()</span>
+<span class="n">misty</span><span class="o">.</span><span class="n">meow</span><span class="p">()</span>
+</pre></div><p>What just happened? The command <code>smokey.meow</code> called a <em>method</em> which when it's called assigns the object
+<code>smokey</code> as first argument to the function <code>meow</code>.</p>
+<div class="admonition note"><p>This is how a <em>method</em> is different from a <em>function</em>:
+A method "remembers" the object it is working on.</p>
+</div><p>And that first argument which contains a specific object of the just created class is
+usually called <code>self</code>.
+You can of course call it differently, but other programmers will not like you. :)</p>
+<p>Can such a method take more that one argument?
+It can - in that case, <code>self</code> will be substituted as the first argument,
+and the rest of the arguments will be taken from how you called the method.
+For example:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kittie</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">meow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow meow! I like {} very much!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">food</span><span class="p">))</span>
+
+<span class="n">smokey</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">()</span>
+<span class="n">smokey</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">'Smokey'</span>
+<span class="n">smokey</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="s1">'fish'</span><span class="p">)</span>
+</pre></div><h2>Method <code>__init__</code></h2>
+<p>There is another place where you can pass arguments to the class:
+when you create a new object (calling the class).
+You can easily solve the problem that you might see in the previous code:
+After the kittie object is created, you must add a name so the method
+<code>meow</code> can work.</p>
+<p>You can also create classes by passing parameters when you are calling it:</p>
+<div class="highlight"><pre><span></span><span class="n">smokey</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'Smokey'</span><span class="p">)</span>
+</pre></div><p>Python uses the <code>__init__</code> method (2 underscores, <code>init</code>, 2 underscores) for this option.
+Those underscores indicate that this method name is somehow special. The method <code>__init__</code>
+is actually called right when the object is being created, or in other words - when it's
+being initialized (<code>init</code> stands for <em>initialization</em>).
+So you can write it like this:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kittie</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">meow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow meow! I like {} very much!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">food</span><span class="p">))</span>
+
+<span class="n">smokey</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">(</span><span class="s1">'Smokey'</span><span class="p">)</span>
+<span class="n">smokey</span><span class="o">.</span><span class="n">meow</span><span class="p">()</span>
+</pre></div><p>And now there is no possibility to create a kittie without a name,
+and <code>meow</code> will work all the time.</p>
+<p>There are many more methods with underscores, e.g. the <code>__str__</code>
+method is called when you need to convert the object into a string:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Kittie</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">'&lt;Kittie named {}&gt;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">meow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"{}: Meow meow! I like {} very much!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">food</span><span class="p">))</span>
+
+<span class="n">smokey</span> <span class="o">=</span> <span class="n">Kittie</span><span class="p">(</span><span class="s1">'Smokey'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">smokey</span><span class="p">)</span>
+</pre></div><h2>Exercise: Cat</h2>
+<p>Now that you know how to create the kittie class, try to make a class for cats.</p>
+<ul>
+<li>The Cat can meow with the <code>meow</code> method.</li>
+<li>The Cat has 9 lives when she's created (she can't have more than 9 and less than 0 lives). </li>
+<li>The Cat can say if she is alive (has more than 0 lives) with the <code>alive</code> method.</li>
+<li>The Cat can lose lives (method <code>takeoff_life</code>).</li>
+<li>The Cat can be fed with the <code>eat</code> method that takes exactly 1 argument - a specific food (string).
+If the food is <code>fish</code>, the Cat will gain one life (if she is not already dead or
+doesn't have maximum lives).</li>
+</ul>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/pyladies-en-prague/beginners-en/class/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Cat</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>         <span class="c1"># Init function does not have to take number of lives</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lives_number</span> <span class="o">=</span> <span class="mi">9</span>   <span class="c1"># as parameter 'cause that number is always the same.</span>
+
+    <span class="k">def</span> <span class="nf">meow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"Meow, meow, meeeoooow!"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lives_number</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">takeoff_life</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive</span><span class="p">():</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">"You can't kill a cat that is already dead, you monster!"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lives_number</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive</span><span class="p">():</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">"It's pointless to give food to dead cat!"</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">food</span> <span class="o">==</span> <span class="s2">"fish"</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">lives_number</span> <span class="o">&lt;</span> <span class="mi">9</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lives_number</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">"The cat ate a fish and gained 1 life!"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">"The cat is eating."</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><p>And that's now everything about classes.
+<a href="/2018/pyladies-en-prague/beginners-en/inheritance/">Next time</a> we will learn about inheritance.
+And also about doggies. :)</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/pyladies-en-prague/sessions/class/">↑ <span class="d-none d-sm-inline">Lekce: Classes</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/pyladies-en-prague/beginners-en/inheritance/"><span class="d-none d-sm-inline">Inheritance</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-pyladies-en-prague/lessons/beginners-en/class/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Translated by Marketa Muzikova</p>
+    
+        <p>Originally written by Petr Viktorin, 2014-2017 for <a href="https://naucse.python.cz/course/pyladies/beginners/class/">PyLadies CZ</a>.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

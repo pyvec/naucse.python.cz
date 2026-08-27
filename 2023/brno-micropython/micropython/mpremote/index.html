@@ -1,0 +1,268 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                PyWorking: MicroPython: Práce se soubory (mpremote)
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/2023/brno-micropython/">PyWorking: MicroPython</a>
+
+> <a href="/2023/brno-micropython/sessions/intro/">Úvod</a>
+
+> <a href="/2023/brno-micropython/micropython/mpremote/">Práce se soubory (mpremote)</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h2 id="prace_se_soubory">Práce se soubory
+<a href="#prace_se_soubory" class="header-link">#</a>
+</h2>
+<div class="admonition note"><p>Budeme používat knihovnu <code>mpremote</code>, se kterou ještě nemáme tolik zkušeností.
+Kdyby něco nefungovalo, zkus kouknout na <a href="/2023/brno-micropython/micropython/ampy/">starší návod</a>
+který používá knihovnu <code>ampy</code>.</p>
+<p>Jestli se ti <code>mpremote</code> nepovedlo <a href="/2023/brno-micropython/micropython/install/">zprovoznit</a> a používáš
+<code>picocom</code>, Pytty nebo <code>screen</code>, přejdi na <a href="/2023/brno-micropython/micropython/ampy/">starší návod</a> hned.</p>
+</div><p>Jak začneš psát trochu složitější programy,
+mohlo by se stát, že tě konzole MicroPythonu začne trochu štvát.
+Špatně se v ní opravují chyby a automatické odsazování funguje jen většinou.
+Jak naštvání předejít?</p>
+<p>Větší kousky kódu – a určitě takové,
+ve kterých je nějaký cyklus, podmínka či funkce –
+si piš v textovém editoru. MicroPythonu pak pošleš celý soubor.</p>
+<p>Zkus si to. Do souboru <code>blikajici_led.py</code> dej následující kód:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">machine</span> <span class="kn">import</span> <span class="n">Pin</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="n">pin_diody</span> <span class="o">=</span> <span class="n">Pin</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="n">Pin</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'blik!'</span><span class="p">)</span>
+    <span class="n">pin_diody</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">pin_diody</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+</pre></div><p>Předpokládám, že
+Ve virtuálním prostředí bys měl/a mít program <code>mpremote</code>.
+<a href="/2023/brno-micropython/micropython/install/">Návod na instalaci</a></p>
+<p>Jestli máš otevřenou <code>mpremote</code> konzoli, zavři ji pomocí
+<kbd>Ctrl</kbd>+<kbd>]</kbd>.
+Potom <code>mpremote</code> pusť znovu, ale s podpříkazem <code>run</code> a názvem souboru:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>mpremote<span class="w"> </span>run<span class="w"> </span>blikajici_led.py
+</pre></div><p>Program by měl blikat diodou.
+Využívá k tomu funkci <code>time.sleep()</code>, která počká daný počet vteřin –
+tedy <code>time.sleep(1/2)</code> zastaví program na půl sekundy.</p>
+<p>Když zmáčkneš <kbd>Ctrl</kbd>+<kbd>C</kbd>, zavřeš <code>mpremote</code>.
+Program poběží dál, ale neuvidíš výpisy (a chybové hlášky) které posílá.</p>
+<h2 id="nahrani_souboru">Nahrání souboru
+<a href="#nahrani_souboru" class="header-link">#</a>
+</h2>
+<p>Podobně je možné na destičku soubory i nahrávat, jen je potřeba místo
+<code>run</code> použít <code>fs cp</code> se jménem souboru a dvojtečkou:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>mpremote<span class="w"> </span>fs<span class="w"> </span>cp<span class="w"> </span>blikajici_led.py<span class="w"> </span>:
+</pre></div><p>Jak to funguje?  <code>fs cp &lt;odkud&gt; &lt;kam&gt;</code>.
+Dvojtečka označuje soubor na destičce, na rozdíl od souborů na tvém
+„velkém“ počítači.
+Když zadáš dvojtečku samotnou, <code>cp</code> pro soubor na destičce použije stejné
+jméno jako má soubor na „velkém“ disku.</p>
+<p>To že je soubor nahraný si můžeš ověřit pomocí <code>fs ls</code>, který ukáže velikosti
+a jména souborů na destičce:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>mpremote<span class="w"> </span>fs<span class="w"> </span>ls
+<span class="go">ls :</span>
+<span class="go">         183 blikajici_led.py</span>
+<span class="go">         230 boot.py</span>
+</pre></div><h2 id="automaticke_spousteni">Automatické spouštění
+<a href="#automaticke_spousteni" class="header-link">#</a>
+</h2>
+<p>Pokud navíc budeš chtít, aby se program na destičce automaticky spouštěl, musí
+se soubor s programem na destičce jmenovat <code>main.py</code>. <code>mpremote</code> umí soubor při
+kopírování i přejmenovat, když mu při kopírování zadáš za dvojtečkou
+i druhé (nové) jméno:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>mpremote<span class="w"> </span>fs<span class="w"> </span>cp<span class="w"> </span>blikajici_led.py<span class="w"> </span>:main.py
+</pre></div><p>Po úspěšném kopírování máš na destičce nahraný náš program ze souboru
+<code>blikajici_led.py</code> do souboru <code>main.py</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>mpremote<span class="w"> </span>fs<span class="w"> </span>ls
+<span class="go">ls :</span>
+<span class="go">         183 blikajici_led.py</span>
+<span class="go">         183 main.py</span>
+<span class="go">         230 boot.py</span>
+</pre></div><p>Teď už bude tvůj program fungovat
+i bez počítače, takže stačí destičku připojit např. k powerbance
+a dioda se rozbliká.
+Zkus to -- resetuj destičku jedním z těchto způsobů:</p>
+<ul>
+<li>odpojením a opětovným připojením USB kabelu</li>
+<li>tlačítkem RST na destičce</li>
+<li>příkazem <code>mpremote reset</code></li>
+</ul>
+<h2 id="mazani_a_cteni">Mazání a čtení
+<a href="#mazani_a_cteni" class="header-link">#</a>
+</h2>
+<p>Soubor můžeš smazat pomocí příkazu <code>fs rm</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>mpremote<span class="w"> </span>fs<span class="w"> </span>rm<span class="w"> </span>:main.py
+</pre></div><p>Pak by měl být <code>main.py</code> smazaný:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>mpremote<span class="w"> </span>fs<span class="w"> </span>ls
+<span class="go">ls :</span>
+<span class="go">         183 blikajici_led.py</span>
+<span class="go">         230 boot.py</span>
+</pre></div><p>A co že je to <code>boot.py</code>?
+To je program který se spustí po zapojení destičky,
+ještě před <code>main.py</code>.
+Obsahuje nastavení.
+Pomocí <code>fs cat</code> se můžeš podívat co dělá:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>mpremote<span class="w"> </span>fs<span class="w"> </span>cat<span class="w"> </span>boot.py
+<span class="gp">$ </span>mpremote<span class="w"> </span>fs<span class="w"> </span>cat<span class="w"> </span>boot.py
+<span class="gp"># </span>This<span class="w"> </span>file<span class="w"> </span>is<span class="w"> </span>executed<span class="w"> </span>on<span class="w"> </span>every<span class="w"> </span>boot<span class="w"> </span><span class="o">(</span>including<span class="w"> </span>wake-boot<span class="w"> </span>from<span class="w"> </span>deepsleep<span class="o">)</span>
+<span class="go">...</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2023/brno-micropython/micropython/output/">← <span class="d-none d-sm-inline">Obvod</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2023/brno-micropython/sessions/intro/">↑ <span class="d-none d-sm-inline">Lekce: Úvod</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2023/brno-micropython/micropython/ampy/"><span class="d-none d-sm-inline">Práce se soubory (ampy)</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/naucse-micropython/blob/mp2023/lessons/micropython/mpremote/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Petr Viktorin, 2016-2022.</p>
+    
+        <p>Upravil Lumír Balhar, 2018.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

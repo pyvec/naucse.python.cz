@@ -1,0 +1,784 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Interaktivní vizualizace a aplikace I.
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/pydata-praha-podzim/">Datový kurz PyLadies</a>
+
+> <a href="/2021/pydata-praha-podzim/sessions/dashboards/">Interaktivní vizualizace a aplikace</a>
+
+> <a href="/2021/pydata-praha-podzim/pydata/dashboards/">Interaktivní vizualizace a aplikace I.</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><em>Na naucse.python.cz bohužel nefunguje zobrazování interaktivních plotly grafů. Pro zobrazení včetně grafů můžeš použít nbviewer: <a href="https://nbviewer.jupyter.org/github/coobas/pydataladies-dashboard/blob/main/notebooks/dashboardy-1.ipynb">https://nbviewer.jupyter.org/github/coobas/pydataladies-dashboard/blob/main/notebooks/dashboardy-1.ipynb</a> nebo si notebook pustit lokálně. Všechny soubory pohromadě najdeš v repozitáři <a href="https://github.com/coobas/pydataladies-dashboard">https://github.com/coobas/pydataladies-dashboard</a>.</em></p>
+<h1>Interaktivní vizualizace a aplikace</h1>
+<p>Při práci s daty je mnoho příležitostí, kdy se hodí interaktivita. Při vizualici se hodí zvětšování / změnšování měřítka, výběr podoblasti, ukázání vykreslených hodnot apod. Nebo při datové anlýze obecně se může hodit interaktivně v notebooku měnit nějaký parametr (třeba hyperparametr pro strojové učení). Anebo chceme dát výsledky naší skvělé analýzy k dispozici "netechnickým" kolegům nebo kamarádům, kteří (zatím) nedokáží Jupyter notebook spustit.</p>
+<p>Tady si ukážeme, jak si s takovými úkoly poradit pomocí dvou nástrojů: <a href="https://plotly.com/python/">plotly</a>, resp. především <a href="https://plotly.com/python/plotly-express/">plotly express</a>, a <a href="https://www.streamlit.io/">streamlit</a>.</p>
+<p>Existují i další nástroje, které poskytují podobné možnosti. Podrobný přehled najdete na <a href="https://pyviz.org/tools.html">https://pyviz.org/tools.html</a>.  Na interaktivní vizualizace jsou to především <a href="http://github.com/pyviz/holoviews">holoviews</a> nebo <a href="http://github.com/altair-viz/altair">altair</a>. Na "dashboarding" pak <a href="http://github.com/plotly/dash">dash</a>, <a href="https://panel.holoviz.org/">panel</a>, <a href="http://github.com/QuantStack/voila">voila</a> nebo <a href="https://justpy.io">justpy</a>.</p>
+<p>Každý z těchto nástrojů má, jako obvykle, své výhody a nevýhody. Nejrozšířenějším nástrojem je <a href="http://github.com/plotly/dash">Dash</a> ze stejné dílny jako plotly, který poskytuje i enterprise řešení pro provoz aplikací. Dash je určitě dobrou volbou, jak se můžete dozvědět i na <a href="https://www.youtube.com/watch?v=dewrzMPPLDU">přednášce z pražského PyData Meetupu</a>. Panel (a také Voila) se od Dash liší tím, že je lze použít i v Jupyter notebooku a pak notebook použít přímo jako aplikaci. Největší přednost <code>voila</code> je jednoduchý způsob, jak udělat dashboard přímo z notebooku: viz <a href="https://voila.readthedocs.io/en/stable/using.html">dokumentace</a>.</p>
+<p>Dvě největší výhody Streamlitu jsou rychlost (jednoduchost) vývoje aplikace a atraktivní výchozí vzhled.</p>
+<p>Pár článků či přednášek, které se tématu týkají:</p>
+<ul>
+<li><a href="https://www.intelligencerefinery.io/post/making-python-apps/">Going beyond Jupyter notebooks</a></li>
+<li><a href="https://towardsdatascience.com/how-to-build-a-complex-reporting-dashboard-using-dash-and-plotl-4f4257c18a7f">How to Build a Reporting Dashboard using Dash and Plotly</a></li>
+<li><a href="https://www.youtube.com/watch?v=L91rd1D6XTA">Turn any Notebook into a Deployable Dashboard | SciPy 2019 | James Bednar</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Pro a proti</h2>
+<p>Je potřeba ale říct, že všechny zmíněné přístupy mají své výrazné nevýhody a limity a nehodí se pro velké a složité aplikace. Možnosti interakcí v aplikaci jsou omezené a také mohou být pomalé. Robustní škálování pro mnoho uživatelů (velký provoz) je obecně složitější. Kdy tedy především použít, co si tady ukážeme?</p>
+<ul>
+<li>Na malou aplikaci pro omezený počet uživatelů (dashboard pro kolegy).</li>
+<li>Na rychlý vývoj prototypu.</li>
+</ul>
+<p>A co když chceme budovat velkou (webovou) aplikaci?</p>
+<ul>
+<li>Zadáme vývojářskému týmu, aby v moderních JavaScript nástrojích typu React nebo Vue.js pro nás vytvořil krásný a rychlý "front-end", zatímco my vytvoříme v Pythonu "back-end", který s front-endem bude komunikovat např. pomocí JSON API. To uvidíme i v naší lekci o API.</li>
+<li>Když takový tým nemáme, naučíme se programovat v JavaScriptu ... Ne, raději v TypeScriptu ...</li>
+<li>... raději najmeme ten vývojářský tým :-)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Instalace a import grafických knihoven</h2>
+<p>Pokud nemáte nainstalovanou knihovnu plotly, odkomentujte a spusťte příslušné řádky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># instalace plotly</span>
+<span class="c1"># %pip install plotly</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro plotly express se vžila zkratka <code>px</code>, kterou použijeme i my.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Interaktivní vizualizace dat</h2>
+<p>Pojďme si zkusit trochu více prohlédnout data, se kterými jsme pracovali v předchozích lekcích na strojové učení.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Rybí míry</h3>
+<p>Začněme rozměry ryb, na kterých jsme ukazovali regresi a klasifikaci. Určitě stojí za to si data nejprve trochu prohlédnout. (Jen si asi nenakreslíme přímo vzhled ryb, na to nám data nestačí :)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fish_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"fish_data.csv"</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A místo klasického zobrazování čísel si zkusíme rovnou data vykreslit do grafu. Víme (tušíme), že v datech je spousta sloupců. Můžeme si je nechat vykreslit všechny pomocí <code>scatter_matrix</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">scatter_matrix</span><span class="p">(</span><span class="n">fish_data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To vůbec není špatné na prvotní orientaci. Už teď je vidět, že tam máme kategorickou proměnnou Species, nějaké spojité proměnné s rozměry a nepodstatné ID. Vidíme také, že některé proměnné spolu hodně korelují.</p>
+<p>Už teď bychom mohli využít interaktivních prvků: zkuste si najet kurzorem na body v grafu nebo použít nástroje na změnu měřítka nebo výběr dat, které se zobrazí v pravém horním rohu. Ještě lepší bude ale trochu graf zlepšit: Zahodit ID a druhy si označit barvou.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">scatter_matrix</span><span class="p">(</span>
+    <span class="n">fish_data</span><span class="p">,</span>
+    <span class="n">dimensions</span><span class="o">=</span><span class="p">[</span><span class="s2">"Weight"</span><span class="p">,</span> <span class="s2">"Length1"</span><span class="p">,</span> <span class="s2">"Length2"</span><span class="p">,</span> <span class="s2">"Length3"</span><span class="p">,</span> <span class="s2">"Height"</span><span class="p">,</span> <span class="s2">"Width"</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"Species"</span><span class="p">,</span>
+    <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">hover_data</span><span class="o">=</span><span class="p">[</span><span class="s2">"Species"</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tady nám kromě barevnosti přibyla vpravo legenda. A dokonce legenda interaktivní! Jednoduchým kliknutím můžeme schovat / zobrazit jednotlivé kategorie, dvouklikem můžeme zobrazit jen jednu kategorii. Zkuste si to! Užitečné může být i vybírání dat - Box Select nebo Lasso Select.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Použijte pro barvu sloupec Weight, symboly udělejte částečně průhledné pomocí argumentu <code>opacity</code> (rozsah 0 - 1) a v legendě, zobrazované, když se najede kurzorem na určitý bod, nechť se zobrzují všechny sloupce (pomůže argument <code>hover_data</code>).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Když se pak chceme třeba podívat na statistické vlastnosti jedné konkrétní proměnné (sloupce), můžeme použít některou z funkcí na zobrazení rozdělovací funkce, resp. některých jejích vlastností (momentů).</p>
+<p>Začít můžeme poměrně častým box plotem. Bonus plotly je hlavně v interaktivním zobrazení číselných hodnot: mediánu a kvantilů, a také identifikaci (pravděpodobně) odlehlých hodnot.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">fish_data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">"Species"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"Species"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">"Height"</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="s2">"all"</span><span class="p">,</span> <span class="n">notched</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">fish_data</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"Species"</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">"Height"</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro zobrazení vztahu dvou proměnných může být ještě užitečné podívat se na hustotu bodů v ploše pomocí kontur. U tohoto grafu můžeme po stranách zobrazit i tzv. marginální rozdělení: nejpravděpodobnější rozdělení jedné proměnné v závislosti na druhé.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">density_contour</span><span class="p">(</span>
+    <span class="n">fish_data</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"Species"</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">"Height"</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">"Length3"</span><span class="p">,</span>
+    <span class="n">marginal_x</span><span class="o">=</span><span class="s2">"histogram"</span><span class="p">,</span>
+    <span class="n">marginal_y</span><span class="o">=</span><span class="s2">"box"</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Zkuste si zobrazit v grafech jiné veličiny (jiné sloupce) než jen Height a Width. Zkuste změnit typ marginálních grafů.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Co s tím dál?</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Report pro šéfa a šéfovou</h3>
+<p>Máme i kolegy, kteří (ještě) nepoužívají Python a přesto by ocenili, kdyby mohli místo statického reportu dostat report s takto krásnými a interaktivními vizualizacemi. Pro tento účel se hodí export notebooku do html pomocí <code>nbconvert</code>.</p>
+<p>V příkazovém řádku spustíme <code>nbconvert</code> pomocí příkazu <code>jupyter nbconvert</code>. Pro export do html pak přidáme <code>--to html</code>, nesmíme zapomenout zadat který notebook (tj. soubor) chceme vlastně konvertovat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Odkomentováním se spustí příkaz v příkazové řádce (díky vykřičníku)</span>
+<span class="c1"># Možná se seoubor u tebe jmenuje jinak než dashboardy-1, v takovém použij aktuální jméno souboru</span>
+<span class="c1"># !jupyter nbconvert dashboardy-1.ipynb --to html</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Můžeme také exportovat jen výstupy a "utajit" zdrojový kód pomocí <code>--no-input</code>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># !jupyter nbconvert dashboardy-1.ipynb --to html --no-input</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Analýza nových dat</h3>
+<p>Všem se naše vizualizace líbily, a jelikož je potřeba analyzovat další data, dostali jsme to za úkol my. Tentokrát se nejedná o ryby, ale o tučňáky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Vyber si z grafů ten, který se ti nejvíc líbí, a místo rybích dat použij tučňáky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">penguins</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"penguins_size_nona.csv"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Vytváříme aplikaci</h2>
+<p>Z naší práce v notebooku vykrystalizoval velice častý vzor: Podobné vizualizace a analýzy, v nichž se mění data a několik klíčových parametrů. Příležitost vytvořit aplikaci, která toto umožní nám a okruhu poučených uživatelů.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pojďme si nadefinovat naší jednoduchou aplikaci:</p>
+<ol>
+<li>Načíst data z csv souboru.</li>
+<li>Vykreslit scatter matrix, kde budu moct zvolit dimenze, sloupec pro barvu a průhlednost.</li>
+<li>Pro vybraný sloupec zobrazit distribuci vybraného sloupce pomocí histogramu, box plotu nebo violin plotu.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Příprava v notebooku</h3>
+<p>Pojďme to nejprve načrtnout tady v notebooku. Jako první si připravíme uživatelské vstupy.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># vstup 1: výběr datové sady</span>
+<span class="n">data_file_path</span> <span class="o">=</span> <span class="s2">"penguins_size_nona.csv"</span>
+<span class="c1"># vstup 2: výběr parametrů scatter matrix</span>
+<span class="n">dimensions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'culmen_length_mm'</span><span class="p">,</span> <span class="s1">'culmen_depth_mm'</span><span class="p">,</span> <span class="s1">'flipper_length_mm'</span><span class="p">,</span> <span class="s1">'body_mass_g'</span><span class="p">]</span>
+<span class="n">color</span> <span class="o">=</span> <span class="s2">"sex"</span>
+<span class="n">opacity</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="c1"># výběr sloupce pro zobrazení rozdělení dat</span>
+<span class="n">interesting_column</span> <span class="o">=</span> <span class="s2">"body_mass_g"</span>
+<span class="c1"># výběr funkce pro zobrazení rozdělovací funkce</span>
+<span class="n">dist_plot</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">violin</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A tohle už je pak naše aplikace: Použili jsme stejné funkce a parametry jako na začátku práce s plotly, jen jsme je parametrizovali pomocí vstupů z předchozího bloku.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># načtení dat</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_file_path</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># scatter matric plat</span>
+<span class="n">px</span><span class="o">.</span><span class="n">scatter_matrix</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="n">opacity</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># zobrazení rozdělovací funkce</span>
+<span class="n">dist_plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">interesting_column</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A teď z toho pojďme udělat interaktivní webovou aplikaci! To nebudeme dělat přímo tady v notebooku, ale v "obyčejném" .py souboru s Python kódem.</p>
+<p>Aplikaci máme připravenou v souboru <code>app.py</code>, tady v notebooku si soubor můžeme prohlédnout:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="n">cat</span> <span class="o">../</span><span class="n">app</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Základem je, že uživatelské vstupy jsme předělali z podoby <code>proměnná = hodnota</code> do podoby <code>proměnná = st.vhodný_widget(...)</code>. Toto je způsob vytváření streamlit aplikace:</p>
+<ul>
+<li>Aplikaci píšeme v podstatě jako lineární skript (zdrojový kód samozřejmě můžeme strukturovat do funkcí / modulů / tříd dle vlastního uvážení, streamlit ale bude aplikaci vždy spouštět krok po kroku jako ten skript).</li>
+<li>Uživatelské vstupy načítáme z návratové hodnoty funkcí <code>st.nějaký_widget</code>, Streamlit se postará o to, aby widget správně fungoval a návratová hodnota byla vždy ta aktuální.</li>
+<li>Prvky aplikace (výstupy) zobrazíme uživateli pomocí <code>st.write</code>.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><em>Widgets - pomocné "věcičky":</em> V uživatelských grafických rozhraních (GUI) se používají <em>widgety</em>: nástroje na vybrání možností, hodnoty proměnné, zadání textu nebo datumu apod.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Spuštění</h3>
+<p>Streamlit ještě nejspíš nemáš nainstalovaný. Instaluje se běžným způsobem přes pip:</p>
+<div class="highlight"><pre><code>pip install streamlit
+
+</code></pre></div><p>případně pokud používáš conda</p>
+<div class="highlight"><pre><code>conda install -c conda-forge streamlit
+
+</code></pre></div><p>Na svém počítači si pak apikaci spustíš příkazem <code>streamlit run</code> s názvem souboru s aplikací. V našem případě tedy</p>
+<div class="highlight"><pre><code>streamlit run app.py
+
+</code></pre></div><p>Pokud je vše v pořádku, zobrazí se něco takovéhoto:</p>
+<div class="highlight"><pre><code>  You can now view your Streamlit app in your browser.
+
+  Network URL: http://192.168.2.103:8800
+  External URL: http://85.207.123.46:8800</code></pre></div><p>Dle instrukcí otevři odkaz (ten první) v prohlížeči. Je velká pravděpodobnout, že se objeví naše právě vytvořená aplikace na vizualizaci dat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Publikujeme na internet</h2>
+<p>V principu bychom mohli spustit aplikaci u sebe na počítači tak, aby ji mohli používat i další uživatelé. Na vnitřní síti (domácí, pracovní) by to bylo snadné (i když na pracovní síti a pracovním počítači by tomu mohla bránit bezpečnostní nastavení), přístup z vnějšího internetu by už byl komplikovanější.</p>
+<p>Naštěstí nejsme v podobné situaci sami :) Takže existují více či méně složité a sofistikované způsoby, jak aplikaci spustit na nějakém serveru (v cloudu) a zpřístupnit z internetu. My si ukážeme, jak to funguje na <a href="https://heroku.com">Heroku</a>. Podobné služby nabízí třeba AWS (Elastic Beanstalk), Google App Engine nebo Dokku on Digital Ocean. Výhodou Heroku je jednoduchost a možnost bezplatných služeb, nevýhodou pak rychle rostoucí cena a omezené možnosti.</p>
+<p>Existuje také možnost publikovat aplikaci pomocí <a href="https://blog.streamlit.io/introducing-streamlit-sharing/">Streamlit Sharing</a>. Tato služba nabízí ještě jednodušší publikaci z veřejných GitHub repozitářů, nemá ale tolik možností jako např. Heroku.</p>
+<p>Budeme postupovat v podstatě podle průvodce <a href="https://devcenter.heroku.com/articles/getting-started-with-python">Getting started with Python</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Registrace a klient Heroku</h3>
+<p>Než začneme, je potřeba:</p>
+<ol>
+<li>Založit si bezplatný účet na <a href="https://signup.heroku.com/signup/dc">https://signup.heroku.com/signup/dc</a>.</li>
+<li>Nainstalovat Git:<ul>
+<li>Windows: <a href="https://gitforwindows.org/">https://gitforwindows.org/</a></li>
+<li>Mac OS: <a href="https://sourceforge.net/projects/git-osx-installer/files/">https://sourceforge.net/projects/git-osx-installer/files/</a> (případně další možnosti popsané na <a href="https://www.atlassian.com/git/tutorials/install-git">https://www.atlassian.com/git/tutorials/install-git</a>).</li>
+<li>Linux: Nejspíš tam už bude nebo určitě víš jak na to :)</li>
+</ul>
+</li>
+<li>Alespoň základní konfigurace Gitu. V příkazovém řádku (<em>vyplňte své jméno a email</em>):<div class="highlight"><pre><code>git config --global user.name "Moje Jméno"
+git config --global user.email "muj@email.com"</code></pre></div></li>
+<li>Nainstalovat si Heroku klienta:<ul>
+<li>Postupujte podle <a href="https://devcenter.heroku.com/articles/heroku-cli">https://devcenter.heroku.com/articles/heroku-cli</a></li>
+</ul>
+</li>
+</ol>
+<p>Instalaci ověříme v příkazové řádce pomocí:</p>
+<ol>
+<li><p>Git:</p>
+<div class="highlight"><pre><code>git config --list</code></pre></div><p>Mělo by se objevit něco na způsob</p>
+<div class="highlight"><pre><code>user.name=Moje Jméno
+user.email=muj@email.com</code></pre></div></li>
+<li><p>Heroku:</p>
+<div class="highlight"><pre><code>heroku --version</code></pre></div><p>Tady by mělo být výstupem zhruba</p>
+<div class="highlight"><pre><code>heroku/7.39.2 darwin-x64 node-v12.13.0</code></pre></div></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Go-live</h3>
+<p>Teď budeme chvilku pracovat v příkazové řádce. Nejprve je potřeba vytvořit novou složku pro publikovanou aplikaci a nakopírovat tam soubory <code>app.py</code>, <code>requirements.txt</code>, <code>runtime.txt</code> a <code>Procfile</code>.</p>
+<p>A teď už v příkazové řádce, kde aktuální složka musí být ta nově vytvořená, kam jsi zkopírovala soubory:</p>
+<ol>
+<li><p>Vytvoř Git repozitář:</p>
+<div class="highlight"><pre><code>git init</code></pre></div></li>
+<li><p>Heroku potřebuje soubor s názvem <code>Procfile</code>. Ten velice jednoduše říká, co že to vlastně chceme spustit. Bude tam příkaz <code>streamlit run</code> (tak jako jsme spouštěli aplikaci lokálně) s pár přepínači navíc. Pro  <code>Procfile</code> musí obsahovat tento řádek:</p>
+<div class="highlight"><pre><code>web: streamlit run --server.headless 1 -server.port $PORT app.py</code></pre></div></li>
+<li><p>Je určitě dobré specifikovat verzi Pythonu, jinak se použije výchozí (v době psaní je to 3.6). V souboru <code>runtime.txt</code> na to stačí řádka <code>python-3.8.10</code>.</p>
+</li>
+<li><p>Dalším souborem, který potřebujeme, je <code>requirements.txt</code>. O tom jste už možná slyšeli(y) - obsahuje seznam Python balíčků, které potřebuje daný Python projekt. Heroku tento soubor použije, aby před spuštěním aplikace nainstaloval vše potřebné. Pro náš dashboard musí být v <code>requirements.txt</code> toto:</p>
+<div class="highlight"><pre><code>pandas==1.2.5
+streamlit==1.2.0
+plotly==4.14.3</code></pre></div></li>
+<li><p>Soubory už máme připravené, potřebujeme je teď přidat do Git repozitáře. Na to použij tyto dva příkazy:</p>
+<div class="highlight"><pre><code>git add app.py Procfile runtime.txt requirements.txt
+git commit -v -m "první verze dashboardu"</code></pre></div></li>
+<li><p>A teď už můžeme publikovat. Tedy nejdříve se přihlásit pomocí</p>
+<div class="highlight"><pre><code>heroku login</code></pre></div><p>(Postupujte dle pokynů - otevře se přihlašovací stránka ve webovém prohlížeči, která vás vyzve k zadání přihlašovacích údajů.)</p>
+</li>
+<li><p>Pak ještě vytvořit Heroku aplikaci pomocí</p>
+<div class="highlight"><pre><code>heroku create</code></pre></div></li>
+<li><p>A nakonec už opravdu vypustit aplikaci na internet pomocí</p>
+<div class="highlight"><pre><code>git push heroku main</code></pre></div></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud vše půjde dobře, tento krok bude chvíli trvat. Postupně se bude vypisovat, co pro nás Heroku dělá:</p>
+<div class="highlight"><pre><code>Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 940.72 KiB | 2.40 MiB/s, done.
+Total 4 (delta 2), reused 0 (delta 0)
+remote: Compressing source files... done.
+remote: Building source:
+remote:
+remote: -----&gt; Python app detected
+remote: -----&gt; Installing python-3.8.6
+remote: -----&gt; Installing pip 20.1.1, setuptools 47.1.1 and wheel 0.34.2
+remote: -----&gt; Installing SQLite3
+remote: -----&gt; Installing requirements with pip
+remote:        Collecting pandas==1.1.4
+remote:          Downloading pandas-1.1.4-cp36-cp36m-manylinux1_x86_64.whl (9.5 MB)
+remote:        Collecting streamlit==0.71.0
+remote:          Downloading streamlit-0.71.0-py2.py3-none-any.whl (7.4 MB)
+remote:        Collecting plotly==4.13.0
+remote:          Downloading plotly-4.13.0-py2.py3-none-any.whl (13.1 MB)
+...</code></pre></div><p>Nakonec by se mělo objevit něco jako</p>
+<div class="highlight"><pre><code>remote: -----&gt; Launching...
+remote:        Released v6
+remote:        https://cryptic-ocean-20431.herokuapp.com/ deployed to Heroku
+remote:
+remote: Verifying deploy... done.
+To https://git.heroku.com/cryptic-ocean-20431.git</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Důležitý je odkaz pod řádkem "Released v6". To je totiž adresa, na které je náš dashboard dostupný "odkudkoli z internetu". Buď si ji zkopírujte do prohlížeče nebo použijte příkaz <code>heroku open</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol 1:</strong> Pošli odkaz na tvou běžící aplikaci :)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol 2:</strong> Pomocí <code>st.title</code> přidej titulek (název) aplikace. Vyzkoušej u sebe lokálně, pak změnu commituj do gitu a aktualizuj aplikaci na Heroku (pomocí <code>git push heroku master</code>).</p>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/pydata-praha-podzim/sessions/dashboards/">↑ <span class="d-none d-sm-inline">Lekce: Interaktivní vizualizace a aplikace</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/pydata-praha-podzim/pydata/dashboards-2/"><span class="d-none d-sm-inline">Pokročilejší možnosti pro dashboardy</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyDataCZ/naucse.python.cz/blob/praha-podzim2021/lessons/pydata/dashboards/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Jakub Urban, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

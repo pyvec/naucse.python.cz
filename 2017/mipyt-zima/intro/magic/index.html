@@ -1,0 +1,743 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                MI-PYT (Pokročilý Python): Magie
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/intro/magic/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2017/mipyt-zima/">MI-PYT (Pokročilý Python)</a>
+
+> <a href="/2017/mipyt-zima/sessions/magic/">Magie</a>
+
+> <a href="/2017/mipyt-zima/intro/magic/">Magie</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Magie</h1>
+<p>Co z Pythonu dělá tak užitečný jazyk?
+Z velké části je to zaměření na čitelnost kódu. Pythonu se někdy říká „spustitelný pseudokód“: syntaxe je inspirovaná zápisem abstraktních algoritmů v matematice, používá se málo speciálních znaků jako <code>$</code>, <code>&lt;&lt;</code>, <code>&amp;&amp;</code>, <code>?</code>.
+Čitelnosti je podřízena expresivita (proto v Pythonu nenajdeme makra jako v Lispu) i délka zápisu (některé věci se nedají napsat na jeden řádek).</p>
+<p>Návrh jazyka (a knihoven pro něj) se řídí mimo jiné poučkou „There should be one– and preferably only one –obvious way to do it.“
+Existuje ideálně jeden <em>zjevně nejlepší</em> způsob, jak dosáhnout určité funkčnosti.
+Úkolem programátora je tento způsob najít a použít. Náš cíl by měl být kód, který ostatní programátoři pochopí na první pohled. A pokud je to možné, měli by ho pochopit i neprogramátoři. Není mezi nimi pevná hranice – váš kód můžou číst lidi, kteří programovací jazyk v životě neviděli; programátoři silní v jiných jazycích; průměrní Pythonisté; nebo ostřílení veteráni. Čím víc jich dokáže kód pochopit, tím bude váš kód udržovatelnější.</p>
+<p>S tím souvisí koncept „magie“. Magie je něco, co funguje, ačkoli tomu nerozumíme. Pro každého čtenáře kódu může být magie něco jiného: pro začátečníka bude nepochopitelný zápis <code>zip(*args)</code>, matematik nemusí chápat princip dědičnosti tříd, ostřílený Pythonista nemusí chápat maticovou matematiku, neprogramátor netuší, jak funguje mobil nebo webová aplikace. Je to tedy subjektivní pojem, ale lze ho zobjektivnit: čím méně lidí váš kód pochopí, tím je kód magičtější.</p>
+<p>Magie, která <em>funguje</em>, nevadí. Věci které nechápu, můžu stále používat – jen nevím jak fungují, a tudíž je neumím <em>opravit</em>. Problém nastane až v momentě, kdy se něco pokazí.</p>
+<p>Přehlednost a udržitelnost kódu je samozřejmě potřeba vyvážit s ostatními aspekty. Kód musí být například dostatečně rychlý a optimalizace ho často znepřehlední. Proto je dobré optimalizovat až potom, co vím, že je kód <em>správný</em> a řeší opravdu problém, který potřebuji vyřešit. V ten moment napíšu testy a potom, když je potřeba, můžu optimalizovat – trochu přehlednosti vyměnit za rychlost.</p>
+<p>Na jiný důvod, proč použít méně pochopitelné techniky, narazíme při psaní knihoven a frameworků. To je kód, který používá hodně programátorů – a často jsou to programátoři s méně zkušenostmi, než mají autoři knihovny. Tady proto bývá dobré občas použít nějakou tu magii – znepřehlednit kód knihovny, aby kód který knihovnu <em>používá</em>, mohl být přehlednější.</p>
+<p>Typický příklad jsou dekorátory ve Flasku. Napsat dekorátor není úplně triviální, ale velice to zjednodušuje práci všem, co ve Flasku píšou web. Konstrukce <code>@app.route</code> je pro většinu lidí magická – nevíme přesně, co to dělá, ale to nám nebrání ji použít.</p>
+<h2>Velká moc a velká zodpovědnost</h2>
+<p>Druhý možný význam slova <em>magie</em> je něco, co neodpovídá „normálnímu“ chování podobných věcí.</p>
+<p>Jazyk Python standardizuje syntaxi relativně malého počtu operací (operátory, volání funkcí, atributy, ...), způsobů řízení toku programu (cykly, <code>with</code>, ...) a strukturování kódu (moduly, <code>def</code>, <code>class</code>).
+To, že je jich relativně málo, má dvě výhody: zaprvé fungují s ostatními části jazyka a zadruhé nebývá problém rozhodnout, který způsob je pro daný problém nejlepší.</p>
+<p>Téměř všechno v Pythonu ale jde předefinovat. Operátor <code>/</code> nemusí jen dělit: můžu si napsat třídu pro jméno souboru, která umí pomocí <code>/</code> oddělovat adresáře *.
+Cyklus <code>for</code> nemusí iterovat přes předem danou sekvenci prvků; iterovatelný objekt může poskytovat jakékoli hodnoty podle jakýchkoli pravidel.
+Příkaz <code>class</code> dokonce vůbec nemusí vytvořit třídu, jak uvidíme později.</p>
+<p>Ačkoliv si ale můžeme dovolit téměř cokoli, je dobré mít na paměti, že odchylky od „normálního“ chování jsou <em>magické</em>. Jakmile někdo použije divnou třídu, která předefinovává dělení, ve svém kódu, musí každý čtenář toho kódu nejen opustit představu o tom, co operátor <code>/</code> dělá, ale hlavně si předtím uvědomit, že <code>/</code> <em>může</em> dělat něco divného. To samé platí u „divných“ iterovatelných objektů nebo tříd. Odchylka od normálního chování, je-li nezbytná, by měla být dobře promyšlená a zdokumentovaná.</p>
+<p>Nadefinujeme-li vlastní nestandardní – „magické“ – chování některých objektů, často se stane, že nebudou fungovat s ostatními prvky jazyka tak dobře, jako to co je zabudované. Předefinujeme-li <code>&lt;</code> tak, že nebude mít nic společného s porovnáváním, bude se funkce <code>sorted</code> chovat podivně. Když u svých objektů předefinuji přístup k atributům, musím si dávat zvlášť pozor na to, aby fungovala funkce <code>dir()</code>.</p>
+<p>Následující principy (kromě jiných) je proto dobré při psaní knihoven používat jen po pečlivém zvážení, jestli by to nešlo i bez magie.</p>
+<p>* <em>Taková třída dokonce <a href="https://docs.python.org/3/library/pathlib.html">existuje ve standardní knihovně</a>.</em></p>
+<h2>Speciální metody</h2>
+<p>Základní způsob, jak přizpůsobit chování objektů, jsou <em>speciální metody</em>.
+Asi už víte, že všechny atributy, které začínají a končí dvojitým podtržítkem, jsou rezervované pro samotný Python, který je používá podle svých pravidel – například danou metodu volá, když je potřeba sečíst dvě čísla.</p>
+<p>Speciální metody jsou popsané v <a href="https://docs.python.org/3/reference/datamodel.html#special-method-names">dokumentaci</a>. Zde uvedu jen přehled, který pokročilý Pythonista nosí v hlavě, aby věděl co je všechno možné.
+Doporučuji si předtím, než nějakou naimplementujete, dokumentaci přečíst.</p>
+<p>Metody pro předefinování aritmetických operátorů:
+<code>__add__</code>, <code>__sub__</code>, <code>__mul__</code>, <code>__div__</code>, <code>__floordiv__</code>, <code>__pow__</code>, <code>__matmul__</code>, <code>__lshift__</code>, <code>__rshift__</code>, <code>__or__</code>, <code>__xor__</code> a varianty s <code>r</code> a <code>i</code> (<code>__radd__</code>, <code>__iadd__</code>, atd.);
+<code>__neg__</code>, <code>__pos__</code>, <code>__abs__</code>, <code>__invert__</code>.</p>
+<p>Metody pro předefinování porovnávání:
+<code>__eq__</code>, <code>__ne__</code>, <code>__lt__</code>, <code>__gt__</code>, <code>__le__</code>, <code>__ge__</code>, <code>__hash__</code>.</p>
+<p>Metoda pro zavolání objektu jako funkce:
+<code>__call__</code>.</p>
+<p>Metody pro funkčnost sekvencí a kontejnerů:
+<code>__len__</code>, <code>__iter__</code>, <code>__next__</code>, <code>__reversed__</code>; <code>__contains__</code> pro operátor <code>in</code>.</p>
+<p>Metody pro „hranaté závorky“:
+<code>__getitem__</code>, <code>__setitem__</code>, <code>__delitem__</code>.</p>
+<p>Převádění na řetězce:
+<code>__repr__</code>, <code>__str__</code>, <code>__format__</code>.</p>
+<p>Převádění na čísla:
+<code>__complex__</code>, <code>__float__</code>, <code>__index__</code>, <code>__round__</code>, <code>__floor__</code>, <code>__ceil__</code>.</p>
+<p>Převádění na <code>bool</code> (např. i v <code>if</code>):
+<code>__bool__</code>.</p>
+<p>Vytváření a rušení objektů:
+<code>__new__</code> (konstruktor – <em>vytvoří</em> objekt dané třídy), <code>__init__</code> (<em>inicializuje</em> objekt dané třídy), <code>__del__</code> (zavoláno před <em>zrušením</em> objektu).</p>
+<p>Předefinování přístupu k atributům:
+<code>__getattr__</code> (zavolá se, pokud se atribut nenajde), <code>__getattribute__</code> (zavolá se pro <em>každý</em> přístup k atributu), <code>__setattr__</code>, <code>__delattr__</code>, <code>__dir__</code>.</p>
+<p>Implementace <em>context manageru</em> (pro <code>with</code>):
+<code>__enter__</code>, <code>__exit__</code>.</p>
+<p>Implementace deskriptoru (viz níže):
+<code>__get__</code>, <code>__set__</code>, <code>__delete__</code>.</p>
+<p>Implementace asynchronní funkcionality:
+<code>__await__</code>, <code>__aiter__</code>, <code>__anext__</code>, <code>__aenter__</code>, <code>__aexit__</code>.</p>
+<p>Předefinování hierarchie dědičnosti:
+<code>__instancecheck__</code>, <code>__subclasscheck__</code>.</p>
+<h2>Dekorátory</h2>
+<p>Další věc, na kterou se podíváme, jsou <em>dekorátory</em> – způsob, jak si
+přizpůsobovat funkce.</p>
+<p>Nejjednodušší použití dekorátorů je <em>registrace</em>:
+k funkci přidáme dekorátor a funkce se někam zaregistruje, uloží,
+aby se dala zavolat později.
+Typický příklad je <code>@app.route</code> ve Flasku.</p>
+<p>My si pro příklad budeme chtít udělat dekorátor pro kalkulačku,
+<code>@register_operator</code>, aby fungoval tento kód:</p>
+<div class="highlight"><pre><span></span><span class="n">operators</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="nd">@register_operator</span>
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="nd">@register_operator</span>
+<span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">'First number: '</span><span class="p">))</span>
+<span class="n">operator_name</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">'Operation: '</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">'Second number: '</span><span class="p">))</span>
+
+<span class="n">func</span> <span class="o">=</span> <span class="n">operators</span><span class="p">[</span><span class="n">operator_name</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+</pre></div><p>Bez použití dekorátorů by se to dalo napsat takto:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">register_operator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="n">operators</span><span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="n">register_operator</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+</pre></div><p>S použitím dekorátoru je funkce <code>register_operator</code> téměř stejná,
+jen použijeme speciální syntaxi se zavináčem.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">register_operator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="n">operators</span><span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+    <span class="k">return</span> <span class="n">func</span>
+
+<span class="nd">@register_operator</span>
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div><p>Použití dekorátoru je jen zkrácený zápis pro volání dekorátoru jako
+funkce – poslední tři řádky předchozího příkladu jsou ekvivalentní tomuto:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="n">add</span> <span class="o">=</span> <span class="n">register_operator</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+</pre></div><p>Chování samotného <code>@</code> je tedy celkem triviální.
+Magie (složitost) spočívá v tom, že dekorátor je většinou funkce vyššího řádu:
+bere jinou funkci jako argument a taky jinou funkci vrací.
+V případě registrace vrací stejnou funkci jako dostala – ale to není povinné.</p>
+<p>Často se setkáme s dekorátory, které dekorovanou funkci nějak modifikují.
+Například můžeme napsat dekorátor, který v naší kalkulačce převede vstup
+na reálná čísla.
+Dělá to tak, že definuje <em>novou funkci</em>, která volá tu původní – ale před nebo
+po tomto volání může dělat i něco jiného.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">to_floats</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">outer_function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">outer_function</span>
+
+<span class="nd">@to_floats</span>
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">"""Adds two numbers"""</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'2'</span><span class="p">))</span>
+</pre></div><p>Takto funguje většina dekorátorů, které mění chování dekorované funkce.
+Naráží s tím ale na jeden problém: nově nadefinovaná funkce má vlastní jméno
+(a dokumentační řetězec a podobné informace), což kazí iluzi, že jsme
+původní funkci jen trošku změnili:</p>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+<span class="n">help</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+</pre></div><p>Řešení je jednoduché – zkopírovat jméno, dokumentační řetězec atd. z jedné
+funkce na druhou.
+Na to ve standardní knihovně existuje dekorátor jménem <code>functools.wraps</code>:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="k">def</span> <span class="nf">to_floats</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">outer_function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">outer_function</span>
+</pre></div><p>S <code>wraps</code> bude <code>help(add)</code> fungovat správně – ukáže původní jméno
+a dokumentační řetězec.</p>
+<p>Z volání <code>wraps(func)</code> je vidět, že jako dekorátor můžeme použít i volání
+funkce, ne jen funkci samotnou.
+Budeme-li chtít napsat dekorátor, který tohle umí, potřebujeme napsat
+funkci ještě vyššího řádu – totiž funkci, která po zavolání vrátí dekorátor:</p>
+<div class="highlight"><pre><span></span><span class="n">operators</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">def</span> <span class="nf">register_operator</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="n">operators</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="k">return</span> <span class="n">func</span>
+    <span class="k">return</span> <span class="n">decorator</span>
+
+<span class="nd">@register_operator</span><span class="p">(</span><span class="s1">'+'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="nd">@register_operator</span><span class="p">(</span><span class="s1">'*'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">'First number: '</span><span class="p">))</span>
+<span class="n">operator_name</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">'Operation: '</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">'Second number: '</span><span class="p">))</span>
+
+<span class="n">func</span> <span class="o">=</span> <span class="n">operators</span><span class="p">[</span><span class="n">operator_name</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+</pre></div><p>Řádek <code>@register_operator('+')</code> dělá (jak už víme) to stejné, jako bychom hned
+za funkcí napsali <code>add = register_operator('+')(add)</code>.</p>
+<p>Budete-li chtít napsat dekorátor, který bere argumenty, a přitom ještě
+„mění“ dekorovanou funkci, dostanete se na tři funkce zanořené v sobě:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+<span class="n">operators</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">def</span> <span class="nf">register_operator</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to_floats</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+
+        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">outer_function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+        <span class="n">operators</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">outer_function</span>
+        <span class="k">return</span> <span class="n">outer_function</span>
+
+    <span class="k">return</span> <span class="n">to_floats</span>
+
+<span class="nd">@register_operator</span><span class="p">(</span><span class="s1">'+'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="n">func</span> <span class="o">=</span> <span class="n">operators</span><span class="p">[</span><span class="s1">'+'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'2'</span><span class="p">))</span>
+</pre></div><p>Dekorátorů se na jedné funkci dá použít víc:</p>
+<div class="highlight"><pre><span></span><span class="nd">@register_operator</span><span class="p">(</span><span class="s1">'×'</span><span class="p">)</span>
+<span class="nd">@register_operator</span><span class="p">(</span><span class="s1">'*'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+</pre></div><p>Úplně stejně jako funkce se dají dekorovat i třídy.
+Dekorátor dostane třídu jako první argument a třída se nahradí tím,
+co dekorátor vrátí.</p>
+<h2>Deskriptory</h2>
+<p>Jeden z nejmagičtějších operátorů v Pythonu je <code>.</code>, tečka.
+Je magický v obou významech – většina lidí ho používá, ačkoli nemá tušení, co přesně dělá, a dá se předefinovat tolika různými způsoby, že to vydá na <a href="https://www.youtube.com/watch?v=NiSqG6s8skA">celou přednášku</a>.</p>
+<p>Pomocí tečky zapisujeme tři operace: čtení atributu (<code>print(foo.bar)</code>), zapisování (<code>foo.bar = 3</code>) a mazání (<code>del foo.bar</code>).
+Tady se zaměříme hlavně na nejmagičtější z nich, čtení.</p>
+<p>Kdykoli atribut čteme pomocí tečky, hledá se několika místech:</p>
+<ul>
+<li>na samotné instanci objektu,</li>
+<li>pokud se tam nenajde, tak na třídě,</li>
+<li>pokud se nenajde ani tam, tak na rodičovských třídách (v případě vícenásobné dědičnosti podle <a href="https://www.python.org/download/releases/2.3/mro/">MRO</a>),</li>
+<li>a pokud stále není k nalezení, vyhodí se <code>AttributeError</code>.</li>
+</ul>
+<p>To je trochu zjednodušený, ale užitečný model.</p>
+<p>Speciální metody, které se nevolají pomocí tečky, přeskakují první krok: metoda <code>__add__</code> tedy musí být definována na <em>třídě</em>, aby se zavolala pro <code>a + b</code>.</p>
+<blockquote><p><em>(Poznámka navíc pro ty, kdo čtou tento text podruhé: na metatřídě se atribut nehledá; např. existuje-li <code>type.mro</code>, najde se <code>str.mro</code>, ale už ne <code>"".mro</code>)</em></p>
+</blockquote>
+<p>Podívejme se teď na získávání atributu trošku podrobněji. Je to poměrně komplikovaný proces a existuje několik způsobů, jak ho přizpůsobit. Nejjednodušší je dvojice speciálních metod:</p>
+<ul>
+<li><code>__getattribute__</code>, která <em>kompletně předefinuje</em> funkci <code>.</code> pro čtení atributu, a</li>
+<li><code>__getattr__</code>, která se zavolá, až když se atribut nenajde normálním způsobem.</li>
+</ul>
+<p>První z nich nedoporučuji používat, protože je <em>příliš</em> obecná (pokusy se z ní dostat ke stavu objektu končívají nekonečnou rekurzí).
+Příklad druhé:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Palette</span><span class="p">:</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">):</span>
+        <span class="n">prefix</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">attr_name</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">'_'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s1">'dark'</span><span class="p">:</span>
+            <span class="n">original_color</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">c</span><span class="o">//</span><span class="mi">2</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">original_color</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">attr_name</span><span class="p">)</span>
+
+<span class="n">palette</span> <span class="o">=</span> <span class="n">Palette</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">palette</span><span class="o">.</span><span class="n">dark_red</span><span class="p">)</span>
+</pre></div><p>(Předpokládám že znáte funkci <code>getattr</code>; kdyby ne: <code>getattr(foo, "bar")</code> dělá totéž co <code>foo.bar</code> – jen je jméno atributu předáno jako řetězec, takže může být např. v proměnné. Podobně existují <code>setattr(instance, attr_name, new_value)</code> a <code>delattr(setattr(instance, attr_name)</code>.)</p>
+<p>Metoda <code>__getattr__</code> je většinou tak trochu kanón na vrabce: ve většině případů nepotřebujeme nastavit chování <em>všech</em> neexistujících atributů, ale jenom jednoho nebo několika konkrétních.
+Například máme třídu pro 2D bod s atributy <code>x</code> a <code>y</code> a potřebujeme i atribut pro dvojici <code>(x, y)</code>.
+Toto se často dělá pomocí dekorátoru <code>property</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Point</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+
+<span class="n">point</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+</pre></div><p>Jak to ale funguje? Dekorátor <code>property</code> je třída, jakou můžete teoreticky napsat sami v Pythonu.
+Je to <em>deskriptor</em>, objekt, který v rámci nějaké třídy <em>popisuje</em> jak přistupovat k nějakému atributu.</p>
+<p>Nejlépe se deskriptory vysvětlí na příkladu:</p>
+<div class="highlight"><pre><span></span><span class="c1"># (Omluvte prosím češtinu v kódu)</span>
+
+<span class="k">class</span> <span class="nc">Descriptor2D</span><span class="p">:</span>
+    <span class="sd">"""Popisuje atribut, který kombinuje dva jiné atributy do dvojice"""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name1</span> <span class="o">=</span> <span class="n">name1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name2</span> <span class="o">=</span> <span class="n">name2</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">"""Volá se, když je třeba načíst atribut dané `instance` na dané třídě `cls`.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Je-li instance nastavena, čteme atribut z ní.</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name1</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Je-li instance None, čteme atribut přímo ze třídy `cls`;</span>
+            <span class="c1"># v tomto případě slušné deskriptory většinou vrací deskriptor samotný.</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+<span class="k">class</span> <span class="nc">Rect</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
+
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">Descriptor2D</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">Descriptor2D</span><span class="p">(</span><span class="s1">'w'</span><span class="p">,</span> <span class="s1">'h'</span><span class="p">)</span>
+
+<span class="n">rect</span> <span class="o">=</span> <span class="n">Rect</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="c1"># Čtení atributu přímo ze třídy:</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Rect</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+</pre></div><p>Deskriptory jsou tedy součást třídy – atributy s nějakým jménem. Popisují, jak se bude přistupovat k atributu daného jména.</p>
+<p>Existují dva druhy deskriptorů: <em>data descriptor</em> a <em>non-data descriptor</em>.
+Liší se v tom, jestli popisují jen, jak se daný atribut <em>čte</em>, nebo i jak se do něj <em>zapisuje</em>.
+Výše uvedený deskriptor je <em>non-data</em>: ovládá jen čtení. Zápis funguje jako u normálních atributů:
+přepíše aktuální hodnotu – a nová hodnota se pak použije místo volání deskriptoru:</p>
+<div class="highlight"><pre><span></span><span class="n">rect</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="s1">'haha'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+</pre></div><p>Abychom tomu zabránili, můžeme na deskriptoru nadefinovat speciální metodu <code>__set__</code> (nebo <code>__delete__</code>), která popisuje,
+jak se atribut nastavuje (resp. maže).
+Tím vznikne <em>data descriptor</em>:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Descriptor2D</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name1</span> <span class="o">=</span> <span class="n">name1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name2</span> <span class="o">=</span> <span class="n">name2</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name1</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">new_value</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name1</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name2</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="nb">delattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name1</span><span class="p">)</span>
+        <span class="nb">delattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name2</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Rect</span><span class="p">:</span>
+    <span class="c1"># jako předtím</span>
+
+<span class="n">rect</span> <span class="o">=</span> <span class="n">Rect</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">rect</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+</pre></div><p>Už zmíněný vestavěný deskriptor <code>property</code> je <em>data descriptor</em>.
+Popisuje jak čtení, tak zápis atributu. Pokud mu nenastavíme funkci pro zápis, vyhodí ze své metody  <code>__set__</code> výjimku <code>AttributeError</code> se zprávou, že do atributu se zapisovat nedá. (To je trochu magická odchylka od normálního chování Pythonu, kdy atributy zapisovat jdou.)</p>
+<p>Nejčastější příklad <em>non-data</em> deskriptoru je obyčejná funkce.
+Každá funkce totiž funguje jako deskriptor: má speciální metodu <code>__get__</code>, která zajišťuje, že pokud je nastavena na třídě, daným atributem nedostaneme <em>funkci</em>, ale <em>metodu</em> (s „předvyplněným“ parametrem <code>self</code>).</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">4</span>
+
+<span class="k">class</span> <span class="nc">C</span><span class="p">:</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="n">foo</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+
+<span class="c1"># Obyčejná funkce</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">foo</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+
+<span class="c1"># Metoda</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">C</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+</pre></div><p>Protože je to <em>non-data</em> deskriptor, můžeme v jednotlivých instancích třídy
+daný atribut přepsat něčím jiným, čímž metodu znepřístupníme.</p>
+<p>Jako zajímavost uvedu <em>non-data</em> deskriptor, který přepisuje svůj vlastní atribut.
+Funguje podobně jako <code>@property</code>, jen se výsledek vypočítá pouze jednou a uloží se jako normální atribut.
+Při dalším přístupu k atributu už se použije uložená hodnota.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">reify</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+<span class="k">class</span> <span class="nc">Vector</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="nd">@reify</span>
+    <span class="k">def</span> <span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Running expensive computation...'</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+<span class="n">vect</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vect</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vect</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vect</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+</pre></div><p>Kompletní implementace je např. ve frameworku Pyramid jako <a href="http://docs.pylonsproject.org/projects/pyramid/en/latest/_modules/pyramid/decorator.html">pyramid.decorator.reify</a>.</p>
+<h2>Konstruktor</h2>
+<p>Třídy v Pythonu můžou mít <em>konstruktor</em> – funkci, která se zavolá, aby
+vytvořila objekt daného typu.
+Toto není známá metoda <code>__init__</code> – ta objekt nevytváří, ta dostane už
+předpřipravený <code>self</code>, který jen naplní atributy.
+Opravdový konstruktor se jmenuje <code>__new__</code> a chová se jako <code>classmethod</code>:
+místo <code>self</code> bere třídu, jejíž instanci má vytvořit.</p>
+<p>Opravdový konstruktor se „hodí“ pro vytváření <em>singletonů</em>, tříd, které mají jen
+jednu instanci:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Singleton</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+
+<span class="k">assert</span> <span class="n">Singleton</span><span class="p">()</span> <span class="ow">is</span> <span class="n">Singleton</span><span class="p">()</span>
+</pre></div><p>Podobný trik lze použít pro třídu podobnou <code>bool</code>, která má pouze dvě instance:
+<code>bool(1) is bool(2)</code>.</p>
+<p>Metoda <code>__new__</code> se hodí, když chceme dědit z neměnitelné (<em>immutable</em>)
+třídy jako <code>tuple</code>.
+Metoda <code>__init__</code> sice dostane <code>self</code>, ale cokoli z nadtřídy už nemůže měnit.
+Je ale možné předefinovat <code>__new__</code>.</p>
+<p>Normálně bere <code>tuple</code> jediný argument, <code>tuple([1, 2])</code>.
+Chceme-li brát dva, dá se to udělat takto:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Point</span><span class="p">(</span><span class="nb">tuple</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div><h2>Metatřídy</h2>
+<p>Poslední věc, na kterou se podíváme, jsou metatřídy.</p>
+<p>Začneme zlehka: pokud při definici třídy zadáme nějakou funkci jako pojmenovaný
+parametr <code>metaclass</code>, funkce se zavolá s informacemi potřebnými pro vytvoření
+třídy.
+Ty můžeme použít, nebo úplně ignorovat a vrátit něco jiného:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fake_metaclass</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">42</span>
+
+<span class="k">class</span> <span class="nc">NotAClass</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">fake_metaclass</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">NotAClass</span><span class="p">)</span>
+</pre></div><p>Argumenty, které „metatřída” dostane, jsou tři: jméno třídy, <em>n</em>-tice
+nadtříd a jmenný prostor – slovník s proměnnými, které vznikly vykonáním
+těla příkazu <code>class</code>.
+(Ve jmenném prostoru jsou implicitně nastavené záznamy <code>__module__</code>
+a <code>__qualname__</code>, které přidává samotný příkaz <code>class</code>.)</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fake_metaclass</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'name:'</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'bases:'</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'namespace:'</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">42</span>
+
+<span class="k">class</span> <span class="nc">NotAClass</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">fake_metaclass</span><span class="p">):</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="mi">123</span>
+    <span class="k">def</span> <span class="nf">inc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div><p>Když <code>metaclass</code> nezadáme, použije se výchozí <em>metatřída</em>, tedy třída třídy.
+V Pythonu je to <code>type</code>.
+Pokud ji zavoláme s vhodnými argumenty, dostaneme normální třídu:</p>
+<div class="highlight"><pre><span></span><span class="n">MyInt</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s1">'MyInt'</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="p">),</span> <span class="p">{</span><span class="s1">'foo'</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span> <span class="s1">'inc'</span><span class="p">:</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span> <span class="o">+</span> <span class="mi">1</span><span class="p">})</span>
+
+<span class="n">three</span> <span class="o">=</span> <span class="n">MyInt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">three</span><span class="o">.</span><span class="n">inc</span><span class="p">())</span>
+</pre></div><p>Kromě toho se <code>type</code> dá zavolat i s jedním argumentem; v tom případě vrátí
+typ (třídu) daného argumentu.
+(Tohle chování – funkce, která dělá úplně různé věci v závislosti na počtu
+argumentů – v Pythonu často nevidíme.
+Je to nešťastná výjimka, která přežívá z historických důvodů.)</p>
+<p>Pojďme se podívat na třídy několika základních objektů:</p>
+<div class="highlight"><pre><span></span><span class="c1"># Třída základních objektů</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="s2">"abc"</span><span class="p">))</span>
+
+<span class="c1"># Třída třídy – metatřída.</span>
+<span class="c1"># Třída většiny tříd v Pythonu je `type`</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+
+<span class="c1"># Třída třídy třídy</span>
+<span class="c1"># Samotná `type` je jedna z té většiny tříd; její třída je `type`</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">type</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="mi">1</span><span class="p">))))</span>
+</pre></div><p>Objekty třídy <code>type</code> (tedy třídy) se normálně tvoří příkazem <code>class</code>.
+Explicitně to můžeme napsat takto:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NormalClass</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="nb">type</span><span class="p">):</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="mi">123</span>
+</pre></div><p>Když budeme chtít chování třídy změnit, budeme postupovat podobně jako
+u jiných objektů.
+Kdybych chtěl celé číslo, přes které jde iterovat, podědím z <code>int</code>
+a předefinuji <code>__iter__</code>.
+Pokud chci třídu, přes kterou jde iterovat (tedy ne přes objekty dané
+třídy – přes třídu samotnou!), podědím z <code>type</code> a předefinuji <code>__iter__</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">IterableMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">namespace</span>
+                           <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'__'</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">SimpleEnum</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">IterableMeta</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">SimpleEnum</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">SimpleEnum</span><span class="p">))</span>
+</pre></div><p>(V metatřídě se většinou používá <code>cls</code> místo <code>self</code>, aby bylo jasné, že
+instance, se kterou pracujeme, je třída – ale to je jen konvence.)</p>
+<p>Metatřídy se dědí.
+Pokud v příkazu <code>class</code> nezadám explicitně <code>metaclass</code>, použije
+se metatřída nadtřídy:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AnotherEnum</span><span class="p">(</span><span class="n">SimpleEnum</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="mi">30</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">AnotherEnum</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">AnotherEnum</span><span class="p">))</span>
+</pre></div><p>Tímto způsobem lze vnuknout třídám magické schopnosti bez toho, aby
+uživatel naší knihovny musel použít <code>metaclass</code> – stačí mu podědit z námi
+připravené třídy.</p>
+<p>Další věc, kterou metatřídy umí, je připravit počáteční jmenný prostor.
+Metoda <code>__init__</code> (nebo <code>__new__</code>) v metatřídě normálně dostane slovník,
+což nemusí být vždy to, co potřebuji.
+Můžu si chtít třeba „zapamatovat” pořadí, v jakém byly jednotlivé atributy
+vytvořeny – a slovník toto pořadí neuchovává.</p>
+<p>Na to existuje speciální metoda <code>__prepare__</code>, která se, když na metatřídě
+existuje, zavolá pro vytvoření jmenného prostoru:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="k">class</span> <span class="nc">OrderRememberingMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__prepare__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">namespace</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">OrderedEnum</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">OrderRememberingMeta</span><span class="p">):</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">second</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">third</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">fourth</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">fifth</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">OrderedEnum</span><span class="p">))</span>
+</pre></div><p>Toho se dá využít třeba v mapování objektů na databázi (např. v Django Models
+nebo SQLAlchemy), kdy chceme, aby pořadí sloupců tabulky odpovídalo
+tomu, jak jsou sloupce/atributy nadefinovány ve třídě.</p>
+<h2>A další</h2>
+<p>Další (bohužel?) oblíbený trik je vnuknutí magických schopností modulu.</p>
+<p>Naimportované moduly Python ukládá do slovníku <code>sys.modules</code>, aby při dalším
+importu nemusel načítat znovu – <code>sys.modules</code> tedy slouží jako cache.
+A tuto cache můžeme změnit (tzv. <em>cache poisoning</em>) – přidat si do ní
+vlastní „modul“, který ovšem vůbec nemusí být modul, a tudíž může umět věci,
+které moduly normálně neumí:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">'fake'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'a string'</span>
+
+<span class="o">...</span>
+
+<span class="kn">import</span> <span class="nn">fake</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fake</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+</pre></div><p>Když toto uděláme přímo z modulu, uživatel naší knihovny dostane podstrčený
+objekt hned při prvním importu.
+K tomu se hodí proměnná <code>__name__</code>, jméno aktuálního modulu:</p>
+<div class="highlight"><pre><span></span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">ReplacementModule</span><span class="p">()</span>
+</pre></div><p>Jiný trik je registrace „built-in“ („superglobální”) proměnné:</p>
+<div class="highlight"><pre><code>import builtins
+builtins.ANSWER = 42
+
+...
+
+# Třeba v jiném modulu
+print(ANSWER)</code></pre></div><p>Tímto způsobem se dají i předefinovat vestavěné funkce, což může být někdy
+užitečné pro ladění. V produkčním kódu to ale, prosím, nedělejte.</p>
+<h2>Úkol</h2>
+<p>Úkol není!</p>
+<p>Budete-li chtít některé techniky z této lekce ve svém kódu (včetně semestrálky) použít, zamyslete se, jestli se problém nedá vyřešit jednodušeji, čitelněji, přehledněji, udržovatelněji.
+Dobrý mág ví, kdy magii <em>nepoužít</em>.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/intro/magic/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2017/mipyt-zima/sessions/magic/">↑ <span class="d-none d-sm-inline">Lekce: Magie</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2017/mipyt-zima/sessions/magic/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2017-mipyt-zima/lessons/intro/magic/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Petr Viktorin, Miro Hrončok a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

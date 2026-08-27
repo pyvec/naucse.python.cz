@@ -1,0 +1,329 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz v Tieto Czech: Files
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/tieto/">Začátečnický kurz v Tieto Czech</a>
+
+> <a href="/2018/tieto/sessions/files-and-exceptions/">Soubory a výjimky</a>
+
+> <a href="/2018/tieto/beginners/tieto-files/">Files</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h2>Files</h2>
+<h3>Opening Files</h3>
+<p>You can open files with the open function , which lives in the io module but is automatically imported for you.</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; f = open('somefile.txt')</code></pre></div><p>You can specify full path to the file and some other optional arguments. In case that you are trying to open file, that doesn't exist, you will receive exception like this:</p>
+<div class="highlight"><pre><code>Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+FileNotFoundError: [Errno 2] No such file or directory: 'somefile.txt'</code></pre></div><h3>File modes</h3>
+<p>If you use open with only a file name as a parameter, you get a file object you can read from. If you want to write to the file, you must state that explicitly, supplying a mode.</p>
+<table>
+<thead><tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>'r'</td>
+<td>Read mode (default)</td>
+</tr>
+<tr>
+<td>'w'</td>
+<td>Write mode</td>
+</tr>
+<tr>
+<td>'x'</td>
+<td>Exclusive write mode</td>
+</tr>
+<tr>
+<td>'a'</td>
+<td>Append mode</td>
+</tr>
+<tr>
+<td>'b'</td>
+<td>Binary mode</td>
+</tr>
+<tr>
+<td>'t'</td>
+<td>Text mode</td>
+</tr>
+<tr>
+<td>'+'</td>
+<td>Read/write mode</td>
+</tr>
+</tbody>
+</table>
+<p>The default mode is 'rt', which means your file is treated as encoded Unicode text.</p>
+<h3>File methods</h3>
+<p><strong>Reading and writing</strong></p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; f = open('somefile.txt', 'w')
+&gt;&gt;&gt; f.write('Hello, ')
+7
+&gt;&gt;&gt; f.write('World!')
+6
+&gt;&gt;&gt; f.close()</code></pre></div><p><strong>Partial reading</strong></p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; f = open('somefile.txt', 'r')
+&gt;&gt;&gt; f.read(4)
+'Hell'
+&gt;&gt;&gt; f.read()
+'o, World!'</code></pre></div><p><strong>Reading from stdin</strong></p>
+<p>somefile.txt file with text:</p>
+<div class="highlight"><pre><code>Welcome to this file
+There is nothing here except
+This stupid haiku</code></pre></div><p>somescript.py</p>
+<div class="highlight"><pre><code>import sys
+text = sys.stdin.read()
+words = text.split()
+wordcount = len(words)
+print('Wordcount:', wordcount)</code></pre></div><p>Command:</p>
+<div class="highlight"><pre><code>cat somefile.txt | python somescript.py
+Wordcount: 12</code></pre></div><h3>Method seek()</h3>
+<div class="highlight"><pre><code>&gt;&gt;&gt; f = open(r'somefile.txt', 'w')
+&gt;&gt;&gt; f.write('01234567890123456789')
+20
+&gt;&gt;&gt; f.seek(5)
+5
+&gt;&gt;&gt; f.write('Hello, World!')
+13
+&gt;&gt;&gt; f.close()
+&gt;&gt;&gt; f = open(r'somefile.txt')
+&gt;&gt;&gt; f.read()
+'01234Hello, World!89'</code></pre></div><p>The method tell() returns the current file position.</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; f = open(r'somefile.txt')
+&gt;&gt;&gt; f.read(3)
+'012'
+&gt;&gt;&gt; f.read(2)
+'34'
+&gt;&gt;&gt; f.tell()
+5</code></pre></div><h3>Closing files</h3>
+<p>You should always close files before you exit the script.</p>
+<ul>
+<li>Might help to avoid keeping the file uselessly "locked" against modification in some operating systems.</li>
+<li>You should always close a file you have written to because Python may buffer the data you have written and the data might not be written to the file at all.</li>
+</ul>
+<p>You can use try, finally:</p>
+<div class="highlight"><pre><code># Open your file here
+try:
+    # Write data to your file
+finally:
+    file.close()</code></pre></div><h3>With statement</h3>
+<div class="highlight"><pre><code>with open("somefile.txt") as somefile:
+     do_something(somefile)</code></pre></div><p>The with statement simplifies exception handling by encapsulating common
+preparation and cleanup tasks.</p>
+<p>In addition, it will automatically close the file. The with statement provides a way for ensuring that a clean-up is always used.</p>
+<p><strong>Without with statement</strong></p>
+<div class="highlight"><pre><code>file = open("welcome.txt")
+data = file.read()
+print data
+file.close()  # It's important to close the file when you're done with it</code></pre></div><p><strong>With with statement</strong></p>
+<div class="highlight"><pre><code>with open("welcome.txt") as file: # Use file to refer to the file object
+   data = file.read()
+   do something with data</code></pre></div><h3>Another file methods</h3>
+<p>Let's use our somefile.txt.</p>
+<p><strong>read(n)</strong></p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; f = open(r'somefile.txt')
+&gt;&gt;&gt; f.read(7)
+'Welcome'
+&gt;&gt;&gt; f.read(4)
+' to '
+&gt;&gt;&gt; f.close()</code></pre></div><p><strong>read()</strong></p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; f = open(r'somefile.txt')
+&gt;&gt;&gt; print(f.read())
+Welcome to this file
+There is nothing here except
+This stupid haiku
+&gt;&gt;&gt; f.close()</code></pre></div><p><strong>readline()</strong></p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; f = open(r'somefile.txt')
+&gt;&gt;&gt; for i in range(3):
+        print(str(i) + ': ' + f.readline(), end='')
+0: Welcome to this file
+1: There is nothing here except
+2: This stupid haiku
+&gt;&gt;&gt; f.close()</code></pre></div><p><strong>readlines()</strong></p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; import pprint
+&gt;&gt;&gt; pprint.pprint(open(r'somefile.txt').readlines())
+['Welcome to this file\n',
+'There is nothing here except\n',
+'This stupid haiku']</code></pre></div><p><strong>write(string)</strong></p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; f = open(r'somefile.txt', 'w')
+&gt;&gt;&gt; f.write('this\nis no\nhaiku')
+13
+&gt;&gt;&gt; f.close()</code></pre></div><div class="admonition warn"><p class="admonition-title">File will be overwritten!</p>
+</div><p><strong>writelines()</strong></p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; f = open(r'somefile.txt')
+&gt;&gt;&gt; lines = f.readlines()
+&gt;&gt;&gt; f.close()
+&gt;&gt;&gt; lines[1] = "isn't a\n"
+&gt;&gt;&gt; f = open(r'somefile.txt', 'w')
+&gt;&gt;&gt; f.writelines(lines)
+&gt;&gt;&gt; f.close()</code></pre></div><h3>Iterations</h3>
+<p>One character at a time:</p>
+<div class="highlight"><pre><code>with open('somefile.txt') as f:
+    while True:
+        char = f.read(1)
+        if not char: break
+        print('Processing:', char)</code></pre></div><p>One line at a time:</p>
+<div class="highlight"><pre><code>with open('somefile.txt') as f:
+    while True:
+        line = f.readline()
+        if not line: break
+        print(line)</code></pre></div><p>Reading everything:</p>
+<div class="highlight"><pre><code>with open('somefile.txt') as f:
+    for line in f.readlines():
+        print(line)</code></pre></div><p>Enother examples of iteration:</p>
+<div class="highlight"><pre><code>with open('somefile.txt') as f:
+    for line in f:
+        print(line)</code></pre></div><div class="highlight"><pre><code>for line in open('somefile.txt'):
+    print(line)</code></pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/tieto/sessions/files-and-exceptions/">↑ <span class="d-none d-sm-inline">Lekce: Soubory a výjimky</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/tieto/beginners/tieto-exceptions/"><span class="d-none d-sm-inline">Exceptions</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-tieto/lessons/beginners/tieto-files/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro Tieto Czech s.r.o. napsal Lumír Jasiok, 2018</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,5807 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Pandas - spojování tabulek
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2023/pydata-praha-podzim/">Datový kurz PyLadies</a>
+
+> <a href="/2023/pydata-praha-podzim/sessions/eda4/">Explorativní datová analýza a více zdrojů / proměnných</a>
+
+> <a href="/2023/pydata-praha-podzim/pydata/pandas_joins/">Pandas - spojování tabulek</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="pandas_-_spojovani_tabulek">Pandas - spojování tabulek
+<a href="#header-pandas_-_spojovani_tabulek" class="header-link">#</a>
+</h1>
+<p>Tato lekce se nese ve znamení mnohosti a propojování - naučíš se  pracovat s více tabulkami najednou. Při tom společně projdeme (ne poprvé a ne naposledy) čištění reálných datových sad.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Importy jako obvykle</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="spojovani_tabulek">Spojování tabulek
+<a href="#header-spojovani_tabulek" class="header-link">#</a>
+</h2>
+<p>V lekci, kde jsme zpracovávali data o počasí, jsme ti ukázali, že je pomocí funkce <code>concat</code> možné slepit dohromady několik objektů <code>DataFrame</code> či <code>Series</code>, pokud mají "kompatibilní" index. Nyní se na problematiku podíváme trochu blíže a ukážeme si, jak spojovat tabulky na základě různých sloupců, a co dělat, když řádky z jedné tabulky nepasují přesně na tabulku druhou.</p>
+<p>Obecně pro spojování <code>pandas</code> nabízí tři funkce / metody, z nichž každá má svoje typické využití (možnostmi se ovšem překrývají):</p>
+<ul>
+<li><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html"><code>concat</code></a> je univerzální funkce pro slepování dvou či více tabulek / sloupců - pod sebe, vedle sebe, s přihlédnutím k indexům i bez něj. </li>
+<li><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.merge.html"><code>merge</code></a> je univerzální funkce pro spojování tabulek na základě vazby mezi indexy nebo sloupci.</li>
+<li><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.join.html"><code>join</code></a> (metoda) zjednodušuje práci, když chceš spojit dvě tabulky na základě indexu.</li>
+</ul>
+<p>Detailní rozbor toho, co která umí, najdeš v <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/merging.html">dokumentaci</a>. My si je také postupně ukážeme.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="jednoduche_skladani">Jednoduché skládání
+<a href="#header-jednoduche_skladani" class="header-link">#</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="pod_sebou">Pod sebou
+<a href="#header-pod_sebou" class="header-link">#</a>
+</h4>
+<p>To je asi ten nejjednodušší případ - máme dva objekty <code>Series</code> nebo dva kusy tabulky se stejnými sloupci a chceme je spojit pod sebou. Na to se používá funkce <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html"><code>concat</code></a>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s2">"jedna"</span><span class="p">,</span> <span class="s2">"dvě"</span><span class="p">,</span> <span class="s2">"tři"</span><span class="p">])</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s2">"čtyři"</span><span class="p">,</span> <span class="s2">"pět"</span><span class="p">,</span> <span class="s2">"šest"</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0    jedna
+1      dvě
+2      tři
+0    čtyři
+1      pět
+2     šest
+dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>💡 Vidíš, že se index opakuje? Vytvořili jsme dvě <code>Series</code>, u kterých jsme index neřešili. Jenže <code>pandas</code> na rozdíl od nás ano, a tak poslušně oba indexy spojil, i za cenu duplicitních hodnot. Za cenu použití dodatečného argumentu <code>ignore_index=True</code> se tomu lze vyhnout, což si ukážeme na příklady spojování dvou tabulek o stejných sloupcích:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0     jedna
+1       dvě
+2       tři
+3     jedna
+4       dvě
+5       tři
+6     jedna
+7       dvě
+8       tři
+9     jedna
+10      dvě
+11      tři
+12    jedna
+13      dvě
+14      tři
+dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="vedle_sebe">Vedle sebe
+<a href="#header-vedle_sebe" class="header-link">#</a>
+</h4>
+<p>Toto asi použijete zřídka, ale když chceme "lepit" doprava (třeba deset <code>Series</code>), stačí přidat nám dobře známý argument <code>axis</code>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>jedna</td>
+      <td>jedna</td>
+      <td>jedna</td>
+      <td>jedna</td>
+      <td>jedna</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>dvě</td>
+      <td>dvě</td>
+      <td>dvě</td>
+      <td>dvě</td>
+      <td>dvě</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>tři</td>
+      <td>tři</td>
+      <td>tři</td>
+      <td>tři</td>
+      <td>tři</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Příklad:</strong> Jak co nejrychleji "nakreslit prázdnou šachovnici" (obě slova jsou v uvozovkách)?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sachy</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>   
+            <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="s2">"⬜"</span><span class="p">,</span> <span class="s2">"⬛"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"⬛"</span><span class="p">,</span> <span class="s2">"⬜"</span><span class="p">]])]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">]</span> <span class="o">*</span> <span class="mi">4</span>
+<span class="p">)</span>
+<span class="n">sachy</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">sachy</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s2">"ABCDEFGH"</span><span class="p">)</span>
+<span class="n">sachy</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>A</th>
+      <th>B</th>
+      <th>C</th>
+      <th>D</th>
+      <th>E</th>
+      <th>F</th>
+      <th>G</th>
+      <th>H</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>8</th>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+      <td>⬛</td>
+      <td>⬜</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="spojovani_ruznorodych_tabulek">Spojování různorodých tabulek
+<a href="#header-spojovani_ruznorodych_tabulek" class="header-link">#</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>🎦 Pro spojování heterogenních dat (v datové hantýrce "joinování") sáhneme po trochu komplexnějších filmových datech...</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Máme staženo několik souborů, načteme si je (zatím hrubě, "raw") - s přihlédnutím k tomu, že první dva nejsou v pravém slova smyslu "comma-separated", ale používají k oddělení hodnot tabulátor (tady pomůže argument <code>sep</code>). Také zohledníme, že v nich řetězec <code>"\N"</code> představuje chybějící hodnoty (pomůže argument <code>na_values</code>):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">imdb_titles_raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"title.basics.tsv.gz"</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">na_values</span><span class="o">=</span><span class="s2">"</span><span class="se">\\</span><span class="s2">N"</span><span class="p">)</span>
+<span class="n">imdb_ratings_raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"title.ratings.tsv.gz"</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">na_values</span><span class="o">=</span><span class="s2">"</span><span class="se">\\</span><span class="s2">N"</span><span class="p">)</span>
+<span class="n">boxoffice_raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"boxoffice_march_2019.csv.gz"</span><span class="p">)</span>
+<span class="n">rotten_tomatoes_raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"rotten_tomatoes_top_movies_2019-01-15.csv"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Co který soubor obsahuje?</p>
+<ul>
+<li><p>První dva soubory obsahují volně dostupná (byť "jen" pro nekomerční použití) data o filmech z IMDb (Internet Movie Database). My jsme si zvolili obecné informace a uživatelská (číselná) hodnocení. Detailní popis souborů, stejně jako odkazy na další soubory, najdeš na <a href="https://www.imdb.com/interfaces/">https://www.imdb.com/interfaces/</a>. Z důvodů paměťové náročnosti jsme datovou sadu ořezali o epizody seriálů, protože nás nebudou zajímat a s trochu štěstí přežijeme i na počítačích s menší operační pamětí.</p>
+</li>
+<li><p>Soubor <code>boxoffice_march_2019.csv.gz</code> obsahuje informace o výdělcích jednotlivých filmů. Pochází z ukázkového datasetu pro soutěž "TMDB Box Office Prediction" na serveru Kaggle: <a href="https://www.kaggle.com/c/tmdb-box-office-prediction/data">https://www.kaggle.com/c/tmdb-box-office-prediction/data</a></p>
+</li>
+<li><p>Soubor <code>rotten_tomatoes_top_movies_2019-01-15.csv</code> obsahuje procentuální hodnocení filmů ze serveru Rotten Tomatoes, které se počítá jako podíl pozitivních hodnoceních od filmových kritiku (je to tedy jiný princip než na IMDb). Staženo z: <a href="https://data.world/prasert/rotten-tomatoes-top-movies-by-genre">https://data.world/prasert/rotten-tomatoes-top-movies-by-genre</a></p>
+</li>
+</ul>
+<p>Pojďme se podívat na nedostatky těchto souborů a postupně je skládat dohromady. Zajímalo by nás (a snad i tebe!), jak souvisí hodnocení s komerční úspěšností filmu, jak se liší hodnocení rotten tomatoes od těch na IMDb.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">imdb_titles_raw</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>tconst</th>
+      <th>titleType</th>
+      <th>primaryTitle</th>
+      <th>originalTitle</th>
+      <th>isAdult</th>
+      <th>startYear</th>
+      <th>endYear</th>
+      <th>runtimeMinutes</th>
+      <th>genres</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>tt0000001</td>
+      <td>short</td>
+      <td>Carmencita</td>
+      <td>Carmencita</td>
+      <td>0</td>
+      <td>1894.0</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>Documentary,Short</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>tt0000002</td>
+      <td>short</td>
+      <td>Le clown et ses chiens</td>
+      <td>Le clown et ses chiens</td>
+      <td>0</td>
+      <td>1892.0</td>
+      <td>NaN</td>
+      <td>5.0</td>
+      <td>Animation,Short</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>tt0000003</td>
+      <td>short</td>
+      <td>Pauvre Pierrot</td>
+      <td>Pauvre Pierrot</td>
+      <td>0</td>
+      <td>1892.0</td>
+      <td>NaN</td>
+      <td>4.0</td>
+      <td>Animation,Comedy,Romance</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>tt0000004</td>
+      <td>short</td>
+      <td>Un bon bock</td>
+      <td>Un bon bock</td>
+      <td>0</td>
+      <td>1892.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Animation,Short</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>tt0000005</td>
+      <td>short</td>
+      <td>Blacksmith Scene</td>
+      <td>Blacksmith Scene</td>
+      <td>0</td>
+      <td>1893.0</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>Comedy,Short</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1783511</th>
+      <td>tt9916734</td>
+      <td>video</td>
+      <td>Manca: Peleo</td>
+      <td>Manca: Peleo</td>
+      <td>0</td>
+      <td>2018.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Music,Short</td>
+    </tr>
+    <tr>
+      <th>1783512</th>
+      <td>tt9916754</td>
+      <td>movie</td>
+      <td>Chico Albuquerque - Revelações</td>
+      <td>Chico Albuquerque - Revelações</td>
+      <td>0</td>
+      <td>2013.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Documentary</td>
+    </tr>
+    <tr>
+      <th>1783513</th>
+      <td>tt9916756</td>
+      <td>short</td>
+      <td>Pretty Pretty Black Girl</td>
+      <td>Pretty Pretty Black Girl</td>
+      <td>0</td>
+      <td>2019.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Short</td>
+    </tr>
+    <tr>
+      <th>1783514</th>
+      <td>tt9916764</td>
+      <td>short</td>
+      <td>38</td>
+      <td>38</td>
+      <td>0</td>
+      <td>2018.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Short</td>
+    </tr>
+    <tr>
+      <th>1783515</th>
+      <td>tt9916856</td>
+      <td>short</td>
+      <td>The Wind</td>
+      <td>The Wind</td>
+      <td>0</td>
+      <td>2015.0</td>
+      <td>NaN</td>
+      <td>27.0</td>
+      <td>Short</td>
+    </tr>
+  </tbody>
+</table>
+<p>1783516 rows × 9 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Kolik tabulka zabírá megabajtů paměti? (1 MB = 2**20 bajtů)</span>
+<span class="n">imdb_titles_raw</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>648.8971881866455</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jistě budeme chtít převést sloupce na správné typy. Jaké jsou v základu?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">imdb_titles_raw</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>tconst             object
+titleType          object
+primaryTitle       object
+originalTitle      object
+isAdult             int64
+startYear         float64
+endYear           float64
+runtimeMinutes    float64
+genres             object
+dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Na co budeme převádět?</p>
+<ul>
+<li><code>tconst</code> je řetězec, který posléze použijeme jako index, protože představuje unikátní identifikátor v databázi IMDb.</li>
+<li><code>titleType</code>:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"titleType"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>titleType
+short           676930
+movie           514654
+video           227582
+tvSeries        162781
+tvMovie         126507
+tvMiniSeries     25574
+videoGame        23310
+tvSpecial        17007
+tvShort           9171
+Name: count, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jen devět různých hodnot ve skoro 2 milionech řádků? To je ideální kandidát na převedení na typ <code>"category"</code>.</p>
+<ul>
+<li><code>primaryTitle</code> a <code>originalTitle</code> vypadají jako obyčejné řetězce (pokud možno anglický a pokud možno původní název)</li>
+<li><code>isAdult</code> určuje, zda se jedná o dílo pro dospělé. Tento sloupec bychom nejspíše měli převést na <code>bool</code>.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"isAdult"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>isAdult
+0    1692292
+1      91224
+Name: count, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li><code>startYear</code> a <code>endYear</code> obsahují roky, t.j. celá čísla, ovšem kvůli chybějícím hodnotám je pro ně zvolen typ <code>float64</code>. V <code>pandas</code> raději zvolíme tzv. "nullable integer", který se zapisuje s velkým "I". Když nevíš, jaký podtyp konkrétně, sáhni po <code>Int64</code>.</li>
+<li>totéž platí pro <code>runtimeMinutes</code>.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">imdb_titles_raw</span><span class="p">[[</span><span class="s2">"startYear"</span><span class="p">,</span> <span class="s2">"endYear"</span><span class="p">,</span> <span class="s2">"runtimeMinutes"</span><span class="p">]]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>startYear           2115.0
+endYear             2027.0
+runtimeMinutes    125156.0
+dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Mimochodem všimli jste si, že máme díla z budoucnosti (rok 2115)?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"startYear"</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">()</span>
+<span class="n">imdb_titles_raw</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"startYear &gt; 2019"</span><span class="p">)[</span><span class="s2">"startYear"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>startYear
+2020.0    340
+2021.0     36
+2022.0     14
+2023.0      1
+2024.0      2
+2025.0      1
+2115.0      1
+Name: count, dtype: int64</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAjcAAAGsCAYAAAAhYYazAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjcuMiwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy8pXeV/AAAACXBIWXMAAA9hAAAPYQGoP6dpAAAqCElEQVR4nO3de1zVdZ7H8fcB5SApqCHghcR7FxXJC8OkTU4kKg83c2bXtUxjtFnLGpKspAuMNSOaydqumpPrJXe2vOya06RihprrxOaKUNl6N8MLoKZyFAuQ89s/fHjqBCocjhz4+no+Hufx6HzP9/c7n9/3ceS8+57v7/ezWZZlCQAAwBB+vi4AAADAmwg3AADAKIQbAABgFMINAAAwCuEGAAAYhXADAACMQrgBAABGIdwAAACjEG4AAIBRCDcAAMAoN3W42bZtm0aMGKF27drJZrNp7dq1td6HZVl644031L17d9ntdrVv315//OMfvV8sAACokSa+LsCXSktLFR0drd/85jcaNWqUR/tITk7WRx99pDfeeEO9evXSmTNndObMGS9XCgAAasrGjTMvs9lsev/99zVy5EhXW1lZmV566SW99957OnfunHr27KlZs2bpvvvukyTt2bNHvXv31u7du9WjRw/fFA4AANzc1D9LXc9TTz2lnJwcrVixQl988YX+/u//XkOHDtWBAwckSX/961/VuXNnffjhh+rUqZOioqI0ceJEZm4AAPAhws1VFBQUaOnSpVq9erUGDRqkLl26aOrUqRo4cKCWLl0qSTp8+LC++eYbrV69WsuXL9eyZcuUm5urX//61z6uHgCAm9dNvebmWr788ktVVlaqe/fubu1lZWW69dZbJUlOp1NlZWVavny5q9/ixYvVt29f7du3j5+qAADwAcLNVVy4cEH+/v7Kzc2Vv7+/22vNmzeXJLVt21ZNmjRxC0B33HGHpMszP4QbAADqH+HmKmJiYlRZWamTJ09q0KBB1fa55557dOnSJR06dEhdunSRJO3fv1+S1LFjx3qrFQAA/OCmPlvqwoULOnjwoKTLYSYzM1ODBw9W69atddttt2ns2LH629/+pjlz5igmJkanTp1Sdna2evfurcTERDmdTvXv31/NmzfX3Llz5XQ6NXnyZAUHB+ujjz7y8dEBAHBzuqnDzdatWzV48OAq7ePHj9eyZctUUVGhP/zh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">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Takhle nějak by přetypování mohlo vypadat:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="p">(</span>
+    <span class="n">imdb_titles_raw</span>
+    <span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+        <span class="n">titleType</span><span class="o">=</span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"titleType"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"category"</span><span class="p">),</span>
+        <span class="n">startYear</span><span class="o">=</span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"startYear"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"Int64"</span><span class="p">),</span>
+        <span class="n">endYear</span><span class="o">=</span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"endYear"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"Int64"</span><span class="p">),</span>
+        <span class="n">isAdult</span><span class="o">=</span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"isAdult"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">),</span>
+        <span class="n">runtimeMinutes</span><span class="o">=</span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"runtimeMinutes"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"Int64"</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>tconst              object
+titleType         category
+primaryTitle        object
+originalTitle       object
+isAdult               bool
+startYear            Int64
+endYear              Int64
+runtimeMinutes       Int64
+genres              object
+dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Takhle už by to mohlo být. Jen si ještě:</p>
+<ul>
+<li>pro přehlednost přejmenujeme některé sloupce (pomocí metody <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.rename.html"><code>rename</code></a>)</li>
+<li>použijeme <code>tconst</code> jako index</li>
+</ul>
+<p>A tabulka <code>imdb_titles</code> bude připravená k použití!</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">imdb_titles</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">imdb_titles_raw</span>
+    <span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+        <span class="n">titleType</span><span class="o">=</span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"titleType"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"category"</span><span class="p">),</span>
+        <span class="n">startYear</span><span class="o">=</span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"startYear"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"Int64"</span><span class="p">),</span>
+        <span class="n">endYear</span><span class="o">=</span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"endYear"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"Int64"</span><span class="p">),</span>
+        <span class="n">isAdult</span><span class="o">=</span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"isAdult"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">),</span>
+        <span class="n">runtimeMinutes</span><span class="o">=</span><span class="n">imdb_titles_raw</span><span class="p">[</span><span class="s2">"runtimeMinutes"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"Int64"</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">rename</span><span class="p">({</span>
+        <span class="s2">"primaryTitle"</span><span class="p">:</span> <span class="s2">"title"</span><span class="p">,</span>
+        <span class="s2">"originalTitle"</span><span class="p">:</span> <span class="s2">"original_title"</span><span class="p">,</span>
+        <span class="s2">"titleType"</span><span class="p">:</span> <span class="s2">"title_type"</span><span class="p">,</span>
+        <span class="s2">"runtimeMinutes"</span><span class="p">:</span> <span class="s2">"length"</span><span class="p">,</span>
+        <span class="s2">"startYear"</span><span class="p">:</span> <span class="s2">"start_year"</span><span class="p">,</span>
+        <span class="s2">"endYear"</span><span class="p">:</span> <span class="s2">"end_year"</span><span class="p">,</span>
+        <span class="s2">"isAdult"</span><span class="p">:</span> <span class="s2">"is_adult"</span><span class="p">,</span>
+    <span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"tconst"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">imdb_titles</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title_type</th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>start_year</th>
+      <th>end_year</th>
+      <th>length</th>
+      <th>genres</th>
+    </tr>
+    <tr>
+      <th>tconst</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>tt0000001</th>
+      <td>short</td>
+      <td>Carmencita</td>
+      <td>Carmencita</td>
+      <td>False</td>
+      <td>1894</td>
+      <td>&lt;NA&gt;</td>
+      <td>1</td>
+      <td>Documentary,Short</td>
+    </tr>
+    <tr>
+      <th>tt0000002</th>
+      <td>short</td>
+      <td>Le clown et ses chiens</td>
+      <td>Le clown et ses chiens</td>
+      <td>False</td>
+      <td>1892</td>
+      <td>&lt;NA&gt;</td>
+      <td>5</td>
+      <td>Animation,Short</td>
+    </tr>
+    <tr>
+      <th>tt0000003</th>
+      <td>short</td>
+      <td>Pauvre Pierrot</td>
+      <td>Pauvre Pierrot</td>
+      <td>False</td>
+      <td>1892</td>
+      <td>&lt;NA&gt;</td>
+      <td>4</td>
+      <td>Animation,Comedy,Romance</td>
+    </tr>
+    <tr>
+      <th>tt0000004</th>
+      <td>short</td>
+      <td>Un bon bock</td>
+      <td>Un bon bock</td>
+      <td>False</td>
+      <td>1892</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>Animation,Short</td>
+    </tr>
+    <tr>
+      <th>tt0000005</th>
+      <td>short</td>
+      <td>Blacksmith Scene</td>
+      <td>Blacksmith Scene</td>
+      <td>False</td>
+      <td>1893</td>
+      <td>&lt;NA&gt;</td>
+      <td>1</td>
+      <td>Comedy,Short</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>tt9916734</th>
+      <td>video</td>
+      <td>Manca: Peleo</td>
+      <td>Manca: Peleo</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>Music,Short</td>
+    </tr>
+    <tr>
+      <th>tt9916754</th>
+      <td>movie</td>
+      <td>Chico Albuquerque - Revelações</td>
+      <td>Chico Albuquerque - Revelações</td>
+      <td>False</td>
+      <td>2013</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>Documentary</td>
+    </tr>
+    <tr>
+      <th>tt9916756</th>
+      <td>short</td>
+      <td>Pretty Pretty Black Girl</td>
+      <td>Pretty Pretty Black Girl</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>Short</td>
+    </tr>
+    <tr>
+      <th>tt9916764</th>
+      <td>short</td>
+      <td>38</td>
+      <td>38</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>Short</td>
+    </tr>
+    <tr>
+      <th>tt9916856</th>
+      <td>short</td>
+      <td>The Wind</td>
+      <td>The Wind</td>
+      <td>False</td>
+      <td>2015</td>
+      <td>&lt;NA&gt;</td>
+      <td>27</td>
+      <td>Short</td>
+    </tr>
+  </tbody>
+</table>
+<p>1783516 rows × 8 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Kolik tabulka zabírá megabajtů paměti?</span>
+<span class="n">imdb_titles</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span>   <span class="c1"># O chlup méně, zase tolik jsme si ale nepomohli.</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>537.2908029556274</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Připravíme si ještě speciální tabulku jenom pro filmy, protože další datové sady se zabývají jenom jimi.</p>
+<p>U této tabulky navíc vyhodíme zbytečné sloupce <code>title_type</code>, <code>end_year</code> a přejmenujeme <code>start_year</code> prostě na <code>year</code>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">movies</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">imdb_titles</span>
+    <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"title_type == 'movie'"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">"title_type"</span><span class="p">,</span> <span class="s2">"end_year"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">"start_year"</span><span class="p">:</span> <span class="s2">"year"</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">movies</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+    </tr>
+    <tr>
+      <th>tconst</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>tt0000009</th>
+      <td>Miss Jerry</td>
+      <td>Miss Jerry</td>
+      <td>False</td>
+      <td>1894</td>
+      <td>45</td>
+      <td>Romance</td>
+    </tr>
+    <tr>
+      <th>tt0000147</th>
+      <td>The Corbett-Fitzsimmons Fight</td>
+      <td>The Corbett-Fitzsimmons Fight</td>
+      <td>False</td>
+      <td>1897</td>
+      <td>20</td>
+      <td>Documentary,News,Sport</td>
+    </tr>
+    <tr>
+      <th>tt0000335</th>
+      <td>Soldiers of the Cross</td>
+      <td>Soldiers of the Cross</td>
+      <td>False</td>
+      <td>1900</td>
+      <td>&lt;NA&gt;</td>
+      <td>Biography,Drama</td>
+    </tr>
+    <tr>
+      <th>tt0000502</th>
+      <td>Bohemios</td>
+      <td>Bohemios</td>
+      <td>False</td>
+      <td>1905</td>
+      <td>100</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>tt0000574</th>
+      <td>The Story of the Kelly Gang</td>
+      <td>The Story of the Kelly Gang</td>
+      <td>False</td>
+      <td>1906</td>
+      <td>70</td>
+      <td>Biography,Crime,Drama</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>tt9916622</th>
+      <td>Rodolpho Teóphilo - O Legado de um Pioneiro</td>
+      <td>Rodolpho Teóphilo - O Legado de um Pioneiro</td>
+      <td>False</td>
+      <td>2015</td>
+      <td>&lt;NA&gt;</td>
+      <td>Documentary</td>
+    </tr>
+    <tr>
+      <th>tt9916680</th>
+      <td>De la ilusión al desconcierto: cine colombiano...</td>
+      <td>De la ilusión al desconcierto: cine colombiano...</td>
+      <td>False</td>
+      <td>2007</td>
+      <td>100</td>
+      <td>Documentary</td>
+    </tr>
+    <tr>
+      <th>tt9916706</th>
+      <td>Dankyavar Danka</td>
+      <td>Dankyavar Danka</td>
+      <td>False</td>
+      <td>2013</td>
+      <td>&lt;NA&gt;</td>
+      <td>Comedy</td>
+    </tr>
+    <tr>
+      <th>tt9916730</th>
+      <td>6 Gunn</td>
+      <td>6 Gunn</td>
+      <td>False</td>
+      <td>2017</td>
+      <td>116</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>tt9916754</th>
+      <td>Chico Albuquerque - Revelações</td>
+      <td>Chico Albuquerque - Revelações</td>
+      <td>False</td>
+      <td>2013</td>
+      <td>&lt;NA&gt;</td>
+      <td>Documentary</td>
+    </tr>
+  </tbody>
+</table>
+<p>514654 rows × 6 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">movies</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">movies</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(514654, 6)
+title             object
+original_title    object
+is_adult            bool
+year               Int64
+length             Int64
+genres            object
+dtype: object
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nyní se podíváme na zoubek hodnocením z IMDb, na tabulky <code>imdb_ratings_raw</code>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">imdb_ratings_raw</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>tconst</th>
+      <th>averageRating</th>
+      <th>numVotes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>tt0000001</td>
+      <td>5.8</td>
+      <td>1486</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>tt0000002</td>
+      <td>6.4</td>
+      <td>179</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>tt0000003</td>
+      <td>6.6</td>
+      <td>1117</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>tt0000004</td>
+      <td>6.4</td>
+      <td>109</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>tt0000005</td>
+      <td>6.2</td>
+      <td>1820</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>923691</th>
+      <td>tt9916380</td>
+      <td>9.7</td>
+      <td>58</td>
+    </tr>
+    <tr>
+      <th>923692</th>
+      <td>tt9916420</td>
+      <td>7.0</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>923693</th>
+      <td>tt9916460</td>
+      <td>9.2</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>923694</th>
+      <td>tt9916720</td>
+      <td>5.2</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <th>923695</th>
+      <td>tt9916766</td>
+      <td>7.2</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+<p>923696 rows × 3 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">imdb_ratings_raw</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>tconst            object
+averageRating    float64
+numVotes           int64
+dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To by vlastně skoro mohlo být!</p>
+<p>Tak jen nastavíme index (opět <code>tconst</code>) a přejmenujeme sloupce:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ratings</span> <span class="o">=</span> <span class="p">(</span><span class="n">imdb_ratings_raw</span>
+    <span class="o">.</span><span class="n">rename</span><span class="p">({</span>
+        <span class="s2">"averageRating"</span><span class="p">:</span> <span class="s2">"imdb_rating"</span><span class="p">,</span>
+        <span class="s2">"numVotes"</span><span class="p">:</span> <span class="s2">"imdb_votes"</span>
+    <span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"tconst"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">ratings</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+    </tr>
+    <tr>
+      <th>tconst</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>tt0000001</th>
+      <td>5.8</td>
+      <td>1486</td>
+    </tr>
+    <tr>
+      <th>tt0000002</th>
+      <td>6.4</td>
+      <td>179</td>
+    </tr>
+    <tr>
+      <th>tt0000003</th>
+      <td>6.6</td>
+      <td>1117</td>
+    </tr>
+    <tr>
+      <th>tt0000004</th>
+      <td>6.4</td>
+      <td>109</td>
+    </tr>
+    <tr>
+      <th>tt0000005</th>
+      <td>6.2</td>
+      <td>1820</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>tt9916380</th>
+      <td>9.7</td>
+      <td>58</td>
+    </tr>
+    <tr>
+      <th>tt9916420</th>
+      <td>7.0</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>tt9916460</th>
+      <td>9.2</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>tt9916720</th>
+      <td>5.2</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <th>tt9916766</th>
+      <td>7.2</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+<p>923696 rows × 2 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="prvni_join">První join
+<a href="#header-prvni_join" class="header-link">#</a>
+</h4>
+<p>Máme připravené dvě krásné tabulky, které sdílejí stejný index, a můžeme vesele spojovat. Protože pomocí <code>join</code>, <code>merge</code> a <code>concat</code> lze volbou vhodných parametrů dosáhnout identického výsledku (což je jedním z nešvarů knihovny <code>pandas</code>), ukážeme si všechny tři alternativy podle subjektivního pořadí vhodnosti.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">movies</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ratings</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+    </tr>
+    <tr>
+      <th>tconst</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>tt0000009</th>
+      <td>Miss Jerry</td>
+      <td>Miss Jerry</td>
+      <td>False</td>
+      <td>1894</td>
+      <td>45</td>
+      <td>Romance</td>
+      <td>5.5</td>
+      <td>77.0</td>
+    </tr>
+    <tr>
+      <th>tt0000147</th>
+      <td>The Corbett-Fitzsimmons Fight</td>
+      <td>The Corbett-Fitzsimmons Fight</td>
+      <td>False</td>
+      <td>1897</td>
+      <td>20</td>
+      <td>Documentary,News,Sport</td>
+      <td>5.2</td>
+      <td>289.0</td>
+    </tr>
+    <tr>
+      <th>tt0000335</th>
+      <td>Soldiers of the Cross</td>
+      <td>Soldiers of the Cross</td>
+      <td>False</td>
+      <td>1900</td>
+      <td>&lt;NA&gt;</td>
+      <td>Biography,Drama</td>
+      <td>6.3</td>
+      <td>39.0</td>
+    </tr>
+    <tr>
+      <th>tt0000502</th>
+      <td>Bohemios</td>
+      <td>Bohemios</td>
+      <td>False</td>
+      <td>1905</td>
+      <td>100</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>tt0000574</th>
+      <td>The Story of the Kelly Gang</td>
+      <td>The Story of the Kelly Gang</td>
+      <td>False</td>
+      <td>1906</td>
+      <td>70</td>
+      <td>Biography,Crime,Drama</td>
+      <td>6.2</td>
+      <td>505.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>tt9916622</th>
+      <td>Rodolpho Teóphilo - O Legado de um Pioneiro</td>
+      <td>Rodolpho Teóphilo - O Legado de um Pioneiro</td>
+      <td>False</td>
+      <td>2015</td>
+      <td>&lt;NA&gt;</td>
+      <td>Documentary</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>tt9916680</th>
+      <td>De la ilusión al desconcierto: cine colombiano...</td>
+      <td>De la ilusión al desconcierto: cine colombiano...</td>
+      <td>False</td>
+      <td>2007</td>
+      <td>100</td>
+      <td>Documentary</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>tt9916706</th>
+      <td>Dankyavar Danka</td>
+      <td>Dankyavar Danka</td>
+      <td>False</td>
+      <td>2013</td>
+      <td>&lt;NA&gt;</td>
+      <td>Comedy</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>tt9916730</th>
+      <td>6 Gunn</td>
+      <td>6 Gunn</td>
+      <td>False</td>
+      <td>2017</td>
+      <td>116</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>tt9916754</th>
+      <td>Chico Albuquerque - Revelações</td>
+      <td>Chico Albuquerque - Revelações</td>
+      <td>False</td>
+      <td>2013</td>
+      <td>&lt;NA&gt;</td>
+      <td>Documentary</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>514654 rows × 8 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>K tabulce se nenápadně přidaly dva sloupce z tabulky <code>ratings</code>, a to takovým způsobem, že se porovnaly hodnoty indexu (tedy <code>tconst</code>) a spárovaly se ty části řádku, kde se tento index shoduje.</p>
+<p>💡 Uvědom si (ačkoliv z volání funkcí v <code>pandas</code> to není úplně zřejmé), že se tady děje něco fundamentálně odlišného od "nalepení doprava" - tabulky tu nejsou chápány jako čtverečky, které jde skládat jako lego, nýbrž jako zdroj údajů o jednotlivých objektech, které je potřeba spojit sémanticky.</p>
+<p>Jak ale vidíš, tabulka obsahuje spoustu řádků, kde ve sloupcích s hodnocením chybí hodnoty (respektive nachází se <code>NaN</code>). To vychází ze způsobu, jakým metoda <code>join</code> ve výchozím nastavení "joinuje" - použije všechny řádky z levé tabulky bez ohledu na to, jestli jim odpovídá nějaký protějšek v tabulce pravé. Naštěstí lze pomocí argumentu <code>how</code> specifikovat i jiné způsoby spojování:</p>
+<ul>
+<li><code>left</code> (výchozí pro metodu <code>join</code>) - vezmou se všechny prvky z levé tabulky a jim odpovídající prvky z pravé tabulky (kde nejsou, doplní se <code>NaN</code>)</li>
+<li><code>right</code> - vezmou se všechny prvky z pravé tabulky a jim odpovídající prvky z levé tabulky (kde nejsou, doplní se <code>NaN</code>)</li>
+<li><code>inner</code> (výchozí pro funkci <code>merge</code>) - vezmou se jen ty prvky, které jsou v levé i pravé tabulce.</li>
+<li><code>outer</code> (výchozí pro funkci <code>concat</code>) - vezmou se všechny prvky, z levé i pravé tabulky, kde něco chybí, doplní se <code>NaN</code>.</li>
+</ul>
+<p>V podobě Vennově diagramu, kde kruhy představují množiny řádků v obou zdrojových tabulkách a modrou barvou jsou zvýrazněny řádky v tabulce cílové:</p>
+<p><img src="/2023/pydata-praha-podzim/pydata/pandas_joins/static/joins.svg" alt="Typy joinů"></p>
+<p><em>Obrázek adaptován z <a href="https://upload.wikimedia.org/wikipedia/commons/9/9d/SQL_Joins.svg">https://upload.wikimedia.org/wikipedia/commons/9/9d/SQL_Joins.svg</a> (autor: Arbeck)</em></p>
+<p>💡 Až budeme probírat databáze, tyto čtyři typu joinů se nám znovu vynoří.</p>
+<p>Následující výpis ukáže, kolik řádků bychom dostali při použití různých hodnot <code>how</code>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">how</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"left"</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">,</span> <span class="s2">"inner"</span><span class="p">,</span> <span class="s2">"outer"</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"movies.join(ratings, how=</span><span class="se">\"</span><span class="si">{</span><span class="n">how</span><span class="si">}</span><span class="se">\"</span><span class="s2">):"</span><span class="p">,</span> <span class="n">movies</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="n">how</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"řádků."</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>movies.join(ratings, how="left"): 514654 řádků.
+movies.join(ratings, how="right"): 923696 řádků.
+movies.join(ratings, how="inner"): 232496 řádků.
+movies.join(ratings, how="outer"): 1205854 řádků.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A teď tedy ty tři alternativy:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Alternativa 1 (preferovaná)</span>
+<span class="n">movies_with_rating</span> <span class="o">=</span> <span class="n">movies</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"inner"</span><span class="p">)</span>
+<span class="n">movies_with_rating</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[25]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+    </tr>
+    <tr>
+      <th>tconst</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>tt0000009</th>
+      <td>Miss Jerry</td>
+      <td>Miss Jerry</td>
+      <td>False</td>
+      <td>1894</td>
+      <td>45</td>
+      <td>Romance</td>
+      <td>5.5</td>
+      <td>77</td>
+    </tr>
+    <tr>
+      <th>tt0000147</th>
+      <td>The Corbett-Fitzsimmons Fight</td>
+      <td>The Corbett-Fitzsimmons Fight</td>
+      <td>False</td>
+      <td>1897</td>
+      <td>20</td>
+      <td>Documentary,News,Sport</td>
+      <td>5.2</td>
+      <td>289</td>
+    </tr>
+    <tr>
+      <th>tt0000335</th>
+      <td>Soldiers of the Cross</td>
+      <td>Soldiers of the Cross</td>
+      <td>False</td>
+      <td>1900</td>
+      <td>&lt;NA&gt;</td>
+      <td>Biography,Drama</td>
+      <td>6.3</td>
+      <td>39</td>
+    </tr>
+    <tr>
+      <th>tt0000574</th>
+      <td>The Story of the Kelly Gang</td>
+      <td>The Story of the Kelly Gang</td>
+      <td>False</td>
+      <td>1906</td>
+      <td>70</td>
+      <td>Biography,Crime,Drama</td>
+      <td>6.2</td>
+      <td>505</td>
+    </tr>
+    <tr>
+      <th>tt0000615</th>
+      <td>Robbery Under Arms</td>
+      <td>Robbery Under Arms</td>
+      <td>False</td>
+      <td>1907</td>
+      <td>&lt;NA&gt;</td>
+      <td>Drama</td>
+      <td>4.8</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>tt9910930</th>
+      <td>Jeg ser deg</td>
+      <td>Jeg ser deg</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>75</td>
+      <td>Crime,Documentary</td>
+      <td>4.6</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>tt9911774</th>
+      <td>Padmavyuhathile Abhimanyu</td>
+      <td>Padmavyuhathile Abhimanyu</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>130</td>
+      <td>Drama</td>
+      <td>8.5</td>
+      <td>363</td>
+    </tr>
+    <tr>
+      <th>tt9913056</th>
+      <td>Swarm Season</td>
+      <td>Swarm Season</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>86</td>
+      <td>Documentary</td>
+      <td>6.2</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>tt9913084</th>
+      <td>Diabolik sono io</td>
+      <td>Diabolik sono io</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>75</td>
+      <td>Documentary</td>
+      <td>6.2</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>tt9914286</th>
+      <td>Sokagin Çocuklari</td>
+      <td>Sokagin Çocuklari</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>98</td>
+      <td>Drama,Family</td>
+      <td>9.8</td>
+      <td>72</td>
+    </tr>
+  </tbody>
+</table>
+<p>232496 rows × 8 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Alternativa 2 (taky dobrá)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">movies</span><span class="p">,</span> <span class="n">ratings</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[26]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+    </tr>
+    <tr>
+      <th>tconst</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>tt0000009</th>
+      <td>Miss Jerry</td>
+      <td>Miss Jerry</td>
+      <td>False</td>
+      <td>1894</td>
+      <td>45</td>
+      <td>Romance</td>
+      <td>5.5</td>
+      <td>77</td>
+    </tr>
+    <tr>
+      <th>tt0000147</th>
+      <td>The Corbett-Fitzsimmons Fight</td>
+      <td>The Corbett-Fitzsimmons Fight</td>
+      <td>False</td>
+      <td>1897</td>
+      <td>20</td>
+      <td>Documentary,News,Sport</td>
+      <td>5.2</td>
+      <td>289</td>
+    </tr>
+    <tr>
+      <th>tt0000335</th>
+      <td>Soldiers of the Cross</td>
+      <td>Soldiers of the Cross</td>
+      <td>False</td>
+      <td>1900</td>
+      <td>&lt;NA&gt;</td>
+      <td>Biography,Drama</td>
+      <td>6.3</td>
+      <td>39</td>
+    </tr>
+    <tr>
+      <th>tt0000574</th>
+      <td>The Story of the Kelly Gang</td>
+      <td>The Story of the Kelly Gang</td>
+      <td>False</td>
+      <td>1906</td>
+      <td>70</td>
+      <td>Biography,Crime,Drama</td>
+      <td>6.2</td>
+      <td>505</td>
+    </tr>
+    <tr>
+      <th>tt0000615</th>
+      <td>Robbery Under Arms</td>
+      <td>Robbery Under Arms</td>
+      <td>False</td>
+      <td>1907</td>
+      <td>&lt;NA&gt;</td>
+      <td>Drama</td>
+      <td>4.8</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>tt9910930</th>
+      <td>Jeg ser deg</td>
+      <td>Jeg ser deg</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>75</td>
+      <td>Crime,Documentary</td>
+      <td>4.6</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>tt9911774</th>
+      <td>Padmavyuhathile Abhimanyu</td>
+      <td>Padmavyuhathile Abhimanyu</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>130</td>
+      <td>Drama</td>
+      <td>8.5</td>
+      <td>363</td>
+    </tr>
+    <tr>
+      <th>tt9913056</th>
+      <td>Swarm Season</td>
+      <td>Swarm Season</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>86</td>
+      <td>Documentary</td>
+      <td>6.2</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>tt9913084</th>
+      <td>Diabolik sono io</td>
+      <td>Diabolik sono io</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>75</td>
+      <td>Documentary</td>
+      <td>6.2</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>tt9914286</th>
+      <td>Sokagin Çocuklari</td>
+      <td>Sokagin Çocuklari</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>98</td>
+      <td>Drama,Family</td>
+      <td>9.8</td>
+      <td>72</td>
+    </tr>
+  </tbody>
+</table>
+<p>232496 rows × 8 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Alternativa 3 (méně "sémantická")</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">movies</span><span class="p">,</span> <span class="n">ratings</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s2">"inner"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[27]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+    </tr>
+    <tr>
+      <th>tconst</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>tt0000009</th>
+      <td>Miss Jerry</td>
+      <td>Miss Jerry</td>
+      <td>False</td>
+      <td>1894</td>
+      <td>45</td>
+      <td>Romance</td>
+      <td>5.5</td>
+      <td>77</td>
+    </tr>
+    <tr>
+      <th>tt0000147</th>
+      <td>The Corbett-Fitzsimmons Fight</td>
+      <td>The Corbett-Fitzsimmons Fight</td>
+      <td>False</td>
+      <td>1897</td>
+      <td>20</td>
+      <td>Documentary,News,Sport</td>
+      <td>5.2</td>
+      <td>289</td>
+    </tr>
+    <tr>
+      <th>tt0000335</th>
+      <td>Soldiers of the Cross</td>
+      <td>Soldiers of the Cross</td>
+      <td>False</td>
+      <td>1900</td>
+      <td>&lt;NA&gt;</td>
+      <td>Biography,Drama</td>
+      <td>6.3</td>
+      <td>39</td>
+    </tr>
+    <tr>
+      <th>tt0000574</th>
+      <td>The Story of the Kelly Gang</td>
+      <td>The Story of the Kelly Gang</td>
+      <td>False</td>
+      <td>1906</td>
+      <td>70</td>
+      <td>Biography,Crime,Drama</td>
+      <td>6.2</td>
+      <td>505</td>
+    </tr>
+    <tr>
+      <th>tt0000615</th>
+      <td>Robbery Under Arms</td>
+      <td>Robbery Under Arms</td>
+      <td>False</td>
+      <td>1907</td>
+      <td>&lt;NA&gt;</td>
+      <td>Drama</td>
+      <td>4.8</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>tt9910930</th>
+      <td>Jeg ser deg</td>
+      <td>Jeg ser deg</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>75</td>
+      <td>Crime,Documentary</td>
+      <td>4.6</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>tt9911774</th>
+      <td>Padmavyuhathile Abhimanyu</td>
+      <td>Padmavyuhathile Abhimanyu</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>130</td>
+      <td>Drama</td>
+      <td>8.5</td>
+      <td>363</td>
+    </tr>
+    <tr>
+      <th>tt9913056</th>
+      <td>Swarm Season</td>
+      <td>Swarm Season</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>86</td>
+      <td>Documentary</td>
+      <td>6.2</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>tt9913084</th>
+      <td>Diabolik sono io</td>
+      <td>Diabolik sono io</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>75</td>
+      <td>Documentary</td>
+      <td>6.2</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>tt9914286</th>
+      <td>Sokagin Çocuklari</td>
+      <td>Sokagin Çocuklari</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>98</td>
+      <td>Drama,Family</td>
+      <td>9.8</td>
+      <td>72</td>
+    </tr>
+  </tbody>
+</table>
+<p>232496 rows × 8 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zkusme si zreprodukovat pořadí 250 nejlepších filmů z IMDb (viz <a href="https://www.imdb.com/chart/top/?ref_=nv_mv_250">https://www.imdb.com/chart/top/?ref_=nv_mv_250</a>):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Ty nejlepší (do června 2019)</span>
+<span class="p">(</span><span class="n">movies_with_rating</span>
+    <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"imdb_votes &gt; 25000"</span><span class="p">)</span>                  <span class="c1"># Berou se jen filmy s více než 25000 hlasy</span>
+    <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"imdb_rating"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># IMDb tu použivá i váhu jednotlivých hlasů (kterou neznáme)</span>
+    <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">250</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[28]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>The Chaos Class</td>
+      <td>Hababam Sinifi</td>
+      <td>False</td>
+      <td>1975</td>
+      <td>87</td>
+      <td>Comedy,Drama</td>
+      <td>9.4</td>
+      <td>33394</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>The Shawshank Redemption</td>
+      <td>The Shawshank Redemption</td>
+      <td>False</td>
+      <td>1994</td>
+      <td>142</td>
+      <td>Drama</td>
+      <td>9.3</td>
+      <td>2071759</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>The Mountain II</td>
+      <td>Dag II</td>
+      <td>False</td>
+      <td>2016</td>
+      <td>135</td>
+      <td>Action,Drama,War</td>
+      <td>9.3</td>
+      <td>100095</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>CM101MMXI Fundamentals</td>
+      <td>CM101MMXI Fundamentals</td>
+      <td>False</td>
+      <td>2013</td>
+      <td>139</td>
+      <td>Comedy,Documentary</td>
+      <td>9.2</td>
+      <td>41327</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>The Godfather</td>
+      <td>The Godfather</td>
+      <td>False</td>
+      <td>1972</td>
+      <td>175</td>
+      <td>Crime,Drama</td>
+      <td>9.2</td>
+      <td>1421495</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>245</th>
+      <td>12 Years a Slave</td>
+      <td>12 Years a Slave</td>
+      <td>False</td>
+      <td>2013</td>
+      <td>134</td>
+      <td>Biography,Drama,History</td>
+      <td>8.1</td>
+      <td>571204</td>
+    </tr>
+    <tr>
+      <th>246</th>
+      <td>The Sixth Sense</td>
+      <td>The Sixth Sense</td>
+      <td>False</td>
+      <td>1999</td>
+      <td>107</td>
+      <td>Drama,Mystery,Thriller</td>
+      <td>8.1</td>
+      <td>836928</td>
+    </tr>
+    <tr>
+      <th>247</th>
+      <td>The Passion of Joan of Arc</td>
+      <td>La passion de Jeanne d'Arc</td>
+      <td>False</td>
+      <td>1928</td>
+      <td>110</td>
+      <td>Biography,Drama,History</td>
+      <td>8.1</td>
+      <td>40107</td>
+    </tr>
+    <tr>
+      <th>248</th>
+      <td>Barfi!</td>
+      <td>Barfi!</td>
+      <td>False</td>
+      <td>2012</td>
+      <td>151</td>
+      <td>Comedy,Drama,Romance</td>
+      <td>8.1</td>
+      <td>68274</td>
+    </tr>
+    <tr>
+      <th>249</th>
+      <td>Platoon</td>
+      <td>Platoon</td>
+      <td>False</td>
+      <td>1986</td>
+      <td>120</td>
+      <td>Drama,War</td>
+      <td>8.1</td>
+      <td>348628</td>
+    </tr>
+  </tbody>
+</table>
+<p>250 rows × 8 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Do výčtu se nám dostaly filmy, které hranici hlasů nepřekračují o moc. Máme důvodné podezření, že toto kritérium dávno změnili. S požadovanými 250 000 hlasy se už blížíme:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="p">(</span><span class="n">movies_with_rating</span>
+    <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"imdb_votes &gt; 250000"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"imdb_rating"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">250</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[29]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>The Shawshank Redemption</td>
+      <td>The Shawshank Redemption</td>
+      <td>False</td>
+      <td>1994</td>
+      <td>142</td>
+      <td>Drama</td>
+      <td>9.3</td>
+      <td>2071759</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>The Godfather</td>
+      <td>The Godfather</td>
+      <td>False</td>
+      <td>1972</td>
+      <td>175</td>
+      <td>Crime,Drama</td>
+      <td>9.2</td>
+      <td>1421495</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>The Dark Knight</td>
+      <td>The Dark Knight</td>
+      <td>False</td>
+      <td>2008</td>
+      <td>152</td>
+      <td>Action,Crime,Drama</td>
+      <td>9.0</td>
+      <td>2037678</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>The Godfather: Part II</td>
+      <td>The Godfather: Part II</td>
+      <td>False</td>
+      <td>1974</td>
+      <td>202</td>
+      <td>Crime,Drama</td>
+      <td>9.0</td>
+      <td>986451</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Pulp Fiction</td>
+      <td>Pulp Fiction</td>
+      <td>False</td>
+      <td>1994</td>
+      <td>154</td>
+      <td>Crime,Drama</td>
+      <td>8.9</td>
+      <td>1620135</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>245</th>
+      <td>Ocean's Eleven</td>
+      <td>Ocean's Eleven</td>
+      <td>False</td>
+      <td>2001</td>
+      <td>116</td>
+      <td>Crime,Thriller</td>
+      <td>7.8</td>
+      <td>470530</td>
+    </tr>
+    <tr>
+      <th>246</th>
+      <td>Lost in Translation</td>
+      <td>Lost in Translation</td>
+      <td>False</td>
+      <td>2003</td>
+      <td>102</td>
+      <td>Drama</td>
+      <td>7.8</td>
+      <td>371577</td>
+    </tr>
+    <tr>
+      <th>247</th>
+      <td>Donnie Brasco</td>
+      <td>Donnie Brasco</td>
+      <td>False</td>
+      <td>1997</td>
+      <td>127</td>
+      <td>Biography,Crime,Drama</td>
+      <td>7.8</td>
+      <td>253811</td>
+    </tr>
+    <tr>
+      <th>248</th>
+      <td>Captain Phillips</td>
+      <td>Captain Phillips</td>
+      <td>False</td>
+      <td>2013</td>
+      <td>134</td>
+      <td>Biography,Drama,Thriller</td>
+      <td>7.8</td>
+      <td>384378</td>
+    </tr>
+    <tr>
+      <th>249</th>
+      <td>How to Train Your Dragon 2</td>
+      <td>How to Train Your Dragon 2</td>
+      <td>False</td>
+      <td>2014</td>
+      <td>102</td>
+      <td>Action,Adventure,Animation</td>
+      <td>7.8</td>
+      <td>273406</td>
+    </tr>
+  </tbody>
+</table>
+<p>250 rows × 8 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="druhy_join">Druhý join
+<a href="#header-druhy_join" class="header-link">#</a>
+</h4>
+<p>Co tabulka s výdělky (<code>boxoffice_raw</code>)?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">boxoffice_raw</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[30]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rank</th>
+      <th>title</th>
+      <th>studio</th>
+      <th>lifetime_gross</th>
+      <th>year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>Star Wars: The Force Awakens</td>
+      <td>BV</td>
+      <td>936662225</td>
+      <td>2015</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>Avatar</td>
+      <td>Fox</td>
+      <td>760507625</td>
+      <td>2009</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>Black Panther</td>
+      <td>BV</td>
+      <td>700059566</td>
+      <td>2018</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>Avengers: Infinity War</td>
+      <td>BV</td>
+      <td>678815482</td>
+      <td>2018</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>Titanic</td>
+      <td>Par.</td>
+      <td>659363944</td>
+      <td>1997</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>16262</th>
+      <td>16263</td>
+      <td>Dog Eat Dog</td>
+      <td>IFC</td>
+      <td>80</td>
+      <td>2009</td>
+    </tr>
+    <tr>
+      <th>16263</th>
+      <td>16264</td>
+      <td>Paranoid Girls</td>
+      <td>NaN</td>
+      <td>78</td>
+      <td>2015</td>
+    </tr>
+    <tr>
+      <th>16264</th>
+      <td>16265</td>
+      <td>Confession of a Child of the Century</td>
+      <td>Cohen</td>
+      <td>74</td>
+      <td>2015</td>
+    </tr>
+    <tr>
+      <th>16265</th>
+      <td>16266</td>
+      <td>Storage 24</td>
+      <td>Magn.</td>
+      <td>72</td>
+      <td>2013</td>
+    </tr>
+    <tr>
+      <th>16266</th>
+      <td>16267</td>
+      <td>Zyzzyx Road</td>
+      <td>Reg.</td>
+      <td>30</td>
+      <td>2006</td>
+    </tr>
+  </tbody>
+</table>
+<p>16267 rows × 5 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">boxoffice_raw</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[31]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>rank               int64
+title             object
+studio            object
+lifetime_gross     int64
+year               int64
+dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>S tím bychom v podstatně mohli být spokojení, jen přejmenujeme <code>rank</code>, abychom při joinování věděli, odkud daný sloupec pochází.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">boxoffice</span> <span class="o">=</span> <span class="p">(</span><span class="n">boxoffice_raw</span>
+    <span class="o">.</span><span class="n">rename</span><span class="p">({</span>
+        <span class="s2">"rank"</span><span class="p">:</span> <span class="s2">"boxoffice_rank"</span>
+    <span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A zkusíme joinovat. V tomto případě se nemůžeme opřít o index (<code>boxoffice</code> pochází z jiného zdroje a o nějakém ID filmu z IMDb nemá ani tuchy), ale explicitně specifikujeme, který sloupec (či sloupce) se musí shodovat - na to slouží argument <code>on</code>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+    <span class="n">movies_with_rating</span><span class="p">,</span>
+    <span class="n">boxoffice</span><span class="p">,</span>
+    <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">" (imdb)"</span><span class="p">,</span> <span class="s2">" (boxoffice)"</span><span class="p">],</span>
+    <span class="n">on</span><span class="o">=</span><span class="s2">"title"</span>
+<span class="p">)</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"title == 'Pinocchio'"</span><span class="p">)</span>  <span class="c1"># "Jeden" ukázkový film</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[33]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year (imdb)</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+      <th>boxoffice_rank</th>
+      <th>studio</th>
+      <th>lifetime_gross</th>
+      <th>year (boxoffice)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1643</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>1940</td>
+      <td>88</td>
+      <td>Animation,Comedy,Family</td>
+      <td>7.5</td>
+      <td>114689</td>
+      <td>885</td>
+      <td>Dis.</td>
+      <td>84254167</td>
+      <td>1940</td>
+    </tr>
+    <tr>
+      <th>1644</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>1940</td>
+      <td>88</td>
+      <td>Animation,Comedy,Family</td>
+      <td>7.5</td>
+      <td>114689</td>
+      <td>6108</td>
+      <td>Mira.</td>
+      <td>3684305</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>1645</th>
+      <td>Pinocchio</td>
+      <td>Turlis Abenteuer</td>
+      <td>False</td>
+      <td>1967</td>
+      <td>75</td>
+      <td>Adventure,Family,Fantasy</td>
+      <td>7.2</td>
+      <td>19</td>
+      <td>885</td>
+      <td>Dis.</td>
+      <td>84254167</td>
+      <td>1940</td>
+    </tr>
+    <tr>
+      <th>1646</th>
+      <td>Pinocchio</td>
+      <td>Turlis Abenteuer</td>
+      <td>False</td>
+      <td>1967</td>
+      <td>75</td>
+      <td>Adventure,Family,Fantasy</td>
+      <td>7.2</td>
+      <td>19</td>
+      <td>6108</td>
+      <td>Mira.</td>
+      <td>3684305</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>1647</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>1971</td>
+      <td>79</td>
+      <td>Comedy,Fantasy</td>
+      <td>3.5</td>
+      <td>123</td>
+      <td>885</td>
+      <td>Dis.</td>
+      <td>84254167</td>
+      <td>1940</td>
+    </tr>
+    <tr>
+      <th>1648</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>1971</td>
+      <td>79</td>
+      <td>Comedy,Fantasy</td>
+      <td>3.5</td>
+      <td>123</td>
+      <td>6108</td>
+      <td>Mira.</td>
+      <td>3684305</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>1649</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>1911</td>
+      <td>50</td>
+      <td>Fantasy</td>
+      <td>5.9</td>
+      <td>69</td>
+      <td>885</td>
+      <td>Dis.</td>
+      <td>84254167</td>
+      <td>1940</td>
+    </tr>
+    <tr>
+      <th>1650</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>1911</td>
+      <td>50</td>
+      <td>Fantasy</td>
+      <td>5.9</td>
+      <td>69</td>
+      <td>6108</td>
+      <td>Mira.</td>
+      <td>3684305</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>1651</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>2002</td>
+      <td>108</td>
+      <td>Comedy,Family,Fantasy</td>
+      <td>4.3</td>
+      <td>7192</td>
+      <td>885</td>
+      <td>Dis.</td>
+      <td>84254167</td>
+      <td>1940</td>
+    </tr>
+    <tr>
+      <th>1652</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>2002</td>
+      <td>108</td>
+      <td>Comedy,Family,Fantasy</td>
+      <td>4.3</td>
+      <td>7192</td>
+      <td>6108</td>
+      <td>Mira.</td>
+      <td>3684305</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>1653</th>
+      <td>Pinocchio</td>
+      <td>Un burattino di nome Pinocchio</td>
+      <td>False</td>
+      <td>1971</td>
+      <td>96</td>
+      <td>Animation,Family,Fantasy</td>
+      <td>7.0</td>
+      <td>117</td>
+      <td>885</td>
+      <td>Dis.</td>
+      <td>84254167</td>
+      <td>1940</td>
+    </tr>
+    <tr>
+      <th>1654</th>
+      <td>Pinocchio</td>
+      <td>Un burattino di nome Pinocchio</td>
+      <td>False</td>
+      <td>1971</td>
+      <td>96</td>
+      <td>Animation,Family,Fantasy</td>
+      <td>7.0</td>
+      <td>117</td>
+      <td>6108</td>
+      <td>Mira.</td>
+      <td>3684305</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>1655</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>2012</td>
+      <td>75</td>
+      <td>Animation,Family,Fantasy</td>
+      <td>6.3</td>
+      <td>218</td>
+      <td>885</td>
+      <td>Dis.</td>
+      <td>84254167</td>
+      <td>1940</td>
+    </tr>
+    <tr>
+      <th>1656</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>2012</td>
+      <td>75</td>
+      <td>Animation,Family,Fantasy</td>
+      <td>6.3</td>
+      <td>218</td>
+      <td>6108</td>
+      <td>Mira.</td>
+      <td>3684305</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>1657</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>2015</td>
+      <td>&lt;NA&gt;</td>
+      <td>Family,Fantasy</td>
+      <td>4.9</td>
+      <td>43</td>
+      <td>885</td>
+      <td>Dis.</td>
+      <td>84254167</td>
+      <td>1940</td>
+    </tr>
+    <tr>
+      <th>1658</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>2015</td>
+      <td>&lt;NA&gt;</td>
+      <td>Family,Fantasy</td>
+      <td>4.9</td>
+      <td>43</td>
+      <td>6108</td>
+      <td>Mira.</td>
+      <td>3684305</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>1659</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>2015</td>
+      <td>75</td>
+      <td>Documentary</td>
+      <td>6.8</td>
+      <td>8</td>
+      <td>885</td>
+      <td>Dis.</td>
+      <td>84254167</td>
+      <td>1940</td>
+    </tr>
+    <tr>
+      <th>1660</th>
+      <td>Pinocchio</td>
+      <td>Pinocchio</td>
+      <td>False</td>
+      <td>2015</td>
+      <td>75</td>
+      <td>Documentary</td>
+      <td>6.8</td>
+      <td>8</td>
+      <td>6108</td>
+      <td>Mira.</td>
+      <td>3684305</td>
+      <td>2002</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jejda, to jsme asi nechtěli. Existuje spousta různých Pinocchiů a ke každému z nich se připojili vždy oba snímky tohoto jména z <code>boxoffice</code>. Z toho vyplývá poučení, že při joinování je dobré se zamyslet nad jedinečností hodnot ve sloupci, který používáme jako klíč. Jméno filmu takové očividně není.</p>
+<p>V našem konkrétním případě jsme si problému všimli sami, ale pokud bude duplikátní klíč utopen někde v milionech hodnot, rádi bychom, aby to počítač poznal za nás. K tomu slouží argument <code>validate</code> - podle toho, jaký vztah mezi tabulkami očekáš, jsou přípustné hodnoty <code>"one_to_one"</code>, <code>"one_to_many"</code>, <code>"many_to_one"</code> nebo <code>"many_to_many"</code>:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+    <span class="n">movies_with_rating</span><span class="p">,</span>
+    <span class="n">boxoffice</span><span class="p">,</span>
+    <span class="n">on</span><span class="o">=</span><span class="s2">"title"</span><span class="p">,</span>
+    <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">" (imdb)"</span><span class="p">,</span> <span class="s2">" (boxoffice)"</span><span class="p">],</span>
+<span class="c1">#    validate="one_to_one"    # Odkomentuj a vyskočí chyba!</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[34]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year (imdb)</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+      <th>boxoffice_rank</th>
+      <th>studio</th>
+      <th>lifetime_gross</th>
+      <th>year (boxoffice)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Oliver Twist</td>
+      <td>Oliver Twist</td>
+      <td>False</td>
+      <td>1912</td>
+      <td>&lt;NA&gt;</td>
+      <td>Drama</td>
+      <td>4.7</td>
+      <td>19</td>
+      <td>6826</td>
+      <td>Sony</td>
+      <td>2080321</td>
+      <td>2005</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Oliver Twist</td>
+      <td>Oliver Twist</td>
+      <td>False</td>
+      <td>1912</td>
+      <td>&lt;NA&gt;</td>
+      <td>Drama</td>
+      <td>4.4</td>
+      <td>12</td>
+      <td>6826</td>
+      <td>Sony</td>
+      <td>2080321</td>
+      <td>2005</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Oliver Twist</td>
+      <td>Oliver Twist</td>
+      <td>False</td>
+      <td>1916</td>
+      <td>50</td>
+      <td>Drama</td>
+      <td>6.6</td>
+      <td>16</td>
+      <td>6826</td>
+      <td>Sony</td>
+      <td>2080321</td>
+      <td>2005</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Oliver Twist</td>
+      <td>Oliver Twist</td>
+      <td>False</td>
+      <td>1922</td>
+      <td>98</td>
+      <td>Drama</td>
+      <td>6.8</td>
+      <td>657</td>
+      <td>6826</td>
+      <td>Sony</td>
+      <td>2080321</td>
+      <td>2005</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Oliver Twist</td>
+      <td>Oliver Twist</td>
+      <td>False</td>
+      <td>1933</td>
+      <td>80</td>
+      <td>Drama</td>
+      <td>5.0</td>
+      <td>292</td>
+      <td>6826</td>
+      <td>Sony</td>
+      <td>2080321</td>
+      <td>2005</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>20562</th>
+      <td>BTS World Tour: Love Yourself in Seoul</td>
+      <td>BTS World Tour: Love Yourself in Seoul</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>112</td>
+      <td>Documentary,Music</td>
+      <td>8.5</td>
+      <td>439</td>
+      <td>6173</td>
+      <td>Fathom</td>
+      <td>3509917</td>
+      <td>2019</td>
+    </tr>
+    <tr>
+      <th>20563</th>
+      <td>Mojin: The Worm Valley</td>
+      <td>Yun nan chong gu</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>110</td>
+      <td>Action,Fantasy</td>
+      <td>4.7</td>
+      <td>120</td>
+      <td>11240</td>
+      <td>WGUSA</td>
+      <td>101516</td>
+      <td>2019</td>
+    </tr>
+    <tr>
+      <th>20564</th>
+      <td>Extreme Job</td>
+      <td>Geukhanjikeob</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>111</td>
+      <td>Action,Comedy</td>
+      <td>7.3</td>
+      <td>905</td>
+      <td>7212</td>
+      <td>CJ</td>
+      <td>1548816</td>
+      <td>2019</td>
+    </tr>
+    <tr>
+      <th>20565</th>
+      <td>Peppa Celebrates Chinese New Year</td>
+      <td>xiao zhu pei qi guo da nian</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>81</td>
+      <td>Animation,Family</td>
+      <td>3.4</td>
+      <td>41</td>
+      <td>10811</td>
+      <td>STX</td>
+      <td>131225</td>
+      <td>2019</td>
+    </tr>
+    <tr>
+      <th>20566</th>
+      <td>Avant qu'on explose</td>
+      <td>Avant qu'on explose</td>
+      <td>False</td>
+      <td>2019</td>
+      <td>108</td>
+      <td>Comedy</td>
+      <td>6.9</td>
+      <td>41</td>
+      <td>10995</td>
+      <td>EOne</td>
+      <td>116576</td>
+      <td>2019</td>
+    </tr>
+  </tbody>
+</table>
+<p>20567 rows × 12 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Řešení je jednoduché - budeme joinovat přes dva různé sloupce (argument <code>on</code> to unese ;-)). Při té příležitosti navíc zjišťujeme, že nedává smysl spojovat filmy, které rok vůbec uvedený nemají, a proto je vyhodíme:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">movies_with_rating</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"year"</span><span class="p">]),</span>  <span class="c1"># Vyhoď všechny řádky bez roku</span>
+        <span class="n">boxoffice</span><span class="p">,</span>
+        <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">"year"</span><span class="p">],</span>
+        <span class="n">validate</span><span class="o">=</span><span class="s2">"many_to_one"</span><span class="p">,</span>      <span class="c1"># movies_with_rating pořád nejsou unikátní!</span>
+    <span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"title == 'Playback'"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[35]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+      <th>boxoffice_rank</th>
+      <th>studio</th>
+      <th>lifetime_gross</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>6926</th>
+      <td>Playback</td>
+      <td>Playback</td>
+      <td>False</td>
+      <td>2012</td>
+      <td>98</td>
+      <td>Horror,Thriller</td>
+      <td>4.3</td>
+      <td>4478</td>
+      <td>16256</td>
+      <td>Magn.</td>
+      <td>264</td>
+    </tr>
+    <tr>
+      <th>6927</th>
+      <td>Playback</td>
+      <td>Playback</td>
+      <td>False</td>
+      <td>2012</td>
+      <td>113</td>
+      <td>Drama</td>
+      <td>4.9</td>
+      <td>27</td>
+      <td>16256</td>
+      <td>Magn.</td>
+      <td>264</td>
+    </tr>
+    <tr>
+      <th>6928</th>
+      <td>Playback</td>
+      <td>Dur d'être Dieu</td>
+      <td>False</td>
+      <td>2012</td>
+      <td>66</td>
+      <td>Documentary</td>
+      <td>5.2</td>
+      <td>8</td>
+      <td>16256</td>
+      <td>Magn.</td>
+      <td>264</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pořád nejsou unikátní! Co s tím?</p>
+<p><strong>Hypotéza:</strong> Vstupujeme na nebezpečnou půdu a zkusíme spekulovat, že informace o ziscích budeme mít nejspíš jen o nejpopulárnějších filmech. Možná máme pravdu, možná ne a nejspíš nějakou drobnou nepřesnost zaneseme, ale dobrat se tady skutečné pravdy je "drahé" (a možná i skutečně drahé), z nabízených datových sad to věrohodně možné není.</p>
+<p>Abychom se co nejvíc přiblížili realitě, z každé opakující se dvojice (název, rok) vybereme film s nejvyšším <code>imdb_votes</code>. Nejdříve si pomocí <code>sort_values</code> srovnáme všechny filmy a pak zavoláme <code>drop_duplicates(..., keep="first")</code>, což nám ponechá vždy jen jeden z řady duplikátů:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">movies_with_rating_and_boxoffice</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">movies_with_rating</span>
+            <span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"year"</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"imdb_votes"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span>
+                <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">"year"</span><span class="p">],</span>
+                <span class="n">keep</span><span class="o">=</span><span class="s2">"first"</span>
+            <span class="p">),</span>
+        <span class="n">boxoffice</span><span class="p">,</span>
+        <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">"year"</span><span class="p">],</span>
+        <span class="n">validate</span><span class="o">=</span><span class="s2">"one_to_one"</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">movies_with_rating_and_boxoffice</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[36]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+      <th>boxoffice_rank</th>
+      <th>studio</th>
+      <th>lifetime_gross</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>The Shawshank Redemption</td>
+      <td>The Shawshank Redemption</td>
+      <td>False</td>
+      <td>1994</td>
+      <td>142</td>
+      <td>Drama</td>
+      <td>9.3</td>
+      <td>2071759</td>
+      <td>2792</td>
+      <td>Col.</td>
+      <td>28341469</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>The Dark Knight</td>
+      <td>The Dark Knight</td>
+      <td>False</td>
+      <td>2008</td>
+      <td>152</td>
+      <td>Action,Crime,Drama</td>
+      <td>9.0</td>
+      <td>2037678</td>
+      <td>10</td>
+      <td>WB</td>
+      <td>535234033</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Inception</td>
+      <td>Inception</td>
+      <td>False</td>
+      <td>2010</td>
+      <td>148</td>
+      <td>Action,Adventure,Sci-Fi</td>
+      <td>8.8</td>
+      <td>1816360</td>
+      <td>85</td>
+      <td>WB</td>
+      <td>292576195</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Fight Club</td>
+      <td>Fight Club</td>
+      <td>False</td>
+      <td>1999</td>
+      <td>139</td>
+      <td>Drama</td>
+      <td>8.8</td>
+      <td>1657857</td>
+      <td>2248</td>
+      <td>Fox</td>
+      <td>37030102</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Pulp Fiction</td>
+      <td>Pulp Fiction</td>
+      <td>False</td>
+      <td>1994</td>
+      <td>154</td>
+      <td>Crime,Drama</td>
+      <td>8.9</td>
+      <td>1620135</td>
+      <td>629</td>
+      <td>Mira.</td>
+      <td>107928762</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>8996</th>
+      <td>Girlfriends</td>
+      <td>Girlfriends</td>
+      <td>False</td>
+      <td>1996</td>
+      <td>&lt;NA&gt;</td>
+      <td>NaN</td>
+      <td>8.6</td>
+      <td>7</td>
+      <td>13930</td>
+      <td>FRun</td>
+      <td>18000</td>
+    </tr>
+    <tr>
+      <th>8997</th>
+      <td>Sacred</td>
+      <td>Sacred</td>
+      <td>False</td>
+      <td>2017</td>
+      <td>&lt;NA&gt;</td>
+      <td>Action,Drama,Romance</td>
+      <td>8.2</td>
+      <td>6</td>
+      <td>13950</td>
+      <td>Argo.</td>
+      <td>17740</td>
+    </tr>
+    <tr>
+      <th>8998</th>
+      <td>The Professor: Tai Chi's Journey West</td>
+      <td>The Professor: Tai Chi's Journey West</td>
+      <td>False</td>
+      <td>2016</td>
+      <td>72</td>
+      <td>Documentary</td>
+      <td>7.2</td>
+      <td>6</td>
+      <td>15820</td>
+      <td>FRun</td>
+      <td>2852</td>
+    </tr>
+    <tr>
+      <th>8999</th>
+      <td>After Love</td>
+      <td>After Love</td>
+      <td>False</td>
+      <td>2017</td>
+      <td>&lt;NA&gt;</td>
+      <td>Drama,Romance,Thriller</td>
+      <td>7.6</td>
+      <td>5</td>
+      <td>14299</td>
+      <td>Distrib.</td>
+      <td>13693</td>
+    </tr>
+    <tr>
+      <th>9000</th>
+      <td>Still, the Children Are Here</td>
+      <td>Still, the Children Are Here</td>
+      <td>False</td>
+      <td>2004</td>
+      <td>85</td>
+      <td>Documentary</td>
+      <td>6.6</td>
+      <td>5</td>
+      <td>15653</td>
+      <td>Icar.</td>
+      <td>3685</td>
+    </tr>
+  </tbody>
+</table>
+<p>9001 rows × 11 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># To už by šlo!</span>
+<span class="n">movies_with_rating_and_boxoffice</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"title == 'Playback'"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[37]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+      <th>boxoffice_rank</th>
+      <th>studio</th>
+      <th>lifetime_gross</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5831</th>
+      <td>Playback</td>
+      <td>Playback</td>
+      <td>False</td>
+      <td>2012</td>
+      <td>98</td>
+      <td>Horror,Thriller</td>
+      <td>4.3</td>
+      <td>4478</td>
+      <td>16256</td>
+      <td>Magn.</td>
+      <td>264</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Seřaď filmy podle toho, kolik vydělaly (nabízí se hned dvě možnosti).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Otázka:</strong> Které filmy nám vypadly a proč?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="treti_join">Třetí join
+<a href="#header-treti_join" class="header-link">#</a>
+</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rotten_tomatoes_raw</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[38]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rank</th>
+      <th>Title</th>
+      <th>RatingTomatometer</th>
+      <th>No. of Reviews</th>
+      <th>Genres</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>Black Panther (2018)</td>
+      <td>97</td>
+      <td>444</td>
+      <td>action|adventure</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>Mad Max: Fury Road (2015)</td>
+      <td>97</td>
+      <td>394</td>
+      <td>action|adventure</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>Wonder Woman (2017)</td>
+      <td>93</td>
+      <td>410</td>
+      <td>action|adventure</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>Metropolis (1927)</td>
+      <td>99</td>
+      <td>118</td>
+      <td>action|adventure</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>Coco (2017)</td>
+      <td>97</td>
+      <td>308</td>
+      <td>action|adventure</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1585</th>
+      <td>70</td>
+      <td>Priest (2011)</td>
+      <td>15</td>
+      <td>97</td>
+      <td>western</td>
+    </tr>
+    <tr>
+      <th>1586</th>
+      <td>71</td>
+      <td>American Outlaws (2001)</td>
+      <td>14</td>
+      <td>103</td>
+      <td>western</td>
+    </tr>
+    <tr>
+      <th>1587</th>
+      <td>72</td>
+      <td>September Dawn (2007)</td>
+      <td>15</td>
+      <td>54</td>
+      <td>western</td>
+    </tr>
+    <tr>
+      <th>1588</th>
+      <td>73</td>
+      <td>Jonah Hex (2010)</td>
+      <td>12</td>
+      <td>147</td>
+      <td>western</td>
+    </tr>
+    <tr>
+      <th>1589</th>
+      <td>74</td>
+      <td>Texas Rangers (2001)</td>
+      <td>2</td>
+      <td>51</td>
+      <td>western</td>
+    </tr>
+  </tbody>
+</table>
+<p>1590 rows × 5 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rotten_tomatoes_raw</span><span class="p">[</span><span class="s2">"Title"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[39]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Title
+Yellow Submarine (1968)                                 6
+101 Dalmatians (1961)                                   5
+Fantasia (1940)                                         5
+Harry Potter and the Deathly Hallows - Part 2 (2011)    5
+Miracle on 34th Street (1947)                           5
+                                                       ..
+Misery (1990)                                           1
+The Dead Zone (1983)                                    1
+The Conjuring (2013)                                    1
+The Exorcist (1973)                                     1
+Texas Rangers (2001)                                    1
+Name: count, Length: 947, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A zase duplicity, některé názvy se nám opakují :-(</p>
+<p><strong>Otázka:</strong> Dokážeš zjistit proč? Nápověda: podívej se na nějaký konkrétní film.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Naštěstí už víme, jak na to - použijeme metodu <code>drop_duplicates</code>, tentokrát přes sloupec <code>"Title"</code>. (Poznámka: druhou možností by bylo sloučit všechny různé žánry daného filmu do jedné buňky).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [40]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rotten_tomatoes_nodup</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">rotten_tomatoes_raw</span>
+    <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span>
+        <span class="n">subset</span><span class="o">=</span><span class="s2">"Title"</span><span class="p">,</span>
+        <span class="n">keep</span><span class="o">=</span><span class="s2">"first"</span>                   <span class="c1"># Vybereme první výskyt, lze i "last" (anebo False =&gt; vyhodit všechny)</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"Genres"</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">)</span>    <span class="c1"># Informační hodnotu jsme už ztratili</span>
+    <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"Rank"</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">)</span>      <span class="c1"># Mělo smysl jen v rámci žánru</span>
+<span class="p">)</span>
+<span class="n">rotten_tomatoes_nodup</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[40]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Title</th>
+      <th>RatingTomatometer</th>
+      <th>No. of Reviews</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Black Panther (2018)</td>
+      <td>97</td>
+      <td>444</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Mad Max: Fury Road (2015)</td>
+      <td>97</td>
+      <td>394</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Wonder Woman (2017)</td>
+      <td>93</td>
+      <td>410</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Metropolis (1927)</td>
+      <td>99</td>
+      <td>118</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Coco (2017)</td>
+      <td>97</td>
+      <td>308</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1585</th>
+      <td>Priest (2011)</td>
+      <td>15</td>
+      <td>97</td>
+    </tr>
+    <tr>
+      <th>1586</th>
+      <td>American Outlaws (2001)</td>
+      <td>14</td>
+      <td>103</td>
+    </tr>
+    <tr>
+      <th>1587</th>
+      <td>September Dawn (2007)</td>
+      <td>15</td>
+      <td>54</td>
+    </tr>
+    <tr>
+      <th>1588</th>
+      <td>Jonah Hex (2010)</td>
+      <td>12</td>
+      <td>147</td>
+    </tr>
+    <tr>
+      <th>1589</th>
+      <td>Texas Rangers (2001)</td>
+      <td>2</td>
+      <td>51</td>
+    </tr>
+  </tbody>
+</table>
+<p>947 rows × 3 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [41]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Ready to merge?</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">imdb_titles</span><span class="p">,</span> <span class="n">rotten_tomatoes_nodup</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s2">"title"</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s2">"Title"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[41]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title_type</th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>start_year</th>
+      <th>end_year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>Title</th>
+      <th>RatingTomatometer</th>
+      <th>No. of Reviews</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>0 řádků!</p>
+<p>Dosud jsme manipulovali s řádky a sloupci jako celky, nicméně teď musíme zasahovat přímo do hodnot v buňkách. I to se při slučování dat z různých zdrojů nezřídka stává. Stojíme před úkolem převést řetězce typu "Black Panther (2018)" na dvě hodnoty: název "Black Panther" a rok 2018 (jeden sloupec na dva).</p>
+<p>Naštěstí si ty sloupce umíme jednoduše vyrobit pomocí řetězcové metody <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.str.slice.html"><code>.str.slice</code></a>, která z každého řetězce vyřízne nějakou jeho část (a zase pracuje na celém sloupci - výsledkem bude nový sloupec s funkcí aplikovanou na každou z hodnot). Budeme věřit, že předposlední čtyři znaky představují rok a zbytek, až na nějaké ty závorky, tvoří skutečný název:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rotten_tomatoes_beta</span> <span class="o">=</span> <span class="p">(</span><span class="n">rotten_tomatoes_nodup</span>
+    <span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="n">rotten_tomatoes_nodup</span><span class="p">[</span><span class="s2">"Title"</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">),</span>             
+        <span class="n">year</span><span class="o">=</span><span class="n">rotten_tomatoes_nodup</span><span class="p">[</span><span class="s2">"Title"</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">rename</span><span class="p">({</span>
+        <span class="s2">"RatingTomatometer"</span><span class="p">:</span> <span class="s2">"tomatoes_rating"</span><span class="p">,</span>
+        <span class="s2">"No. of Reviews"</span><span class="p">:</span> <span class="s2">"tomatoes_votes"</span><span class="p">,</span>
+    <span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">"Title"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"columns"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">rotten_tomatoes_beta</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[42]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>tomatoes_rating</th>
+      <th>tomatoes_votes</th>
+      <th>title</th>
+      <th>year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>97</td>
+      <td>444</td>
+      <td>Black Panther</td>
+      <td>2018</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>97</td>
+      <td>394</td>
+      <td>Mad Max: Fury Road</td>
+      <td>2015</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>93</td>
+      <td>410</td>
+      <td>Wonder Woman</td>
+      <td>2017</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>99</td>
+      <td>118</td>
+      <td>Metropolis</td>
+      <td>1927</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>97</td>
+      <td>308</td>
+      <td>Coco</td>
+      <td>2017</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1585</th>
+      <td>15</td>
+      <td>97</td>
+      <td>Priest</td>
+      <td>2011</td>
+    </tr>
+    <tr>
+      <th>1586</th>
+      <td>14</td>
+      <td>103</td>
+      <td>American Outlaws</td>
+      <td>2001</td>
+    </tr>
+    <tr>
+      <th>1587</th>
+      <td>15</td>
+      <td>54</td>
+      <td>September Dawn</td>
+      <td>2007</td>
+    </tr>
+    <tr>
+      <th>1588</th>
+      <td>12</td>
+      <td>147</td>
+      <td>Jonah Hex</td>
+      <td>2010</td>
+    </tr>
+    <tr>
+      <th>1589</th>
+      <td>2</td>
+      <td>51</td>
+      <td>Texas Rangers</td>
+      <td>2001</td>
+    </tr>
+  </tbody>
+</table>
+<p>947 rows × 4 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Závorková odysea nekončí, někdo nám proaktivně do závorek nacpal i originální název naanglickojazyčných filmů. Pojďme se o tom přesvědčit pomocí metody <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.str.contains.html"><code>.str.contains</code></a> (protože tato metoda ve výchozím stavu používá pro vyhledávání regulární výrazy, které jsme se zatím nenaučili používat, musíme jí to explicitně zakázat argumentem <code>regex=False</code>):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rotten_tomatoes_beta</span><span class="p">[</span><span class="n">rotten_tomatoes_beta</span><span class="p">[</span><span class="s2">"title"</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">")"</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[43]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>tomatoes_rating</th>
+      <th>tomatoes_votes</th>
+      <th>title</th>
+      <th>year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>15</th>
+      <td>100</td>
+      <td>58</td>
+      <td>Seven Samurai (Shichinin no Samurai)</td>
+      <td>1956</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>98</td>
+      <td>46</td>
+      <td>Aguirre, the Wrath of God (Aguirre, der Zorn G...</td>
+      <td>1972</td>
+    </tr>
+    <tr>
+      <th>61</th>
+      <td>97</td>
+      <td>71</td>
+      <td>Ghostbusters (1984 Original)</td>
+      <td>1984</td>
+    </tr>
+    <tr>
+      <th>69</th>
+      <td>98</td>
+      <td>47</td>
+      <td>A Fistful of Dollars (Per un Pugno di Dollari)</td>
+      <td>1964</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>96</td>
+      <td>139</td>
+      <td>Embrace Of The Serpent (El Abrazo De La Serpie...</td>
+      <td>2016</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1368</th>
+      <td>97</td>
+      <td>59</td>
+      <td>To Be and to Have (Etre et Avoir)</td>
+      <td>2003</td>
+    </tr>
+    <tr>
+      <th>1457</th>
+      <td>43</td>
+      <td>82</td>
+      <td>Goal! The Dream Begins (Goal!: The Impossible ...</td>
+      <td>2005</td>
+    </tr>
+    <tr>
+      <th>1502</th>
+      <td>71</td>
+      <td>52</td>
+      <td>Only Human (Seres queridos)</td>
+      <td>2006</td>
+    </tr>
+    <tr>
+      <th>1547</th>
+      <td>83</td>
+      <td>64</td>
+      <td>The Good, the Bad, the Weird (Joheun-nom, Nabb...</td>
+      <td>2010</td>
+    </tr>
+    <tr>
+      <th>1559</th>
+      <td>74</td>
+      <td>62</td>
+      <td>Fah talai jone (Tears of the Black Tiger)</td>
+      <td>2007</td>
+    </tr>
+  </tbody>
+</table>
+<p>66 rows × 4 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V rámci zjednodušení proto ještě odstraníme všechny takové závorky. K tomu pomůže funkce <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.str.rsplit.html"><code>.str.rsplit</code></a>, která rozdělí zprava řetězec na několik částí podle oddělovače a vloží je do seznamu - my za ten oddělovač zvolíme levou závorku <code>"("</code>, omezíme počet částí na jednu až dvě (<code>n=1</code>):</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [44]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">split_title</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">rotten_tomatoes_beta</span><span class="p">[</span><span class="s2">"title"</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"("</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">split_title</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">41</span><span class="p">,</span> <span class="mi">61</span><span class="p">,</span> <span class="mi">81</span><span class="p">]]</span>   <span class="c1"># Některé seznamy obsahují jeden prvek, jiné dva</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[44]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>41            [Marvel's The Avengers]
+61    [Ghostbusters , 1984 Original)]
+81      [Mad Max 2: The Road Warrior]
+Name: title, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A jak teď vybrat první prvek z každého seznamu?</p>
+<p>💡 Metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.apply.html"><code>apply</code></a> umožňuje použít libovolnou transformaci (definovanou jako funkci) na každý řádek v tabulce či hodnotu v <code>Series</code>. Obvykle se bez ní obejdeme a měli bychom (proto se jí tolik speciálně nevěnujeme), protože není příliš výpočetně efektivní. Tady nám ale usnadní pochopení, co se vlastně dělá, t.j. vybírá první prvek nějakého seznamu:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [45]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">take_first</span><span class="p">(</span><span class="n">a_list</span><span class="p">):</span>   <span class="c1"># Funkce, kterou použijeme v apply</span>
+    <span class="k">return</span> <span class="n">a_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">rotten_tomatoes</span> <span class="o">=</span> <span class="p">(</span><span class="n">rotten_tomatoes_beta</span>
+    <span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="n">split_title</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">take_first</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">rotten_tomatoes</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[45]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>tomatoes_rating</th>
+      <th>tomatoes_votes</th>
+      <th>title</th>
+      <th>year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>97</td>
+      <td>444</td>
+      <td>Black Panther</td>
+      <td>2018</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>97</td>
+      <td>394</td>
+      <td>Mad Max: Fury Road</td>
+      <td>2015</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>93</td>
+      <td>410</td>
+      <td>Wonder Woman</td>
+      <td>2017</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>99</td>
+      <td>118</td>
+      <td>Metropolis</td>
+      <td>1927</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>97</td>
+      <td>308</td>
+      <td>Coco</td>
+      <td>2017</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1585</th>
+      <td>15</td>
+      <td>97</td>
+      <td>Priest</td>
+      <td>2011</td>
+    </tr>
+    <tr>
+      <th>1586</th>
+      <td>14</td>
+      <td>103</td>
+      <td>American Outlaws</td>
+      <td>2001</td>
+    </tr>
+    <tr>
+      <th>1587</th>
+      <td>15</td>
+      <td>54</td>
+      <td>September Dawn</td>
+      <td>2007</td>
+    </tr>
+    <tr>
+      <th>1588</th>
+      <td>12</td>
+      <td>147</td>
+      <td>Jonah Hex</td>
+      <td>2010</td>
+    </tr>
+    <tr>
+      <th>1589</th>
+      <td>2</td>
+      <td>51</td>
+      <td>Texas Rangers</td>
+      <td>2001</td>
+    </tr>
+  </tbody>
+</table>
+<p>947 rows × 4 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [46]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Zbavení se duplikátů hned na začátku nám zachovalo filmy se stejným jménem :-)</span>
+<span class="n">rotten_tomatoes</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"title == 'The Magnificent Seven'"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[46]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>tomatoes_rating</th>
+      <th>tomatoes_votes</th>
+      <th>title</th>
+      <th>year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1539</th>
+      <td>88</td>
+      <td>42</td>
+      <td>The Magnificent Seven</td>
+      <td>1960</td>
+    </tr>
+    <tr>
+      <th>1560</th>
+      <td>63</td>
+      <td>289</td>
+      <td>The Magnificent Seven</td>
+      <td>2016</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+    <span class="n">movies</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"year"</span><span class="p">]),</span>
+    <span class="n">rotten_tomatoes</span><span class="p">,</span>
+    <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">"year"</span><span class="p">],</span>
+    <span class="n">how</span><span class="o">=</span><span class="s2">"inner"</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[47]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>tomatoes_rating</th>
+      <th>tomatoes_votes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>The Birth of a Nation</td>
+      <td>The Birth of a Nation</td>
+      <td>False</td>
+      <td>1915</td>
+      <td>195</td>
+      <td>Drama,History,War</td>
+      <td>98</td>
+      <td>40</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Battleship Potemkin</td>
+      <td>Bronenosets Potemkin</td>
+      <td>False</td>
+      <td>1925</td>
+      <td>75</td>
+      <td>Drama,History</td>
+      <td>100</td>
+      <td>45</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>The Gold Rush</td>
+      <td>The Gold Rush</td>
+      <td>False</td>
+      <td>1925</td>
+      <td>95</td>
+      <td>Adventure,Comedy,Drama</td>
+      <td>100</td>
+      <td>43</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Metropolis</td>
+      <td>Metropolis</td>
+      <td>False</td>
+      <td>1927</td>
+      <td>153</td>
+      <td>Drama,Sci-Fi</td>
+      <td>99</td>
+      <td>118</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>All Quiet on the Western Front</td>
+      <td>All Quiet on the Western Front</td>
+      <td>False</td>
+      <td>1930</td>
+      <td>136</td>
+      <td>Drama,War</td>
+      <td>100</td>
+      <td>42</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>654</th>
+      <td>Three Identical Strangers</td>
+      <td>Three Identical Strangers</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>96</td>
+      <td>Biography,Documentary,Drama</td>
+      <td>96</td>
+      <td>157</td>
+    </tr>
+    <tr>
+      <th>655</th>
+      <td>Searching</td>
+      <td>Searching</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>102</td>
+      <td>Drama,Mystery,Thriller</td>
+      <td>92</td>
+      <td>214</td>
+    </tr>
+    <tr>
+      <th>656</th>
+      <td>Won't You Be My Neighbor?</td>
+      <td>Won't You Be My Neighbor?</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>94</td>
+      <td>Biography,Documentary</td>
+      <td>98</td>
+      <td>216</td>
+    </tr>
+    <tr>
+      <th>657</th>
+      <td>RBG</td>
+      <td>RBG</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>98</td>
+      <td>Biography,Documentary</td>
+      <td>95</td>
+      <td>153</td>
+    </tr>
+    <tr>
+      <th>658</th>
+      <td>Hereditary</td>
+      <td>Hereditary</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>127</td>
+      <td>Drama,Horror,Mystery</td>
+      <td>89</td>
+      <td>317</td>
+    </tr>
+  </tbody>
+</table>
+<p>659 rows × 8 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Když sloučíme filmy a hodnocení na Rotten Tomatoes, z 947 filmů se nám skoro tři sta ztratí. Bohužel zde je na vině především nestejnost zápisu názvu, různé uřčité členy, interpunkce, podnázvy apod. Coby řešení se tady nabízí spousta a spousta manuální práce, případně nějaká heuristika, která by na sebe pasovala "hodně podobné" názvy.</p>
+<p><em>Mimochodem, obtížnost manuální práce se mezi vývojáři někdy přeceňuje: Opravit 288 názvů filmů může být práce na hodinu až dvě, zatímco psát algoritmus na "řešení problému" může trvat stejně dlouho, ne-li déle.</em></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="ctvrty_a_posledni_join">Čtvrtý (a poslední) join
+<a href="#header-ctvrty_a_posledni_join" class="header-link">#</a>
+</h4>
+<p>Dokončíme slučování všech čtyř tabulek:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [48]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">movies_complete</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+    <span class="n">movies_with_rating_and_boxoffice</span><span class="p">,</span>
+    <span class="n">rotten_tomatoes</span><span class="p">,</span>
+    <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">"year"</span><span class="p">],</span>
+    <span class="n">how</span><span class="o">=</span><span class="s2">"inner"</span>
+<span class="p">)</span>
+<span class="n">movies_complete</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"boxoffice_rank"</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[48]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>original_title</th>
+      <th>is_adult</th>
+      <th>year</th>
+      <th>length</th>
+      <th>genres</th>
+      <th>imdb_rating</th>
+      <th>imdb_votes</th>
+      <th>boxoffice_rank</th>
+      <th>studio</th>
+      <th>lifetime_gross</th>
+      <th>tomatoes_rating</th>
+      <th>tomatoes_votes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Black Panther</td>
+      <td>Black Panther</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>134</td>
+      <td>Action,Adventure,Sci-Fi</td>
+      <td>7.3</td>
+      <td>489977</td>
+      <td>3</td>
+      <td>BV</td>
+      <td>700059566</td>
+      <td>97</td>
+      <td>444</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Avengers: Infinity War</td>
+      <td>Avengers: Infinity War</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>149</td>
+      <td>Action,Adventure,Sci-Fi</td>
+      <td>8.5</td>
+      <td>616050</td>
+      <td>4</td>
+      <td>BV</td>
+      <td>678815482</td>
+      <td>84</td>
+      <td>408</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Titanic</td>
+      <td>Titanic</td>
+      <td>False</td>
+      <td>1997</td>
+      <td>194</td>
+      <td>Drama,Romance</td>
+      <td>7.8</td>
+      <td>945889</td>
+      <td>5</td>
+      <td>Par.</td>
+      <td>659363944</td>
+      <td>89</td>
+      <td>184</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Incredibles 2</td>
+      <td>Incredibles 2</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>118</td>
+      <td>Action,Adventure,Animation</td>
+      <td>7.7</td>
+      <td>192301</td>
+      <td>9</td>
+      <td>BV</td>
+      <td>608581744</td>
+      <td>94</td>
+      <td>332</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>The Dark Knight</td>
+      <td>The Dark Knight</td>
+      <td>False</td>
+      <td>2008</td>
+      <td>152</td>
+      <td>Action,Crime,Drama</td>
+      <td>9.0</td>
+      <td>2037678</td>
+      <td>10</td>
+      <td>WB</td>
+      <td>535234033</td>
+      <td>94</td>
+      <td>332</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>469</th>
+      <td>Boxing Gym</td>
+      <td>Boxing Gym</td>
+      <td>False</td>
+      <td>2010</td>
+      <td>91</td>
+      <td>Documentary</td>
+      <td>7.1</td>
+      <td>389</td>
+      <td>12999</td>
+      <td>Zipp.</td>
+      <td>32476</td>
+      <td>95</td>
+      <td>42</td>
+    </tr>
+    <tr>
+      <th>470</th>
+      <td>Red Hill</td>
+      <td>Red Hill</td>
+      <td>False</td>
+      <td>2010</td>
+      <td>95</td>
+      <td>Thriller,Western</td>
+      <td>6.4</td>
+      <td>7844</td>
+      <td>13681</td>
+      <td>Strand</td>
+      <td>21087</td>
+      <td>78</td>
+      <td>65</td>
+    </tr>
+    <tr>
+      <th>471</th>
+      <td>City Lights</td>
+      <td>City Lights</td>
+      <td>False</td>
+      <td>1931</td>
+      <td>87</td>
+      <td>Comedy,Drama,Romance</td>
+      <td>8.5</td>
+      <td>144261</td>
+      <td>13827</td>
+      <td>UA</td>
+      <td>19181</td>
+      <td>98</td>
+      <td>45</td>
+    </tr>
+    <tr>
+      <th>472</th>
+      <td>Minding the Gap</td>
+      <td>Minding the Gap</td>
+      <td>False</td>
+      <td>2018</td>
+      <td>93</td>
+      <td>Documentary</td>
+      <td>8.1</td>
+      <td>4119</td>
+      <td>14471</td>
+      <td>Magn.</td>
+      <td>11998</td>
+      <td>100</td>
+      <td>63</td>
+    </tr>
+    <tr>
+      <th>473</th>
+      <td>The Autopsy of Jane Doe</td>
+      <td>The Autopsy of Jane Doe</td>
+      <td>False</td>
+      <td>2016</td>
+      <td>86</td>
+      <td>Horror,Mystery,Thriller</td>
+      <td>6.8</td>
+      <td>73965</td>
+      <td>14657</td>
+      <td>IFC</td>
+      <td>10474</td>
+      <td>87</td>
+      <td>98</td>
+    </tr>
+  </tbody>
+</table>
+<p>474 rows × 13 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A přišli jsme o dalších 175 filmů.</p>
+<p>Co dál? Pokud by toto byl skutečný úkol, museli bychom se s tím nějak vypořádat - zkoumat, proč které řádky nesedí, v čem se liší názvy stejného filmu v různých datových sadách, jinými slovy <em>manuální práce, práce, práce...</em></p>
+<p>Naštěstí to je úkol jen ukázkový, a my můžeme být spokojeni, že máme sice neúplnou, ale přesto použitelnou datovou sadu :-)</p>
+</div>
+</div>
+</div>
+
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2023/pydata-praha-podzim/sessions/eda4/">↑ <span class="d-none d-sm-inline">Lekce: Explorativní datová analýza a více zdrojů / proměnných</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2023/pydata-praha-podzim/pydata/pandas_correlations/"><span class="d-none d-sm-inline">Pandas - vztahy mezi více proměnnými</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/PyDataCZ/pyladies-kurz/blob/main/lessons/pydata/pandas_joins/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Jan Pipek, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

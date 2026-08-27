@@ -1,0 +1,845 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: EDA - Reprezentativnost dat a Centrální limitní věta
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-ostrava-jaro/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-ostrava-jaro/sessions/eda5/">EDA — Reprezentativnost dat, CLT a automatický pomocník</a>
+
+> <a href="/2020/pydata-ostrava-jaro/pydata/clt/">EDA - Reprezentativnost dat a Centrální limitní věta</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>EDA - Reprezentativnost dat a centrální limitní věta</h1>
+<p>Z minulých lekcí už známe základní metody datové analýzy a umíme aplikovat obecné postupy a komplexní nástroje tak, abychom z dat dostali zajímavé informace.</p>
+<p>Situaci nám v tomto snažení mohou komplikovat chybějící data a různé další chyby vedoucí k odlehlým měřením, které se dají s trochou štěstí detekovat a je možné se s nimi nějak vypořádat. Co když ale data vypadají naprosto perfektně, ale výsledky, i přes precizně provedené statistické výpočty, budou úplně k ničemu? Jak se tohle vůbec může stát?</p>
+<p>Dnes se společně podíváme na to, jak důležitou roli v našem snažení hrají data samotná a správný způsob jejich sběru, jak se dají podvrhnout výsledky analýzy ještě před tím, než se o ní někdo vůbec pokusí, a jak využít centrálně limitní větu k tomu, abychom se toho vyvarovali.</p>
+<h2>Špatná data nikdy neposkytnou dobré výsledky</h2>
+<p>U dat platí známé <em>Garbage in - garbage out</em>, a tedy, i kdyby naše výpočty a analytické nástroje byly naprosto precizní a bez chyby, pokud do nich nasypeme odpad na vstupu, nic jiného než odpad na druhé straně nemůžeme očekávat.</p>
+<h2>Reprezentativnost dat</h2>
+<p>Problém spočívá hlavně v tom, že většinu času potřebujeme pracovat se vzorky z celkového množství dat, protože nejsme schopni získat celková data od všech.</p>
+<p>Pokud budu chtít analyzovat vývoj spotřeby elektřiny u sebe doma a budu pravidelně po dobu několika let odečítat hodnoty z elektroměru, budu mít veškerá potřebná data k dispozici. Pro zjištění vlivu na vývoj spotřeby je pak mohu zkusit spojit s informacemi o počasí či s významnými událostmi v kalendáři. V tuto chvíli mám k dispozici vše potřebné.</p>
+<p>Co když mě ale bude zajímat názor Poláků na potraty? Není v silách nikoho zeptat se každého jednotlivého Poláka na jeho názor a sesbíraná data pak analyzovat jako kompletní datovou sadu. V takovém případě si budu muset vystačit s dobře vybraným (tzv. <em>reprezentativním</em>) vzorkem populace Polska. Jenže jak jej vybrat? Náhodně!</p>
+<blockquote><p>Pojem <em>populace</em> je obecný a označuje všechna data, která existují. Pokud pro svůj výzkum nemáme přístup k celé populaci, potřebujeme získat reprezentativní <em>vzorek</em> (sample). Při analýze spotřeby elektřiny u mě doma, analýze účetnictví mého zaměstnavatele nebo prospěchu svých dětí mám k dispozici celou populaci. U analýzy názorů Evropanů se budu muset spokojit se vzorkem populace. Pak je tu ještě střední cesta. Například při analýze filmů si nemohu být jist, zda je mám v datasetu staženém z internetu úplně všechny, ale vzorek, který mám k dispozici, je tak velký, že jej pro potřeby konkrétní analýzy mohu považovat za populaci a jeho reprezentativností se netřeba trápit.</p>
+</blockquote>
+<p>Abychom byli schopni odhadnout názor polské populace na potraty, potřebujeme vytvořit dobrý reprezentativní výběr, což je daleko těžší, než se zdá. Základem je vybrat z obyvatel <strong>dostatečné množství</strong> jedinců a hlavně je v ideálním případě vybírat <strong>zcela náhodně</strong>. Zatímco získání dostatku odpovědí je s dostatkem peněz a času celkem snadné, náhodný výběr je velmi komplexní disciplína. Tak například:</p>
+<ul>
+<li>Když udělám dotazníkové šetření před budovou nádraží, budu tam mít respondenty, kteří z jakéhokoli důvodu preferují hromadnou dopravu nebo prostě nemají na auto peníze. Tímto úplně ignorujeme lidi jezdící autem nebo ty pracující z domu. A navíc, řada introvertních lidí vás obejde obloukem a nebude ochotna odpovídat na otázky.</li>
+<li>Pokud jen vystavím dotazník na internetu, vyplní mi jej jen respondenti, kteří na to mají čas a jsou v tomto směru aktivnější. Existují i platformy, kde za vyplnění dostávají respondenti zaplaceno. Tam se ale může snadno stát, že ve snaze vyplnit co nejvíce dotazníku v co nejkratším čase budou odpovědi náhodné, protože si respondent ani nepřečte otázku.</li>
+<li>Telefonická šetření také získají odpovědi od respondentů, kteří mají čas a chuť si s operátorem povídat a neblokují tato telefonní čísla.</li>
+</ul>
+<p>Pokud získáme data jakýmkoli z těchto způsobů, nebudou výsledky analýz ani v nejmenším reprezentativní, protože při získávání respondentů jsme ignorovali značnou část populace. Tomuhle se říká selektivní zkreslení (selection bias).</p>
+<p>Situace je ještě komplikovanější, pokud děláte výzkum vlivu nějakého faktoru (třeba konkrétního léku). V takovém případě potřebujeme dvě skupiny respondentů, které se liší jen v tom, zda lék užívají či nikoli, ale všechny ostatní faktory jsou zcela náhodné. To je velmi problematické. Pokud je například lék drahý, je velmi pravděpodobné, že ve skupině jeho uživatelů budou lidé s vyšším příjmem. Bohatší lidé si mohou dovolit kvalitnější a zdravější jídlo a předplatné v posilovně, a tak za jejich uzdravením vůbec nemusí být lék samotný, ale spousta dalších faktorů, které se u druhé skupiny neobjevují a jejichž vliv se nepodařilo snahou o náhodný výběr odstranit.</p>
+<p>Dobře vybraný náhodný vzorek je jako polévka. Pokud ji pořádně nezamícháte, budete na začátku jist jen vodu bez chuti a na konci příliš intenzivní směs zeleniny, nudlí a koření.</p>
+<p>Data mohou být ovšem zkreslena (tzv. bias) mnoha dalšími způsoby:</p>
+<ol>
+<li>Výše popsaný problém s nenáhodným výběrem (selection or self-selection bias)</li>
+<li>Zkreslení pamětí (recall bias) - lidé mají od přírody selektivní paměť a čím vzdálenější je oblast, na kterou se ptáme, tím více zkreslené mohou být výsledky. Například lidé trpící nějakou nemocí si budou zdánlivě lépe pamatovat rizikové faktory z minulosti, protože sami sobě budou chtít zdůvodnit, proč tu či onu nemoc mají. Kdyby o své diagnóze nevěděli, jejich odpovědi by mohly lépe vystihovat realitu.</li>
+<li>Zkreslení pozorovatelem (observer bias) - osoba dělající výzkum se ptá způsobem, který záměrně ovlivní odpovědi nebo v datech automaticky hledá to, co v nich očekává.</li>
+<li>Zkreslení přeživších (survivorship bias) - Zaměření se jen na respondenty, kteří už prošli nějakým výběrem, což může limitovat jejich náhodnost. Například analyzované průměrné výsledky studentů střední školy jsou s každým rokem lepší a lepší, protože ti nejhorší studenti školu postupně opouštějí.</li>
+</ol>
+<h2>Rozdělení pravděpodobnosti</h2>
+<p>Nelekej se! Nepopulární látku z hodin statistiky si přiblížíme prakticky a jednoduše.</p>
+<p>Představ si nějakou proměnnou - třeba hmotnost člověka. Rozdělení pravděpodobnosti, které tato proměnná má, nám říká, jak pravděpodobné je, že potkáš člověka s nějakou konkrétní hmotností. Asi intuitivně tušíme, že potkat člověka se 75 kg je daleko snazší a děje se to častěji než setkání s člověkem, který má 200 kg. A tuhle intuici nám rozdělení pravděpodobnosti jen převádí na konkrétní čísla.</p>
+<h3>Rovnoměrné rozdělení</h3>
+<p>Rovnoměrné rozdělení je takové, kde mají všechny možnosti stejnou šanci nastat. Je to asi nejjednodušší rozdělení pravděpodobnosti, protože si jej lze představit jako hody (poctivou) kostkou nebo mincí. U hodu kostkou máme šest možností, které mohou nastat se stejnou pravděpodobností. U mince jsou jen dvě.</p>
+<p>Graf šedesáti hodů kostkou bude v ideálním případě vypadat následovně:</p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/clt/static/uniform.png" alt="uniform distribution"></p>
+<h3>Normální rozdělení</h3>
+<p>Daleko zajímavější než rovnoměrné rozdělení je normální rozdělení. O normálním rozdělení už byla řeč v jedné z minulých lekcí. Hlavní charakteristika normálního rozdělení spočívá v tom, že nejčastěji se v populaci vyskytuje nějaká průměrná hodnota a čím více se od průměru vzdálíme, tím menší je pravděpodobnost, že se s takovou hodnotou setkáme. Vzpomínáte na graf výšky a hmotnosti u mužů a žen? Graf tvaru zvonu je pro normální rozložení typický.</p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/clt/static/normal.png" alt="normal distrubution"></p>
+<p>Další zajímavostí normálního rozdělení je, že se s ním potkáme u spousty proměnných, se kterými budeme v analýzách pracovat - výsledky testů, rozdělení příjmů, výška, hmotnost, atp. Díky jeho častému výskytu v běžném životě je i spousta algoritmů strojového učení přizpůsobena k nejlepšímu fungování právě s proměnnými s normálním rozdělením. Pokud u nějaké proměnné normální rozdělení pravděpodobnosti detekujeme (nejčastěji prostým pohledem na histogram), má hned k dispozici jedno velmi užitečné pravidlo týkající se procentuálního pokrytí populace v závislosti na vzdálenosti od průměru v násobcích směrodatné odchylky.</p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/clt/static/normal_std.png" alt="normal distribution standard deviation">
+zdroj: <a href="https://en.m.wikipedia.org/wiki/File:Empirical_Rule.PNG">Wikipedia</a></p>
+<h3>Exponenciální rozdělení</h3>
+<p>Příkladem z jiného soudku může být exponenciální rozdělení pravděpodobnosti, jehož graf (histogram) má tvar exponenciální funkce.</p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/clt/static/exponential.png" alt="exponential distribution"></p>
+<p>Praktickým příkladem proměnné s takovým rozložením může být např. doba, za jakou se pokazí nějaký spotřebič. Budeme-li uvažovat, že v každém okamžiku je pravděpodobnost objevení se poruchy konstantní (což je idealizovaná aproximace, přibližně platná pro některé druhy výrobků), bude exponenciálně klesat pravděpodobnost, že máme doma funkční kus - nejdříve rychle, pak stále pomaleji, až se nakonec bude asymptoticky blížit nule.</p>
+<h3>Další rozdělení</h3>
+<p>Rozdělení pravděpodobnosti je daleko více a často se liší jen v detailech. Vybrat to správné a ověřit, že daná proměnná je skutečně distribuována tímto způsobem, může být důležité pro některé konkrétní statistické výpočty. Následující schéma ukazuje celou řadu různých rozdělení a vztahů mezi nimi:</p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/clt/static/distributions.png" alt="distributions">
+zdroj: <a href="https://towardsdatascience.com/probability-distributions-in-data-science-cce6e64873a7">towardsdatascience.com</a></p>
+<h3>K čemu je to dobré?</h3>
+<p>Mimo již napsaného nám znalost rozložení pravděpodobnosti může pomoci zodpovědět užitečné otázky. Když se například podíváme na graf normálního rozložení platů učitelů, můžeme si odpovědět na otázku, jak je pravděpodobné, že učitel vydělává více, než je určitá hodnota. Ke každému rozložení pak existují vzorce, které nám pomohou se ke konkrétní hodnotě pravděpodobnosti dopočítat.</p>
+<h2>Centrální limitní věta (Central limit theorem)</h2>
+<p>Jak souvisí rozdělení pravděpodobnosti s reprezentativností dat? Velmi. A znalost centrální limitní věty (CLT) nám to pomůže dokázat.</p>
+<p>CLT nám říká, že pokud budeme z proměnné s <strong>libovolným rozdělením pravděpodobnosti</strong> vytvářet vzorky, budou průměry (ale i jiné popisné statistiky) těchto vzorků mít <strong>normální rozdělení</strong>. A čím početnější tyto vzorky budou, tím blíže ideálu bude i normální rozdělení z nich vytvořené.</p>
+<p>Tohle si říká o příklad. Mějme populaci složenou z miliónu hodů klasickou kostkou.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">hody</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Milión náhodných čísel v intervalu &lt;1, 7) si převedeme na <code>DataFrame</code> a koukneme na histogram a základní popisné statistiky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">populace</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">hody</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"hody"</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">populace</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">11</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">populace</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>hody</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>count</td>
+      <td>1000000.000000</td>
+    </tr>
+    <tr>
+      <td>mean</td>
+      <td>3.499345</td>
+    </tr>
+    <tr>
+      <td>std</td>
+      <td>1.706921</td>
+    </tr>
+    <tr>
+      <td>min</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <td>25%</td>
+      <td>2.000000</td>
+    </tr>
+    <tr>
+      <td>50%</td>
+      <td>3.000000</td>
+    </tr>
+    <tr>
+      <td>75%</td>
+      <td>5.000000</td>
+    </tr>
+    <tr>
+      <td>max</td>
+      <td>6.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">populace</span><span class="o">.</span><span class="n">hody</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>4    166914
+3    166899
+2    166783
+5    166603
+1    166479
+6    166322
+Name: hody, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Běžná hrací kostka zaručuje, že se při miliónu pokusů objeví každá hodnota v přibližně stejném počtu. Tato proměnná má tedy rovnoměrné (uniformní) rozložení pravděpodobnosti.</p>
+<p>Co se stane, když si z takovéto populace začneme vybírat vzorky? Pro názornost začneme s velmi malými vzorky o velikosti 3 a pro každý takový vzorek vypočítáme průměr a uložíme jej do nového seznamu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prumery_hodu</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">prumery_hodu</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">populace</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">hody</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Seznam si opět převedeme na <code>DataFrame</code> a podíváme se, co nám z průměrných hodnot tisíce samostatných vzorků vzniklo.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prumery_hodu</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">prumery_hodu</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"prumery_hodu"</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prumery_hodu</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">15</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prumery_hodu</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>prumery_hodu</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>count</td>
+      <td>1000.000000</td>
+    </tr>
+    <tr>
+      <td>mean</td>
+      <td>3.550000</td>
+    </tr>
+    <tr>
+      <td>std</td>
+      <td>0.981052</td>
+    </tr>
+    <tr>
+      <td>min</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <td>25%</td>
+      <td>3.000000</td>
+    </tr>
+    <tr>
+      <td>50%</td>
+      <td>3.666667</td>
+    </tr>
+    <tr>
+      <td>75%</td>
+      <td>4.333333</td>
+    </tr>
+    <tr>
+      <td>max</td>
+      <td>6.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Z průměrů naších vzorků nám vzniklo téměř ideální normální rozložení. Průměrem všech průměrů jsme se také dostali velmi blízko průměru celé populace. Problém je, že v histogramu je vidět i nezanedbatelný počet extrémních hodnot na obou stranách grafu, kdy jsme při náhodném výběru obdrželi vzorky s třemi jedničkami či třemi šestkami. Jak je vidět, příliš malé vzorky jsou velmi náchylné k výskytu odlehlých měření (méně pravděpodobných kombinací hodnot ve vzorku) a nemusí být ve výsledku reprezentativní.</p>
+<p>Pojďme zkusit ještě jednou stejný pokus, ale tentokrát udělat každý vzorek desetkrát větší.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prumery_hodu</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">prumery_hodu</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">populace</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">hody</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prumery_hodu</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">prumery_hodu</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"prumery_hodu"</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prumery_hodu</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">15</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYUAAAD4CAYAAAAD6PrjAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjEsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy8QZhcZAAAZ+0lEQVR4nO3dfZgU5Z3u8e/NS0QMisKEEMAMJgTBFw44SyTGDaI5wRUBN5Kgomh0WRUTTTYqhr1izp71CokedY3RyEZWyKIIiNHVTTaiZNGDb4MgIkhEJTouyigaQ4wo8Ns/uqa2GealZ5ju6mHuz3X1NVVPVXX9pi3n5qmqfkoRgZmZGUCnrAswM7Py4VAwM7OUQ8HMzFIOBTMzSzkUzMws1SXrAvZG7969o7KyMusyzMzalZUrV74VERUNLWvXoVBZWUl1dXXWZZiZtSuSft/YMp8+MjOzlEPBzMxSDgUzM0u162sKZlZaH330ETU1NXzwwQdZl2IF6NatG/3796dr164Fb+NQMLOC1dTU0KNHDyorK5GUdTnWhIjg7bffpqamhoEDBxa8nU8fmVnBPvjgA3r16uVAaAck0atXrxb36hwKZtYiDoT2ozX/rRwKZmaW8jUFM2u1yhkPtun7bZp1Spu+n7WcQ8EsY/7D2nGce+65jBs3jtNPPz2T7Qvh00dmts/ZuXNnSfazY8eOkuynlBwKZtaubNq0icMPP5yzzjqLIUOGcPrpp/P+++9TWVnJlVdeyYgRI1i0aBGjR49Ox0Z76623qBs884477mDixIl8+ctfprKykptvvpnrr7+e4cOHc+yxx7J161YAXnrpJcaOHcsxxxzD8ccfzwsvvADk/rV+4YUX8vnPf54rrriCQYMGUVtbC8CuXbv47Gc/m843ZPny5XzhC1/gsMMOY/HixUDu9tHLL7+cI488kqOOOoq77747bb/kkksYPHgwJ510Elu2bEnfp7KykrfeeguA6upqRo8e3Safb9FCQdIcSVskra3X/k1JL0h6XtKP89qvkrRR0gZJXylWXWbW/m3YsIGLL76Y9evXc+CBB3LLLbcA0KtXL5555hkmT57c5PZr165lyZIlPP3008ycOZPu3buzatUqRo0axbx58wCYNm0aP/nJT1i5ciXXXXcdF198cbp9TU0NK1as4Prrr2fKlCnMnz8fgKVLlzJs2DAqKhocgBSAzZs389hjj/HAAw8wY8YMAJYsWcLq1at59tlnWbp0KZdffjmbN2/m3nvvZcOGDaxbt4558+axYsWKvfrcClHMawp3ADcD8+oaJJ0ATACGRcR2SZ9I2ocCk4EjgE8BSyV9LiJK0wc0s3ZlwIABHHfccQBMmTKFm266CYCvf/3rBW1/wgkn0KNHD3r06MFBBx3EqaeeCsBRRx3FmjVr2LZtGytWrGDSpEnpNtu3b0+nJ02aROfOnQH4xje+wYQJE7jsssuYM2cO5513XpP7njhxIp06dWLo0KG8+eabADz22GOcccYZdO7cmT59+vClL32Jp59+muXLl6ftn/rUpxgzZkyBn1DrFS0UImK5pMp6zRcBsyJie7JOXV9oArAgaX9F0kZgJPB4seozs/ar/v33dfMHHHBA2talSxd27doFsMcXuPbbb790ulOnTul8p06d2LFjB7t27aJnz56sXr26wf3n72fAgAH06dOHRx55hKeeeirtNTQmf98R0eS6TWnq99sbpb776HPA8ZKuAT4AvhsRTwP9gCfy1qtJ2vYgaRowDeDQQw8tbrVm1qSs7nR69dVXefzxxxk1ahR33nknX/ziF1m1atVu61RWVrJy5UpGjhyZnrsv1IEHHsjAgQNZtGgRkyZNIiJYs2YNw4YNa3D9Cy64gClTpnD22WenPYiWOP7447ntttuYOnUqW7duZfny5Vx77bXs2LEjbd+yZQvLli3jzDPP3O33O/nkk7nnnntavM/GlPpCcxfgEOBY4HJgoVr4lbuImB0RVRFR1dR5OzPbdw0ePJif/vSnDBkyhHfeeYeLLrpoj3W++93vcuuttzJ8+PD0gmxLzJ8/n9tvv51hw4ZxxBFHcN999zW67vjx49m2bVuzp44ac9ppp3H00UczbNgwxowZw49//GM++clPctpppzFo0CCGDh3KOeecw6hRo9Jtrr76ai699FKqqqpaFUSN0d50X5p989zpowci4shk/tfAjyJiWTL/ErmAuAAgIn6YtP8H8IOIaPL0UVVVVfjJa9betafvKaxfv54hQ4YU7f0LsWnTJsaNG8fatWubX7lEqqur+fa3v82jjz6adSl7aOi/maSVEVHV0Pql7in8EjgBQNLngI8BbwH3A5Ml7SdpIDAIeKrEtZmZtdisWbP46le/yg9/+MOs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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prumery_hodu</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>prumery_hodu</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>count</td>
+      <td>1000.000000</td>
+    </tr>
+    <tr>
+      <td>mean</td>
+      <td>3.515267</td>
+    </tr>
+    <tr>
+      <td>std</td>
+      <td>0.311893</td>
+    </tr>
+    <tr>
+      <td>min</td>
+      <td>2.600000</td>
+    </tr>
+    <tr>
+      <td>25%</td>
+      <td>3.300000</td>
+    </tr>
+    <tr>
+      <td>50%</td>
+      <td>3.533333</td>
+    </tr>
+    <tr>
+      <td>75%</td>
+      <td>3.733333</td>
+    </tr>
+    <tr>
+      <td>max</td>
+      <td>4.333333</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Graf opět vypadá jako graf normálního rozložení, ale tentokrát je užší a neobsahuje extrémní hodnoty ani na jedné straně. Směrodatná odchylka je tím pádem podstatně menší. Z toho všeho vyplývá, že podstatně větší množství z tisíce vybraných vzorků bylo blíže průměru a mělo i ostatní popisné statistiky podobné jako celá populace.</p>
+<p>Díky vlastnostem normálního rozložení můžeme také prohlásit, že přibližně 68 % našich vzorků z druhého pokusu je v rozmezí <code>mean ± std</code> = (3,186; 3,802) a přibližně 95 % našich vzorků je v rozmezí <code>mean ± 2×std</code> tedy (2,878; 4,11). <em>Přibližně</em> proto, že získané rozložení nemá ideální "normální" tvar. A při výběru konečného množství vzorků (navíc z konečné populace) ani mít nemůže.</p>
+<h2>Jaká je tedy ta správná velikost vzorku?</h2>
+<p>Odpověď na tuhle otázku není jednoduchá. Více je samozřejmě lépe, jak jsme si dokázali s použitím CLT, ale limitujícím faktorem jsou často peníze a čas. Velké společnosti zaměřené na výzkumy veřejného mínění mají dostatek obojího a tak je lepší to nechat na nich. Nicméně i tak existuje pár pravidel, kterými je možné se řídit.</p>
+<h3>Minimum je 100</h3>
+<p>Se vzorkem velikosti 100 se už dají dělat různé pokusy a výpočty a je možné od nich očekávat alespoň nějaké užitečné odpovědi. Pokud je populace menší než 100, je potřeba ji prozkoumat celou.</p>
+<h3>Maximum je 10 % nebo 1000</h3>
+<p>Pokud má populace 5000 individuí, mělo by nám stačit získat informace o pěti stovkách z nich. Nemusíme při tom ale překročit tisícovku, takže pro populaci o 200 000 individuích i 10 000 000 by nám měl postačit stejně velký vzorek. Je ale třeba mít na paměti náhodnost výběru.</p>
+<h3>Zbývá vybrat něco mezi</h3>
+<p>V závislosti na:</p>
+<ul>
+<li>množství času a peněz,</li>
+<li>nutnosti získat opravdu přesné výsledky,</li>
+<li>potřebě rozdělit individua ze vzorku na menší skupiny dle nějakého kritéria,</li>
+<li>předpokladu, že respondenti budou dávat podobné odpovědi,</li>
+<li>či důležitosti a dopadech rozhodnutí, které z takového výzkumu nakonec vyvstane.</li>
+</ul>
+<p>Každý chce mít co nejpřesnější výsledky, takže limitujícím faktorem jsou často peníze a čas a dokud jedno nebo druhé nedojde, výzkum pokračuje dále.</p>
+<h3>Podpořeno čísly</h3>
+<p>Existuje několik vzorců, které umožní podpořit ten správný výběr velikosti vzorku vypočteným číslem. Výběr toho správného není snadný a závisí na našich znalostech populace. Jeden z jednodušších vzorců, pro jehož výpočet nám stačí znát velikost populace, je Yamane (podle jména svého autora). Vypadá takto:</p>
+<p>$$ n = \frac{N}{(1+Ne^2)} $$</p>
+<p><code>n</code> je výsledná velikost vzorku, <code>N</code> značí celkovou velikost populace a <code>e</code> je označení pro přípustnou chybu. Přípustná chyba je obrácenou hodnotou úrovně spolehlivosti výběrů. Pokud budeme například požadovat, aby nás výzkum vyšel stejně v 97 % případů, bude</p>
+<p>$$ e = \frac{100 - 97}{100} = 0.03 $$</p>
+<p>Pro lepší představu by se výsledky takových výpočtů daly shrnout do jednoduché tabulky, která poslouží, pokud by jednoduchá pravidla z předchozích odstavců nebyla dostatečná.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<table>
+    <thead>
+        <tr>
+            <td></td>
+            <td colspan="5" style="text-align: center;">Velikost populace</td>
+        </tr>
+        <tr>
+            <td>Přípustná chyba</td>
+            <td>5000</td>
+            <td>2500</td>
+            <td>1000</td>
+            <td>500</td>
+            <td>200</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>±10 %</td>
+            <td>98</td>
+            <td>96</td>
+            <td>91</td>
+            <td>83</td>
+            <td>67</td>
+        </tr>
+        <tr>
+            <td>±7,5 %</td>
+            <td>172</td>
+            <td>166</td>
+            <td>151</td>
+            <td>131</td>
+            <td>94</td>
+        </tr>
+        <tr>
+            <td>±5 %</td>
+            <td>370</td>
+            <td>345</td>
+            <td>286</td>
+            <td>222</td>
+            <td>133</td>
+        </tr>
+        <tr>
+            <td>±3 %</td>
+            <td>909</td>
+            <td>769</td>
+            <td>526</td>
+            <td>345</td>
+            <td>169</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Čas na hraní (a přemýšlení)</h2>
+<p>Tato lekce je spíše teoretická, ale rozhodně přináší hodně podnětů k zamyšlení. Můžeš opět vzít svou datovou sadu a předchozí analýzy a zamyslet se nad následujícími otázkami:</p>
+<ul>
+<li>Pracuješ se vzorkem nebo s celou populací? Dá se to nějak ověřit?</li>
+<li>Je vzorek reprezentativní?</li>
+<li>Jak složité by bylo získat data celé populace nebo si vytvořit vlastní reprezentativní vzorek?</li>
+<li>Kolik peněz by stálo položit nějakou zajímavou otázku reprezentativnímu vzorku české populace?</li>
+<li>Jaké rozložení mají proměnné ve tvých datech? Je tam nějaká, na kterou žádné rozložení pravděpodobnosti nepasuje?</li>
+</ul>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-ostrava-jaro/sessions/eda5/">↑ <span class="d-none d-sm-inline">Lekce: EDA — Reprezentativnost dat, CLT a automatický pomocník</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-ostrava-jaro/pydata/profiling/"><span class="d-none d-sm-inline">EDA - Pandas profiling</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2020-pydata-ostrava-jaro/lessons/pydata/clt/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Lumír Balhar, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

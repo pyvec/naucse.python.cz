@@ -1,0 +1,367 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz v Tieto Czech: Paramiko, Netmiko and Fabric
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/tieto/">Začátečnický kurz v Tieto Czech</a>
+
+> <a href="/2018/tieto/sessions/regular-expressions/">Regulární výrazy, logování, balíky, Fabric</a>
+
+> <a href="/2018/tieto/beginners/tieto-fabric/">Paramiko, Netmiko and Fabric</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h2>Paramiko, Netmiko and Fabric</h2>
+<h3>Paramiko</h3>
+<p>Paramiko is a Python (2.7, 3.4+) implementation of the SSHv2 protocol, providing both client and server functionality. While it leverages a Python C extension for low level cryptography (Cryptography), Paramiko itself is a pure Python interface around SSH networking concepts.</p>
+<h4>Install Paramiko</h4>
+<div class="highlight"><pre><code>pip install paramiko</code></pre></div><h4>Paramiko example</h4>
+<div class="highlight"><pre><code>#!/usr/bin/env python
+import paramiko
+import sys
+
+if len(sys.argv) &lt; 3:
+    print("args missing")
+    sys.exit(1)
+
+hostname = sys.argv[1]
+command = sys.argv[2]
+
+username = "ubuntu"
+port = 2222
+
+try:
+    client = paramiko.SSHClient()
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.WarningPolicy)
+    client.connect(hostname, port=port, username=username, key_filename='/Users/jasiplum/Development/Projects/Tieto/Python/naucse/.vagrant/machines/default/virtualbox/private_key')
+    stdin, stdout, stderr = client.exec_command(command)
+    print(stdout.read())
+except Exception as e:
+    print("Error happened: %s" % (e,))</code></pre></div><p>You can specify SSH private key using option connect() method parameter <strong>key_filename=</strong>.</p>
+<h3>Netmiko</h3>
+<p>Multi-vendor library to simplify Paramiko SSH connections to network devices.</p>
+<p>Currently supported:</p>
+<p><strong>Regularly tested</strong></p>
+<div class="highlight"><pre><code>Arista vEOS
+Cisco ASA
+Cisco IOS
+Cisco IOS-XE
+Cisco IOS-XR
+Cisco NX-OS
+Cisco SG300
+HP Comware7
+HP ProCurve
+Juniper Junos
+Linux</code></pre></div><p><strong>Limited testing</strong></p>
+<div class="highlight"><pre><code>Alcatel AOS6/AOS8
+Apresia Systems AEOS
+Calix B6
+Cisco WLC
+Dell OS9 (Force10)
+Dell OS10
+Dell PowerConnect
+Extreme ERS (Avaya)
+Extreme VSP (Avaya)
+Extreme VDX (Brocade)
+Extreme MLX/NetIron (Brocade/Foundry)
+Huawei
+IP Infusion OcNOS
+Mellanox
+NetApp cDOT
+Palo Alto PAN-OS
+Pluribus
+Ruckus ICX/FastIron
+Ubiquiti EdgeSwitch
+Vyatta VyOS</code></pre></div><p><strong>Experimental</strong></p>
+<div class="highlight"><pre><code>A10
+Accedian
+Aruba
+Ciena SAOS
+Citrix Netscaler
+Cisco Telepresence
+Check Point GAiA
+Coriant
+Dell OS6
+Dell EMC Isilon
+Eltex
+Enterasys
+Extreme EXOS
+Extreme Wing
+Extreme SLX (Brocade)
+F5 LTM
+Fortinet
+MRV Communications OptiSwitch
+Nokia/Alcatel SR-OS
+QuantaMesh
+Rad ETX</code></pre></div><h4>Netmiko installation</h4>
+<div class="highlight"><pre><code>pip install netmiko</code></pre></div><h4>Netmiko example</h4>
+<p>A simple SSH session to a Cisco router that executes the 'show ip int brief' command:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; from netmiko import ConnectHandler
+
+&gt;&gt;&gt; cisco_881 = {
+...   'device_type': 'cisco_ios',
+...   'ip': '10.10.10.227',
+...   'username': 'pyclass',
+...   'password': 'password',
+... }
+
+&gt;&gt;&gt; net_connect = ConnectHandler(**cisco_881)
+SSH connection established to 10.10.10.227:22
+Interactive SSH session established</code></pre></div><p>Alternatively, I could just call the ConnectHandler function directly and not use a dictionary (as follows):</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; net_connect = ConnectHandler(device_type='cisco_ios', ip='10.10.10.227', username='pyclass', password='password')</code></pre></div><p>Now at this point we have an SSH connection. I can verify this by executing the .find_prompt() method</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; net_connect.find_prompt()
+u'pynet-rtr1#'</code></pre></div><p>Use the .send_command() method to send the 'show ip int brief' command:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; output = net_connect.send_command("show ip int brief")
+&gt;&gt;&gt; print(output)
+Interface                  IP-Address      OK? Method Status                Protocol
+FastEthernet0              unassigned      YES unset  down                  down    
+FastEthernet1              unassigned      YES unset  down                  down    
+FastEthernet2              unassigned      YES unset  down                  down    
+FastEthernet3              unassigned      YES unset  down                  down    
+FastEthernet4              10.220.88.20    YES NVRAM  up                    up      
+Vlan1                      unassigned      YES unset  down                  down</code></pre></div><h3>Fabric</h3>
+<p>Fabric is a high level Python (2.7, 3.4+) library designed to execute shell commands remotely over SSH.</p>
+<h4>Fabric installation</h4>
+<div class="highlight"><pre><code>pip install Fabric</code></pre></div><h4>Fabric example</h4>
+<div class="highlight"><pre><code>from fabric.api import *
+import fabric.contrib.project as project
+import os
+import shutil
+import sys
+import SocketServer
+
+from pelican.server import ComplexHTTPRequestHandler
+
+# Local path configuration (can be absolute or relative to fabfile)
+env.deploy_path = 'output'
+DEPLOY_PATH = env.deploy_path
+
+# Remote server configuration
+production = 'root@localhost:22'
+dest_path = '/var/www'
+
+# Rackspace Cloud Files configuration settings
+env.cloudfiles_username = 'my_rackspace_username'
+env.cloudfiles_api_key = 'my_rackspace_api_key'
+env.cloudfiles_container = 'my_cloudfiles_container'
+
+# Github Pages configuration
+env.github_pages_branch = "gh-pages"
+
+# Port for `serve`
+PORT = 8000
+
+def clean():
+    """Remove generated files"""
+    if os.path.isdir(DEPLOY_PATH):
+        shutil.rmtree(DEPLOY_PATH)
+        os.makedirs(DEPLOY_PATH)
+
+def build():
+    """Build local version of site"""
+    local('pelican -s pelicanconf.py')
+
+def rebuild():
+    """`build` with the delete switch"""
+    local('pelican -d -s pelicanconf.py')
+
+def regenerate():
+    """Automatically regenerate site upon file modification"""
+    local('pelican -r -s pelicanconf.py')
+
+def serve():
+    """Serve site at http://localhost:8000/"""
+    os.chdir(env.deploy_path)
+
+    class AddressReuseTCPServer(SocketServer.TCPServer):
+        allow_reuse_address = True
+
+    server = AddressReuseTCPServer(('', PORT), ComplexHTTPRequestHandler)
+
+    sys.stderr.write('Serving on port {0} ...\n'.format(PORT))
+    server.serve_forever()
+
+def reserve():
+    """`build`, then `serve`"""
+    build()
+    serve()
+
+def preview():
+    """Build production version of site"""
+    local('pelican -s publishconf.py')
+
+def cf_upload():
+    """Publish to Rackspace Cloud Files"""
+    rebuild()
+    with lcd(DEPLOY_PATH):
+        local('swift -v -A https://auth.api.rackspacecloud.com/v1.0 '
+              '-U {cloudfiles_username} '
+              '-K {cloudfiles_api_key} '
+              'upload -c {cloudfiles_container} .'.format(**env))
+
+@hosts(production)
+def publish():
+    """Publish to production via rsync"""
+    local('pelican -s publishconf.py')
+    project.rsync_project(
+        remote_dir=dest_path,
+        exclude=".DS_Store",
+        local_dir=DEPLOY_PATH.rstrip('/') + '/',
+        delete=True,
+        extra_opts='-c',
+    )
+
+def gh_pages():
+    """Publish to GitHub Pages"""
+    rebuild()
+    local("ghp-import -b {github_pages_branch} {deploy_path} -p".format(**env))</code></pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/tieto/sessions/regular-expressions/">↑ <span class="d-none d-sm-inline">Lekce: Regulární výrazy, logování, balíky, Fabric</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/tieto/beginners/tieto-regular-expressions/"><span class="d-none d-sm-inline">Regular expressions</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-tieto/lessons/beginners/tieto-fabric/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro Tieto Czech s.r.o. napsal Lumír Jasiok, 2018</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

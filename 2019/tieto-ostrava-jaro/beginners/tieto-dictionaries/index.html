@@ -1,0 +1,343 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz v Tieto Czech: Dictionaries
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/tieto-ostrava-jaro/">Začátečnický kurz v Tieto Czech</a>
+
+> <a href="/2019/tieto-ostrava-jaro/sessions/dictionaries/">Slovníky (Dictionaries)</a>
+
+> <a href="/2019/tieto-ostrava-jaro/beginners/tieto-dictionaries/">Dictionaries</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h2>Dictionaries</h2>
+<p>Dictionaries is data structure, in which each value has it§s own name. This type of structure is called a mapping.</p>
+<p>Dictionaries are constructed to be easilly searchable based on it's key.</p>
+<p>A dictionary is more appropriate than a list in some situations.</p>
+<ul>
+<li><p>Storing file modification times, with file names as keys</p>
+</li>
+<li><p>Address book</p>
+</li>
+</ul>
+<p>For example list of people:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; names = ['Alice', 'Beth', 'Cecil', 'Dee-Dee', 'Earl']</code></pre></div><p>In case that you would like to store telephone number of users using list, you would have to create second list with numbers under same index as user name:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; numbers = ['2341', '9102', '3158', '0142', '5551']</code></pre></div><p>And lookup for user phone like this:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; numbers[names.index('Alice')]
+'2341'</code></pre></div><p>As you can see, it's not straightforward. You can use dictionay instead in such case.</p>
+<div class="highlight"><pre><code>phonebook = {'Alice': '2341', 'Beth': '9102', 'Cecil': '3258'}</code></pre></div><p>Dictionaries consist of pairs of keys and their corresponding values.</p>
+<p>You can create empty dictionary like this:</p>
+<div class="highlight"><pre><code>new_dictionary = {}</code></pre></div><div class="admonition note"><p>Keys are unique within a dictionary!</p>
+</div><h3>The dict() function</h3>
+<p>You can use dict function() to construct dictionary from other sequences like this:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; items = [('name', 'Gumby'), ('age', 42)]                
+&gt;&gt;&gt; d = dict(items)                
+&gt;&gt;&gt; d                
+{'age': 42, 'name': 'Gumby'}                
+&gt;&gt;&gt; d['name']                
+'Gumby'</code></pre></div><p>You can also use <em>keywoard argument</em>:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; d = dict(name='Gumby', age=42)                
+&gt;&gt;&gt; d                
+{'age': 42, 'name': 'Gumby'}</code></pre></div><h3>Basic dictionary operations</h3>
+<ul>
+<li><strong>len(d)</strong> - returns the number of items (key-value pairs)</li>
+<li><strong>d[k]</strong> - returns the value associated with the key k</li>
+<li><strong>d[k] = v</strong>  - associates the value v with the key k</li>
+<li><strong>del d[k]</strong> - deletes the item with key k</li>
+<li><strong>k in d</strong> - checks whether there is an item in d that has the key k</li>
+</ul>
+<div class="highlight"><pre><code># A simple database
+
+# A dictionary with person names as keys. Each person is represented as
+# another dictionary with the keys 'phone' and 'addr' referring to their phone
+# number and address, respectively.
+people = {
+
+    'Alice': {
+        'phone': '2341',
+        'addr': 'Foo drive 23'
+    },
+
+    'Beth': {
+        'phone': '9102',
+        'addr': 'Bar street 42'
+    },
+
+    'Cecil': {
+        'phone': '3158',
+        'addr': 'Baz avenue 90'
+    }
+
+}
+
+# Descriptive labels for the phone number and address. These will be used
+# when printing the output.
+labels = {
+    'phone': 'phone number',
+    'addr': 'address'
+}
+
+name = input('Name: ')
+
+# Are we looking for a phone number or an address?
+request = input('Phone number (p) or address (a)? ')
+
+# Use the correct key:
+if request == 'p': key = 'phone'
+if request == 'a': key = 'addr'
+
+# Only try to print information if the name is a valid key in                                                
+# our dictionary:
+if name in people: print("{}'s {} is {}.".format(name, labels[key], people[name][key]))</code></pre></div><h3>String formatting with dictionaries</h3>
+<p>The dictionary may contain all kinds of information, and your format string will only pick out whatever it needs.</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; phonebook
+{'Beth': '9102', 'Alice': '2341', 'Cecil': '3258'}
+&gt;&gt;&gt; "Cecil's phone number is {Cecil}.".format_map(phonebook)
+"Cecil's phone number is 3258."</code></pre></div><p>Another example:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; template = '''&lt;html&gt;
+... &lt;head&gt;&lt;title&gt;{title}&lt;/title&gt;&lt;/head&gt;
+... &lt;body&gt;
+... &lt;h1&gt;{title}&lt;/h1&gt;
+... &lt;p&gt;{text}&lt;/p&gt;
+... &lt;/body&gt;'''
+&gt;&gt;&gt; data = {'title': 'My Home Page', 'text': 'Welcome to my home page!'}
+&gt;&gt;&gt; print(template.format_map(data))
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;My Home Page&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;My Home Page&lt;/h1&gt;
+&lt;p&gt;Welcome to my home page!&lt;/p&gt;
+&lt;/body&gt;</code></pre></div><h3>Dictionary methods</h3>
+<p><strong>clear()</strong></p>
+<p>The clear method removes all items from the dictionary. This is an in-place operation.</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; d = {}
+&gt;&gt;&gt; d['name'] = 'Gumby'
+&gt;&gt;&gt; d['age'] = 42
+&gt;&gt;&gt; d
+{'age': 42, 'name': 'Gumby'}
+&gt;&gt;&gt; returned_value = d.clear()
+&gt;&gt;&gt; d
+{}
+&gt;&gt;&gt; print(returned_value)
+None</code></pre></div><p>Why don't erase dictionary simply like this?</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; x = {}
+&gt;&gt;&gt; x[1] = 'one'
+&gt;&gt;&gt; x
+{1: 'one'}
+&gt;&gt;&gt;
+&gt;&gt;&gt; x = {}
+&gt;&gt;&gt; x
+{}</code></pre></div><p>Sometimes you want also delete all referenced objects values as well:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; x = {}
+&gt;&gt;&gt; y = x
+&gt;&gt;&gt; x['key'] = 'value'
+&gt;&gt;&gt; y
+{'key': 'value'}
+&gt;&gt;&gt; x = {}
+&gt;&gt;&gt; x = {}
+{'key': 'value'}</code></pre></div><p>vs.</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; x = {}
+&gt;&gt;&gt; y = x
+&gt;&gt;&gt; x['key'] = 'value'
+&gt;&gt;&gt; y
+{'key': 'value'}
+&gt;&gt;&gt; x.clear()
+&gt;&gt;&gt; y
+{}</code></pre></div><p><strong>copy()</strong></p>
+<p>The copy method returns a new dictionary with the same key-value pairs (shallow copy).</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; x = {'username': 'admin', 'machines': ['foo', 'bar', 'baz']}
+&gt;&gt;&gt; y = x.copy()
+&gt;&gt;&gt; y['username'] = 'mlh'
+&gt;&gt;&gt; y['machines'].remove('bar')
+&gt;&gt;&gt; y
+{'username': 'mlh', 'machines': ['foo', 'baz']}
+&gt;&gt;&gt; x
+{'username': 'admin', 'machines': ['foo', 'baz']}</code></pre></div><p><strong>deepcopy()</strong></p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; from copy import deepcopy
+&gt;&gt;&gt; d = {}
+&gt;&gt;&gt; d['names'] = ['Alfred', 'Bertrand']
+&gt;&gt;&gt; c = d.copy()
+&gt;&gt;&gt; dc = deepcopy(d)
+&gt;&gt;&gt; d['names'].append('Clive')
+&gt;&gt;&gt; c
+{'names': ['Alfred', 'Bertrand', 'Clive']}
+&gt;&gt;&gt; dc
+{'names': ['Alfred', 'Bertrand']}</code></pre></div><p><strong>get()</strong></p>
+<p>Ordinarily, when you try to access an item that is not present in the dictionary, things go very wrong .</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; d = {}
+&gt;&gt;&gt; print(d['name'])
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in ?
+KeyError: 'name'</code></pre></div><p>Get, on the other side:</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; print(d.get('name'))
+None</code></pre></div><p><strong>items()</strong></p>
+<p>The items method returns all the items of the dictionary as a list of items in which each item is of the form (key, value).</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; d = {'title': 'Python Web Site', 'url': 'http://www.python.org', 'spam': 0}
+&gt;&gt;&gt; d.items()
+dict_items([('url', 'http://www.python.org'), ('spam', 0), ('title', 'Python Web Site')])</code></pre></div><p><strong>keys()</strong></p>
+<p>The keys method returns a dictionary view of the keys in the dictionary .</p>
+<p><strong>pop()</strong></p>
+<p>The pop method can be used to get the value corresponding to a given key and then to remove the key-value pair from the dictionary .</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; d = {'x': 1, 'y': 2}
+&gt;&gt;&gt; d.pop('x')
+1
+&gt;&gt;&gt; d
+{'y': 2}</code></pre></div><p><strong>values()</strong></p>
+<p>The values method returns a dictionary view of the values in the dictionary. Unlike keys, the view returned by values may contain duplicates .</p>
+<div class="highlight"><pre><code>&gt;&gt;&gt; d = {}
+&gt;&gt;&gt; d[1] = 1
+&gt;&gt;&gt; d[2] = 2
+&gt;&gt;&gt; d[3] = 3
+&gt;&gt;&gt; d[4] = 1
+&gt;&gt;&gt; d.values()
+dict_values([1, 2, 3, 1])</code></pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/tieto-ostrava-jaro/sessions/dictionaries/">↑ <span class="d-none d-sm-inline">Lekce: Slovníky (Dictionaries)</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/tieto-ostrava-jaro/sessions/dictionaries/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-tieto-ostrava-jaro/lessons/beginners/tieto-dictionaries/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro Tieto Czech s.r.o. napsal Lumír Jasiok, 2018</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

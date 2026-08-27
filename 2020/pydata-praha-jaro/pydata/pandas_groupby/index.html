@@ -1,0 +1,3866 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Pandas - práce s indexy a analýza dat po skupinách
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-praha-jaro/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-praha-jaro/sessions/eda5/">Explorativní datová analýza a pokročilejší manipulace</a>
+
+> <a href="/2020/pydata-praha-jaro/pydata/pandas_groupby/">Pandas - práce s indexy a analýza dat po skupinách</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>EDA 5: Pokročilejší manipulace a agregace</h1>
+<p>Další čtení pro dlouhé večery v tomto ročním období:</p>
+<ul>
+<li><a href="https://github.com/alanderex/pydata-pandas-workshop/tree/master/notebooks">https://github.com/alanderex/pydata-pandas-workshop/tree/master/notebooks</a></li>
+<li><a href="https://github.com/TomAugspurger/pandas-head-to-tail/blob/master/notebooks/03-Iterators-Groupby.ipynb">https://github.com/TomAugspurger/pandas-head-to-tail/blob/master/notebooks/03-Iterators-Groupby.ipynb</a></li>
+<li><a href="https://realpython.com/pandas-groupby/">https://realpython.com/pandas-groupby/</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Analýza dat po skupinách</h2>
+<p>Jedním ze základních postupů v datové analýze je rozdělení dat do skupin, aplikace nějaké operace na jednotlivé skupiny a nakonec kombinace výsledků do vhodného datasetu. Anglicky se tento postup označuje jako <em>split-apply-combine</em>. Skupiny jsou často, byť ne nutně, definovány nějakou (kategorickou) proměnnou, např. by to mohla být barva, pohlaví nebo kontinent. Skupiny lze ale vytvářet i odvozováním, např. pomocí rozsahu nebo nebo vlastností časových řad. Oboje už jsme vlastně viděli v EDA 3, kdy jsme skupiny vytvářeli pro deštivé dny nebo jednotlivé roky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pojďme si to vysvětlit prakticky. Použijeme k tomu hezký dataset s údaji z amerického Kongresu, který obsahuje seznam všech mužů a žen, kteří kdy v jedné z jeho komor (Sněmovně nebo Senátu) zasedli.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># odkaz přímo na csv soubor na internetu</span>
+<span class="n">LEGISLATORS_HISTORICAL_URL_CSV</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"https://theunitedstates.io/congress-legislators/legislators-historical.csv"</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+    <span class="n">LEGISLATORS_HISTORICAL_URL_CSV</span><span class="p">,</span>
+    <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">"gender"</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">,</span> <span class="s2">"state"</span><span class="p">,</span> <span class="s2">"party"</span><span class="p">,</span> <span class="s2">"birthday"</span><span class="p">,</span> <span class="s2">"first_name"</span><span class="p">,</span> <span class="s2">"last_name"</span><span class="p">],</span>
+    <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">"birthday"</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>last_name</th>
+      <th>first_name</th>
+      <th>birthday</th>
+      <th>gender</th>
+      <th>type</th>
+      <th>state</th>
+      <th>party</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Bassett</td>
+      <td>Richard</td>
+      <td>1745-04-02</td>
+      <td>M</td>
+      <td>sen</td>
+      <td>DE</td>
+      <td>Anti-Administration</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Bland</td>
+      <td>Theodorick</td>
+      <td>1742-03-21</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>VA</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Burke</td>
+      <td>Aedanus</td>
+      <td>1743-06-16</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>SC</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Carroll</td>
+      <td>Daniel</td>
+      <td>1730-07-22</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>MD</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Clymer</td>
+      <td>George</td>
+      <td>1739-03-16</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>PA</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>11976</th>
+      <td>Collins</td>
+      <td>Chris</td>
+      <td>1950-05-20</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>NY</td>
+      <td>Republican</td>
+    </tr>
+    <tr>
+      <th>11977</th>
+      <td>Cummings</td>
+      <td>Elijah</td>
+      <td>1951-01-18</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>MD</td>
+      <td>Democrat</td>
+    </tr>
+    <tr>
+      <th>11978</th>
+      <td>Hill</td>
+      <td>Katie</td>
+      <td>1987-08-25</td>
+      <td>F</td>
+      <td>rep</td>
+      <td>CA</td>
+      <td>Democrat</td>
+    </tr>
+    <tr>
+      <th>11979</th>
+      <td>Isakson</td>
+      <td>John</td>
+      <td>1944-12-28</td>
+      <td>M</td>
+      <td>sen</td>
+      <td>GA</td>
+      <td>Republican</td>
+    </tr>
+    <tr>
+      <th>11980</th>
+      <td>Hunter</td>
+      <td>Duncan</td>
+      <td>1976-12-07</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>CA</td>
+      <td>Republican</td>
+    </tr>
+  </tbody>
+</table>
+<p>11981 rows × 7 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Krok 1: Split</h3>
+<p>Na rozdělení dat do skupin slouží metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.groupby.html?highlight=groupby#pandas.DataFrame.groupby"><code>groupby</code></a>. Nejjednodušší a možná i nejčastější použití je seskupení podle existujícího sloupce v tabulce. Třeba podle <code>type</code>, tedy u nás konkrétně podle komory: <code>rep</code> je Sněmovna reprezentatntů, <code>sen</code> je Senát.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical_by_type</span> <span class="o">=</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"type"</span><span class="p">)</span>
+<span class="n">legislators_historical_by_type</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x10ab2bc10&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dostali jsme objekt typu <a href="https://pandas.pydata.org/pandas-docs/stable/reference/groupby.html"><code>GroupBy</code></a>. Pokud vám to připomíná <code>DatetimeIndexResampler</code> z <a href="https://naucse.python.cz/2020/pydata-praha-jaro/pydata/eda-univariate-timeseries/">Explorativní analýzy a statistiky jedné proměnné</a>, je to velice dobrá asociace. Tato operace totiž data jen rozdělila do skupin, ještě jsme ale neřekli, co s těmi skupinami chceme dělat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Krok 2 + 3: Apply + Combine</h3>
+<p>Na skupiny, které jsme vytvořili pomocí <code>groupby</code>, teď můžeme aplikovat nějakou operaci. To je právě krok <em>apply</em>. Nemá pro nás moc cenu oddělovat tento krok od třetího kroku <em>combine</em>, protože když už nějakou opraci aplikujeme, tak bychom rádi výsledek sestavili do výsledného datasetu. Pandas navíc tyto kroky sám nijak neodděluje.</p>
+<p><em>Pozn.: Apply a combine začne být více odděleno v nástrojích na zpracování velkých dat, které už se nevejdou pohodlně do operační paměti počítače a pandas na ně už nestačí. Apply pak probíhá po částech, třeba i distribuovaně na oddělených serverech, a výsledné combine se provádí sesbíráním částečných výsledků.</em></p>
+<p>Použijeme teď jednoduchou agregační metodu <code>count</code>, která nám vrátí počet hodnot (po skupinách samozřejmě).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical_by_type</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>last_name</th>
+      <th>first_name</th>
+      <th>birthday</th>
+      <th>gender</th>
+      <th>state</th>
+      <th>party</th>
+    </tr>
+    <tr>
+      <th>type</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>rep</th>
+      <td>10151</td>
+      <td>10151</td>
+      <td>9658</td>
+      <td>10151</td>
+      <td>10151</td>
+      <td>9925</td>
+    </tr>
+    <tr>
+      <th>sen</th>
+      <td>1830</td>
+      <td>1830</td>
+      <td>1770</td>
+      <td>1830</td>
+      <td>1830</td>
+      <td>1822</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Vidíme, že v datech je zaznamenáno 1830 senátorů a 10151 kongresmanů. Na levé straně v indexu vidíme skupiny, podle kterých se dataset agregoval a do sloupců se daly všechny sloupce, na které bylo možné aplikovat naši agregační funkci (v tom případě na všechny zbylé).</p>
+<p>Z čísel si můžeš všimnout, že u některých chybí údaje o datu narození nebo straně.</p>
+<p>Než aplikujeme krok <em>apply</em>, můžeme si vybrat, na který ze sloupců tak učiníme, trochu si tím zpřehledníme výstup. Pokud si vybereme jen jeden sloupec, dostaneme Series.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical_by_type</span><span class="p">[</span><span class="s1">'party'</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>type
+rep    9925
+sen    1822
+Name: party, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tento krok si můžeme trochu zjednodušit - než abychom se doptávali na <code>count</code> nad jedním sloupcem v rámci agregace, můžeme se doptat na <em>velikost</em> každé ze skupin.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical_by_type</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>type
+rep    10151
+sen     1830
+dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Rozděl data podle strany (<code>party</code>) a vypiš počet záznamů v každé skupině. Dokážeš výsledek setřídit podle velikosti skupin?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Možná sis všimla, jaký je u výsledku index. Pokud ne, nevadí, určitě si všimneš teď. Zkusíme totiž vytvořit skupiny ne z jednoho sloupce, ale ze dvou. Pojďme si rozdělit zákonodárce podle států, a každou skupinu za jeden stát ještě podle pohlaví.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_by_state_gender_counts</span> <span class="o">=</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"state"</span><span class="p">,</span> <span class="s2">"gender"</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">legislators_by_state_gender_counts</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>last_name</th>
+      <th>first_name</th>
+      <th>birthday</th>
+      <th>type</th>
+      <th>party</th>
+    </tr>
+    <tr>
+      <th>state</th>
+      <th>gender</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AK</th>
+      <th>M</th>
+      <td>16</td>
+      <td>16</td>
+      <td>16</td>
+      <td>16</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">AL</th>
+      <th>F</th>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>M</th>
+      <td>203</td>
+      <td>203</td>
+      <td>194</td>
+      <td>203</td>
+      <td>203</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">AR</th>
+      <th>F</th>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>M</th>
+      <td>112</td>
+      <td>112</td>
+      <td>109</td>
+      <td>112</td>
+      <td>110</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>WI</th>
+      <th>M</th>
+      <td>197</td>
+      <td>197</td>
+      <td>197</td>
+      <td>197</td>
+      <td>197</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">WV</th>
+      <th>F</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>M</th>
+      <td>119</td>
+      <td>119</td>
+      <td>117</td>
+      <td>119</td>
+      <td>119</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">WY</th>
+      <th>F</th>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>M</th>
+      <td>38</td>
+      <td>38</td>
+      <td>38</td>
+      <td>38</td>
+      <td>38</td>
+    </tr>
+  </tbody>
+</table>
+<p>104 rows × 5 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Máme tedy skupiny, které jsou definované dvojicí hodnot stát a pohlaví (<code>state</code>, <code>gender</code>). A to je přesně důvod, proč existuje v Pandas <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.html"><code>MultiIndex</code></a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Práce s MultiIndex</h3>
+<p>Vlastnosti MultiIndexu, vlastně takového víceúrovňového či vícerozměrného indexu, můžeme prozkoumat (kromě prostého zobrazení) pomocí několika užitečných atributů (properties).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># počet úrovní </span>
+<span class="n">legislators_by_state_gender_counts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">nlevels</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>2</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># jména úrovní</span>
+<span class="n">legislators_by_state_gender_counts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>FrozenList(['state', 'gender'])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># mohutnost (počet hodnot) jednotlivých úrovní</span>
+<span class="n">legislators_by_state_gender_counts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levshape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(58, 2)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># hodnoty v jednotlivých úrovních</span>
+<span class="n">legislators_by_state_gender_counts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>FrozenList([['AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'DK', 'FL', 'GA', 'GU', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OL', 'OR', 'PA', 'PI', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT', 'WA', 'WI', 'WV', 'WY'], ['F', 'M']])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Víme tedy, že náš (multi) index má dvě úrovně. Abychom dostali konkrétní řádek, musíme tím pádem zadat dvě hodnoty. K tomu nám poslouží <code>tuple</code> (pozor, musí to opravdu být <code>tuple</code> a ne <code>list</code>, tj. musíme použít kulaté a ne hranaté závorky).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_by_state_gender_counts</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="s2">"WY"</span><span class="p">,</span> <span class="s2">"F"</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>last_name     2
+first_name    2
+birthday      2
+type          2
+party         2
+Name: (WY, F), dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Co kdybychom zadali jen polovinu indexu? Dostaneme celou skupinu, v našem případě celý stát.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_by_state_gender_counts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"WY"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>last_name</th>
+      <th>first_name</th>
+      <th>birthday</th>
+      <th>type</th>
+      <th>party</th>
+    </tr>
+    <tr>
+      <th>gender</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>F</th>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>M</th>
+      <td>38</td>
+      <td>38</td>
+      <td>38</td>
+      <td>38</td>
+      <td>38</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Otázka:</strong> Jaký je index výsledné tabulky?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud bychom chtěli jedno pohlaví, můžeme indexu změnit pořadí.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">swapped_index</span> <span class="o">=</span> <span class="n">legislators_by_state_gender_counts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">swaplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">legislators_by_gender_state_counts</span> <span class="o">=</span> <span class="n">legislators_by_state_gender_counts</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">swapped_index</span><span class="p">)</span>
+<span class="n">legislators_by_gender_state_counts</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>last_name</th>
+      <th>first_name</th>
+      <th>birthday</th>
+      <th>type</th>
+      <th>party</th>
+    </tr>
+    <tr>
+      <th>gender</th>
+      <th>state</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>M</th>
+      <th>AK</th>
+      <td>16</td>
+      <td>16</td>
+      <td>16</td>
+      <td>16</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>F</th>
+      <th>AL</th>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>M</th>
+      <th>AL</th>
+      <td>203</td>
+      <td>203</td>
+      <td>194</td>
+      <td>203</td>
+      <td>203</td>
+    </tr>
+    <tr>
+      <th>F</th>
+      <th>AR</th>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">M</th>
+      <th>AR</th>
+      <td>112</td>
+      <td>112</td>
+      <td>109</td>
+      <td>112</td>
+      <td>110</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>WI</th>
+      <td>197</td>
+      <td>197</td>
+      <td>197</td>
+      <td>197</td>
+      <td>197</td>
+    </tr>
+    <tr>
+      <th>F</th>
+      <th>WV</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>M</th>
+      <th>WV</th>
+      <td>119</td>
+      <td>119</td>
+      <td>117</td>
+      <td>119</td>
+      <td>119</td>
+    </tr>
+    <tr>
+      <th>F</th>
+      <th>WY</th>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>M</th>
+      <th>WY</th>
+      <td>38</td>
+      <td>38</td>
+      <td>38</td>
+      <td>38</td>
+      <td>38</td>
+    </tr>
+  </tbody>
+</table>
+<p>104 rows × 5 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_by_gender_state_counts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"F"</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>last_name</th>
+      <th>first_name</th>
+      <th>birthday</th>
+      <th>type</th>
+      <th>party</th>
+    </tr>
+    <tr>
+      <th>state</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AL</th>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>AR</th>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>AZ</th>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>CA</th>
+      <td>24</td>
+      <td>24</td>
+      <td>24</td>
+      <td>24</td>
+      <td>24</td>
+    </tr>
+    <tr>
+      <th>CO</th>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Více o (pokročileší) práci s indexy a multiindexy najdeš v <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html">dokumentaci</a>.</p>
+<p>Pokud bychom se chtěli multiindexu "zbavit", můžeme to udělat pomocí <code>.reset_index()</code></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_by_state_gender_counts</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>state</th>
+      <th>gender</th>
+      <th>last_name</th>
+      <th>first_name</th>
+      <th>birthday</th>
+      <th>type</th>
+      <th>party</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>AK</td>
+      <td>M</td>
+      <td>16</td>
+      <td>16</td>
+      <td>16</td>
+      <td>16</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>AL</td>
+      <td>F</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>AL</td>
+      <td>M</td>
+      <td>203</td>
+      <td>203</td>
+      <td>194</td>
+      <td>203</td>
+      <td>203</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>AR</td>
+      <td>F</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>AR</td>
+      <td>M</td>
+      <td>112</td>
+      <td>112</td>
+      <td>109</td>
+      <td>112</td>
+      <td>110</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Anebo rovnou použít <code>groupby</code> s <code>as_index=False</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"state"</span><span class="p">,</span> <span class="s2">"gender"</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>state</th>
+      <th>gender</th>
+      <th>last_name</th>
+      <th>first_name</th>
+      <th>birthday</th>
+      <th>type</th>
+      <th>party</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>AK</td>
+      <td>M</td>
+      <td>16</td>
+      <td>16</td>
+      <td>16</td>
+      <td>16</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>AL</td>
+      <td>F</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>AL</td>
+      <td>M</td>
+      <td>203</td>
+      <td>203</td>
+      <td>194</td>
+      <td>203</td>
+      <td>203</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>AR</td>
+      <td>F</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>AR</td>
+      <td>M</td>
+      <td>112</td>
+      <td>112</td>
+      <td>109</td>
+      <td>112</td>
+      <td>110</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Co je ten <code>DataFrameGroupBy object</code>?</h2>
+<p>Na začátku jsme si udělali základní agregaci bez aplikace funkcí a dostali jsme jakýsi objekt. Je možné s ním něco dělat, aniž bychom agregovali? Ukazuje se, že ano.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'state'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x1194bf710&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jedna klíčová funkce, kterou nám tento objekt nabízí, je iterace.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">groups</span> <span class="o">=</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'state'</span><span class="p">)</span>
+
+<span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span> <span class="c1"># timhle ziskame prvni element pri iteraci (for cyklu)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>('AK',         last_name first_name   birthday gender type state        party
+ 6619       Waskey      Frank 1875-04-20      M  rep    AK     Democrat
+ 6647         Cale     Thomas 1848-09-17      M  rep    AK  Independent
+ 7442      Grigsby     George 1874-12-02      M  rep    AK          NaN
+ 7501       Sulzer    Charles 1879-02-24      M  rep    AK          NaN
+ 8039   Sutherland     Daniel 1869-04-17      M  rep    AK   Republican
+ 8236   Wickersham      James 1857-08-24      M  rep    AK   Republican
+ 8877       Dimond    Anthony 1881-11-30      M  rep    AK     Democrat
+ 9819     Gruening     Ernest 1887-02-06      M  sen    AK     Democrat
+ 9951       Rivers      Ralph 1903-05-23      M  rep    AK     Democrat
+ 9985     Bartlett     Edward 1904-04-20      M  sen    AK     Democrat
+ 10082     Pollock     Howard 1920-04-11      M  rep    AK   Republican
+ 10108      Begich   Nicholas 1932-04-06      M  rep    AK     Democrat
+ 10325      Gravel    Maurice 1930-05-13      M  sen    AK     Democrat
+ 11262   Murkowski      Frank 1933-03-28      M  sen    AK   Republican
+ 11386     Stevens        Ted 1923-11-18      M  sen    AK   Republican
+ 11734      Begich       Mark 1962-03-30      M  sen    AK     Democrat)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Mírná odbočka zpět k Pythonu jako takovému. Máme-li nějaký zdroj tuplů:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">'Ondřej'</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span> <span class="p">(</span><span class="s1">'Královna Alžběta'</span><span class="p">,</span> <span class="mi">93</span><span class="p">),</span> <span class="p">(</span><span class="s1">'Maggie Simpson'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pak můžeme v rámci iterace dostat buďto celý tuple, nebo můžeme rovnou <em>rozbalit</em> jednotlivé hodnoty do proměnných</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>('Ondřej', 29)
+('Královna Alžběta', 93)
+('Maggie Simpson', 1)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">age</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'</span><span class="si">{name}</span><span class="s1">: </span><span class="si">{age}</span><span class="s1"> let'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Ondřej: 29 let
+Královna Alžběta: 93 let
+Maggie Simpson: 1 let
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zpět k naší agregaci - jak nám to pomůže? Podívejte zpět na to, co jsme dostali při iteraci nad <code>DataFrameGroupBy</code> objektem?</p>
+<p>Ano, je to tuple.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">groups</span> <span class="o">=</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'state'</span><span class="p">)</span>
+
+<span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[26]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>('AK',         last_name first_name   birthday gender type state        party
+ 6619       Waskey      Frank 1875-04-20      M  rep    AK     Democrat
+ 6647         Cale     Thomas 1848-09-17      M  rep    AK  Independent
+ 7442      Grigsby     George 1874-12-02      M  rep    AK          NaN
+ 7501       Sulzer    Charles 1879-02-24      M  rep    AK          NaN
+ 8039   Sutherland     Daniel 1869-04-17      M  rep    AK   Republican
+ 8236   Wickersham      James 1857-08-24      M  rep    AK   Republican
+ 8877       Dimond    Anthony 1881-11-30      M  rep    AK     Democrat
+ 9819     Gruening     Ernest 1887-02-06      M  sen    AK     Democrat
+ 9951       Rivers      Ralph 1903-05-23      M  rep    AK     Democrat
+ 9985     Bartlett     Edward 1904-04-20      M  sen    AK     Democrat
+ 10082     Pollock     Howard 1920-04-11      M  rep    AK   Republican
+ 10108      Begich   Nicholas 1932-04-06      M  rep    AK     Democrat
+ 10325      Gravel    Maurice 1930-05-13      M  sen    AK     Democrat
+ 11262   Murkowski      Frank 1933-03-28      M  sen    AK   Republican
+ 11386     Stevens        Ted 1923-11-18      M  sen    AK   Republican
+ 11734      Begich       Mark 1962-03-30      M  sen    AK     Democrat)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Můžeme-li tedy dostat tuple při každé iteraci, můžeme jej rozbalit. Konkrétně to je dvoupoložkový tuple, kde první element je hodnota, nad kterou je agregováno, a druhý element je celý DataFrame, který této hodnotě odpovídá!</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+    <span class="k">break</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">index</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[28]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'AK'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[29]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>last_name</th>
+      <th>first_name</th>
+      <th>birthday</th>
+      <th>gender</th>
+      <th>type</th>
+      <th>state</th>
+      <th>party</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>6619</th>
+      <td>Waskey</td>
+      <td>Frank</td>
+      <td>1875-04-20</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>AK</td>
+      <td>Democrat</td>
+    </tr>
+    <tr>
+      <th>6647</th>
+      <td>Cale</td>
+      <td>Thomas</td>
+      <td>1848-09-17</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>AK</td>
+      <td>Independent</td>
+    </tr>
+    <tr>
+      <th>7442</th>
+      <td>Grigsby</td>
+      <td>George</td>
+      <td>1874-12-02</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>AK</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>7501</th>
+      <td>Sulzer</td>
+      <td>Charles</td>
+      <td>1879-02-24</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>AK</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>8039</th>
+      <td>Sutherland</td>
+      <td>Daniel</td>
+      <td>1869-04-17</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>AK</td>
+      <td>Republican</td>
+    </tr>
+    <tr>
+      <th>8236</th>
+      <td>Wickersham</td>
+      <td>James</td>
+      <td>1857-08-24</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>AK</td>
+      <td>Republican</td>
+    </tr>
+    <tr>
+      <th>8877</th>
+      <td>Dimond</td>
+      <td>Anthony</td>
+      <td>1881-11-30</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>AK</td>
+      <td>Democrat</td>
+    </tr>
+    <tr>
+      <th>9819</th>
+      <td>Gruening</td>
+      <td>Ernest</td>
+      <td>1887-02-06</td>
+      <td>M</td>
+      <td>sen</td>
+      <td>AK</td>
+      <td>Democrat</td>
+    </tr>
+    <tr>
+      <th>9951</th>
+      <td>Rivers</td>
+      <td>Ralph</td>
+      <td>1903-05-23</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>AK</td>
+      <td>Democrat</td>
+    </tr>
+    <tr>
+      <th>9985</th>
+      <td>Bartlett</td>
+      <td>Edward</td>
+      <td>1904-04-20</td>
+      <td>M</td>
+      <td>sen</td>
+      <td>AK</td>
+      <td>Democrat</td>
+    </tr>
+    <tr>
+      <th>10082</th>
+      <td>Pollock</td>
+      <td>Howard</td>
+      <td>1920-04-11</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>AK</td>
+      <td>Republican</td>
+    </tr>
+    <tr>
+      <th>10108</th>
+      <td>Begich</td>
+      <td>Nicholas</td>
+      <td>1932-04-06</td>
+      <td>M</td>
+      <td>rep</td>
+      <td>AK</td>
+      <td>Democrat</td>
+    </tr>
+    <tr>
+      <th>10325</th>
+      <td>Gravel</td>
+      <td>Maurice</td>
+      <td>1930-05-13</td>
+      <td>M</td>
+      <td>sen</td>
+      <td>AK</td>
+      <td>Democrat</td>
+    </tr>
+    <tr>
+      <th>11262</th>
+      <td>Murkowski</td>
+      <td>Frank</td>
+      <td>1933-03-28</td>
+      <td>M</td>
+      <td>sen</td>
+      <td>AK</td>
+      <td>Republican</td>
+    </tr>
+    <tr>
+      <th>11386</th>
+      <td>Stevens</td>
+      <td>Ted</td>
+      <td>1923-11-18</td>
+      <td>M</td>
+      <td>sen</td>
+      <td>AK</td>
+      <td>Republican</td>
+    </tr>
+    <tr>
+      <th>11734</th>
+      <td>Begich</td>
+      <td>Mark</td>
+      <td>1962-03-30</td>
+      <td>M</td>
+      <td>sen</td>
+      <td>AK</td>
+      <td>Democrat</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>K čemu nám to může být? Při agregaci se data drasticky zjednodušují a nemusíme si vždy být jisti, že naše agregace jsou napsané správně. Pomocí iterace nad skupinami si můžeme zobrazit všechna data před agregací.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">target_directory</span> <span class="o">=</span> <span class="s1">'by_states'</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">target_directory</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'state'</span><span class="p">):</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_directory</span><span class="p">,</span> <span class="n">state</span> <span class="o">+</span> <span class="s1">'.csv'</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Další agregační funkce</h2>
+<p>Dosud jsme agregovali jen pomocí <code>.size</code> nebo <code>.count</code>, ale existuje spousta další agregačních metod, zejm. těch numerických.</p>
+<p>Pro snadnější práci s agregacemi budeme používat metodu <code>.agg</code>, která akceptuje slovník. Tento slovník udává, <em>co</em> chceme agregovat (klíč) a <em>jak</em> to chceme agregovat (hodnota). S tím, že způsobů agregace pro jeden sloupec může být více naráz. Ukážeme si.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'state'</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">'birthday'</span><span class="p">:</span> <span class="s1">'max'</span><span class="p">})</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[31]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>birthday</th>
+    </tr>
+    <tr>
+      <th>state</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AK</th>
+      <td>1962-03-30</td>
+    </tr>
+    <tr>
+      <th>AL</th>
+      <td>1967-10-09</td>
+    </tr>
+    <tr>
+      <th>AR</th>
+      <td>1968-08-21</td>
+    </tr>
+    <tr>
+      <th>AS</th>
+      <td>1943-08-15</td>
+    </tr>
+    <tr>
+      <th>AZ</th>
+      <td>1976-11-03</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'state'</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">'birthday'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'min'</span><span class="p">,</span> <span class="s1">'max'</span><span class="p">],</span> <span class="s1">'party'</span><span class="p">:</span> <span class="s1">'nunique'</span><span class="p">})</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[32]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead tr th {
+    text-align: left
+    }
+.lesson-content .dataframe thead tr:last-of-type th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="2" halign="left">birthday</th>
+      <th>party</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>min</th>
+      <th>max</th>
+      <th>nunique</th>
+    </tr>
+    <tr>
+      <th>state</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AK</th>
+      <td>1848-09-17</td>
+      <td>1962-03-30</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>AL</th>
+      <td>1780-01-30</td>
+      <td>1967-10-09</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>AR</th>
+      <td>1788-08-25</td>
+      <td>1968-08-21</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>AS</th>
+      <td>1937-03-13</td>
+      <td>1943-08-15</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>AZ</th>
+      <td>1816-01-24</td>
+      <td>1976-11-03</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Agregace nad nesloupci</h2>
+<p>Dosud jsme vždy agregovali nad něčím, co jsme měli v DataFramu. Je ale možné agregovat nad daty, které tam vůbec nemáme, alespoň ne explicitně.</p>
+<p>Kromě názvu sloupce můžeme do <code>groupby</code> vložit nějakou Series (!), která má stejný tvar jako naše sloupce a pandas podle toho bude umět agregovat. Jaká taková Series se nabízí? Nejlépe transformace nějakého existujícího sloupce.</p>
+<p>Na začátku jsme si ukazovali, že občas chybí nějaká data, konkrétně birthday a party.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">party</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[33]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0        False
+1         True
+2         True
+3         True
+4         True
+         ...  
+11976    False
+11977    False
+11978    False
+11979    False
+11980    False
+Name: party, Length: 11981, dtype: bool</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Series má metodu <code>isnull</code>, která nám vrátí True/False hodnoty podle toho, jestli daná hodnota je platná nebo ne (chybějící, NULL v SQL).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tuto Series můžeme použít pro agregaci.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span>
+    <span class="n">legislators_historical</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+    <span class="n">legislators_historical</span><span class="o">.</span><span class="n">party</span><span class="o">.</span><span class="n">isnull</span><span class="p">()])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[34]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>state  party
+AK     False     14
+       True       2
+AL     False    206
+AR     False    115
+       True       2
+               ... 
+VT     True       4
+WA     False     95
+WI     False    197
+WV     False    120
+WY     False     40
+Length: 91, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Ukázali jsme si agregaci na jednoduché metodě <code>.isnull</code>, ale na čem dalším to jde udělat?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>.str a .dt metody</h3>
+<p>Podobně jako můžeme testovat zda hodnoty existují, můžeme testovat různé vlastnosti stringů a dat (od slova datum). Slouží k tomu <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/text.html#string-methods">.str</a> a <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.dt.html">.dt</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">name_length</span> <span class="o">=</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">first_name</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
+<span class="n">name_length</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[35]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0         7
+1        10
+2         7
+3         6
+4         6
+         ..
+11976     5
+11977     6
+11978     5
+11979     4
+11980     6
+Name: first_name, Length: 11981, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Často používanými metodami v rámci <code>.str</code> je <code>contains</code> nebo <code>.lower/upper</code></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s1">'JOHN'</span><span class="p">,</span> <span class="s1">'Jean-Luc'</span><span class="p">,</span> <span class="s1">'Mary-Jane'</span><span class="p">,</span> <span class="s1">'Kate'</span><span class="p">,</span> <span class="s1">'John'</span><span class="p">])</span>
+<span class="n">names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[36]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0    False
+1     True
+2     True
+3    False
+4    False
+dtype: bool</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">names</span><span class="p">[</span><span class="n">names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[37]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1     Jean-Luc
+2    Mary-Jane
+dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zatímco <code>.str.contains</code> použijeme zpravidla na filtrování, <code>.lower</code> poslouží třeba na unifikaci dat, která se pak lépe agregují (a deduplikují).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">names</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[38]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Kate         1
+JOHN         1
+John         1
+Jean-Luc     1
+Mary-Jane    1
+dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[39]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>john         2
+mary-jane    1
+jean-luc     1
+kate         1
+dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Z <code>.dt</code> si ukážeme jak vytáhnout z data rok.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [40]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">birth_years</span> <span class="o">=</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">birthday</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span>
+
+<span class="n">birth_years</span><span class="c1">#.value_counts()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[40]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0        1745.0
+1        1742.0
+2        1743.0
+3        1730.0
+4        1739.0
+          ...  
+11976    1950.0
+11977    1951.0
+11978    1987.0
+11979    1944.0
+11980    1976.0
+Name: birthday, Length: 11981, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [41]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">birth_years</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[41]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x108c708d0&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Binning</h3>
+<p>Sice jsme si vytáhli jednotlivé roky narození, ale přeci jen jich je spousta a moc nám to neřekne, určitě se podle nich nedá dobře agregovat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">birth_years</span> <span class="o">=</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">birthday</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'Int16'</span><span class="p">)</span>
+<span class="n">legislators_historical</span> <span class="o">=</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">birth_year</span><span class="o">=</span><span class="n">birth_years</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">birth_year</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[43]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x118eb6650&gt;</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYMAAAD4CAYAAAAO9oqkAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjEsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy8QZhcZAAAQuklEQVR4nO3df4wc5X3H8fcXDIRgsA2kV2S7PUchVBSLxJyIU/LjDCkx0NaoAUSFggFXVltIDVgqpqmSP9pKpi2hkFaprDiqqWhMQlBx+dHENVxRpNrBBoMBQziICXYcKGBMjpCSk779Yx+HjXvr2/XNevfu3i9pdTPPzM49X+3NfXaenZmNzESSNLkd1ukOSJI6zzCQJBkGkiTDQJKEYSBJAqZ0ugMAJ554Yvb29na6Gwftrbfe4phjjul0N9puMtRpjRPDZKgRYMuWLa9m5vuq2FZXhEFvby+bN2/udDcO2sDAAP39/Z3uRttNhjqtcWKYDDUCRMSLVW3LYSJJkmEgSTIMJEkYBpIkDANJEoaBJAnDQJKEYSBJwjCQJNElVyBr8uldcV9L6+9YeUGbeiIJPDKQJGEYSJIwDCRJGAaSJAwDSRKGgSQJTy3VOOGpqFJ7eWQgSTIMJEmGgSQJw0CShGEgScIwkCRhGEiSMAwkSRgGkiQMA0kShoEkCcNAkkSTYRAR10XEUxHxZER8PSLeExFzImJTRAxGxJ0RcWRZ96gyP1iW97azAEnS2I0aBhExE/hToC8zTwMOBy4FbgJuycwPAHuAJeUpS4A9pf2Wsp4kqYs1O0w0BTg6IqYA7wV2A2cDd5Xla4ALy/SiMk9Zfk5ERDXdlSS1Q2Tm6CtFLAP+Gngb+A6wDNhY3v0TEbOBBzLztIh4EliYmTvLsueBj2Tmq/ttcymwFKCnp+eMtWvXVlfVITY0NMTUqVM73Y22q7LObbv2VrKdRubOnHZQz5sMr6U1ThwLFizYkpl9VWxr1C+3iYgZ1N7tzwHeAL4JLBzrL87MVcAqgL6+vuzv7x/rJjtmYGCA8dz/ZlVZ5xUtfllNq3Zc1n9Qz5sMr6U1aiTNDBN9CvhBZv5PZv4cuBs4C5heho0AZgG7yvQuYDZAWT4NeK3SXkuSKtVMGPwQmB8R7y1j/+cATwMPAReVdRYD95TpdWWesvzBbGYsSpLUMaMOE2Xmpoi4C3gUGAYeoza8cx+wNiL+qrStLk9ZDfxLRAwCr1M780ia9PweZ3WzUcMAIDO/CHxxv+YXgDNHWPdnwMVj75ok6VBpKgyk0bT6rrfdfBcutcYwkHg3PJbPHW76TCcDRBOJ9yaSJBkGkiTDQJKEYSBJwjCQJGEYSJIwDCRJGAaSJAwDSRJegSwdtG67BYc0Fh4ZSJIMA0mSYSBJwjCQJGEYSJIwDCRJGAaSJAwDSRKGgSQJw0CShGEgScIwkCRhGEiS8K6lamCkO3IunzvMFd6pU5qQPDKQJBkGkiTDQJKEYSBJwjCQJGEYSJIwDCRJGAaSJAwDSRKGgSQJw0CSRJNhEBHTI+KuiHgmIrZHxEcj4viIWB8Rz5WfM8q6ERG3RcRgRDwREfPaW4IkaayaPTK4FfiPzPwN4HRgO7AC2JCZJwMbyjzAecDJ5bEU+EqlPZYkVW7UMIiIacAngNUAmflOZr4BLALWlNXWABeW6UXA7VmzEZgeESdV3nNJUmUiMw+8QsSHgFXA09SOCrYAy4BdmTm9rBPAnsycHhH3Aisz87tl2QbghszcvN92l1I7cqCnp+eMtWvXVlrYoTQ0NMTUqVM73Y1Kbdu19/+19RwNL7/dgc4cQt1U49yZ09qy3Yn497q/yVAjwIIFC7ZkZl8V22rm+wymAPOAz2Xmpoi4lXeHhADIzIyIA6fKfjJzFbWQoa+vL/v7+1t5elcZGBhgPPd/JCN9b8HyucPcvG1ifwVGN9W447L+tmx3Iv697m8y1Fi1Zj4z2AnszMxNZf4uauHw8r7hn/LzlbJ8FzC77vmzSpskqUuNGgaZ+WPgpYg4pTSdQ23IaB2wuLQtBu4p0+uAy8tZRfOBvZm5u9puS5Kq1Ozx8OeAOyLiSOAF4EpqQfKNiFgCvAhcUta9HzgfGAR+WtaVJHWxpsIgM7cCI31Icc4I6yZw9Rj7pQqN9H3GklTPK5AlSYaBJMkwkCRhGEiSMAwkSRgGkiQMA0kShoEkieavQJZ0iLV6seCOlRe0qSeaDAwDaYJoNjyWzx3mihX3GR76JQ4TSZIMA0mSYSBJwjCQJGEYSJIwDCRJGAaSJAwDSRKGgSQJw0CShGEgScIwkCRhGEiSMAwkSRgGkiQMA0kShoEkCcNAkoRfeylNWn7Hsup5ZCBJMgwkSQ4TSeoiDl11jkcGkiTDQJLkMJGkJrU6hAMO44wnhoGktjmYAFFnOEwkSWo+DCLi8Ih4LCLuLfNzImJTRAxGxJ0RcWRpP6rMD5blve3puiSpKq0cGSwDttfN3wTckpkfAPYAS0r7EmBPab+lrCdJ6mJNhUFEzAIuAL5a5gM4G7irrLIGuLBMLyrzlOXnlPUlSV2q2Q+Q/x74M+DYMn8C8EZmDpf5ncDMMj0TeAkgM4cjYm9Z/9X6DUbEUmApQE9PDwMDAwdZQucNDQ11df+Xzx0efaUm9Bxd3ba6lTWOL432u27fJ7vRqGEQEb8DvJKZWyKiv6pfnJmrgFUAfX192d9f2aYPuYGBAQ5l/1s/Q6Oak8aWzx3m5m0T+wQ0axxfdlzWP2L7od4nJ4Jm/iLOAn4vIs4H3gMcB9wKTI+IKeXoYBawq6y/C5gN7IyIKcA04LXKey5Jqsyonxlk5o2ZOSsze4FLgQcz8zLgIeCistpi4J4yva7MU5Y/mJlZaa8lSZUay3UGNwDXR8Qgtc8EVpf21cAJpf16YMXYuihJareWBg4zcwAYKNMvAGeOsM7PgIsr6JskHVCjz8+Wzx3mihGWeXuMxrwCWZJkGEiSDANJEoaBJAnDQJKEYSBJwi+36Qp+AYikTvPIQJJkGEiSDANJEoaBJAnDQJKEYSBJwjCQJGEYSJIwDCRJGAaSJAwDSRKGgSQJw0CShGEgScIwkCRhGEiSMAwkSRgGkiQMA0kShoEkCcNAkoRhIEnCMJAkYRhIkoApne7ARNS74r5Od0GSWuKRgSTJMJAkGQaSJAwDSRKGgSSJJsIgImZHxEMR8XREPBURy0r78RGxPiKeKz9nlPaIiNsiYjAinoiIee0uQpI0Ns0cGQwDyzPzVGA+cHVEnAqsADZk5snAhjIPcB5wcnksBb5Sea8lSZUaNQwyc3dmPlqmfwJsB2YCi4A1ZbU1wIVlehFwe9ZsBKZHxEmV91ySVJnIzOZXjugFHgZOA36YmdNLewB7MnN6RNwLrMzM75ZlG4AbMnPzfttaSu3IgZ6enjPWrl079mo6ZGhoiKlTp/5iftuuvR3sTfv0HA0vv93pXrSXNU4MjWqcO3Paoe9MGy1YsGBLZvZVsa2mr0COiKnAt4BrM/PN2v//mszMiGg+VWrPWQWsAujr68v+/v5Wnt5VBgYGqO//FRP0CuTlc4e5edvEvmjdGieGhjVue6ul7exYeUFFPep+TZ1NFBFHUAuCOzLz7tL88r7hn/LzldK+C5hd9/RZpU2S1KWaOZsogNXA9sz8Ut2idcDiMr0YuKeu/fJyVtF8YG9m7q6wz5KkijVzrHgW8FlgW0RsLW1/DqwEvhERS4AXgUvKsvuB84FB4KfAlZX2WJJUuVHDoHwQHA0WnzPC+glcPcZ+SZIOIa9AliQZBpIkw0CShGEgScIwkCRhGEiSMAwkSRgGkiQMA0kShoEkCcNAkoRhIEnCMJAkYRhIkmjhay8ns95RvsZy+dzhCftVl5ImB48MJEmGgSTJMJAkYRhIkjAMJEkYBpIkDANJEoaBJAnDQJKEYSBJwttRSFJDo92KZn87Vl7Qpp60n0cGkqTJd2TQatJL0mTgkYEkyTCQJBkGkiQMA0kShoEkCcNAkoRhIEnCMJAkYRhIkmjTFcgRsRC4FTgc+GpmrmzH7wGvKJakKlQeBhFxOPCPwG8DO4FHImJdZj5d9e+SpG5yMG9Ou+Xmdu0YJjoTGMzMFzLzHWAtsKgNv0eSVJHIzGo3GHERsDAz/7DMfxb4SGZes996S4GlZfYU4NlKO3JonQi82ulOHAKToU5rnBgmQ40Ap2TmsVVsqGN3Lc3MVcCqTv3+KkXE5szs63Q/2m0y1GmNE8NkqBFqdVa1rXYME+0CZtfNzyptkqQu1Y4weAQ4OSLmRMSRwKXAujb8HklSRSofJsrM4Yi4Bvg2tVNLv5aZT1X9e7rMhBjuasJkqNMaJ4bJUCNUWGflHyBLksYfr0CWJBkGkiTDoKGI+FpEvBIRT9a13RkRW8tjR0RsLe29EfF23bJ/qnvOGRGxLSIGI+K2iIhO1DOSBjV+KCI2ljo2R8SZpT1K/wcj4omImFf3nMUR8Vx5LO5ELY20WGN/ROytex2/UPechRHxbKl/RSdqOZAGdZ4eEf9d/v7+PSKOq1t2Y6nl2Yj4dF1719bZSo3jeJ+cHREPRcTTEfFURCwr7cdHxPqyj62PiBmlvbr9MjN9jPAAPgHMA55ssPxm4AtluvcA630PmA8E8ABwXqdrO1CNwHf29RE4Hxiom36g1DEf2FTajwdeKD9nlOkZna7tIGvsB+4dYRuHA88D7weOBB4HTu10bU3U+QjwyTJ9FfCXZfrUUsNRwJxS2+HdXmeLNY7XffIkYF6ZPhb4fnm9/gZYUdpXADfV/f1Wsl96ZNBAZj4MvD7SsvJO4hLg6wfaRkScBByXmRuz9grdDlxYdV8PVoMaE9j3DnIa8KMyvQi4PWs2AtNLfZ8G1mfm65m5B1gPLGx/75vTYo2NdP0tVhrU+UHg4TK9HvhMmV4ErM3M/83MHwCD1Grs6jpbrHFE42Cf3J2Zj5bpnwDbgZnUXoc1ZbU1vNvnyvZLw+DgfBx4OTOfq2ubExGPRcR/RcTHS9tMajfr22dnaetm1wJ/GxEvAX8H3FjaZwIv1a23r5ZG7d2sUY0AH42IxyPigYj4zdI2HmsEeIp3/5lfzLsXg06k17JRjTDO98mI6AU+DGwCejJzd1n0Y6CnTFf2WhoGB+cP+OWjgt3Ar2Xmh4HrgX+tH58dZ/4YuC4zZwPXAas73J92aFTjo8CvZ+bpwJeBf+tQ/6pyFfAnEbGF2pDDOx3uTzs0qnFc75MRMRX4FnBtZr5Zv6wc0VR+TYBh0KKImAL8PnDnvrZyuP1amd5Cbdz1g9RuwzGr7unj4dYci4G7y/Q3qQ0dQOPbjIzH24+MWGNmvpmZQ2X6fuCIiDiR8VkjmflMZp6bmWdQe/PyfFk0YV7LRjWO530yIo6gFgR3ZOa+v9OXy/DPvqGuV0p7Za+lYdC6TwHPZOYvDjUj4n1R+x4HIuL9wMnAC+Ww7s2ImF8+Z7gcuKcTnW7Bj4BPlumzgX1DYeuAy8vZC/OBvaW+bwPnRsSMcobDuaWtm41YY0T86r4zS8oZRocBrzFOb7ESEb9Sfh4G/AWw74yadcClEXFURMyh9vf6PcZhnY1qHK/7ZOnTamB7Zn6pbtE6am9iKD/vqWuvZr/s9Kfn3fqg9i5jN/BzauNtS0r7PwN/tN+6n6E2drmV2lDD79Yt6wOepPbO5B8oV313w2OkGoGPAVuonUmyCTijrBvUvrToeWAb0Fe3nauofQg5CFzZ6brGUOM15XV8HNgI/Fbdds6ndmbH88DnO11Xk3UuK33+PrCy/m8P+Hyp5Vnqzqbp5jpbqXEc75MfozYE9ETp+9bympwAbKD2xuU/gePL+pXtl96OQpLkMJEkyTCQJGEYSJIwDCRJGAaSJAwDSRKGgSQJ+D9nfelnK5PKIwAAAABJRU5ErkJggg==%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [44]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">birth_year</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[44]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1840    94
+1824    94
+1870    93
+1828    92
+1835    91
+        ..
+1981     1
+1977     1
+1721     1
+1983     1
+1987     1
+Name: birth_year, Length: 258, dtype: Int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Ani histogram, ani <code>value_counts</code> nám žádné moc hodnotné informace nepřinesl. Budeme muset data trochu seskupit. Na to v pandas existuje několik možností.</p>
+<p>První z nich je nám již známý <code>.value_counts</code>, kterému můžeme přihodit argument <code>bins</code>, který znamená, že nechceme frekvence jednotlivých hodnot, ale že chceme seskupit data do několika intervalů.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [45]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">birth_year</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[45]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(1827.4, 1854.0]      2077
+(1800.8, 1827.4]      2059
+(1854.0, 1880.6]      1839
+(1880.6, 1907.2]      1345
+(1774.2, 1800.8]      1245
+(1907.2, 1933.8]      1021
+(1933.8, 1960.4]       937
+(1747.6, 1774.2]       647
+(1960.4, 1987.0]       145
+(1720.733, 1747.6]     113
+Name: birth_year, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Co když nám takové samorozdělení nestačí? Na to je <code>pandas.cut</code>, resp. <code>pd.cut</code>. Má spoustu možností, doporučujeme <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.cut.html">projít dokumentaci</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [46]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1700</span><span class="p">,</span> <span class="mi">1750</span><span class="p">,</span> <span class="mi">1800</span><span class="p">,</span> <span class="mi">1850</span><span class="p">,</span> <span class="mi">1900</span><span class="p">,</span> <span class="mi">1950</span><span class="p">]</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">birth_year</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[46]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0        (1700.0, 1750.0]
+1        (1700.0, 1750.0]
+2        (1700.0, 1750.0]
+3        (1700.0, 1750.0]
+4        (1700.0, 1750.0]
+               ...       
+11976    (1900.0, 1950.0]
+11977                 NaN
+11978                 NaN
+11979    (1900.0, 1950.0]
+11980                 NaN
+Name: birth_year, Length: 11981, dtype: category
+Categories (5, interval[int64]): [(1700, 1750] &lt; (1750, 1800] &lt; (1800, 1850] &lt; (1850, 1900] &lt; (1900, 1950]]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">birth_year</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[47]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(1800, 1850]    3839
+(1850, 1900]    3159
+(1900, 1950]    2002
+(1750, 1800]    1856
+(1700, 1750]     149
+Name: birth_year, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nevýhodou <code>pd.cut</code> je, že intervaly jsou určeny uživatelem a může chvíli trvat, než je člověk odladí. Více automatická je možnost určit intervaly pomocí statistického rozložení dat, k tomu slouží <code>pd.qcut</code>, ten místo hranic intervalů bere kvantily.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [48]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">legislators_historical</span><span class="o">.</span><span class="n">birth_year</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="o">.</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[48]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(1784.0, 1849.0]      4616
+(1849.0, 1932.0]      4545
+(1720.999, 1784.0]    1155
+(1932.0, 1987.0]      1112
+Name: birth_year, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Kontingenční tabulky</h3>
+<p>Pokud budeme agregovat nad několika sloupci, může se nám stát, že z DataFramu se nám stane jedna dlouhá nudle. V tom se nedá moc dobře vyznat. Pokud jste s takovými daty někdy pracovali v Excelu, možná vám bude povědomá funkce kontigenčních tabulek, v angličtině pivot tables.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [49]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">agg</span> <span class="o">=</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'type'</span><span class="p">,</span> <span class="s1">'gender'</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[[</span><span class="s1">'last_name'</span><span class="p">]]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">agg</span> <span class="o">=</span> <span class="n">agg</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'last_name'</span><span class="p">:</span> <span class="s1">'count'</span><span class="p">})</span>
+<span class="n">agg</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[49]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>type</th>
+      <th>gender</th>
+      <th>count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>rep</td>
+      <td>F</td>
+      <td>204</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>rep</td>
+      <td>M</td>
+      <td>9947</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>sen</td>
+      <td>F</td>
+      <td>31</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>sen</td>
+      <td>M</td>
+      <td>1799</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Součástí každého <code>pivot</code>u jsou tři faktory - specifikace,</p>
+<ol>
+<li>který se sloupců chceme v indexu</li>
+<li>který bude ve sloupcích</li>
+<li>který sloupec se přiřadí do hodnot v DataFramu</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [50]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">agg</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'gender'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'type'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">'count'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[50]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>type</th>
+      <th>rep</th>
+      <th>sen</th>
+    </tr>
+    <tr>
+      <th>gender</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>F</th>
+      <td>204</td>
+      <td>31</td>
+    </tr>
+    <tr>
+      <th>M</th>
+      <td>9947</td>
+      <td>1799</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Omezením metody <code>pivot</code> je to, že umí jen otáčet DataFrame, ale pokud některému z políček odpovídá více hodnot, vyhodí vám chybu, protože neví, jak je má agregovat. Pivot je opravdu jen pro otáčení.</p>
+<p>Na komplexnější agregace tu je podobně pojmenovaný <code>pivot_table</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [51]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">agg</span> <span class="o">=</span> <span class="n">legislators_historical</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'type'</span><span class="p">,</span> <span class="s1">'state'</span><span class="p">,</span> <span class="s1">'gender'</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[[</span><span class="s1">'last_name'</span><span class="p">]]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">agg</span> <span class="o">=</span> <span class="n">agg</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'last_name'</span><span class="p">:</span> <span class="s1">'count'</span><span class="p">})</span>
+<span class="n">agg</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[51]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>type</th>
+      <th>state</th>
+      <th>gender</th>
+      <th>count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>rep</td>
+      <td>AK</td>
+      <td>M</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>rep</td>
+      <td>AL</td>
+      <td>F</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>rep</td>
+      <td>AL</td>
+      <td>M</td>
+      <td>166</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>rep</td>
+      <td>AR</td>
+      <td>F</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>rep</td>
+      <td>AR</td>
+      <td>M</td>
+      <td>81</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>167</th>
+      <td>sen</td>
+      <td>VT</td>
+      <td>M</td>
+      <td>36</td>
+    </tr>
+    <tr>
+      <th>168</th>
+      <td>sen</td>
+      <td>WA</td>
+      <td>M</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <th>169</th>
+      <td>sen</td>
+      <td>WI</td>
+      <td>M</td>
+      <td>26</td>
+    </tr>
+    <tr>
+      <th>170</th>
+      <td>sen</td>
+      <td>WV</td>
+      <td>M</td>
+      <td>31</td>
+    </tr>
+    <tr>
+      <th>171</th>
+      <td>sen</td>
+      <td>WY</td>
+      <td>M</td>
+      <td>19</td>
+    </tr>
+  </tbody>
+</table>
+<p>172 rows × 4 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>pivot_table</code> nabízí možnost přiřadit do některé z dimenzí (do indexu či sloupců) vícero sloupců, a následně pak vytvoří víceúrovňový index. Jde též specifikovat, jaká funkce se aplikuje, pokud na buňku připadá více hodnot (jako v Excelu).</p>
+<p>Více detailů najdete <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.pivot_table.html">v dokumentaci</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [52]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wide</span> <span class="o">=</span> <span class="n">agg</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'state'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'type'</span><span class="p">,</span> <span class="s1">'gender'</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="s1">'count'</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+
+<span class="n">wide</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[52]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead tr th {
+    text-align: left
+    }
+.lesson-content .dataframe thead tr:last-of-type th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th>type</th>
+      <th colspan="2" halign="left">rep</th>
+      <th colspan="2" halign="left">sen</th>
+    </tr>
+    <tr>
+      <th>gender</th>
+      <th>F</th>
+      <th>M</th>
+      <th>F</th>
+      <th>M</th>
+    </tr>
+    <tr>
+      <th>state</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AK</th>
+      <td></td>
+      <td>10.0</td>
+      <td></td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>AL</th>
+      <td>1</td>
+      <td>166.0</td>
+      <td>2</td>
+      <td>37</td>
+    </tr>
+    <tr>
+      <th>AR</th>
+      <td>3</td>
+      <td>81.0</td>
+      <td>2</td>
+      <td>31</td>
+    </tr>
+    <tr>
+      <th>AS</th>
+      <td></td>
+      <td>2.0</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>AZ</th>
+      <td>3</td>
+      <td>34.0</td>
+      <td></td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <th>CA</th>
+      <td>23</td>
+      <td>298.0</td>
+      <td>1</td>
+      <td>41</td>
+    </tr>
+    <tr>
+      <th>CO</th>
+      <td>3</td>
+      <td>53.0</td>
+      <td></td>
+      <td>34</td>
+    </tr>
+    <tr>
+      <th>CT</th>
+      <td>6</td>
+      <td>183.0</td>
+      <td></td>
+      <td>51</td>
+    </tr>
+    <tr>
+      <th>DC</th>
+      <td></td>
+      <td>2.0</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>DE</th>
+      <td></td>
+      <td>48.0</td>
+      <td></td>
+      <td>49</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Kdyby ti přišlo matoucí, že tu jsou dvě podobné funkce na kontigenční tabulky, tak tě ještě víc zmateme, protože existuje ještě <code>pd.crosstab</code>. Do detailů zde už zacházet nebudeme, doporučujeme <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.crosstab.html">dokumentaci</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Inverzní kontigenční tabulky</h3>
+<p>Zatímco na kontigenční tabulky mnozí narazili, jejich inverzní funkcionalita je celkem neznámá, a zajímavá. Funguje přesně tak, jak píšeme - vezme se široká tabulka, ve které je jedna z dimenzí ve sloupcích, a zúží a prodlouží se tím, že se ony názvy sloupcí překonvertují do samotného sloupce. Příklad bude názornější.</p>
+<p>V pandas se na tuto inverzní operaci používá metoda <code>melt</code>. Její delší výčet argumentů je tradičně <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.melt.html">v dokumentaci</a>.</p>
+<p>Mějme dataset, kde je výkon v různých regionech fiktivní země. Nevýhodou je, že nemůžeme úplně dívat na časové řady, protože roky, ke kterým údaje platí, jsou ve sloupcích, ne v řádcích. Takto široké tabulky jsou celkem populární třeba u dat o počasí.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [53]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">'region'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'North'</span><span class="p">,</span> <span class="s1">'South'</span><span class="p">,</span> <span class="s1">'East'</span><span class="p">,</span> <span class="s1">'West'</span><span class="p">],</span>
+    <span class="s1">'2000'</span><span class="p">:</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>
+    <span class="s1">'2005'</span><span class="p">:</span> <span class="p">[</span><span class="mi">450</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">510</span><span class="p">,</span> <span class="mi">1040</span><span class="p">],</span>
+    <span class="s1">'2010'</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">950</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span>
+    <span class="s1">'2015'</span><span class="p">:</span> <span class="p">[</span><span class="mi">550</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+    <span class="s1">'2020'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+<span class="p">})</span>
+<span class="n">df</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[53]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>region</th>
+      <th>2000</th>
+      <th>2005</th>
+      <th>2010</th>
+      <th>2015</th>
+      <th>2020</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>North</td>
+      <td>200</td>
+      <td>450</td>
+      <td>10</td>
+      <td>550</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>South</td>
+      <td>100</td>
+      <td>10</td>
+      <td>500</td>
+      <td>20</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>East</td>
+      <td>50</td>
+      <td>510</td>
+      <td>950</td>
+      <td>50</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>West</td>
+      <td>1000</td>
+      <td>1040</td>
+      <td>500</td>
+      <td>10</td>
+      <td>10</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>pd.melt</code> zajímá, který ze sloupců nějak identifikuje dané řádky (<code>id_vars</code>) a které sloupce obsahují hodnoty (<code>value_vars</code>). Zbylé dva argumenty slouží jen k přejmenování sloupců (<code>var_name</code>, <code>value_name</code>).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [54]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">long</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s1">'region'</span><span class="p">],</span> <span class="n">value_vars</span><span class="o">=</span><span class="p">[</span><span class="s1">'2000'</span><span class="p">,</span> <span class="s1">'2005'</span><span class="p">,</span> <span class="s1">'2010'</span><span class="p">,</span> <span class="s1">'2015'</span><span class="p">,</span> <span class="s1">'2020'</span><span class="p">],</span>
+        <span class="n">var_name</span><span class="o">=</span><span class="s1">'year'</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s1">'output'</span><span class="p">)</span>
+
+<span class="n">long</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[54]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>region</th>
+      <th>year</th>
+      <th>output</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>North</td>
+      <td>2000</td>
+      <td>200</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>South</td>
+      <td>2000</td>
+      <td>100</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>East</td>
+      <td>2000</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>West</td>
+      <td>2000</td>
+      <td>1000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>North</td>
+      <td>2005</td>
+      <td>450</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>South</td>
+      <td>2005</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>East</td>
+      <td>2005</td>
+      <td>510</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>West</td>
+      <td>2005</td>
+      <td>1040</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>North</td>
+      <td>2010</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>South</td>
+      <td>2010</td>
+      <td>500</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>East</td>
+      <td>2010</td>
+      <td>950</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>West</td>
+      <td>2010</td>
+      <td>500</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>North</td>
+      <td>2015</td>
+      <td>550</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>South</td>
+      <td>2015</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>East</td>
+      <td>2015</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>West</td>
+      <td>2015</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>North</td>
+      <td>2020</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>South</td>
+      <td>2020</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>East</td>
+      <td>2020</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>West</td>
+      <td>2020</td>
+      <td>10</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><em>Úkol: vem tento dlouhý dataset a udělej z něj ten původní, široký.</em> (Neřeš, pokud máš někde index, kde před tím nebyl.)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-praha-jaro/sessions/eda5/">↑ <span class="d-none d-sm-inline">Lekce: Explorativní datová analýza a pokročilejší manipulace</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-praha-jaro/sessions/eda5/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2020-pydata-praha-jaro/lessons/pydata/pandas_groupby/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsali Jakub Urban a Ondřej Kokeš, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
