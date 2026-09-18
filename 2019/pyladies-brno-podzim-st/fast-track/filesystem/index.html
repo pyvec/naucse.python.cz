@@ -1,0 +1,330 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Souborové systémy
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/pyladies-brno-podzim-st/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/pyladies-brno-podzim-st/sessions/filesystem/">Soubory a adresáře</a>
+
+> <a href="/2019/pyladies-brno-podzim-st/fast-track/filesystem/">Souborové systémy</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Soubory a cesty</h1>
+<p>Informace uložené v Pythonních proměnných – seznamech, slovnících, a tak dále – jsou dočasné.
+Jakmile Python ukončíš, zmizí.
+Chceš-li něco uložit na delší dobu, nebo třeba sdílet s jinými programy,
+můžeš si informace uložit do souboru.</p>
+<p>S počítačovými soubory (angl. <em>files</em>) už ses asi setkala.
+Teď se na ně ale podívejme trochu podrobněji.</p>
+<p>Soubor je místo, kam se dají ukládat informace – <em>obsah</em>. Kromě obsahu mají soubory ještě další vlastnosti:</p>
+<ul>
+<li><em>jméno</em>, podle kterého se soubor dá najít,</li>
+<li>informace o <em>vlastnictví</em> a <em>oprávnění</em>, které určují kdo může ze souboru
+číst a kdo do něj může zapisovat,</li>
+<li>informace o <em>časech</em> vytvoření, posledního zápisu, a podobně,</li>
+<li>a další informace, na každém druhu operačního systému jiné.</li>
+</ul>
+<p>Tak jako je kapitola v knížce poskládaná z písmenek, obsah souboru je
+poskládaný z <em>bajtů</em> (angl. <em>bytes</em>) – malých čísel.
+Každá informace, kterou počítač umí zpracovat, se dá zakódovat do bajtů
+podobně jako se z písmenek skládá text.</p>
+<p>Soubory jsou většinou uloženy na disku (nebo podobném médiu), kde bývá místo
+na bilióny bajtů.
+Aby počítač poznal, kde na disku je který soubor, používá <em>souborový systém</em>
+(angl. <em>filesystem</em>).
+Ten plní podobnou funkci jako v knížce obsah, jména kapitol a čísla stránek.</p>
+<h2>Operační systémy</h2>
+<p>Souborových systémů existuje spousta druhů.
+Experti nám snad prominou hrubé zjednodušení, když si je rozdělíme na dva
+druhy: ty pro Windows a ty pro Unix.</p>
+<p>Unix je operační systém, vytvořený v sedmdesátých letech, ze kterého vycházejí
+dnešní systémy Linux, macOS a další.
+Základní principy, o kterých bude řeč tady, se od dob Unixu většinou
+příliš nezměnily.
+A tak když v těchto materiákech uvidíš jméno „Unix“, jde o něco společné pro
+Linux i macOS.
+Hlavní rozdíly mezi Linuxem a macOS jsou v konvencích – např. na Linuxu se
+místo pro domovské adresáře jmenuje většinou <code>/home</code>, kdežto na macOS <code>/Users</code>.</p>
+<p>Další rozšířený operační systém, Windows, z Unixu nevychází.
+Některé věci se v něm, jak později uvidíme, chovají jinak.</p>
+<h2>Adresáře</h2>
+<p>Na dnešních souborových systémech jsou soubory tříděny do <em>adresářů</em> neboli
+<em>složek</em> (angl. <em>directory</em>, <em>folder</em>).
+Adresář může obsahovat spoustu souborů nebo i jiných adresářů.</p>
+<p>A teď něco, co pro tebe může být nové: pro programátory jsou adresáře taky soubory.
+Souborů je dokonce spousta druhů: <em>normální soubory</em> s informacemi, adresáře
+(které obsahují další soubory), speciální soubory které můžou reprezentovat
+celý disk nebo spojení mezi počítači, odkazy na jiné soubory, a tak dále.
+Co je a co není soubor závisí na systému.
+Dnes se proto omezíme jen na dva druhy souborů, které najdeme jak na Windows
+tak na Unixu: normální datové soubory (ty, které si pod jménem „soubor“
+představí běžný uživatel) a adresáře.</p>
+<h2>Cesty</h2>
+<p>Abys mohl/a najít nějaký soubor, potřebuješ znát jeho jméno a adresář,
+který ten soubor obsahuje.
+Abys pak mohl/a najít ten adresář, musíš opět znát jméno adresáře a adresář,
+který ho obsahuje.
+A tak dál, až se dostaneš ke <em>kořenovému adresáři</em> (angl. <em>root directory</em>),
+který (zjednodušeně řečeno) obsahuje celý souborový systém.
+Když napíšeš jména všech adresářů které takhle projdeš za sebe, dostaneš
+<em>cestu</em> (angl. <em>path</em>) k danému souboru.
+Taková cesta by mohla na Unixu být třeba:</p>
+<ul>
+<li>Linux: <code>/home/janca/Documents/archiv.tar.gz</code></li>
+<li>macOS: <code>/Users/janca/Documents/archiv.tar.gz</code></li>
+</ul>
+<p>To znamená, že začneš v kořenovém adresáři (který se na Linuxu jmenuje <code>/</code>),
+v něm hledáš adresář <code>home</code> nebo <code>Users</code> (ten tradičně obsahuje domovské
+adresáře uživatelů), v něm pak <code>janca</code> (podle uživatelského jména),
+v něm <code>Documents</code>, a v něm pak <code>archiv.tar.gz</code>.
+To už není adresář, ale normální soubor do kterého se dají zapsat informace.</p>
+<p>Obdobná cesta na Windows by mohla být třeba:
+<code>C:\Users\Jana\Documents\archiv.tar.gz</code></p>
+<p>Tahle cesta začíná na disku <code>C:</code>.
+Windows mají na rozdíl od Unixu zvláštní souborový systém pro každý disk,
+a tak mají víc kořenových adresářů – třeba <code>C:\</code> a <code>D:\</code>.
+Dál je to podobné jako na Unixu, jen oddělovač adresářů je zpětné lomítko
+místo obyčejného.</p>
+<h2>Absolutní a relativní cesty</h2>
+<p>Cesta, která začíná v konkrétním kořenovém adresáři, se nazývá <em>absolutní</em>
+cesta (angl. <em>absolute</em> path). Je jako úplná poštovní adresa:
+správně nadepsaný dopis můžu hodit do schránky kdekoli na světě a (teoreticky)
+vždy dojde k adresátovi.</p>
+<p>Když ale dopis do Česka házím do české schránky, můžu vynechat informaci
+o kontinentu a zemi.
+Je to tak kratší a jednodušší‚ ale z Austrálie by to nefungovalo.</p>
+<p>Na podobném principu jsou založeny <em>relativní cesty</em> (angl. <em>relative paths</em>).
+Když už jsi v domovském adresáři, stačí zadat cestu <code>Documents/archiv.tar.gz</code>,
+bez lomítek či jména disku na začátku.
+To znamená, že cesta nezačíná v kořenovém adresáři, ale v <em>aktuálním adresáři</em>
+(angl. <em>current directory</em>) – tam, kde právě jsi.
+Kdyby ses pomocí <code>cd</code> přepnula jinam, tahle relativní cesta by přestala
+fungovat.</p>
+<p>Kde relativní cesta „začíná“, to záleží na kontextu – většinou jde o aktuální 
+adresář, ale může to být třeba gitový repozitář
+(hlavní adresář nějakého projektu), adresář s programem který právě běží,
+a podobně.</p>
+<h2>Dvě tečky a jedna tečka</h2>
+<p>Každý adresář obsahuje dva speciální záznamy: <code>..</code> a <code>.</code>.</p>
+<p>Jméno <code>.</code> (tečka) vždy označuje samotný adresář.
+Tudíž <code>/home/janca</code> je stejný adresář jako <code>/home/janca/.</code>,
+<code>/home/janca/././././.</code> a tak dál.
+To nezní moc užitečně – ale jen do té doby, než potřebuješ zadat jako
+relativní cestu samotný aktuální adresář.</p>
+<p>Jméno <code>..</code> (dvě tečky) označuje <em>nadřazený adresář</em>.
+Když se tohle jméno objeví v cestě, znamená to, že potřebujeme přejít
+o úroveň výš.
+Jsi-li v adresáři <code>/home/janca/Pictures/dovolena</code>, tak:</p>
+<ul>
+<li>cesta <code>..</code> znamená adresář <code>/home/janca/Pictures</code></li>
+<li>cesta <code>../../programy/venv</code> znamená <code>/home/janca/programy/venv</code></li>
+<li>absolutní cesta <code>/home/janca/Documents/../Pictures/dovolena</code>
+znamená <code>/home/janca/Pictures/dovolena</code></li>
+</ul>
+<div class="admonition note"><p>Striktně řečeno, výše uvedené neplatí vždycky:
+speciální soubory zvané <em>symbolické odkazy</em> (angl. <em>symlinks</em>) můžou počítač
+při procházení cesty přesměrovat tak, že <code>Documents/../Pictures</code> bude jiný
+soubor než <code>Pictures</code>.
+Detaily jsou nad rámec těchto materiálů, nicméně je to důvod, proč Python
+nebude automaticky nahrazovat <code>Documents/../Pictures</code> za <code>Pictures</code>.</p>
+</div><h2>Jména souborů</h2>
+<p>Jméno souboru je řetězec. Nemůže to ale být jakýkoli řetězec.
+Různé systémy mají různou maximální délku jména (i když na tenhle limit dnes 
+většinou nenarazíš).
+A navíc je omezen i obsah – jméno souboru nesmí obsahovat:</p>
+<ul>
+<li>na Unixu oddělovač adresářů <code>/</code> ani speciální nulový znak,</li>
+<li>na windows oddělovač <code>\</code>, znaky <code>&lt;&gt;:"/|?*</code> ani speciální znaky (např.
+tabulátor, znak nového řádku).</li>
+</ul>
+<p>Nedoporučuji s názvy příliš experimentovat, protože některé validní znaky
+můžou v určitých kontextech mít zvláštní význam (např. <code>*</code> a <code>?</code> jako zástupné
+znaky), špatně se používají (např. mezery a nové řádky), působí problémy
+s kódováním (např. písmena s diakritikou nebo emoji), nebo naráží na problémy
+s tím, že Windows nerozlišují velikost písmen ale Unix ano.</p>
+<p>Programátoři by se tak měli omezit na:</p>
+<ul>
+<li>malá písmena bez diakritiky,</li>
+<li>číslice <code>0</code> - <code>9</code>,</li>
+<li>pomlčku <code>-</code>,</li>
+<li>podtržítko <code>_</code>, a</li>
+<li>tečku jako oddělovač přípony.</li>
+</ul>
+<p>Možná sis všimla, že normální lomítko, <code>/</code>, nesmí na Windows být ve jménu
+souboru.
+Spousta moderních programů (včetně většiny knihoven v Pythonu) toho využívá a
+dopředná lomítka automaticky zaměňuje za zpětná.
+Můžeš tak na všech systémech používat stejné relativní cesty: <code>Documents/archiv.tar.gz</code> většinou funguje i na Windows.</p>
+<h2>Přípony</h2>
+<p>Hodně jmen souborů obsahuje tečku a za ní krátkou <em>příponu</em> (angl. <em>extension</em>),
+která tradičně indikuje formát souboru – způsob,
+kterým jsou v souboru zakódovány informace.
+Například soubor <code>hrad.jpeg</code> má příponu <code>.jpeg</code>.
+Ten kdo ví, že <a href="https://cs.wikipedia.org/wiki/JPEG">JPEG</a> je způsob zakódování
+obrázku (zvlášť vhodný pro fotografie), si tak může domyslet že v souboru je
+nejspíš fotka hradu.</p>
+<p>Pythonisti zase poznají příponu <code>.py</code>.
+Python samotný ji vyžaduje: příkaz <code>import module</code> hledá soubor <code>module.py</code>.</p>
+<p>Přípony jsou zvlášť důležité na Windows, kde se podle nich vybírá program,
+kterým se soubor otevře.
+(Unix se oproti tomu dívá v prvé řadě na samotný obsah souboru.)</p>
+<p>Přípon se může objevit i víc: <code>archiv.tar.gz</code> nejspíš obsahuje několik souborů spojených dohromady ve formátu <a href="https://cs.wikipedia.org/wiki/Tar_%28informatika%29">tar</a> a pak zkomprimovaných ve formátu <a href="https://cs.wikipedia.org/wiki/Gzip">gzip</a>.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/pyladies-brno-podzim-st/beginners/files/">← <span class="d-none d-sm-inline">Soubory</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/pyladies-brno-podzim-st/sessions/filesystem/">↑ <span class="d-none d-sm-inline">Lekce: Soubory a adresáře</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/pyladies-brno-podzim-st/intro/pathlib/"><span class="d-none d-sm-inline">Adresáře, soubory a cesty</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-pyladies-brno-podzim-st/lessons/fast-track/filesystem/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Petr Viktorin, 2018-2019</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

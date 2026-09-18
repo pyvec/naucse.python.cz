@@ -1,0 +1,2878 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: Analýza časových řad
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-ostrava-jaro/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-ostrava-jaro/sessions/timeseries/">Analýza časových řad</a>
+
+> <a href="/2020/pydata-ostrava-jaro/pydata/timeseries/">Analýza časových řad</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Analýza časových řad</h1>
+<p>V této lekci se podíváme na to, jak analyzovat časové řady. Na pomoc si pro tento účel vezmeme data s údaji o počasí (teplota, tlak apod.).</p>
+<p>Abychom s daty mohli efektivně pracovat, budeme muset data ještě transformovat a pročistit. To je (bohužel) běžnou součástí datové analýzy, protože zdrojová data jsou typicky ne zcela vhodně uspořádána a často obsahují i chyby. Při práci s časovými řadami využijeme bohaté možnosti <code>pandas</code> pro práci s časovými údaji.</p>
+<p>V této lekci se naučíš:</p>
+<ul>
+<li>načítat data ze souborů ve formátu Excel,</li>
+<li>efektivně čistit a transformat data na "spořádaná data".</li>
+</ul>
+<h2>Instalace knihovny <code>xlrd</code></h2>
+<p>Knihovna <code>xlrd</code> dodá Pandasu schopnost pracovat se soubory ve formátu Excel.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># %pip install xlrd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Načtení knihoven</h2>
+<p>Budeme používat samozřejmě <code>pandas</code>, pro vizualizaci pak <code>matplotlib</code> a <code>seaborn</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Příprava dat</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Načtení hrubých dat - počasí</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Naší základní datovou sadou budou data o počasí, konkrétně v Praze-Ruzyni. Data poskytuje Českým hydrometeorologický ústav (ČHMÚ) ve formě Excel souborů, dostupných z <a href="http://portal.chmi.cz/historicka-data/pocasi/denni-data">http://portal.chmi.cz/historicka-data/pocasi/denni-data</a>.</p>
+<p>Možná překvapivě není úplně snadné dobrá a podrobná data získat. Ta nejkvalitnější jsou placená, navíc <a href="https://www.irozhlas.cz/zpravy-domov/data-statni-spravy-otevrena-data-chmu_1809140600_hm">"Česká data o počasí patří k nejdražším"</a>. Jen nedávno soud nařídil poskytovat alespoň základní data zdarma, viz <a href="https://www.irozhlas.cz/zpravy-domov/chmu-soud-pocasi-zaznamy_1807030700_cib">článek na irozhlas</a>.</p>
+<p>Takto vypadají náhledy dvou listů ze souboru <code>P1PRUZ01.xls</code>, který obsahuje historická data z meteorologických měření v Praze-Ruzyni. Data jsou poměrně nepěkně uspořádána. Ani v Excelu by se s těmito soubory nepracovalo dobře...</p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/timeseries/static/thumb_geografie.png" alt="thumb_geografie.png"></p>
+<p><img src="/2020/pydata-ostrava-jaro/pydata/timeseries/static/thumb_teplota.png" alt="thumb_teplota.png"></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Samotné načtení souboru je poměrně snadné. Použijeme na to třídu <code>ExcelFile</code>, protože kromě načítání poskytuje také property <code>sheet_names</code>.</p>
+<p>Často stačí (a je jednodušší) použít funkci <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_excel.html#pandas.read_excel"><code>read_excel</code></a>. V dokumentaci si všimni velkého množství argumentů, které umožňují správně načíst všelijak formátované soubory a hodnoty v nich.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RUZYNE_DATA_FILENAME</span> <span class="o">=</span> <span class="s2">"P1PRUZ01.xls"</span>
+<span class="n">RUZYNE_DATA_URL</span> <span class="o">=</span> <span class="s2">"https://data4pydata.s3-eu-west-1.amazonaws.com/pyladies/P1PRUZ01.xls"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># stáhne data pokud ještě nejsou k dispozici</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+<span class="k">def</span> <span class="nf">save_file_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">target_filename</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">target_filename</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Stahuji data - počkej chvíli ..."</span><span class="p">)</span>
+        <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">target_filename</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"Data jsou v souboru </span><span class="si">{target_filename}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">save_file_from_url</span><span class="p">(</span><span class="n">RUZYNE_DATA_URL</span><span class="p">,</span> <span class="n">RUZYNE_DATA_FILENAME</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Data jsou v souboru P1PRUZ01.xls
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># otevření Excel souboru</span>
+<span class="n">excel_data_ruzyne</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">RUZYNE_DATA_FILENAME</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zobrazíme si seznam listů v souboru.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">excel_data_ruzyne</span><span class="o">.</span><span class="n">sheet_names</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>['geografie stanice',
+ 'teplota průměrná',
+ 'teplota maximální',
+ 'teplota minimální',
+ 'rychlost větru',
+ 'tlak vzduchu',
+ 'vlhkost vzduchu',
+ 'úhrn srážek',
+ 'celková výška sněhu',
+ 'sluneční svit']</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zatím jsme žádná data nenačetli (nemáme žádný <code>DataFrame</code> s daty ze souboru). Data načte ve formě <code>DataFrame</code> až metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.ExcelFile.parse.html#pandas.ExcelFile.parse"><code>parse</code></a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># načti data z jednoho listu a zobraz prvních 5</span>
+<span class="n">teplota_prumerna</span> <span class="o">=</span> <span class="n">excel_data_ruzyne</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"teplota průměrná"</span><span class="p">)</span>
+<span class="n">teplota_prumerna</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Průměrná denní teplota vzduchu ve °C</th>
+      <th>Unnamed: 1</th>
+      <th>Unnamed: 2</th>
+      <th>Unnamed: 3</th>
+      <th>Unnamed: 4</th>
+      <th>Unnamed: 5</th>
+      <th>Unnamed: 6</th>
+      <th>Unnamed: 7</th>
+      <th>Unnamed: 8</th>
+      <th>Unnamed: 9</th>
+      <th>...</th>
+      <th>Unnamed: 23</th>
+      <th>Unnamed: 24</th>
+      <th>Unnamed: 25</th>
+      <th>Unnamed: 26</th>
+      <th>Unnamed: 27</th>
+      <th>Unnamed: 28</th>
+      <th>Unnamed: 29</th>
+      <th>Unnamed: 30</th>
+      <th>Unnamed: 31</th>
+      <th>Unnamed: 32</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>stanice: P1PRUZ01</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>rok</td>
+      <td>měsíc</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+      <td>5.0</td>
+      <td>6.0</td>
+      <td>7.0</td>
+      <td>8.0</td>
+      <td>...</td>
+      <td>22.0</td>
+      <td>23.0</td>
+      <td>24.0</td>
+      <td>25.0</td>
+      <td>26.0</td>
+      <td>27.0</td>
+      <td>28.0</td>
+      <td>29.0</td>
+      <td>30.0</td>
+      <td>31.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1961</td>
+      <td>01</td>
+      <td>-2.0</td>
+      <td>-1.9</td>
+      <td>0.1</td>
+      <td>-0.3</td>
+      <td>0.4</td>
+      <td>-0.3</td>
+      <td>0.8</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>-2.4</td>
+      <td>-3.4</td>
+      <td>-3.9</td>
+      <td>-7.4</td>
+      <td>-9.8</td>
+      <td>-10.3</td>
+      <td>-9.0</td>
+      <td>0.7</td>
+      <td>4.7</td>
+      <td>4.7</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1961</td>
+      <td>02</td>
+      <td>1.3</td>
+      <td>1.2</td>
+      <td>0.5</td>
+      <td>0.7</td>
+      <td>-3.3</td>
+      <td>0.6</td>
+      <td>3.1</td>
+      <td>2.3</td>
+      <td>...</td>
+      <td>2.8</td>
+      <td>3.0</td>
+      <td>3.4</td>
+      <td>0.9</td>
+      <td>2.6</td>
+      <td>4.4</td>
+      <td>5.8</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 33 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Výsledek není přesně to, co bychom chtěli. Náprava je ale naštěstí jednoduchá - potřebujeme jen přeskočit první tři řádky. K tomu stačí přidat <code>skiprows=3</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">teplota_prumerna</span> <span class="o">=</span> <span class="n">excel_data_ruzyne</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"teplota průměrná"</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">teplota_prumerna</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rok</th>
+      <th>měsíc</th>
+      <th>1.</th>
+      <th>2.</th>
+      <th>3.</th>
+      <th>4.</th>
+      <th>5.</th>
+      <th>6.</th>
+      <th>7.</th>
+      <th>8.</th>
+      <th>...</th>
+      <th>22.</th>
+      <th>23.</th>
+      <th>24.</th>
+      <th>25.</th>
+      <th>26.</th>
+      <th>27.</th>
+      <th>28.</th>
+      <th>29.</th>
+      <th>30.</th>
+      <th>31.</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1961</td>
+      <td>1</td>
+      <td>-2.0</td>
+      <td>-1.9</td>
+      <td>0.1</td>
+      <td>-0.3</td>
+      <td>0.4</td>
+      <td>-0.3</td>
+      <td>0.8</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>-2.4</td>
+      <td>-3.4</td>
+      <td>-3.9</td>
+      <td>-7.4</td>
+      <td>-9.8</td>
+      <td>-10.3</td>
+      <td>-9.0</td>
+      <td>0.7</td>
+      <td>4.7</td>
+      <td>4.7</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1961</td>
+      <td>2</td>
+      <td>1.3</td>
+      <td>1.2</td>
+      <td>0.5</td>
+      <td>0.7</td>
+      <td>-3.3</td>
+      <td>0.6</td>
+      <td>3.1</td>
+      <td>2.3</td>
+      <td>...</td>
+      <td>2.8</td>
+      <td>3.0</td>
+      <td>3.4</td>
+      <td>0.9</td>
+      <td>2.6</td>
+      <td>4.4</td>
+      <td>5.8</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1961</td>
+      <td>3</td>
+      <td>2.1</td>
+      <td>3.9</td>
+      <td>4.4</td>
+      <td>3.1</td>
+      <td>5.7</td>
+      <td>4.7</td>
+      <td>7.2</td>
+      <td>6.8</td>
+      <td>...</td>
+      <td>0.5</td>
+      <td>5.2</td>
+      <td>7.1</td>
+      <td>6.6</td>
+      <td>10.1</td>
+      <td>3.5</td>
+      <td>1.3</td>
+      <td>4.7</td>
+      <td>7.4</td>
+      <td>4.8</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1961</td>
+      <td>4</td>
+      <td>8.1</td>
+      <td>8.4</td>
+      <td>7.8</td>
+      <td>10.0</td>
+      <td>13.5</td>
+      <td>16.2</td>
+      <td>17.0</td>
+      <td>10.6</td>
+      <td>...</td>
+      <td>13.5</td>
+      <td>10.9</td>
+      <td>11.7</td>
+      <td>11.0</td>
+      <td>12.4</td>
+      <td>10.9</td>
+      <td>11.4</td>
+      <td>11.4</td>
+      <td>12.5</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1961</td>
+      <td>5</td>
+      <td>10.3</td>
+      <td>12.4</td>
+      <td>11.8</td>
+      <td>12.1</td>
+      <td>16.2</td>
+      <td>14.3</td>
+      <td>11.8</td>
+      <td>8.3</td>
+      <td>...</td>
+      <td>11.8</td>
+      <td>13.6</td>
+      <td>14.6</td>
+      <td>16.3</td>
+      <td>15.8</td>
+      <td>12.3</td>
+      <td>6.2</td>
+      <td>6.7</td>
+      <td>8.3</td>
+      <td>13.2</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 33 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tohle vypadá už trochu lépe - řádky a sloupce jsou tak, jak bylo zamýšleno. Problémem ale je, že dny jsou jako sloupce. Už jen proto, že ne každý měsíc má 31 dní. Proto se v posledních třech sloupcích vyskytují nedefinované hodnoty neboli <code>NaN</code> (Not a Number).</p>
+<p>Chybějící hodnoty se mohou vyskytnout i z jiných důvodů než "jen" kvůli nevhodnosti uspořádání dat. Např. měřící přístroj mohl mít závadu, data se poškodila apod. Pro chybějící hodnoty mohou být použity různé zkratky a symboly a právě proto existuje šikovný argument <code>na_values</code>.</p>
+<p>Z mnoha dobrých důvodů, které sami uvidíte v praxi, je naším cílem dostat data do podoby tzv. <a href="https://en.wikipedia.org/wiki/Tidy_data"><em>tidy data</em></a>, kdy <strong>řádky odpovídají jednotlivým pozorováním (měřením), názvy sloupců odpovídají veličinám.</strong></p>
+<p>Tady přijde vhod metoda <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.melt.html#pandas.DataFrame.melt"><code>melt</code></a>. Ta slouží právě pro případy, kdy hodnoty jsou zakódované jako názvy sloupců. Takto vysvětlíme <code>melt</code>, že sloupce <code>["rok", "měsíc"]</code> jsou už správně jako "veličiny", že v názvech zbývajících sloupců jsou hodnoty veličiny <code>den</code> a že hodnoty patří veličině <code>teplota průměrná</code>, což se použije pro pojmenování nového sloupce.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">teplota_prumerna_tidy</span> <span class="o">=</span> <span class="n">teplota_prumerna</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span>
+    <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s2">"rok"</span><span class="p">,</span> <span class="s2">"měsíc"</span><span class="p">],</span> <span class="n">var_name</span><span class="o">=</span><span class="s2">"den"</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s2">"teplota průměrná"</span>
+<span class="p">)</span>
+<span class="n">teplota_prumerna_tidy</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rok</th>
+      <th>měsíc</th>
+      <th>den</th>
+      <th>teplota průměrná</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1961</td>
+      <td>1</td>
+      <td>1.</td>
+      <td>-2.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1961</td>
+      <td>2</td>
+      <td>1.</td>
+      <td>1.3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1961</td>
+      <td>3</td>
+      <td>1.</td>
+      <td>2.1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1961</td>
+      <td>4</td>
+      <td>1.</td>
+      <td>8.1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1961</td>
+      <td>5</td>
+      <td>1.</td>
+      <td>10.3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V tomto případě bylo celkem jasné, že názvy sloupců jsou vlastně hodnoty nějaké veličiny. Někdy to může být více skryté, např. v případě kategorických proměnných. Třeba data z měření délky nohou můžeme dostat v tomto formátu:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">leg_length</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"left"</span><span class="p">:</span> <span class="p">[</span><span class="mi">81</span><span class="p">,</span> <span class="mf">81.4</span><span class="p">],</span> <span class="s2">"right"</span><span class="p">:</span> <span class="p">[</span><span class="mf">78.2</span><span class="p">,</span> <span class="mi">78</span><span class="p">]})</span>
+<span class="n">leg_length</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>left</th>
+      <th>right</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>81.0</td>
+      <td>78.2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>81.4</td>
+      <td>78.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Má <code>leg_length</code> podobu tidy data? Pokud ne, dokážeš tato data uspořádat správně?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Vytvoření "správného" (časového) indexu</h3>
+<p>Téměř nikdy nechceme pracovat s oddělenými sloupci "rok", "měsíc" apod. Práci s časovými údaji a časovými řadami mají na starosti specializované třídy, především <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp"><code>Timestamp</code></a> a <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DatetimeIndex.html"><code>DatetimeIndex</code></a>, pro rozdíly mezi časovými údaji pak <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timedelta.html#pandas.Timedelta">Timedelta</a>. Přehled najdeš v dokumentaci: <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html">Time series / date functionality</a>. A věřte - není to jednoduchý problém. Časová algebra pracuje zároveň s desítkovou, šedesátkovou, dvanáctkovou, dvacetčtyřkovou, sedmičkovou, měsíční, kvartální, roční, ... algebrou. Do toho vstupují časové zóny, přestupné roky, letní čas, různé kalendáře a kdo ví co ještě.</p>
+<p>Pojďme tedy vytvořit pro naši časovou řadu ten "správný" časový index. K tomu se často se hodí funkce <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.to_datetime.html#pandas.to_datetime"><code>to_datetime</code></a>. Tato funkce umí převádět numerické nebo textové údaje (jednotlivě i celé řady) do toho správného Pandas typu pro práci s časovými údaji.</p>
+<p>Pro nás se hodí, že umí pracovat i s daty, kde jsou v oddělených sloupcích roky, měsíce, dny atd. Ukážeme si to na na jednoduchém příkladu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># příklad řady datumů v oddělených sloupcích</span>
+<span class="n">split_dates_example</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">"year"</span><span class="p">:</span> <span class="p">[</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">2016</span><span class="p">],</span> <span class="s2">"month"</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">"day"</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]}</span>
+<span class="p">)</span>
+<span class="n">split_dates_example</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>year</th>
+      <th>month</th>
+      <th>day</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2015</td>
+      <td>2</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2016</td>
+      <td>3</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Funkce <code>to_datetime</code> nám z ukázkové tabulky vytvoří řadu (<code>Series</code>) typu <code>datetime64[ns]</code>. Tento (numpy) typ podporuje mnoho užitečných metod pro práci s časovými údaji, viz. <a href="https://docs.scipy.org/doc/numpy/reference/arrays.datetime.html">Datetimes and Timedeltas</a>. Údaj <code>[ns]</code> ukazuje na (výchozí) nanosekundovou přesnost.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">split_dates_example</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0   2015-02-04
+1   2016-03-05
+dtype: datetime64[ns]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Aby to fungovalo na naše česká data, je potřeba jen přejmenovat sloupce "rok", "měsíc", "den" na "year", "month", "day". K tomu máme metodu <code>rename</code>, tak to pojďme vyzkoušet rovnou dohromady. Výsledek uložíme do nové proměnné <code>datum</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">datum</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+        <span class="n">teplota_prumerna_tidy</span><span class="p">[[</span><span class="s2">"rok"</span><span class="p">,</span> <span class="s2">"měsíc"</span><span class="p">,</span> <span class="s2">"den"</span><span class="p">]]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"rok"</span><span class="p">:</span> <span class="s2">"year"</span><span class="p">,</span> <span class="s2">"měsíc"</span><span class="p">:</span> <span class="s2">"month"</span><span class="p">,</span> <span class="s2">"den"</span><span class="p">:</span> <span class="s2">"day"</span><span class="p">}</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">~/.virtualenvs/naucse/lib/python3.7/site-packages/pandas/core/tools/datetimes.py</span> in <span class="ansi-cyan-fg">_convert_listlike_datetimes</span><span class="ansi-blue-fg">(arg, format, name, tz, unit, errors, infer_datetime_format, dayfirst, yearfirst, exact)</span>
+<span class="ansi-green-intense-fg ansi-bold">    431</span>             <span class="ansi-green-fg">try</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 432</span><span class="ansi-red-fg">                 </span>values<span class="ansi-blue-fg">,</span> tz <span class="ansi-blue-fg">=</span> conversion<span class="ansi-blue-fg">.</span>datetime_to_datetime64<span class="ansi-blue-fg">(</span>arg<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    433</span>                 <span class="ansi-green-fg">return</span> DatetimeIndex<span class="ansi-blue-fg">.</span>_simple_new<span class="ansi-blue-fg">(</span>values<span class="ansi-blue-fg">,</span> name<span class="ansi-blue-fg">=</span>name<span class="ansi-blue-fg">,</span> tz<span class="ansi-blue-fg">=</span>tz<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">pandas/_libs/tslibs/conversion.pyx</span> in <span class="ansi-cyan-fg">pandas._libs.tslibs.conversion.datetime_to_datetime64</span><span class="ansi-blue-fg">()</span>
+
+<span class="ansi-red-fg">TypeError</span>: Unrecognized value type: &lt;class 'int'&gt;
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">ValueError</span>                                Traceback (most recent call last)
+<span class="ansi-green-fg">~/.virtualenvs/naucse/lib/python3.7/site-packages/pandas/core/tools/datetimes.py</span> in <span class="ansi-cyan-fg">_assemble_from_unit_mappings</span><span class="ansi-blue-fg">(arg, errors, tz)</span>
+<span class="ansi-green-intense-fg ansi-bold">    859</span>     <span class="ansi-green-fg">try</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 860</span><span class="ansi-red-fg">         </span>values <span class="ansi-blue-fg">=</span> to_datetime<span class="ansi-blue-fg">(</span>values<span class="ansi-blue-fg">,</span> format<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">"%Y%m%d"</span><span class="ansi-blue-fg">,</span> errors<span class="ansi-blue-fg">=</span>errors<span class="ansi-blue-fg">,</span> utc<span class="ansi-blue-fg">=</span>tz<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    861</span>     <span class="ansi-green-fg">except</span> <span class="ansi-blue-fg">(</span>TypeError<span class="ansi-blue-fg">,</span> ValueError<span class="ansi-blue-fg">)</span> <span class="ansi-green-fg">as</span> err<span class="ansi-blue-fg">:</span>
+
+<span class="ansi-green-fg">~/.virtualenvs/naucse/lib/python3.7/site-packages/pandas/core/tools/datetimes.py</span> in <span class="ansi-cyan-fg">to_datetime</span><span class="ansi-blue-fg">(arg, errors, dayfirst, yearfirst, utc, format, exact, unit, infer_datetime_format, origin, cache)</span>
+<span class="ansi-green-intense-fg ansi-bold">    727</span>         <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 728</span><span class="ansi-red-fg">             </span>values <span class="ansi-blue-fg">=</span> convert_listlike<span class="ansi-blue-fg">(</span>arg<span class="ansi-blue-fg">.</span>_values<span class="ansi-blue-fg">,</span> format<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    729</span>             result <span class="ansi-blue-fg">=</span> arg<span class="ansi-blue-fg">.</span>_constructor<span class="ansi-blue-fg">(</span>values<span class="ansi-blue-fg">,</span> index<span class="ansi-blue-fg">=</span>arg<span class="ansi-blue-fg">.</span>index<span class="ansi-blue-fg">,</span> name<span class="ansi-blue-fg">=</span>arg<span class="ansi-blue-fg">.</span>name<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">~/.virtualenvs/naucse/lib/python3.7/site-packages/pandas/core/tools/datetimes.py</span> in <span class="ansi-cyan-fg">_convert_listlike_datetimes</span><span class="ansi-blue-fg">(arg, format, name, tz, unit, errors, infer_datetime_format, dayfirst, yearfirst, exact)</span>
+<span class="ansi-green-intense-fg ansi-bold">    434</span>             <span class="ansi-green-fg">except</span> <span class="ansi-blue-fg">(</span>ValueError<span class="ansi-blue-fg">,</span> TypeError<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 435</span><span class="ansi-red-fg">                 </span><span class="ansi-green-fg">raise</span> e
+<span class="ansi-green-intense-fg ansi-bold">    436</span> 
+
+<span class="ansi-green-fg">~/.virtualenvs/naucse/lib/python3.7/site-packages/pandas/core/tools/datetimes.py</span> in <span class="ansi-cyan-fg">_convert_listlike_datetimes</span><span class="ansi-blue-fg">(arg, format, name, tz, unit, errors, infer_datetime_format, dayfirst, yearfirst, exact)</span>
+<span class="ansi-green-intense-fg ansi-bold">    399</span>                     result, timezones = array_strptime(
+<span class="ansi-green-fg">--&gt; 400</span><span class="ansi-red-fg">                         </span>arg<span class="ansi-blue-fg">,</span> format<span class="ansi-blue-fg">,</span> exact<span class="ansi-blue-fg">=</span>exact<span class="ansi-blue-fg">,</span> errors<span class="ansi-blue-fg">=</span>errors
+<span class="ansi-green-intense-fg ansi-bold">    401</span>                     )
+
+<span class="ansi-green-fg">pandas/_libs/tslibs/strptime.pyx</span> in <span class="ansi-cyan-fg">pandas._libs.tslibs.strptime.array_strptime</span><span class="ansi-blue-fg">()</span>
+
+<span class="ansi-green-fg">pandas/_libs/tslibs/strptime.pyx</span> in <span class="ansi-cyan-fg">pandas._libs.tslibs.strptime.array_strptime</span><span class="ansi-blue-fg">()</span>
+
+<span class="ansi-red-fg">ValueError</span>: day is out of range for month
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">ValueError</span>                                Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-16-0cfa83a4d204&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> datum = pd.to_datetime(
+<span class="ansi-green-intense-fg ansi-bold">      2</span>         teplota_prumerna_tidy[["rok", "měsíc", "den"]].rename(
+<span class="ansi-green-fg">----&gt; 3</span><span class="ansi-red-fg">             </span>columns<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">{</span><span class="ansi-blue-fg">"rok"</span><span class="ansi-blue-fg">:</span> <span class="ansi-blue-fg">"year"</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">"měsíc"</span><span class="ansi-blue-fg">:</span> <span class="ansi-blue-fg">"month"</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">"den"</span><span class="ansi-blue-fg">:</span> <span class="ansi-blue-fg">"day"</span><span class="ansi-blue-fg">}</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span>         ),
+<span class="ansi-green-intense-fg ansi-bold">      5</span>     )
+
+<span class="ansi-green-fg">~/.virtualenvs/naucse/lib/python3.7/site-packages/pandas/core/tools/datetimes.py</span> in <span class="ansi-cyan-fg">to_datetime</span><span class="ansi-blue-fg">(arg, errors, dayfirst, yearfirst, utc, format, exact, unit, infer_datetime_format, origin, cache)</span>
+<span class="ansi-green-intense-fg ansi-bold">    729</span>             result <span class="ansi-blue-fg">=</span> arg<span class="ansi-blue-fg">.</span>_constructor<span class="ansi-blue-fg">(</span>values<span class="ansi-blue-fg">,</span> index<span class="ansi-blue-fg">=</span>arg<span class="ansi-blue-fg">.</span>index<span class="ansi-blue-fg">,</span> name<span class="ansi-blue-fg">=</span>arg<span class="ansi-blue-fg">.</span>name<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    730</span>     <span class="ansi-green-fg">elif</span> isinstance<span class="ansi-blue-fg">(</span>arg<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">(</span>ABCDataFrame<span class="ansi-blue-fg">,</span> abc<span class="ansi-blue-fg">.</span>MutableMapping<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 731</span><span class="ansi-red-fg">         </span>result <span class="ansi-blue-fg">=</span> _assemble_from_unit_mappings<span class="ansi-blue-fg">(</span>arg<span class="ansi-blue-fg">,</span> errors<span class="ansi-blue-fg">,</span> tz<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    732</span>     <span class="ansi-green-fg">elif</span> isinstance<span class="ansi-blue-fg">(</span>arg<span class="ansi-blue-fg">,</span> ABCIndexClass<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    733</span>         cache_array <span class="ansi-blue-fg">=</span> _maybe_cache<span class="ansi-blue-fg">(</span>arg<span class="ansi-blue-fg">,</span> format<span class="ansi-blue-fg">,</span> cache<span class="ansi-blue-fg">,</span> convert_listlike<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">~/.virtualenvs/naucse/lib/python3.7/site-packages/pandas/core/tools/datetimes.py</span> in <span class="ansi-cyan-fg">_assemble_from_unit_mappings</span><span class="ansi-blue-fg">(arg, errors, tz)</span>
+<span class="ansi-green-intense-fg ansi-bold">    860</span>         values <span class="ansi-blue-fg">=</span> to_datetime<span class="ansi-blue-fg">(</span>values<span class="ansi-blue-fg">,</span> format<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">"%Y%m%d"</span><span class="ansi-blue-fg">,</span> errors<span class="ansi-blue-fg">=</span>errors<span class="ansi-blue-fg">,</span> utc<span class="ansi-blue-fg">=</span>tz<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    861</span>     <span class="ansi-green-fg">except</span> <span class="ansi-blue-fg">(</span>TypeError<span class="ansi-blue-fg">,</span> ValueError<span class="ansi-blue-fg">)</span> <span class="ansi-green-fg">as</span> err<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 862</span><span class="ansi-red-fg">         </span><span class="ansi-green-fg">raise</span> ValueError<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">f"cannot assemble the datetimes: {err}"</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    863</span> 
+<span class="ansi-green-intense-fg ansi-bold">    864</span>     <span class="ansi-green-fg">for</span> u <span class="ansi-green-fg">in</span> <span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">"h"</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">"m"</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">"s"</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">"ms"</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">"us"</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">"ns"</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">:</span>
+
+<span class="ansi-red-fg">ValueError</span>: cannot assemble the datetimes: day is out of range for month</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Skoro - skončilo to poměrně logickou chybou (výjimkou) <code>ValueError: cannot assemble the datetimes: day is out of range for month</code>. Nepovedlo se (naštěstí) přesvědčit <code>pandas</code>, že všechny měsíce mají 31 dní :)</p>
+<p>Pomocí <code>errors="coerce"</code> ale můžeme nařídit, aby se převedla všechna správná data a chybná data se označila jako <code>NaN</code>, resp. v tomto případě <code>NaT</code> - Not a Time.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">datum</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+    <span class="n">teplota_prumerna_tidy</span><span class="p">[[</span><span class="s2">"rok"</span><span class="p">,</span> <span class="s2">"měsíc"</span><span class="p">,</span> <span class="s2">"den"</span><span class="p">]]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"rok"</span><span class="p">:</span> <span class="s2">"year"</span><span class="p">,</span> <span class="s2">"měsíc"</span><span class="p">:</span> <span class="s2">"month"</span><span class="p">,</span> <span class="s2">"den"</span><span class="p">:</span> <span class="s2">"day"</span><span class="p">}</span>
+    <span class="p">),</span>
+    <span class="n">errors</span><span class="o">=</span><span class="s2">"coerce"</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">datum</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0       1961-01-01
+1       1961-02-01
+2       1961-03-01
+3       1961-04-01
+4       1961-05-01
+           ...    
+21571   2018-08-31
+21572          NaT
+21573   2018-10-31
+21574          NaT
+21575   2018-12-31
+Length: 21576, dtype: datetime64[ns]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro úplnou informaci o čase bychom měli ještě přidat údaj o časové zóně. To nám umožní správně časy porovnávat, nebo třeba zachytit letní a zimní čas, což je často dosti svízelný problém. V našem případě denních dat to sice není zcela zásadní, v některých případech se to ale projevit může.</p>
+<p>U časových údajů, které neobsahují časovou zónu, můžeme použít <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.tz_localize.html#pandas.Series.tz_localize"><code>.dt.tz_localize</code></a>. Pro konverzi časové zóny pak slouží <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.tz_convert.html#pandas.DataFrame.tz_convert"><code>.dt.tz_convert</code></a>.</p>
+<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.dt.html#pandas.Series.dt"><code>.dt</code></a> je tzv. <em>accessor object</em> pro práci s časovými vlastnostmi dat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">datum_localized</span> <span class="o">=</span> <span class="n">datum</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">tz_localize</span><span class="p">(</span><span class="s2">"Europe/Prague"</span><span class="p">)</span>
+<span class="n">datum_localized</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0       1961-01-01 00:00:00+01:00
+1       1961-02-01 00:00:00+01:00
+2       1961-03-01 00:00:00+01:00
+3       1961-04-01 00:00:00+01:00
+4       1961-05-01 00:00:00+01:00
+                   ...           
+21571   2018-08-31 00:00:00+02:00
+21572                         NaT
+21573   2018-10-31 00:00:00+01:00
+21574                         NaT
+21575   2018-12-31 00:00:00+01:00
+Length: 21576, dtype: datetime64[ns, Europe/Prague]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Určitě jste si všimli, že přibyl i údaj o čase, a samozřejmě o časové zóně a tím i o posunu od <a href="https://cs.wikipedia.org/wiki/Koordinovan%C3%BD_sv%C4%9Btov%C3%BD_%C4%8Das">UTC</a>. <code>+01:00</code> znamená +1 hodina od UTC. U datumů je totiž koncept časové zóny ne úplně přirozený a proto Pandas přidal i čas (<code>00:00:00</code>). Jelikož je ale často význam denních dat nějaký souhrn za konkrétních 24 hodin (a někdy za 23 hodin a někdy za 25 hodin díky střídaní letního a zimního času), je lepší pracovat i konkrétním časem (začátkem dne). A to je i náš případ.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Teď už jen pomocí <code>assign</code> přidáme sloupec "datum". Můžeš ověřit, že následná analýza bude fungovat i s lokalizovaným časem <code>datum_localized</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">teplota_prumerna_tidy</span> <span class="o">=</span> <span class="n">teplota_prumerna_tidy</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">datum</span><span class="o">=</span><span class="n">datum</span><span class="p">)</span>
+<span class="n">teplota_prumerna_tidy</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rok</th>
+      <th>měsíc</th>
+      <th>den</th>
+      <th>teplota průměrná</th>
+      <th>datum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1961</td>
+      <td>1</td>
+      <td>1.</td>
+      <td>-2.0</td>
+      <td>1961-01-01</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1961</td>
+      <td>2</td>
+      <td>1.</td>
+      <td>1.3</td>
+      <td>1961-02-01</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1961</td>
+      <td>3</td>
+      <td>1.</td>
+      <td>2.1</td>
+      <td>1961-03-01</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1961</td>
+      <td>4</td>
+      <td>1.</td>
+      <td>8.1</td>
+      <td>1961-04-01</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1961</td>
+      <td>5</td>
+      <td>1.</td>
+      <td>10.3</td>
+      <td>1961-05-01</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>21571</th>
+      <td>2018</td>
+      <td>8</td>
+      <td>31.</td>
+      <td>15.7</td>
+      <td>2018-08-31</td>
+    </tr>
+    <tr>
+      <th>21572</th>
+      <td>2018</td>
+      <td>9</td>
+      <td>31.</td>
+      <td>NaN</td>
+      <td>NaT</td>
+    </tr>
+    <tr>
+      <th>21573</th>
+      <td>2018</td>
+      <td>10</td>
+      <td>31.</td>
+      <td>7.8</td>
+      <td>2018-10-31</td>
+    </tr>
+    <tr>
+      <th>21574</th>
+      <td>2018</td>
+      <td>11</td>
+      <td>31.</td>
+      <td>NaN</td>
+      <td>NaT</td>
+    </tr>
+    <tr>
+      <th>21575</th>
+      <td>2018</td>
+      <td>12</td>
+      <td>31.</td>
+      <td>3.7</td>
+      <td>2018-12-31</td>
+    </tr>
+  </tbody>
+</table>
+<p>21576 rows × 5 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> <code>to_datetime</code> dokáže pracovat i s řetězci, což se často hodí. Převeďte <code>ladies_times</code> na vhodný typ pro časové údaje, přiřaďte naši časovou zónu a poté pomocí <code>tz_convert</code> převeďte na UTC. Možná budete muset pandám vysvětlit, že v Česku jsou v datumech nejdříve dny, na rozdíl třeba od Ameriky. Naštěstí na to stačí jeden jednoduchý argument pro <code>to_datetime</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ladies_times</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"23. 1. 2020 18:00"</span><span class="p">,</span> <span class="s2">"30. 1. 2020 18:00"</span><span class="p">,</span> <span class="s2">"6. 2. 2020 18:00"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># pandas_times = pd.to_datetime(___).___.___</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Čištění dat</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Chybějící data jsou v našem případě důsledkem nehezkého uspořádání zdrojového Excelu, takže s jejich opravou si nebudeme lámat hlavu a rovnou přistoupíme k jejich smazání.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">teplota_prumerna_tidy_clean</span> <span class="o">=</span> <span class="n">teplota_prumerna_tidy</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Zařaďte <code>dropna</code> do sestrojení datumů tak, abychom nemuseli použít <code>errors="coerce"</code> pro <code>to_datetime</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># odkomentujte a přidejte dropna</span>
+<span class="c1"># pd.to_datetime(</span>
+<span class="c1">#     teplota_prumerna_tidy[["rok", "měsíc", "den"]].rename(</span>
+<span class="c1">#         columns={"rok": "year", "měsíc": "month", "den": "day"}</span>
+<span class="c1">#     ),</span>
+<span class="c1"># )</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol</strong>: Vytvořte <code>teplota_prumerna_tidy_clean_indexed</code> se sloupcem <code>datum</code> jako indexem a bez sloupců <code>rok</code>, <code>měsíc</code> a <code>den</code>. Můžete použít metodu <code>drop</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">teplota_prumerna_tidy_clean_indexed</span> <span class="o">=</span> <span class="n">___</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Vše dohromady</h3>
+<p>Parsování celého souboru, tj. jeho načtení a převedení do požadované formy Pandas <code>DataFrame</code>, máme teď hotové. Pro další generace (a naše použití) na to definujeme funkci. V rámci této funkce také vyhodíme sloupce rok, měsíc a den, sloupec datum použijeme jako index a data podle datumu setřídíme. Přidali jsme ještě jméno listu jako vstupní parameter, což se bude hodit hned vzápětí pro načítání všech listů do jednoho <code>DataFrame</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">extract_and_clean_chmi_excel_sheet</span><span class="p">(</span><span class="n">excel_data</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">):</span>
+    <span class="sd">"""Parse ČHMÚ historical meteo excel data"""</span>
+    <span class="c1"># načti list z excel souboru a převeď na tidy data formát</span>
+    <span class="n">data_tidy</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">excel_data</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sheet_name</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s2">"rok"</span><span class="p">,</span> <span class="s2">"měsíc"</span><span class="p">],</span> <span class="n">var_name</span><span class="o">=</span><span class="s2">"den"</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="c1"># vytvoř časovou řadu datumů</span>
+    <span class="n">datum</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+        <span class="n">data_tidy</span><span class="p">[[</span><span class="s2">"rok"</span><span class="p">,</span> <span class="s2">"měsíc"</span><span class="p">,</span> <span class="s2">"den"</span><span class="p">]]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"rok"</span><span class="p">:</span> <span class="s2">"year"</span><span class="p">,</span> <span class="s2">"měsíc"</span><span class="p">:</span> <span class="s2">"month"</span><span class="p">,</span> <span class="s2">"den"</span><span class="p">:</span> <span class="s2">"day"</span><span class="p">}</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="c1"># přidej sloupec datum jako index a odstraň den, měsíc, rok a vrať setříděný výsledek</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">data_tidy</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">datum</span><span class="o">=</span><span class="n">datum</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"datum"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"rok"</span><span class="p">,</span> <span class="s2">"měsíc"</span><span class="p">,</span> <span class="s2">"den"</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+    <span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A teď už si můžeme načíst všechna data z Ruzyně tak, jak se nám budou hodit pro analýzu.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># otevři Excel soubor</span>
+<span class="n">excel_data_ruzyne</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="s2">"P1PRUZ01.xls"</span><span class="p">)</span>
+<span class="c1"># načti všechny listy kromě prvního</span>
+<span class="n">extracted_sheets</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">extract_and_clean_chmi_excel_sheet</span><span class="p">(</span><span class="n">excel_data_ruzyne</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sheet_name</span> <span class="ow">in</span> <span class="n">excel_data_ruzyne</span><span class="o">.</span><span class="n">sheet_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="p">)</span>
+<span class="c1"># spoj všechny listy do jednoho DataFrame</span>
+<span class="n">ruzyne_tidy</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">extracted_sheets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>U použití <code>concat</code> je důležité, že všecha data mají stejný index. <code>axis=1</code> říká, že se mají skládat sloupce vedle sebe. Výchozí <code>axis=0</code> by spojovala data pod sebe a nedopadlo by to úplně dobře (můžeš vyzkoušet :)). Detailněji jsme to řešili v lekci o nulových hodnotách a odlehlých pozorováních.</p>
+<p>Prohlédneme si výslednou tabulku <code>ruzyne_tidy</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ruzyne_tidy</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[28]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>teplota průměrná</th>
+      <th>teplota maximální</th>
+      <th>teplota minimální</th>
+      <th>rychlost větru</th>
+      <th>tlak vzduchu</th>
+      <th>vlhkost vzduchu</th>
+      <th>úhrn srážek</th>
+      <th>celková výška sněhu</th>
+      <th>sluneční svit</th>
+    </tr>
+    <tr>
+      <th>datum</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1961-01-01</th>
+      <td>-2.0</td>
+      <td>1.0</td>
+      <td>-3.4</td>
+      <td>1.7</td>
+      <td>969.9</td>
+      <td>87.0</td>
+      <td>0.0</td>
+      <td>6.0</td>
+      <td>0.4</td>
+    </tr>
+    <tr>
+      <th>1961-01-02</th>
+      <td>-1.9</td>
+      <td>-1.2</td>
+      <td>-2.4</td>
+      <td>3.0</td>
+      <td>965.2</td>
+      <td>89.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1961-01-03</th>
+      <td>0.1</td>
+      <td>1.0</td>
+      <td>-2.6</td>
+      <td>2.7</td>
+      <td>952.3</td>
+      <td>80.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1961-01-04</th>
+      <td>-0.3</td>
+      <td>2.1</td>
+      <td>-2.0</td>
+      <td>3.3</td>
+      <td>953.6</td>
+      <td>87.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1961-01-05</th>
+      <td>0.4</td>
+      <td>2.8</td>
+      <td>-4.3</td>
+      <td>6.3</td>
+      <td>963.9</td>
+      <td>81.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>2.2</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2018-12-27</th>
+      <td>4.0</td>
+      <td>6.5</td>
+      <td>2.7</td>
+      <td>5.4</td>
+      <td>981.4</td>
+      <td>88.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>2018-12-28</th>
+      <td>3.9</td>
+      <td>6.2</td>
+      <td>0.3</td>
+      <td>3.9</td>
+      <td>981.5</td>
+      <td>82.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.9</td>
+    </tr>
+    <tr>
+      <th>2018-12-29</th>
+      <td>2.2</td>
+      <td>4.8</td>
+      <td>1.3</td>
+      <td>5.8</td>
+      <td>983.8</td>
+      <td>87.0</td>
+      <td>0.8</td>
+      <td>0.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>2018-12-30</th>
+      <td>4.1</td>
+      <td>5.8</td>
+      <td>1.0</td>
+      <td>7.9</td>
+      <td>980.0</td>
+      <td>82.0</td>
+      <td>0.5</td>
+      <td>0.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>2018-12-31</th>
+      <td>3.7</td>
+      <td>5.4</td>
+      <td>1.2</td>
+      <td>3.2</td>
+      <td>986.2</td>
+      <td>85.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>21184 rows × 9 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Indexování a výběr intervalů</h2>
+<p>Data, která jsme načetli a vyčistili, tvoří vlastně několik časových řad v jednotlivých sloupcích tabulky <code>ruzyne_tidy</code>. Granularita (nebo frekvence či časové rozlišení) je jeden den.</p>
+<p>Pomocí <code>to_period()</code> bychom mohli datový typ indexu převést i na <code>period[D]</code>. To může zrychlit některé operace, pro naše použití to ale není nezbytné.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ruzyne_tidy</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_period</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[29]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>PeriodIndex(['1961-01-01', '1961-01-02', '1961-01-03', '1961-01-04',
+             '1961-01-05', '1961-01-06', '1961-01-07', '1961-01-08',
+             '1961-01-09', '1961-01-10',
+             ...
+             '2018-12-22', '2018-12-23', '2018-12-24', '2018-12-25',
+             '2018-12-26', '2018-12-27', '2018-12-28', '2018-12-29',
+             '2018-12-30', '2018-12-31'],
+            dtype='period[D]', name='datum', length=21184, freq='D')</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Už jsme si ukazovali indexování (výběr intervalu) pomocí <code>.loc</code>. U časových řad to funguje samozřejmě také. Pozor na to, že <code>.loc</code> vrací data <em>včetně</em> horní meze, <em>na rozdíl</em> od indexování <code>list</code>ů nebo numpy polí.</p>
+<p>Konkrétní období můžeme vybrat třeba takto:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ruzyne_tidy</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span> <span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[30]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>teplota průměrná</th>
+      <th>teplota maximální</th>
+      <th>teplota minimální</th>
+      <th>rychlost větru</th>
+      <th>tlak vzduchu</th>
+      <th>vlhkost vzduchu</th>
+      <th>úhrn srážek</th>
+      <th>celková výška sněhu</th>
+      <th>sluneční svit</th>
+    </tr>
+    <tr>
+      <th>datum</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2017-12-24</th>
+      <td>6.1</td>
+      <td>7.0</td>
+      <td>5.5</td>
+      <td>7.7</td>
+      <td>979.5</td>
+      <td>82.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.3</td>
+    </tr>
+    <tr>
+      <th>2017-12-25</th>
+      <td>1.7</td>
+      <td>5.7</td>
+      <td>-0.6</td>
+      <td>4.0</td>
+      <td>975.4</td>
+      <td>88.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2017-12-26</th>
+      <td>1.2</td>
+      <td>4.5</td>
+      <td>-4.5</td>
+      <td>3.7</td>
+      <td>964.1</td>
+      <td>85.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.6</td>
+    </tr>
+    <tr>
+      <th>2017-12-27</th>
+      <td>-0.7</td>
+      <td>3.4</td>
+      <td>-3.5</td>
+      <td>2.7</td>
+      <td>949.1</td>
+      <td>91.0</td>
+      <td>2.2</td>
+      <td>0.0</td>
+      <td>0.8</td>
+    </tr>
+    <tr>
+      <th>2017-12-28</th>
+      <td>1.0</td>
+      <td>1.5</td>
+      <td>-0.8</td>
+      <td>5.7</td>
+      <td>951.8</td>
+      <td>87.0</td>
+      <td>7.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2017-12-29</th>
+      <td>-1.7</td>
+      <td>1.2</td>
+      <td>-3.8</td>
+      <td>6.3</td>
+      <td>965.0</td>
+      <td>79.0</td>
+      <td>0.1</td>
+      <td>1.0</td>
+      <td>1.9</td>
+    </tr>
+    <tr>
+      <th>2017-12-30</th>
+      <td>2.5</td>
+      <td>4.8</td>
+      <td>-3.8</td>
+      <td>5.7</td>
+      <td>962.7</td>
+      <td>86.0</td>
+      <td>1.8</td>
+      <td>1.0</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>2017-12-31</th>
+      <td>9.1</td>
+      <td>11.5</td>
+      <td>4.5</td>
+      <td>6.7</td>
+      <td>964.6</td>
+      <td>81.0</td>
+      <td>0.5</td>
+      <td>0.0</td>
+      <td>1.2</td>
+    </tr>
+    <tr>
+      <th>2018-01-01</th>
+      <td>4.1</td>
+      <td>9.1</td>
+      <td>0.4</td>
+      <td>4.7</td>
+      <td>962.9</td>
+      <td>77.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Atributy časových proměnných</h3>
+<p>Časové proměnné typu <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DatetimeIndex.html"><code>DatetimeIndex</code></a> poskytují velice užitečnou sadu atributů vracející</p>
+<ul>
+<li>části časového údaje, např. <code>.year</code> vrátí pouze rok, <code>.month</code> měsíc apod., </li>
+<li>relativní informace , např. <code>.weekday</code> nebo <code>.weekofyear</code></li>
+<li>kalendářní vlastnosti jako <code>is_quarter_start</code> nebo <code>is_year_end</code>, které by bylo poměrně náročné zjišťovat numericky.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ruzyne_tidy</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[31]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Int64Index([1961, 1961, 1961, 1961, 1961, 1961, 1961, 1961, 1961, 1961,
+            ...
+            2018, 2018, 2018, 2018, 2018, 2018, 2018, 2018, 2018, 2018],
+           dtype='int64', name='datum', length=21184)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Můžeme tak vybrat jeden celý rok např. takto:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ruzyne_tidy</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ruzyne_tidy</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="mi">2018</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[32]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>teplota průměrná</th>
+      <th>teplota maximální</th>
+      <th>teplota minimální</th>
+      <th>rychlost větru</th>
+      <th>tlak vzduchu</th>
+      <th>vlhkost vzduchu</th>
+      <th>úhrn srážek</th>
+      <th>celková výška sněhu</th>
+      <th>sluneční svit</th>
+    </tr>
+    <tr>
+      <th>datum</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2018-01-01</th>
+      <td>4.1</td>
+      <td>9.1</td>
+      <td>0.4</td>
+      <td>4.7</td>
+      <td>962.9</td>
+      <td>77.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.4</td>
+    </tr>
+    <tr>
+      <th>2018-01-02</th>
+      <td>3.9</td>
+      <td>5.7</td>
+      <td>0.5</td>
+      <td>6.9</td>
+      <td>965.8</td>
+      <td>81.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>2018-01-03</th>
+      <td>4.6</td>
+      <td>7.6</td>
+      <td>0.5</td>
+      <td>9.3</td>
+      <td>952.9</td>
+      <td>81.0</td>
+      <td>7.9</td>
+      <td>0.0</td>
+      <td>0.8</td>
+    </tr>
+    <tr>
+      <th>2018-01-04</th>
+      <td>4.5</td>
+      <td>5.7</td>
+      <td>3.9</td>
+      <td>5.9</td>
+      <td>955.9</td>
+      <td>82.0</td>
+      <td>0.9</td>
+      <td>0.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>2018-01-05</th>
+      <td>7.3</td>
+      <td>9.0</td>
+      <td>4.1</td>
+      <td>5.6</td>
+      <td>958.5</td>
+      <td>80.0</td>
+      <td>0.3</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2018-12-27</th>
+      <td>4.0</td>
+      <td>6.5</td>
+      <td>2.7</td>
+      <td>5.4</td>
+      <td>981.4</td>
+      <td>88.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>2018-12-28</th>
+      <td>3.9</td>
+      <td>6.2</td>
+      <td>0.3</td>
+      <td>3.9</td>
+      <td>981.5</td>
+      <td>82.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.9</td>
+    </tr>
+    <tr>
+      <th>2018-12-29</th>
+      <td>2.2</td>
+      <td>4.8</td>
+      <td>1.3</td>
+      <td>5.8</td>
+      <td>983.8</td>
+      <td>87.0</td>
+      <td>0.8</td>
+      <td>0.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>2018-12-30</th>
+      <td>4.1</td>
+      <td>5.8</td>
+      <td>1.0</td>
+      <td>7.9</td>
+      <td>980.0</td>
+      <td>82.0</td>
+      <td>0.5</td>
+      <td>0.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>2018-12-31</th>
+      <td>3.7</td>
+      <td>5.4</td>
+      <td>1.2</td>
+      <td>3.2</td>
+      <td>986.2</td>
+      <td>85.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>365 rows × 9 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nebo můžeme získat data pro všechny dny před rokem 1989, které jsou začátky kvartálů a zároveň to jsou pondělky.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ruzyne_tidy</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+    <span class="n">ruzyne_tidy</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">is_quarter_start</span>
+    <span class="o">&amp;</span> <span class="p">(</span><span class="n">ruzyne_tidy</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">weekday</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="o">&amp;</span> <span class="p">(</span><span class="n">ruzyne_tidy</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">&lt;</span> <span class="mi">1989</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[33]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>teplota průměrná</th>
+      <th>teplota maximální</th>
+      <th>teplota minimální</th>
+      <th>rychlost větru</th>
+      <th>tlak vzduchu</th>
+      <th>vlhkost vzduchu</th>
+      <th>úhrn srážek</th>
+      <th>celková výška sněhu</th>
+      <th>sluneční svit</th>
+    </tr>
+    <tr>
+      <th>datum</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1962-01-01</th>
+      <td>0.2</td>
+      <td>2.4</td>
+      <td>-4.0</td>
+      <td>4.3</td>
+      <td>966.5</td>
+      <td>75.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1962-10-01</th>
+      <td>15.6</td>
+      <td>22.4</td>
+      <td>8.3</td>
+      <td>1.7</td>
+      <td>976.6</td>
+      <td>73.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>8.8</td>
+    </tr>
+    <tr>
+      <th>1963-04-01</th>
+      <td>1.0</td>
+      <td>2.9</td>
+      <td>0.6</td>
+      <td>2.7</td>
+      <td>971.9</td>
+      <td>96.0</td>
+      <td>1.3</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1963-07-01</th>
+      <td>17.3</td>
+      <td>21.2</td>
+      <td>15.4</td>
+      <td>2.0</td>
+      <td>972.1</td>
+      <td>79.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1968-01-01</th>
+      <td>-4.1</td>
+      <td>0.4</td>
+      <td>-6.5</td>
+      <td>4.0</td>
+      <td>958.0</td>
+      <td>82.0</td>
+      <td>0.4</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1968-04-01</th>
+      <td>8.5</td>
+      <td>17.6</td>
+      <td>0.2</td>
+      <td>4.3</td>
+      <td>973.0</td>
+      <td>55.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>11.8</td>
+    </tr>
+    <tr>
+      <th>1968-07-01</th>
+      <td>20.9</td>
+      <td>25.9</td>
+      <td>11.3</td>
+      <td>3.7</td>
+      <td>980.8</td>
+      <td>62.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>14.3</td>
+    </tr>
+    <tr>
+      <th>1973-01-01</th>
+      <td>-2.1</td>
+      <td>3.8</td>
+      <td>-9.2</td>
+      <td>3.3</td>
+      <td>983.5</td>
+      <td>57.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>6.3</td>
+    </tr>
+    <tr>
+      <th>1973-10-01</th>
+      <td>9.7</td>
+      <td>12.8</td>
+      <td>6.2</td>
+      <td>1.3</td>
+      <td>977.7</td>
+      <td>74.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1974-04-01</th>
+      <td>10.3</td>
+      <td>15.5</td>
+      <td>5.4</td>
+      <td>2.7</td>
+      <td>970.2</td>
+      <td>64.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.9</td>
+    </tr>
+    <tr>
+      <th>1974-07-01</th>
+      <td>15.7</td>
+      <td>19.2</td>
+      <td>13.4</td>
+      <td>9.0</td>
+      <td>967.4</td>
+      <td>83.0</td>
+      <td>1.2</td>
+      <td>0.0</td>
+      <td>0.8</td>
+    </tr>
+    <tr>
+      <th>1979-01-01</th>
+      <td>-16.8</td>
+      <td>-11.8</td>
+      <td>-19.5</td>
+      <td>3.3</td>
+      <td>960.4</td>
+      <td>76.0</td>
+      <td>0.2</td>
+      <td>9.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1979-10-01</th>
+      <td>7.8</td>
+      <td>14.2</td>
+      <td>0.9</td>
+      <td>4.3</td>
+      <td>978.8</td>
+      <td>77.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>8.3</td>
+    </tr>
+    <tr>
+      <th>1984-10-01</th>
+      <td>11.3</td>
+      <td>16.0</td>
+      <td>9.9</td>
+      <td>2.0</td>
+      <td>964.4</td>
+      <td>94.0</td>
+      <td>0.1</td>
+      <td>0.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>1985-04-01</th>
+      <td>8.8</td>
+      <td>13.5</td>
+      <td>4.7</td>
+      <td>6.0</td>
+      <td>973.4</td>
+      <td>87.0</td>
+      <td>0.9</td>
+      <td>0.0</td>
+      <td>2.7</td>
+    </tr>
+    <tr>
+      <th>1985-07-01</th>
+      <td>14.8</td>
+      <td>21.9</td>
+      <td>12.0</td>
+      <td>3.0</td>
+      <td>970.7</td>
+      <td>83.0</td>
+      <td>7.6</td>
+      <td>0.0</td>
+      <td>3.7</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Jaká byla průměrná teplota první (a jedinou) neděli v roce 2010, která byla zároveň začátkem měsíce? Pokud máte řešení a čas, zkuste vymyslet aternativní způsob(y).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># ruzyne_tidy.loc[</span>
+<span class="c1">#     ___</span>
+<span class="c1">#     &amp; (___)</span>
+<span class="c1">#     &amp; (___),</span>
+<span class="c1">#     "teplota průměrná",</span>
+<span class="c1">#]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Práce s časovou řadou</h2>
+<p>Pojďme trochu zkombinovat statistiku a práci s časovou řadou. Zajímalo by vás, jak moc byl který rok teplý či studený? Pomocí <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html#pandas.DataFrame.resample"><code>resample</code></a> můžeme změnit rozlišení dat na jiné období, např. jeden rok.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ruzyne_yearly</span> <span class="o">=</span> <span class="n">ruzyne_tidy</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"1Y"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Co že jsme to vlastně vytvořili?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ruzyne_yearly</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[36]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;pandas.core.resample.DatetimeIndexResampler object at 0x7fa1f5c47910&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dostali jsme instanci třídy <code>DatetimeIndexResampler</code>. To zní logicky, ale kde jsou data? Ta zatím nejsou, protože jsme ještě <code>pandas</code> neřekli, jak vlastně mají ze všech těch denních údajů v rámci jednoho roku vytvořit ta roční data. Neboli, jak data <em>agregovat</em>.</p>
+<p>Ze statistiky víme, že jedním z ukazatelů může být střední hodnota. Zkusíme vypočítat průměrnou "teplotu průměrnou" (není to překlep) a rovnou vykreslit.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ruzyne_yearly</span><span class="p">[</span><span class="s2">"teplota průměrná"</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Trochu podobnou operací jako resampling je rolování. To spočívá v plynulém posouvání "okna", které slouží pro (vážený) výběr dat a následné aplikaci agregační funkce (jako u <code>resample</code>). Pojďme pomocí <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.rolling.html#pandas.DataFrame.rolling"><code>rolling</code></a> vytvořit podobný pohled na roční průměrnou teplotu. Rozdíl oproti <code>resample</code> je v tom, že dostaneme pro každý den jednu hodnotu, nikoli jen jednu hodnotu pro celý rok. A také už nemůžeme použít interval <code>"1Y"</code>, protože jeden (kalendářní) rok není dobře definovaný interval díky přestupným rokům.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ruzyne_tidy</span><span class="p">[</span><span class="s2">"teplota průměrná"</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="s2">"365.25D"</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">365</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro podrobnější přehled práce s časovými řadami se podívejta např. na <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html">https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html</a> nebo třeba na hezký článek s podobnými daty <a href="https://www.dataquest.io/blog/tutorial-time-series-analysis-with-pandas/">https://www.dataquest.io/blog/tutorial-time-series-analysis-with-pandas/</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Navrhněte vhodnou agregaci pro maximální teplotu (ne průměr) a vykreslete.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># ruzyne_yearly[___].___().___();</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Úkol:</strong> Převzorkujte údaje za rok 2018 po měsících. Jaký měsíc měl nejvíc srážek, tj. za jaký byl součet sloupce "úhrn srážek" nejvyšší?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [40]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># doplňte nebo vyřešte po svém :)</span>
+<span class="c1"># ruzyne_tidy.loc[___ == 2018, "úhrn srážek"].___(</span>
+<span class="c1">#     "1M"</span>
+<span class="c1"># ).___().___(ascending=False).index[___].___</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-ostrava-jaro/sessions/timeseries/">↑ <span class="d-none d-sm-inline">Lekce: Analýza časových řad</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-ostrava-jaro/sessions/timeseries/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2020-pydata-ostrava-jaro/lessons/pydata/timeseries/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Jakub Urban, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

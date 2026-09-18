@@ -1,0 +1,411 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Poznámky – Správa uživatelů
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/users/">Správa uživatelů</a>
+
+> <a href="/2020/linux-admin/notes/users/">Poznámky – Správa uživatelů</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Poznámky – správa uživatelů</h1>
+<p>Úvod</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>locate battery.png
+<span class="gp">$ </span>eog /usr/share/icons/gnome/256x256/devices/battery.png
+</pre></div><p>Hlasitost – systémové zvuky</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>locate bark.ogg
+<span class="gp">$ </span>ogg123 /usr/share/sounds/gnome/default/alerts/bark.ogg
+<span class="go">bash: ogg123: Příkaz nebyl nenalezen...</span>
+<span class="go">Nainstalovat balíček „vorbis-tools“, který poskytuje příkaz „ogg123“? [N/y] y</span>
+</pre></div><h2>Uživatelé</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps aux
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l /usr/bin
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>groups
+<span class="gp">$ </span>whoami
+<span class="gp">$ </span>id
+</pre></div><p>Skupina <code>wheel</code> je pro administrátory.</p>
+<h2>Kam nemůžeš</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="s2">"..."</span> &gt; /usr/bin/mujprogram
+<span class="gp">$ </span>console: /usr/bin/mujprogram: Operace zamítnuta
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>ll /usr/lib64/python*/site-packages
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>ll /usr/share/icons/gnome/256x256/devices/
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>nano /usr/bin/mujprogram
+</pre></div><p>uložení → <code>Error writing /usr/bin/mujprogram: Permission denied</code></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> &gt; /usr/share/sounds/gnome/default/alerts/bark.ogg
+</pre></div><p>Pod svým uživatelským účtem nemůžeš zasahovat do sdílených částí systému.</p>
+<p>Existují výjimky – instalace <code>ogg123</code> – byla pro všechny uživatele!</p>
+<h2>Práva souborů</h2>
+<p><code>ls -l</code> a <code>chmod</code></p>
+<p>Čtení – <code>r</code></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ~/Dokumenty/data-shell/
+<span class="gp">$ </span>cat pizza.cfg
+<span class="go">alpha: 0.5</span>
+<span class="go">beta: 0.2</span>
+<span class="go">gamma: off</span>
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-rw-r--r--. 1 petr petr    32 Aug  8  2019 pizza.cfg</span>
+<span class="gp">$ </span>chmod -r pizza.cfg
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">--w-------. 1 petr petr 32 Aug  8  2019 pizza.cfg</span>
+<span class="go">cat: pizza.cfg: Operace zamítnuta</span>
+<span class="gp">$ </span>chmod +r pizza.cfg
+<span class="gp">$ </span>ls -l pizza.cfg 
+<span class="go">-rw-r--r--. 1 petr petr 32  8. srp  2019 pizza.cfg</span>
+</pre></div><p>Zápis – <code>w</code></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod -w pizza.cfg
+<span class="gp">$ </span><span class="nb">echo</span> &gt; pizza.cfg 
+<span class="go">bash: pizza.cfg: Operace zamítnuta</span>
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-r--r--r--. 1 petr petr 32  8. srp  2019 pizza.cfg</span>
+<span class="gp">$ </span>chmod +w pizza.cfg
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-rw-rw-r--. 1 petr petr 32  8. srp  2019 pizza.cfg</span>
+</pre></div><p>Spuštění – <code>x</code></p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>./pizza.cfg 
+<span class="go">bash: ./pizza.cfg: Operace zamítnuta</span>
+<span class="gp">$ </span>chmod +x pizza.cfg 
+<span class="gp">$ </span>./pizza.cfg
+<span class="go">./pizza.cfg: řádek 1: alpha:: příkaz nenalezen</span>
+<span class="go">./pizza.cfg: řádek 2: beta:: příkaz nenalezen</span>
+<span class="go">./pizza.cfg: řádek 3: gamma:: příkaz nenalezen</span>
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-r-xr-xr-x. 1 petr petr 32  8. srp  2019 pizza.cfg</span>
+<span class="gp">$ </span>chmod -x pizza.cfg 
+<span class="gp">$ </span>ls -l pizza.cfg
+<span class="go">-r--r--r--. 1 petr petr 32  8. srp  2019 pizza.cfg</span>
+</pre></div><p><code>x</code> u adresářů</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l .
+<span class="gp">$ </span>ls -l -d .
+<span class="go">drwxr-xr-x. 8 petr petr 4096  6. říj 23.40 .</span>
+</pre></div><p>To <code>-d</code> zobrazí info pro samotný adresář.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod -x .
+<span class="gp">$ </span>ls .
+<span class="go">ls: nelze přistoupit k '.': Operace zamítnuta</span>
+<span class="gp">$ </span>cat pizza.cfg
+<span class="go">cat: pizza.cfg: Operace zamítnuta</span>
+<span class="gp">$ </span>cat ~/Dokumenty/data-shell/pizza.cfg
+<span class="go">cat: /home/petr/Dokumenty/data-shell/pizza.cfg: Operace zamítnuta</span>
+<span class="gp">$ </span>chmod +x .
+<span class="go">chmod: nelze přistoupit k '.': Operace zamítnuta</span>
+</pre></div><p>oops...</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ..
+<span class="gp">$ </span>chmod +x data-shell
+<span class="gp">$ </span><span class="nb">cd</span> data-shell/
+<span class="gp">$ </span>ls
+<span class="go">creatures  diplomka_archiv  north-pacific-gyre  plan.txt   writing</span>
+<span class="go">data       molecules        pizza.cfg           solar.pdf</span>
+<span class="gp">$ </span>ls -ld . pizza.cfg
+<span class="go">drwxr-xr-x. 8 petr petr 4096  6. říj 23.40 .</span>
+<span class="go">-r--r--r--. 1 petr petr   32  8. srp  2019 pizza.cfg</span>
+</pre></div><p>'rwx' se opakuje 3× – pro <em>uživatele</em>, <em>skupinu</em> a <em>všechny</em>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod u+x data-shell
+<span class="gp">$ </span>chmod g+x data-shell
+<span class="gp">$ </span>chmod o+x data-shell
+<span class="gp">$ </span>chmod a-x data-shell
+</pre></div><p>Do domovského adresáře ti nikdo jiný nevleze – <code>rwx</code> je tu jen pro tebe:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -ld ~
+<span class="go">drwx------. 25 petr petr 4096  2. lis 14.31 /home/petr</span>
+</pre></div><h2>Změna uživatele</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>id
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>su moje_uzivatelske_jmeno
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>su root
+</pre></div><p>... neznáš heslo.</p>
+<h2>Nový uživatel</h2>
+<p>Gnome GUI na uživatele.
+Jsem administrátor.
+Vytvořit nového uživatele <code>test1</code> – chce to heslo, i když jsem "administrátor".
+Co je to administrátor?</p>
+<p>Zavřít nastavení, otevřít znovu – chce to heslo znovu.
+Administrátor – systém mi přidělí oprávnění, když zadám <em>své</em> heslo.
+„Být“ administrátor chci co nejmíň.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su test1
+<span class="gp">$ </span><span class="nb">pwd</span>
+<span class="gp">$ </span>ls
+<span class="gp">$ </span>ps
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>ls -al
+</pre></div><p>Přepnout uživatele v GUI (NE odhlásit!) → vytvoří se adresáře.
+Nastavení uživatelů – chce to heslo administrátora...</p>
+<p>Přepnout zpátky – neodhlašovat.</p>
+<p>Zpátky ke konzoli.
+K přepnutí uživatele potřebuješ heslo:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su moje_uzivatelske_jmeno
+<span class="gp">$ </span><span class="nb">exit</span>
+</pre></div><p>Superuživatel nemá heslo!</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su root
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">exit</span>
+</pre></div><h2>Kde ti uživatelé jsou</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>less /etc/passwd
+<span class="gp">$ </span>less /etc/shadow
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l /etc/passwd /etc/shadow
+</pre></div><h2>Přihlášení</h2>
+<p>Změnit uživatele může <em>jen</em> administrátor.
+Jak tedy funguje <code>su</code>?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>su test1
+<span class="gp">$ </span>ps -a -u
+<span class="go">USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span>
+<span class="go">petr        1504  0.0  0.1 371584  2812 tty2     Ssl+ 13:37   0:00 /usr/libe...</span>
+<span class="go">petr        1507  1.1  3.3 1723936 67372 tty2    Sl+  13:37   1:03 /usr/libe...</span>
+<span class="go">petr        1570  0.0  0.1 467944  3192 tty2     Sl+  13:37   0:00 /usr/libe...</span>
+<span class="go">petr       15640  0.0  0.3 227968  6084 pts/0    Ss   14:31   0:00 bash</span>
+<span class="go">root       18130  0.0  0.4 246780  8444 pts/0    S    15:10   0:00 su test1</span>
+<span class="go">test1      18140  0.1  0.2 227404  5396 pts/0    S    15:10   0:00 -bash</span>
+<span class="go">test1      18171  0.0  0.1 228432  3980 pts/0    R+   15:10   0:00 ps -a -u</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l /usr/bin/su
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">exit</span>
+</pre></div><h2>Sudo</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l /usr/bin/sudo
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>whoami
+<span class="gp">$ </span>sudo whoami
+<span class="gp">$ </span>sudo ps -a -u
+<span class="gp">$ </span>sudo ll
+<span class="gp">$ </span>sudo ls -l
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo less /etc/shadow
+</pre></div><p>Jsme ve virtuálním počítači, pojďme ho trochu rozbít:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>nano /usr/bin/zkouska
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo nano /usr/bin/zkouska
+</pre></div><p>Když jsem (přes <code>sudo</code>) superuživatelem, <code>su</code> se mě neptá na heslo:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo su test1
+</pre></div><p>Ale <code>sudo</code> funguje to jen pro <em>administrátory</em> (<code>wheel</code>):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo su petr
+</pre></div><p>Můžu se ovšem přihlásit jako superuživatel!</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo su root
+<span class="gp"># </span><span class="nb">pwd</span>
+<span class="gp"># </span><span class="nb">exit</span>
+</pre></div><p>Všimni si promptu <code>#</code> – občas ho najdeš v tutoriálech;
+znamená, že musíš <em>být root</em>.
+Dnes se častěji používá <code>sudo</code> před příkazem – být administrátorem
+je nebezpečné.
+Navíc <code>sudo</code> se dá nastavovat – pro každého uživatele říct, jaké příkazy
+je oprávněn přes <code>sudo</code> spouštět.</p>
+<p>Potřabuješ-li pustit příkaz jako <code>root</code>,
+všimni si, že se <code>sudo</code> neptá na heslo pokaždé.
+Pro konkrétní terminál si ho vždy nějakou dobu pamatuje, a to i mezi spuštěními.
+(Není v tom žádná velká magie – viz <code>sudo ls /var/run/sudo/ts</code>.)</p>
+<p>Potřebuješ-li opravdu pustit celý shell jako <code>root</code>
+(např. zachraňuješ počítač),
+lepší než <code>sudo su root</code> je <code>sudo -i</code> (interaktivní):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo -i
+<span class="gp"># </span><span class="nb">pwd</span>
+<span class="gp"># </span><span class="nb">exit</span>
+</pre></div><h2>Změna hesla</h2>
+<p>Další věc, kterou může dělat jen administrátor, je změna hesla.
+Existuje ale <em>setuid</em> <code>passwd</code>, který heslo mění!</p>
+<p>Zkus si změnit heslo na něco jednoduchého:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>passwd
+<span class="go">Změna hesla uživatele petr.</span>
+<span class="go">Current password: </span>
+<span class="go">Nové heslo: </span>
+<span class="go">ŠPATNÉ HESLO: Heslo je kratší než 8 znaků</span>
+<span class="go">passwd: Chyba manipulace s autentizačním tokenem</span>
+</pre></div><p>Nejde to!
+Stejně tak nesmíš měnit heslo jiného uživatele:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>passwd test1
+<span class="go">passwd: Pouze root smí zadat uživatelské jméno.</span>
+</pre></div><p>Ale <code>root</code> může vše!</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo passwd test1
+<span class="go">Změna hesla uživatele test1.</span>
+<span class="go">Nové heslo: </span>
+<span class="go">ŠPATNÉ HESLO: Heslo je kratší než 8 znaků</span>
+<span class="go">Opakujte nové heslo: </span>
+<span class="go">passwd: všechny autentizační tokeny byly úspěšně změněny.</span>
+</pre></div><p>(Hláška <code>ŠPATNÉ HESLO</code> se sice objeví, ale je jen informační – heslo může
+být klidně jednopísmenné.)</p>
+<h2>Přidání uživatele v konzoli</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>useradd test2
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo useradd test2
+<span class="gp">$ </span>sudo ls -l /home/test2
+<span class="gp">$ </span>sudo ls -al /home/test2
+<span class="gp">$ </span>sudo ls -al ~test2
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>cat /etc/passwd
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>userdel test2
+<span class="gp">$ </span>sudo ls -al ~test2
+<span class="gp">$ </span>sudo ls -al /home/test2
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo useradd test2
+</pre></div><h2>Skupiny</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>groups
+<span class="gp">$ </span>groups test1
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo groupadd editors
+<span class="gp">$ </span>sudo usermod test1 -aG editors
+<span class="gp">$ </span>groups test1
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo usermod petr -aG editors
+<span class="gp">$ </span>groups petr
+<span class="gp">$ </span>groups
+</pre></div><p>Uživatel a skupiny pro daný proces jsou vždy nastavené <em>při přihlášení</em>.
+Aby se změny členství ve skupinách projevily, musíš se znovu přihlásit:</p>
+<div class="highlight"><pre><code>$ groups
+$ su petr
+$ groups
+$ ps a</code></pre></div><h2>Poznámka 1 – Další oprávnění</h2>
+<h2>Poznámka 2 – <code>-x</code> jen zabraňuje vstupu</h2>
+<p>Do domovského adresáře ti nikdo jiný nevleze:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -ld ~
+<span class="go">drwx------. 25 petr petr 4096  2. lis 14.31 /home/petr</span>
+</pre></div><p>Ale když už tam (jako jiný uživatel) jsem, můžu se procházet:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ~/Dokumenty/data-shell/
+<span class="gp">$ </span>su test1
+<span class="go">Heslo: </span>
+<span class="gp">$ </span>ls
+<span class="go">creatures  diplomka_archiv  north-pacific-gyre  plan.txt   writing</span>
+<span class="go">data       molecules        pizza.cfg           solar.pdf</span>
+</pre></div><p>(<code>su</code> bez <code>-</code> nedělá „login“)</p>
+<h2>Poznámka 3 – proč ne <code>useradd</code></h2>
+<p>Je <code>groupadd</code>, <code>groupmod</code> a <code>groupdel</code>; <code>usedmod</code> a <code>userdel</code>, proč <code>adduser</code>
+a ne <code>useradd</code>?</p>
+<p>Příkaz <code>useradd</code> historicky sice vytvořil uživatele, ale nenastavil mu skupinu
+a shell, nevytvořil domovský adresář a tak dále.</p>
+<h2>Poznámka poslední</h2>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>sudo poweroff
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/users/">↑ <span class="d-none d-sm-inline">Lekce: Správa uživatelů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/sessions/users/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/notes/users/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsal Petr Viktorin, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

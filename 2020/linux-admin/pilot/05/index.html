@@ -1,0 +1,510 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Zápis – Odkazy &amp; hierarchie
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/review/">Hierarchie</a>
+
+> <a href="/2020/linux-admin/pilot/05/">Zápis – Odkazy &amp; hierarchie</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>5. Linuxová administrace - souborové systémy</h1>
+<h2>Jak pustit terminál s příkazem, aniž bychom sáhli na myš?</h2>
+<p>Nejprve zjisti název svého terminálu. 
+Může to být například <code>gnome-terminal</code>, <code>konsole</code> nebo <code>xterm</code>. 
+Na tvém systému může jich být víc než jeden, vyber si kterýkoli z dostupných.</p>
+<p>Když se podíváš do nápovědy vybraného terminálu, dozvíš se další krok:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>gnome-terminal --help
+<span class="go">Usage:</span>
+<span class="go">  gnome-terminal [OPTION…] [-- COMMAND …]</span>
+</pre></div><p>Zkus třeba příkaz:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>gnome-terminal -- top
+</pre></div><p>Zavřením okna s terminálem ukončíš daný proces.</p>
+<div class="admonition note"><p>Spouštět programy můžeš také z systémového Shellu, který je dostupný pod zkratkou <kbd>ALT</kbd>+<kbd>F2</kbd>. 
+Když do něj napíšeš jméno terminálu a zmáčkneš <kbd>Enter</kbd>, zafunguje to taky.</p>
+</div><p>Je to asi nejrychlejší cesta ke spouštění programů na počítači s Linuxem.</p>
+<h2>Odkazy</h2>
+<h3>Tvrdý odkaz</h3>
+<p>Vytvoříme si nový soubor <code>basnicka.txt</code></p>
+<div class="highlight"><pre><code>Když byl Pepa ještě mladý,
+nevědel si s ničím rady.
+Chlastal pivo, jedl ovar,
+byl duševní polotovar.</code></pre></div><p>Podívej se do obsahu stávající složky pomocí příkazu <code>ls -li</code>. 
+Všimni si, že oproti příkazu <code>ls -l</code>, je zde nový první sloupec. 
+Jak myslíš, co znamenají tyto hodnoty?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l -i
+<span class="go">540792 drwxr-xr-x. 2 guest guest 4096 Mar 13  2016 basnicka.txt</span>
+<span class="go">557103 drwxrwxr-x. 4 guest guest 4096 Feb  1  2019 dev</span>
+<span class="go">557071 drwxr-xr-x. 2 guest guest 4096 Mar 13  2016 Documents</span>
+</pre></div><p>V prvním sloupci je identifikační číslo souboru.
+Každý soubor v systému má své unikátní číslo. 
+Adresář funguje podobně jako slovník, kde jsou klíče názvy souborů a hodnoty - jejich identifikace.
+Když se podíváš na adresáře, zjistíš, že i adresáře mají svá identifikační čísla.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l -i ..
+<span class="go">total 1884220</span>
+<span class="go">2885155 drwxr-xr-x 3 guest guest       4096 zář 19  2019 01</span>
+<span class="go">3408256 drwxr-xr-x 2 guest guest       4096 říj  5  2019 02</span>
+<span class="go">2885201 drwxr-xr-x 2 guest guest       4096 říj 24  2019 03</span>
+<span class="go">2884113 drwxr-xr-x 1 guest guest       4096 říj 24  2019 04</span>
+<span class="go">2884334 drwxr-xr-x 1 guest guest       4096 říj 19  2019 05</span>
+</pre></div><p>Co by se stalo, kdybys měla v adresáři dvě jména, která by označovala stejný soubor?</p>
+<p>Takto vytvoříš druhý název, který bude označovat stejný soubor.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ln basnicka.txt basen.txt
+<span class="gp">$ </span>ls -l -i
+<span class="go">534799 -rw-rw-r--. 2 guest guest    0 Oct 24 18:23 basen.txt</span>
+<span class="go">534799 -rw-rw-r--. 2 guest guest    0 Oct 24 18:23 basnicka.txt</span>
+</pre></div><p>Oba soubory jsou zcela stejné. Když změníš jeden, změní se i druhý.
+Tomu se říká <strong>hardlink</strong> (<em>tvrdý odkaz</em>). A k čemu je to užitečné? Popravdě, moc není. 
+Tvrdé odkazy se používají často na to, aby se identifikovaly stejné soubory na disku a jeden mohl nahradit kopií toho druhého.</p>
+<p>Souborový systém dokonce kontroluje, kolikrát je daný soubor v tomto do systému, a to pomocí čísla, na které se můžeš podívat ve třetím sloupci výpisu.</p>
+<div class="highlight"><pre><span></span><span class="go">534799 -rw-rw-r--. 2 guest guest    0 Oct 24 18:23 basen.txt</span>
+<span class="go">534799 -rw-rw-r--. 2 guest guest    0 Oct 24 18:23 basnicka.txt</span>
+<span class="go">                   ^</span>
+<span class="go">                   |</span>
+<span class="go">                   +-- toto počítadlo existence souboru na disku</span>
+<span class="go">                       (= kolikrát se na disku nachází)</span>
+</pre></div><p>Když smažeš jeden ze souborů, číslo se sníží o 1. 
+Když smažeš druhý, číslo spadne na nulu a systém bude vědět, že daný soubor není už potřeba, pak ho jednou smaže.</p>
+<p><em>Hardlink</em> není úplně šikovný, ale občas se s ním setkáš. Je dobře vědět, že existuje.</p>
+<h3>Symbolický odkaz</h3>
+<p>Užitečnější a frekventovanější je <strong>symlink</strong> (symbolický odkaz).
+Můžeš si představit, že tento druh odkazu říká: "obsah tohoto souboru zde není, podívej se jinam".</p>
+<p>Symbolický odkaz vytvoříš pomocí přepínače <code>-s</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ln -s basnicka.txt BASEN
+<span class="gp">$ </span>ls -li
+<span class="go">534947 lrwxrwxrwx. 1 guest guest    9 Oct 24 18:26 BASEN -&gt; basnicka.txt</span>
+<span class="go">534799 -rw-rw-r--. 2 guest guest    0 Oct 24 18:23 basen.txt</span>
+</pre></div><p>Podívej se na výstup v terminálu. <code>BASEN -&gt; basnicka.txt</code> je zobrazení symbolického odkazu. 
+Čísla obou souborů jsou jiná.
+Soubor <code>BASEN</code> nemá v sobě obsah naší básničky. 
+Představ si, že je v něm uložená jen informace, že obsah se nachází v souboru <code>basnicka.txt</code>. 
+S odkazem <code>BASEN</code> můžeš pracovat jako s jinými soubory. 
+Když ho otevřeš pro čtení, systém sáhne po místě, na které odkazuje, tedy <code>basnicka.txt</code>, a vypíše jeho obsah.</p>
+<p>Dá se udělat i odkaz někam, kde nic není.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ln -s nic.txt NIC
+<span class="gp">$ </span>ls -li
+<span class="go">2885258 lrwxrwxrwx 1 guest guest          7 říj 24  2019 NIC -&gt; nic.txt</span>
+</pre></div><p>Když ho budeš chtít otevřit, systém ale řekne, že takový soubor neexistuje.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat NIC
+<span class="go">cat: NIC: No such file or directory</span>
+</pre></div><p>Symbolické odkazy jsou velmi užitečné.</p>
+<ul>
+<li><p>Nemusíš nic kopírovat
+Když potřebuješ mít soubor na určitém místě na disku, ale nechceš ho kopírovat - uděláš symbolický odkaz.
+Typicky se symbolické odkazy použijí, pokud máš soubory na externím disku a chceš s nimi pracovat na svém počítači. 
+Vytvoří se <em>symlinky</em> na určitá místa externího disku, počítač je zpracuje a po odpojení disku <em>symlinky</em> zůstanou k dispozici do budoucna.</p>
+</li>
+<li><p><em>Symlink</em> může odkazovat i na adresář
+Můžeš si například nastavit <em>symlink</em> na svůj domovský adresář:</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="go">ln -s ~ tady-je-doma</span>
+<span class="go">ls -li</span>
+<span class="go">2884841 lrwxrwxrwx 1 guest guest         10 zář 28 12:46 tady-je-doma -&gt; /home/guest</span>
+</pre></div><p>Na to je dobré dávat pozor, až budeš psát skript, který něco čte a ukládá v adresářové struktuře - vždy si ověř, že odkazuješ na správné místo na disku.</p>
+<div class="admonition note"><p>Když se podíváš na soubory v grafickém programu, většinou poznáš podle ikonky s šipečkou, že se jedná o symbolický odkaz.</p>
+</div><h1>Uspořádání souborů na disku</h1>
+<p>Nyní se podíváme na strukturu souborového systému.</p>
+<p>V grafickém programu zobrazujícím soubory (např. <code>nautilus</code>) otevři adresář <code>/</code>. 
+Je dobré mít v tuto chvíli zaškrtnutou možnost <em>Allow files to expand</em>, která rozbalí obsah adresáře po kliknutí.</p>
+<p>V Linuxu jsou všechny soubory uložené v jednom adresářovém stromu, pod adresářem <code>/</code>, což je hlavní rozdíl oproti Windows, kde jsou disky <code>C:</code>, <code>D:</code>, atd.</p>
+<p>V adresáři <code>/</code> najdeš všechny soubory, které existují na disku. 
+Pro strukturu tohoto adresáře existuje standard, pojmenovaný <a href="https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard">Filesystem Hiearchy Standard</a>, který popisuje, kam ukládat jaké soubory. 
+Základní struktura systémových souborů bývá na všech unixových systémech stejná.
+To jak vypadá, vychází z historických důvodů. 
+Je totiž univerzální, navržená nejen pro osobní počítače, ale různé jiné stroje (sdílené počítače, pracovní stanice apod.).
+Je potřeba ty soubory rozdělovat podle toho, jak se k nim v těchto případech přistupuje: které jsou pro čtení, a které pro zápis, které jsou přístupné pro všechny uživatele, a které pro každého uživatele zvlášť. 
+Jsou rozděleny soubory, které se instalují do systému jakožto jeho součást (např. software, který se instaluje přes nějaký systémový instalátor), a programy, které si uživatel nainstaluje ručně.</p>
+<p>Půjdeme na to podle abecedy.</p>
+<h2>/bin</h2>
+<p>Je to jeden z adresářů, který patří do <code>PATH</code>.
+Obsahuje všechny příkazy, které můžeš spustit.</p>
+<p>Možná to budeš mít jako <em>symlink</em> na <code>/usr/bin</code>. Je to tak opět z historických důvodů. 
+Historicky totiž <code>/bin</code> byl na každém počítači zvlášť, zatímco <code>/usr</code> sis mohla zpřístupnit z jiného počítače nebo disku. 
+Z toho vyplývá rozdíl mezi příkazy, které potřebuje samotný systém, potažmo systémový administrátor, a příkazy, které jsou záležitostí samotného uživatele. 
+<code>bash</code>, <code>cat</code>, <code>ls</code> - všechno to patří k <code>/bin</code>. 
+Do <code>/usr/bin</code> patří třeba grafické editory nebo okénkové prostředí (to, co není nezbytně potřeba, aby tvůj systém dokázal fungovat).
+V <code>/bin</code> jsou věci, které potřebuje systémový administrátor, aby mohl počítač opravit.</p>
+<p>Na spoustě moderních systémů (ač ne všech) jsou již tyto adresáře propojeny.</p>
+<h2>/boot</h2>
+<p>Obsahuje soubory na inicializaci systému. 
+Zde jsou soubory, které konfigurují to, co se stane po zapnutí počítače. 
+Načte se linuxové jádro, připraví se zbytek disku, aby se dal používat a jádro se pustí. 
+Když máš nainstalovaných víc operačních systému, tady je např. konfigurace menu pro jejich výběr.</p>
+<h2>/cd-rom</h2>
+<p>V dřívější době se zde objevil obsah vloženého CD. 
+Dneska se to ale už dává jinam. 
+Ne na každém systému najdeš tento adresář.</p>
+<h2>/dev</h2>
+<p><code>dev</code> je od <em>device</em> - zařízení. 
+Tady jsou soubory, které ovládají, či řídí zařízení přípojená k tvému počítači.</p>
+<p>Je zde například <code>/dev/input/mouse0</code>, který dostává informace o tom, jak se hýbe tvoje myš. A takové soubory jsou k dispozici v <code>/dev</code>. 
+Soubory, které komunikují dost přímo s věcmi připojenými k počítači. Mezi nimi jsou:</p>
+<ul>
+<li>procesory</li>
+<li>sdílené paměti,</li>
+<li>disky,</li>
+<li>zvukové karty,</li>
+<li>spousta tty s číslem (tty0, tty1 atd.) - čili terminály,</li>
+<li>video karty,</li>
+</ul>
+<p>Je potřeba být superuživatelem, aby bylo možné něco zapsat do těch souborů, protože se jedná o nastavení celého počítače. 
+A když tam zapíšeš něco špatného,  můžeš si tím zničit systém.</p>
+<h2>/etc</h2>
+<p>Obsahuje konfigurační soubory. 
+Když jsi systémový administrátor a chceš, aby všichni uživatelé měli například červené pozadí, nastavíš to tady - pro celý systém.
+Většinou zde najdeš spoustu adresářů rozmanitých programů, kde je uloženo jejich nastavení.</p>
+<p>Je konvencí, že konfigurace se ukládá jako textový soubor.
+Může je měnit jen superuživatel, ale pro změnu stačí obyčejný textový editor.</p>
+<p>Informace o všech uživatelích systému jsou v <code>/etc/passwd</code>. 
+Je jich zde asi víc, než jsi čekala}. 
+Typicky pro každou aplikaci existuje jeden uživatel, kterému se povolí dělat jen tu či onu činnost.
+Jako první je uživatel <code>root</code>. Někde mezi údaji (nejspíš blíž konce) bude i tvoje uživatelské jméno.</p>
+<div class="highlight"><pre><span></span><span class="go">                   + -- domovský adresář</span>
+<span class="go">  jmého uživatele  |      shell uživatele</span>
+<span class="go">  |                |         |</span>
+<span class="go">root:x:0:0:root:/root:/bin/bash</span>
+<span class="go">       | |   |</span>
+<span class="go">       | |   + -- jméno hlavní skupiny</span>
+<span class="go">       +-+ -- číslo uživatele a skupiny, do které patří       </span>
+
+<span class="go">bin:x:1:1:bin:/bin:/sbin/nologin</span>
+<span class="go">daemon:x:2:2:daemon:/sbin:/sbin/nologin</span>
+</pre></div><p>Proč <code>root</code> nemá svou složku v <code>/home</code>? 
+Jde o to, že běžné uživatelské účty bývají sdílené (jsou k dispozici z více počítačů - třeba přes síť). 
+Představ si třeba počítačovou učebnu. 
+Připojíš se k libovolnému počítači svými údaji a dostáváš k dispozici své soubory. 
+Může se stát, že se něco pokazí a domovská složka není k dispozici. 
+Zavolá se administrátor, přihlásí se jako <em>root</em> a vyřeší problém. 
+Domovská složka <em>rootu</em> musí být proto vždy k dispozici, ne jen tehdy, když je k dispozici <code>/home</code>.</p>
+<p>Když se přihlásíš do systému, tak se pustí tzv. <em>login shell</em>. 
+U tebe to bude Bash, ale můžeš si zde nastavit i jiný Shell.
+Když je jako <em>login shell</em> uvedeno u uživatele <code>nologin</code>, takový uživatel se nemůže přihlásit do systému.</p>
+<p>A kde jsou hesla v tak slibně pojmenovaném souboru? 
+Ano, jsou to ty <code>x</code> ve druhém sloupečku údajů uživatele.
+Když Unix vznikal v akademickém prostředí, vůbec nevadilo, že se heslo ukládalo přímo do toho souboru. 
+Jenže jak se systém vyvíjel, nebylo to udržitelné řešení. 
+Hesla se proto přenesla jinam. 
+Z důvodu provázanosti v systému se ale soubor nemohl přejmenovat a je to dodnes <code>/etc/passwd</code>, i když hesla neobsahuje.</p>
+<p>Reálná hesla jsou uložená v souboru <code>shadow</code>. 
+Ten soubor nemůže nikdo přečíst (když se podíváš na oprávnění - opravdu nikdo), jsou zahashovaná.</p>
+<p>Přidání/smazání uživatele se udělá právě v <code>/passwd</code>. 
+Když se ve správném formátu vyplní nový řádek, vytvoří se tím systémový uživatel. Může to udělat jen superuživatel. 
+Na správu uživatelů existují ale lepší nástroje, takže to nedělej tímto způsobem :). 
+Protože je tento soubor tak důležitý, vytváří se k němu i záloha s pomlčkou v názvu. 
+Jen pro případ, že by se něco rozbilo v originálu.
+Když se za jméno souboru dá vlnovka <code>~</code>, tak je to záloha. 
+Ne na všech souborových systémech se ale vlnovka dá použít, a proto základní soubory používají pro označení zálohy pomlčku.</p>
+<h3>hosts</h3>
+<p>Obsahuje seznam jmen počítačů na síti.
+Mělo by to říkat, že 127.0.0.1 je <code>localhost</code>, což znamená, že pokud se přípojíš k adrese <code>localhost</code>, připojení bude navázáno s adresou 127.0.0.1.</p>
+<h3>group</h3>
+<p>Obsahuje seznam všech uživatelských skupin na počítači.
+Přidáním řádku vytváříš skupiny.</p>
+<div class="highlight"><pre><span></span><span class="go">jméno  číslo skupiny</span>
+<span class="go">|      |</span>
+<span class="go">root:x:0  </span>
+<span class="go">wheel:x:10:user</span>
+<span class="go">            |</span>
+<span class="go">            členové této skupiny</span>
+</pre></div><p>Nejrychlejší způsob, jak se přidat do skupiny, je přidání svého jména na konci řádku. Lepší je ale použít příkaz <code>usermod</code>.</p>
+<h3>fstab</h3>
+<p>Zde je nastavení, které disky na tomto počítači chceš vidět jako připojené souborové systémy.
+Dá se zde nastavit třeba, z jakého vzdáleného počítače se má vzít složka <code>/home</code>.</p>
+<h2>/home</h2>
+<p>Místo pro uživatelské domovské složky.
+Je to složka, do níž si můžeš dát, co jen chceš :). 
+Některé programy hledají konkrétně pojmenované soubory v domovské složce, třeba <code>.bashrc</code>. 
+Když si zobrazíš skryté soubory, zjistíš, že souborů začínajících tečkou je v ní poměrně dost.
+Protože je pak orientace ve složce složitější, moderní programy se spíš snaží ukládat svou konfiguraci do adresáře <code>.config</code>. 
+V něm si své potřebné informace ukládají do složek podle svého jména.</p>
+<p>Kromě toho by tam měl být adresář <code>.local</code>, kde jsou složky</p>
+<ul>
+<li><code>bin</code></li>
+<li><code>etc</code></li>
+<li><code>lib</code></li>
+<li><code>share</code></li>
+<li><code>var</code></li>
+</ul>
+<p>Jména těch adresářů mají stejný význam, jako přímo v kořenovém adresáři <code>/</code>, s tím rozdílem, že tady jsou dostupné jen pro toho konkrétního uživatele.
+Když si nainstaluješ program jen pro sebe, nainstaluje se úplně stejně, jako by se instaloval do systému (čili do stejných složek), ale pouze pro tebe.
+Příklad může být třeba příkaz: <code>pip --user install nejakypythonnnastroj</code>, který se dá do složky <code>.local/bin</code>.</p>
+<h2>/lib a /lib64</h2>
+<p>Obě ty složky jsou odkazy na <code>/usr/lib</code> a <code>/usr/lib64</code>, a je to ze stejného důvodu, jako <code>/bin</code> a <code>/usr/bin</code>. 
+Původně v adresářích <code>/lib</code> a <code>/lib64</code> byly obsaženy systémové knihovny pro administrátora, dnes jsou již sjednoceny s adresářem pro knihovny doinstalované uživatelem.</p>
+<h3>Věc o architekturách - x86_64, ARM atd.</h3>
+<p>Můžeš mít procesor Intel, který je 64bitový, což znamená, že instrukce pro něj mají nějakou velikost. 
+Existuje sada instrukcí pro tu konkrétní architekturu. 
+Vedle toho existují procesory ARM, které vevnitř fungují jinak, a taky potřebují jiné programy.
+Program napsaný v Pythonu bude fungovat na obou, protože pythonní interpreter umí ho přečíst na jakémkoli systému.
+Ty nejrychlejší programy na tvém systému jsou ale zkompilované do binárních souborů. 
+Ty soubory poznáš velice jednoduše, když je otevřeš pomoci například <code>less</code>, uvidíš nečitelný binární výstup.
+Zkus:</p>
+<div class="highlight"><pre><span></span><span class="go">less /bin/cat</span>
+</pre></div><p>To jsou už přímo instrukce pro ten procesor. Pro každý procesor bude ten <em>stejný</em> soubor vypadat jinak.
+Když máme vícero počítačů na síti, rozlišuje se mezi soubory, které jsou jen pro tento konkrétní procesor, a soubory, jež jsou použitelné kdekoli.
+V <code>/lib</code> jsou knihovny zkompilované jen pro daný procesor, a v <code>/usr/share</code> se pak nachází ty obecné, které se můžou použit na jakémkoli počítači.</p>
+<p>V <code>/lib64</code> uvidíš spoustu souborů, které mají příponu <code>.so</code>.
+Najdeš zde například <code>libc.so</code>, což je standardní knihovna jazyka C.
+Tu knihovnu používá téměř každý program, který máš na počítači, umožňuje totiž komunikaci s operačním systémem.</p>
+<p>Spousta těch souborů má na konci <code>.1</code> či jiné číslo. 
+Jedno z toho je typicky symbolický odkaz na ten druhý soubor.
+Když nějaký program používá konkrétní verzi knihovny, řekne si: <em>já chci libc.so6</em>, a dostane přímo tuto verzi. 
+Když je programu nezáleží na verzi knihovny, vyžádá si základní název a dostane zpravidla nejnovější verzi, která je nainstalovaná na daném počítači.
+Jsou to tedy různá jména stejného souboru, podle toho, jestli chci nejnovější nebo konkrétní verzi. 
+A díky tomu, že je to odkaz, neduplikují se na disku žádné informace.</p>
+<p>Možná si teď říkáš, k čemu vlastně ty odkazy jsou, proč je jeden soubor v tolika verzích?</p>
+<p>Podívejme se na Python.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -l /usr/bin/python
+<span class="go">/usr/bin/python --&gt; python2</span>
+<span class="gp">$ </span>ls -l /usr/bin/python2
+<span class="go">/usr/bin/python2 --&gt; python2.7</span>
+<span class="gp">$ </span>ls -l /usr/bin/python3
+<span class="go">/usr/bin/python3 --&gt; python3.7</span>
+</pre></div><p>Když napíšeš příkaz <code>python</code>, v této distribuci Linuxu dostaneš k dispozici verzi 2.7. Když napíšeš <code>python3</code> - verzi 3.7. 
+Pokud píšeš program v Pythonu a víš, že se může provést kteroukoli verzi Pythonu, nemusíš specifikovat verzi, stačí použit obecný odkaz. 
+Pokud ale víš, že chceš použít specifické vlastností konkrétní verze, například Python 3.8, zadáš do terminálu přímo: <code>python3.8</code>.
+Odkaz je způsob, jak říct, co je ta výchozí verze, v tuto chvíli nejlepší k použití.</p>
+<p>Proč je <code>/lib</code> a <code>/lib64</code>? To je vlastnost nejpoužívanějších procesorů Intel, že umí dvě instrukční sady. 
+Rozumí jak 32bitovým, tak 64bitovým instrukcím. 
+Daný program ale může používat jen jednu z knihoven, musí si vybrat.</p>
+<h2>/libexec</h2>
+<p>Možná máš tuto složku jen jako součást <code>/usr</code>.
+Jsou zde programy, které by se neměly spouštět přímo z příkazové řádky.
+Najdeš zde skripty, které využívají přímo programy nainstalované v tvém počítači, ale nejsou vhodné na to, aby je spouštěl člověk. Takové skryté prográmky dávají vývojaři programů do <code>/libexec</code>.</p>
+<h2>/lost+found</h2>
+<p>Když spadne počítač a zhavaruje disk, systém se pak z toho vzpamatuje a může najít nějaké soubory, které nejsou zařazené do žádného adresáře. Nalezené soubory jsou přesunuty sem. 
+V ideálním případě je tento adresář prázdný a neměl by být přístupný pro každého, protože některé z těch souborů můžou obsahovat citlivé údaje.</p>
+<h2>/media</h2>
+<p>Když vložíš flashku či CD, v <code>/media</code> tady se automaticky vytvářely adresáře s obsahem toho zařízení. 
+Dneska zas to tak moc nedělá a je pro to lepší místo. Sem se dávají symbolické odkazy na jiné adresáře, ale je to tak z historických důvodů.</p>
+<h2>/mnt</h2>
+<p>Tady se připojovaly disky, v dávných časech, když se to dělávalo ještě ručně. Dnes, když vložíš do počítače flashku, systém ji automaticky najde a zpřístupní. 
+Dneska se s tím už tolik nepotkáte, ale třeba klasicky na univerzitách, kde všechny počítače jsou připojené do jedné sítě, sdílené disky jsou k dispozici právě z <code>/mnt</code>.</p>
+<h2>/opt</h2>
+<p>Tady se dávají věci, které nejsou dělané přímo pro tvou distribuci. 
+Programy, které jsou napsány přímo pro ten systém, dávají jakousi záruku, že všechno bude dobře spolupracovat. 
+Tyto ukládají své soubory do hlavního souborového systému.
+Pro ostatní případy se to dává do <code>/opt</code>, do složek se jménem autora, firmy nebo softwaru. 
+Je zde rozdíl mezi programy vytvořenými přímo pro spolupráci s tímto systémem a programy, které se sice zabalily tak, aby fungovaly na tom systému, ale nejsou jeho součástí. 
+Pokud si nainstaluješ <em>Google Chrome</em>, který není open source a linuxové distribuce ho nechtějí distribuovat, najdeš ho zde.</p>
+<h2>/proc</h2>
+<p>Obsahuje informace o aktuálně běžících procesech. 
+Každý proces má tady svou složku, a v ní informace například o paměti, jakou ten proces používá. 
+Existují programy, které se podívají dovnitř procesů a jsou schopné říct, volání jaké funkce daný proces zrovna dělá a kolik času stráví program v této funkci. 
+<code>mem</code> = paměť využívaná procesem
+<code>fd</code> - <em>file descriptors</em>, tady jsou všechny soubory otevřené daným procesem
+<code>self</code> je symbolický odkaz na adresář s aktuálně běžícím procesem.
+Můžeš díky němu zjistit číslo procesu právě běžícího programu:</p>
+<div class="highlight"><pre><span></span><span class="go">ls -l /proc/self</span>
+<span class="go">lrwxrwxrwx 1 root root 0 říj 17 09:48 /proc/self -&gt; 6692</span>
+</pre></div><p>6692 je zde číslo procesu <code>ls</code>.</p>
+<h2>/root</h2>
+<p>Domovský adresář pro superuživatele.</p>
+<h2>/run</h2>
+<p>Obsahuje informace potřebné pro běh programu.
+Je to novější standard, tady se dávají soubory, které se používají za běhu (např. informace o dockerových kontejnerech)</p>
+<p><code>/run/media/user</code> - zde se objeví obsah např. připojené flashky (toto je nejaktuálnější místo, kam se tyto věci dávají). 
+<code>/run</code> je na to sémanticky lepší místo, protože obsah flashky mění za běhu tohoto počítače. Pak je tam adresář aktuálního uživatele, což je skvělé z hlediska přístupových práv, flashka se nezpřístupní všem, a jen tomu, kdo ji právě vložil.</p>
+<h2>/sbin</h2>
+<p>Tato složa se dnes tak moc nepoužívá a měla by být odkaz na <code>/usr/sbin</code>. 
+Tady jsou programy pro superuživatele, které by neměl spouštět běžný uživatel - nástroje na opravy disků, analýzu chyb, nastavení síťování a spousta jiných.</p>
+<h2>/srv</h2>
+<p>Pokud na tvém počítači běží webový server, tady se tradičně dávají věci přístupné z toho webového serveru. Nejspíš tam teď nic nemáš.</p>
+<h2>/sys</h2>
+<p>Informace o systému. Když je potřeba dát k dispozici nějaké informace o tom systému, nebo zařídit, aby se ten systém dal ovládat, je zde na to soubor. Dá se tím i nastavit např. rychlost větráčků atd.</p>
+<h2>/tmp</h2>
+<p>Velice zajímavá složka - tady se dávají dočasné soubory. 
+Na moderních systémech se tato složka automaticky smaže při startu systému. 
+Historicky se tady ukládaly např. stažené soubory z prohlížeče, rozbalené archivy, a pak to člověk mohl zkopírovat někam jinam.
+Pokud v automatických testech testuješ čtení a ukládání nějakých souborů, je dobrý nápad v nich vytvářet složku s testovacími soubory do <code>/tmp</code>, kde po doběhnutí testů se systém sám postará o úklid.
+Některé programy si do <code>/tmp</code> dávají soubory potřebné pro jednorázovou akci. Nebo když v prohlížeči zmáčkneš u stahování přílohy <em>otevři</em> místo <em>stáhni</em>, tak se příloha stáhne do <code>/tmp</code>.</p>
+<p>Krom toho existuje i <code>/var/tmp</code>, kam se dávají dočasné soubory, které nechceš smazat při restartu počítače.</p>
+<h2>/usr</h2>
+<p>Složky pro uživatele, kopírují strukturu kořenového adresáře.</p>
+<h2>/var</h2>
+<p>Tady jsou soubory, které se mění za běhu systému.
+<code>/var/mail</code> je systémová pošta. E-mail je standard starší, než internet - daly se posílat zprávy mezi uživateli počítače.</p>
+<p><code>/var/cache/</code> - tady se dávají soubory, které zrychlují práci, ale dají se vygenerovat kdykoli znova. 
+Když si nějaký program stáhne něco z internetu, dá si to sem a příště to nemusí stahovat znova. 
+Pokud se to smaže, nic se neděje, stáhne se to prostě zas.</p>
+<p><code>/var/run/</code> - další adresář pro soubory, které se mění za běhu počítače.
+<code>/var/run/</code> může být <em>symlink</em> na <code>/var</code> nebo <code>/run</code>, všechna tři místa mají totiž stejný účel.</p>
+<h1>Volné místo na disku</h1>
+<p>Kolik ti zbývá místa na disku, zjistíš pomocí příkazu <code>df</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>df
+<span class="go">Filesystem     1K-blocks      Used Available Use% Mounted on</span>
+<span class="go">udev             3889620         0   3889620   0% /dev</span>
+<span class="go">tmpfs             782916      2184    780732   1% /run</span>
+<span class="go">/dev/sda1      245084444 206939492  25625684  89% /</span>
+<span class="go">tmpfs            3914572    201872   3712700   6% /dev/shm</span>
+<span class="go">tmpfs               5120         4      5116   1% /run/lock</span>
+<span class="go">tmpfs            3914572         0   3914572   0% /sys/fs/cgroup</span>
+</pre></div><p>Ale protože z toho výpisu to není moc jasné, použij přepínač <code>-h</code>, který znamená <em>human</em>, pro lidi. Sloupeček <em>Avail</em> obsahuje informaci o volném místě.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>df -h
+<span class="go">Filesystem      Size  Used Avail Use% Mounted on</span>
+<span class="go">udev            3,8G     0  3,8G   0% /dev</span>
+<span class="go">tmpfs           765M  2,2M  763M   1% /run</span>
+<span class="go">/dev/sda1       234G  198G   25G  89% /</span>
+<span class="go">tmpfs           3,8G  119M  3,7G   4% /dev/shm</span>
+<span class="go">tmpfs           5,0M  4,0K  5,0M   1% /run/lock</span>
+<span class="go">tmpfs           3,8G     0  3,8G   0% /sys/fs/cgroup</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/notes/fhs/">← <span class="d-none d-sm-inline">Adresářová struktura</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/review/">↑ <span class="d-none d-sm-inline">Lekce: Hierarchie</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/sessions/review/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/pilot/05/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsala Karolina Surma, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

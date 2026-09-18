@@ -1,0 +1,271 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Funkce které ovládají proces
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/shell-3/">Procesy &amp; deskriptory souborů</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/fork-teaser/">Funkce které ovládají proces</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Funkce, které ovládají proces</h1>
+<p>Vytvoř si nový pythonní soubor v textovém editoru: <code>procesy.py</code>.
+V něm si vyzkoušíme několik funkcí, které ovládají aktuálně běžící proces.</p>
+<h2>Ukončení: exit</h2>
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="s1">'abc'</span><span class="p">))</span>
+</pre></div><p>Normální funkce jako <code>len</code> a <code>print</code> se po zavolání vrátí;
+když jsou hotové, program pokračuje dál.
+Dokonce i <code>time.sleep(10000000)</code> se časem vrátí, jen to dlouho trvá.</p>
+<p>Existují ale i funkce které se nevrací: třeba ty které vyvolají výjimku.
+Program který na výjimku není připravený skončí.</p>
+<p>Funkce <code>sys.exit()</code> vyhodí výjimku, která – když ji nezpracuješ – ukončí
+program s danou návratovou hodnotou.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">_exit</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Tohle se vypíše'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Tohle už ne'</span><span class="p">)</span>
+</pre></div><h3>Tvrdší přístup</h3>
+<p>Speciální funkce <code>os._exit()</code> jde ještě dál: okamžitě ukončí proces.
+Python nedostane možnost zpracovat výjimky, zavřít otevřené soubory,
+ukončit síťové spojení a podobně.
+Prostě se ukončí, hned, bez výjimek a bez diskuse.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">_exit</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Tohle se nevypíše'</span><span class="p">)</span>
+</pre></div><p>Program po zavolání <code>os._exit()</code> nepokračuje dál; tahle funkce se nevrací.
+Argument funkce <code>_exit</code> je opět návratová hodnota procesu.</p>
+<h2>Mutace: exec</h2>
+<p>Další funkce po které program nepokračuje dál je <em>exec</em>,
+která aktuálně prováděný program nahradí jiným.</p>
+<p>Existuje v několika variantách (podle toho, jak se hledá nový program);
+nejjednodušší je asi:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">execvp</span><span class="p">(</span><span class="s1">'echo'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'echo'</span><span class="p">,</span> <span class="s1">'123'</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Tohle se nevypíše'</span><span class="p">)</span>
+</pre></div><p>Proces ve kterém program běží začne místo Pythonu provádět příkaz <code>echo 123</code>.
+Jako u <code>os._exit</code> Python nedostane možnost zpracovat výjimky nebo jinak
+„uklidit“.
+Prostě se pustí od začátku jiný program se stejným číslem (PID).</p>
+<h2>Klonování: fork</h2>
+<p>Když máme funkce, které se nevrátí, a taky funkce, které se vrátí jednou,
+můžou existovat funkce, které se vrátí víckrát? Zkus:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Ahoj!"</span><span class="p">)</span>
+</pre></div><p>Hláška se vypíše dvakrát.</p>
+<p>Funkce <code>fork</code> totiž umí <em>naklonovat</em> aktuální proces.
+Proces se rozdvojí a každá kopie pokračuje, jako by se funkce <code>fork</code> právě vrátila.</p>
+<p>Tyto dva procesy se liší jen v jedné jediné věci - tím, co vrátí <code>os.fork()</code>.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+<span class="n">hodnota</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Fork vrací:"</span><span class="p">,</span> <span class="n">hodnota</span><span class="p">)</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>python procesy.py
+<span class="go">Fork vrací: 1827</span>
+<span class="go">Fork vrací: 0</span>
+</pre></div><p>V jednom procesu je návratová hodnota <code>0</code>, ve druhém je to vyšší číslo.</p>
+<p>Jeden proces, tzv. „rodič“, totiž dostal PID druhého procesu,
+„potomka", aby ho mohl ovládat.
+Druhý proces dostal 0, aby poznal že je „potomek".</p>
+<p>Většinou se <code>fork()</code> volá v podmínce <code>if</code>u, aby každý proces dělal
+něco jiného:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+<span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">pid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"já jsem dítě"</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"já jsem rodič"</span><span class="p">)</span>
+</pre></div><p>Spousta programů před forkem často vytvoří rouru, což je speciální soubor
+který má dva „konce“: jeden pro čtení a druhý pro zápis.</p>
+<p>Existuje na to funkce <code>os.pipe()</code>.
+Ta rouru vytvoří a vrátí dvojicí deskriptorů (čísel souborů):
+první pro čtení a druhý pro zápis.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">r</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
+
+<span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">pid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"já jsem dítě, moje PID je"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'Ahoj!'</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"já jsem rodič, dítě je"</span><span class="p">,</span> <span class="n">pid</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">pozdrav</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'dítě říká:'</span><span class="p">,</span> <span class="n">pozdrav</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</pre></div><p>Co dělá tento kód?
+„Potomek“ vypíše že je dítě a zavře konec roury pro čtení. 
+Pak napíše pozdrav "Ahoj" do konce pro zápis.
+Nakonec zavře i tento konec.</p>
+<p>„Rodič“ vypíše že je rodič, zavře rouru pro zápis
+a přečte prvních 10 bajtů z konce pro čtení, a zavře i ten.</p>
+<p>Takto si můžou procesy „povídat“ – jeden z nich vytvoří rouru, kterou
+„zdědí“ jeho „potomek“.</p>
+<h2>A k čemu to je?</h2>
+<p>To si řekneme příště.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/fd/">← <span class="d-none d-sm-inline">Soubory a deskriptory</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-3/">↑ <span class="d-none d-sm-inline">Lekce: Procesy &amp; deskriptory souborů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-3/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/fork-teaser/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Karolina Surma, Martin Pavlásek a Petr Viktorin, 2020-2021</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

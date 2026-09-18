@@ -1,0 +1,405 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Snake
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/projects/snake/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/pyladies-ostrava-podzim/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/pyladies-ostrava-podzim/sessions/asteroids/">Závěrečný projekt</a>
+
+> <a href="/2019/pyladies-ostrava-podzim/projects/snake/">Snake</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Hra typu Had</h1>
+<p>Dnes to všechno — třídy, grafiku, seznamy a tak dále –
+spojíme dohromady do závěrečného projektu.
+Doufám, že se ti bude líbit!</p>
+<p>Naším cílem bude vytvořit klon známé hry <a href="https://en.wikipedia.org/wiki/Snake_(video_game_genre)">Snake (neboli Had)</a>
+jejíž princip je tu s námi od roku 1976. Největší popularity se Had dočkal
+díky mobilním telefonům Nokia, kde je jako základní hra dostupný od roku 1998
+až dodnes.</p>
+<p>Projekt není zase tak složitý, protože jeho základní principy už dobře znáš
+z domácích projektů a lekcí kurzu. Následující text je tedy spíše
+zadání než výukový materiál a v projektu jistě narazíš na něco, co jsme
+společně neprobírali. V takovém případě se neboj zeptat nebo si informace
+dohledat!</p>
+<p>A ještě jedna věc: protože začátečnický kurz končí,
+začneme kód psát v angličtině, aby se pak dal sdílet s celým světem.</p>
+<div class="admonition note"><p>Procházíš-li si projekt doma, je možné, že narazíš na
+něco s čím si nebudeš vědět rady.
+Kdyby se to stalo, prosím, ozvi se nám!
+Rádi ti s projektem pomůžeme.</p>
+</div><h2>Logika hry a fáze projektu</h2>
+<p>Základní princip hry máš v malíčku, pokud jsi dokončila domácí projekt
+po <a href="/2019/pyladies-ostrava-podzim/beginners/list/">lekci o seznamech</a>. Pokud jej nemáš, doporučuji
+se k němu vrátit.</p>
+<p>Práci s pygletem jsme dělali v <a href="/2019/pyladies-ostrava-podzim/intro/pyglet/">lekci o grafice</a>.</p>
+<p>Teď nám nezbývá než princip tolik populární hry a znalosti z kurzu spojit
+dohromady. Doporučuji začít s čistým souborem v prázdné složce a do hotových
+programů se koukat jen v případě potřeby.</p>
+<p>Jak postupovat, aby se projekt nezdál nedosažitelný už na začátku? Třeba takto:</p>
+<ol>
+<li>Promysli si, jak bude hra fungovat a jak přeneseme mřížku s hadem
+z příkazové řádky do grafického okna.</li>
+<li>Vykresli hada do grafického okna (ve formě barevných čtverců)</li>
+<li>Přidej funkci, která bude hadem hýbat.</li>
+<li>Umožni změnit směr hada pomocí klávesnice.</li>
+<li>Nenech hada utéct z herní plochy a nabourat do sebe sama.</li>
+<li>Přidej hadovi jídlo a zajisti, aby po jídle rostl.</li>
+<li>Vyměň barevné čtverečky za opravdovou grafiku.</li>
+</ol>
+<p>Po těchto krocích budeš mít základní hru, ale tou to nekončí, právě naopak!
+Budeš mít vlastní hru, jejímuž fungování rozumíš jako nikdo jiný, a to je to pravé pro
+přidávání dalších možností. Fantazii se meze nekladou. Například:</p>
+<ol>
+<li>Ve hře mohou být dva nebo třeba tři hadi najednou – každý ovládaný
+jinými klávesami — navzájem soupeřící o jídlo.</li>
+<li>Kromě jídla se mohou na ploše objevovat i jiné objekty – překážky,
+do kterých nesmí had narazit, otrávené jídlo, které hada zkrátí atp.</li>
+<li>Hrací plocha může být nekonečná a když z ní had vyleze, objeví se
+na druhé straně.</li>
+</ol>
+<h2>Z příkazové řádky do grafické aplikace</h2>
+<p>V příkazové řádce měl had souřadnice označující řádek a sloupec. V grafické
+aplikaci to bude podobné, ale protože pixelů na obrazovce je mnohem více, budeme
+si muset vytvořit pomyslnou síť stejně velkých čtverců, které nám nahradí
+řádky a sloupce. Velikost takového čtverce bude konstanta, kterou se vyplatí
+mít po celou dobu hry k dispozici, aby se podle ní daly vypočítat
+souřadnice k vykreslení obrázků. Pro začátek řekněme, že ideální velikost
+takového čtverce bude 64 × 64 pixelů.</p>
+<p>Z velikosti čtverce, kterou si můžeme v budoucnu libovolně změnit,
+a velikosti okna aplikace můžeme vypočítat, kolik se nám do okna takových
+čtverců vejde na šířku a na výšku a tím i zjistit, kolik pomyslných
+sloupců a řádků bude naše hrací plocha mít.</p>
+<h2>Vykreslení hada</h2>
+<p>Abychom mohli hada vykreslit, potřebujeme si pro začátek uložit jeho souřadnice.
+K tomu můžeš použít seznam dvojic – stejně jako v domácím projektu. Podobných
+informací, které se budou v průběhu hry dynamicky měnit, budeme mít už
+za malou chvíli více. Proto dává smysl si pro stav hry vytvořit třídu, která
+bude tyto informace obsahovat jako atributy a bude s nimi umět pracovat.</p>
+<div class="admonition note"><p>I když se může na začátku zdát vlastní třída jako zbytečná
+komplikace, později zjistíš, že ne všechno by se dalo snadno udržovat v globálních
+proměnných.</p>
+</div><p><span class="figure"><a href="/2019/pyladies-ostrava-podzim/projects/snake/static/coords.svg"><img src="/2019/pyladies-ostrava-podzim/projects/snake/static/coords.svg" alt="Had na „šachovnici“ se souřadnicemi"></a></span></p>
+<p>Když už je had definován, budeme potřebovat jednoduchou funkci, která
+na ta správná místa umístí obrázky. Pro začátek si vystačíme se zeleným
+čtvercem. Obrázek si <a href="/2019/pyladies-ostrava-podzim/projects/snake/static/green.png">stáhni zde</a> a ulož
+do složky k programu.</p>
+<p>Stejně jako na lekci i zde použijeme pro vykreslení <code>Sprite</code>, kterému už při
+vytvoření můžeme zadat obrázek pro vykreslení a vypočtené souřadnice.
+Pro jednoduchost stačí <code>Sprite</code> vytvořit, vykreslit a „zapomenout“. Není to ale
+optimální přístup a tak tohle může být jedním z adeptů pro pozdější vylepšení.</p>
+<h2>Rozpohybování hada</h2>
+<p>Aby se mohl had hýbat, potřebuje znát směr pohybu. V příkazové řádce jsme
+vždy počkali, až nám směr zadá uživatel, ale v opravdové hře se bude had
+pohybovat sám. Bude tedy potřeba nějaký atribut v naší třídě, kde bude směr
+neustále uložen a měnit se bude podle stisknutých kláves v dalším kroku.</p>
+<p>Směr pohybu může být uložen v libovolné podobě – světové strany, slovní
+označení strany, nebo třeba dvojice s číselným označením pohybu
+(<code>(0, 1)</code> pro pohyb nahoru, <code>(-1, 0)</code> pro pohyb doleva atp.). Podle vybraného
+formátu pak bude třeba směr zpracovat.</p>
+<p>Pro tuhle chvíli mu tedy bude stačit nastavit směr napevno a napsat funkci,
+nebo metodu, která hadem pohne. Pohyb bude probíhat
+naprosto stejně jako v příkazové řádce – přidáme do seznamu souřadnice,
+kde by měla být „nová hlava“ a umažeme poslední kousek hada.</p>
+<p>Protože se pohyb má provádět pravidelně, bude potřeba tuto operaci provádět
+automaticky v pravidelných intervalech. <code>pyglet.clock.schedule_interval</code> je
+zde jasná volba.</p>
+<h2>Ovládání pomocí klávesnice</h2>
+<p>Reagovat na stisknuté klávesy jsme se už taky učili. Teď to tedy využijeme,
+abychom dokázali změnit nastavený směr pohybu z předchozího bodu. Bude pro to
+samozřejmě potřeba funkce, kterou v pygletu zaregistrujeme pro spuštění po
+stisku klávesy.</p>
+<p>Protože had už se nám v závislosti na směru pohybuje, měl by začít reagovat
+na jeho změnu.</p>
+<p>V tuto chvíli:</p>
+<ul>
+<li>Směr se mění podle stisknuté klávesy.</li>
+<li>Had se sám pohybuje podle zadaného směru.</li>
+<li>Nová pozice hada se automaticky vykresluje jako zelené čtverečky.</li>
+</ul>
+<p>Vida, máme hotový základ!</p>
+<h2>Nenechme ho utéct</h2>
+<p>Had už se nám hýbe podle našich představ, ale stačí ho nechat chvíli bez dozoru
+a uteče nám z hrací plochy. Tomu není těžké zabránit, když víme, že žádná
+souřadnice hada nesmí být menší než nula a větší než je velikost hrací plochy.
+Kontrolovat je potřeba souřadnice jeho hlavy, která bude vždy všude jako první.</p>
+<p>Reagovat na náraz do zdi se dá mnoha způsoby. Nejjednodušší by asi bylo
+ukončit hru, ale to by se pak hráč nemohl podívat na tu šlamastiku, do které
+se dostal. Proto bude lepší místo toho pouze zastavit časovač, který se stará
+o pohyb hada.</p>
+<p>Stejným způsobem a na stejném místě v programu bude třeba vyřešit i situaci,
+kdy had narazí sám do sebe.</p>
+<h2>Jen ať jí, hlavně že mu chutná</h2>
+<p>Jezdit s hadem po hrací ploše může být chvíli zábava, ale protože had neroste,
+není to žádná výzva. A aby mohl růst, potřebuje jíst.</p>
+<p>K tomu budeš potřebovat další globálně dostupný seznam (nejlépe atribut
+existující třídy), který bude obsahovat informace (souřadnice) o existujícím
+jídle na hrací ploše. Navíc bude potřeba mít k dispozici metodu, která bude
+umět jídlo na hrací plochu přidat.</p>
+<p>Záleží jen na tobě, zda se bude nové jídlo objevovat, když had jedno
+z existujících sní, nebo automaticky v pravidelných intervalech.</p>
+<p>Jídlo vykreslíme stejným způsobem jako hada (ve stejné funkci/metodě) a jako
+obrázek použijeme třeba <a href="/2019/pyladies-ostrava-podzim/projects/snake/static/apple.png">jablko</a>.</p>
+<p>První závan grafiky :-)</p>
+<h2>Čtverečky ven, grafiku sem</h2>
+<p>Čtverečky jsou fajn, ale hra by měla lahodit oku a had by měl vypadat jako had.
+K tomu máme připravenou sadu obrázků - <a href="/2019/pyladies-ostrava-podzim/projects/snake/static/snake-tiles.zip">ke stažení zde</a>.
+Archiv si rozbal do adresáře s hrou tak, aby adresář <code>snake-tiles</code> byl na stejné
+úrovni jako soubor s programem.</p>
+<p><span class="figure"><a href="/2019/pyladies-ostrava-podzim/projects/snake/static/snake-tiles.png"><img src="/2019/pyladies-ostrava-podzim/projects/snake/static/snake-tiles.png" alt="Kousky hada"></a></span></p>
+<h3>Načtení všech obrázků ze složky</h3>
+<p>Nejdříve si načteme všechny obrázky do hry, abychom je pak mohli bez potíží
+použít. Protože se nechceme opakovat (DRY), bude potřeba to udělat nějak
+poloautomaticky. Python obsahuje knihovnu <a href="https://docs.python.org/3/library/pathlib.html"><code>pathlib</code></a>,
+která umí velmi přehledně pracovat s cestami k souborům a třeba nám dát
+i seznam všech souborů ve složce.</p>
+<p>Nejdříve si z této knihovny naimportujeme třídu <code>Path</code>, která reprezentuje
+soubor či složku na disku a vytvoříme z ní instanci, která bude
+ukazovat do naší složky s obrázky.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">TILES_DIRECTORY</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'snake-tiles'</span><span class="p">)</span>
+</pre></div><p>Třída <code>Path</code> má metodu <code>glob()</code>, která nám ze zadané cesty umí vrátit sekvenci
+s názvy souborů dle argumentem zadaných kritérií. My potřebujeme všechny soubory
+s příponou <code>.png</code> bez ohledu na jméno. Jakýkoli řetězec je v regulárních
+výrazech označen hvězdičkou (<code>*</code>), takže argument pro metodu <code>glob()</code> bude
+<code>*.png</code>, což označuje jakýkoli soubor s příponou <code>.png</code>. Jako výsledek
+dostaneme sekvenci cest k souborům s obrázky, kterou můžeme projít pomocí cyklu
+<code>for</code>, a každý obrázek si můžeme načíst do slovníku, kde hodnotou bude samotný obrázek
+<code>pyglet.image</code> a klíčem jeho název. Z názvu však potřebujeme jen samotný název souboru
+bez přípony a názvu složky – ten je uložen v atributu <code>stem</code>.</p>
+<p>Výsledný slovník by měl vypadat takto:</p>
+<div class="highlight"><pre><code>{'right-tongue': &lt;ImageData 64x64&gt;, 'top-tongue': &lt;ImageData 64x64&gt;,
+ 'right-top': &lt;ImageData 64x64&gt;, 'left-bottom': &lt;ImageData 64x64&gt;,
+ 'tail-left': &lt;ImageData 64x64&gt;, 'bottom-tongue': &lt;ImageData 64x64&gt;,
+ 'left-top': &lt;ImageData 64x64&gt;, 'bottom-bottom': &lt;ImageData 64x64&gt;,
+ ...</code></pre></div><p>Pokud je tohle pro tebe příliš mnoho nových věcí najednou a nedaří se ti to
+vyřešit, zkus to ještě jednou a pak se můžeš podívat na řešení.</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/pyladies-ostrava-podzim/projects/snake/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILES_DIRECTORY</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'snake-tiles'</span><span class="p">)</span>
+
+<span class="n">snake_tiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">TILES_DIRECTORY</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'*.png'</span><span class="p">):</span>
+    <span class="n">snake_tiles</span><span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">snake_tiles</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><h3>Housenka</h3>
+<p>Než se začneme zabývat různými obrázky, uděláme pokus k ověření, že nám vše stále funguje.
+Jako mezistupeň od hranatého hada k jeho věrné grafické podobě vytvoř housenku.
+Uděláš to jednoduše tak, že místo zeleného čtverce použiješ k vykreslení hada
+obrázek <code>tail-head.png</code>, který máš ve slovníku načten jako pod klíčem <code>tail-head</code>.</p>
+<p>Funguje? No výborně! Před pokračováním si u jeho hraní na chvíli odpočiň.
+Začne to být náročnější.</p>
+<p><span class="figure"><a href="/2019/pyladies-ostrava-podzim/projects/snake/static/screenshot-cat.png"><img src="/2019/pyladies-ostrava-podzim/projects/snake/static/screenshot-cat.png" alt="Housenka"></a></span></p>
+<h3>Výběr správných obrázků</h3>
+<p>Jistě sis všimla, že některé obrázky v naší sadě jsou téměř identické a liší
+se jen v otočení. V tuhle chvíli máme totiž dvě možnosti, jak vykreslit
+celého hada pomocí správných obrázků na správných pozicích:</p>
+<ol>
+<li>Můžeme vzít jeden obrázek pro tělo, jeden pro ohyb a po jednom pro
+hlavu a ocas a ty otáčet tak, jak to bude pro konkrétní kousek hada potřeba.</li>
+<li>Můžeme využít všech dostupných (různé otočených) obrázků a použít ten
+správný obrázek na tom správném místě.</li>
+</ol>
+<p>Bod č. 2 je v tuto chvíli snazší a tak budeme pokračovat tímto způsobem.</p>
+<p>Jak vybrat správné obrázky na ta správná místa? Jména obrázků (klíče ve slovníku)
+obsahují informaci, odkud kam daný obrázek vede. Stačí se tedy při
+vykreslování každého kousku hada podívat na umístění jednoho před ním
+a jednoho za ním a podle toho vybrat ze slovníku ten správný obrázek.
+U každého kousku hada a kousku před i za ním tě budou zajímat jejich
+souřadnice, protože podle nich lze velmi snadno poznat, zda je zkoumaný kousek
+nalevo, napravo, nahoře, nebo dole.</p>
+<p>Způsobů, jak toho docílit, je celá řada a i když se to může zdát jako složitější
+úkol, vše potřebné k jeho vyřešení znáš.</p>
+<p><span class="figure"><a href="/2019/pyladies-ostrava-podzim/projects/snake/static/screenshot-final.png"><img src="/2019/pyladies-ostrava-podzim/projects/snake/static/screenshot-final.png" alt="Finální had"></a></span></p>
+<p>Odměnou za vyřešení ti bude kompletní grafická hra Had. Gratuluji!</p>
+<h2>Optimalizace, úklid</h2>
+<p>Než se po dokončení základní hry vrhneš na její rozšiřování, měl by se celý kód
+uklidit a zpřehlednit, aby se v něm další úpravy dělaly snáze a s menším
+rizikem, že se něco pokazí.</p>
+<p>Body k zamyšlení:</p>
+<ul>
+<li>Pokud se ti tam opakuje nějaký kousek kódu vícekrát, možná by se dal
+vložit do funkce nebo cyklu.</li>
+<li>Mají všechny proměnné smysluplná jména?</li>
+<li>Při vykreslování možná tvoříš pro každý kousek hada nový <code>Sprite</code> a ten
+je po vykreslení zapomenut. Optimálnější by možná bylo použít seznam
+a v něm všechny instance třídy <code>Sprite</code> uchovávat a používat znovu a znovu.
+<code>Sprite</code> přeci můžeme posunout na libovolné místo i změnit obrázek, který
+obsahuje.</li>
+<li>Používáš globální proměnné? Nebylo by lepší mít jednu třídu pro stav hry
+a v ní všechny podstatné informace a metody?</li>
+<li>Funguje ovládání dle tvých představ nebo by šlo nějak zlepšit?</li>
+</ul>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                        <a href="https://naucse.python.cz/lessons/projects/snake/">Přejít na stejnou lekci v kurzu pro samouky</a>.
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/pyladies-ostrava-podzim/projects/asteroids/">← <span class="d-none d-sm-inline">Asteroids</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/pyladies-ostrava-podzim/sessions/asteroids/">↑ <span class="d-none d-sm-inline">Lekce: Závěrečný projekt</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/pyladies-ostrava-podzim/sessions/asteroids/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-pyladies-ostrava-podzim/lessons/projects/snake/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Ostrava napsal Lumr Balhar, 2018.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

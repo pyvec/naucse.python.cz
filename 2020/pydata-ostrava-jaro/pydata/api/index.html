@@ -1,0 +1,2853 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Datový kurz PyLadies: API
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/pydata-ostrava-jaro/">Datový kurz PyLadies</a>
+
+> <a href="/2020/pydata-ostrava-jaro/sessions/api/">API</a>
+
+> <a href="/2020/pydata-ostrava-jaro/pydata/api/">API</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Co je API?</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Klient a server</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>API (Application Programming Interface) je dohoda mezi dvěma stranami o tom, jak si mezi sebou budou povídat. Těmto stranám se říká klient a server.</p>
+<p><strong>Server</strong> je ta strana, která má zajímavé informace nebo něco zajímavého umí a umožňuje ostatním na internetu, aby toho využili. Server je program, který donekonečna běží na nějakém počítači a je připraven všem ostatním na internetu odpovídat na požadavky.</p>
+<p><strong>Klient</strong> je program, který posílá požadavky na server a z odpovědí se snaží poskládat něco užitečného. Klient je tedy mobilní aplikace s mráčky a sluníčky nebo náš prohlížeč, v němž si můžeme otevřít kurzovní lístek ČNB. Je to ale i Heureka robot, který za Heureku načítá informace o zboží v e-shopech.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/2020/pydata-ostrava-jaro/pydata/api/static/giphy.gif" alt="title"></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Základní pojmy</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Než se pustíme do tvorby klienta, projdeme si některé základní pojmy kolem API.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Protokol</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Celé dorozumívání mezi klientem a serverem se odehrává přes tzv. protokol. To není nic jiného, než smluvený způsob, co bude kdo komu posílat a jakou strukturu to bude mít. Protokolů je v počítačovém světě spousta, ale nás bude zajímat jen HTTP, protože ten využívají webová API a ostatně i web samotný. Není to náhoda, že adresa internetových stránek v prohlížeči zpravidla začíná http:// (nebo https://).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>HTTP</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dorozumívání mezi klientem a serverem probíhá formou požadavku (HTTP request), jenž posílá klient na server, a odpovědi (HTTP response), kterou server posílá zpět. Každá z těchto zpráv má své náležitosti.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Požadavek</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li><strong>metoda</strong> (HTTP method): Například metoda GET má tu vlastnost, že pouze čte a nemůžeme s ní tedy přes API něco změnit - je tzv. bezpečná. Kromě metody GET existují ještě metody POST (vytvořit), PUT (aktualizovat) a DELETE (odstranit), které nepotřebujeme, protože data z API budeme pouze získávat.</li>
+<li><strong>adresa s parametry</strong> (URL s query parameters):  Na konci běžné URL adresy otazník a za ním parametry. Pokud je parametrů víc, oddělují se znakem &amp;. Adresa samotná nejčastěji určuje o jaká data půjde (v našem příkladě jsou to filmy) a URL parametry umožňují provést filtraci už na straně serveru a získat tím jen ta data, která nás opravdu zajímají (v našem případě dramata v délce 150 min)<div class="highlight"><pre><code>  http://api.example.com/movies/
+  http://api.example.com/movies?genre=drama&amp;duration=150 </code></pre></div></li>
+<li><strong>hlavičky</strong> (headers): Hlavičky jsou vlastně jen další parametry. Liší se v tom, že je neposíláme jako součást adresy a na rozdíl od URL parametrů podléhají nějaké standardizaci a konvencím.</li>
+<li><strong>tělo</strong> (body): Tělo zprávy je krabice, kterou s požadavkem posíláme, a do které můžeme vložit, co chceme. Tedy nejlépe něco, čemu bude API na druhé straně rozumět. Tělo může být prázdné. V těle můžeme poslat obyčejný text, data v nějakém formátu, ale klidně i obrázek. Aby API na druhé straně vědělo, co v krabici je a jak ji má rozbalovat, je potřeba s tělem zpravidla posílat hlavičku Content-Type.</li>
+</ul>
+<p>Musíme vyčíst z dokumentace konkrétního API, jak požadavek správně poskládat.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Odpověď</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li><strong>status kód</strong> (status code): Číselný kód, kterým API dává najevo, jak požadavek zpracovalo. Podle první číslice kódu se kódy dělí na různé kategorie:<div class="highlight"><pre><code>  1xx - informativní odpověď (požadavek byl přijat, ale jeho zpracování pokračuje)
+  2xx - požadavek byl v pořádku přijat a zpracován
+  3xx - přesměrování, klient potřebuje poslat další požadavek jinam, aby se dobral odpovědi
+  4xx - chyba na straně klienta (špatně jsme poskládali dotaz)
+  5xx - chyba na straně serveru (API nezvládlo odpovědět)</code></pre></div></li>
+<li><strong>hlavičky</strong> (headers): Informace o odpovědi jako např. datum zpracování, formát odpovědi...</li>
+<li><strong>tělo</strong> (body): Tělo odpovědi - to, co nás zajímá většinou nejvíc</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Formáty</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tělo může být v libovolném formátu. Může to být text, HTML, obrázek, PDF soubor, nebo cokoliv jiného.
+Hodnotě hlavičky Content-Type se dávají různé názvy: content type, media type, MIME type. 
+Nejčastěji se skládá jen z typu a podtypu, které se oddělí lomítkem. Několik příkladů:</p>
+<ul>
+<li>text/plain - obyčejný text</li>
+<li>text/html - HTML</li>
+<li>text/csv - CSV</li>
+<li>image/gif - GIF obrázek</li>
+<li>image/jpeg - JPEG obrázek</li>
+<li>image/png - PNG obrázek</li>
+<li>application/json - JSON</li>
+<li>application/xml nebo text/xml - XML</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Formát JSON</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>JSON vznikl kolem roku 2000 a brzy se uchytil jako stručnější náhrada za XML, především na webu a ve webových API. Dnes je to <strong>nejspíš nejoblíbenější formát pro obecná strukturovaná data vůbec</strong>. Jeho autorem je Douglas Crockford, jeden z lidí podílejících se na vývoji jazyka JavaScript.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4>JSON je datový formát NE datový typ!</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Vstupem je libovolná datová struktura:</p>
+<ul>
+<li>číslo</li>
+<li>řetězec</li>
+<li>pravdivostní hodnota</li>
+<li>pole</li>
+<li>objekt</li>
+<li>None</li>
+</ul>
+<p>Výsutpem je vždy řetězec (string)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/2020/pydata-ostrava-jaro/pydata/api/static/null.jpg" alt="title"></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jazyk Python (a mnoho dalších) má podporu pro práci s JSON v základní instalaci (vestavěný).</p>
+<p>V případě jazyka Python si lze JSON splést především se slovníkem (dictionary). Je ale potřeba si uvědomit, že JSON je text, který může být uložený do souboru nebo odeslaný přes HTTP, ale nelze jej přímo použít při programování. Musíme jej vždy nejdříve zpracovat na slovníky a seznamy.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V následujícím JSONu je pod klíčem "people" seznam slovníků s další strukturou:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">people_info</span> <span class="o">=</span> <span class="s1">'''</span>
+<span class="s1">{</span>
+<span class="s1">    "people": [</span>
+<span class="s1">    {</span>
+<span class="s1">        "name": "John Smith",</span>
+<span class="s1">        "phone": "555-246-999",</span>
+<span class="s1">        "email": ["johns@gmail.com", "jsmith@gmail.com"],</span>
+<span class="s1">        "is_employee": false</span>
+<span class="s1">    },</span>
+<span class="s1">    {</span>
+<span class="s1">        "name": "Jane Doe",</span>
+<span class="s1">        "phone": "665-296-659",</span>
+<span class="s1">        "email": ["janed@gmail.com", "djane@gmail.com"],</span>
+<span class="s1">        "is_employee": true</span>
+<span class="s1">    }</span>
+<span class="s1">  ]</span>
+<span class="s1">}</span>
+<span class="s1">'''</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>json.loads převede řetězec na objekt</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">people_info</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'people': [{'name': 'John Smith',
+   'phone': '555-246-999',
+   'email': ['johns@gmail.com', 'jsmith@gmail.com'],
+   'is_employee': False},
+  {'name': 'Jane Doe',
+   'phone': '665-296-659',
+   'email': ['janed@gmail.com', 'djane@gmail.com'],
+   'is_employee': True}]}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>dict</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'people'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>list</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'people'</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>dict</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'people'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[{'name': 'John Smith',
+  'phone': '555-246-999',
+  'email': ['johns@gmail.com', 'jsmith@gmail.com'],
+  'is_employee': False},
+ {'name': 'Jane Doe',
+  'phone': '665-296-659',
+  'email': ['janed@gmail.com', 'djane@gmail.com'],
+  'is_employee': True}]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'people'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'name': 'John Smith',
+ 'phone': '555-246-999',
+ 'email': ['johns@gmail.com', 'jsmith@gmail.com'],
+ 'is_employee': False}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'people'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">'name'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'John Smith'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Práce s API klienty</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Obecný klient</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Mobilní aplikace na počasí je klient, který někdo vytvořil pro jeden konkrétní úkol a pracovat umí jen s jedním konkrétním API. Takový klient je užitečný, pokud chceme akorát vědět, jaké je počasí, ale už méně, pokud si chceme zkoušet práci s více API zároveň. Proto existují obecní klienti.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Prohlížeč jako obecný klient</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud z API chceme pouze číst a API nevyžaduje žádné přihlašování, můžeme jej vyzkoušet i v prohlížeči, jako by to byla webová stránka. Pokud na stránkách ČNB navštívíme <a href="https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/">kurzovní lístek</a> a úplně dole klikneme na <a href="https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt?date=19.02.2020">Textový formát</a>, uvidíme odpověď z API serveru</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="https://www.cnb.cz/cs/financni_trhy/devizovy_trh/kurzy_devizoveho_trhu/denni_kurz.txt">https://www.cnb.cz/cs/financni_trhy/devizovy_trh/kurzy_devizoveho_trhu/denni_kurz.txt</a></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Obecný klient v příkazové řádce: curl</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud se k API budeme potřebovat přihlásit nebo s ním zkoušet dělat složitější věci než jen čtení, nebude nám prohlížeč stačit.</p>
+<p>Proto je dobré se naučit používat program curl. Spouští se v příkazové řádce a je to švýcarský nůž všech, kteří se pohybují kolem webových API.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4>Příklady s curl</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/2020/pydata-ostrava-jaro/pydata/api/static/curl.jpg" alt="title"></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Když příkaz zadáme a spustíme, říkáme tím programu curl, že má poslat požadavek na uvedenou adresu a vypsat to, co mu ČNB pošle zpět.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/2020/pydata-ostrava-jaro/pydata/api/static/curl-return.jpg" alt="title"></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Vlastní klient</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Obecného klienta musí ovládat člověk (ruční nastavování parametrů, pravidelné spuštění na základě podmínek či času atd.). To je přesně to, co potřebujeme, když si chceme nějaké API vyzkoušet, ale celý smysl API je v tom, aby je programy mohly využívat automaticky.
+Pokud chceme naprogramovat klienta pro konkrétní úkol, můžeme ve většině jazyků použít buď vestavěnou, nebo doinstalovanou knihovnu. V případě jazyka Python použijeme knihovnu Requests.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Práce s veřejným API</h2>
+<p>Vyzkoušíme si dotazy na API s daty zločinnosti v UK, která jsou dostupná na měsiční bázi dle přibližné lokace (viz <a href="https://data.police.uk/docs/method/stops-at-location/">https://data.police.uk/docs/method/stops-at-location/</a>)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">api_url</span> <span class="o">=</span> <span class="s2">"https://data.police.uk/api/stops-street"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nastavení parametrů volání API dle dokumentace <a href="https://data.police.uk/docs/method/stops-at-location/">https://data.police.uk/docs/method/stops-at-location/</a>
+Jako lokaci jsem vybral nechvalně proslulý obvod Hackney v Londýně :)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"lat"</span> <span class="p">:</span> <span class="s2">"51.5487158"</span><span class="p">,</span>
+    <span class="s2">"lng"</span> <span class="p">:</span> <span class="s2">"-0.0613842"</span><span class="p">,</span>
+    <span class="s2">"date"</span> <span class="p">:</span> <span class="s2">"2018-06"</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pomocí funkce <code>get</code> pošleme požadavek na URL adresu API. URL adresa doplněná o parametry vypadá takto: <a href="https://data.police.uk/api/stops-street?lat=51.5487158&amp;lng=-0.0613842&amp;date=2018-06">https://data.police.uk/api/stops-street?lat=51.5487158&amp;lng=-0.0613842&amp;date=2018-06</a> a je možné ji vyzkoušet i v prohlížeči.</p>
+<p>V proměnné response máme uložený objekt, který obsahuje odpověď od API.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pokud je status kód jiný, než 200 (success), vyhodí skript chybu a chybový status code</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Failed to get data:'</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'First 100 characters of data are'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">[:</span><span class="mi">100</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>First 100 characters of data are
+[{"age_range":"18-24","outcome":"Community resolution","involved_person":true,"self_defined_ethnicit
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Hlavička s doplňujícími informacemi o opdovědi</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">response</span><span class="o">.</span><span class="n">headers</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'Date': 'Wed, 25 Mar 2020 14:33:39 GMT', 'Content-Type': 'application/json', 'Content-Length': '5687', 'Connection': 'keep-alive', 'Vary': 'Accept-Encoding', 'Access-Control-Allow-Origin': '*', 'Content-Encoding': 'gzip', 'Strict-Transport-Security': 'max-age=31536000;', 'X-XSS-Protection': '1; mode=block', 'X-Content-Type-Options': 'nosniff', 'X-Frame-Options': 'DENY', 'Content-Security-Policy': "default-src 'self' 'unsafe-inline' ; script-src 'self' data: www.google-analytics.com ajax.googleapis.com 'unsafe-inline';", 'Referer-Policy': 'strict-origin-when-cross-origin'}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">'content-type'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'application/json'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Obsah odpovědi je řetězec bytů</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">[:</span><span class="mi">200</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>b'[{"age_range":"18-24","outcome":"Community resolution","involved_person":true,"self_defined_ethnicity":"Black\\/African\\/Caribbean\\/Black British - Any other Black\\/African\\/Caribbean background","gend'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Vypadá jako seznam (list) nebo slovník (dictionary), ale nechová se tak:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"age_range"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-19-ec7ac01c28cf&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>response<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">"age_range"</span><span class="ansi-blue-fg">]</span>
+
+<span class="ansi-red-fg">TypeError</span>: 'Response' object is not subscriptable</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Převedeme řetězec bytů metodou .json() z knihovny requests</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Ověříme datový typ</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>list</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nyní můžeme přistupovat k "data" jako ke klasickému seznamu (list)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"age_range"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'18-24'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Převední seznamu(list) na řetězec s parametry pro zobrazení struktury v čitelné podobě</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">datas</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">datas</span><span class="p">[:</span><span class="mi">1600</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[
+    {
+        "age_range": "18-24",
+        "datetime": "2018-06-01T09:45:00+00:00",
+        "gender": "Male",
+        "involved_person": true,
+        "legislation": "Misuse of Drugs Act 1971 (section 23)",
+        "location": {
+            "latitude": "51.551330",
+            "longitude": "-0.068037",
+            "street": {
+                "id": 968551,
+                "name": "On or near Downs Park Road"
+            }
+        },
+        "object_of_search": "Controlled drugs",
+        "officer_defined_ethnicity": "Black",
+        "operation": false,
+        "operation_name": null,
+        "outcome": "Community resolution",
+        "outcome_linked_to_object_of_search": null,
+        "outcome_object": {
+            "id": "bu-community-resolution",
+            "name": "Community resolution"
+        },
+        "removal_of_more_than_outer_clothing": null,
+        "self_defined_ethnicity": "Black/African/Caribbean/Black British - Any other Black/African/Caribbean background",
+        "type": "Person search"
+    },
+    {
+        "age_range": "18-24",
+        "datetime": "2018-06-02T02:37:00+00:00",
+        "gender": "Male",
+        "involved_person": true,
+        "legislation": "Misuse of Drugs Act 1971 (section 23)",
+        "location": {
+            "latitude": "51.549626",
+            "longitude": "-0.054738",
+            "street": {
+                "id": 968830,
+                "name": "On or near Dalston Lane"
+            }
+        },
+        "object_of_search": "Controlled drugs",
+        "officer_defined_ethnicity": "Black",
+        "operation": false,
+        "operat
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Cyklus, kterým přistupujeme k věkovému rozpětí lidí lustrovaných policií</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">age_range</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s2">"age_range"</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">age_range</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['18-24', '18-24', 'over 34', '18-24', '10-17', '10-17', 'over 34', '25-34', 'over 34', '25-34', None, '25-34', '18-24', '10-17', None, '18-24', None, '18-24', '10-17', 'over 34', '18-24', '18-24', '18-24', '18-24', '18-24', '18-24', '18-24', '18-24', '18-24', '25-34', '18-24', '18-24', '18-24', 'over 34', '10-17', '10-17', '25-34', '18-24', '18-24', '25-34', '25-34', '25-34', 'over 34', 'over 34', '18-24', '18-24', '18-24', '18-24', '18-24', '25-34', '25-34', 'over 34', '25-34', 'over 34', '18-24', '25-34', '25-34', 'over 34', '18-24', None, '18-24', '18-24', None, '18-24', '18-24', '25-34', '10-17', '25-34', '18-24', '25-34', '18-24', None, '18-24', '25-34', '25-34', '25-34', '18-24', '25-34', '25-34', '18-24', '18-24', '10-17', 'over 34', 'over 34', '18-24', '18-24', '25-34', '10-17', '18-24', 'over 34', '10-17', '25-34', 'over 34', '18-24', '25-34', 'over 34', '25-34', '18-24', '18-24', '18-24', '18-24', '10-17', '10-17', '18-24', '25-34', '18-24', '25-34', '18-24', '18-24', '10-17', '25-34', '18-24', 'over 34', '10-17', '18-24', 'over 34', '18-24', '10-17', '10-17', 'over 34', '25-34', '10-17', '10-17', '25-34', '10-17', '10-17', '10-17', '10-17', '18-24', '10-17', '10-17', None, 'over 34', '10-17', '10-17', '25-34', '10-17', '18-24', '10-17', None, '10-17', '10-17', '25-34', '18-24', '18-24', '25-34', '10-17', '10-17', '25-34', '10-17', None, '25-34', '25-34', '18-24', '10-17', '25-34', '18-24', '10-17', '10-17', '25-34', None, '18-24', '25-34', '25-34', '10-17', '10-17', '18-24', 'over 34', '18-24', '18-24', '10-17', '10-17', '25-34', 'over 34', 'over 34', '18-24', '18-24', '25-34', '10-17']
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Cyklus, kterým přistupujeme k id ulice, kde došlo lustraci podezřelé(ho)</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">street_id</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s2">"location"</span><span class="p">][</span><span class="s2">"street"</span><span class="p">][</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">street_id</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[968551, 968830, 968830, 968740, 964026, 964026, 968844, 968662, 968662, 968662, 971832, 971832, 968828, 968828, 968805, 968828, 968805, 968805, 968805, 968584, 964086, 968632, 968632, 964132, 968632, 968632, 968584, 968584, 968872, 971832, 968717, 968866, 971656, 964226, 968662, 968662, 968703, 968668, 968668, 968703, 964013, 968505, 968830, 968500, 968662, 968830, 968830, 968662, 968662, 968705, 964150, 968663, 968663, 968830, 968467, 968662, 968663, 968830, 964370, 964370, 968500, 964287, 964329, 971656, 971656, 968830, 968829, 968830, 968829, 968608, 968703, 968703, 968469, 968662, 968754, 968662, 968872, 968748, 968872, 968691, 968641, 968641, 964023, 964322, 968872, 968872, 968872, 968662, 964219, 964092, 964219, 968854, 968662, 968662, 968662, 968786, 968584, 968662, 964266, 964316, 964266, 968637, 968637, 968804, 968804, 968804, 971758, 968804, 968662, 964297, 968830, 968770, 968500, 968662, 968804, 968500, 964324, 964266, 964225, 968816, 968500, 964266, 968641, 968575, 968828, 968828, 968828, 968489, 968815, 968564, 964266, 968871, 968687, 964091, 968815, 971713, 971801, 968662, 964208, 968614, 968802, 968839, 964085, 968630, 968642, 964098, 964312, 964312, 968872, 964248, 971656, 968872, 968872, 968804, 968647, 968884, 968844, 968872, 968763, 968830, 968804, 968854, 968609, 968662, 968830, 968489, 968603, 971832, 968641, 968830, 968647, 968489, 968496, 968606, 968626, 968606, 968369, 968660, 968815]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Spojíme seznamy do dataframe</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_from_lists</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">age_range</span><span class="p">,</span> <span class="n">street_id</span><span class="p">)),</span> 
+                <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'age_range'</span><span class="p">,</span> <span class="s1">'street_id'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_from_lists</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[31]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age_range</th>
+      <th>street_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>18-24</td>
+      <td>968551</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>18-24</td>
+      <td>968830</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>over 34</td>
+      <td>968830</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>18-24</td>
+      <td>968740</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10-17</td>
+      <td>964026</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jakou věkovou skupinu lustrovala policie nejčastěji?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_from_lists</span><span class="p">[</span><span class="s2">"age_range"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">();</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Json_normalize</h3>
+<p>aneb jak jednoduše převést JSON na DataFrame</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">norm_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">norm_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[35]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age_range</th>
+      <th>outcome</th>
+      <th>involved_person</th>
+      <th>self_defined_ethnicity</th>
+      <th>gender</th>
+      <th>legislation</th>
+      <th>outcome_linked_to_object_of_search</th>
+      <th>datetime</th>
+      <th>removal_of_more_than_outer_clothing</th>
+      <th>operation</th>
+      <th>officer_defined_ethnicity</th>
+      <th>type</th>
+      <th>operation_name</th>
+      <th>object_of_search</th>
+      <th>outcome_object.id</th>
+      <th>outcome_object.name</th>
+      <th>location.latitude</th>
+      <th>location.street.id</th>
+      <th>location.street.name</th>
+      <th>location.longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>18-24</td>
+      <td>Community resolution</td>
+      <td>True</td>
+      <td>Black/African/Caribbean/Black British - Any ot...</td>
+      <td>Male</td>
+      <td>Misuse of Drugs Act 1971 (section 23)</td>
+      <td>None</td>
+      <td>2018-06-01T09:45:00+00:00</td>
+      <td>None</td>
+      <td>False</td>
+      <td>Black</td>
+      <td>Person search</td>
+      <td>None</td>
+      <td>Controlled drugs</td>
+      <td>bu-community-resolution</td>
+      <td>Community resolution</td>
+      <td>51.551330</td>
+      <td>968551</td>
+      <td>On or near Downs Park Road</td>
+      <td>-0.068037</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>18-24</td>
+      <td>A no further action disposal</td>
+      <td>True</td>
+      <td>Black/African/Caribbean/Black British - Any ot...</td>
+      <td>Male</td>
+      <td>Misuse of Drugs Act 1971 (section 23)</td>
+      <td>None</td>
+      <td>2018-06-02T02:37:00+00:00</td>
+      <td>None</td>
+      <td>False</td>
+      <td>Black</td>
+      <td>Person search</td>
+      <td>None</td>
+      <td>Controlled drugs</td>
+      <td>bu-no-further-action</td>
+      <td>A no further action disposal</td>
+      <td>51.549626</td>
+      <td>968830</td>
+      <td>On or near Dalston Lane</td>
+      <td>-0.054738</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>over 34</td>
+      <td>Arrest</td>
+      <td>True</td>
+      <td>White - Any other White background</td>
+      <td>Male</td>
+      <td>Misuse of Drugs Act 1971 (section 23)</td>
+      <td>None</td>
+      <td>2018-06-02T09:45:00+00:00</td>
+      <td>None</td>
+      <td>False</td>
+      <td>White</td>
+      <td>Person search</td>
+      <td>None</td>
+      <td>Controlled drugs</td>
+      <td>bu-arrest</td>
+      <td>Arrest</td>
+      <td>51.549626</td>
+      <td>968830</td>
+      <td>On or near Dalston Lane</td>
+      <td>-0.054738</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>18-24</td>
+      <td>A no further action disposal</td>
+      <td>True</td>
+      <td>Black/African/Caribbean/Black British - African</td>
+      <td>Male</td>
+      <td>Misuse of Drugs Act 1971 (section 23)</td>
+      <td>None</td>
+      <td>2018-06-02T10:50:00+00:00</td>
+      <td>None</td>
+      <td>False</td>
+      <td>Black</td>
+      <td>Person and Vehicle search</td>
+      <td>None</td>
+      <td>Controlled drugs</td>
+      <td>bu-no-further-action</td>
+      <td>A no further action disposal</td>
+      <td>51.550209</td>
+      <td>968740</td>
+      <td>On or near Rowe Lane</td>
+      <td>-0.051944</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10-17</td>
+      <td>A no further action disposal</td>
+      <td>True</td>
+      <td>Black/African/Caribbean/Black British - Caribbean</td>
+      <td>Female</td>
+      <td>Police and Criminal Evidence Act 1984 (section 1)</td>
+      <td>None</td>
+      <td>2018-06-02T19:30:00+00:00</td>
+      <td>None</td>
+      <td>False</td>
+      <td>Black</td>
+      <td>Person search</td>
+      <td>None</td>
+      <td>Offensive weapons</td>
+      <td>bu-no-further-action</td>
+      <td>A no further action disposal</td>
+      <td>51.542304</td>
+      <td>964026</td>
+      <td>On or near St Thomas'S Square</td>
+      <td>-0.054589</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">norm_data</span><span class="p">[</span><span class="s2">"gender"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[36]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Male      170
+Female      9
+Name: gender, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">norm_data</span><span class="p">[</span><span class="s2">"gender"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">();</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">norm_data</span><span class="p">[</span><span class="s2">"age_range"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">();</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Tvoříme klienta pro práci s veřejným API</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V následujícím bloku si vytvoříme klienta, který nám stáhne data za dva měsíce (místo jednoho) a uloží je do seznamu seznamů (list of lists). Případné chyby spojení s API ošetříme výjimkami (exceptions) - více viz <a href="https://requests.readthedocs.io/en/master/_modules/requests/exceptions/">dokumentace requests</a></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_uk_crime_data</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">dates_list</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Function loops through a list of dates </span>
+<span class="sd">    </span>
+<span class="sd">    Three arguments latitude, longitude and a list of dates</span>
+<span class="sd">    </span>
+<span class="sd">    Returns a dataframe with crime data for each day</span>
+<span class="sd">    """</span>
+    <span class="n">appended_data</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dates_list</span><span class="p">:</span>
+        <span class="n">api_url</span> <span class="o">=</span> <span class="s2">"https://data.police.uk/api/stops-street"</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"lat"</span> <span class="p">:</span> <span class="n">latitude</span><span class="p">,</span>
+            <span class="s2">"lng"</span> <span class="p">:</span> <span class="n">longitude</span><span class="p">,</span>
+            <span class="s2">"date"</span> <span class="p">:</span> <span class="n">i</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">data_foo</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">data_foo</span><span class="p">)</span>
+        <span class="c1"># store DataFrame in list</span>
+        <span class="n">appended_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+       
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">appended_data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Zavolání funkce get_uk_crime_data s parametry zeměpisné šíře a délky přiřazené proměnné df_uk_crime_data</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [40]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dates_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"2018-06"</span><span class="p">,</span><span class="s2">"2018-07"</span><span class="p">]</span>
+<span class="n">lat</span> <span class="o">=</span> <span class="s2">"51.5487158"</span>
+<span class="n">lng</span> <span class="o">=</span> <span class="s2">"-0.0613842"</span>
+
+<span class="n">df_uk_crime_data</span> <span class="o">=</span> <span class="n">get_uk_crime_data</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lng</span><span class="p">,</span> <span class="n">dates_list</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [41]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_uk_crime_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[41]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age_range</th>
+      <th>outcome</th>
+      <th>involved_person</th>
+      <th>self_defined_ethnicity</th>
+      <th>gender</th>
+      <th>legislation</th>
+      <th>outcome_linked_to_object_of_search</th>
+      <th>datetime</th>
+      <th>removal_of_more_than_outer_clothing</th>
+      <th>operation</th>
+      <th>officer_defined_ethnicity</th>
+      <th>type</th>
+      <th>operation_name</th>
+      <th>object_of_search</th>
+      <th>outcome_object.id</th>
+      <th>outcome_object.name</th>
+      <th>location.latitude</th>
+      <th>location.street.id</th>
+      <th>location.street.name</th>
+      <th>location.longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>18-24</td>
+      <td>Community resolution</td>
+      <td>True</td>
+      <td>Black/African/Caribbean/Black British - Any ot...</td>
+      <td>Male</td>
+      <td>Misuse of Drugs Act 1971 (section 23)</td>
+      <td>None</td>
+      <td>2018-06-01T09:45:00+00:00</td>
+      <td>None</td>
+      <td>False</td>
+      <td>Black</td>
+      <td>Person search</td>
+      <td>None</td>
+      <td>Controlled drugs</td>
+      <td>bu-community-resolution</td>
+      <td>Community resolution</td>
+      <td>51.551330</td>
+      <td>968551</td>
+      <td>On or near Downs Park Road</td>
+      <td>-0.068037</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>18-24</td>
+      <td>A no further action disposal</td>
+      <td>True</td>
+      <td>Black/African/Caribbean/Black British - Any ot...</td>
+      <td>Male</td>
+      <td>Misuse of Drugs Act 1971 (section 23)</td>
+      <td>None</td>
+      <td>2018-06-02T02:37:00+00:00</td>
+      <td>None</td>
+      <td>False</td>
+      <td>Black</td>
+      <td>Person search</td>
+      <td>None</td>
+      <td>Controlled drugs</td>
+      <td>bu-no-further-action</td>
+      <td>A no further action disposal</td>
+      <td>51.549626</td>
+      <td>968830</td>
+      <td>On or near Dalston Lane</td>
+      <td>-0.054738</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>over 34</td>
+      <td>Arrest</td>
+      <td>True</td>
+      <td>White - Any other White background</td>
+      <td>Male</td>
+      <td>Misuse of Drugs Act 1971 (section 23)</td>
+      <td>None</td>
+      <td>2018-06-02T09:45:00+00:00</td>
+      <td>None</td>
+      <td>False</td>
+      <td>White</td>
+      <td>Person search</td>
+      <td>None</td>
+      <td>Controlled drugs</td>
+      <td>bu-arrest</td>
+      <td>Arrest</td>
+      <td>51.549626</td>
+      <td>968830</td>
+      <td>On or near Dalston Lane</td>
+      <td>-0.054738</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>18-24</td>
+      <td>A no further action disposal</td>
+      <td>True</td>
+      <td>Black/African/Caribbean/Black British - African</td>
+      <td>Male</td>
+      <td>Misuse of Drugs Act 1971 (section 23)</td>
+      <td>None</td>
+      <td>2018-06-02T10:50:00+00:00</td>
+      <td>None</td>
+      <td>False</td>
+      <td>Black</td>
+      <td>Person and Vehicle search</td>
+      <td>None</td>
+      <td>Controlled drugs</td>
+      <td>bu-no-further-action</td>
+      <td>A no further action disposal</td>
+      <td>51.550209</td>
+      <td>968740</td>
+      <td>On or near Rowe Lane</td>
+      <td>-0.051944</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10-17</td>
+      <td>A no further action disposal</td>
+      <td>True</td>
+      <td>Black/African/Caribbean/Black British - Caribbean</td>
+      <td>Female</td>
+      <td>Police and Criminal Evidence Act 1984 (section 1)</td>
+      <td>None</td>
+      <td>2018-06-02T19:30:00+00:00</td>
+      <td>None</td>
+      <td>False</td>
+      <td>Black</td>
+      <td>Person search</td>
+      <td>None</td>
+      <td>Offensive weapons</td>
+      <td>bu-no-further-action</td>
+      <td>A no further action disposal</td>
+      <td>51.542304</td>
+      <td>964026</td>
+      <td>On or near St Thomas'S Square</td>
+      <td>-0.054589</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Neveřejné API Oxford Dictionaries</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Přístup k tomuto API je možné získat po registraci na <a href="https://developer.oxforddictionaries.com/">developer.oxforddictionaries.com</a>. Pro malé množství požadavků je API dostupné zdarma, ale při jeho vyšším využití se pak za každý požadavek na platí.</p>
+<p>Po registraci je nutné vytvořit aplikaci, která získá své jedinečné ID a klíč, které se posílají v hlavičkách s každým požadavkem a tak je možné získat k API přístup a také ověřit, kdo se API ptá.</p>
+<blockquote><p>Kódy níže přestanou po lekci fungovat. Pokud chceš v prozkoumávání API pokračovat, udělej si vlastní registraci.</p>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">api_url</span> <span class="o">=</span> <span class="s2">"https://od-api.oxforddictionaries.com/api/v2"</span>
+<span class="n">app_id</span> <span class="o">=</span> <span class="s2">"06126da7"</span>
+<span class="n">app_key</span> <span class="o">=</span> <span class="s2">"d3edae649c4072e2f36af99bb8283069"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Jak se Oxford dictionaries API ptát je <a href="https://developer.oxforddictionaries.com/documentation/getting_started">popsáno v dokumentaci</a>. Pro získání definice slova jej stačí spolu s jazykem vložit do URL adresy.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">language</span> <span class="o">=</span> <span class="s2">"en"</span>
+<span class="n">word</span> <span class="o">=</span> <span class="s2">"ace"</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_url</span> <span class="o">+</span> <span class="n">f</span><span class="s2">"/entries/</span><span class="si">{language}</span><span class="s2">/</span><span class="si">{word}</span><span class="s2">"</span><span class="p">,</span>
+                 <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">"app_id"</span> <span class="p">:</span> <span class="n">app_id</span><span class="p">,</span> <span class="s2">"app_key"</span><span class="p">:</span><span class="n">app_key</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [44]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[44]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'id': 'ace',
+ 'metadata': {'operation': 'retrieve',
+  'provider': 'Oxford University Press',
+  'schema': 'RetrieveEntry'},
+ 'results': [{'id': 'ace',
+   'language': 'en-gb',
+   'lexicalEntries': [{'entries': [{'etymologies': ['Middle English (denoting the ‘one’ on dice): via Old French from Latin as‘unity, a unit’'],
+       'homographNumber': '100',
+       'senses': [{'definitions': ['a playing card with a single spot on it, ranked as the highest card in its suit in most card games'],
+         'domains': [{'id': 'cards', 'text': 'Cards'}],
+         'examples': [{'text': 'the ace of diamonds'},
+          {'registers': [{'id': 'figurative', 'text': 'Figurative'}],
+           'text': 'life had started dealing him aces again'}],
+         'id': 'm_en_gbus0005680.006',
+         'shortDefinitions': ['playing card with single spot on it, ranked as highest card in its suit in most card games']},
+        {'definitions': ['a person who excels at a particular sport or other activity'],
+         'domains': [{'id': 'sport', 'text': 'Sport'}],
+         'examples': [{'text': 'a motorcycle ace'}],
+         'id': 'm_en_gbus0005680.010',
+         'registers': [{'id': 'informal', 'text': 'Informal'}],
+         'shortDefinitions': ['person who excels at particular sport or other activity'],
+         'subsenses': [{'definitions': ['a pilot who has shot down many enemy aircraft'],
+           'domains': [{'id': 'air_force', 'text': 'Air_Force'}],
+           'examples': [{'text': 'a Battle of Britain ace'}],
+           'id': 'm_en_gbus0005680.011',
+           'shortDefinitions': ['pilot who has shot down many enemy aircraft']}],
+         'synonyms': [{'id': 'expert', 'language': 'en', 'text': 'expert'},
+          {'id': 'master', 'language': 'en', 'text': 'master'},
+          {'language': 'en', 'text': 'genius'},
+          {'id': 'virtuoso', 'language': 'en', 'text': 'virtuoso'},
+          {'id': 'maestro', 'language': 'en', 'text': 'maestro'},
+          {'id': 'professional', 'language': 'en', 'text': 'professional'},
+          {'id': 'adept', 'language': 'en', 'text': 'adept'},
+          {'id': 'past_master', 'language': 'en', 'text': 'past master'},
+          {'language': 'en', 'text': 'doyen'},
+          {'language': 'en', 'text': 'champion'},
+          {'language': 'en', 'text': 'star'},
+          {'language': 'en', 'text': 'winner'}],
+         'thesaurusLinks': [{'entry_id': 'ace',
+           'sense_id': 't_en_gb0000173.001'}]},
+        {'definitions': ['(in tennis and similar games) a service that an opponent is unable to return and thus wins a point'],
+         'domains': [{'id': 'tennis', 'text': 'Tennis'}],
+         'examples': [{'text': 'Nadal banged down eight aces in the set'}],
+         'id': 'm_en_gbus0005680.013',
+         'shortDefinitions': ['(in tennis and similar games) service that opponent is unable to return and thus wins point'],
+         'subsenses': [{'definitions': ['a hole in one'],
+           'domains': [{'id': 'golf', 'text': 'Golf'}],
+           'examples': [{'text': "his hole in one at the 15th was Senior's second ace as a professional"}],
+           'id': 'm_en_gbus0005680.014',
+           'registers': [{'id': 'informal', 'text': 'Informal'}],
+           'shortDefinitions': ['hole in one']}]}]}],
+     'language': 'en-gb',
+     'lexicalCategory': {'id': 'noun', 'text': 'Noun'},
+     'phrases': [{'id': 'an_ace_up_one%27s_sleeve',
+       'text': "an ace up one's sleeve"},
+      {'id': 'hold_all_the_aces', 'text': 'hold all the aces'},
+      {'id': 'play_one%27s_ace', 'text': "play one's ace"},
+      {'id': 'within_an_ace_of', 'text': 'within an ace of'}],
+     'pronunciations': [{'audioFile': 'http://audio.oxforddictionaries.com/en/mp3/ace_1_gb_1_abbr.mp3',
+       'dialects': ['British English'],
+       'phoneticNotation': 'IPA',
+       'phoneticSpelling': 'eɪs'}],
+     'text': 'ace'},
+    {'entries': [{'homographNumber': '101',
+       'senses': [{'definitions': ['very good'],
+         'examples': [{'text': 'an ace swimmer'},
+          {'notes': [{'text': 'as exclamation', 'type': 'grammaticalNote'}],
+           'text': "Ace! You've done it!"}],
+         'id': 'm_en_gbus0005680.016',
+         'registers': [{'id': 'informal', 'text': 'Informal'}],
+         'shortDefinitions': ['very good'],
+         'synonyms': [{'id': 'excellent',
+           'language': 'en',
+           'text': 'excellent'},
+          {'language': 'en', 'text': 'very good'},
+          {'id': 'first-rate', 'language': 'en', 'text': 'first-rate'},
+          {'language': 'en', 'text': 'first-class'},
+          {'id': 'marvellous', 'language': 'en', 'text': 'marvellous'},
+          {'id': 'wonderful', 'language': 'en', 'text': 'wonderful'},
+          {'language': 'en', 'text': 'magnificent'},
+          {'id': 'outstanding', 'language': 'en', 'text': 'outstanding'},
+          {'id': 'superlative', 'language': 'en', 'text': 'superlative'},
+          {'id': 'formidable', 'language': 'en', 'text': 'formidable'},
+          {'id': 'virtuoso', 'language': 'en', 'text': 'virtuoso'},
+          {'id': 'masterly', 'language': 'en', 'text': 'masterly'},
+          {'id': 'expert', 'language': 'en', 'text': 'expert'},
+          {'language': 'en', 'text': 'champion'},
+          {'language': 'en', 'text': 'fine'},
+          {'language': 'en', 'text': 'consummate'},
+          {'id': 'skilful', 'language': 'en', 'text': 'skilful'},
+          {'id': 'adept', 'language': 'en', 'text': 'adept'}],
+         'thesaurusLinks': [{'entry_id': 'ace',
+           'sense_id': 't_en_gb0000173.002'}]}]}],
+     'language': 'en-gb',
+     'lexicalCategory': {'id': 'adjective', 'text': 'Adjective'},
+     'phrases': [{'id': 'an_ace_up_one%27s_sleeve',
+       'text': "an ace up one's sleeve"},
+      {'id': 'hold_all_the_aces', 'text': 'hold all the aces'},
+      {'id': 'play_one%27s_ace', 'text': "play one's ace"},
+      {'id': 'within_an_ace_of', 'text': 'within an ace of'}],
+     'pronunciations': [{'audioFile': 'http://audio.oxforddictionaries.com/en/mp3/ace_1_gb_1_abbr.mp3',
+       'dialects': ['British English'],
+       'phoneticNotation': 'IPA',
+       'phoneticSpelling': 'eɪs'}],
+     'text': 'ace'},
+    {'entries': [{'grammaticalFeatures': [{'id': 'transitive',
+         'text': 'Transitive',
+         'type': 'Subcategorization'}],
+       'homographNumber': '102',
+       'senses': [{'definitions': ['(in tennis and similar games) serve an ace against (an opponent)'],
+         'domains': [{'id': 'tennis', 'text': 'Tennis'}],
+         'examples': [{'text': 'he can ace opponents with serves of no more than 62 mph'}],
+         'id': 'm_en_gbus0005680.020',
+         'registers': [{'id': 'informal', 'text': 'Informal'}],
+         'shortDefinitions': ['(in tennis and similar games) serve ace against'],
+         'subsenses': [{'definitions': ['score an ace on (a hole) or with (a shot)'],
+           'domains': [{'id': 'golf', 'text': 'Golf'}],
+           'examples': [{'text': 'there was a prize for the first player to ace the hole'}],
+           'id': 'm_en_gbus0005680.026',
+           'shortDefinitions': ['score ace on hole or with']}]},
+        {'definitions': ['achieve high marks in (a test or exam)'],
+         'examples': [{'text': 'I aced my grammar test'}],
+         'id': 'm_en_gbus0005680.028',
+         'regions': [{'id': 'north_american', 'text': 'North_American'}],
+         'registers': [{'id': 'informal', 'text': 'Informal'}],
+         'shortDefinitions': ['achieve high marks in'],
+         'subsenses': [{'definitions': ['outdo someone in a competitive situation'],
+           'examples': [{'text': 'the magazine won an award, acing out its rivals'}],
+           'id': 'm_en_gbus0005680.029',
+           'notes': [{'text': '"ace someone out"', 'type': 'wordFormNote'}],
+           'shortDefinitions': ['outdo someone in competitive situation']}]}]}],
+     'language': 'en-gb',
+     'lexicalCategory': {'id': 'verb', 'text': 'Verb'},
+     'phrases': [{'id': 'an_ace_up_one%27s_sleeve',
+       'text': "an ace up one's sleeve"},
+      {'id': 'hold_all_the_aces', 'text': 'hold all the aces'},
+      {'id': 'play_one%27s_ace', 'text': "play one's ace"},
+      {'id': 'within_an_ace_of', 'text': 'within an ace of'}],
+     'pronunciations': [{'audioFile': 'http://audio.oxforddictionaries.com/en/mp3/ace_1_gb_1_abbr.mp3',
+       'dialects': ['British English'],
+       'phoneticNotation': 'IPA',
+       'phoneticSpelling': 'eɪs'}],
+     'text': 'ace'}],
+   'type': 'headword',
+   'word': 'ace'},
+  {'id': 'ace',
+   'language': 'en-gb',
+   'lexicalEntries': [{'entries': [{'etymologies': ['early 21st century: abbreviation of asexual, with alteration of spelling on the model of ace'],
+       'homographNumber': '200',
+       'senses': [{'definitions': ['a person who has no sexual feelings or desires'],
+         'domains': [{'id': 'sex', 'text': 'Sex'}],
+         'examples': [{'text': 'both asexual, they have managed to connect with other aces offline'}],
+         'id': 'm_en_gbus1190638.004',
+         'shortDefinitions': ['asexual person']}]}],
+     'language': 'en-gb',
+     'lexicalCategory': {'id': 'noun', 'text': 'Noun'},
+     'pronunciations': [{'audioFile': 'http://audio.oxforddictionaries.com/en/mp3/ace_1_gb_1_abbr.mp3',
+       'dialects': ['British English'],
+       'phoneticNotation': 'IPA',
+       'phoneticSpelling': 'eɪs'}],
+     'text': 'ace'},
+    {'entries': [{'homographNumber': '201',
+       'senses': [{'definitions': ['(of a person) having no sexual feelings or desires; asexual'],
+         'domains': [{'id': 'sex', 'text': 'Sex'}],
+         'examples': [{'text': "I didn't realize that I was ace for a long time"}],
+         'id': 'm_en_gbus1190638.006',
+         'shortDefinitions': ['asexual']}]}],
+     'language': 'en-gb',
+     'lexicalCategory': {'id': 'adjective', 'text': 'Adjective'},
+     'pronunciations': [{'audioFile': 'http://audio.oxforddictionaries.com/en/mp3/ace_1_gb_1_abbr.mp3',
+       'dialects': ['British English'],
+       'phoneticNotation': 'IPA',
+       'phoneticSpelling': 'eɪs'}],
+     'text': 'ace'}],
+   'type': 'headword',
+   'word': 'ace'}],
+ 'word': 'ace'}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Přistupování k tweetům přes Twitter API pomocí knihovny Tweepy</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Příkaz na instalaci knihovny tweepy uvnitř notebooku. Stačí odkomentovat a spustit.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [45]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#%pip install tweepy</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Import knihovny Tweepy</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [46]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tweepy</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pro získání dat z Twitteru musí náš klient projít OAuth autorizací.</p>
+<p><strong>Jak funguje OAuth autorizace na Twitteru?</strong></p>
+<ol>
+<li>vývojář aplikace se zaregistruje u poskytovatele API</li>
+<li>zaregistruje aplikaci, získá consumer_key, consumer_secret, access_token a access_secret na <a href="https://developer.twitter.com/en/apps">https://developer.twitter.com/en/apps</a></li>
+<li>aplikace volá API a prokazuje se consumer_key, consumer_secret, access_token a access_secret</li>
+</ol>
+<blockquote><p>Opět, přístupové údaje už po lekci fungovat nebudou. Pro další průzkum bude potřeba udělat si vlastní registraci.</p>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">consumer_key</span> <span class="o">=</span> <span class="s2">"2v7VOqqG01BZaK20QImzUlbuk"</span>
+<span class="n">consumer_secret</span> <span class="o">=</span> <span class="s2">"jD0vrWDgiBdFBR15jOfpOSnRfjyPVQeztSKJXonbt5qHtrPUB3"</span>
+<span class="n">access_token</span> <span class="o">=</span> <span class="s2">"102983608-rwLGu2zXw5XvgByk9XHoXUbU5ZyDzDggMg26epGn"</span>
+<span class="n">access_secret</span> <span class="o">=</span> <span class="s2">"aMKyBBOpAJTVrcnuKuxzYMcgJlDXLgLlkCsQZPKwTOqhh"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Další krok je vytvoření instance OAuthHandleru, do kterého vložíme náš consumer token a consumer secret</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [48]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">auth</span> <span class="o">=</span> <span class="n">tweepy</span><span class="o">.</span><span class="n">OAuthHandler</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">)</span>
+<span class="n">auth</span><span class="o">.</span><span class="n">set_access_token</span><span class="p">(</span><span class="n">access_token</span><span class="p">,</span> <span class="n">access_secret</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Ověření funkčnosti autentifikace</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [49]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">tweepy</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">api</span><span class="o">.</span><span class="n">verify_credentials</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Authentication OK"</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Error during authentication"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Authentication OK
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>V API dokumentaci k Tweepy <a href="http://docs.tweepy.org/en/v3.5.0/api.html">http://docs.tweepy.org/en/v3.5.0/api.html</a> najdeme metodu která např. vypíše ID přátel, resp. sledujících účtu</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [50]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">api</span><span class="o">.</span><span class="n">friends_ids</span><span class="p">(</span><span class="s1">'@kdnuggets'</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[50]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[1236557193752657926,
+ 785618379201654784,
+ 1408142352,
+ 1720046887,
+ 1223302770771595265,
+ 453124512,
+ 357606935,
+ 3363584909,
+ 133028836,
+ 427089628,
+ 2711212681,
+ 865622395,
+ 1482581556,
+ 130745589,
+ 1034844617261248512,
+ 68746721,
+ 204014237,
+ 14567619,
+ 731279155,
+ 911297187664949248]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nebo vypíše ID, které účet sleduje</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [51]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">api</span><span class="o">.</span><span class="n">followers_ids</span><span class="p">(</span><span class="s1">'@kdnuggets'</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[51]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[43787434,
+ 1241954399200653314,
+ 704134333510975489,
+ 1111600265982107649,
+ 1195612679710400512,
+ 1239601251375071233,
+ 1228367607209889793,
+ 1236518605895991296,
+ 110091822,
+ 407635381,
+ 758284065661419520,
+ 805670766503084032,
+ 933118891315703808,
+ 346474415,
+ 956356673882517505,
+ 106900152,
+ 779250326574596096,
+ 1147329370458972160,
+ 1242559364919177220,
+ 1179831345712893958]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Metoda, která vrátí posledních 20 tweetů podle ID uživatele</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [52]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">twitter_user</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">user_timeline</span><span class="p">(</span><span class="s1">'@kdnuggets'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [53]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kdnuggets_tweets</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">twitter_user</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kdnuggets_tweets</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['KDnuggets 20:n12: 24 Best (and Free) Books To Understand #MachineLearning; #Coronavirus Daily Change and Poll Analy… https://t.co/lDYwOe81ri', 'Customer Churn Prediction Using #MachineLearning: Main Approaches and Models #KDN https://t.co/7BCMF3A1O2', '#Coronavirus Deaths by US State and Country Over Time: Daily Tracking @nytimes https://t.co/X9fPwdgrfV https://t.co/tqsDnSJBaN', 'Custom classifier on top of #BERT-like Language Model - guide #DeepLearning #PyTorch #NLP https://t.co/iKOdHDD5zJ https://t.co/BcS5mJIzW7', 'How to build an API for a #MachineLearning model in 5 minutes using Flask #KDN https://t.co/OsIP2AFnLO', 'Using topological text analysis for COVID-19 Open Research Challenge https://t.co/8lCzJpMNrv https://t.co/g4FlZk0fAi', 'The History of Euler’s Number, E=2.718281828 ... https://t.co/RtmFgVfGny https://t.co/PdOt9EpKnj', 'An Easy Introduction to #MachineLearning Recommender Systems #KDN https://t.co/NNN18ZJPw0', 'Excellent source of #Coronavirus info - @FinancialTimes  the latest figures - Free to read https://t.co/WGOiJrv91t https://t.co/oWllgHte5h', '#Coronavirus cases by country trend @tableau public dashboard https://t.co/3st2aJGVxB https://t.co/JXuILSMTqw', 'How To Ultralearn #DataScience: summary, for those in a hurry #KDN https://t.co/hSZEE6jBqj', 'While you might be stuck inside, you can keep learning and exploring with these online AI resources.… https://t.co/95SGuvlkeL', '10 Best and #Free #MachineLearning Courses, Online #KDN https://t.co/QuaACqgQiF', 'Webinar: @thisismetis will break down #Python for #datascience and analytics, explain what is driving its adoption,… https://t.co/ESf2VQ31xY', 'MIT #COVID19 Challenge - Beat the #coronavirus Pandemic - April 3-5 Virtual #Hackathon  https://t.co/WgOxIHynBw https://t.co/y1KPyVE5JG', 'How to Speed up Pandas by 4x with one line of code #KDN https://t.co/MGSSoERsyI', 'predictions by @Datarobot US counties likely to have 1st first #coronavirus cases in the next 5, as of Mar 23: VA\xa0C… https://t.co/HheuNzjPhq', 'Useful #Coronavirus / #COVID19  Dashboards to track the spread https://t.co/OcK7j7lWk3 https://t.co/nYeJd7LGtS', 'Python and R Courses for #DataScience #KDN https://t.co/qf4fzWKnbf', 'Why BERT Fails in Commercial Environments - KDnuggets https://t.co/fH2zjx1UxC https://t.co/W28ZxyBYq8']
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [54]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_tweets</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">,</span> <span class="n">access_token</span><span class="p">,</span> <span class="n">access_secret</span><span class="p">,</span> <span class="n">twitter_account</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Function gets the last 20 tweets and adds those not in the list</span>
+<span class="sd">    </span>
+<span class="sd">    Five arguments consumer_key, consumer_secret, access_token, access_secret, and twitter_account name</span>
+<span class="sd">    </span>
+<span class="sd">    Returns a dataframe with tweets for given account</span>
+<span class="sd">    """</span>
+    
+    <span class="n">auth</span> <span class="o">=</span> <span class="n">tweepy</span><span class="o">.</span><span class="n">OAuthHandler</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">)</span>
+    <span class="n">auth</span><span class="o">.</span><span class="n">set_access_token</span><span class="p">(</span><span class="n">access_token</span><span class="p">,</span> <span class="n">access_secret</span><span class="p">)</span>
+    <span class="n">api</span> <span class="o">=</span> <span class="n">tweepy</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">api</span><span class="o">.</span><span class="n">verify_credentials</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Authentication OK"</span><span class="p">)</span>
+        <span class="n">twitter_user</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">user_timeline</span><span class="p">(</span><span class="n">twitter_account</span><span class="p">)</span>
+        
+        <span class="n">tweets_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">twitter_user</span><span class="p">]</span>
+                      
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Error during authentication"</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tweets_list</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">twitter_account</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [55]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">get_tweets</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">,</span> <span class="n">access_token</span><span class="p">,</span> <span class="n">access_secret</span><span class="p">,</span> <span class="s1">'@kdnuggets'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Authentication OK
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[55]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>.lesson-content .dataframe tbody tr th:only-of-type {
+    vertical-align: middle
+    }
+.lesson-content .dataframe tbody tr th {
+    vertical-align: top
+    }
+.lesson-content .dataframe thead th {
+    text-align: right
+    }</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>@kdnuggets</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>KDnuggets 20:n12: 24 Best (and Free) Books To ...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Customer Churn Prediction Using #MachineLearni...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>#Coronavirus Deaths by US State and Country Ov...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Custom classifier on top of #BERT-like Languag...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>How to build an API for a #MachineLearning mod...</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Using topological text analysis for COVID-19 O...</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>The History of Euler’s Number, E=2.718281828 ....</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>An Easy Introduction to #MachineLearning Recom...</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Excellent source of #Coronavirus info - @Finan...</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>#Coronavirus cases by country trend @tableau p...</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>How To Ultralearn #DataScience: summary, for t...</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>While you might be stuck inside, you can keep ...</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>10 Best and #Free #MachineLearning Courses, On...</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Webinar: @thisismetis will break down #Python ...</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>MIT #COVID19 Challenge - Beat the #coronavirus...</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>How to Speed up Pandas by 4x with one line of ...</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>predictions by @Datarobot US counties likely t...</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>Useful #Coronavirus / #COVID19  Dashboards to ...</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>Python and R Courses for #DataScience #KDN htt...</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>Why BERT Fails in Commercial Environments - KD...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Kam dál?</h2>
+<p>API existuje celá řada. Některé jsou veřejně dostupné, jiné mají omezený přístup nebo se za ně platí, ale to svoje si najde úplně každý. Na internetu se válí i spousta seznamů, jako je <a href="https://github.com/public-apis/public-apis">tento na Githubu</a>, kde je možné začít pátrat po tom pravém API pro tebe.</p>
+</div>
+</div>
+</div>
+ 
+
+
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/pydata-ostrava-jaro/sessions/api/">↑ <span class="d-none d-sm-inline">Lekce: API</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/pydata-ostrava-jaro/sessions/api/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2020-pydata-ostrava-jaro/lessons/pydata/api/index.ipynb">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyDataCZ napsal Dan Cupak, 2020.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

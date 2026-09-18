@@ -1,0 +1,557 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Beginners course PyLadies: Graphics
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/pyladies-en-prague/">Beginners course PyLadies</a>
+
+> <a href="/2018/pyladies-en-prague/sessions/pyglet/">Graphics</a>
+
+> <a href="/2018/pyladies-en-prague/beginners-en/pyglet/">Graphics</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Graphics</h1>
+<p>Today we will learn how to write graphical applications in Python.</p>
+<p>We will use a library that is not built into Python (similar to pytest
+which we used for testing). So we have to install it first. Open 
+your virtual environment and then use <code>pip</code> - specifically the command
+<code>python -m pip install pyglet</code>.
+It looks like this:</p>
+<div class="highlight"><pre><span></span><span class="gp">(venv)$ </span>python -m pip install pyglet
+<span class="go">Collecting pyglet</span>
+<span class="go">  Downloading pyglet-1.2.4-py3-none-any.whl (964kB)</span>
+<span class="go">Installing collected packages: pyglet</span>
+<span class="go">Successfully installed pyglet-1.2.4</span>
+</pre></div><p>If you have installed Pyglet successfully, try to run the
+following program. A black window should appear.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'Done!'</span><span class="p">)</span>
+</pre></div><div class="admonition note"><p>If your window is black but there is some rubbish
+don't mind it now. Before we will start to draw 
+in the window, we will clean it.</p>
+</div><p>Done? Let's explain what is exactly happening.</p>
+<h2>Interactive programs</h2>
+<p>Let's have a look what the program for 1D tic tac toe looks like.
+You can see in the comments what every line of code does.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">tictactoe1d</span><span class="p">():</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="s1">'-'</span> <span class="o">*</span> <span class="mi">20</span>                <span class="c1"># Game preparation</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>                     <span class="c1"># Loop:</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">player_move</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>  <span class="c1"># 1. Ask player for their move</span>
+        <span class="k">if</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">'-'</span><span class="p">:</span>  <span class="c1"># 2. Evaluate move</span>
+            <span class="k">break</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>                <span class="c1"># 3. Print what the game looks like now</span>
+
+                                    <span class="c1"># And again:</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">ai_move</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>      <span class="c1"># 1. Ask computer for its move</span>
+        <span class="k">if</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">'-'</span><span class="p">:</span>  <span class="c1"># 2. Evaluate move</span>
+            <span class="k">break</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>                <span class="c1"># 3. Print what the game looks like now</span>
+</pre></div><p>We have two types of actions/events in this program, which alternate regularly.
+When an action is called, it's then evaluated and printed.</p>
+<p>We already had a similar structure of reactions, for example:
+rock, paper, scissors.</p>
+<ul>
+<li>Some preparation</li>
+<li>Until program finishes<ul>
+<li>Read some input</li>
+<li>Evaluate the input</li>
+<li>Print result</li>
+</ul>
+</li>
+</ul>
+<p>A lot of different programs work similarly, they
+respond to input or other actions/events.</p>
+<p>A web server is waiting for a <em>request</em> for a web page. When it
+gets a request, it processes for example a page that is saved on
+the disk, and as output, it sends some response.</p>
+<p>More complex programs are responding to many 
+different actions/events, not only to a "request"
+or "player move"/"computer move". What happens after the
+input evaluation depends on the type of the action.</p>
+<p>For example your web browser is waiting for a mouse click or a keystroke
+and it will behave depending on the type of key you press or where you
+clicked - maybe it sends a request to the remote server.
+And then it's waiting for another action. A response may come from the 
+server and then the web browser renders the page
+to the screen. Or the user can press "STOP"
+and the request is canceled.</p>
+<p>Or, a text editor waits for different kidns of input from the keyboard
+or mouse, and it has to evaluate every input.</p>
+<p>So a similar program structure - a loop that reads the input, 
+processes it, and produces output - it is very useful.
+It is called <em>event loop</em> and programs built on it
+are called <em>event-driven</em>.</p>
+<p>When there is something useful for more programs it is
+not usual that each programmer will write it all over from the beginning
+but some people write it once, pack it as a <em>library</em> and then everyone 
+can use it.</p>
+<h2>Pyglet 🐷</h2>
+<p>One of these libraries is Pyglet.
+It contains an event loop and some functions for
+2D graphics (with help from another library - OpenGL)
+and also for retrieving keyboard and mouse events.</p>
+<p>Let's go back to the program that opens a window:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'Done!'</span><span class="p">)</span>
+</pre></div><p>The whole event loop is hidden in the function <code>pyglet.app.run()</code>.
+Detecting input (e.g. from keyboard) is something that Pyglet can do
+by itself, but the evaluation and drawing of the result is different 
+for each program, so you will have to program it by yourself.</p>
+<p>Currently Pyglet is processing only two events:
+Closing the window (by pressing the "x" button which is added by the 
+operating system) and pressing the <kbd>Esc</kbd> key,
+which also closes the window.
+After the window is closed, the event loop (function <code>pyglet.app.run()</code>)
+ends and the program continues to the next line of code.</p>
+<h2>Text</h2>
+<p>The <kbd>Esc</kbd> key is not interesting
+so let's have a look at the other keys.</p>
+<p>In Pyglet when you want to respond to some event, you have to
+write a function and then you <em>register</em> it - you tell
+Pyglet to call this function at the right time.
+An event that happens when the user is writing something
+on the keyboard is called <code>on_text</code> in Pyglet and it's
+processed this way:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">process_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span><span class="n">on_text</span><span class="o">=</span><span class="n">process_text</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>What does it do? <code>window.push_handlers(on_text=process_text)</code>
+tells Pyglet that when the user writes something into our
+window, Pyglet has to call a function <code>process_text</code>. This
+function gets one argument containing what the user wrote.</p>
+<p>Notice that when we register our function
+we are <strong>not</strong> writing parentheses, although we 
+<a href="/2018/pyladies-en-prague/beginners/functions/">once</a> said
+that functions have to be called that way.
+Do you remember this example? Maybe you found it weird back then.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sin</span>
+<span class="k">print</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">sin</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">sin</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div><p>Apart from numbers, strings, <code>True/False</code>, we now also know
+files, lists, tuples and others. And we can say that a function
+in Python is a value like any other.
+Numbers can be multiplied, strings can be written into a file,
+we can read from files, and functions are only different in that
+that they can be called.
+But before we call a function, we can store the function
+in a variable:</p>
+<div class="highlight"><pre><span></span><span class="n">write</span> <span class="o">=</span> <span class="k">print</span>
+<span class="n">write</span><span class="p">(</span><span class="s2">"Hello world!"</span><span class="p">)</span>
+</pre></div><p>Or we can pass the function to another function as an argument:</p>
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="k">print</span><span class="p">)</span>
+</pre></div><p>And the function <code>window.push_handlers</code> was directly writen to
+process a function. Why? Pyglet doesn't need the result
+of the function <code>process_text</code> - it is useless for it.
+And we also can't call the function cause we don't have
+useful <code>text</code> as an argument.
+That's why we give the function itself to Pyglet, and it
+is called everytime the user press some key.</p>
+<h2>Time ⏲</h2>
+<p>Before we move to the real graphics, we will have a look
+at another type of event.</p>
+<p>It's a <em>clock tick</em>. That's an event, which is happening
+regularly after some time.</p>
+<p>Registering a function for ticks is done differently than <code>on_text</code>:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">tick</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">tick</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">process_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span><span class="n">on_text</span><span class="o">=</span><span class="n">process_text</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>What does it do? <code>pyglet.clock.schedule_interval(tick, 1/30)</code>
+tells Pyglet that it should call the function <code>tick</code> every
+<code>1/30</code> of a second.</p>
+<p>The function <code>tick</code> gets only one argument - 
+how much time has elapsed since the last call.
+Mostly it is not exactly 1/30 of a second, it's a bit
+more. Our computer has also other things to do, so it
+doesn't get to our program immediately, and it also
+takes some time for Python to call our function.</p>
+<div class="admonition note"><p>And why 1/30 of a second? Because we will
+create an animation later. When 30 images per second 
+are displayed in front of our eyes, 
+the brain connects them to create an illusion of smooth motion.
+<br>
+Most of the movies are using only 24 pictures per second and
+realistic 3D games have up to 60.</p>
+</div><h2>Drawing 🖌</h2>
+<p><img src="/2018/pyladies-en-prague/beginners-en/pyglet/static/snake.png" alt="" style="display:block;float:right;"></p>
+<p>A program that prints a lot of numbers to the command line
+is not really interesting. But today's topic is
+graphics so we will slowly get rid off the command line.
+Let's draw! :)</p>
+<p>Find some picture on the internet. Not too big so we still have
+some room in our window. And PNG format would be the best.
+You can start for example <a href="https://www.google.cz/search?tbs=ift:png&amp;tbm=isch&amp;q=snake+icon">here</a>.
+And don't pick any dark picture because you might not
+see it in your dark window.
+Save it to the same folder where you have your program. For
+example I have saved the picture as <code>snake.png</code>.</p>
+<p>Then draw the picture (use the name of your image):</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">tick</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">tick</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">process_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake.png'</span><span class="p">)</span>
+<span class="n">snake</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span>
+    <span class="n">on_text</span><span class="o">=</span><span class="n">process_text</span><span class="p">,</span>
+    <span class="n">on_draw</span><span class="o">=</span><span class="n">draw</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>Success?</p>
+<p>Let's explain what is happening:</p>
+<ul>
+<li><code>image = pyglet.image.load('snake.png')</code> loads the picture from a file</li>
+<li><code>snake = pyglet.sprite.Sprite(image)</code>
+creates a special object, a <a href="https://en.wikipedia.org/wiki/Sprite_(computer_graphics">Sprite</a>),
+which specifies that we want to "place" our image at a specific
+place in the window. If we didn't do anything else, the image
+would sit in the left corner.</li>
+<li>Our function <code>draw()</code> takes care of rendering (drawing into) the window.
+It is called everytime when the window needs to be redrawn - e.g. when you
+minimize the window and then you open it again, or when you move the window
+out of the screen and then you move it back in. Or when we animate
+something.</li>
+</ul>
+<div class="admonition note"><p>Some operating systems remember the contents of windows
+that are not visible, but you shouldn't count on it.</p>
+</div><ul>
+<li><code>window.clear()</code> cleans the window - "paints the window black" and
+deletes everything that was there before.</li>
+</ul>
+<div class="admonition note"><p>This is not needed on a lot of computers but it's
+better to write programs so they run correctly
+everywhere.</p>
+</div><ul>
+<li><code>snake.draw()</code> draws a picture with our prepared <code>snake</code> <em>sprite</em>.</li>
+<li><code>window.push_handlers(on_draw=draw)</code> registers the function <code>draw</code> –
+and tells Pyglet to call it everytime it is needed.
+<br>
+When you need to register more functions to handle events
+you can also add them to the <code>push_handlers</code> function like that ↑.</li>
+</ul>
+<p>Any drawing <em>must</em> be done within the drawing function that
+Pyglet calls from <code>on_draw</code>. Functions like <code>clear</code> and <code>draw</code>
+won't work anywhere else.</p>
+<h2>Animation</h2>
+<p>Let's play with the Sprite a bit.</p>
+<p>Write the following in the function <code>process_text</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">150</span>
+</pre></div><p>Our Sprite has an <em>attribute</em> <code>x</code> which determines its 
+<var>x</var> coordinate - how far to the right it is
+from the window edge.
+You can set this attribute how ever you want - mostly as
+reaction to some event, but it can be also set in the beginning.</p>
+<p>Try to add something to <code>x</code> everytime the clock ticks.
+Are you able to guess how this piece of code will behave?</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">tick</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="mi">20</span>
+</pre></div><p>If you are not scared of maths, import <code>math</code>,
+and let the picture move according to some function:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">tick</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="mi">20</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">+</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div><p>What will happen when you change those numbers?</p>
+<p>What will happen when you try to set a <code>rotation</code> attribute in a similar way?</p>
+<h2>Call later</h2>
+<p><img src="/2018/pyladies-en-prague/beginners-en/pyglet/static/snake2.png" alt="" style="display:block;float:right;"></p>
+<p>Pyglet also can call a function after some time.</p>
+<p>Download another picture. I have another snake which
+is a bit different than the first one.</p>
+<p>Once you have the picture in the folder with your
+program, add this piece of code right before <code>pyglet.app.run()</code>:</p>
+<div class="highlight"><pre><span></span><span class="n">image2</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake2.png'</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">change</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span><span class="n">image2</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">change</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div><p>Calling <code>schedule_once(change, 1)</code> tells Pyglet that it
+should call the function <code>change</code> after one second.
+And this function changes the image - in a similar way as we were
+changing the coordinates.</p>
+<p><code>schedule_once</code> can be also called when you are handling another
+event. Try to replace the function <code>change</code> like that:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">change</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">image2</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">change_back</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">change_back</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">image</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">change</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+</pre></div><h2>Click 🐭</h2>
+<p>The last event we will learn to handle is clicking.
+Write this function right before the <code>window.push_handlers</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">click</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">button</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+</pre></div><p>… and then register it in the <code>push_handlers</code> as <code>on_mouse_press=click,</code>.</p>
+<p>Try to find out what each argument means by yourself.</p>
+<div class="admonition note"><p class="admonition-title">Help</p>
+<ul>
+<li>If you don't get rid of the command line completely
+you can use <code>print</code>. So everytime you want to find out some
+value, use print.</li>
+<li>How many buttons does a mouse have?</li>
+<li>What happens when the user <kbd>Shift</kbd>+clicks?</li>
+</ul>
+</div><h2>To be continued</h2>
+<p>We wrote enough code, so we can end this lesson:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">tick</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="mi">20</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">tick</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">process_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">150</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">snake</span><span class="o">.</span><span class="n">rotation</span> <span class="o">+</span> <span class="mi">10</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">snake</span><span class="o">.</span><span class="n">png</span><span class="p">)</span>
+<span class="n">snake</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">click</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">button</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">button</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span>
+    <span class="n">on_text</span><span class="o">=</span><span class="n">process_text</span><span class="p">,</span>
+    <span class="n">on_draw</span><span class="o">=</span><span class="n">draw</span><span class="p">,</span>
+    <span class="n">on_mouse_press</span><span class="o">=</span><span class="n">click</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">image2</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake2.png'</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">change</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">image2</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">change_back</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">change_back</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">snake</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">image</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">change</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="n">change</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>With keystroke and mouse input, timing, and rendering of Sprites, 
+you can create a simple game or graphics application.</p>
+<p>When you write some game, try to keep the state of the
+application (basically how the window should look)
+in lists and tuples (or in dictionaries or classes).
+One function should draw this state, and another function
+should manipulate (change) it.
+To avoid confusion, you can also have those two functions 
+in different files.</p>
+<p>If you are interested in this topic, you can try to play and examine this
+<a href="/2018/pyladies-en-prague/beginners-en/pyglet/static/pong.py">Pong</a> code, which shows more Pyglet options: writing text, 
+drawing rectangles and handling specific keys (e.g. arrows).
+It may seem difficult, but just look at the comments (currently with A LOT of grammar
+errors) and try to understand it. If the comments are not enough for you
+to understand, we will also translate <a href="/2018/pyladies-en-prague/beginners-en/pong/">the more detailed 
+materials for it</a></p>
+<p>You can find the things that we've learned today (and some more) in the
+<a href="https://github.com/muzikovam/cheatsheets/blob/master/pyglet/pyglet-basics-en.pdf">Pyglet cheatsheet</a>,
+which you can download and print out.</p>
+<p>And if you want to dive deeper into Pyglet, there is also
+<a href="http://pyglet.readthedocs.org/en/latest/index.html">documentation</a>.
+If anything in there isn't clear, just ask!</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/pyladies-en-prague/sessions/pyglet/">↑ <span class="d-none d-sm-inline">Lekce: Graphics</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/pyladies-en-prague/sessions/pyglet/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-pyladies-en-prague/lessons/beginners-en/pyglet/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Translated by Marketa Muzikova</p>
+    
+        <p>Originally written by Petr Viktorin, 2015-2017 for <a href="https://naucse.python.cz/course/pyladies/intro/pyglet/">PyLadies CZ</a>.</p>
+    
+        <p>Python icon created by Martin Berube.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

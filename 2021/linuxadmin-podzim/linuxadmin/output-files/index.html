@@ -1,0 +1,339 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Vypisování souborů
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/shell-2/">Bash II</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/output-files/">Vypisování souborů</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Vypisování souborů</h1>
+<p>Teď, když se umíš pohybovat po adresářovém systému a vytvářet soubory,
+se podíváme na to, co v těch souborech je.</p>
+<p>Začni v adresáři <code>data-shell/molecules</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ~/Dokumenty/data-shell/molecules
+<span class="gp">$ </span>ls -F
+<span class="go">cubane.pdb  ethane.pdb  methane.pdb  octane.pdb  pentane.pdb  propane.pdb</span>
+</pre></div><h2>Vypisovací kočka</h2>
+<p>Podle přípony jsou tu soubory ve formátu <em>Protein Data Bank</em>,
+což je textový formát, kterým se dají popsat druhy a pozice atomů v molekule.
+Jak takový <code>.pdb</code> soubor vypadá?
+Zkus si nějaký vypsat pomocí příkazu <code>cat</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat methane.pdb
+<span class="go">COMPND      METHANE</span>
+<span class="go">AUTHOR      DAVE WOODCOCK  95 12 18</span>
+<span class="go">ATOM      1  C           1       0.257  -0.363   0.000  1.00  0.00</span>
+<span class="go">ATOM      2  H           1       0.257   0.727   0.000  1.00  0.00</span>
+<span class="go">ATOM      3  H           1       0.771  -0.727   0.890  1.00  0.00</span>
+<span class="go">ATOM      4  H           1       0.771  -0.727  -0.890  1.00  0.00</span>
+<span class="go">ATOM      5  H           1      -0.771  -0.727   0.000  1.00  0.00</span>
+<span class="go">TER       6              1</span>
+<span class="go">END</span>
+</pre></div><p>Do terminálu se ti vypíše obsah souboru – to, co by se ti ukázalo v textovém
+editoru, kdybys soubor otevřela.</p>
+<h3>Proč <code>cat</code>?</h3>
+<p>Jméno <code>cat</code> je zkratka z angl. <em>catenate</em>/<em>concatenate</em> – zřetězit,
+spojit do sekvence. Je to termín pro spojování řetězců, jak to znáš
+z Pythonu: <code>'Ahoj' + ' ' + 'světe'</code>.
+Když dáš příkazu <code>cat</code> několik argumentů, tak postupně vypíše obsah každého
+daného souboru. Spojí je dohromady, jeden za druhý:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat methane.pdb ethane.pdb
+<span class="go">COMPND      METHANE</span>
+<span class="go">AUTHOR      DAVE WOODCOCK  95 12 18</span>
+<span class="go">ATOM      1  C           1       0.257  -0.363   0.000  1.00  0.00</span>
+<span class="go">ATOM      2  H           1       0.257   0.727   0.000  1.00  0.00</span>
+<span class="go">ATOM      3  H           1       0.771  -0.727   0.890  1.00  0.00</span>
+<span class="go">ATOM      4  H           1       0.771  -0.727  -0.890  1.00  0.00</span>
+<span class="go">ATOM      5  H           1      -0.771  -0.727   0.000  1.00  0.00</span>
+<span class="go">TER       6              1</span>
+<span class="go">END</span>
+<span class="go">COMPND      ETHANE</span>
+<span class="go">AUTHOR      DAVE WOODCOCK  95 12 18</span>
+<span class="go">ATOM      1  C           1      -0.752   0.001  -0.141  1.00  0.00</span>
+<span class="go">ATOM      2  C           1       0.752  -0.001   0.141  1.00  0.00</span>
+<span class="go">ATOM      3  H           1      -1.158   0.991   0.070  1.00  0.00</span>
+<span class="go">ATOM      4  H           1      -1.240  -0.737   0.496  1.00  0.00</span>
+<span class="go">ATOM      5  H           1      -0.924  -0.249  -1.188  1.00  0.00</span>
+<span class="go">ATOM      6  H           1       1.158  -0.991  -0.070  1.00  0.00</span>
+<span class="go">ATOM      7  H           1       0.924   0.249   1.188  1.00  0.00</span>
+<span class="go">ATOM      8  H           1       1.240   0.737  -0.496  1.00  0.00</span>
+<span class="go">TER       9              1</span>
+<span class="go">END</span>
+</pre></div><p>V praxi se <code>cat</code> většinou používá pro vypsání jediného souboru,
+ale jméno stále odkazuje na tohle spojování.
+S kočkama samozřejmě nemá vůbec, ale vůbec nic společného 😺</p>
+<div class="admonition note"><p>Podobnou historii má i příkaz <code>touch</code> (česky “dotknout se”): původně byl
+vytvořen proto, aby se dal jednoduše aktualizovat čas poslední změny souboru.
+To stále dělá: až budeš chtít tuhle informaci u nějakého souboru změnit,
+koukni na <code>man touch</code>.</p>
+<p>To, že <code>touch</code> vytvoří nový soubor (pokud zatím neexistuje) je
+“jen vedlejší efekt” téhle aktualizace. Je ale často užitečnější než
+“opravdový" účel.</p>
+</div><h3>Opakovací kočka</h3>
+<p>Když zadáš jen příkaz <code>cat</code> bez jména souboru, nestane se naoko nic.
+To proto, že <code>cat</code> v tomhle případě vypisuje vstup z klávesnice – a to
+po řádcích. Takže dokud něco nezadáš, může to vypadat že „Bash zamrzl“.</p>
+<p>Ale jakmile napíšeš celý řádek řádek a zmáčkenš <kbd>Enter</kbd>,
+<code>cat</code> ho zopakuje.
+To zatím není moc užitečné, ale za chvíli se to bude hodit.</p>
+<p>Jako skoro každý program se <code>cat</code> dá ukončit
+pomocí <kbd>Ctrl</kbd>+<kbd>C</kbd>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat
+<span class="go">ahoj</span>
+<span class="go">ahoj</span>
+<span class="go">blablabla</span>
+<span class="go">blablabla</span>
+<span class="go">^C</span>
+</pre></div><div class="admonition note"><p>První opakování řádku má „na svědomí“ terminál, který automaticky ukazuje
+co napíšeš na klávesnici a nechá tě např. opravovat chyby pomocí
+<kbd>Backspace</kbd>.
+Příkazu předá až kompletní řádek, když stiskneš <kbd>Enter</kbd>.
+(Tohle chování se dá vypnout; programy jako <code>nano</code> se starají
+o veškerý výstup samy.)
+Druhé opakování přichází od příkazu <code>cat</code>, který vypisuje co od terminálu
+obdrží, když zmáčkneš <kbd>Enter</kbd>.</p>
+</div><h2>Hlavičky a ocásky</h2>
+<p>Zkus si vypdat obsah souboru <code>octane.pdb</code>.
+Ten je trochu delší; máš-li menší terminál, možná se tam ani nevejde.
+V dnešních terminálech můžeš sice rolovat posuvníkem,
+ale hodí se umět vypsat jenom začátek – hlavičku – souboru.
+To se dělá příkazem <code>head</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>head octane.pdb
+<span class="go">COMPND      OCTANE</span>
+<span class="go">AUTHOR      DAVE WOODCOCK  96 01 05</span>
+<span class="go">ATOM      1  C           1      -4.397   0.370  -0.255  1.00  0.00</span>
+<span class="go">ATOM      2  C           1      -3.113  -0.447  -0.421  1.00  0.00</span>
+<span class="go">ATOM      3  C           1      -1.896   0.386  -0.007  1.00  0.00</span>
+<span class="go">ATOM      4  C           1      -0.611  -0.426  -0.198  1.00  0.00</span>
+<span class="go">ATOM      5  C           1       0.608   0.405   0.216  1.00  0.00</span>
+<span class="go">ATOM      6  C           1       1.892  -0.400   0.001  1.00  0.00</span>
+<span class="go">ATOM      7  C           1       3.113   0.429   0.414  1.00  0.00</span>
+<span class="go">ATOM      8  C           1       4.397  -0.374   0.199  1.00  0.00</span>
+</pre></div><p>Normálně <code>head</code> vypíše prvních 10 řádků, ale pomocí přepínače <code>-n</code>
+můžeš zadat i jiný počet:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>head -n4 octane.pdb
+<span class="go">COMPND      OCTANE</span>
+<span class="go">AUTHOR      DAVE WOODCOCK  96 01 05</span>
+<span class="go">ATOM      1  C           1      -4.397   0.370  -0.255  1.00  0.00</span>
+<span class="go">ATOM      2  C           1      -3.113  -0.447  -0.421  1.00  0.00</span>
+</pre></div><p>Záporné hodnoty fungují jako v Pythonu: s <code>-n -10</code> vypíše <code>head</code> všechny řádky
+kromě deseti posledních.</p>
+<p>Podobný příkaz je <code>tail</code>, který naopak vypíše poslední řádky ze souboru:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>tail -n <span class="m">4</span> octane.pdb
+<span class="go">ATOM     25  H           1       4.368  -1.282   0.801  1.00  0.00</span>
+<span class="go">ATOM     26  H           1       5.254   0.230   0.498  1.00  0.00</span>
+<span class="go">TER      27              1</span>
+<span class="go">END</span>
+</pre></div><h2>Méně je více</h2>
+<p>Příkazy <code>head</code> a <code>tail</code> jsou užitečné, ale někdy se potřebuješ v dlouhém
+dokumentu trochu „porozhlédnout“.
+K tomu slouží příkaz <code>less</code>, který ukáže obsah souboru podobným způsobem
+jako <code>man</code>.
+Klávesami <kbd>↑</kbd>/<kbd>↓</kbd>/<kbd>PgUp</kbd>/<kbd>PgDb</kbd>
+se v souboru „pohybuj“ a pomocí <kbd>Q</kbd> se dostaneš ven.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>less octane.pdb
+</pre></div><div class="admonition note"><p class="admonition-title">Proč „less“?</p>
+<p>Příkaz <code>less</code> vychází ze staršího <code>more</code> (více), nástroje pro terminály
+které neuměly „rolovat“ v historii.
+Po vypsání kousku textu zobrazil něco jako <em>Press Space for more</em>,
+„stiskni mezerník pro více [textu]“ a čekal na stisk klávesy.</p>
+<p>Jméno <em>Less</em> (méně) si jen hraje se rčením <em>méně je více</em>
+(less is more) – <code>less</code> je vylepšenou verzí <code>more</code>, která se umí v souboru
+vracet zpátky (a mnohem víc).</p>
+</div><h2>Počítání řádků</h2>
+<p>Občas nepotřebuješ přímo obsah souboru, ale chceš vědět kolik obsahu v něm je.
+Na to, abys to zjistila, slouží příkaz <code>wc</code>.
+Název je zkratka z anglického <em>word count</em>, počet slov; podobnost s evropskou
+zkratkou WC (<em>water closet</em>) je čistě náhodná.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>wc octane.pdb
+<span class="go">  30  246 1828 octane.pdb</span>
+</pre></div><p>Příkaz <code>wc</code> vypíše čtyři hodnoty: počet řádků, počet slov, počet bytů
+(tedy velikost souboru) a jméno souboru.
+Z nápovědy se dozvíš jak vybrat jen jednu z těchto hodnot (nebo víc jiných).
+Asi nejužitečnější je počet řádků, který vybereš přepínačem <code>-l</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>wc -l octane.pdb
+<span class="go">30 octane.pdb</span>
+</pre></div><p>Když dáš příkazu <code>wc</code> víc souborů, vypíše informace o každém z nich:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>wc *.pdb
+<span class="go">  20  156 1158 cubane.pdb</span>
+<span class="go">  12   84  622 ethane.pdb</span>
+<span class="go">   9   57  422 methane.pdb</span>
+<span class="go">  30  246 1828 octane.pdb</span>
+<span class="go">  21  165 1226 pentane.pdb</span>
+<span class="go">  15  111  825 propane.pdb</span>
+<span class="go"> 107  819 6081 celkem</span>
+</pre></div><p>V posledním řádku pak vidíš součet všech položek.</p>
+<p>Když naopak příkazu <code>wc</code> nezadáš žádná jména souborů, funguje podobně jako
+<code>cat</code>: zpracuje vstup z klávesnice.
+To už se může hodit: když si zkopíruješ nějaký text z editoru do schránky,
+můžeš ji vložit „do“ spuštěného příkazu <code>wc</code>.</p>
+<div class="admonition none"><p>Dnešní editory mají funkci počítání slov zabudovanou.
+Je dokonce i v <code>nano</code> (pod <kbd>Alt</kbd>+<kbd>D</kbd>).
+Ale textová políčka třeba v prohlížeči bývají „hloupější“.</p>
+</div><p>Tentokrát po napsání textu nemačkej <kbd>Ctrl</kbd>+<kbd>C</kbd> – tím bys
+příkaz <code>wc</code> ukončila, takže by nedostal šanci vypsat výsledek.
+Místo toho použij na začátku řádku <kbd>Ctrl</kbd>+<kbd>D</kbd>,
+což znamená „konec vstupu“.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>wc
+<span class="go">haló haló,</span>
+<span class="go">co se stalo?</span>
+<span class="go">      2       5      23</span>
+</pre></div><p>Zkratka <kbd>Ctrl</kbd>+<kbd>D</kbd>, konec vstupu, funguje i pro příkazy
+jako <code>cat</code>.
+A dokonce i pro samotný <code>bash</code>: když zmáčkneš tuhle zkratku
+místo příkazu, Bash se ukončí.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-2/">↑ <span class="d-none d-sm-inline">Lekce: Bash II</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter/"><span class="d-none d-sm-inline">Roury a filtry</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/output-files/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Petr Viktorin a Karolina Surma, 2020</p>
+    
+        <p>částečně založeno na kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, 2016–2018 Software Carpentry Foundation, 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

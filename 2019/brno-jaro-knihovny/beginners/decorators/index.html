@@ -1,0 +1,495 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Python a jeho knihovny: Dekorátory
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/brno-jaro-knihovny/">Python a jeho knihovny</a>
+
+> <a href="/2019/brno-jaro-knihovny/sessions/dekoratory/">Dekorátory</a>
+
+> <a href="/2019/brno-jaro-knihovny/beginners/decorators/">Dekorátory</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Dekorátory</h1>
+<h2>Co je cílem tohoto cvičení?</h2>
+<p>V této lekci se nebude věnovat žádné externí knihovně. Místo toho se seznámíme
+s jednou vlastností Pythonu, kterou knihovny často využívají, a která obvykle
+vypadá trochu magicky.</p>
+<p>Touto vlastností jsou <em>dekorátory</em>.</p>
+<p><em>Dekorátory</em> se hodí tehdy, když potřebujeme upravit chování nějaké funkce, ale
+nechceme ji přímo upravovat.</p>
+<h2>Předpoklady</h2>
+<p>Předpokládáme základní znalost Pythonu. Měli byste mít počítač s nainstalovaným
+interpretem jazyka Python ve verzi aspoň 3.6. Pro začátek si také vytvořte nové
+virtuální prostředí. Bude se nám hodit, pokud v něm bude nainstalovaná knihovna
+<em>requests</em>.</p>
+<h2>Teorie do začátku</h2>
+<p>Co je to vlastně dekorátor? Dekorátor je vlastně jenom funkce, která dostane
+jeden argument a vrátí jednu hodnotu. Je ale trochu speciální v tom, že jak
+argument, tak návratová hodnota jsou zase jiné funkce.</p>
+<div class="admonition note"><p>Funkcím, které operují nad jinými funkcemi, říkáme <em>funkce vyššího řádu</em>.</p>
+</div><p>Použití dekorátorů v kódu už jsme viděli při používání knihovny <code>click</code>. Vypadá zhruba takto:</p>
+<div class="highlight"><pre><span></span><span class="nd">@dekorator</span>
+<span class="k">def</span> <span class="nf">funkce</span><span class="p">():</span>
+    <span class="k">pass</span>
+</pre></div><p>Tento zápis se zavináčem je jenom <em>syntaktický cukr</em>. Usnadňuje nám zápis, ale
+chová se přesně stejně jako následující kód, na kterém je lépe vidět, že
+<code>dekorator</code> je funkce:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">funkce</span><span class="p">():</span>
+    <span class="k">pass</span>
+<span class="n">funkce</span> <span class="o">=</span> <span class="n">dekorator</span><span class="p">(</span><span class="n">funkce</span><span class="p">)</span>
+</pre></div><p>Na řádku za zavináčem může být libovolný výraz, který po vyhodnocení vrátí
+funkci, která má požadované rozhraní.</p>
+<h2>Přiklad 0 – registrace funkcí</h2>
+<p>Jak už při programování bývá zvykem, náš první dekorátor nás pozdraví.</p>
+<p>Začneme s jednoduchým programem, který definuje funkci pro pozdrav a zavolá ji.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ahoj</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Ahoj"</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">ahoj</span><span class="p">()</span>
+</pre></div><p>Do tohoto programu bychom rádi přidali další pozdravy, a zavolali je všechny.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ahoj</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Ahoj"</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">nazdar</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Nazdar"</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">ahoj</span><span class="p">()</span>
+    <span class="n">nazdar</span><span class="p">()</span>
+</pre></div><p>Tento přístup ale povede k tomu, že by na konci byl dlouhý seznam pozdravů.
+Můžeme si funkce rovnou uložit do seznamu a potom přes něj jenom iterovat.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ahoj</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Ahoj"</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">nazdar</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Nazdar"</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">funkce</span> <span class="o">=</span> <span class="p">[</span><span class="n">ahoj</span><span class="p">,</span> <span class="n">nazdar</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">funkce</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">()</span>
+</pre></div><p>A jako poslední krok přidáme dekorátor, který nám bude funkce rovnou přidávat
+do seznamu.</p>
+<div class="highlight"><pre><span></span><span class="n">funkce</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<span class="k">def</span> <span class="nf">pridej_pozdrav</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="n">funkce</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">funkce</span>
+
+
+<span class="nd">@pridej_pozdrav</span>
+<span class="k">def</span> <span class="nf">ahoj</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Ahoj"</span><span class="p">)</span>
+
+
+<span class="nd">@pridej_pozdrav</span>
+<span class="k">def</span> <span class="nf">nazdar</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Nazdar"</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">funkce</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">()</span>
+</pre></div><p>Zkuste přidat ještě jeden pozdrav.</p>
+<div class="admonition note"><p>V tomto příkladu jde o docela zbytečné použití dekorátorů. Ukazuje ale
+praktický způsob, jak řešit registraci funkcí. Stejné řešení používá
+například knihovna <code>flask</code> pro definování webových služeb nebo <code>click</code> pro
+vytváření příkazů pro terminál.</p>
+</div><h2>Příklad 1 – trasování volání funkcí</h2>
+<p>Podívejme se třeba na tuto na pohled nevinnou funkci. Počítá, jak vypadá <em>n</em>-té
+číslo ve Fibonacciho posloupnosti. Funguje docela pěkně, pokud jí nezadáme jako
+argument příliš velké číslo. Na autorově počítači příliš velká čísla začínají
+kolem 35.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fib</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">"""Spočítá x-té číslo ve Fibonacciho posloupnosti."""</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">fib</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div><p>Napíšeme si jednoduchý dekorátor, který nám bude vypisovat informace o tom, co
+se ve funkci děje.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">co_se_deje</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Aplikuju dekorátor"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">func</span>
+
+
+<span class="nd">@co_se_deje</span>
+<span class="k">def</span> <span class="nf">fib</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">"""Spočítá x-té číslo ve Fibonacciho posloupnosti."""</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">fib</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">fib</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+</pre></div><p>Tento dekorátor funkci nijak nemění. Akorát nám oznámí, že byl aplikovaný. V
+těle dekorátoru ale můžeme nadefinovat novou funkci a vrátit ji.</p>
+<p>Zkusme si to:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">co_se_deje</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">nahradni_funkce</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"Spočítej si to sám!"</span>
+
+    <span class="k">return</span> <span class="n">nahradni_funkce</span>
+</pre></div><p>Nebo můžeme vrátit funkci, která akorát zavolá tu původní.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">co_se_deje</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">nahradni_funkce</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nahradni_funkce</span>
+</pre></div><p>Pojďme vracenou funkci rozšířit tak, aby vypisovala informace o tom, co dělá.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">co_se_deje</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">nahradni_funkce</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"Voláme {func.__name__}({x})"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nahradni_funkce</span>
+</pre></div><p>Úkol: upravte dekorátor tak, aby vypisoval i vypočítanou hodnotu.</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2019/brno-jaro-knihovny/beginners/decorators/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">co_se_deje</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">nahradni_funkce</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"Voláme {func.__name__}({x})"</span><span class="p">)</span>
+        <span class="n">vysledek</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"Výsledek {func.__name__}({x}) = {vysledek}"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">vysledek</span>
+
+    <span class="k">return</span> <span class="n">nahradni_funkce</span>
+</pre></div>
+    </div>
+</div><div class="admonition note"><p>Tento dekorátor není úplně praktický. Pokud toho vypíše trochu víc, tak už se
+v tom logu nikdo nevyzná. Myšlenka jako taková ovšem není úplně špatná. Kdyby
+třeba dekorátor počítal, kolikrát se funkce spustí, a jak dlouho obvykle
+trvá, mohl by nám pomoct najít místa pro optimalizaci.</p>
+</div><h3>Nápověda pro funkce</h3>
+<p>Zkuste si v interaktivní konzoli Pythonu spustit následující příklad:</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="k">print</span><span class="p">)</span>
+<span class="go">Help on built-in function print in module builtins:</span>
+
+<span class="go">print(...)</span>
+<span class="go">    print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)</span>
+
+<span class="go">    Prints the values to a stream, or to sys.stdout by default.</span>
+<span class="go">    Optional keyword arguments:</span>
+<span class="go">    file:  a file-like object (stream); defaults to the current sys.stdout.</span>
+<span class="go">    sep:   string inserted between values, default a space.</span>
+<span class="go">    end:   string appended after the last value, default a newline.</span>
+<span class="go">    flush: whether to forcibly flush the stream.</span>
+</pre></div><p>Dostaneme krátkou nápovědu o tom, jak používat funkci <code>print</code>.</p>
+<p>Odkud se tato nápověda bere? Z dokumentačního komentáře. Takže bychom měli
+dostat pěknou nápovědu třeba i pro naši známou funkci <code>fib</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fib</span> <span class="kn">import</span> <span class="n">fib</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="n">fib</span><span class="p">)</span>
+<span class="go">Help on function nahradni_funkce in module fib:</span>
+
+<span class="go">nahradni_funkce(x)</span>
+
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div><p>Něco je špatně. Protože jsme původní implementaci funkce <code>fib</code> pomocí
+dekorátoru nahradili naší pomocnou funkcí, komentář se cestou ztratil. Mohli
+bychom přidat dokumentační komentář k náhradní funkci, ale přece nebudeme
+stejný kód kopírovat dvakrát.</p>
+<p>Standardní knihovna má naštěstí možnost, jak to snadno opravit. V modulu
+<code>functools</code> je definovaný dekorátor <code>wraps</code>, který umí zkopírovat dokumentační
+komentář a jméno z jedné funkce do druhé.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+
+
+<span class="k">def</span> <span class="nf">co_se_deje</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">nahradni_funkce</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fib</span> <span class="kn">import</span> <span class="n">fib</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="n">fib</span><span class="p">)</span>
+<span class="go">Help on function fib in module fib:</span>
+
+<span class="go">fib(x)</span>
+<span class="go">    Spočítá x-té číslo ve Fibonacciho posloupnosti.</span>
+
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div><h3>Předávání všech argumentů.</h3>
+<p>Při psaní dekorátorů je dobré myslet na to, jak moc univerzální by měly být.
+Například náš <code>co_se_deje</code> momentálně funguje pouze pro funkce, které mají
+jeden argument.</p>
+<p>To je ale docela hloupé omezení. Stejně dobře bychom mohli chtít sledovat
+volání jiné funkce, která má třeba argumentů víc.</p>
+<p>Pokud dekorátor nepotřebuje vědět nic o argumentech funkce, je docela praktické
+jej nadefinovat tak, aby byly prostě všechny předal dál, ať už jich je kolik
+chce.</p>
+<p>To můžeme udělat následovně:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">co_se_deje</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">nahradni_funkce</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"Voláme {func.__name__}{args}"</span><span class="p">)</span>
+        <span class="n">vysledek</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"Výsledek {func.__name__}{args} = {vysledek}"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">vysledek</span>
+    <span class="k">return</span> <span class="n">nahradni_funkce</span>
+</pre></div><p>Do n-tice <code>args</code> posbíráme všechny poziční argumenty, do slovníku <code>kwargs</code>
+všechny pojmenované argumenty. A při volání dekorované funkce je všechny zase
+předáme dál.</p>
+<p>Ve výstupu teď používáme pouze poziční argumenty. Přidání těch pojmenovaných je
+cvičení pro čtenáře.</p>
+<h2>Příklad 2 – opakování HTTP požadavků</h2>
+<p>Pokud náš program musí pracovat s nějakou externí službou nebo systémem, může
+se stát, že komunikace mezi nimi nebude vždy bezproblémová. Pěkný příklad je
+třeba stahování webové stránky se špatným připojením. S tím z Pythonu nic
+udělat nemůžeme.</p>
+<p>Můžeme ale zkusit požadavek zopakovat, pokud poznáme, že je to typ chyby, kde
+opakování může pomoct.</p>
+<p>Začneme s jednoduchým programem, který udělá HTTP požadavek.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">stahni</span><span class="p">():</span>
+    <span class="sd">"""Stáhne stránku a něco s ní udělá."""</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Stahuju stránku"</span><span class="p">)</span>
+    <span class="n">odpoved</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"https://httpbin.org/status/200,400,500"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">"Dostali jsme {odpoved.status_code}"</span><span class="p">)</span>
+    <span class="n">odpoved</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s2">"OK"</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">stahni</span><span class="p">()</span>
+</pre></div><p>Použitá stránka náhodně odpoví jedním z vyjmenovaných kódu, takže ve dvou
+třetinách případů bychom měli dostat chybu. Pokud požadavek zkusíme zopakovat,
+máme dobrou šanci, že to projde.</p>
+<p>Začneme s jednoduchým dekorátorem, který jenom zavolá funkci.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">opakuj_pri_neuspechu</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">"""Pokud volání funkce vyhodí výjimku, budeme ji ignorovat a zkusíme funkci</span>
+<span class="sd">    zavolat znovu.</span>
+<span class="sd">    """</span>
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">nahradni_funkce</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nahradni_funkce</span>
+
+
+<span class="nd">@opakuj_pri_neuspechu</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">stahni</span><span class="p">():</span>
+    <span class="k">pass</span>
+</pre></div><p>Co bude dělat naše náhradní funkce. Donekonečna bude zkoušet zavolat
+dekorovanou funkci. Pokud se to podaří, vrátí její výsledek. Pokud dostaneme
+výjimku <code>requests.exceptions.HTTPError</code>, chvilku počkáme, a půjdeme na další
+pokus.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+
+
+<span class="k">def</span> <span class="nf">opakuj_pri_neuspechu</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">"""Pokud volání funkce vyhodí výjimku, budeme ji ignorovat a zkusíme funkci</span>
+<span class="sd">    zavolat znovu.</span>
+<span class="sd">    """</span>
+
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">nahradni_funkce</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">"Chyba, zkusíme to znovu"</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nahradni_funkce</span>
+</pre></div><p>Teď by program měl vypisovat, že se snaží stránku stáhnout několikrát, a
+opakovat to tak dlouho, dokud se to nepodaří.</p>
+<p>Co když ale potřebujeme opakování pokusů na více místech, ale chceme reagovat
+na jiné výjimky?</p>
+<p>Mohli bychom si nadefinovat nový dekorátor pro každý typ podmínky, kterou
+chceme zachycovat. To zní jako hodně práce a duplicitního kódu.</p>
+<p>Místo toho můžeme dekorátor upravit tak, aby přijímal argumenty, a pak mu
+řekneme, kterou výjimku ošetřovat.</p>
+<p>Výraz za <code>@</code> musí při vyhodnocení vždy vracet funkci, která se chová jako
+dekorátor. Takže musíme přidat jednu vrstvu do našich vnořených funkcí.</p>
+<p>Funkce <code>opakuj_pri_neuspechu</code> je vlastně továrna na dekorátory. Vždy, když ji
+zavoláme, vrátí nám funkci, která se chová podle našich potřeb a funguje jako
+dekorátor.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+
+
+<span class="k">def</span> <span class="nf">opakuj_pri_neuspechu</span><span class="p">(</span><span class="n">vyjimka</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">dekorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+
+        <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">nahradni_funkce</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">vyjimka</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s2">"Chyba, zkusíme to znovu"</span><span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nahradni_funkce</span>
+
+    <span class="k">return</span> <span class="n">dekorator</span>
+
+
+<span class="nd">@opakuj_pri_neuspechu</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">stahni</span><span class="p">():</span>
+    <span class="k">pass</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-jaro-knihovny/sessions/dekoratory/">↑ <span class="d-none d-sm-inline">Lekce: Dekorátory</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/brno-jaro-knihovny/sessions/dekoratory/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-brno-jaro-knihovny/lessons/beginners/decorators/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Lubomír Sedlář, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

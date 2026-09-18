@@ -1,0 +1,772 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Python a jeho knihovny: Úvod do CSS
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/praha-jaro-knihovny/">Python a jeho knihovny</a>
+
+> <a href="/2020/praha-jaro-knihovny/sessions/html-css/">Úvod do HTML a CSS</a>
+
+> <a href="/2020/praha-jaro-knihovny/intro/css/">Úvod do CSS</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Úvod do CSS</h1>
+<p>V přechozí lekci sis zkusila navrhnout webovou stránku jen pomocí HTML a asi jsi zjistila, že taková stránka
+ vypadá dosti nevábně. Asi jako nevybarvené omalovánky. Ve světě webových stránek jsou právě Kaskádové styly (<strong>CSS</strong>)
+  naše pastelky (<strong>barvičky</strong>).</p>
+<p>Špatnou zprávou je, že syntaxe <strong>CSS</strong> je rozdílná od HTML, takže si budeš muset v mozku vyčlenit další místo. Dobrou
+   zprávou je, že i <strong>CSS</strong> jde psát jako Python (Pythonic way), ale více až na konci lekce.
+    Teď se musíme naučit čísté <strong>CSS</strong>.</p>
+<p>Pro zopakování <strong>CSS</strong> znamená <strong>Cascading Styles Sheets</strong> (v češtině: Kaskádové styly).</p>
+<h2>Aplikace CSS stylů</h2>
+<p>Máte napsanou HTML stránku a teď si asi říkáte, musím to celé přepisovat, když chci mít růžové pozadí a žluté písmo?
+  Opověď zní, ano můžu, ale naštěstí nemusím. Existují tři způsoby jak dodat HTML stránce grafický styl:</p>
+<ol>
+<li><p><strong>Inline</strong>: CSS styly jsou vložené přímo v HTML tagu zadané pomocí atributu <strong>style</strong>.</p>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p</span> <span class="na">style</span><span class="o">=</span><span class="s">"color: red"</span><span class="p">&gt;</span>text<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</pre></div><p>Tímto zápisem říkáme, že celý text v odstavci má mít červenou barvu.</p>
+</li>
+<li><p><strong>Interní CSS</strong>: CSS styly jsou vkládáne pomocí tagu <code>&lt;style&gt; &lt;/style&gt;</code> do hlavičky dokumentu <code>&lt;head&gt; &lt;/head&gt;</code>:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+   <span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+       <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+           <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>CSS Example<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+           <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+
+           <span class="nt">p</span> <span class="p">{</span>
+               <span class="k">color</span><span class="p">:</span> <span class="kc">red</span><span class="p">;</span>
+           <span class="p">}</span>
+
+           <span class="nt">a</span><span class="o">&amp;</span><span class="nt">nbsp</span><span class="o">;</span><span class="p">{</span>
+               <span class="k">color</span><span class="p">:</span> <span class="kc">orange</span><span class="p">;</span>
+           <span class="p">}</span>
+
+           <span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+       <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+       <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+           <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Ahoj pyladies!<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+           <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">"https://naucse.python.cz/"</span><span class="p">&gt;</span>Oranžový odkaz na nauč se<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+       <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+   <span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div></li>
+<li><p><strong>Externí CSS</strong>: Poslední možností je uložit CSS jako externí soubor (přípona *.css). Vytvoř si soubor <code>styl.css</code>
+a ulož ho do stejné složky, kde máš html soubor. Do souboru vlož jen vnitřek z předchozího příkladu:</p>
+<p><code>styl.css</code>:</p>
+<div class="highlight"><pre><span></span><span class="nt">p</span> <span class="p">{</span>
+   <span class="k">color</span><span class="p">:</span> <span class="kc">red</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">a</span> <span class="p">{</span>
+   <span class="k">color</span><span class="p">:</span> <span class="kc">orange</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div><p>Nyní svému HTML musíš říct, kde má hledat soubory se stylem.:</p>
+<p><code>moje_stranka.html</code>:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">"html"</span><span class="p">&gt;</span>
+   <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+       <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>CSS Example<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+       <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">"stylesheet"</span> <span class="na">href</span><span class="o">=</span><span class="s">"style.css"</span><span class="p">&gt;</span>
+   <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+   <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+       <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Ahoj pyladies!<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+       <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">"https://naucse.python.cz/"</span><span class="p">&gt;</span>Oranžový odkaz na nauč se<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+   <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div><p>Odkaz na CSS obstaral tag <code>&lt;link&gt;</code>, který má dva atributy. Atribut <strong>rel</strong> udává vztah (relationship) mezi
+současným HTML a odkazovaným dokumentem. Hodnotou <em>stylesheet</em> říkáme, že má očekávat <strong>css</strong> soubor.
+Atribut <strong>href</strong> (hypertext reference) odkazuje na umístění souboru, které může být relativní i absolutní.</p>
+</li>
+</ol>
+<div class="admonition warning"><p class="admonition-title">Pozor!</p>
+<p>Je dobrou praxí style do HTML nezadávat, tak abychom oddělili struktru dokumentu <strong>HTML</strong> od jeho stylu <strong>CSS</strong>.
+Inline CSS používáme jen v případě pokud je důležité, aby byl text červený v každé šabloně.</p>
+</div><h2>Syntaxe CSS</h2>
+<p>Ve zkratce se syntaxe skládá ze <strong>selektorů</strong>, <strong>vlastností</strong> a <strong>hodnot</strong>. Výhodou je, že už známe Python, takže si
+ můžeme pomoci jeho syntaxí. Představ si, že selektor je <strong>slovník</strong>, <strong>vlastnost</strong> je klíč a hodnota je <strong>hodnota</strong>.
+ Definicí slovníku známe, ale co s tím, co kam ukládat? Vysvětlíme si to postupně na příkladu:</p>
+<div class="highlight"><pre><span></span><span class="nt">body</span> <span class="p">{</span>
+    <span class="k">font-size</span><span class="p">:</span> <span class="mi">14</span><span class="kt">px</span><span class="p">;</span>
+    <span class="k">color</span><span class="p">:</span> <span class="kc">deeppink</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div><ul>
+<li><p><strong>selektor</strong>: Určuje, na který tag chceme aplikovat styl a můžeme si ho představit jako jméno proměnné slovníku. V 
+příkladu je to tag <strong>body</strong>.</p>
+</li>
+<li><p><strong>vlastnost (property)</strong>: Jak už název napovídá, říká nám kterou vlastnost daného tagu chceme měnit. V příkladu 
+máme vlastnosti dvě <strong>font-size (velikost písma)</strong> a <strong>color (barvu písma)</strong>. Když zůstaneme u Pythonu, tak můžeme
+vlastnost připodobnit ke klíči slovníku.</p>
+</li>
+<li><p><strong>hodnota (value)</strong>: Hodnota je hodnota vlastnosti, je to trochu definice kruhem, ale snad je to zřejmé. Hodnotu
+stejně jako v Pythonu píšeme za dvojtečku.</p>
+</li>
+</ul>
+<div class="admonition warning"><p class="admonition-title">Pozor!</p>
+<p>Neberte příklad s Pythonem doslova, jednolivé páry vlastnost:hodnota se v CSS oddělují středníkem.
+Stejně tak selektor se nepřiřazuje k "slovníku" znaménkem rovná se, ale jen mezerou.</p>
+</div><h3>Jednotky délky</h3>
+<p>Možná sis v předchozím příkladu všimla podivné jednotky u font-size <strong>px</strong>. <em>px</em> je jednotka pixelu. Co je to pixel?
+Je to bod na tvé obrazovce, který může mít v jeden okamžik jen jednu barvu. Možná si vzpomínáš na pravěk počítačů,
+ kdy obrázky vypadaly nějak takto:
+<span class="figure"><a href="/2020/praha-jaro-knihovny/intro/css/static/heart.png"><img src="/2020/praha-jaro-knihovny/intro/css/static/heart.png" alt="obrázek srdce"></a></span></p>
+<p>Na srdíčku jsou vidět jednotlivé čtverečky. A jeden ten čtvereček je pixel. S dnešním <em>Ultra HD</em> rozlišením už
+ jednotlivé pixely (čtverečky) neuvidíš.</p>
+<p>A jaké jednotky délky můžeš používat? V CSS se dělí na <strong>absolutní</strong> a <strong>relativní</strong>. Pojdmě si napsat seznam:</p>
+<ul>
+<li><strong>absolutní</strong>:<ul>
+<li><strong>cm</strong>: centimetr</li>
+<li><strong>mm</strong>: milimetr</li>
+<li><strong>in</strong>: palec (1in = 96px = 2.54cm)</li>
+<li><strong>px</strong>: pixel (1px = 1/96 palce)</li>
+<li><strong>pt</strong>: bod (1pt = 1/72 palce)</li>
+<li><strong>pc</strong>: picas (1pc = 12 pt)</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><strong>relativní</strong>:<ul>
+<li><strong>em</strong>: násobek velikosti písma</li>
+<li><strong>ex</strong>: násobek velikosti písma na x-ové souřadnici (zřídka používané)</li>
+<li><strong>ch</strong>: násobek šířky znako 0 (nula)</li>
+<li><strong>rem</strong>: násobek velikosti písma kořenového tagu (elementu)</li>
+<li><strong>vw</strong>: procentní bod šířky okna prohlížeče</li>
+<li><strong>vh</strong>: procentní bod výšky okna prohlížeče</li>
+<li><strong>vmin</strong>: procentní bod menšího rozměru z okna prohlížeče</li>
+<li><strong>vmax</strong>: procentní bod většího rozměru z okna prohlížeče</li>
+<li><strong>%</strong>: procentní bod velikosti nadřazeného elementu (tagu)</li>
+</ul>
+</li>
+</ul>
+<h2>Barvy</h2>
+<p>Včelí medvídci ze známého večerníčku chtěli natírat svět nabílo (viz poznámka). Natírat svět jenom na bílo je nuda.
+ CSS poskytuje <strong>16 777 216</strong> různých barev. A jak barvy zadávat, když jich je tolik?</p>
+<div class="admonition note"><p><strong>Nás by tak nejvíce vábilo (Bílá)</strong><br>
+Nás by tak nejvíce vábilo,<br>
+natírat celý svět na bílo.<br>
+Motýla i jeho larvu,<br>
+milujeme bílou barvu. Bílá, bílá, bílá, bílá,<br>
+komu by se nelíbila.<br>
+Bílá vrána, bílá noc,<br>
+bílé není nikdy moc."Čmeláci vy jste snad šílení,<br>
+okamžitě nechte bílení."</p>
+<p>-- Zdeněk Svěrák</p>
+</div><p>Nemusíš se bát, že bys musela znát názvy všech barev. Pokud znáš anglický název barvy můžeš ho zkusit a pro ty jiné
+barvy tu jsou číselné zápisy. Jak jinak, programátoři mají čísla rádi. Způsoby zadávání barev:</p>
+<ol>
+<li><p><strong>Slovně</strong>: Barvu musíš zadávat anglickým názvem. Současné prohlížeče podporují
+<a href="https://www.w3schools.com/colors/colors_names.asp">140 názvů barev</a>.</p>
+</li>
+<li><p><strong>RGB</strong>:   RGB znamená <span style="color:red">Red</span> - <span style="color:green">Green</span> - 
+<span style="color:blue">Blue</span>. To, že se dá každá barva složit kombinací
+<span style="color:red">červené</span>, <span style="color:blue">modré</span> a
+<span style="color:green">zelené</span> barvy
+si už asi někde slyšela. Podivej se na ukázku a hned si řekneme více:</p>
+<div class="highlight"><pre><span></span>     <span class="nt">p</span> <span class="p">{</span>
+         <span class="k">color</span><span class="p">:</span><span class="nb">rgb</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">);</span>
+     <span class="p">}</span>
+
+     <span class="nt">h1</span> <span class="p">{</span>
+         <span class="k">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="mi">100</span><span class="kt">%</span><span class="p">,</span><span class="mi">100</span><span class="kt">%</span><span class="p">,</span><span class="mi">100</span><span class="kt">%</span><span class="p">);</span>
+     <span class="p">}</span>
+</pre></div><p>V našem příkladu jsme zadali, že všechny odstavce (<strong>p</strong>) budou mít bílou barvu a stejně tak všechny nadpisy
+(<strong>h1</strong>) budou mít také bílou barvu. Obsah každé složky barvy můžeme vkládat pomocí procent, to je asi z příkladu
+ zřejmé a pochopitelné. Ale co je za číslo <strong>255</strong>?</p>
+<p>Teď zase zpátky k matematice. Počítače pracují na principu <strong>nul</strong> a <strong>jedniček</strong>. Ano, týká se to i webových 
+stránek. Pradávné počítače pracovali s osmibitovými procesory, což zjednodušeně znamená, že má 8 drátků, kam můžeme
+pouštět proud. Na každém drátku proud běží(1)/neběží(0). Tímto způsobem procesor umí pracovat s <code>2*2*2*2*2*2*2*2
+ = 2^8 = 256</code> hodnotami. Historicky se ustanovilo, že <strong>8 bitů</strong> bude jeden <strong>bajt</strong>. A obřím skokem, počítačoví 
+ inženýři prominou, se dostáváme k rgb.</p>
+<p>Matematiky a počítačové inženýry jsme odbyli, ale malíř by namítnul, že když smíchá
+<span style="color:red; font-weight: bold;">červenou</span>, <span style="color:green; font-weight: bold;">zelenou</span>
+a <span style="color:blue; font-weight: bold;">modrou</span> ve stejném poměru, tak dostane <strong>černou</strong>. Jak to
+, že jsme dostali bílou? Důvod je takový, že my
+nemícháme vodovky, ale světelné paprsky, které vytvářejí pixel. Takže když smícháš 
+<span style="color:red; font-weight: bold;">červené</span>,
+ <span style="color:green; font-weight: bold;">zelené</span> a 
+ <span style="color:blue; font-weight: bold;">modré</span> světlo dostaneš světlo...
+ <span style="color:white; background-color: black">bílé</span>.</p>
+</li>
+<li><p><strong>Hexadecimální zápis</strong>: Zdál se ti předchozí výklad o rgb, bitech a bajtech složitý. Jsi ráda, že už trošku
+chápeš dvojkovou soustavu, tak věř, že to není všechno. Proč používat dvojkovou soustavu, když můžeme používat
+soustavu šestnáctkovou (hexadecimální). Proč by to někdo dělal? Programátoři jsou líní, to je často odpověd na
+takové otázky. Výklad číselných soustav je mimo rozsah tohoto kurzu více se dozvíte na
+ <a href="https://cs.wikipedia.org/wiki/%C5%A0estn%C3%A1ctkov%C3%A1_soustava">wikipedii</a>. A co ty barvy, jak je máme
+  zapisovat?</p>
+<div class="highlight"><pre><span></span>  <span class="nt">p</span> <span class="p">{</span>
+      <span class="k">color</span><span class="p">:</span><span class="nb">rgb</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nt">h1</span> <span class="p">{</span>
+      <span class="k">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="mi">100</span><span class="kt">%</span><span class="p">,</span><span class="mi">100</span><span class="kt">%</span><span class="p">,</span><span class="mi">100</span><span class="kt">%</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nt">h2</span> <span class="p">{</span>
+     <span class="k">color</span><span class="p">:</span> <span class="mh">#ffffff</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div><p>Všechny barvy v příkladu jsou bílé. Hexadecimální zápis znovu využívá principu RGB. Znak <code>#</code> značí, že se jedna
+  o hexadecimální zápis. První dvě číslice jsou <span style="color:red; font-weight: bold;">červená</span>,
+  prostřední dvě číslice jsou <span style="color:green; font-weight: bold;">zelená</span> a poslední 
+  dvě číslice jsou <span style="color:blue; font-weight: bold;">modré</span>.</p>
+</li>
+<li><p><strong>HSL</strong>: HSL znamená hue (barva), saturation (nasycení) a lightness (světlost). Hue nabývá hodnot od 0 do 360 a
+obsahuje celou barevnou škálu. Saturation a lightness nabývají procentuálních hodnot 0 až 100.</p>
+</li>
+</ol>
+<p>Zápis běžných barev:</p>
+<ul>
+<li><span style="color:red; font-weight: bold;">červená</span>: color:red, color:#ff0000, color:rgb(255, 0, 0), color:hsl(0, 100%, 50%)</li>
+<li><span style="color:green; font-weight: bold;">zelená</span>: color:green, color:#008000, color:rgb(0, 128, 0),
+color:hsl(0, 100%, 50%)</li>
+<li><span style="color:blue; font-weight: bold;">modrá</span>: color:blue, color:#0000ff, color:rgb(0, 0, 255),
+color:hsl(0, 100%, 50%)</li>
+<li><span style="color:brown; font-weight: bold;">hnědá</span>: color:brown, color:#a52a2a, color:rgb(165, 42, 42),
+color:hsl(0, 59%, 41%)</li>
+<li><span style="color:black; font-weight: bold;">černá</span>: color:black, color:#000000, color:rgb(0, 0, 0),
+color:hsl(0, 0%, 0%)</li>
+<li><span style="color:pink; font-weight: bold;">růžová</span>: color:pink, color:#ffc0cb, color:rgb(255, 192, 203),
+color:hsl(350, 100%, 88%)</li>
+</ul>
+<div class="admonition note"><p><strong>Color picker</strong><br>
+Teď už víš jak zapisovat barvy a co ty čísla a písmena znamenají. Nicméně dnesku už nikdo neskládá barvy pomocí 
+nějakých hodnot od oka, ale existují nástroje na výběr barev. Zkus googlit <strong>color picker</strong>. Samotný google má 
+aplikaci na výběr barev a měl by to být tvůj první výsledek vyhledávání.</p>
+</div><p><strong>background-color</strong><br>
+V příhladech ses setkala s vlastností <code>color</code>, která danému tagu říká jakou barvu má použít. Ve většině případů je to
+ barva textu. Pokud chceš změnit barvu pozadí, tak použij vlastnost <code>background-color</code>:</p>
+<div class="highlight"><pre><span></span><span class="nt">p</span> <span class="p">{</span>
+      <span class="k">color</span><span class="p">:</span><span class="nb">rgb</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+      <span class="k">background-color</span><span class="p">:</span> <span class="kc">yellow</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div><h2>Text</h2>
+<p>Když se snažíš napsat nějaký dokument v textovém procesoru, tak nejčastěji budeš formátovat samotný text (velikost, 
+samotné písmo, zvýraznění textu atd.). Všechny tyto vlastnosti mají v CSS jméno a můžeme je libovolně konfigurovat.
+Vlastnosti textu v dokumentaci CSS nalezneš pod těmito prefixy: <code>font-</code>, <code>text-</code>, <code>letter-</code>. Tady si ukážeme ty 
+nejčastější:</p>
+<ul>
+<li><strong>font-family</strong>: určuje samotnou sadu písma (<span style="font-family:Arial">Arial</span>,
+<span style="font-family:Verdana">Verdana</span>, <span style="font-family:Comic Sans MS;">Comic Sans MS</span>):<div class="highlight"><pre><span></span>  <span class="nt">body</span> <span class="p">{</span>
+      <span class="k">font-family</span><span class="p">:</span> <span class="n">Comic</span> <span class="n">Sans</span> <span class="n">MS</span><span class="p">,</span><span class="kc">serif</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><strong>font-size</strong>: velikost písma (<span style="font-size:8px">8px</span>, <span style="font-size:12px">12px</span>,
+<span style="font-size:24px">24px</span>):<div class="highlight"><pre><span></span>  <span class="nt">body</span> <span class="p">{</span>
+      <span class="k">font-size</span><span class="p">:</span> <span class="mi">24</span><span class="kt">px</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><p><strong>font-weight</strong>: tloušťka písma (<span style="font-weight:bold">bold</span>, <span style="font-weight:bolder">bolder
+</span>, <span style="font-weight:lighter">lighter</span>):</p>
+<div class="highlight"><pre><span></span>  <span class="nt">body</span> <span class="p">{</span>
+      <span class="k">font-weight</span><span class="p">:</span> <span class="kc">bold</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><p><strong>font-style</strong>: styl písma (<span style="font-style:italic">italic</span>, <span style="font-style:oblique">oblique
+</span>, <span style="font-style:normal">normal</span>):</p>
+<div class="highlight"><pre><span></span>  <span class="nt">body</span> <span class="p">{</span>
+      <span class="k">font-style</span><span class="p">:</span> <span class="kc">italic</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><p><strong>font-variant</strong>: označuje kapitálky (<span style="font-variant:small-caps">small-caps</span>):</p>
+<div class="highlight"><pre><span></span>  <span class="nt">body</span> <span class="p">{</span>
+      <span class="k">font-variant</span><span class="p">:</span> <span class="kc">small-caps</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><p><strong>text-transform</strong>: řídí velikost písmen (malé/velké) (<span style="text-transform:uppercase">uppercase</span>,
+<span style="text-transform:lowercase">lowercase</span>, <span style="text-transform:capitalize">capitalize</span>):</p>
+<div class="highlight"><pre><span></span>  <span class="nt">body</span> <span class="p">{</span>
+      <span class="k">text-transform</span><span class="p">:</span> <span class="kc">uppercase</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><p><strong>text-decoration</strong>: nadtržení, podtržení a přeškrtnutí (<span style="text-decoration:overline">overline</span>,
+<span style="text-decoration:underline">underline</span>, <span style="text-decoration:line-through">line-through
+</span>):</p>
+<div class="highlight"><pre><span></span>  <span class="nt">body</span> <span class="p">{</span>
+      <span class="k">text-decoration</span><span class="p">:</span> <span class="kc">underline</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><p><strong>text-align</strong>: horizontální zarovnání textu</p>
+<div style="text-align:right">right</div>      
+  <div style="text-align:center">center</div>
+  <div style="text-align:left">left</div>
+  <br>
+  <div style="text-align:justify;"><span style="font-weight:bold">justify:</span> Lorem ipsum dolor sit amet,
+   consectetuer adipiscing elit. Aliquam in lorem sit amet leo accumsan lacinia. Fusce nibh. Nulla est.
+    Nullam at arcu a est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
+     Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      Maecenas aliquet accumsan leo. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam eget nisl.
+       Aliquam id dolor. Nulla non lectus sed nisl molestie malesuada. Donec quis nibh at felis congue commodo.
+        Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. </div><div class="highlight"><pre><span></span>  <span class="nt">body</span> <span class="p">{</span>
+      <span class="k">text-align</span><span class="p">:</span> <span class="kc">justify</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><p><strong>text-indent</strong>: odsazení textu</p>
+<div style="text-indent:50px;"> Lorem ipsum dolor sit amet,
+   consectetuer adipiscing elit. Aliquam in lorem sit amet leo accumsan lacinia. Fusce nibh. Nulla est.
+    Nullam at arcu a est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
+     Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      Maecenas aliquet accumsan leo. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam eget nisl.
+       Aliquam id dolor. Nulla non lectus sed nisl molestie malesuada. Donec quis nibh at felis congue commodo.
+        Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. </div><div class="highlight"><pre><span></span>  <span class="nt">p</span> <span class="p">{</span>
+      <span class="k">text-indent</span><span class="p">:</span> <span class="mi">50</span><span class="kt">px</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><p><strong>letter-spacing</strong>: mezery mezi písmeny</p>
+<div style="letter-spacing:3px;"> Lorem ipsum dolor sit amet,
+   consectetuer adipiscing elit. Aliquam in lorem sit amet leo accumsan lacinia. Fusce nibh. Nulla est.
+    Nullam at arcu a est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
+     Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      Maecenas aliquet accumsan leo. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam eget nisl.
+       Aliquam id dolor. Nulla non lectus sed nisl molestie malesuada. Donec quis nibh at felis congue commodo.
+        Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. </div><div class="highlight"><pre><span></span>  <span class="nt">p</span> <span class="p">{</span>
+      <span class="k">letter-spacing</span><span class="p">:</span> <span class="mi">3</span><span class="kt">px</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><p><strong>word-spacing</strong>: mezery mezi slovy</p>
+<div style="word-spacing:2em;"> Lorem ipsum dolor sit amet,
+   consectetuer adipiscing elit. Aliquam in lorem sit amet leo accumsan lacinia. Fusce nibh. Nulla est.
+    Nullam at arcu a est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
+     Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      Maecenas aliquet accumsan leo. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam eget nisl.
+       Aliquam id dolor. Nulla non lectus sed nisl molestie malesuada. Donec quis nibh at felis congue commodo.
+        Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. </div><div class="highlight"><pre><span></span>  <span class="nt">p</span> <span class="p">{</span>
+      <span class="k">word-spacing</span><span class="p">:</span><span class="mi">2</span><span class="kt">em</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+<li><p><strong>line-height</strong>: velikost řádku</p>
+<div style="line-height:5.0;"> Lorem ipsum dolor sit amet,
+   consectetuer adipiscing elit. Aliquam in lorem sit amet leo accumsan lacinia. Fusce nibh. Nulla est.
+    Nullam at arcu a est sollicitudin euismod. Praesent id justo in neque elementum ultrices. Aliquam erat volutpat.
+     Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      Maecenas aliquet accumsan leo. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam eget nisl.
+       Aliquam id dolor. Nulla non lectus sed nisl molestie malesuada. Donec quis nibh at felis congue commodo.
+        Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. </div><div class="highlight"><pre><span></span>  <span class="nt">p</span> <span class="p">{</span>
+      <span class="k">line-height</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div></li>
+</ul>
+<h2>Krabicový model - okraje</h2>
+<p>Krabicový model? To je zase co? CSS nahlíží na každý element jako na krabici (v originále <strong>box model</strong>). Zde bych
+ upozornil, že ve skutečnosti jsou to obdelníky - pořad jsme v 2D prostory, které jsou definované okolo každého
+  elementu. S vystvětlením nám pomůže obrázek.</p>
+<p><img src="/2020/praha-jaro-knihovny/intro/css/static/css_box_model_chrome.png" alt="krabicový-model"></p>
+<p>Co jednotlivé podjmy znamenají?:</p>
+<ul>
+<li><strong>padding</strong>: vnitřní okraj k ohraničení (border)</li>
+<li><strong>border</strong>: ohraničení</li>
+<li><strong>margin</strong>: vnější okraj</li>
+</ul>
+<p>Na příkladu to může vypadat takto:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Page Title<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+            <span class="nt">h1</span> <span class="p">{</span>
+                    <span class="k">font-size</span><span class="p">:</span> <span class="mf">1.5</span><span class="kt">em</span><span class="p">;</span>
+                    <span class="k">background-color</span><span class="p">:</span> <span class="mh">#cccccc</span><span class="p">;</span>
+                    <span class="k">margin</span><span class="p">:</span> <span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+                    <span class="k">padding</span><span class="p">:</span> <span class="mi">40</span><span class="kt">px</span><span class="p">;</span>
+                    <span class="k">border</span><span class="p">:</span> <span class="mi">5</span><span class="kt">px</span> <span class="kc">solid</span> <span class="kc">red</span><span class="p">;</span>
+                <span class="p">}</span>
+        <span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Nadpis<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Odstavec<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div><p><code>margin</code> a <code>padding</code> se zadávají delkovými jednotkami. <code>border</code> je vlastnost, která spojuje tři vlastnosti dohromady
+ <code>border-width</code>, <code>border-style</code> a <code>border-color</code>. Hodnoty pro <code>border-style</code> jsou: <em>solid, dotted, dashed, double
+ , groove, ridge, inset, outset.</em></p>
+<h2>Vše dohromady</h2>
+<p><code>moje_stranka.html</code></p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Moje první webová stránka<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">"styly.css"</span> <span class="na">rel</span><span class="o">=</span><span class="s">"stylesheet"</span><span class="p">&gt;</span>
+
+    <span class="c">&lt;!-- Syntaxe komentáře v HTML --&gt;</span>
+
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Moje první webová stránka<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Nadpis 2<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam ornare wisi eu metus. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis bibendum, lectus ut
+        viverra rhoncus, dolor nunc faucibus libero, eget facilisis enim ipsum id lacus. In enim a<span class="ni">&amp;nbsp;</span>arcu imperdiet
+        malesuada. Itaque earum rerum hic tenetur a<span class="ni">&amp;nbsp;</span>sapiente delectus, ut aut reiciendis voluptatibus maiores alias
+        consequatur aut perferendis doloribus asperiores repellat. Nulla pulvinar eleifend sem. Integer pellentesque
+        quam vel velit. Fusce nibh. Fusce tellus. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil
+        impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+        Fusce tellus. Nulla pulvinar eleifend sem. Mauris tincidunt sem sed arcu. Nullam faucibus mi quis velit.
+    <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+        Et harum quidem rerum facilis est et expedita distinctio. Nunc tincidunt ante vitae massa. Etiam neque. Etiam
+        dui sem, fermentum vitae, sagittis id, malesuada in, quam. Nunc auctor. Fusce wisi. Etiam dui sem, fermentum
+        vitae, sagittis id, malesuada in, quam. Aenean placerat. Nullam rhoncus aliquam metus. Class aptent taciti
+        sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Nulla turpis magna, cursus sit amet,
+        suscipit a, interdum id, felis. Pellentesque sapien. Morbi scelerisque luctus velit. Fusce tellus. Donec vitae
+        arcu. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+    <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+        Nullam eget nisl. <span class="p">&lt;</span><span class="nt">em</span><span class="p">&gt;</span>Mauris suscipit<span class="p">&lt;/</span><span class="nt">em</span><span class="p">&gt;</span>, ligula sit amet pharetra semper, nibh ante cursus purus, vel
+        sagittis velit
+        mauris vel metus. Mauris dolor felis, sagittis at, luctus sed, aliquam non, tellus. Mauris tincidunt sem sed
+        arcu. Etiam commodo dui eget wisi. Maecenas fermentum, sem in pharetra pellentesque, <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>turpis <span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span>
+        volutpat ante,
+        in pharetra metus odio a<span class="ni">&amp;nbsp;</span>lectus. Vestibulum fermentum tortor id mi. Etiam dui sem, fermentum vitae, sagittis id,
+        malesuada in, quam. Aliquam erat volutpat. Etiam quis quam. Fusce dui leo, imperdiet in, aliquam sit amet,
+        feugiat eu, orci. Pellentesque pretium lectus id turpis. Etiam ligula pede, sagittis quis, interdum ultricies,
+        scelerisque eu. Duis bibendum, lectus ut viverra rhoncus, dolor nunc faucibus libero, eget facilisis enim ipsum
+        id lacus. Sed convallis magna eu sem. Nullam dapibus fermentum ipsum. Duis risus. Duis pulvinar. Morbi
+        scelerisque luctus velit. Etiam posuere lacus quis dolor.
+    <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Úkoly tohoto kurzu<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Naučit se HTML, CSS a<span class="ni">&amp;nbsp;</span>pokročilé knihovny <span class="p">&lt;</span><span class="nt">strong</span>
+                <span class="na">style</span><span class="o">=</span><span class="s">"color:#3e7bac; background-color: #ffe56b;"</span><span class="p">&gt;</span>Pythonu<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>
+            Výpis některých knihoven:
+            <span class="p">&lt;</span><span class="nt">ol</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Request<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Flask<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>SQLAlchemy<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">ol</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Potěši se z nových znalostí<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Kde najdu informace o kurzu<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">"https://naucse.python.cz/2020/praha-jaro-knihovny/"</span><span class="p">&gt;&lt;</span><span class="nt">img</span>
+                <span class="na">src</span><span class="o">=</span><span class="s">"https://pyladies.cz/static/img/pyladies.png"</span>
+                <span class="na">width</span><span class="o">=</span><span class="s">"300"</span> <span class="na">alt</span><span class="o">=</span><span class="s">"PyLadies logo"</span><span class="p">&gt;&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Tabulka<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span><span class="p">&gt;</span>Sloupec 1<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span><span class="p">&gt;</span>Sloupec 2<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span><span class="p">&gt;</span>Sloupec 3<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 1, buňka 1<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 1, buňka 2<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 1, buňka 3<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 2, buňka 1<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 2, buňka 2<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 2, buňka 3<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 3, buňka 1<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 3, buňka 2<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 3, buňka 3<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 4, buňka 1<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 4, buňka 2<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>řádek 4, buňka 3<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Formulář<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Note:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span> It looks the part, but won't do a<span class="ni">&amp;nbsp;</span>damned thing.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">""</span> <span class="na">method</span><span class="o">=</span><span class="s">"post"</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Celí jméno:<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">"name"</span> <span class="na">value</span><span class="o">=</span><span class="s">"Tvoje jméno"</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">"fname"</span><span class="p">&gt;</span>Křestní jméno:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">"text"</span> <span class="na">id</span><span class="o">=</span><span class="s">"fname"</span> <span class="na">name</span><span class="o">=</span><span class="s">"fname"</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">"lname"</span><span class="p">&gt;</span>Přijmení: <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">"text"</span> <span class="na">id</span><span class="o">=</span><span class="s">"lname"</span> <span class="na">name</span><span class="o">=</span><span class="s">"lname"</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Komentář: <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">textarea</span> <span class="na">rows</span><span class="o">=</span><span class="s">"10"</span> <span class="na">cols</span><span class="o">=</span><span class="s">"20"</span> <span class="na">name</span><span class="o">=</span><span class="s">"comments"</span><span class="p">&gt;</span>Tvůj komentář<span class="p">&lt;/</span><span class="nt">textarea</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Tvoje pohlaví:<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">"radio"</span> <span class="na">name</span><span class="o">=</span><span class="s">"sex"</span> <span class="na">value</span><span class="o">=</span><span class="s">"female"</span><span class="p">&gt;</span> žena
+        <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">"radio"</span> <span class="na">name</span><span class="o">=</span><span class="s">"sex"</span> <span class="na">value</span><span class="o">=</span><span class="s">"male"</span><span class="p">&gt;</span> muž
+        <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">select</span> <span class="na">name</span><span class="o">=</span><span class="s">"language"</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>Python<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>JavaScript<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>C<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">"submit"</span> <span class="na">value</span><span class="o">=</span><span class="s">"odeslat"</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div><p><code>styly.css</code></p>
+<div class="highlight"><pre><span></span><span class="nt">body</span> <span class="p">{</span>
+    <span class="k">font-family</span><span class="p">:</span> <span class="n">arial</span><span class="p">,</span> <span class="n">helvetica</span><span class="p">,</span> <span class="kc">sans-serif</span><span class="p">;</span>
+    <span class="k">font-size</span><span class="p">:</span> <span class="mi">14</span><span class="kt">px</span><span class="p">;</span>
+    <span class="k">color</span><span class="p">:</span> <span class="kc">black</span><span class="p">;</span>
+    <span class="k">background-color</span><span class="p">:</span> <span class="mh">#ffc</span><span class="p">;</span>
+    <span class="k">margin</span><span class="p">:</span> <span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+    <span class="k">padding</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">/* Komentář v CSS */</span>
+
+<span class="nt">p</span> <span class="p">{</span>
+    <span class="k">line-height</span><span class="p">:</span> <span class="mi">21</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">h1</span> <span class="p">{</span>
+    <span class="k">color</span><span class="p">:</span> <span class="mh">#ffc</span><span class="p">;</span>
+    <span class="k">background-color</span><span class="p">:</span> <span class="mh">#900</span><span class="p">;</span>
+    <span class="k">font-size</span><span class="p">:</span> <span class="mi">2</span><span class="kt">em</span><span class="p">;</span>
+    <span class="k">margin</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">margin-bottom</span><span class="p">:</span> <span class="mi">7</span><span class="kt">px</span><span class="p">;</span>
+    <span class="k">padding</span><span class="p">:</span> <span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
+    <span class="k">font-style</span><span class="p">:</span> <span class="kc">italic</span><span class="p">;</span>
+    <span class="k">text-align</span><span class="p">:</span> <span class="kc">center</span><span class="p">;</span>
+    <span class="k">letter-spacing</span><span class="p">:</span> <span class="mf">0.5</span><span class="kt">em</span><span class="p">;</span>
+    <span class="k">border-bottom-style</span><span class="p">:</span> <span class="kc">solid</span><span class="p">;</span>
+    <span class="k">border-bottom-width</span><span class="p">:</span> <span class="mf">0.5</span><span class="kt">em</span><span class="p">;</span>
+    <span class="k">border-bottom-color</span><span class="p">:</span> <span class="mh">#c00</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">h2</span> <span class="p">{</span>
+    <span class="k">color</span><span class="p">:</span> <span class="kc">white</span><span class="p">;</span>
+    <span class="k">background-color</span><span class="p">:</span> <span class="mh">#090</span><span class="p">;</span>
+    <span class="k">font-size</span><span class="p">:</span> <span class="mf">1.5</span><span class="kt">em</span><span class="p">;</span>
+    <span class="k">margin</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">padding</span><span class="p">:</span> <span class="mi">2</span><span class="kt">px</span><span class="p">;</span>
+    <span class="k">padding-left</span><span class="p">:</span> <span class="mi">14</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">h3</span> <span class="p">{</span>
+    <span class="k">color</span><span class="p">:</span> <span class="mh">#999</span><span class="p">;</span>
+    <span class="k">font-size</span><span class="p">:</span> <span class="mf">1.25</span><span class="kt">em</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">img</span> <span class="p">{</span>
+    <span class="k">border-style</span><span class="p">:</span> <span class="kc">dashed</span><span class="p">;</span>
+    <span class="k">border-width</span><span class="p">:</span> <span class="mi">2</span><span class="kt">px</span><span class="p">;</span>
+    <span class="k">border-color</span><span class="p">:</span> <span class="mh">#cccccc</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">a</span> <span class="p">{</span>
+    <span class="k">text-decoration</span><span class="p">:</span> <span class="kc">none</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">strong</span> <span class="p">{</span>
+    <span class="k">font-style</span><span class="p">:</span> <span class="kc">italic</span><span class="p">;</span>
+    <span class="k">text-transform</span><span class="p">:</span> <span class="kc">uppercase</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">li</span> <span class="p">{</span>
+    <span class="k">color</span><span class="p">:</span> <span class="mh">#990000</span><span class="p">;</span>
+    <span class="k">font-style</span><span class="p">:</span> <span class="kc">italic</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">table</span> <span class="p">{</span>
+    <span class="k">background-color</span><span class="p">:</span> <span class="mh">#ccc</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">em</span> <span class="p">{</span>
+    <span class="k">color</span><span class="p">:</span> <span class="kc">deeppink</span>
+<span class="p">}</span>
+</pre></div><h2>Závěr</h2>
+<p>V této hodině jsme nechtěli a ani nemohli obsáhnout všechny aspekty a zákoutí HTML a CSS a už vůbec ne celého
+ webového vývoje. Cílem bylo seznámit tě s principy, které teď už ovládáš a můžeš se pokročilá témata sama doučit.
+ Složité webové stránky se neobejdou bez JavaScriptu a serveru (backendu). Nicméně osobní webovou prezentaci si
+  dokážeš udělat právě jenom s HTML a CSS. Na začátku jsem sliboval, že ti úkážu jak zapisovat syntaxi CSS jednodušeji
+  tzv. <strong>pythonic way</strong>. Zkus se podívat na CSS preprocesor <a href="http://stylus-lang.com/">Stylus</a>.</p>
+<p>Spoustu užitečných informací o webovým vývoji nalezneš na stránkách <a href="https://www.w3schools.com/">w3school.com</a>
+   případně <a href="https://developer.mozilla.org/">mozilla developer</a>.</p>
+<p>Na stránkách w3school nalezneš i sekci <a href="https://www.w3schools.com/howto/default.asp">How To</a> (jak na to), kde je
+   obrovská databáze veškerých webových "vychytávek".</p>
+<p>Pokud to myslíš s tvorbou webových stránek vážně, tak je potřeba se naučit JavaScript a nějaký framework. Velmi
+populární pro začátek je framework <a href="https://getbootstrap.com/">Bootstrap</a>, který pochází od vývojářů twitteru.
+W3school vyvíjí vlastní framework <a href="https://www.w3schools.com/w3css/">W3.CSS</a>, který je pro začátek asi nejlepší volbou.</p>
+<p>A pak jsou tady "<em>těžké váhy</em>" frontend frameworků, které stojí hlavně na JavaScriptu:</p>
+<ul>
+<li><a href="https://reactjs.org/">React</a></li>
+<li><a href="https://angular.io/">Angular</a></li>
+<li><a href="https://vuejs.org/">Vue.js</a></li>
+</ul>
+<p>Pro začátečníky se doporučuje <strong>React</strong> nebo <strong>Vue</strong>. <strong>React</strong> má nejširší základnu uživatelů, <strong>Vue</strong> je pro člověka,
+ který v JS nemá pevné základy, jednodušší. Angular je momentálně na ústupu z důvodu jeho komplexnosti.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/praha-jaro-knihovny/intro/html/">← <span class="d-none d-sm-inline">Úvod do HTML</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/praha-jaro-knihovny/sessions/html-css/">↑ <span class="d-none d-sm-inline">Lekce: Úvod do HTML a CSS</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/praha-jaro-knihovny/sessions/html-css/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2020-praha-jaro-knihovny/lessons/intro/css/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro kurz MI-PYT na ČVUT napsali Miro Hrončok, Petr Viktorin a další, 2016-2017.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

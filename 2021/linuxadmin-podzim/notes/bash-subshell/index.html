@@ -1,0 +1,408 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Poznámky – Subshell
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/review/">Instalace balíčků</a>
+
+> <a href="/2021/linuxadmin-podzim/notes/bash-subshell/">Poznámky – Subshell</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Poznámky – Subshell</h1>
+<div class="admonition warning"><p>Toto jsou zatím jen rozdrobené poznámky, ne materiály pro (samo)studium.</p>
+</div><h2>Na začátek trocha opakování</h2>
+<p>Už znáš příkaz <code>type</code>, který ukáže jaký příkaz přesně se pustí když
+napíšeš „krátké“ jméno programu. Například:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> git
+<span class="go">git is /usr/bin/git</span>
+<span class="gp">$ </span><span class="nb">type</span> firefox 
+<span class="go">firefox is /usr/bin/firefox</span>
+<span class="gp">$ </span><span class="nb">type</span> python3
+<span class="go">python3 is /usr/bin/python3</span>
+</pre></div><p>Když zapneš virtuální prostředí Pythonu a spustíš příkaz ještě jednou, zjistíš
+že je cesta k Pythonu jiná než před chvílí:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span><span class="nb">type</span> python3
+<span class="go">python3 is /home/user/bash/venv/bin/python3</span>
+</pre></div><p>U <code>cd</code> ti <code>type</code> řekne, že se jedná o zabudovanou funkci v shellu.
+Proč to není program, ale funkce? <code>cd</code> totiž nemůže být příkaz.
+Když pouštím nějaký proces, nemůže on ovládat proces, který ho pustil (nesmí jít jakoby o úroveň výše).</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> <span class="nb">cd</span>
+<span class="go">cd is a shell builtin</span>
+</pre></div><p>Procesy se vytváří tak, že se proces rozdvojí (forkem) a pak začne dělat něco jiného. 
+Normální programy fungují tak, že běží <code>bash</code>, kterému v jednom momentu řekneš, že chceš spustit <code>firefox</code>. 
+<code>bash</code> se rozdvojí, pustí <code>firefox</code>, ale <code>bash</code> jede dál. Následně <code>firefox</code> žije vlastním životem.</p>
+<div class="highlight"><pre><code>bash ----+--- bash ----------
+         |
+         +--- firefox</code></pre></div><p>Když si <code>firefox</code> změní aktuální adresář, klidně to může udělat. Problém s <code>cd</code> je, že my chceme změnit aktuální adresář Bashe. 
+A kdyby <code>cd</code> byl příkaz, který Bash spouští podobně jako <code>firefox</code>, <code>cd</code> by nemohlo změnit stav rodičovského procesu <code>bash</code>.
+Proto je <code>cd</code> výjimka, zabudovaná funkce Bashe a umí měnit jeho interní stav.</p>
+<h4>export</h4>
+<p>Další opakování.
+Proměnná se ve výchozím stavu nekopíruje do podprocesu. Abychom toho docílili, je třeba použít <code>export</code>.</p>
+<p>Vytvoř soubor: <code>echo-promenna</code>, který vypíše obsah proměnně <code>promenna</code></p>
+<div class="highlight"><pre><code>#! /bin/bash
+
+echo $promenna</code></pre></div><p>Když ho spustíš, nevypíše nic, protože takovou proměnnou nezná, není nadefinovaná.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>chmod +x echo-promenna
+<span class="gp">$ </span>./echo-promenna
+</pre></div><p>Když ji nadefinuješ ve stávajícím Bashi a spustíš skript, opět neuvidíš obsah proměnné, Bash v podprocesu totiž nedědí stav nadřazeného Bashe.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$promenna</span>
+
+<span class="gp">$ </span><span class="nv">promenna</span><span class="o">=</span><span class="m">123</span>
+<span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$promenna</span>
+<span class="go">123</span>
+<span class="gp">$ </span>./echo-promenna
+</pre></div><p>A pro předání obsahu proměnné do podprocesu se přesně hodí příkaz <code>export</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$promenna</span>
+<span class="gp">$ </span>./echo-promenna
+
+<span class="gp">$ </span><span class="nv">promenna</span><span class="o">=</span><span class="m">123</span>
+<span class="gp">$ </span><span class="nb">export</span> promenna
+<span class="gp">$ </span>./echo-promenna
+<span class="go">123</span>
+</pre></div><p>A protože proměnná je teď nastavená, že se bude exportovat, když ji nastavíš na něco jiného, nová hodnota se předá dál.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">promenna</span><span class="o">=</span>abc
+<span class="gp">$ </span>./echo-promenna
+<span class="go">abc</span>
+</pre></div><p>Co je to ten <code>export</code>? Stejně jako <code>cd</code> je to vestavěná funkce Bashe. A taky stejně jako <code>cd</code> mění stav stávajícího Bashe, takže nemůže být zvláštním programem.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">type</span> <span class="nb">export</span>
+<span class="go">export is a shell builtin</span>
+</pre></div><p>Další věc, kterou můžeš dostat jako výsledek příkazu <code>type</code>, vedle opravdového programu, aliasu a zabudované funkce shellu, je  i obyčejná, tebou nadefinovaná funkce.</p>
+<p>Příkaz na <code>mcd</code> můžeš napsat jako funkci, která pak bude vypadat takto:</p>
+<div class="highlight"><pre><span></span><span class="go">mcd () </span>
+<span class="go">{</span>
+<span class="go">    mkdir -p $1 &amp;&amp; cd $1</span>
+<span class="go">}</span>
+</pre></div><p>Taková funkce se skládá z jména (<code>mcd</code>), kulatých závorek a složených závorek. 
+Mezi složené závorky napiš příkaz/y, které má funkce provést.</p>
+<p>Je možné to napsat i do jediného řádku, ale pak je třeba dávat pozor, za příkazy totiž patří středníky, například:</p>
+<div class="highlight"><pre><span></span><span class="go">mcd () { mkdir -p $1 &amp;&amp; cd $; }</span>
+</pre></div><p>I v případě shellových funkcí nadefinovaných přímo v příkazové řádce, platí pravidlo, že patří pouze aktuálnímu shellu. 
+Nemůžeš je použit mimo něj, v jiném terminálu nebo v podprocesu.</p>
+<h4>source</h4>
+<p>Příkaz, který umožňuje spouštět daný skript/program v aktuálním bashovém procesu, se jmenuje <code>source</code>. Mimochodem, je to další zabudovaná funkce shellu.</p>
+<div class="admonition note"><p>Pokud jsi nastavovala Python na linuxovém počítači dle pokynů začátečnického kurzu, vzpomeneš si jistě na aktivaci virtuálního prostředí pomocí příkazu <code>source venv/bin/activate</code>. Příkaz source mění PATH tvého systému.</p>
+</div><p>Pro srovnání grafický výstup procesu. Pokud skript jen spustíš, vypadá to tak:</p>
+<div class="highlight"><pre><code>
+bash ----+----------------------------------------
+         |                                   ^
+         |   bash cd      alias    ...
+         +--- O ------------O------ O-------X</code></pre></div><p><code>source</code> spustí skript v aktuálním shellu:</p>
+<div class="highlight"><pre><code>           bash cd       alias    ...
+bash ------- O ------------O-------O-------X</code></pre></div><p>Namísto <code>source</code> lze použít i <code>.</code>, v <code>man bash</code> zjistíš , že má <code>.</code> i <code>source</code> stejný popis.</p>
+<p>Zajímavost:
+<code>echo</code> je také zabudovaná funkce shellu, ale když se podíváš do systému, zjistíš, že máš i program, který se jmenuje <code>echo</code>. 
+Dělají teměř to stejné, vypíšou na standardní výstup to, co dostanou jako argument.
+<code>/usr/bin/echo abc</code>
+vs.
+<code>echo abc</code></p>
+<p>Na spouštění podprocesů existuje i zkratka, a to závorky. 
+Vše, co je v kulatých závorkách, se spustí v podprocesu.</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span><span class="o">(</span> <span class="nb">cd</span> test<span class="p">;</span> <span class="nb">pwd</span> <span class="o">)</span><span class="p">;</span> <span class="nb">pwd</span>
+<span class="go">/home/user/bash/04/test</span>
+<span class="go">/home/user/bash/04</span>
+</pre></div><p>Grafické znázornění vypadá takto:</p>
+<div class="highlight"><pre><code>
+         (
+bash ----+--------------------------------------- pwd ---
+         |                                   ^
+         |   bash    cd test      pwd   )    .
+         +---------- O ------------O---------X</code></pre></div><p>Občas chceme použít výstup jednoho programu jako argument druhého programu.
+Zde je rozdíl mezi standardním vstupem do programu a argumentem programu.</p>
+<p>Příklad - výstup jednoho programu je <strong>vstup</strong> dalšího</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">pwd</span> <span class="p">|</span> cat
+<span class="go">/home/karel</span>
+</pre></div><p>Mohli bychom ale chtít použít pro tento cíl program <code>echo</code> s <strong>argumentem</strong> "aktuální adresář", jak v příkladu níže.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> /home/karel
+<span class="go">/home/karel</span>
+</pre></div><p>Jak předat výstup programu jako argument? Pomocí dolaru a závorek:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="k">$(</span> <span class="nb">pwd</span> <span class="k">)</span>
+<span class="go">/home/karel</span>
+</pre></div><p>Bash vyhodnotí příkaz <code>pwd</code> a doplní místo textu v <code>$( pwd )</code> výstup z něho.</p>
+<p>Tohle je celkem zbytečné, protože aktuální adresář je k dispozici např. i
+v proměnné <code>PWD</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$PWD</span>
+<span class="go">/home/karel</span>
+</pre></div><p>Ale u výstupu programu <code>locate</code> to tak není.
+Vem si třeba následující příkazy:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>locate bark.ogg
+<span class="go">/usr/share/sounds/gnome/default/alerts/bark.ogg</span>
+<span class="gp">$ </span>mplayer /usr/share/sounds/gnome/default/alerts/bark.ogg
+</pre></div><p>Místo nich můžeš psát:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mplayer <span class="k">$(</span>locate bark.ogg<span class="k">)</span>
+</pre></div><p><em>Cvičení</em>
+Co udělají tyto příkazy?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="k">$(</span> ls <span class="k">)</span>
+<span class="gp">$ </span>cat <span class="k">$(</span> ls <span class="k">)</span>
+</pre></div><p><code>echo</code> vypíše jména všech souborů v daném adresáři.
+<code>cat</code> přečte obsah všeho, co dostane jako argument – a to včetně obsahu případných netextových („binárních“) souborů.</p>
+<p>Tenhle <code>cat</code> taky může narazit na chyby, které odhalíš,
+pokud přesměruješ standardní výstup do virtuálního koše:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat <span class="k">$(</span> ls <span class="k">)</span> &gt; /dev/null 
+<span class="go">cat: test: Is a directory</span>
+<span class="go">cat: venv: Is a directory</span>
+</pre></div><p>To, co zbylo, je náš starý známý - standardní chybový výstup. <code>cat</code> neumí přečíst obsah adresářů, a proto zahlásí chybu na <code>stderr</code>.</p>
+<p>Ukážeme si při této příležitosti ještě jednu věc. 
+Výstup programu níže u tebe může vypadat trochu jinak, ale příklad níže dobře poslouží za ukázku. 
+Všimni si, že se výstup na dvou posledních řádcích trochu změnil oproti příkladu výše. A proč?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat <span class="k">$(</span> ls <span class="k">)</span> <span class="p">|</span> head
+<span class="gp">#</span>! /bin/bash
+<span class="go">cat:</span>
+<span class="go">mkdir -p $1</span>
+<span class="go">testcd $1</span>
+<span class="go">pwd</span>
+<span class="go">: Is a directory</span>
+<span class="go">cat: venv: Is a directory</span>
+</pre></div><p>Oba výstupy, i standardní i chybový, směřují na stejné místo - tvůj terminál. 
+<code>cat</code> přesměruje svůj standardní výstup k příkazu <code>head</code>, a chybový vypíše do příkazové řádky. 
+<code>head</code> vypíše standardní výstup do příkazové řádky. 
+Počítač přepíná mezi jednotlivými procesy a výstupy smíchá dohromady. 
+Proto chybový výstup je částečně mezi standardním.</p>
+<p>Pokud místo dolaru napíšeš zobáček, místo toho, aby se použil výstup programu jako argument, použije se název souboru, kam ukládá svůj výstup <code>ls</code>. 
+Je to speciální jméno souboru, které si <code>echo</code> může přečíst.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> &lt;<span class="o">(</span> ls <span class="o">)</span>
+<span class="go">/dev/fd/63</span>
+<span class="gp">$ </span><span class="nb">echo</span> /dev/fd/63
+<span class="go">/dev/fd/63</span>
+</pre></div><p><code>cat</code> v souboru najde jeho obsah.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat &lt;<span class="o">(</span> ls <span class="o">)</span>
+<span class="go">mcd</span>
+<span class="gp">$ </span>cat /dev/fd/63
+<span class="go">mcd</span>
+</pre></div><h3>Porovnání dvou souborů - program <code>diff</code></h3>
+<p>Ulož si dvě básničky - <code>basnicka.txt</code>
+<em>Haló haló,
+co se stalo? 
+Kolo se mi polámalo!</em></p>
+<p><code>basnicka2.txt</code>
+<em>Haló haló,
+co se stalo???
+Kolo se mi polámalo!</em></p>
+<p>Pomocí programu <code>diff -U3</code> dostaneš hezky výpis, co se v obou souborech liší (podobný výpis znáš z gitu).</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>diff -U3 basnicka.txt basnicka2.txt
+<span class="go">--- basnicka.txt    2020-04-26 14:59:04.770053968 +0200</span>
+<span class="go">+++ basnicka2.txt   2020-04-26 14:59:18.118062312 +0200</span>
+<span class="go">@@ -1,4 +1,4 @@</span>
+<span class="go"> Haló haló,</span>
+<span class="go">-co se stalo? </span>
+<span class="go">+co se stalo???</span>
+
+<span class="go"> Kolo se mi polámalo!</span>
+</pre></div><p>Některé programy dávají své výsledky jen na standardní výstup. 
+Standardní výstup je jen jeden, co ale, kdybychom chtěli porovnat výstup dvou příkazů? 
+Pokud znáš verzovací nástroj <code>git</code>, může tě třeba zajímat, jak vypadal konkrétní soubor před týdnem a před měsícem. 
+Git má na to příkazy, ale ty vypisují výsledky na standardní výstup. 
+Jistě, můžeš si výstupy přesměrovat do souboru (to už znáš), a následně použit <code>diff</code>. 
+Můžeš taky porovnat přímo ty zvláštní soubory, do kterých programy, když provádějí příkazy, zapisuji. 
+A příkaz vypadá takto:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>diff -U3 &lt;<span class="o">(</span> cat basnicka.txt <span class="o">)</span> &lt;<span class="o">(</span> cat basnicka2.txt <span class="o">)</span>
+<span class="go">--- basnicka.txt    2020-04-26 14:59:04.770053968 +0200</span>
+<span class="go">+++ basnicka2.txt   2020-04-26 14:59:18.118062312 +0200</span>
+<span class="go">@@ -1,4 +1,4 @@</span>
+<span class="go"> Haló haló,</span>
+<span class="go">-co se stalo? </span>
+<span class="go">+co se stalo???</span>
+
+<span class="go"> Kolo se mi polámalo!</span>
+</pre></div><p>A jak to funguje z hlediska procesů?</p>
+<div class="highlight"><pre><code>$ diff -U3 &lt;( cat 1 ) &lt;( cat 2 )
+
+
+bash ----+---+---+--------------------------------
+         |   |   | 
+         |   |   +---- diff -U3 p1 p2
+         |   |                  ^   ^
+         |   |                  |   |
+         |   |              /...|.../
+         |   +--- cat 2 &gt; p2    |
+         |                      |
+         |             /......../
+         |             |
+         +--- cat 1 &gt; p1
+                  ....</code></pre></div><p>Jiný příklad. Existuje program <code>seq</code>, který vypíše sekvenci čísel, kde koncové číslo je mu dáno jako argument.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>seq <span class="m">2</span>
+<span class="go">1</span>
+<span class="go">2</span>
+</pre></div><p><code>seq</code> vypisuje výsledek na standardní výstup.</p>
+<p>Když chceme porovnat dva výpisy <code>seq</code>, např. <code>seq 10</code> a <code>seq 11</code>, které nemáme v sebou vytvořených souborech, přijde nám s pomocí <code>diff</code> mezi speciálními soubory na disku.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>diff -U3 &lt;<span class="o">(</span> seq <span class="m">10</span> <span class="o">)</span> &lt;<span class="o">(</span> seq <span class="m">11</span> <span class="o">)</span>
+<span class="go">--- /dev/fd/63  2020-04-26 17:10:02.129532287 +0200</span>
+<span class="go">+++ /dev/fd/62  2020-04-26 17:10:02.129532287 +0200</span>
+<span class="go">@@ -8,3 +8,4 @@</span>
+<span class="go"> 8</span>
+<span class="go"> 9</span>
+<span class="go"> 10</span>
+<span class="go">+11</span>
+</pre></div><p>V závorkách mohou být libovolné Bashové příkazy:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>diff -U3 &lt;<span class="o">(</span> seq <span class="m">10</span> <span class="o">)</span> &lt;<span class="o">(</span> seq <span class="m">5</span><span class="p">;</span> seq <span class="m">7</span> <span class="m">10</span> <span class="o">)</span>
+<span class="go">--- /dev/fd/63  2021-11-22 16:37:33.842564914 +0100</span>
+<span class="go">+++ /dev/fd/62  2021-11-22 16:37:33.843564919 +0100</span>
+<span class="go">@@ -3,7 +3,6 @@</span>
+<span class="go"> 3</span>
+<span class="go"> 4</span>
+<span class="go"> 5</span>
+<span class="go">-6</span>
+<span class="go"> 7</span>
+<span class="go"> 8</span>
+<span class="go"> 9</span>
+</pre></div><h2>Transformace proměnných</h2>
+<p>Odbočkou se na konci naťukla tato složitost bashe, transformace proměnných.
+Viz <code>man bash</code>, záznamy jako <code>${parameter:-word}</code>.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/package-management/">← <span class="d-none d-sm-inline">Instalace balíčků</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/review/">↑ <span class="d-none d-sm-inline">Lekce: Instalace balíčků</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/hw/dnf-exercises/"><span class="d-none d-sm-inline">Úkol - Balíčky</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/notes/bash-subshell/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Karolina Surma a Petr Viktorin, 2020-2021</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

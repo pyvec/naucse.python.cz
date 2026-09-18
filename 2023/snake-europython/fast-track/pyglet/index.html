@@ -1,0 +1,365 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Snake Workshop for PyLadies: Intro to Pyglet
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/2023/snake-europython/">Snake Workshop for PyLadies</a>
+
+> <a href="/2023/snake-europython/sessions/workshop/">The Snake</a>
+
+> <a href="/2023/snake-europython/fast-track/pyglet/">Intro to Pyglet</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <div class="admonition warning"><p>This is a machine-generated translation, meant to support the in-person workshop.</p>
+</div><h1 id="graphics">Graphics
+<a href="#graphics" class="header-link">#</a>
+</h1>
+<p>Now we will show you how to write a graphical application.</p>
+<p>The Python language itself contains tools for drawing images, but they are not very suitable for creating games. Therefore, we will use a library (extension) called Pyglet, which is specifically built for interactive graphics.</p>
+<p>But we have to install it separately first. The safest way is to enter the following two commands into the command line with the virtual environment turned on. (There are also simpler ways, but they require a "correctly" configured system.)</p>
+<p>Update the <code>pip</code> tool, which is capable of installing libraries for Python:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip
+</pre></div><p>(In translation: <strong>Python</strong>, run the <strong>m</strong>odule <strong>pip</strong> and tell it to <strong>in</strong>stall and optionally <strong>upgrade</strong> the <strong>pip</strong> library.)</p>
+<p>Installing Pyglet itself:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pyglet
+</pre></div><p>(In translation: <strong>Python</strong>, run the <strong>m</strong>odule <strong>pip</strong> and tell it to <strong>in</strong>stall the <strong>pyglet</strong> library.)</p>
+<p>For me, the installation looks something like this:</p>
+<div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip
+<span class="go">Requirement already satisfied: pip in ./venv/lib/python3.6/site-packages (18.0)</span>
+<span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pyglet
+<span class="go">Collecting pyglet</span>
+<span class="go">  Downloading pyglet-1.2.4-py3-none-any.whl (964kB)</span>
+<span class="go">Installing collected packages: pyglet</span>
+<span class="go">Successfully installed pyglet-1.2.4</span>
+</pre></div><p>The important thing is "Successfully installed", or "Requirement already satisfied" at the end. This means that the library is ready to use!</p>
+<h2 id="program_skeleton">Program skeleton
+<a href="#program_skeleton" class="header-link">#</a>
+</h2>
+<p>Now try to create a new file in the editor, save it as <code>graphics.py</code>, and write the following program in it:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Done!'</span><span class="p">)</span>
+</pre></div><p>Run it. A black window should appear.</p>
+<div class="admonition note"><p class="admonition-title">Is the window not black? On some computers (often with macOS and some types of Linux), it happens that the window is not black, but there is some "mess" in it. That's okay. Before we start drawing in the window, we &gt;will clean up the mess.</p>
+</div><div class="admonition note"><p class="admonition-title">If you receive the error `AttributeError: module 'pyglet' has no attribute 'window'`, check that you named the file `graphics.py` and not `pyglet.py`. Save the file in the editor as `graphics.py`, delete any file named &gt;`pyglet.py`, and try again.</p>
+</div><div class="admonition note"><p class="admonition-title">Another mistake?</p>
+<p>Graphics are a sensitive matter - you are using a system with many parts that can break (Python, Pyglet, OpenGL, graphics card and its driver, operating system, ...).
+If it doesn't work for you, it's best to consult with an expert.</p>
+</div><p>Done? Let's explain what is happening in this program.</p>
+<p>The command <code>import pyglet</code> will give you access to the graphics library, just like <code>import random</code> gives you access to functions related to random numbers.</p>
+<p>The call to <code>pyglet.window.Window()</code> creates a new <em>window</em> on the screen. It returns an object that can be used to control this window; it is stored in the variable <code>window</code>.</p>
+<p>The call to <code>pyglet.app.run()</code> then launches the application.</p>
+<p>The simple programs you have written so far are descriptions of a process - similar to cooking recipes. A sequence of steps that Python executes sequentially from the first to the last. Sometimes something is repeated and some steps can be "wrapped" into a function, but we have always described one procedure from beginning to end so far.</p>
+<p>Programs for more complex applications look more like a manual for a car mechanic than a recipe. They describe what should happen in a given situation. For example, a program for a text editor could look like this:</p>
+<ul>
+<li>When the user presses a letter on the keyboard, add it to the document.</li>
+<li>When the user presses <kbd>⌫ Backspace</kbd>, erase the last letter.</li>
+<li>When the user presses the Save button, write the file to disk.</li>
+</ul>
+<p>And such a program can be written as a "recipe" - but that recipe is the same for all applications:</p>
+<ul>
+<li>do foreever:<ul>
+<li>Wait until something interesting happens (pressing a key, button, ...)</li>
+<li>React to the situation that has occurred.</li>
+</ul>
+</li>
+</ul>
+<p>And that is exactly what <code>pyglet.app.run()</code> does. It processes <em>events</em>, situations that need to be responded to. In your program, it currently responds to the window close button and the <kbd>Esc</kbd> key by closing the window and exiting.</p>
+<p>Your programming task now is to describe what other events are interesting and how to respond to them.</p>
+<h2 id="event_management">Event management
+<a href="#event_management" class="header-link">#</a>
+</h2>
+<p>The easiest event you can handle is typing on a keyboard.</p>
+<p>Try putting the following code just above the line 'pyglet.app.run()' in the program:</p>
+<div class="highlight"><pre><span></span><span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div><p>What is this?
+It is a function definition, but at the beginning it has a <em>decorator</em> - the line starting with an at sign.
+The <code>window.event</code> decorator is a way to tell Pyglet to run this function when something interesting happens.</p>
+<p>What's interesting? Pyglet finds out based on the function name: 'on_text' reacts to text. Whenever the user presses a key, Pyglet calls your function!</p>
+<p>And what does your function do? It calls <code>print</code>. You already know that. The text entered will be displayed on the console from which you are running the program.</p>
+<div class="admonition note"><p>The <code>print()</code> function still outputs text to the same place as before.
+Just because a graphical window is open doesn't mean that everything will suddenly start writing to it.</p>
+</div><h2 id="drawing">Drawing
+<a href="#drawing" class="header-link">#</a>
+</h2>
+<p>How to write in a textbox? That is a bit more complicated than in a console. The text in the box can have different colors, sizes, fonts, and can be shifted or rotated in various ways.</p>
+<p>All these font attributes need to be saved (along with the text itself) in the <code>Label</code> object (meaning 'label'). Try it - put the following code under the line with <code>window =</code>:</p>
+<div class="highlight"><pre><span></span><span class="n">label</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">"Ahoj!"</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div><p>In the variable <code>label</code> you will now have a label with the text "Hello" that belongs to position (10, 20) - 10 points from the right edge of the window and 20 points from the bottom.</p>
+<div class="admonition note"><p>Other properties besides position are not specified here, so reasonable "default" values will be used: white color, small but readable font.</p>
+</div><p>The caption, however, will not write itself. Similarly to calling <code>print</code> to display text in the console, responding to the <em>window drawing</em> event - <code>on_draw</code> - is necessary to draw text.</p>
+<p>Put this code under the <code>on_text</code> function:</p>
+<div class="highlight"><pre><span></span><span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div><p>This function is called by Pyglet whenever it is necessary to draw the content of the window. In animations (movies or games), this is often required 60 times per second ("60 FPS").</p>
+<p>The function does two things:</p>
+<ul>
+<li>Clears the entire window (paints it black)</li>
+<li>Renders text.</li>
+</ul>
+<p>In the window, you will now see a greeting!</p>
+<p>Try changing the <code>on_text</code> function so that the entered text is displayed in a window instead of on the console. This is done by assigning the text to the <em>attribute</em> <code>label.text</code>.</p>
+<div class="highlight"><pre><span></span><span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Starý text:'</span><span class="p">,</span> <span class="n">label</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Nový text:'</span><span class="p">,</span> <span class="n">label</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div><p>Can you add new text to the old one in this function so that the program works as a simple text editor?</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2023/snake-europython/fast-track/pyglet/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="n">text</span>
+</pre></div>
+    </div>
+</div><h2 id="other_events">Other events
+<a href="#other_events" class="header-link">#</a>
+</h2>
+<p>What other events can be responded to? They are all described in the Pyglet documentation (<a href="https://pyglet.readthedocs.io/en/latest/modules/window.html#pyglet.window.Window.on_activate">https://pyglet.readthedocs.io/en/latest/modules/window.html#pyglet.window.Window.on_activate</a>). Here are a few interesting ones.</p>
+<h3 id="key_pressed">Key pressed
+<a href="#key_pressed" class="header-link">#</a>
+</h3>
+<p>The keys that do not enter text (arrows, <kbd>Backspace</kbd> or <kbd>Enter</kbd>, etc.) can be recognized in the <code>on_key_press</code> event.</p>
+<p>The function <code>on_key_press</code> has two arguments: the first one is the keycode, which you can compare with a constant from <a href="https://pyglet.readthedocs.io/en/latest/modules/window_key.html#key-constants">pyglet.window.key</a>. The second one determines the pressed modifiers such as <kbd>Shift</kbd> or <kbd>Ctrl</kbd>.</p>
+<div class="highlight"><pre><span></span><span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="n">key_code</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">BACKSPACE</span><span class="p">:</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">text</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">ENTER</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Zadaná zpráva:'</span><span class="p">,</span> <span class="n">label</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div><p>On macOS, you may need to replace <code>BACKSPACE</code> with <code>DELETE</code>.  (Or at home, study <a href="https://pyglet.readthedocs.io/en/latest/programming_guide/keyboard.html#motion-events">the method</a> for doing it automatically and correctly.)</p>
+<h3 id="mouse_click">Mouse click
+<a href="#mouse_click" class="header-link">#</a>
+</h3>
+<p>When handling the <code>on_mouse_press</code> event, you will receive information about the position of the click (the <var>x</var> and <var>y</var> coordinates) as well as information about the mouse button and modifier that was pressed.</p>
+<p>Like this, for example, the caption will move to the location of the click:</p>
+<div class="highlight"><pre><span></span><span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_mouse_press</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">button</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+</pre></div><h2 id="animation">Animation
+<a href="#animation" class="header-link">#</a>
+</h2>
+<p>A slightly different type of event is the ticking of a clock: something that occurs regularly.</p>
+<p>This is how animations are created, when something on the screen changes and is redrawn very often - for example, 60 times per second.</p>
+<p>How to do it in Pyglet?
+Once again, it is necessary to define a function, but this time it will not be enough to just use <code>window.event</code>.
+Pyglet needs to know how often to call the function.
+Tell it by calling <code>pyglet.clock.schedule_interval</code> with two arguments:
+the name of the function and the time between each call - ¹/₆₀ seconds.
+Write all of this again before the line <code>pyglet.app.run()</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">tik</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">tik</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>
+</pre></div><p>Pyglet now moves the text 1 pixel to the right every sixtieth of a second.</p>
+<h2 id="the_whole_program">The whole program
+<a href="#the_whole_program" class="header-link">#</a>
+</h2>
+<p>In case you get lost or don't know where a particular piece of code belongs, I am providing a sample program for reference.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+<span class="n">label</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">"Hello!"</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="n">text</span>
+
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="n">key_code</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">BACKSPACE</span><span class="p">:</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">text</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">key_code</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">ENTER</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Zadaná zpráva:'</span><span class="p">,</span> <span class="n">label</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_mouse_press</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">button</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+<span class="k">def</span> <span class="nf">tik</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">tik</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p>So much for the training graphic application. What have you learned</p>
+<ul>
+<li>The function <code>pyglet.window.Window()</code> from the <code>pyglet</code> module creates a window.</li>
+<li>The decorator <code>@window.event</code> marks a function that Pyglet will call in response to a certain event: keyboard input (<code>on_text</code>), drawing (<code>on_draw</code>), key press (<code>on_key_press</code>), etc.</li>
+<li>By calling <code>pyglet.app.run()</code>, you tell Pyglet that everything is set up and it should start the application.</li>
+</ul>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2023/snake-europython/sessions/workshop/">↑ <span class="d-none d-sm-inline">Lekce: The Snake</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2023/snake-europython/snake/drawing/"><span class="d-none d-sm-inline">Drawing the snake</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/snake-workshop/blob/snake-ep-2023/lessons/fast-track/pyglet/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Written by Petr Viktorin for PyLadies Brno, 2015-2018.</p>
+    
+        <p>Initial translation to English by Petra Vidnerová, based on ChatGPT</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

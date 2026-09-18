@@ -1,0 +1,259 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Echo
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/shell-3/">Procesy &amp; deskriptory souborů</a>
+
+> <a href="/2020/linux-admin/linuxadmin/echo/">Echo</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Echo</h1>
+<p>Další z velice jednoduchých nástrojů, které při práci v příkazové řádce
+využiješ, je <code>echo</code>.
+Tento příkaz vypíše všechny argumenty, které dostane.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> haló haló
+<span class="go">haló haló</span>
+</pre></div><p>K čemu je to dobré? Můžeš si takto otestovat, jestli operace které se chystáš
+provést na souborech dělají přesně to, co chceš.
+Bash může jednotlivé argumenty trochu měnit, takže konkrétní program dostává
+trochu jiný seznam argumentů než to, co napíšeš.</p>
+<p>Následující program říká Bashi: zavolej program <code>echo</code> a dej mu tři argumenty:
+<code>ahoj</code>, <code>halo</code> a <code>halooo</code>.
+Všimni si, že mezery zde nehrají roli: oddělují jednotlivé argumenty,
+které Bash předá dál.
+Příkaz <code>echo</code> tak dostane jen ty tři slova a vypíše je oddělená mezerami.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> ahoj      halo halooo
+<span class="go">ahoj halo haloo</span>
+</pre></div><p>V následujícím příkazu <code>echo</code> dostane celkem 7 argumentů: <code>ahoj</code> a
+6 jmen souborů, které Bash vytvoří z <code>*.pdb</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> ahoj *.pdb
+<span class="go">ahoj cubane.pdb ethane.pdb methane.pdb octane.pdb pentane.pdb propane.pdb</span>
+</pre></div><p>Pokud potřebuješ zachovat řetězec i včetně mezer, hvězdiček a dalších znaků,
+můžeš použít uvozovky.
+Bash bude všechno co je uvnitř jednoduchých uvozovek (<code>'</code>) brát jako
+jeden argument.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'ahoj     *.pdb'</span>
+<span class="go">ahoj     *.pdb</span>
+</pre></div><p>Doporučuji používat uvozovky vždy, když si nejseš jistá,
+jestli něco Bash nebude považovat za speciální znak:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'&lt;o.o&gt; je robot #1! :)'</span>
+<span class="go">&lt;o.o&gt; je robot #1! :)</span>
+</pre></div><div class="admonition note"><p>Na rozdíl od Pythonu je v Bashi rozdíl mezi jednoduchými a dvojitými uvozovkami.
+Uvnitř dvojitých bude sice Bash zachovávat mezery, <code>*</code> a <code>?</code>, ale jiné znaky
+si speciální význam zachovají (příklad je <code>$</code>, které uvidíš níže).
+Uvnitř jednoduchých je speciální znak jen jeden: ukončující <code>'</code>.</p>
+</div><p>Echo je velice jednoduchý program, který ti umožní mimo jiné zjistit,
+co všechno Bash provede se speciálními znaky,
+než je předá na zpracování dalším programům.</p>
+<p>Zkus si tento příkaz se speciálním znakem <code>$</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$0</span>
+<span class="go">bash</span>
+</pre></div><p>Místo <code>$0</code> je echu předáno jméno aktuálního shellu – <code>bash</code>, nebo na některých
+systémech <code>/bin/bash</code>.
+Samotné <code>echo</code> nic nepřevádí, pouze vypisuje přesně to, co dostává jako argument.
+To Bash nahradí <code>$0</code> konkrétním řetězcem.</p>
+<div class="admonition note"><p class="admonition-title">Rozdíl mezi `cat` a `echo`</p>
+<p><code>cat</code> vypisuje obsah souboru, jehož jméno dostane jako argument, kdežto
+<code>echo</code> vypisuje přímo argumenty které dostane – ať už to jsou jména souborů
+nebo ne:</p>
+<div class="highlight"><pre><span></span><span class="go">echo soubor.txt</span>
+<span class="go">soubor.txt</span>
+</pre></div></div><h2>Echo do souboru</h2>
+<p><code>echo</code> je další způsob, jak vytvářet soubory.
+Znáš už <code>touch</code>, <code>nano</code> (případně jakýkoli jiný textový editor);
+teď k nim přidej přesměrování z <code>echo</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> haló haló &gt; basnicka.txt
+<span class="gp">$ </span>cat basnicka.txt
+<span class="go">haló haló</span>
+</pre></div><p>Přesměrováním se ale původní obsah souboru smaže, takže když budeš chtít dopsat
+do básničky další řádek, nepůjde to:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'co se stalo?'</span> &gt; basnicka.txt
+<span class="gp">$ </span>cat basnicka.txt
+<span class="go">co se stalo</span>
+</pre></div><p>Pro přidání textu do souboru můžeš použit další druh přesměrování: <code>&gt;&gt;</code>.
+S ním původní obsah v souboru zůstane a nový text bude přidán na konec souboru.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> haló haló &gt; basnicka.txt
+<span class="gp">$ </span>cat basnicka.txt
+<span class="go">haló haló</span>
+<span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'co se stalo?'</span> &gt;&gt; basnicka.txt
+<span class="gp">$ </span>cat basnicka.txt
+<span class="go">haló haló</span>
+<span class="go">co se stalo?</span>
+</pre></div><p>Jiný způsob, jak napsat něco do souboru, je přesměrovat výstup z <code>cat</code>.
+Text pak napíšeš přímo do příkazové řádky:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cat &gt; basnicka.txt
+<span class="go">ahoj ahoj</span>
+<span class="go">jak se máš?</span>
+<span class="gp">$ </span>cat basnicka.txt
+<span class="go">ahoj ahoj</span>
+<span class="go">jak se máš?</span>
+</pre></div><p>Další způsob, jak uložit text do souboru, je použít <code>echo</code> a jednoduché uvozovky.
+Bash ti v rámci uvozovek dokonce umožní napsat víc řádků.
+Na konci je potřeba řetězec uzavřít a přesměrovat do souboru.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'halo halo</span>
+<span class="gp">&gt;</span><span class="s1"> co se stalo</span>
+<span class="gp">&gt;</span><span class="s1"> ...'</span> &gt; basnicka.txt
+<span class="gp">$ </span>cat basnicka.txt 
+<span class="go">halo halo</span>
+<span class="go">co se stalo</span>
+<span class="go">...</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/carpentry-unix/pipefilter/">← <span class="d-none d-sm-inline">Roury a filtry</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/shell-3/">↑ <span class="d-none d-sm-inline">Lekce: Procesy &amp; deskriptory souborů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/pilot/03/"><span class="d-none d-sm-inline">Zápis – Procesy a soubory</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/linuxadmin/echo/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Karolina Surma a Petr Viktorin, 2020</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

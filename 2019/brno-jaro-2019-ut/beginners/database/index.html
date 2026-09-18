@@ -1,0 +1,442 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Úvod do Relačních databází
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/brno-jaro-2019-ut/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/brno-jaro-2019-ut/sessions/github-api/">HTTP, API a databáze</a>
+
+> <a href="/2019/brno-jaro-2019-ut/beginners/database/">Úvod do Relačních databází</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Relační Databáze</h1>
+<p>Většina aplikací, zejména těch webových, potřebuje manipulovat s daty.
+Může se jednat třeba o správu objednávek, produktů na eshopu nebo bankovních transakcí.</p>
+<p>Vzhledem k tomu, že databáze jsou velice komplexní téma, tak si v této lekci
+projedeme jen základy. Pokud vás ale databáze zaujmou, tak je dobré se podívat
+po dalších materiálech, například na <a href="https://www.w3schools.com/sql/">W3Schools</a>.</p>
+<p>Nad daty provádíme čtyři druhy operací - vytváření, čtení, úpravu a mazání.
+Tyto operace se sdružují do zkratky <strong>CRUD</strong> (Create, Read, Update, Delete).</p>
+<p>Existují různé možnosti, kam data ukládat. Mohli bychom například vše zapisovat
+do jednoho souboru. Brzy bychom ale zjistili, že se jedná o velice neefektivní
+způsob - operace nad daty by s rostoucím počtem záznamů začaly být pomalé.
+V těchto situacích nastupují na scénu databáze (resp. databázové systémy).</p>
+<p>Jedná se o vysoce sofistikovaná řešení různých výrobců (zmínit můžeme třeba
+<em>Oracle</em> nebo <em>MySQL</em>). Výhodou je, že tyto systémy mají společný způsob,
+jakým se s nimi komunikuje (API) - prostřednictvím jazyka <strong>SQL</strong>. Nemusí nás tedy
+zajímat, jak databáze funguje uvnitř.</p>
+<p>Základem relačních databází jsou <strong>tabulky</strong>. Můžeme si je představit jako jeden
+list sešitu MS Excel (celý sešit by pak odpovídal databázi). Jednotlivé řádky
+tabulky jsou <strong>záznamy</strong>. Ty se skládají z několika <strong>atributů</strong> (sloupců).
+Řádky a sloupce odpovídají Excelovým řádkům a sloupcům.</p>
+<p>Můžeme mít například tabulku <code>OBJEDNAVKA</code>. Bude tvořena sloupci <code>ID_OBJEDNAVKY</code>,
+<code>ID_ZAKAZNIKA</code>, <code>DATUM</code>, <code>CENA</code>. Jednotlivé záznamy představují jednotlivé
+objednávky - víme tedy kdy si kdo udělal objednávku, a kolik za ni zaplatil.</p>
+<h2>SQL</h2>
+<p>SQL (Structured Querying Language - Strukturovaný dotazovací jazyk) nám umožňuje
+komunikovat s databází. Výrobci jednolivých databází obvykle jazyk v některých
+oblastech rozšiřují, základ je ale společný a standardzivaný. Kromě práci s daty
+(CRUD) se jazyk používá pro vytváření tabulek a dalších objektů, pro správu
+uživatelů databáze apod.</p>
+<p>SQL příkazy mohou být do databáze posílány z webové aplikace (Python, Javascript, ...),
+z terminálu, nebo třeba z aplikace přímo určené pro správu databáze.
+Je zvykem jednotlivé příkazy jazyka psát <code>VELKÝMI PÍSMENY</code>. Příkazy oddělujeme
+středníkem <code>;</code>. Jednořádkové komentáře uvozujeme dvěma spojovníky <code>--</code>
+a víceřádkové komentáře píšeme mezi <code>/*</code> a <code>*/</code>.</p>
+<p>Pojďme se podívat na některé z příkazů, které SQL podporuje.</p>
+<h3>Tabulky</h3>
+<p>Pro vytvoření tabulky použijeme příkaz <code>CREATE TABLE</code>, následovaný jménem tabulky
+a definicí jednotlivých sloupců. U sloupců definuje jméno, typ a případně další
+vlastnosti.</p>
+<div class="highlight"><pre><span></span><span class="cm">/* Vytvoří tabulku ROBOT se sloupci ID, NAME a TYPE.</span>
+<span class="cm">   ID je celé číslo, NAME a TYPE jsou řetězce.</span>
+<span class="cm">*/</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">ROBOT</span> <span class="p">(</span>
+    <span class="n">ID</span>      <span class="nb">INT</span>     <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+    <span class="n">NAME</span>    <span class="nb">TEXT</span><span class="p">,</span>
+    <span class="k">TYPE</span>    <span class="nb">TEXT</span>
+<span class="p">)</span>
+</pre></div><p>Význam <code>PRIMARY_KEY</code> si vysvětlíme později. Pokud bychom chtěli tabulku smazat,
+tak použijeme <code>DROP TABLE JMENO_TABULKY</code>. Jen pozor - spolu s tabulkou se
+<strong>smažou všechny záznamy</strong> v ní obsažené.</p>
+<h3>INSERT</h3>
+<p>Jakmile máme vytvořenou tabulku, můžeme do ní vkládat záznamy. Děláme tak
+pomocí příkazu <code>INSERT</code>. Uvedeme jméno tabulky a pak hodnoty, představující
+záznam (nebo záznamy), které se mají vložit.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- Vloží do tabulky ROBOT nového Robota s ID 1, jménem Jim a typem AGGRESIVE</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">ROBOT</span> <span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">NAME</span><span class="p">,</span> <span class="k">TYPE</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="ss">"Jim"</span><span class="p">,</span> <span class="ss">"AGGRESSIVE"</span><span class="p">);</span>
+
+<span class="c1">-- Vloží do tabulky ROBOT další dva Roboty</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">ROBOT</span> <span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">NAME</span><span class="p">,</span> <span class="k">TYPE</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="ss">"John"</span><span class="p">,</span> <span class="ss">"DEFENSIVE"</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span> <span class="ss">"Jack"</span><span class="p">,</span> <span class="ss">"DEFENSIVE"</span><span class="p">);</span>
+</pre></div><h3>SELECT</h3>
+<p>Když už máme i nějaké zaznámy, tak je dobré mít způsob, jak je číst. Slouží
+k tomu mocný příkaz <code>SELECT</code>, který v nejzákladnější podobě očekává seznam sloupců,
+který se má pro jednotlivé záznamy vypsat, a jméno tabulky, ze které se mají
+data číst. Seznam sloupců můžeme nahradit hvězdičkou <code>*</code>, pokud chceme vypsat
+hodnoty všech sloupců.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- vypíše hodnoty všech sloupců pro všechny roboty</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">ROBOT</span><span class="p">;</span>
+
+<span class="c1">-- vypíše jen jména všech robotů</span>
+<span class="k">SELECT</span> <span class="n">NAME</span> <span class="k">FROM</span> <span class="n">ROBOT</span><span class="p">;</span>
+</pre></div><p>Příkaz <code>SELECT</code> podporuje třeba také filtrování dat (ukážeme si později),
+řazení (<code>ORDER BY</code>) a seskupování dat (průměr - <code>AVG</code>, suma - <code>SUM</code>, ...)</p>
+<h3>UPDATE</h3>
+<p>V případě, že chceme data upravit (například změnit jméno robota),
+tak použijeme příkaz <code>UPDATE</code>. I ten očekává jméno tabulky, jejíž záznamy se
+mají upravit. Kromě toho také zadáme nové hodnoty pro jednotlivé sloupce.
+Hodnoty sloupců, které neuvedeme, zůstanou nezměněné.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- nastaví všem robotům typ na AGGRESSIVE</span>
+<span class="k">UPDATE</span> <span class="n">ROBOT</span> <span class="k">SET</span> <span class="k">TYPE</span> <span class="o">=</span> <span class="ss">"AGGRESSIVE"</span><span class="p">;</span>
+</pre></div><h3>DELETE</h3>
+<p>A konečně poslední oprací v CRUD je mazání. V SQL se záznamy mažou pomocí příkazu
+<code>DELETE</code>. I zde, stejně jako u ostatních CRUD příkazů, uvádíme jméno tabulky.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- smaže všechny roboty</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">ROBOT</span><span class="p">;</span>
+</pre></div><h3>WHERE</h3>
+<p>Nejspíš vás napadalo, že pokud bychom vždy četli, upravovali nebo mazali všechna
+data v tabulce, tak by systém nebyl moc dobře použitelný. Naštěstí ale můžeme
+pomocí příkazu <code>WHERE</code> ovlivnit, nad jakými záznamy se bude operace provádět.</p>
+<p>Za <code>WHERE</code> se píší podmínky (spojované pomocí <code>AND</code> nebo <code>OR</code>), které musí
+platit, aby se záznam přidal do množiny, nad kterou se bude operace
+provádět. V podmínkách je možné použít různé operátory:</p>
+<ul>
+<li>rovnost: <code>WHERE SLOUPEC = HODNOTA</code></li>
+<li>nerovnost: <code>WHERE SLOUPEC &gt; HODNOTA</code> (<code>&gt;</code>, <code>&lt;</code>, <code>&lt;&gt;</code>, ...)</li>
+<li>jedna z hodnot: <code>WHERE SLOUPEC IN (HODNOTA_1, HODNOTA_2)</code></li>
+<li>podřetězec: <code>WHERE SLOUPEC LIKE %HODNOTA%</code></li>
+</ul>
+<div class="highlight"><pre><span></span><span class="c1">-- vypíše všechny řádky o robotech, které mají typ AGGRESSIVE</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">ROBOT</span> <span class="k">WHERE</span> <span class="k">TYPE</span> <span class="o">=</span> <span class="ss">"AGGRESSIVE"</span><span class="p">;</span>
+
+<span class="c1">-- přejmenuje roboty, jejichž jména začínají na J, na Jimmy</span>
+<span class="k">UPDATE</span> <span class="n">ROBOT</span> <span class="k">SET</span> <span class="n">NAME</span> <span class="o">=</span> <span class="ss">"Jimmy"</span> <span class="k">WHERE</span> <span class="n">NAME</span> <span class="k">LIKE</span> <span class="ss">"J%"</span><span class="p">;</span>
+
+<span class="c1">-- smaže robota s ID větším než 1</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">ROBOT</span> <span class="k">WHERE</span> <span class="n">ID</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div><h2>Primární klíče</h2>
+<p>Každá tabulka by měla mít soupec, který jednoznačně identifikuje jednotlivé řádky.
+Ve sloupci musí být unikátní hodnoty. Může se jednat o uměle vytvořené číslo
+(nejčastěji nazývané <code>ID</code>), nebo může jít o unikátní identifikátor z reálného
+světa. Pozor ale na to, že ne každý na první pohled unikátní identifikátor je
+<em>skutečně</em> unikátní - je například možné, aby dvě osoby měly stejné rodné číslo.
+Je tedy obecně lepší používat uměle vytvořené primární klíče.</p>
+<p>Primární klíče se používají proto, že zrychlují operace nad daty (rychle se podle
+nich vyhledává) a také proto, že snižují riziko duplicitních dat v databázi.
+Při vytváření tabulky zadáme u sloupce, který má být primárním klíčem, vlastnost
+<code>PRIMARY KEY</code>.</p>
+<h2>Cizí klíče</h2>
+<p>Cizí klíče - <code>FOREIGN KEY</code> - se využívají pro zachycení vazby mezi tabulkami.
+V dceřiné tabulce máme sloupec představující cizí klíč, jehož hodnoty se
+odkazují na primární klíč jiné tabulky.</p>
+<p>Například tabulka <code>OBJEDNAVKA</code> má cizí klíč <code>ID_ZAKAZNIKA</code>. Tento cizí klíč
+se odkazuje na primární klíč tabulky <code>ZAKAZNIK</code>. Tím zaručíme, že každá objednávka
+musí být "napojená" na existujícího zákazníka.</p>
+<p><span class="figure"><a href="/2019/brno-jaro-2019-ut/beginners/database/static/fk.png"><img src="/2019/brno-jaro-2019-ut/beginners/database/static/fk.png" alt="Cizí klíče"></a></span></p>
+<p><a href="https://cdn-images-1.medium.com/max/1600/1*yW_ha3z8Mp6fUn9m6qWwNw.png">zdroj obrázku</a></p>
+<h2>Spojování tabulek</h2>
+<p>Často potřebujeme v jednom dotazu číst data z více tabulek. Používáme k tomu
+příkaz <code>JOIN</code>, který je součástí příkazu <code>SELECT</code>. V základní verzi vezme
+<code>JOIN</code> záznamy z jedné tabulky a připojí k nim odpovídající záznamy z druhé
+tabulky. Na takto nově vzniklý řádek je možné udělat <code>JOIN</code> s další tabulkou.</p>
+<p>To, co považujeme za "odpovídající záznam" zapíšeme jako součást <code>JOIN</code>
+(za klíčové slovo <code>ON</code>). Nejdříve ale musíme zadat jméno tabulky,
+kterou chceme připojit.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- vypíše jména a příjmení zákazníků, kteří udělali objednávku za více než 500 Kč</span>
+
+<span class="k">SELECT</span> <span class="n">ZAKAZNIK</span><span class="p">.</span><span class="n">JMENO</span><span class="p">,</span> <span class="n">ZAKAZNIK</span><span class="p">.</span><span class="n">PRIJMENI</span>
+<span class="k">FROM</span> <span class="n">ZAKAZNIK</span>
+<span class="k">JOIN</span> <span class="n">OBJEDNAVKA</span> <span class="k">ON</span> <span class="n">OBJEDNAVKA</span><span class="p">.</span><span class="n">ZAKAZNIK_ID</span> <span class="o">=</span> <span class="n">ZAKAZNIK</span><span class="p">.</span><span class="n">ID</span>
+<span class="k">WHERE</span> <span class="n">OBJEDNAVKA</span><span class="p">.</span><span class="n">CENA</span> <span class="o">&gt;</span> <span class="mi">500</span><span class="p">;</span>
+</pre></div><h2>Transakce</h2>
+<p>Transakce jsou skupiny příkazů (<code>SELECT</code>, <code>INSERT</code>, ...), která se buď provede
+celá, nebo vůbec. To má velkou výhodu v tom, že pokud některý z příkazů vyvolá
+chybu, tak se databáze vrátí do původního stavu, my můžeme příkaz opravit
+a celou transakci spustit znovu.</p>
+<p>O transakcích se ale bavíme především proto, že je důležité je <strong>ukončit</strong>,
+a to buď příkazem <code>COMMIT</code> nebo <code>ROLLBACK</code>. <code>COMMIT</code> uloží námi provedené
+změny trvale do databáze, takže je uvidíme i v budoucích transakcích.
+<code>ROLLBACK</code> vrátí databázi do původního stavu, což se může hodit v případě,
+že jsme provedli jiné změny, než jsme chtěli.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- vložení dat</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">ROBOT</span> <span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">NAME</span><span class="p">,</span> <span class="k">TYPE</span><span class="p">)</span> <span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="ss">"Jim"</span><span class="p">,</span> <span class="ss">"AGGRESSIVE"</span><span class="p">);</span>
+<span class="c1">-- v této chvíli ještě nejsou data trvale uložena</span>
+
+<span class="c1">-- uložení dat</span>
+<span class="k">COMMIT</span><span class="p">;</span>
+</pre></div><h2>SQLite</h2>
+<p>Celé povídání o databázích by nemělo moc smysl, pokud bychom si neukázali,
+jak je využít z prostředí Pythonu. Jak jsme už zmínili, existují různé databázové
+systémy, my se ale zaměříme na jeden z nejjednodušších na "rozjetí", a to <strong>SQLite</strong>.</p>
+<p>Tento systém ukládá celou databázi do jednoho binárního souboru.
+Můžeme si na něm jednoduše vyzkoušet jednotlivé SQL příkazy,
+a to prostřednictvím Python balíčku <code>sqlite3</code>. Ukažme si využití tohoto balíčku
+na příkladech.</p>
+<div class="highlight"><pre><span></span><span class="n">import</span> <span class="n">sqlite3</span>
+
+<span class="o">#</span> <span class="n">Připojíme</span> <span class="n">se</span> <span class="n">k</span> <span class="n">databázi</span> <span class="p">(</span><span class="n">v</span> <span class="n">souboru</span><span class="p">)</span>
+<span class="k">connection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="k">connect</span><span class="p">(</span><span class="s1">'pyladies_example_1.db'</span><span class="p">)</span>
+
+<span class="o">#</span> <span class="n">Získáme</span> <span class="n">instanci</span> <span class="n">třídy</span> <span class="o">`</span><span class="k">Cursor</span><span class="o">`</span><span class="p">,</span> <span class="n">pomocí</span> <span class="n">které</span> <span class="n">bude</span> <span class="k">do</span> <span class="n">databáze</span> <span class="n">posílat</span> <span class="n">příkazy</span>
+<span class="k">cursor</span> <span class="o">=</span> <span class="k">connection</span><span class="p">.</span><span class="k">cursor</span><span class="p">()</span>
+
+<span class="o">#</span> <span class="n">Pokud</span> <span class="n">tabulka</span> <span class="n">už</span> <span class="n">existuje</span><span class="p">,</span> <span class="n">tak</span> <span class="n">ji</span> <span class="n">odstraníme</span><span class="p">,</span>
+<span class="o">#</span> <span class="n">abychom</span> <span class="n">mohli</span> <span class="n">skript</span> <span class="n">spouštět</span> <span class="n">opakovaně</span>
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"""DROP TABLE IF EXISTS ROBOT"""</span><span class="p">)</span>
+
+<span class="o">#</span> <span class="n">Vytvoříme</span> <span class="n">jednoduchou</span> <span class="n">tabulku</span>
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"""CREATE TABLE ROBOT (NAME TEXT, TYPE TEXT)"""</span><span class="p">)</span>
+
+<span class="o">#</span> <span class="n">Vložíme</span> <span class="k">do</span> <span class="n">tabulky</span> <span class="k">data</span>
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"""</span>
+<span class="ss">    INSERT INTO ROBOT (NAME, TYPE)</span>
+<span class="ss">    VALUES ("</span><span class="n">JIM</span><span class="ss">", "</span><span class="n">DEFENSIVE</span><span class="ss">"), ("</span><span class="n">JACK</span><span class="ss">", "</span><span class="n">OFFENSIVE</span><span class="ss">")</span>
+<span class="ss">"""</span><span class="p">)</span>
+
+<span class="o">#</span> <span class="n">Dotážeme</span> <span class="n">se</span> <span class="n">na</span> <span class="n">všechny</span> <span class="n">roboty</span><span class="p">,</span> <span class="n">výsledky</span> <span class="n">vypíšeme</span>
+<span class="n">robots</span> <span class="o">=</span> <span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"SELECT * FROM ROBOT"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">robot</span> <span class="k">in</span> <span class="n">robots</span><span class="p">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">robot</span><span class="p">)</span>
+
+<span class="o">#</span> <span class="n">Uložíme</span> <span class="n">změny</span> <span class="n">a</span> <span class="n">uzavřeme</span> <span class="n">spojení</span>
+<span class="k">connection</span><span class="p">.</span><span class="k">commit</span><span class="p">()</span>
+<span class="k">connection</span><span class="p">.</span><span class="k">close</span><span class="p">()</span>
+</pre></div><div class="highlight"><pre><span></span><span class="o">#</span> <span class="n">Složitejší</span> <span class="n">příklad</span><span class="p">,</span> <span class="n">který</span> <span class="n">pracuje</span> <span class="n">s</span> <span class="n">primárními</span> <span class="n">a</span> <span class="n">cizími</span> <span class="n">klíči</span>
+<span class="o">#</span> <span class="n">a</span> <span class="n">se</span> <span class="n">spojováním</span> <span class="n">tabulek</span>
+
+<span class="n">import</span> <span class="n">sqlite3</span>
+
+<span class="o">#</span> <span class="n">Připojíme</span> <span class="n">se</span> <span class="n">k</span> <span class="n">databázi</span> <span class="p">(</span><span class="n">v</span> <span class="n">souboru</span><span class="p">)</span>
+<span class="k">connection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="k">connect</span><span class="p">(</span><span class="s1">'pyladies_example_2.db'</span><span class="p">)</span>
+
+<span class="o">#</span> <span class="n">Získáme</span> <span class="n">instanci</span> <span class="n">třídy</span> <span class="o">`</span><span class="k">Cursor</span><span class="o">`</span><span class="p">,</span> <span class="n">pomocí</span> <span class="n">které</span> <span class="n">bude</span> <span class="k">do</span> <span class="n">databáze</span> <span class="n">posílat</span> <span class="n">příkazy</span>
+<span class="k">cursor</span> <span class="o">=</span> <span class="k">connection</span><span class="p">.</span><span class="k">cursor</span><span class="p">()</span>
+
+<span class="o">#</span> <span class="n">Pokud</span> <span class="n">tabulky</span> <span class="n">už</span> <span class="n">existují</span><span class="p">,</span> <span class="n">tak</span> <span class="n">ji</span> <span class="n">odstraníme</span><span class="p">,</span>
+<span class="o">#</span> <span class="n">abychom</span> <span class="n">mohli</span> <span class="n">skript</span> <span class="n">spouštět</span> <span class="n">opakovaně</span>
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"""DROP TABLE IF EXISTS ROBOT"""</span><span class="p">)</span>
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"""DROP TABLE IF EXISTS BATTLE"""</span><span class="p">)</span>
+
+<span class="o">#</span> <span class="n">Vytvoříme</span> <span class="n">tabulku</span> <span class="n">s</span> <span class="n">roboty</span> <span class="n">a</span> <span class="n">tabulky</span> <span class="n">s</span> <span class="n">výsledky</span> <span class="n">bitev</span>
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"""</span>
+<span class="ss">-- u jednotlivých roborů si ukládáme ID, jméno a typ</span>
+<span class="ss">CREATE TABLE ROBOT (</span>
+<span class="ss">    ROBOT_ID INT PRIMARY KEY,</span>
+<span class="ss">    NAME TEXT,</span>
+<span class="ss">    TYPE TEXT)</span>
+<span class="ss">"""</span><span class="p">)</span>
+
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"""</span>
+<span class="ss">-- bitva se skládá z ID bitvy, ID vítěze a poraženého (odpovídají ID v tabulce ROBOT)</span>
+<span class="ss">-- a z bodů pro vítěze a poraženého</span>
+<span class="ss">CREATE TABLE BATTLE (</span>
+<span class="ss">    BATTLE_ID INT PRIMARY KEY,</span>
+<span class="ss">    WINNER_ID INT,</span>
+<span class="ss">    LOSER_ID INT,</span>
+<span class="ss">    WINNER_POINTS INT,</span>
+<span class="ss">    LOSER_POINTS INT,</span>
+<span class="ss">    FOREIGN KEY(WINNER_ID) REFERENCES ROBOT(ROBOT_ID),</span>
+<span class="ss">    FOREIGN KEY(LOSER_ID) REFERENCES ROBOT(ROBOT_ID)</span>
+<span class="ss">    )</span>
+<span class="ss">"""</span><span class="p">)</span>
+
+<span class="o">#</span> <span class="n">Vložíme</span> <span class="k">do</span> <span class="n">tabulkek</span> <span class="k">data</span>
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"""</span>
+<span class="ss">    INSERT INTO ROBOT (ROBOT_ID, NAME, TYPE) VALUES</span>
+<span class="ss">    (1, "</span><span class="n">JIM</span><span class="ss">", "</span><span class="n">DEFENSIVE</span><span class="ss">"), (2, "</span><span class="n">JACK</span><span class="ss">", "</span><span class="n">OFFENSIVE</span><span class="ss">"), (3, "</span><span class="n">JIMMY</span><span class="ss">", "</span><span class="n">OFFESIVE</span><span class="ss">")</span>
+<span class="ss">"""</span><span class="p">)</span>
+
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"""</span>
+<span class="ss">    INSERT INTO BATTLE (BATTLE_ID, WINNER_ID, LOSER_ID, WINNER_POINTS, LOSER_POINTS) VALUES</span>
+<span class="ss">    (1, 1, 2, 10, 8), -- robot 1 porazil robota 2 se skóre 10:8 (v bitvě 1)</span>
+<span class="ss">    (2, 2, 1, 6, 9),</span>
+<span class="ss">    (3, 2, 3, 10, 9),</span>
+<span class="ss">    (4, 1, 3, 5, 4),</span>
+<span class="ss">    (5, 3, 2, 2, 0),</span>
+<span class="ss">    (6, 1, 2, 9, 6)</span>
+<span class="ss">"""</span><span class="p">)</span>
+
+<span class="o">#</span> <span class="n">Dotážeme</span> <span class="n">se</span> <span class="n">na</span> <span class="n">výsledky</span> <span class="n">bitev</span><span class="p">,</span> <span class="n">které</span> <span class="n">vyhrál</span> <span class="n">robot</span> <span class="n">se</span> <span class="n">jménem</span> <span class="ss">"JIM"</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">"""</span>
+<span class="ss">    SELECT BATTLE.WINNER_POINTS, BATTLE.LOSER_POINTS</span>
+<span class="ss">    FROM BATTLE</span>
+<span class="ss">    JOIN ROBOT ON ROBOT.ROBOT_ID = BATTLE.WINNER_ID</span>
+<span class="ss">    WHERE ROBOT.NAME = "</span><span class="n">JIM</span><span class="ss">"</span>
+<span class="ss">"""</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">score</span> <span class="k">in</span> <span class="n">scores</span><span class="p">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+
+<span class="o">#</span> <span class="n">Uložíme</span> <span class="n">změny</span> <span class="n">a</span> <span class="n">uzavřeme</span> <span class="n">spojení</span>
+<span class="k">connection</span><span class="p">.</span><span class="k">commit</span><span class="p">()</span>
+<span class="k">connection</span><span class="p">.</span><span class="k">close</span><span class="p">()</span>
+</pre></div><h2>ORM</h2>
+<p>V Pythonu jsme se naučili data a logiku sdružovat do <strong>tříd</strong>. V databázích
+se data sdružují do <strong>tabulek</strong>. O propojení těchto konceptů se stará ORM - Objektově
+Relační Mapování. Pomocí ORM Frameworku (v Pythonu např.
+<a href="https://en.wikipedia.org/wiki/SQLAlchemy">SQLAlchemy</a>) vytváříme Python třídy,
+pro které existují odpovídající tabulky v databázi.</p>
+<p>Například Python třída <code>Kocka</code> bude mít odpovídající tabulku <code>KOCKA</code>.
+Atributy třídy (<code>Vek</code>, <code>Barva</code>) budou v databázi existovat jako sloupce.
+Jednotlivé řádky tabulky bude možné načíst do aplikace jako instance třídy <code>Kocka</code>.
+Jednotlivé kočky samozřejmě bude možné upravovat, mazat, nebo vytvářet nové.</p>
+<p>Ukázku ORM najdete na <a href="https://en.wikipedia.org/wiki/SQLAlchemy#Schema_definition">Wikipedii</a></p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-jaro-2019-ut/fast-track/http/">← <span class="d-none d-sm-inline">HTTP – Jak funguje Internet</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/brno-jaro-2019-ut/sessions/github-api/">↑ <span class="d-none d-sm-inline">Lekce: HTTP, API a databáze</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/brno-jaro-2019-ut/sessions/github-api/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-brno-jaro-2019-ut/lessons/beginners/database/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies Brno napsal Ondřej Beneš, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

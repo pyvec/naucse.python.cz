@@ -1,0 +1,387 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Proměnné a cyklus
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/shell-2/">Bash II</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/var-loop/">Proměnné a cyklus</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Proměnné a cyklus</h1>
+<p>Přesuň se do složky <code>data-shell/creatures</code>. 
+Jsou v ní tři soubory:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls
+<span class="go">basilisk.dat  minotaur.dat  unicorn.dat</span>
+</pre></div><p>Podívej se, jaké informace tyto soubory obsahují. 
+Na začátku každého z nich je nějaká informace o zvířeti které popisují,
+a následuje část DNA sekvence.
+Tvůj úkol je zjistit, jaké informace se nachází na prvních třech řádcích
+každého souboru.
+Pro tento úkol se může hodit například příkaz <code>head</code>.
+(Všimni si, co <code>head</code> dělá když mu dáš ke zpracování více souborů.)</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>head -n3 *.dat
+<span class="go">==&gt; basilisk.dat &lt;==</span>
+<span class="go">COMMON NAME: basilisk</span>
+<span class="go">CLASSIFICATION: basiliscus vulgaris</span>
+<span class="go">UPDATED: 1745-05-02</span>
+
+<span class="go">==&gt; minotaur.dat &lt;==</span>
+<span class="go">COMMON NAME: minotaur</span>
+<span class="go">CLASSIFICATION: bos hominus</span>
+<span class="go">UPDATED: 1765-02-17</span>
+
+<span class="go">==&gt; unicorn.dat &lt;==</span>
+<span class="go">COMMON NAME: unicorn</span>
+<span class="go">CLASSIFICATION: equus monoceros</span>
+<span class="go">UPDATED: 1738-11-24</span>
+</pre></div><p>Představ si, že pro další zpracování potřebuješ jen <em>druhý</em> řádek každého
+z těchto souborů.
+Pro jeden souboru to půjde jen s příkazy, které už znáš.
+Zkus to například s baziliškem: napiš příkaz, který vypíše druhý řádek
+souboru <code>basilisk.dat</code>.</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/var-loop/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Můžeš na to jít postupně: nejprve vybereš dva první řádky,
+pak z těch dvou jeden poslední.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>head -n2 basilisk.dat <span class="p">|</span> tail -n1
+<span class="go">CLASSIFICATION: basiliscus vulgaris</span>
+</pre></div>
+    </div>
+</div><p>Teď stačí pokaždé přepsat jméno souboru a máš to! To je ale trochu otravné.
+Jde to zjednodušit? Samozřejmě.</p>
+<h2>Proměnné</h2>
+<p>V Pythonu bychom pro takový opakovaný kus kódu
+použili proměnnou a napsali cyklus.
+To se teď naučíme dělat v Bashi. Začneme proměnnými.</p>
+<p>Přiřaď do proměnné <code>jmeno</code> slovo <code>minotaur.dat</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">jmeno</span><span class="o">=</span>minotaur.dat
+</pre></div><p>Pozor na to, že kolem rovnítka nesmí být mezery!</p>
+<p>Když pak chceš použit obsah této proměnné a napíšeš <code>echo jmeno</code>, co to vypíše?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> jmeno
+<span class="go">jmeno</span>
+</pre></div><p>Jak vidíš, není to správná cesta.
+Abys Bashi dala najevo že chceš skutečně vypsat obsah proměnné <code>jmeno</code>,
+je potřeba něco navíc.
+To něco je speciální operátor: dolar před jménem proměnné.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$jmeno</span>
+<span class="go">minotaur.dat</span>
+</pre></div><p>Na rozdíl od Pythonu se v Bashi proměnné nedosazují automaticky.
+Je na to vždy potřeba použít <code>$</code>.</p>
+<div class="admonition note"><p>Doporučuju si k <code>$</code> poznamenat, že znamená “dosadit hodnotu” proměnné,
+ne “použít proměnnou”.</p>
+<p>Při <em>nastavení</em> proměnné se totiž dolar nepíše: v příkazu
+<code>jmeno=minotaur.dat</code> dosazovat hodnotu nechceš.</p>
+<p>(Dolar je taky poslední znak výzvy, <em>promptu</em>; to je zcela jiný význam
+stejného znaku.)</p>
+</div><p>Proměnnou můžeš použít jako název souboru.
+Následujícím příkazem získáš druhý řádek ze souboru, který je uložený v proměnné <code>jmeno</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>head -n2 <span class="nv">$jmeno</span> <span class="p">|</span> tail -n1
+<span class="go">CLASSIFICATION: bos hominus</span>
+</pre></div><p>Podobně jako v Pythonu můžeš novým přiřazením přepsat obsah proměnné a zpřístupnit tak pro další příkazy jiná data pod stejným jménem.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">jmeno</span><span class="o">=</span>unicorn.dat
+<span class="gp">$ </span>head -n2 <span class="nv">$jmeno</span> <span class="p">|</span> tail -n1
+<span class="go">CLASSIFICATION: equus monocer</span>
+
+<span class="gp">$ </span><span class="nv">jmeno</span><span class="o">=</span>basilisk.dat
+<span class="gp">$ </span>head -n2 <span class="nv">$jmeno</span> <span class="p">|</span> tail -n1
+<span class="go">CLASSIFICATION: basiliscus vulgaris</span>
+</pre></div><p>Do proměnných se hodí dávat i příkazy, které pak podle potřeby můžeš přepsat něčím jiným.
+Představ si, že normálně používáš program <code>less</code> pro čtení souborů.
+Jednoho dne ale budeš psát instrukce, které by měly fungovat i na počítači starém 30 let,
+kde program <code>less</code> není. Je tam ale archaický program <code>more</code>.</p>
+<p>V takových případech můžeš jméno programu brát z proměnné:</p>
+<p>Příklad</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">moje_ctecka</span><span class="o">=</span>less
+<span class="gp">$ </span><span class="nv">$moje_ctecka</span> unicorn.dat
+</pre></div><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">moje_ctecka</span><span class="o">=</span>more
+<span class="gp">$ </span><span class="nv">$moje_ctecka</span> unicorn.dat
+</pre></div><p>Všimni si, jak se výstup pokaždé mění.</p>
+<h2>Cyklus for</h2>
+<p>Pojďme teď proměnné využít v cyklech.</p>
+<p>Cyklus <code>for</code> se v Bashi zapisuje podobně jako v Pythonu, jen potřebuje trochu
+víc psaní a odřádkovávání.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span> jmeno <span class="k">in</span> a b c
+<span class="go">&gt; do</span>
+<span class="go">&gt;     echo $jmeno</span>
+<span class="go">&gt; done</span>
+<span class="go">a</span>
+<span class="go">b</span>
+<span class="go">c</span>
+</pre></div><p>V prvním řádku nechceš dosadit hodnotu proměnné, ale jen do ní přiřazuješ.
+Proto zde nepoužiješ znak <code>$</code>. <code>a b c</code> jsou slova, která se do této proměnné budou postupně přiřazovat.
+Po zmáčknutí <kbd>Enter</kbd> příkaz pokračuje (poznáš to podle změny výzvy na <code>&gt;</code>: Bash zatím nezačal nic vykonávat).</p>
+<p>Následuje klíčové slovo <code>do</code>, kterým začíná blok příkazů které se pro každou hodnotu proměnné <code>jmeno</code> provedou.
+My chceme vypsat hodnotu proměnné, čili <code>echo $jmeno</code>.
+Na dalším řádku následuje klíčové slovo <code>done</code>, které ukončuje <code>do</code> a tedy celý cyklus.</p>
+<p>Na rozdíl od Pythonu není nutné tělo cyklu odsadit: blok kódu se uvozuje pomocí
+slov <code>do</code> a <code>done</code>; mezery na začátku řádku nemají význam.
+Hezké odsazení ale zvětšuje přehlednost kódu.
+V materiálech je proto píšu.</p>
+<p>Když za <code>done</code> zmáčkneš <kbd>Enter</kbd>, vypíše se postupně <code>a</code>, <code>b</code> a <code>c</code>.</p>
+<p>Když pak dáš šipku nahoru, místo víceřádkového příkazu ti ho Bash vypíše v jednořádkové formě.
+Jednotlivé příkazy budou odděleny středníky. 
+Středník a nový řádek (<kbd>Enter</kbd>) v Bashi většinou znamenají totéž.
+(Ale nejsou <em>přesně</em> totéž – všimni si že za <code>do</code> středník není.)</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span> jmeno <span class="k">in</span> a b c<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="nv">$jmeno</span><span class="p">;</span> <span class="k">done</span>
+<span class="go">a</span>
+<span class="go">b</span>
+<span class="go">c</span>
+</pre></div><p>A teď už víš dost na to, abys vypsala druhý řádek každého souboru <code>*.dat</code>!
+Zkus to udělat.</p>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/var-loop/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Jak na to? Dobré je si úkol rozdělit na dva kroky: cyklus přes soubory a samotný výpis.</p>
+<p>Nejprve si ve <code>for</code> cyklu vypiš obsah proměnné pomocí <code>echo</code>, aby sis byla jistá, že pracuješ se správnou hodnotou. 
+Když si zvykneš na výpomoc programu <code>echo</code>, ušetříš si v budoucnu spoustu starostí :)</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span> jmeno <span class="k">in</span> *.dat
+<span class="go">&gt; do</span>
+<span class="go">&gt;     echo $jmeno</span>
+<span class="go">&gt; done</span>
+<span class="go">basilisk.dat</span>
+<span class="go">minotaur.dat</span>
+<span class="go">unicorn.dat</span>
+</pre></div><p>Teď už víš, že rámec cyklu <code>for</code> cyklu je napsán správně.
+A tak můžeš místo <code>echo</code> provést už známý příkaz s <code>head</code> a <code>tail</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span> jmeno <span class="k">in</span> *.dat
+<span class="go">&gt; do</span>
+<span class="go">&gt;     head -n 2 $jmeno | tail -n 1</span>
+<span class="go">&gt; done</span>
+<span class="go">CLASSIFICATION: basiliscus vulgaris</span>
+<span class="go">CLASSIFICATION: bos hominus</span>
+<span class="go">CLASSIFICATION: equus monoceros</span>
+</pre></div>
+    </div>
+</div><h3>Kontrola příkazu…</h3>
+<p>Kdybys chtěla udělat něco drastičtějšího než jen vypsat části souborů,
+doporučuju přidat ještě prostřední krok: použij <code>echo</code> pro vypsání
+samotného příkazu a zkontroluj, že se vypíšou opravdu příkazy
+chceš provést.</p>
+<p>Příklad:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span> jmeno <span class="k">in</span> *.dat
+<span class="go">&gt; do</span>
+<span class="go">&gt;     echo rm $jmeno </span>
+<span class="go">&gt; done</span>
+<span class="go">rm basilisk.dat</span>
+<span class="go">rm minotaur.dat</span>
+<span class="go">rm unicorn.dat</span>
+</pre></div><p>Po kontrole můžeš smazat <code>echo</code> a příkazy provést.</p>
+<p>Při přidávání <code>echo</code> si ale dej pozor na přesměrování a jiné “potrubní”
+speciální znaky.
+Následující příkaz nedělá jenom kontrolu:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span> jmeno <span class="k">in</span> *.dat
+<span class="go">&gt; do</span>
+<span class="go">&gt;     echo cat $jmeno &gt;&gt; vsechno.txt</span>
+<span class="go">&gt; done</span>
+</pre></div><p>Místo něj by bylo lepší napsat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span> jmeno <span class="k">in</span> *.dat
+<span class="go">&gt; do</span>
+<span class="go">&gt;     echo "cat $jmeno &gt;&gt; vsechno.txt"</span>
+<span class="go">&gt; done</span>
+</pre></div><h3>…vnořené cykly…</h3>
+<p>Cykly se dají i vnořovat, podobně jako v Pythonu.
+Následující příkaz kontroluje připravení adresářové struktury pro
+měření vlastností několika molekul za několika různých teplot:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span> molekula <span class="k">in</span> cubane ethane methane
+<span class="go">&gt; do</span>
+<span class="go">&gt;     for teplota in 25 30 37 40</span>
+<span class="go">&gt;     do</span>
+<span class="go">&gt;         echo mkdir $molekula-$teplota</span>
+<span class="go">&gt;     done</span>
+<span class="go">&gt; done</span>
+</pre></div><h3>…a něco o chybách</h3>
+<p>Tady je příklad časté chyby, kdy počítač sice udělá to co chceš,
+ale zároveň vypíše chybovou hlášku <code>head: cannot open 'ls' for reading: No such file or directory</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span> jmeno <span class="k">in</span> ls *.dat
+<span class="go">&gt; do</span>
+<span class="go">&gt;     head -n 2 $jmeno | tail -n 1</span>
+<span class="go">&gt; done</span>
+<span class="go">head: cannot open 'ls' for reading: No such file or directory</span>
+<span class="go">CLASSIFICATION: basiliscus vulgaris</span>
+<span class="go">CLASSIFICATION: bos hominus</span>
+<span class="go">CLASSIFICATION: equus monoceros</span>
+</pre></div><p>Proč příkaz <code>head</code> říká, že neumí otevřít soubor <code>ls</code>? Co se tady stalo?
+Odpověď je jednoduchá: Bash interpretuje část <code>ls *.dat</code> jako <em>seznam slov</em>, nikoli výstup příkazu <code>ls</code>.
+Do proměnné <code>jmeno</code> tedy přiřadí postupně slova <code>ls</code>, pak <code>basilisk.dat</code>, pak <code>minotaur.dat</code> atd.
+Příkaz <code>head -n 2 $jmeno</code> si pak u <code>ls</code> stěžuje, že takový soubor neexistuje.</p>
+<p>Můžeš taky narazit na jinou chybu. Už víš, že <code>for</code> cyklus prochází slova, ne příkazy. V příkladu níže jsme zapomněli v těle cyklu uvést <code>echo</code>. Co se stane, když ho spustíš?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span> jmeno <span class="k">in</span> cat dog mouse
+<span class="go">&gt; do</span>
+<span class="go">&gt;     $jmeno</span>
+<span class="go">&gt; done</span>
+</pre></div><p>To, co je pro první řádek cyklu slovo, se v těle používá jako Bashový příkaz. 
+Zavolala jsi tedy příkaz <code>cat</code> bez argumentů, který čeká na vstup z klávesnice. 
+Ukončíš-li ho klávesovou zkratkou <kbd>Ctrl</kbd>+<kbd>D</kbd>,
+objeví se následně chybový výpis o tom, že příkazy <code>dog</code> a <code>mouse</code> nejsou Bashi známé.</p>
+<h2>While?</h2>
+<p>V Bashi existuje taky cyklus <code>while</code>. Seznámíme se s ním ale až později.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/carpentry-unix/pipefilter-nelle/">← <span class="d-none d-sm-inline">Nela a medúzy: Kontrola souborů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-2/">↑ <span class="d-none d-sm-inline">Lekce: Bash II</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/carpentry-unix/loop-nelle/"><span class="d-none d-sm-inline">Nela a medúzy: Zpracování souborů</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/var-loop/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsala Karolina Surma, 2020</p>
+    
+        <p>upravil Petr Viktorin, 2021</p>
+    
+        <p>založeno na kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, 2016–2018 Software Carpentry Foundation, 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

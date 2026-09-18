@@ -1,0 +1,423 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Advanced lessons: Asteroids
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/courses/">Materiály</a>
+                
+                
+
+> <a href="/2019/advanced-en-prague/">Advanced lessons</a>
+
+> <a href="/2019/advanced-en-prague/sessions/game/">Pyglet - Introduction into game development in Python, part 1</a>
+
+> <a href="/2019/advanced-en-prague/advanced-en/asteroids/">Asteroids</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Asteroids game</h1>
+<p>We will try to make a clone of the game <a href="https://en.wikipedia.org/wiki/Asteroids_%28video_game%29">Asteroids</a> 
+that has been released in 1979.</p>
+<p>Our version will look like this:</p>
+<p><span class="figure"><a href="/2019/advanced-en-prague/advanced-en/asteroids/static/screenshot.png"><img src="/2019/advanced-en-prague/advanced-en/asteroids/static/screenshot.png" alt="Asteroids-like game screenshot"></a></span></p>
+<p>The project is quite complex. It uses a few things that were
+not covered by <a href="https://naucse.python.cz/2018/pyladies-en-prague/">the beginner's course</a>. 
+I know that you will be able to look them up.</p>
+<div class="admonition note"><p>If you go through the project alone, it is possible that you
+get stuck at some problem. 
+If that happens to you, let us know.
+We will be happy to help you!</p>
+</div><h2>Spaceship</h2>
+<p>The first step is to program a spaceship that you can control by keyboard.</p>
+<ul>
+<li>An instance of the class <code>Spaceship</code> represents the spaceship.</li>
+<li>Every spaceship has two attributes, <code>x</code> and <code>y</code> (position),
+<code>x_speed</code> and <code>y_speed</code>, <code>rotation</code>, and
+<code>sprite</code>. (A sprite is a 2D object in Pyglet with position, speed, rotation, and image.)</li>
+<li>The spaceship has a method called <code>tick</code> that handles the spaceship mechanics – movement,
+rotation, and control.</li>
+<li>All objects that are in the game are stored in a global list, <code>objects</code>.
+It should contain only the spaceship for now.</li>
+<li>Store all pressed keys in a <em>set</em> (keyword <code>set</code>).
+It is a datatype similar to list but without order. It can contain each element
+only once. (Sets are like dictionaries without values.)
+You can use the <a href="https://github.com/pyvec/cheatsheets/blob/master/sets/sets-en.pdf">sets cheatsheet</a>,
+and the official Python documentation contains
+<a href="https://docs.python.org/3/tutorial/datastructures.html#sets">a tutorial</a>
+and <a href="https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset">a reference</a>.
+The spaceship uses the set as part of the processing in its <code>tick</code> method.</li>
+<li>You can use <a href="http://opengameart.org/content/space-shooter-redux">the image set</a>,
+created by <a href="http://kenney.nl">Kenney Vleugels</a>. He made them public and free. Or you can draw your own images if you want!</li>
+<li><p>In the game, we will use a large number of <code>Sprite</code>s. Drawing them one by one would take quite a long time.
+So add all the <code>Sprite</code>s to the (pyglet.graphics.Batch)[<a href="https://pythonhosted.org/pyglet/api/pyglet.graphics.Batch-class.html">https://pythonhosted.org/pyglet/api/pyglet.graphics.Batch-class.html</a>] collection, which Pyglet can efficiently draw at once. Add arguments to "batch" by using <code>Sprite()</code> to create a <code>sprite.delete()</code>. For example:</p>
+<div class="highlight"><pre><span></span>  <span class="n">batch</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">Batch</span><span class="p">()</span>
+  <span class="n">sprite1</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+  <span class="n">sprite2</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+
+  <span class="c1"># and then you can draw all of them at once: </span>
+  <span class="n">batch</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div><p>Create the <code>batch</code> collection, as well as the <code>objects</code>, as global variables.</p>
+</li>
+<li>To move and rotate the objects relative to their center, it is good to set the
+"anchor" of the image to its center (otherwise, the anchor is in the lower left corner):<div class="highlight"><pre><span></span>  <span class="n">image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+  <span class="n">image</span><span class="o">.</span><span class="n">anchor_x</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">width</span> <span class="o">//</span> <span class="mi">2</span>
+  <span class="n">image</span><span class="o">.</span><span class="n">anchor_y</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">height</span> <span class="o">//</span> <span class="mi">2</span> 
+  <span class="bp">self</span><span class="o">.</span><span class="n">sprite</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+</pre></div></li>
+<li><p>You can use the arrow keys to move the rocket left, right, and straight.
+The arrows to the sides spin the rocket, the arrow forward accelerates the movement
+in the direction the rocket is turned.</p>
+<ul>
+<li>The basic motion of the rocket is simple: the x-coordinate is added to the x-velocity
+times the elapsed time, and the same with the y-coordinate, and for the rotation angle:<div class="highlight"><pre><span></span>  <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_speed</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_speed</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">rotation_speed</span>
+</pre></div>  The speed of rotation depends on the arrows (left or right). In one case, it is 
+  negative, in the other positive. Choose the appropriate value by experimenting <ul>
+<li>starting at 4 radians per second. All similar "magical values" should be defined 
+as constants - i.e. variables that you set at the beginning and never change. It is 
+a convention to name constants in capital letters and put them at the beginning of the file, 
+right after the import:<div class="highlight"><pre><span></span><span class="n">ROTATION_SPEED</span>  <span class="o">=</span>  <span class="mi">4</span>   <span class="c1"># radians per second</span>
+</pre></div></li>
+</ul>
+</li>
+<li>Acceleration is a little more complicated: the x-axis speed is added to the cosine 
+angle of rotation times elapsed time. The sinus is used with the y-axis.<div class="highlight"><pre><span></span>  <span class="bp">self</span><span class="o">.</span><span class="n">x_speed</span> <span class="o">+=</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">ACCELERATION</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">y_speed</span> <span class="o">+=</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">ACCELERATION</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)</span>
+</pre></div>  Notice the ACCELERATION constant example. Choose it again at your discretion.</li>
+<li><p>If you have calculated the <code>self.x</code>, <code>self.y</code>, and <code>self.rotation</code> values, do not forget 
+to project them into <code>self.sprite</code>, otherwise nothing interesting will happen.</p>
+<p>Beware that the <code>math.sin</code> and <code>math.cos</code> functions use radians, whereas the <code>pyglet</code> 
+  <code>Sprite.rotation</code> uses degrees. (Additionally, they start at different origins, and they rotate 
+  in opposite directions.) For a sprite, therefore, the angle needs to be converted:</p>
+<div class="highlight"><pre><span></span>  <span class="bp">self</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+</pre></div></li>
+<li>When the rocket leaves the window, put it back into the game on the other side of 
+the screen. (Check that it works on all four sides.)</li>
+</ul>
+</li>
+<li><strong>Bonus 1:</strong> Try to add a few rockets, each with a slightly different angle.
+  Each individual <code>Spaceship</code> object maintains its own state, so it should not be difficult 
+  to create more (and to control all at once).</li>
+<li><p><strong>Bonus 2 :</strong> You may have noticed a "jump" when a rocket escapes from the window and 
+  returns to the other side. This can be avoided by rendering the whole screen once more 
+  to the left, right, up and down.</p>
+<p>Pyglet has a special low-level feature that can tell "now draw everything moved by 
+  the X pixels to the left". Full explanation would be long, so just copy the code:</p>
+<div class="highlight"><pre><span></span>  <span class="kn">from</span> <span class="nn">pyglet</span> <span class="kn">import</span> <span class="n">gl</span>
+
+  <span class="k">def</span> <span class="nf">draw</span><span class="p">():</span>
+      <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+      <span class="k">for</span> <span class="n">x_offset</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="n">window</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span><span class="p">):</span>
+          <span class="k">for</span> <span class="n">y_offset</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="n">window</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span><span class="p">):</span>
+              <span class="c1"># Remember the current state </span>
+              <span class="n">gl</span><span class="o">.</span><span class="n">glPushMatrix</span> <span class="p">()</span> 
+              <span class="c1"># Move everything drawn from now on by (x_offset, y_offset, 0)</span>
+              <span class="n">gl</span><span class="o">.</span><span class="n">glTranslatef</span><span class="p">(</span><span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+              <span class="c1"># Draw </span>
+              <span class="n">batch</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+              <span class="c1"># Restore remembered state (this cancels the glTranslatef) </span>
+              <span class="n">gl</span><span class="o">.</span><span class="n">glPopMatrix</span><span class="p">()</span>
+</pre></div><p>For an overview, the documentation for the functions used here is: 
+  <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glPushMatrix.xml">glPushMatrix</a>, 
+  <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glPushMatrix.xml">glPopMatrix</a>, 
+  <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glTranslate.xml">glTranslatef</a>.</p>
+</li>
+</ul>
+<p>Have you succeeded? Can you fly through the universe?</p>
+<h2>Asteroids</h2>
+<p>Add a second type of space object: <code>Asteroid</code>.</p>
+<ul>
+<li>Asteroids and spaceships have many things in common: every space object will have its 
+position, speed, rotation, and rules how it moves. So create a <code>SpaceObject</code> class, in which will be 
+everything they have in common, and a <code>Spaceship</code> class, that inherits from <code>SpaceObject</code>, in which the spaceship-specific 
+code remains (i.e., keyboard control, ship image, start from the middle of the screen).</li>
+<li>The part of the code for motion will be common to all space objects (e.g. code for the 
+acceleration); another part will be specific to the rocket only (keypad control). Take advantage 
+of the <code>super()</code> function (more in <a href="/2019/advanced-en-prague/beginners-en/inheritance/">inheritance lesson</a>).</li>
+<li>Write the <code>Asteroid</code> class, which is also inherited from <code>SpaceObject</code>, but has its own 
+behaviour: it starts either at the left or bottom of the screen with a random speed, and each 
+asteroid has a randomly assigned image. (In the Asteroids, the left and right edges 
+are essentially the same, and the top and bottom too.)</li>
+<li>And then add some asteroids of different sizes to the game.</li>
+</ul>
+<p>Have you succeeded? Do you have two types of objects?</p>
+<h2>Collisions</h2>
+<p>Our asteroids are still pretty harmless. Let's change that.</p>
+<ul>
+<li>In this section, your task will be to find out when the ship is hit by an asteroid. For 
+simplicity, we replace each object with a circle and calculate if the circles collide. 
+Each object will need to have a radius - the <code>radius</code> attribute.</li>
+<li><p>In order to see what the game "thinks" where and how big our objects are, 
+draw a circle around each object. The best thing to do is to use 
+<a href="https://pyglet.readthedocs.io/en/latest/programming_guide/gl.html">pyglet.gl</a> 
+and a little math; for now, just copy the <code>draw_circle</code> function and call it for each object. 
+After you got this part working, you won't need to highlight the radius any longer, 
+and you can remove the draw_circle function again.</p>
+<div class="highlight"><pre><span></span>  <span class="k">def</span> <span class="nf">draw_circle</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+    <span class="n">iterations</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">iterations</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">iterations</span><span class="p">)</span>
+
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">radius</span><span class="p">,</span> <span class="mi">0</span>
+
+    <span class="n">gl</span><span class="o">.</span><span class="n">glBegin</span><span class="p">(</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_LINE_STRIP</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+      <span class="n">gl</span><span class="o">.</span><span class="n">glVertex2f</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">dx</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">dy</span><span class="p">)</span>
+      <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="p">(</span><span class="n">dx</span> <span class="o">*</span> <span class="n">c</span> <span class="o">-</span> <span class="n">dy</span> <span class="o">*</span> <span class="n">s</span><span class="p">),</span> <span class="p">(</span><span class="n">dy</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">*</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">gl</span><span class="o">.</span><span class="n">glEnd</span><span class="p">()</span>
+</pre></div></li>
+<li>When an asteroid crashes into the ship, the ship will explode and disappear. We'll leave the 
+explosion for later, but it's important to remove the object from the game. Put it in the 
+<code>SpaceObject.delete</code> method, because any object can be removed from the game. In this 
+method, you must remove the object from the list of <code>objects</code> and then delete its <code>Sprite</code> 
+so that it does not render within the <code>batch</code>.</li>
+<li><p>And how do you detect that collision? Within the <code>Spaceship.tick</code>, go through each object to 
+see if the distance between the ship and the other object is less than the sum of their radiuses 
+(they hit each other), and if so, call the object's <code>hit_by_spaceship</code> method.</p>
+<p>Finding a distance in a game where the <a href="https://en.wikipedia.org/wiki/Wraparound_%28video_games%29">objects that fly out of the screen return on the other side</a> 
+  is not entirely straightforward, so copy the code for now:</p>
+<div class="highlight"><pre><span></span>  <span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">wrap_size</span><span class="p">):</span>
+      <span class="sd">"""Distance in one direction (x or y)"""</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">result</span> <span class="o">&gt;</span> <span class="n">wrap_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+          <span class="n">result</span> <span class="o">=</span> <span class="n">wrap_size</span> <span class="o">-</span> <span class="n">result</span>
+      <span class="k">return</span> <span class="n">result</span>
+
+  <span class="k">def</span> <span class="nf">overlaps</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+      <span class="sd">"""Returns true if and only if two objects overlap space"""</span>
+      <span class="n">distance_squared</span> <span class="o">=</span> <span class="p">(</span><span class="n">distance</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span>
+                          <span class="n">distance</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+      <span class="n">max_distance_squared</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">radius</span> <span class="o">+</span><span class="n">b</span><span class="o">.</span><span class="n">radius</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="k">return</span> <span class="n">distance_squared</span> <span class="o">&lt;</span> <span class="n">max_distance_squared</span>
+</pre></div><p>Most other objects in the completed game (such as fire from the rocket, missile) will not do anything 
+  when the collision happens, so the <code>SpaceObject.hit_by_spaceship</code> should do nothing 
+  (the method only needs to exist). Only an asteroid will break the rocket, so redefine <code>Asteroid.hit_by_spaceship</code> 
+  to call <code>delete</code> ship.</p>
+<p>Because there could be more rockets in our game in general, the asteroid needs to know which rocket it broke. 
+  The <code>hit_by_spaceship</code> method should, therefore, have an argument.</p>
+</li>
+</ul>
+<p>Have you succeeded? Can you lose now?</p>
+<h2>Attack</h2>
+<p>Now try to break the asteroids.
+ </p>
+<ul>
+<li>The missile can fire a laser in 0.3 seconds. For each rocket save a number (as an attribute)
+which is set, after each shot, to 0.3 and then let this number drop by 1 per second in the 
+<code>tick</code> method. If the number is negative user can fire again.</li>
+<li>When a player holds the space bar and has the possibility to fire, then the ship should fire.
+Reflect this in the game by adding an object of a new class, <code>Laser</code>. The laser starts at the 
+rocket's coordinates, it has the rocket's rotation and rocket speed plus something extra in the 
+direction of rotation.</li>
+<li>Each <code>Laser</code> object needs to "remember" how long it is in the game. In the beginning, 
+set its lifetime to a number so the laser can fly little bit further than one screen. When its lifetime 
+is over, the <code>Laser</code> disappears.</li>
+<li>In its <code>tick</code> method, the laser goes through all objects, and when its position overlaps with some
+of these objects, it calls their <code>hit_by_laser</code> method. For most objects, this method does nothing, 
+only the asteroids will break.</li>
+<li><p>When the laser touches an asteroid, the asteroid divides into two smaller ones (or, if it's
+too small, it disappears completely).</p>
+<p>You can set the speeds of new asteroids how you want - it is important that every smaller 
+asteroid flies elsewhere. Usually, new asteroids are faster than the original ones.</p>
+</li>
+<li><p>And that's all! You have a functional game!</p>
+</li>
+</ul>
+<p>Have you succeeded? Can you also win?</p>
+<h2>Completion and extension</h2>
+<p>If you want to continue in the game, here are some ideas. You can do it in any order - or 
+you can invent your own extension!</p>
+<ul>
+<li><p>Is the game too difficult?</p>
+<p>You can add lives: there are three at the beginning, and as long as there's one left, 
+  the rocket will appear again in the middle of the screen with zero speed after an<br>
+  asteroid hit it. 
+  The game should also ignore the keys that were held until the player presses them again 
+  (preferably use <code>pressed_keys.clear ()</code>).</p>
+<p>You can show the number of ships (lives) that are left with icons at the bottom of the screen.</p>
+<p><strong>Bonus</strong>: A few seconds after the "restart", the rocket can be indestructible to have 
+  time to fly when there happens to be an asteroid in the middle of the screen.</p>
+</li>
+<li><p>Is the game too easy?</p>
+<p>Add Levels: When the player shoots all the asteroids, they move to the next level where there 
+  are more the asteroids than in the previous level.</p>
+<p>You can display the level number using <a href="https://pyglet.readthedocs.io/en/latest/programming_guide/text.html">pyglet.text.Label</a>.</p>
+</li>
+<li><p>Is the background too black?</p>
+<p>In the set of pictures in the <code>Backgrounds</code> directory choose one background and paint 
+  the whole universe with it.</p>
+</li>
+<li><p>Is the game too austere?</p>
+<p>Add fire and explosions! Like the <code>Laser</code>, only they don't destroy anything, they just 
+  change their colour depending on how long they are in the game.</p>
+<p>You can use the <a href="http://opengameart.org/content/smoke-particle-assets">"Smoke particle assets"</a> 
+  images drawn by <a href="https://kenney.nl/">Kenney Vleugels</a> again. I recommend "White Puff".
+  You can shrink them (e.g. <code>sprite.scale = 1/10</code>), change their colour (e.g. <code>sprite.color = 255, 100, 0</code>), 
+  or make them partially transparent (e.g. <code>sprite.opacity = 100</code>).</p>
+<p>I recommend to make a new <code>batch</code> for the effects and draw them before the main batch, so the 
+  effects can't overlap the game objects.</p>
+</li>
+<li><p>Don't you know whether you lost or won?</p>
+<p>In the end, you can draw a big GAME OVER or WINNER sign.</p>
+</li>
+<li><p>Are you bored?</p>
+<p>In the original game, UFOs sometimes appear, and sometimes they shoot at the rocket, 
+  so if the rocket stands still in one spot and it is just spinning around, the UFO will 
+  destroy it. You can try to complete the <code>Ufo</code> class and you can create <code>ShipLaser</code> and 
+  <code>UfoLaser</code> that inherit from the <code>Laser</code> class.</p>
+</li>
+</ul>
+<p>Have you succeeded? Does it look and behave professionally?</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/advanced-en-prague/sessions/game/">↑ <span class="d-none d-sm-inline">Lekce: Pyglet - Introduction into game development in Python, part 1</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/advanced-en-prague/sessions/game/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-advanced-en-prague/lessons/advanced-en/asteroids/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Translated by Vsevolod Khanin, Marketa Muzikova and Petr Plavjanik</p>
+    
+        <p>Originally written by Petr Viktorin, 2015-2017 for <a href="https://naucse.python.cz/course/pyladies/projects/asteroids/">PyLadies CZ</a>.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

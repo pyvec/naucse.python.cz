@@ -1,0 +1,344 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Procesy
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2021/linuxadmin-podzim/">Linuxová administrace</a>
+
+> <a href="/2021/linuxadmin-podzim/sessions/shell-3/">Procesy &amp; deskriptory souborů</a>
+
+> <a href="/2021/linuxadmin-podzim/linuxadmin/process/">Procesy</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Procesy</h1>
+<p><strong>Proces</strong> je termín pro <strong>běžící program</strong>.
+Proces na počítači:</p>
+<ul>
+<li>provádí akce</li>
+<li>pracuje na datch</li>
+<li>může ukazovat výsledky své činnosti v okýnkách nebo na příkazové řádce.</li>
+</ul>
+<p>Každý běžící program má svůj proces.
+Když si otevřeš několik terminálů, vytvoří se několik procesů pro Bash.
+Každý má svůj vlastní stav, svůj aktuální adresář apod.</p>
+<h2>Seznam procesů: ps</h2>
+<p>Jaké aktuálně běží ti řekne příkaz <code>ps</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps
+<span class="go">  PID TTY          TIME CMD</span>
+<span class="go"> 5403 pts/8    00:00:00 bash</span>
+<span class="go"> 5449 pts/8    00:00:00 ps</span>
+</pre></div><p>Tenhle výstup je až překvapivě krátký.
+Program <code>ps</code> totiž v základu ukazuje pouze procesy běžící v aktuálním terminálu.
+S parametrem <code>-a</code> se jich vypíše víc, ale až s parametrem <code>-A</code> dostaneš
+všechny aktuálně běžící procesy v systému.
+Většinou je jich hodně (zvlášť v našem grafickém prostředí):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps -A
+<span class="go">  PID TTY          TIME CMD</span>
+<span class="go"> 1211 tty1     00:05:53 Xorg</span>
+<span class="go"> 1413 tty1     00:02:16 gnome-shell</span>
+<span class="go"> 1510 tty1     00:00:00 ibus-x11</span>
+<span class="go"> 1740 tty1     00:00:00 gsd-disk-utilit</span>
+<span class="go"> 1747 tty1     00:00:00 python3</span>
+<span class="go"> 2394 tty1     00:19:03 firefox</span>
+<span class="go"> 2451 tty1     00:01:52 Web Content</span>
+<span class="go"> (...)</span>
+</pre></div><p>Výpis je uveden v textovém formátu, takže s ním můžeš dál pracovat pomocí
+nástrojů které už znáš: <code>cut</code>, <code>grep</code> atd.</p>
+<p>Občas se ti bude hodit více informací, které <code>ps</code> vypíše s přepínač <code>-f</code>.
+Mimojiné se takhle ve výstupu objeví argumenty každého procesu, např.
+<code>-Af</code> u samotné ho <code>ps -Af</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps -Af
+<span class="go"> (...)</span>
+<span class="go">petr        4175    3767  0 14:18 pts/1    00:00:00 ps -Af</span>
+<span class="go">petr        4176    3767  0 14:18 pts/1    00:00:00 tail</span>
+</pre></div><div class="admonition note"><p>Příkaz <code>ps</code> přidal přepínače s pomlčkou (<code>-a</code>, <code>-A</code>) relativně nedávno.
+Přepínače bez pomlček jsou ale dál k dispozici, takže občas v návodech
+a příkladech najdeš <code>ps a</code> nebo <code>ps aux</code>. Pozor, jde o jiné přepínače:
+<code>a</code> neznamená nutně totéž co <code>-a</code>.
+V manuálové stránce jsou popsány oba.</p>
+</div><p>Hezčí výstup dostaneš, když použiješ program <code>top</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>top
+</pre></div><p>Ten ti ukáže tabulku podobnou příkladu níže, která se pravidelně aktualizuje:</p>
+<div class="highlight"><pre><code>  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 3267 hanka     20   0 2957412 321036 146352 S   2,3  4,1  30:39.88 Web Content
+ 1392 hanka     20   0 3726628 295760 145672 S   2,0  3,8  17:12.48 gnome-shell
+ 1108 hanka     20   0  714448 196972 164264 S   1,0  2,5  22:04.77 Xorg
+ 3053 hanka     20   0 3489236 429100 167936 S   1,0  5,5  15:53.94 Web Content
+ (...)</code></pre></div><p>Je to výpis procesů, které se vejdou na obrazovku.
+Jsou seřazeny podle podle vytížení procesoru (t.j. kolik zabírají prostředků),
+takže neaktivní procesy jsou níže (nebo nejsou vůbec vidět) a na prvních
+řádcích bývají typicky grafické aplikace (zvlášť prohlížeče).</p>
+<p>Asi tam budeš mít mimojiné grafický shell – <code>gnome-shell</code>, terminál a
+samotný <code>top</code>.
+Bash ale u začátku nejspíš nebude – ten teď nedělá nic, jen čeká až skončí
+<code>top</code>. Můžeš ho zkusit najít pomocí kláves <kbd>PgUp</kbd>/<kbd>PgDn</kbd>.</p>
+<p>Co znamenají jednotlivé sloupce ve výpisu <code>top</code>?</p>
+<ol>
+<li><code>PID</code> je <strong>číslo procesu</strong> (angl. <em>Process ID</em>) – unikátní číslo.
+Když ho znáš, můžeš pomocí něj proces ovládat – o tom za chvíli.</li>
+<li><code>USER</code> je <strong>vlastník</strong>
+Každý proces patří určitému uživateli, jehož jménem běží.
+To se používá např. pro zjištění jestli má proces právo otevřít soubor,
+který patří danému uživateli.
+Každý uživatel na počítači má svůj vlastní uživatelský účet.
+Na osobních bývá jen jeden; na univerzitním serveru jich budou klidně tisíce.
+Kromě toho na všech linuxových počítačích existuje i hlavní systémový
+administrátor (<code>root</code>, jehož procesy mají plný přístup k celému systému)
+a celá řada účtů pro systémové služby.</li>
+<li><p><code>PR</code> a <code>NI</code> ukazují <em>prioritu</em> a jak je proces “hodný” (angl. <em>nice</em>)
+k ostatním.
+Když je proces k ostatním “hodný” (má tu vyšší číslo), tak systém
+upřednostňuje ostatní procesy.
+“Hodný” program pak běží, když není co jiného dělat.</p>
+<p>Hodnotu <em>nice</em> lze nastavovat; prioritu nastavuje jádro systému samo
+podle <em>nice</em> (a jiných proměnných).</p>
+</li>
+<li><p><code>VIRT</code>,  <code>RES</code>, <code>SHR</code> popisují kolik proces zabírá paměti.
+(Počítání paměti je relativně složité, ale vyšší čísla znamenají “větší”
+proces.)</p>
+</li>
+<li><code>S</code> je stav procesu. Ten může být běžící (<code>R</code>, <em>running</em>),
+spící (<code>S</code>, <em>sleeping</em>, např. čeká na vstup z klávesnice),
+čekající na data z disku (<code>D</code>) a další.</li>
+<li><code>%CPU</code> je procentuální vytížení procesoru.
+(U vícejádrových počítačů může být součet vyšší než 100%.)</li>
+<li><code>%MEM</code> je procentuální využití paměti.
+(Počítání paměti je relativně složité; tohle číslo je třeba brát s rezervou.)</li>
+<li><code>TIME</code> říká jak dlouho tento proces už běží.
+Počítá se ale jen <em>procesorový čas</em>: když proces spí, tak se čas nenavyšuje.
+Pro příklad: Bash, který většinou času jen čeká na zadání příkazu nebo
+dokončení spuštěného procesu, nebude mít tento čas moc velký.
+U prohlížeče, který typicky běží dlouho a neustále něco překresluje
+a stahuje, bude čas větší.</li>
+<li><code>COMMAND</code> je jméno procesu – příkaz kterým byl proces spuštěn.</li>
+</ol>
+<p><code>top</code> ukončíš zmáčknutím klávesy <kbd>Q</kbd>.</p>
+<p>Stejné informace umí ukázat i grafický program <code>gnome-system-monitor</code>
+(<em>Sledování systému</em>):</p>
+<div class="highlight"><pre><code>$ gnome-system-monitor</code></pre></div><h2>Ovládání procesů</h2>
+<p>PID, číslo procesu, je velice důležitý údaj.
+Je unikátní a proces se s jeho pomocí dá ovládat.</p>
+<p>Pokud jsi už <code>top</code> ukončila, opět ho spusť.
+Zkus najít jeho číslo procesu (PID).</p>
+<p>Budeš na to nejspíš potřebovat druhý terminál – v jednom ti běží <code>top</code>,
+ve druhém budeš hledat PID.
+Nové okno otevřít z menu <em>Terminál</em> nebo pomocí
+<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd>.
+(Případně můžeš otevřít novou kartu, podobně jako v prohlížečích,
+přes grafické tlačítko nebo <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd>.)</p>
+<p>Vzpomeň si na příkaz <code>ps -A</code>.
+Jak z něj najdeš číslo procesu (PID) programu <code>top</code>?</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/process/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Ve druhém terminálu spusť:</p>
+<div class="highlight"><pre><code>$ ps -A | grep top
+   3186 pts/0    00:00:06 top</code></pre></div><p>První sloupec je PID.</p>
+<p>Když použiješ rozšířený výpis, objeví se ti i <code>grep top</code>;
+správný proces můžeš vybrat očima. PID je teď ve druhém sloupci:</p>
+<div class="highlight"><pre><code>$ ps -Af | grep top
+hanka       3186    2494  0 13:31 pts/0    00:00:06 top
+hanka       4291    3767  0 14:23 pts/1    00:00:00 grep --color=auto top</code></pre></div>
+    </div>
+</div><p>Podle PID se dá proces ovládat.
+Například ho ukončit, když předáš číslo jako argument příkazu <code>kill</code>:</p>
+<div class="highlight"><pre><code>$ kill &lt;číslo procesu&gt;</code></pre></div><p>Zkontroluj na druhém terminálu, že se <code>top</code> opravdu ukončil a vidíš opět prompt.</p>
+<div class="admonition note"><p>Pokud špatně opíšeš číslo procesu, ukončíš příkazem <code>kill</code> nějaký jiný proces.
+Může to mít nečekané následky.</p>
+</div><p>Příkaz <code>kill</code> není tak “drsný” jak se podle jména zdá:
+pošle procesu <code>top</code> signál, který “hezky poprosí” aby se ukončil.
+Funguje to podobně jako <kbd>CTRL</kbd>+<kbd>C</kbd>.
+<code>top</code> tak má možnost uvést terminál do původního stavu a např. zavřít případné
+otevřené soubory.
+Některé procesy ale můžou tuhle “prosbu” úplně ignorovat;
+jak ukončit takové procesy (a co to znamená “signál” se dozvíme později.</p>
+<div class="admonition note"><p>Některé grafické programy (např. Firefox) spouští víc procesů. 
+Pokud se pokusíš ukončit příkazem <code>kill</code> jeden z nich, nejspíš neuvidíš
+žádný rozdíl. Proces naběhne znovu. Tyto programy radši vypínej tlačítkem :)</p>
+</div><h2>PID Bashe</h2>
+<p>PID aktuálního shellu je uloženo v proměnné <code>$$</code> (podobně jako <code>$?</code> obsahuje
+návratovou hodnotu posledního příkazu.)</p>
+<p>Ověř si to: najdi PID pro <code>bash</code> stejně jako jsi to udělala pro <code>top</code>
+a porovnej ho s hodnotou <code>$$</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ps -A <span class="p">|</span> grep bash
+<span class="go">   3767 pts/1    00:00:00 bash</span>
+<span class="gp">$ </span><span class="nb">echo</span> <span class="nv">$$</span>
+<span class="go">3767</span>
+</pre></div><p>Co se ale stane, když se Bash pokusíš ukončit?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">kill</span> <span class="nv">$$</span>
+<span class="gp">$
+</span></pre></div><p>Příkaz <code>kill</code> není tak “drsný” jak se podle jména zdá:
+pošle procesu <code>top</code> signál, který “hezky poprosí” aby se ukončil.
+Funguje to podobně jako <kbd>CTRL</kbd>+<kbd>C</kbd>.
+<code>top</code> tak má možnost uvést terminál do původního stavu a např. zavřít případné
+otevřené soubory.
+Některé procesy ale můžou tuhle “prosbu” úplně ignorovat – a Bash je právě
+jeden z nich.
+Ostatně ani <kbd>CTRL</kbd>+<kbd>C</kbd> Bash neukončí,
+zruší jen aktuálně zadávaný příkaz.</p>
+<p>I takovéhle procesy ale jdou ukončit. Když použiješ <code>kill</code> se speciálním
+přepínačem, tak se na nic neptá a proces “natvrdo” ukončí.</p>
+<div class="admonition warning"><p>Toto je trochu nebezpečná operace: program nedostane možnost po sobě
+“uklidit” a může po sobě něco nechat v nekonzistentním stavu.
+Proto používej <code>kill -9</code> jen když jiné způsoby nefungují.
+(A nebo teď, ve virtuálním stroji, na zkoušku.)</p>
+</div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/bash-exit-code/">← <span class="d-none d-sm-inline">Návratová hodnota příkazů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2021/linuxadmin-podzim/sessions/shell-3/">↑ <span class="d-none d-sm-inline">Lekce: Procesy &amp; deskriptory souborů</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2021/linuxadmin-podzim/linuxadmin/fd/"><span class="d-none d-sm-inline">Soubory a deskriptory</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/main/lessons/linuxadmin/process/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Karolina Surma a Petr Viktorin, 2020-2021</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

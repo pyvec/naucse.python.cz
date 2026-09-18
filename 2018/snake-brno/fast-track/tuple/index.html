@@ -1,0 +1,226 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Hadí workshop pro PyLadies: N-tice a rozbalování
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/snake-brno/">Hadí workshop pro PyLadies</a>
+
+> <a href="/2018/snake-brno/sessions/intro/">Úvod do Pythonu</a>
+
+> <a href="/2018/snake-brno/fast-track/tuple/">N-tice a rozbalování</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1><var>N</var>-tice</h1>
+<p>Už víš, že pomocí <code>return</code> lze z funkce vracet hodnotu:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dvojnasobek</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+</pre></div><p>Jak ale napsat funkci, která vrátí dvě hodnoty?
+Chci třeba napsat funkci, která spočítá podíl a zbytek po dělení.</p>
+<p>Dvě hodnoty se dají vrátit jako seznam:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">podil_a_zbytek</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">podil</span> <span class="o">=</span> <span class="n">a</span> <span class="o">//</span> <span class="n">b</span>
+    <span class="n">zbytek</span> <span class="o">=</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">podil</span><span class="p">,</span> <span class="n">zbytek</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">podil_a_zbytek</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div><p>Lepší je ale vrátit <em>dvojici</em> čísel – dvě čísla oddělená čárkou:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">podil_a_zbytek</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">podil</span> <span class="o">=</span> <span class="n">a</span> <span class="o">//</span> <span class="n">b</span>
+    <span class="n">zbytek</span> <span class="o">=</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span>
+
+    <span class="k">return</span> <span class="n">podil</span><span class="p">,</span> <span class="n">zbytek</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">podil_a_zbytek</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div><p>Tomuhle se říká dvojice – nebo trojice, čtveřice, pětice, šestice, prostě
+<var>n</var>-tice (angl. <em>tuple</em>) hodnot.
+Funguje podobně jako seznam, ale nedají se do ní přidávat prvky, nebo odebírat
+a jinak měnit.
+Když mám trojici, vždycky zůstane jako trojice.</p>
+<p>Když máš <var>n</var>-tici, můžeš ji přiřazením <em>rozbalit</em> (angl. <em>unpack</em>)
+do několika proměnných:</p>
+<div class="highlight"><pre><span></span><span class="n">podil</span><span class="p">,</span> <span class="n">zbytek</span> <span class="o">=</span> <span class="n">podil_a_zbytek</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">podil</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">zbytek</span><span class="p">)</span>
+</pre></div><p><var>N</var>-tice mají spoustu využití, například:</p>
+<ul>
+<li>Bod v prostoru má 3 souřadnice – trojice čísel!</li>
+<li>Hrací karta má barvu a hodotu – dvojice čísla a řetězce, např. <code>(2, 'piky')</code></li>
+</ul>
+<p>Občas je potřeba dát <var>n</var>-tice do seznamu, např. abys uložila
+informace o celém balíčku hracích karet.
+V podobných případech je potřeba každou <var>n</var>-tici uzavřít do závorek,
+aby bylo jasné kde začíná a kde končí.
+Tady je seznam dvojic:</p>
+<div class="highlight"><pre><span></span><span class="n">ruka</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'piky'</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">'kříže'</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">'káry'</span><span class="p">)]</span>
+</pre></div><p>Když takový seznam máš, můžeš ho projít v cyklu <code>for</code> s pomocí rozbalování:</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">hodnota</span><span class="p">,</span> <span class="n">barva</span> <span class="ow">in</span> <span class="n">ruka</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'Hraju'</span><span class="p">,</span> <span class="n">hodnota</span><span class="p">,</span> <span class="s1">'a jsou to'</span><span class="p">,</span> <span class="n">barva</span><span class="p">)</span>
+</pre></div><h2>Zip</h2>
+<p><var>N</var>-tice, respektive sekvenci <var>n</var>-tic vrací funkce <code>zip</code>,
+která umožňuje projít zároveň několik seznamů,
+jejichž prvky si navzájem odpovídají:</p>
+<div class="highlight"><pre><span></span><span class="n">veci</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'tráva'</span><span class="p">,</span> <span class="s1">'slunce'</span><span class="p">,</span> <span class="s1">'mrkev'</span><span class="p">,</span> <span class="s1">'řeka'</span><span class="p">]</span>
+<span class="n">barvy</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'zelená'</span><span class="p">,</span> <span class="s1">'žluté'</span><span class="p">,</span> <span class="s1">'oranžová'</span><span class="p">,</span> <span class="s1">'modrá'</span><span class="p">]</span>
+<span class="n">mista</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'na zemi'</span><span class="p">,</span> <span class="s1">'nahoře'</span><span class="p">,</span> <span class="s1">'na talíři'</span><span class="p">,</span> <span class="s1">'za zídkou'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">vec</span><span class="p">,</span> <span class="n">barva</span><span class="p">,</span> <span class="n">misto</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">veci</span><span class="p">,</span> <span class="n">barvy</span><span class="p">,</span> <span class="n">mista</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">barva</span><span class="p">,</span> <span class="n">vec</span><span class="p">,</span> <span class="s1">'je'</span><span class="p">,</span> <span class="n">misto</span><span class="p">)</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2018/snake-brno/fast-track/for/">← <span class="d-none d-sm-inline">Cykly</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/snake-brno/sessions/intro/">↑ <span class="d-none d-sm-inline">Lekce: Úvod do Pythonu</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/snake-brno/sessions/intro/back/"><span class="d-none d-sm-inline">Závěr lekce</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-snake-brno/lessons/fast-track/tuple/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies CZ napsal Petr Viktorin, 2018.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

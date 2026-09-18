@@ -1,0 +1,326 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Beginners course PyLadies: Files
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/pyladies-en-prague/">Beginners course PyLadies</a>
+
+> <a href="/2018/pyladies-en-prague/sessions/git/">Git</a>
+
+> <a href="/2018/pyladies-en-prague/beginners-en/files/">Files</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Files</h1>
+<p>This section covers how to read from files in Python 
+and how to write to them.</p>
+<p>You need three steps to read text from a file:</p>
+<ul>
+<li><em>open</em> the file,</li>
+<li><em>read</em> something from it,</li>
+<li>and finally <em>close</em> it.</li>
+</ul>
+<p>Create a <code>poem.txt</code> file in the editor and write any poem into it.
+Save the file.</p>
+<div class="admonition note"><p>I recommend to use the same editor that you use for your 
+Python program to edit the file with the poem.</p>
+<p>If you use a different editor than Atom, be sure to keep in mind when coding:</p>
+<ul>
+<li>If the editor offers you a choice of encoding, choose <code>UTF-8</code>.</li>
+<li>If <code>UTF-8 without BOM</code> is available, use it.</li>
+<li>If you have to use Notepad then use the non-standard <code>utf-8-sig</code> instead.</li>
+</ul>
+<p><a href="https://en.wikipedia.org/wiki/UTF-8"><code>utf-8</code></a> is the name of the standard encoding.
+You can store any emoji or accented characters to files with this encoding.
+🎉</p>
+</div><p>Write this program:</p>
+<div class="highlight"><pre><span></span><span class="n">poem_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'poem.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">poem_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+<span class="n">poem_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div><p>Run it in the directory with <code>poem.txt</code>. In other words, the current working 
+directory must contain the file with the poem.</p>
+<p>The program prints the poem!</p>
+<p>What's going on here?
+The <code>open()</code> function returns the value that represents the <em>open file</em>.
+This value has its own methods.
+We are using the <code>read()</code> method that reads the entire contents 
+of the file at once and returns it as a string.
+We will cover <code>close()</code>, the function that closes the open file, later.</p>
+<h2>Iteration over files</h2>
+<p>You can use open files with the <code>for</code> statement. 
+It's similar as with strings or ranges.
+<code>for i in range</code> provides consecutive numbers. 
+<code>for c in 'abcd'</code> provides single string characters. 
+<code>for line in poem_file</code> provides individual lines read from the file into the <code>line</code> variable.</p>
+<p>For example, we can indent the poem to make it stand out of the text.</p>
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">'I heard this poem:'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">()</span>
+<span class="n">poem_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'poem.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">poem_file</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'    '</span> <span class="o">+</span> <span class="n">line</span><span class="p">)</span>
+<span class="n">poem_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">print</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'How do you like it?'</span><span class="p">)</span>
+</pre></div><p>When you try it, you will find that the spacing is not how it should be. 
+Would you like to try to explain why this is so?</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/pyladies-en-prague/beginners-en/files/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Each row ends with a newline character (<code>'\n'</code>).
+When iterating over a Python file, 
+this character remains at the end of the string <code>line</code> ¹.
+The <code>print()</code> function then adds another newline character. 
+This function always ends the line. 
+You can suppress it using the argument <code>end=''</code>).
+That is one way how to "fix" this extra spacing. 
+The other is to use the method <code>rstrip()</code> for each line. 
+This method removes all spaces and newline characters 
+that are the end of the string.</p>
+<hr>
+<p>¹  Why does Python keep the newline character? If the <code>'\n'</code> at the end of line was removed, 
+it would not be possible to know if the last line ended with <code>'\n'</code> or not.</p>
+    </div>
+</div><h2>Closing files</h2>
+<p>It is quite important to close the file after the program stops using it. 
+The <code>close()</code> method does this for us.
+Operating systems have limits on open files.
+If you do not close them you can exceed this limit.
+Besides, on Windows, you cannot re-open a file that is already open.</p>
+<p>You can compare files to a fridge: If you want to put something into the fridge, 
+you need to open it and then close it.
+The fridge works without closing, too, but then something goes rotten.</p>
+<p>It is easy to forget to close a file.
+For example, an exception or <code>return</code> statement inside 
+the file processing may skip the <code>close()</code>.
+Then the file remains open.</p>
+<p>We can use the <code>try/finally</code> statement to make sure that the file is closed.</p>
+<p>The <code>finally</code> block (the statements(s) after <code>finally</code>) is always executed.
+It executes no matter if the <code>try</code> blocks ends with success, 
+or with an exception, or if you jump out of it using <code>return</code> or <code>break</code>.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">initial_character</span><span class="p">():</span>
+    <span class="sd">"""Return the first character in the poem."""</span>
+
+    <span class="n">poem_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'poem.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">poem_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">poem_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">initial_character</span><span class="p">())</span>
+</pre></div><p>You can use the <code>finally</code> block every time you need 
+to close or terminate something -- not just a file,
+it can also be a database connection.</p>
+<h2>The <code>with</code> statement</h2>
+<p>Because the <code>try/finally</code> block is quite verbose, 
+there is a better way in Python. It's the <code>with</code> statement:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">initial_character</span><span class="p">():</span>
+    <span class="sd">"""Return the first character in the poem."""</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'poem.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">poem_file</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">poem_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">initial_character</span><span class="p">())</span>
+</pre></div><p>We used this statement for testing before. 
+It wraps a block with an expected exception.
+It checks if the correct exception has occurred 
+after the block ends.
+In our case, the file is closed when the block ends
+no matter what has happened.
+The file is closed in all cases --<br>
+if the <code>with</code> block ends with success, 
+or with an exception, or if we're jumping out of it.</p>
+<p>The <code>with</code> statement is the best option for working with files
+in the majority of cases.</p>
+<h2>Writing to files</h2>
+<div class="admonition warning"><p class="admonition-title">Caution!</p>
+<p>It is easy to delete or overwrite any file in Python.
+Try the following examples in a directory where you have nothing important!</p>
+</div><p>You can write to a file in Python.
+You need to open the file for writing using a named argument
+<code>mode='w'</code> (<code>w</code> stands for <em>write</em>).
+You can write individual strings using the <code>write()</code> method.</p>
+<p>If the file already exists, opening it with <code>mode='w'</code> overwrites 
+its original content. There will be only the text that your program 
+writes into it.</p>
+<div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'second-poem.txt'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'w'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">poem_file</span><span class="p">:</span>
+    <span class="n">poem_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'Our old chiming clock</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+    <span class="n">poem_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"Is beating four o'clock</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div><div class="admonition note"><p class="admonition-title">Why is there a `\n`?</p>
+<p>The <code>write()</code> method does not put a line ending after the string.
+If you need to write multiple lines to files, you need to<br>
+end each of them by a newline character <code>'\n'</code>. We have described it
+in the <a href="/2018/pyladies-en-prague/beginners-en/str/">Strings section</a>.</p>
+</div><p>Or, you can use the <code>print()</code> function.
+By default, it writes to the terminal. 
+It can also write into an open file if you use the named argument <code>file</code>.</p>
+<p>Other <code>print()</code> options remain unchanged. These options include
+line ending, conversion to strings, and printing multiple arguments at a time.</p>
+<div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'second-poem.txt'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'w'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">poem_file</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'Our old chiming clock'</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">poem_file</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'Is beating'</span><span class="p">,</span> <span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"o'clock"</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">poem_file</span><span class="p">)</span>
+</pre></div>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2018/pyladies-en-prague/beginners-en/circular-imports/">← <span class="d-none d-sm-inline">Circular imports</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/pyladies-en-prague/sessions/git/">↑ <span class="d-none d-sm-inline">Lekce: Git</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/pyladies-en-prague/git-en/install/"><span class="d-none d-sm-inline">Git installation (optional)</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-pyladies-en-prague/lessons/beginners-en/files/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Translated by Petr Plavjanik</p>
+    
+        <p>Originally written by Petr Viktorin, 2014-2017 for <a href="https://naucse.python.cz/course/pyladies/beginners/files/">PyLadies CZ</a>.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

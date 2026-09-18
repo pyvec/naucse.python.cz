@@ -1,0 +1,567 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Linuxová administrace: Práce se soubory a adresáři
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2020/linux-admin/">Linuxová administrace</a>
+
+> <a href="/2020/linux-admin/sessions/shell-1/">Bash I</a>
+
+> <a href="/2020/linux-admin/carpentry-unix/create/">Práce se soubory a adresáři</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Práce se soubory a adresáři</h1>
+<p>Teď, když umíš zkoumat soubory a adresáře, je můžeš začít vytvářet.</p>
+<h2>Co už máme?</h2>
+<p>Nejdřív se vrať do adresáře <code>data-shell</code> a pomocí <code>ls -F</code> se koukni,
+co tu už je:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ~/Dokumenty/data-shell
+<span class="gp">$ </span><span class="nb">pwd</span>
+<span class="go">/home/nela/Desktop/data-shell</span>
+<span class="gp">$ </span>ls -F
+<span class="go">creatures/  data/  molecules/  north-pacific-gyre/  notes.txt  pizza.cfg  solar.pdf  writing/</span>
+</pre></div><h2>Vytvoření adresáře</h2>
+<p>A teď vytvoř nový adresář zvaný <code>diplomka</code>.
+Použij k tomu příkaz <code>mkdir</code> (který nic nevypisuje):</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir diplomka
+</pre></div><p>Příkaz <code>mkdir</code> (z angl. <em>make directory</em>, vytvoř adresář) vytvoří adresář
+daného jména – nebo přesněji řečeno, na dané cestě.
+Protože je <code>diplomka</code> relativní cesta (ač dosud neexistovala),
+nový adresář se vytvoří v aktuálním adresáři:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -F
+<span class="go">creatures/  data/ diplomka/  molecules/  north-pacific-gyre/  notes.txt  pizza.cfg  solar.pdf  writing/</span>
+</pre></div><p>A zatím v něm nic není:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -F diplomka
+</pre></div><p>Kdyby ses pokusila několik vnořených adresářů najednou, nebude to fungovat:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir diplomka/kapitola-1/sekce-1/podsekce-1
+<span class="go">mkdir: adresář „diplomka/kapitola-1/sekce-1/podsekce-1“ nelze vytvořit: Adresář nebo soubor neexistuje</span>
+</pre></div><p>Chybová hláška tu je trošku zavádějící: <code>mkdir</code> si ve skutečnosti stěžuje
+na to, že neexistuje <code>diplomka/kapitola-1/sekce-1</code>, kde by se měl vytvořit
+adresář <code>podsekce-1</code>.</p>
+<p>V tomto případě můžeš buď vytvořit jednotlivé adresáře postupně, nebo použít
+přepínač <code>-p</code> (z angl. <em>parents</em>), který vytvoří i všechny potřebné nadřazené
+(„rodičovské“) adresáře:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir -p diplomka/kapitola-1/sekce-1/podsekce-1
+</pre></div><p>Jak si to ověřit?
+Příkaz <code>ls</code> má přepínač <code>-R</code>, který vypíše obsah <em>všech</em> adresářů, na které
+narazí, a to <strong>R</strong>ekurzivně – když v podadresáři najde další podadresář,
+„zanoří“ se i do něj.</p>
+<div class="highlight"><pre><span></span><span class="go">ls -FR diplomka</span>
+<span class="go">kapitola-1/</span>
+
+<span class="go">diplomka/kapitola-1:</span>
+<span class="go">sekce-1/</span>
+
+<span class="go">diplomka/kapitola-1/sekce-1:</span>
+<span class="go">podsekce-1/</span>
+
+<span class="go">diplomka/kapitola-1/sekce-1/podsekce-1:</span>
+</pre></div><p>Případně použij příkaz <code>tree</code>, který adresářovou strukturu vypíše
+„skoro graficky“:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>tree diplomka
+<span class="go">diplomka</span>
+<span class="go">└── kapitola-1</span>
+<span class="go">    └── sekce-1</span>
+<span class="go">        └── posdekce-1</span>
+
+<span class="go">3 directories, 0 files</span>
+</pre></div><div class="admonition note"><p>Tyhle materiály píšu na podzim 2020. Všimnul jsem si že výstup příkazu
+<code>tree</code> není přeložený – na rozdíl od hlášek z <code>ls</code> nebo <code>mkdir</code>.
+Zřejmě se ještě nenašel dobrovolník který by ho přeložil do češtiny, nebo
+dokonce na přidání podpory jakýchkoli neanglických jazyků.
+Čím méně používané příkazy budeš zkoušet, tím častěji na angličtinu narazíš.</p>
+</div><h2>Pojmenovávání souborů a adresářů</h2>
+<p>Teď, když víš jak vytvářet adresáře, se pojďme zaměřit na to,
+jak je pojmenovávat.
+Konkrétně jak je pojmenovávat tak, aby práce s nimi byla „v řádce“
+co nejjednodušší.</p>
+<ol>
+<li><p>Nepoužívej mezery.</p>
+<p>Mezerami se v příkazech oddělují jednotlivá „slova“; jméno souboru
+s mezerou by Bash interpretoval jako dva různé soubory.
+Místo mezery použij pomlčku nebo podtržítko, jako u <code>data-shell/</code>
+nebo <code>north-pacific-gyre/</code>.</p>
+</li>
+<li><p>Nezačínej pomlčkou (<code>-</code>).</p>
+<p>Většina příkazů považuje vše co začíná na pomlčku za přepínače.
+Kdybys chtěla pomocí <code>ls -FR</code> vypsat soubor se jménem <code>-FR</code>,
+narazila bys na problém.</p>
+<blockquote><p>[note]
+Kdybys takový soubor měla, můžeš ho pojmenovat <code>./-FR</code>, což pomlčkou
+nezačíná.
+Rozklíčuješ, proč to funguje?</p>
+</blockquote>
+</li>
+<li><p>Ideálně používej jen anglická písmenka, číslice, <code>.</code> (tečku), <code>-</code> (pomlčku)
+a <code>_</code> (podtržítko).</p>
+<p>Bash používá spoustu speciálních znaků, které znamenají něco jiného než
+„část jména“: už znáš <code>~</code> nebo <code>/</code>, v této lekci objevíš <code>*</code> a <code>?</code>,
+a to zdaleka není vše.</p>
+</li>
+<li><p>Vyhni se diakritice.</p>
+<p>Písmena s diakritikou představují jiný problém: nejde je napsat na všech
+klávesnicích.
+Když soubor nasdílíš zahraničnímu kolegovi, bude pro něj mnohem
+jednodušší se zorientovat v souborech pojmenovaných „cesky“ (tj. bez
+diakritiky), kterým jen nerozumí, než aby ještě musel hledat jak napsat <code>č</code>.
+(Nehledě na to, že rozlišit <code>i</code> od <code>í</code> občas není jednoduché.)</p>
+</li>
+<li><p>Drž se malých písmen.</p>
+<p>Linux nerozlišuje mezi velkými a malými písmeny, takže <code>diplomka</code> a
+<code>Diplomka</code> jsou jména dvou úplně odlišných adresářů.
+Když ale tyhle adresáře např. nasdílíš na počítač s MS Windows
+(nebo na souborový systém podporující Windows, což je i většina
+<em>flash</em> disků), vznikne chaos.</p>
+<p>Proto je nejlepší všude používat jen malá písmena.</p>
+</li>
+<li><p>Tečku používej na oddělení přípony.</p>
+<p>Přípona <code>.txt</code>, <code>.mp3</code>, <code>.png</code>, <code>.pdf</code> říká <em>lidem</em>, co v souboru očekávat:
+text, hudbu, obrázek, resp. dokument.
+Pro počítač neznamená přípona nic zvláštního: když programy pro Linux
+potřebují zjistit, co je to za soubor
+(a jestli ho např. otevřít v obrázkovém editoru nebo přehrát jako zvuk),
+„dívají“ se spíš do samotného souboru než na příponu.
+A přejmenováním <code>velryba.jpg</code> na <code>velryba.mp3</code> neuděláš z fotky velryby
+nahrávku :)</p>
+<p>Ale ačkoliv počítač přípony ignoruje, pro lidi jsou důležité.</p>
+<p>Mimo oddělení přípony můžeš tečku použít na skrytí souboru (<code>.gitignore</code>),
+kdybys to někdy potřebovala.</p>
+</li>
+</ol>
+<p>Kdybys musela pracovat se jmény, které tyhle rady nedodržují,
+máš dvě možnosti:</p>
+<ul>
+<li>Celé jméno uzavři do jednoduchých uvozovek, <code>'</code>.
+To funguje vždy, jen tak nejde napsat samotná jednoduchá uvozovka.</li>
+<li>Celé jméno uzavři do dvojitých uvozovek, <code>"</code>.
+Na rozdíl od Pythonu je mezi <code>'</code> a <code>"</code> rozdíl: ve dvojitých uvozovkách
+mají některé znaky (<code>$</code>, <code>`</code> a <code>!</code>) stále speciální funkci.
+Je jich ale málo.</li>
+<li>Před speciální znaky dej zpětné lomítko, <code>\</code>. které funguje podobně jako
+v Pythonu.
+Zpětná lomítka se používají při doplňování pomocí <kbd>Tab</kbd>.</li>
+</ul>
+<p>Autor tohoto textu má mezery ve jménech skladeb – autoři hudby většinou
+na příkazovou řádku nemyslí a přejmenovávání je otrava.
+Tak používám příkazy jako:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mplayer <span class="s2">"disc 1/11 - On to Grasstown.mp3"</span>
+<span class="gp">$ </span>mplayer <span class="s2">"disc\ 1/11\ -\ On\ to\ Grasstown.mp3"</span>
+</pre></div><p>(Což ti teď nebude fungovat, pokud náhodou nemáš nainstalovaný tenhle
+přehrávač a zakoupenou tuhle hudbu.)</p>
+<h2>Vytváření souborů</h2>
+<p>Přepni se do adresáře <code>diplomka</code> a pak spusť <em>textový editor</em> jménem <code>nano</code>,
+kterým vytvoříš soubor <code>osnova.txt</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> thesis
+<span class="gp">$ </span>nano osnova.txt
+</pre></div><div class="admonition Editor?"><p><code>nano</code> je textový editor, podobně jako VSCode nebo Nano.
+Je jednoduchý, má docela málo funkcí, ale protože je malý, bývá
+předinstalovaný na spoustě systémů.</p>
+<p>Ještě častěji než <code>nano</code> najdeš na Linuových systémech editor <code>vi</code>,
+který je složitější na naučení, ale velice mocný.</p>
+<p>A samozřejmě můžeš použít grafický editor <code>gedit</code>, nebo si nainstalovat jiný.
+I takový editor můžeš pustit z příkazové řádky. Většinou můžeš na příkazové
+řádce i zadat soubor, který chceš vytvořit či změnit: <code>gedit osnova.txt</code>.</p>
+</div><p>Do editoru napiš pár řádek textu:</p>
+<p><span class="figure"><a href="/2020/linux-admin/carpentry-unix/create/static/nano.png"><img src="/2020/linux-admin/carpentry-unix/create/static/nano.png" alt="Editor Nano s otevřeným souborem"></a></span></p>
+<p>Potom soubor ulož a editor zavři.
+Jak se to dělá zkratkovitě napovídá dolní lišta, kde znak <code>^</code> znamená
+<kbd>Ctrl</kbd>.</p>
+<ol>
+<li><p>Uložit (zapsat) soubor: stiskni <kbd>Ctrl</kbd>+<kbd>O</kbd> a <code>nano</code>
+tě vyzve k zadání jména souboru. Jméno <code>osnova.txt</code>, které jsi zadala
+při spuštění, bude předvyplněné, tak jen stiskni <kbd>Enter</kbd>.</p>
+</li>
+<li><p>Ukončit Nano: <kbd>Ctrl</kbd>+<kbd>X</kbd>.</p>
+</li>
+</ol>
+<div class="admonition note"><p>Klávesové zktratky s <kbd>Ctrl</kbd> se na příkazové řádce zapisují různě.
+Můžeš se setkat s těmito zápisy pro <kbd>Ctrl</kbd>+<kbd>X</kbd>:</p>
+<ul>
+<li><code>Control-X</code></li>
+<li><code>Control+X</code></li>
+<li><code>Ctrl-X</code></li>
+<li><code>Ctrl+X</code></li>
+<li><code>^X</code></li>
+<li><code>C-X</code></li>
+</ul>
+<p>Který zápis je použit závisí na konextu, např. na tom, kolik je na obrazovce
+k dispozici místa, nebo i na stáří aplikace.
+(Historicky na sobě ta klávesa neměla vždy napsáno <code>Ctrl</code>.)</p>
+<p>Používáš-li Bash s klávesnicí pro macOS, jde často opravdu
+o <kbd>Control</kbd>, nikoli <kbd>⌘ Command</kbd>.</p>
+</div><p>Když <code>nano</code> skončí, nic po sobě na obrazovce nenechá.
+Můžeš si ale ověřit, že se soubor vytvořil:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls
+<span class="go">kapitola-1/  osnova.txt</span>
+</pre></div><div class="admonition note"><p class="admonition-title">Různé způsoby práce se soubory</p>
+<p>Vytvářet adresáře a asoubory samozřejmě můžeš i z grafického „klikátka“.
+Příkazy v terminálu a grafické programy jsou různé způsoby jak se soubory
+pracovat, ale samotné soubory jsou vždy stejné.</p>
+<p>Ze začátku je práce v příkazové řádce složitější, ale jakmile si zvykneš,
+změní se to.</p>
+</div><h2>Přesouvání souborů a adresářů</h2>
+<p>Vrať se do adresáře <code>data-shell</code>.</p>
+<div class="highlight"><pre><span></span><span class="go">cd ~/Dokumenty/data-shell</span>
+</pre></div><p>V adresáři <code>diplomka</code> je teď soubor <code>osnova.txt</code>, ve kterém je spíš plán práce
+než osnova diplomky.
+Pojď soubor přejmenovat.</p>
+<p><em>Přejmenování</em> souboru je to stejné co <em>přesunutí</em>: v obou případech se změní
+cesta k souboru, a počítači je celkem jedno jestli se změní adresář nebo
+jen poslední část cesty – jméno.
+Pro obě operace se používá příkaz <code>mv</code> (z angl. <em>move</em>, přesuň), který
+potřebuje dva argumenty, „odkud“ a „kam“:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mv diplomka/osnova.txt diplomka/plan.txt
+</pre></div><p>První argument říká, který existující soubor se má přesunout; druhý je cesta,
+kde se soubor bude nacházet po přesunutí.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls diplomka/
+<span class="go">kapitola-1/  plan.txt</span>
+</pre></div><p>Pozor na to, že pokud poslední argument („kam“) je existující soubor,
+<code>mv</code> ho <em>přepíše</em>.
+Nemáš-li zálohy, není žádná jednoduchá možnost, jak takový přepsaný soubor
+vrátit zpět.</p>
+<p>Jestli se o své soubory bojíš, používej <code>mv -i</code> (nebo <code>mv --interactive</code>):
+přepínač <code>-i</code> zajistí, že <code>mv</code> před přepsáním souboru poprosí o potvrzení.</p>
+<div class="admonition note"><p>Důležité systémy mají často <code>-i</code> nastaveno jako výchozí chování,
+ale není radno na to spoléhat :)</p>
+</div><p>Příkaz <code>mv</code> umí přesouvat i celé adresáře.</p>
+<h3>Přesouvání do adresáře</h3>
+<p>Teď ale pojď přesunout <code>plan.txt</code> do <em>aktuálního</em> adresáře.
+Opět použiješ <code>mv</code>, ale místo celého cílového jména („kam“) zadáš jen jméno
+adresáře, kam chceš soubor přesunout.
+Adresář <code>mv</code> nepřepíše, místo toho soubor uloží dovnitř, pod původním jménem.</p>
+<p>Jméno aktuálního adresáře je <code>.</code>, to tedy použij jako druhý argument:</p>
+<div class="highlight"><pre><span></span><span class="go">mv diplomka/plan.txt .</span>
+</pre></div><div class="admonition note"><p>Příkaz <code>ls</code> dělá to samé co <code>ls .</code>, <code>cd</code> to samé co <code>cd ~</code>,
+ale u <code>mv</code> podonou zkratku nemá: argumenty „odkud“ a „kam“ vynechat nesmíš.</p>
+</div><p>Pomocí <code>ls</code> zkontroluj, že soubor z adresáře <code>diplomka</code> zmizel, ale objevil
+se v aktuálním adresáři, <code>data-shell</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls diplomka
+<span class="go">kapitola-1/</span>
+<span class="gp">$ </span>ls
+<span class="go">creatures  molecules           solar.pdf  writing</span>
+<span class="go">data       north-pacific-gyre  pizza.cfg</span>
+<span class="go">diplomka   notes.txt           plan.txt</span>
+</pre></div><p>V aktuálním adresáři teď máš spoustu balastu.
+Pomocí <code>ls</code> si můžeš místo celého adresáře vypsat i jen jediný soubor:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls plan.txt
+<span class="go">plan.txt</span>
+</pre></div><p>To se hodí na zjištění, jestli takový soubor existuje.</p>
+<h3>Přesouvání více souborů</h3>
+<p>Příkaz <code>mv</code> umí přesunout i více souborů najednou.
+Když mu předáš víc než dva argumenty, všechny kromě posledního označují
+soubory k přesunutí („odkud”) a poslední adresář, kam se všechny přesunou
+(„kam“).</p>
+<p>Řekněme že soubor <code>plan.txt</code> patří přece jen k diplomce.
+A stejně tak tam patří i <code>notes.txt</code>.
+Přesuň je na správné místo pomocí:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mv plan.txt notes.txt diplomka/
+<span class="gp">$ </span>ls diplomka/
+<span class="go">notes.txt  plan.txt</span>
+</pre></div><p>Abys zkontrolovala, že na původním místě už soubory nejsou,
+můžeš dát příkazu <code>ls</code> více argumentů najednou.
+Vypíšou se všechny – funguje to podobně jako kdybys <code>ls</code> použila pro
+každý z nich zvlášť:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls plan.txt
+<span class="go">ls: nelze přistoupit k 'plan.txt': Adresář nebo soubor neexistuje</span>
+<span class="gp">$ </span>ls notes.txt
+<span class="go">ls: nelze přistoupit k 'notes.txt': Adresář nebo soubor neexistuje</span>
+<span class="gp">$ </span>ls plan.txt notes.txt
+<span class="go">ls: nelze přistoupit k 'plan.txt': Adresář nebo soubor neexistuje</span>
+<span class="go">ls: nelze přistoupit k 'notes.txt': Adresář nebo soubor neexistuje</span>
+</pre></div><h2>Kopírování souborů</h2>
+<p>Příkaz <code>cp</code> funguje velice podobně jako <code>mv</code>, jen soubory kopíruje místo
+přesouvání.</p>
+<p>Řekněme že soubor <code>plan.txt</code> patří ve skutečnosti na obě místa,
+<code>data-shell/</code> i <code>data-shell/diplomka/</code>.
+Aktuálně je jen v <code>diplomka/</code>, ale můžeš ho zkopírovat i do aktuálního adresáře:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cp diplomka/plan.txt plan.txt
+</pre></div><p>Výsledek zkontroluj pomocí <code>ls</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls diplomka/plan.txt plan.txt
+<span class="go">diplomka/plan.txt  plan.txt</span>
+</pre></div><p>Pomocí <code>cp</code> můžeš kopírovat i celé adresáře, i s celým jejich obsahem,
+včetně podadresářů, pod-podadresářů atd..
+Protože se takhle dá rychle zaplnit disk, potřebuješ k tomu přepínač
+<code>-r</code> (<code>--recursive</code>).</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cp -r diplomka diplomka_archiv
+<span class="gp">$ </span>ls diplomka diplomka_archiv
+<span class="go">diplomka:</span>
+<span class="go">kap1  notes.txt  plan.txt</span>
+
+<span class="go">diplomka_archiv:</span>
+<span class="go">kap1  notes.txt  plan.txt</span>
+</pre></div><div class="admonition note"><p>Příkaz <code>mv</code> takový přepínač nemá: pouhým přesouváním si disk nezaplníš.</p>
+</div><h2>Odstraňování souborů a adresářů</h2>
+<p>Mít dvě kopie souboru <code>plan.txt</code> nakonec nebude to nejlepší rozhodnutí
+(když jednu změníš, která bude platit?)
+Jednu z nich smaž pomocí příkazu <code>rm</code> (z angl. <em>remove</em> – odeber).</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rm plan.txt
+<span class="gp">$ </span>ls plan.txt
+<span class="go">ls: nelze přistoupit k 'plan.txt': Adresář nebo soubor neexistuje</span>
+</pre></div><div class="admonition warning"><p class="admonition-title">Mazání je nevratné</p>
+<p>Bash nemá „odpadkový koš“, kam by se „házely“ smazané soubory.
+(Grafické prohlížeče souborů koš většinou mají – i ty Linuxové.)
+Když soubor smažeš, odstraní se ze souborového systému a místo, které
+zabíral, pak systém přepíše jiným souborem, když je potřeba.</p>
+<p>Existují nástroje, které s trochou štěstí umí smazané soubory obnovit,
+ale není to záručeno.</p>
+<p>Kdybys někdy smazala důležitý soubor, co nejdřív vypni počítač,
+aby systém neměl čas nic přepsat, a vyhledej pomoc.
+(V extrémním případě počítač „natvrdo“ vypoj ze zásuvky/odstraň baterii,
+jako kdybys ho polila vodou.)</p>
+<p>Používej zálohy, které můžeš obnovit kdyby se něco stalo.
+Existují na to nástroje, ale dobře poslouží např. Gitový repozitář který
+pravidelně <code>push</code>-uješ na vzdálený server.</p>
+</div><p>Když zkusíš smazat adresář, <code>rm</code> se vztekne:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rm diplomka
+<span class="go">rm: nelze odstranit 'diplomka': je adresářem</span>
+</pre></div><p>Kdybys opravdu chtěla smazat celý adresář a všechen jeho obsah,
+použij přepínač <code>-r</code> (<code>--recursive</code>).
+Doporučuji ho vždy zkombinovat s <code>-i</code> (<code>--interactive</code>), kdy <code>rm</code> u každého
+souboru poprosí o potvrzení,
+případně s <code>-v</code> (<code>--verbose</code>), kdy <code>rm</code> vypíše co dělá.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>rm -rv diplomka
+<span class="go">adresář 'diplomka/kap1/sekce1/posdekce1' smazán</span>
+<span class="go">adresář 'diplomka/kap1/sekce1' smazán</span>
+<span class="go">adresář 'diplomka/kap1' smazán</span>
+<span class="go">smazáno 'diplomka/notes.txt'</span>
+<span class="go">smazáno 'diplomka/plan.txt'</span>
+<span class="go">adresář 'diplomka' smazán</span>
+</pre></div><p>Ještě že máš zálohu! Zkus ji obnovit.</p>
+<div class="admonition note"><p>Co dělá příkaz <code>rm -rf /</code>?
+Přepínač <code>-r</code> smaže rekurzivně všechno; <code>/</code> je adresář,
+který obsahuje úplně všechny soubory v celém systému.
+A <code>-f</code> (<code>--force</code>) potlačí nastavení systémů,
+které mají <code>-i</code> jako výchozí chování.</p>
+<p>Tenhle příkaz je jeden z nejjednodušších způsobů jak zničit celý
+nainstalovaný systém.
+Má jen 8 písmen!
+Byl tak oblíbený u lumpů, kteří ho na internetu doporučovali nováčkům,
+že dnešní verze příkazu <code>rm</code> mazání <code>/</code> nepovolí bez zvláštního,
+dlouhého přepínače.</p>
+<p>Nezadávej příkazy, které najdeš na internetu, aniž bys věděla co dělají!
+(Pokud tedy nepracuješ ve virtuálním počítači, kde nemáš důležitá data.)</p>
+</div><h2>Práce s více soubory a adresáři</h2>
+<p>Často budeš potřebovat kopírovat či přesunout víc souborů najednou.
+Pak můžeš všechny potřebné soubory pojmenovat, a nebo jich vybrat několik
+pomocí <em>zástupných znaků</em> (angl. <em>wildcard</em>: divoká karta, žolík)</p>
+<h3>Opakování: Kopírování s více cestami</h3>
+<p>Přepni se do adresáře <code>data-shell/data</code>.
+Co udělá příkaz níže?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir zaloha
+<span class="gp">$ </span>cp amino-acids.txt animals.txt zaloha/
+</pre></div><div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2020/linux-admin/carpentry-unix/create/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Zkopíruje soubory <code>amino-acids.txt</code> a <code>animals.txt</code>, tj. všechny argumenty
+kromě posledního, do adresáře <code>zaloha</code>.
+Vytvoří tedy soubory <code>zaloha/amino-acids.txt</code> a <code>zaloha/animals.txt</code>.</p>
+    </div>
+</div><p>Co udělá příkaz níže?</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls -F
+<span class="go">amino-acids.txt  animals.txt  elements/  morse.txt  pdb/  planets.txt  salmon.txt  sunspot.txt  zaloha/</span>
+<span class="gp">$ </span>cp amino-acids.txt animals.txt morse.txt
+</pre></div><div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2020/linux-admin/carpentry-unix/create/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <p>Zkopíroval by první dva soubory (<code>amino-acids.txt</code> a <code>animals.txt</code>)
+do adresáře <code>morse.txt/</code>.
+Jenže <code>morse.txt</code> není adresářem, tak příkaz selže.
+Do adresáře nelze dát další soubory.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>cp amino-acids.txt animals.txt morse.txt
+<span class="go">cp: cíl 'morse.txt' není adresářem</span>
+</pre></div>
+    </div>
+</div><h3>Vybírání více souborů pomocí zástupných znaků</h3>
+<p>Hvězdička, <code>*</code>, je v Bashi <em>žolík</em> neboli <em>zástupný znak</em>, který odpovídá
+libovolnému počtu (0 nebo víc) znaků.
+Budeš-li v adresáři <code>data-shell/molecules</code>, pak „šablona“ <code>*.pdb</code> odpovídá
+souborům <code>ethane.pdb</code>, <code>propane.pdb</code> a všem ostatním, které končí na <code>.pdb</code>.
+Ale <code>p*.pdb</code> odpovídá jen <code>pentane.pdb</code> a <code>propane.pdb</code> – těm, které zároveň
+začínají písmenem <code>p</code>:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> ~/Dokumenty/data-shell/molecules
+<span class="gp">$ </span>ls p*.pdb
+<span class="go">cubane.pdb  ethane.pdb  methane.pdb  octane.pdb  pentane.pdb  propane.pdb</span>
+<span class="gp">$ </span>ls p*.pdb
+<span class="go">pentane.pdb  propane.pdb</span>
+</pre></div><p>Další zástupný znak je otazník, <code>?</code>, který odpovídá jen jednomu znaku.
+Takže šablona  <code>?ethane.pdb</code> odpovídá jen jménu <code>methane.pdb</code> – na rozdíl od
+<code>*ethane.pdb</code>, cemuž odpovídá jak <code>methane.pdb</code>, tak i <code>ethane.pdb</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls ?ethane.pdb
+<span class="go">methane.pdb</span>
+<span class="gp">$ </span>ls *ethane.pdb
+<span class="go">ethane.pdb  methane.pdb</span>
+</pre></div><p>Zástupných znaků můžeš použít víc: <code>???ane.pdb</code> odpovídá třem znakům
+následovaným <code>ane.pdb</code>, tedy <code>cubane.pdb ethane.pdb octane.pdb</code>.</p>
+<p>Když Bash zástupné znaky zpracovává, vytvoří seznam odpovídajících souborů
+ještě předtím, než spustí příslušný příkaz.
+Když neodpovídá <em>žádný</em> soubor, pošle příkazu argument tak, jak je:</p>
+<div class="highlight"><pre><span></span><span class="gp">$ </span>ls *.pdf
+<span class="go">ls: nelze přistoupit k '*.pdf': Adresář nebo soubor neexistuje</span>
+</pre></div><p>Když ale nějaké názvy odpovídají, dostane příkaz tyto příkazy jako jednotlivé
+argumenty.
+Zpracovává je tedy Bash; samotný příkaz jako <code>ls</code> nebo <code>cp</code> nemá
+k původní šabloně přístup.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/carpentry-unix/filedir/">← <span class="d-none d-sm-inline">Navigace v souborech a adresářích</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2020/linux-admin/sessions/shell-1/">↑ <span class="d-none d-sm-inline">Lekce: Bash I</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2020/linux-admin/notes/01/"><span class="d-none d-sm-inline">Poznámky – Bash I</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/encukou/linuxadmin/blob/master/lessons/carpentry-unix/create/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>napsali Petr Viktorin a Karolina Surma, 2020</p>
+    
+        <p>založeno na kurzu <a href="http://swcarpentry.github.io/shell-novice/"><em>The Unix Shell</em></a>, 2016–2018 Software Carpentry Foundation, 2018–2020 The Carpentries</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,222 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Začátečnický kurz PyLadies: Bonus - 1D Piškvorky a test-driven development
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    
+
+
+        <style>
+            
+    
+        .lesson-content .group-heading {
+    font-style: italic;
+    font-size: 80%
+    }
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2019/pyladies-ostrava-jaro/">Začátečnický kurz PyLadies</a>
+
+> <a href="/2019/pyladies-ostrava-jaro/sessions/def-str/">Funkce a řetězce</a>
+
+> <a href="/2019/pyladies-ostrava-jaro/homework/ostrava5_TDD/">Bonus - 1D Piškvorky a test-driven development</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>1D piškvorky s testy</h1>
+<h2>Co to je?</h2>
+<p>Poté, co ses naučila pracovat s <a href="/2019/pyladies-ostrava-jaro/beginners/str/">řetězci</a> a psát <a href="/2019/pyladies-ostrava-jaro/beginners/def/">vlastní funkce</a>, dostala jsi za <a href="/2019/pyladies-ostrava-jaro/homework/ostrava5/">úkol</a> naprogramovat si jednoduchou hru: jednorozměrné piškvorky. V domácím projektu je předepsáno, z jakých dílčích funkcí se bude hra skládat. Mrkni se na zadání domácího projektu, než budeš pokračovat. Detailního popisu zadání hned využijeme a nahlédneme do pokročilejší lekce – té o <a href="/2019/pyladies-ostrava-jaro/beginners/testing/">testování</a>. Lekci o testování není třeba studovat celou, na to se podíváme společně za několik lekcí, ale můžeš v ní najít odpovědi na některé otázky.</p>
+<p>Testování ti pomůže ověřit, že tvůj program funguje, jak má. Neboj se však nic, všechno to složitější jsme zatím napsali za tebe. Ty tak můžeš postupovat podle zadání domácích projektů a testy ti spuštěním jednoho jednoduchého příkazu ukážou, jak moc blízko jsi dokončení programu.</p>
+<p>Toto je bonusový materiál, který může udělat domácí úkol zajímavější a naučit tě při tom opět něco nového. Pokud máš ale plné ruce práce se zvládáním aktuální látky, klidně postupuj jen podle zadání domácích projektů a na testování se společně podíváme později.</p>
+<h2>Jak na to?</h2>
+<ol>
+<li><p>Stáhni si připravený soubor pro <a href="/2019/pyladies-ostrava-jaro/homework/ostrava5_TDD/static/piskvorky.py">piškvorky</a> a <a href="/2019/pyladies-ostrava-jaro/homework/ostrava5_TDD/static/test_piskvorky.py">soubor s testy</a> a ulož je do samostatné složky.</p>
+<p>V souboru <em>test_piskvorky.py</em> máš připravené testy. Nic v něm neměň, ale můžeš se do něj podívat. Samotnou hru pak piš do připraveného souboru <em>piskvorky.py</em>. Máš tam nachystané všechny potřebné funkce, jen zatím nic nedělají. Až je všechny doplníš, budeš mít funkční hru.</p>
+</li>
+<li><p>Aktivuj si své virtuální prostředí. Jak na to jsme si ukázali <a href="/2019/pyladies-ostrava-jaro/beginners/venv-setup/">na začátku kurzu</a>.</p>
+</li>
+<li><p>Nainstaluj si knihovnu <a href="https://pytest.readthedocs.io/">pytest</a> podle <a href="/2019/pyladies-ostrava-jaro/beginners/testing/">návodu</a> v materiálech. Právě ta ti umožní ověřit správnou funkčnost programu.</p>
+<div class="highlight"><pre><span></span> <span class="o">(</span>venv<span class="o">)</span> $ pip install pytest
+</pre></div></li>
+<li><p>Opět podle návodu pytest spusť.</p>
+<div class="highlight"><pre><span></span> <span class="o">(</span>venv<span class="o">)</span> $ pytest -v test_piskvorky.py
+</pre></div></li>
+</ol>
+<h2>Co s tím?</h2>
+<p>Pytest ti vypíše, kde všude v tvém programu narazil na problém. Tyto jsou podrobně rozepsané a výstup je tak trochu dlouhý. Na jeho začátku však budeš mít takovéto řádky:</p>
+<div class="highlight"><pre><code>test_piskvorky.py::test_vyhodnot_vyhra_x FAILED
+test_piskvorky.py::test_vyhodnot_vyhra_o FAILED
+test_piskvorky.py::test_vyhodnot_remiza FAILED
+…
+test_piskvorky.py::test_tah_pocitace_skoro_plne_konec_2 FAILED</code></pre></div><p>Každé <em>FAILED</em> znamená jednu chybu: jeden test, který neprošel. Protože jsi zatím nic nenapsala, je problém úplně ve všem. To se ale změní, jakmile splníš první úkol: zařídíš, aby funkce <em>vyhodnot</em> rozpoznala, že vyhrál hráč s křížky.</p>
+<div class="highlight"><pre><code>test_piskvorky.py::test_vyhodnot_vyhra_x PASSED
+test_piskvorky.py::test_vyhodnot_vyhra_o FAILED
+test_piskvorky.py::test_vyhodnot_remiza FAILED
+…
+test_piskvorky.py::test_tah_pocitace_skoro_plne_konec_2 FAILED</code></pre></div><p>Vidíš? Výsledek prvního testu se změnil na <em>PASSED</em>. To znamená, že v tomto případě program funguje, jak má.</p>
+<p>Až budeš mít program hotový, místo všech červených <em>FAILED</em> bude u všech testů zelené <em>PASSED</em>. Pak víš, že máš hotovo. Teda, skoro.</p>
+<div class="highlight"><pre><code>test_piskvorky.py::test_vyhodnot_vyhra_x PASSED
+test_piskvorky.py::test_vyhodnot_vyhra_o PASSED
+…
+test_piskvorky.py::test_tah_pocitace_skoro_plne_konec PASSED
+test_piskvorky.py::test_tah_pocitace_skoro_plne_konec_2 PASSED</code></pre></div><p>Proč jen skoro? Některé věci testovat moc dobře nejdou, nebo by to bylo pro tebe v tuto chvíli moc složité.</p>
+<ul>
+<li>Jednou takovou věcí je zadání od uživatele. Funkci <em>tah_hrace</em> proto pytest netestuje. To pak platí i pro celé jádro hry, funkci <em>piskvorky1d</em>, která právě funkci <em>tah_hrace</em> používá, když je hráč na tahu.</li>
+<li>Druhou věcí, která není testy pokryta, je vypisování na obrazovku. Tedy všechna zvolání o chybách či stavu hry.</li>
+</ul>
+<p>Tyto věci musíš ověřit ručně. To by ale nemuselo být tak hrozné: programuješ hru a testováním si rovnou i hraješ.</p>
+<h2>Co dál?</h2>
+<p>Snad ti tato zkušenost ukázala, že automatické testování ti může ušetřit čas a práci. Že díky testům si můžeš být jistá, že jsi úpravou programu nerozbila nic, co před tím fungovalo.</p>
+<p>Nahlédni do souboru <em>test_piskvorky.py</em>. Možná teď ještě nebudeš rozumět do detailu, jak to všechno vlastně funguje, ale i tak uvidíš, že to není raketová věda. Máš herní pole v nějakém stavu, zavoláš svou funkci, a ověříš, že vrátila to, co by měla.</p>
+<div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">tah</span><span class="p">(</span><span class="s2">"--------------------"</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"----------x---------"</span>
+</pre></div><p><a href="/2019/pyladies-ostrava-jaro/beginners/testing/">Později</a> se naučíš psát si testy sama. Snad ti tenhle malý exkurs ukázal, proč to není zbytečnost a že se ta trocha přidané námahy na začátku skutečně vyplatí.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+                    
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2019/pyladies-ostrava-jaro/homework/ostrava5/">← <span class="d-none d-sm-inline">Domácí projekty</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2019/pyladies-ostrava-jaro/sessions/def-str/">↑ <span class="d-none d-sm-inline">Lekce: Funkce a řetězce</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2019/pyladies-ostrava-jaro/feedback/ostrava5/"><span class="d-none d-sm-inline">Zpětná vazba k domácím projektům</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2019-pyladies-ostrava-jaro/lessons/homework/ostrava5_TDD/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies CZ napsali Glutexo, Lumír Balhar, Petr Viktorin a další, 2019.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>

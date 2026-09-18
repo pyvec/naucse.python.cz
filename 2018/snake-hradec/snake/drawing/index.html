@@ -1,0 +1,554 @@
+
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            
+                Hadí workshop: Kreslení hada
+            
+        </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        
+
+        <link rel="stylesheet" href="/static/css/naucse.css">
+        <link rel="stylesheet" href="/static/css/body.css">
+        <link rel="stylesheet" href="/static/css/pygments-lovelace-style.css">
+        <link rel="stylesheet" href="/static/css/ipython.css">
+
+        
+    <link rel="canonical" href="https://naucse.python.cz/lessons/snake/drawing/" />
+
+
+        <style>
+            
+    
+
+        </style>
+    </head>
+
+    <body>
+        <nav class="header">
+            <ul class="container menu">
+                <li><a href="/" class="logo"><h1>Nauč se Python!</h1></a></li>
+                <li><a href="/courses/" class="menu-link"><h2>Materiály</h2></a></li>
+                <li><a href="/runs/" class="menu-link"><h2>Kurzy</h2></a></li>
+            </ul>
+        </nav>
+
+        
+
+<div class="page">
+    <div class="container">
+
+        
+            <header class="lesson-header">
+                <a href="/">Nauč se Python </a>
+                
+                > <a href="/runs/">Kurzy</a>
+                
+                
+
+> <a href="/2018/snake-hradec/">Hadí workshop</a>
+
+> <a href="/2018/snake-hradec/sessions/workshop/">Workshop</a>
+
+> <a href="/2018/snake-hradec/snake/drawing/">Kreslení hada</a>
+
+
+                <hr>
+            </header>
+        
+
+        
+  
+
+
+        <div class="lesson-content">
+          
+    
+
+    <h1>Nakresli mi hada</h1>
+<p>Většina videoher má vlastní svět – spoustu čísel, textů, seznamů a jiných
+datových objektů, které popisují všechno, co ve hře je – celý <em>stav</em> hry.
+Tenhle stav se časem mění, ať už automaticky nebo podle akcí hráče.
+A docela často – většinou zhruba šedesátkrát za vteřinu – se stav hry převede
+na obrázek, který se hráčovi ukáže.</p>
+<p>Abys mohl/a zobrazit hada, budeš napřed muset definovat stav hry – zadat
+to, co se má vykreslovat.</p>
+<p>Zkus se zamyslet, co všechno bude ten stav obsahovat: co všechno si počítač
+musí o hře „pamatovat“, aby mohl aktuální stav zobrazit?</p>
+<p>Bude potřebovat například aktuální polohu všech částí hada: kde má začátek?
+Kroutí se doprava nebo doleva? Jak je dlouhý?
+Naopak barvu hada se stavu ukložit nepotřebuješ – každý had v téhle hře bude
+stejný.</p>
+<p>Napadne tě, jak polohu hada zapsat pomocí čísel, seznamů a dalších základních
+datových typů?</p>
+<h2>Reprezentace hada</h2>
+<p>Asi nejjednodušší způsob, jak si v počítači „zapamatovat“ herního hada,
+je pomocí seznamu souřadnic.</p>
+<p>Pamatuješ si ze školy na kartézské souřadnice?
+To je taková ta část matematiky, co možná vypadala že nemá praktické využití.
+Pro počítačovou grafiku jsou ale souřadnice to co pro češtinu písmenka.
+Pojďme si je osvěžit.</p>
+<p>Každý bod v rovině (třeba na obrazovce!)
+je možné popsat dvěmi čísly: <var>x</var>-ovou a <var>y</var>-ovou souřadnicí.
+Ta <var>x</var>-ová říká, jak moc vlevo je bod od nějakého počátku,
+ta <var>y</var>-ová udává jak moc je nahoře.
+My za onen „počátek“ zvolíme roh okýnka, ve kterém se bude plazit náš had.</p>
+<p>Na rozdíl od školní geometrie se had bude plazit po čtverečkové mřížce.
+Je to jako na šachovnici – když jde pěšec na D5, D značí, jak moc je to
+políčko vlevo od okraje a 5 jak moc „nahoře“.</p>
+<p>Tady je had, který začíná na souřadnicích (1, 2) a hlavu má na (4, 5):</p>
+<p><span class="figure"><a href="/2018/snake-hradec/snake/drawing/static/coords.svg"><img src="/2018/snake-hradec/snake/drawing/static/coords.svg" alt="Had na „šachovnici“ se souřadnicemi"></a></span></p>
+<p>Možná si všimneš, že matematický zápis souřadnic – (1, 2) – odpovídá
+způsobu, jak se v Pythonu píšou <var>n</var>-tice.
+To není náhoda!
+Dvojice čísel je perfektní způsob, jak uložit souřadnice kousku hada.</p>
+<p>Had má ale kousků víc, a jinak dlouzí hadi jich budou mít různý počet.
+Na to je dobré použít seznam. Seznam souřadnic.
+A protože souřadnice pro nás budou dvojice čísel,
+seznam souřadnic bude seznam dvojic čísel.</p>
+<p>Had z obrázku výše bude v Pythonu vypadat takto:</p>
+<div class="highlight"><pre><span></span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+</pre></div><p>Tohle je reprezentace hada – to, co je z hlediska hry potřeba o konkrétním
+hadovi vědět.</p>
+<p>Počítačům (a programátorům?) to takhle stačí.
+My si to ale zkusme zobrazit barevně, ať hadovi rozumí i hráč naší budoucí hry.</p>
+<h2>Logické a zobrazovací souřadnice</h2>
+<p>U vykreslování hada musíme vyřešit jeden základní problém:
+převod <em>logických souřadnic</em> na souřadnice <em>obrazovky</em>.</p>
+<p>Displeje počítačů fungují podobně jako naše souřadnicová „šachovnice“:
+jsou to čtvercové mřížky plné políček.
+Každému políčku – <em>pixelu</em> – lze nastavit barvu.
+Hlavní rozdíl proti šachovnici je v tom, že pixelů na obrazovce je mnohem,
+mnohem víc.</p>
+<p>Kdyby byl každý „herní“ čtvereček 10×10 pixelů velký,
+tak hlava hada z ukázky, která má „herní“ souřadnice (4, 5),
+se na obrazovku bude vykreslovat na čtverečku, který začíná na (40, 50):</p>
+<p><span class="figure"><a href="/2018/snake-hradec/snake/drawing/static/coords-px.svg"><img src="/2018/snake-hradec/snake/drawing/static/coords-px.svg" alt="Had na „šachovnici“ se souřadnicemi obrazovky"></a></span></p>
+<p>A ocas s „herními“ (<em>logickými</em>) souřadnicemi (1, 2) se vykreslí na čtvereček
+se souřadnicemi (10, 20).</p>
+<h2>Sázení čtverečku</h2>
+<p>Na to, abychom hada vykreslili, použijeme okýnko z Pygletu.
+Tady je základní kostra programu Pyglet, které už bys měl/a rozumět.</p>
+<p>Udělej si nový, prázdný adresář na hadí hru, a kostru si
+zkopíruj do souboru <code>ui.py</code>.
+Budeme ji dál rozvíjet.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div><p><img src="/2018/snake-hradec/snake/drawing/static/green.png" alt="" style="display:block; float:right; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
+Stáhni si soubor <a href="/2018/snake-hradec/snake/drawing/static/green.png">green.png</a> – zelený čtvereček –
+a dej ho do adresáře, kam píšeš kód.</p>
+<p>Pod <code>import pyglet</code> přidej řádek, který tento obrázek načte.</p>
+<div class="highlight"><pre><span></span><span class="n">green_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'green.png'</span><span class="p">)</span>
+</pre></div><p>Potom zkus dovnitř do funkce <code>on_draw</code> přidat vykreslení obrázku na souřadnice
+(40, 50), velikosti 10.</p>
+<div class="highlight"><pre><span></span>    <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div><p>Program spusť (<code>cd</code> do nového adresáře; <code>python ui.py</code>). Funguje?
+(Je docela důležité, aby fungoval – nevidíš-li zelený čtvereček,
+nečti dál a program radši oprav.)</p>
+<p>Jak vidíš, čtvereček je docela malý.
+Budeme radši používat čtverečky větší, řekněme 64 pixelů.</p>
+<p>To číslo je „střelené od boku“.
+V programu ho použijeme několikrát, a možná ho později budeš chtít upravit.
+Uložíme si ho proto do <em>konstanty</em> – proměnné, kterou nebudeme měnit.
+Konstanty se tradičně pojmenovávají velkými písmeny, a píšou se hned za řádek
+<code>import</code> (i když to není technicky nutné).
+Přidej tedy za <code>import</code> řádek:</p>
+<div class="highlight"><pre><span></span><span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+</pre></div><p>… a ve volání <code>green.blit</code> velikost čtverečku zohledni:</p>
+<div class="highlight"><pre><span></span>    <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                     <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+</pre></div><p>Povedlo se? Máš čtvereček?
+Jestli ne, zkus si program celý, řádek po řádce, projít a zkontrolovat.
+Nebo ho porovnej se vzorovým řešením (což je rychlejší varianta, ale míň
+se naučíš).</p>
+<div class="solution" id="solution-0">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-hradec/snake/drawing/index/solutions/0/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">green_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'green.png'</span><span class="p">)</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                     <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><h2>Sázení hada</h2>
+<p>Zkus teď na začátek programu – těsně pod <code>import</code> a konstantu – přidat
+definici hada:</p>
+<div class="highlight"><pre><span></span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+</pre></div><p>A ve funkci <code>draw</code> vykresli všechny čtverečky hada.
+Vzpomeň si, že seznam dvojic můžeš „projít“ pomocí cyklu <code>for</code> a „rozbalení“
+<var>n</var>-tice:</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">snake</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div><p>Funguje to? Vidíš v tom – aspoň zhruba – hada
+(i když je poskládaný ze čtverečků)?</p>
+<p><span class="figure"><a href="/2018/snake-hradec/snake/drawing/static/coords-blocks.svg"><img src="/2018/snake-hradec/snake/drawing/static/coords-blocks.svg" alt="Had na „šachovnici“ a ukázka programu"></a></span></p>
+<p>Jestli ne, nezoufej, zkontroluj si to znovu, poptej se na radu.
+Řešení využij až jako krajní možnost, jak pokračovat dál – nebo na kontrolu
+správného řešení.</p>
+<div class="solution" id="solution-1">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-hradec/snake/drawing/index/solutions/1/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+
+<span class="n">green_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'green.png'</span><span class="p">)</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">snake</span><span class="p">:</span>
+        <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                        <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><h2>Krmení</h2>
+<p><img src="/2018/snake-hradec/snake/drawing/static/red.png" alt="" style="display:block; float:right; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
+<img src="/2018/snake-hradec/snake/drawing/static/apple.png" alt="" style="display:block; float:right; margin: 2px; border: 1px solid #ccc; border-radius: 1px;">
+Aby bylo ve hře co dělat, budeme potřebovat pro hada krmení.
+Stáhni si do adresáře s projektem obrázek <code>apple.png</code> (ať už jednoduchý
+čtvereček nebo detailnější obrázek), a zkus vykreslit jídlo třeba
+na následující souřadnice:</p>
+<div class="highlight"><pre><span></span><span class="n">food</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+</pre></div><div class="solution" id="solution-2">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-hradec/snake/drawing/index/solutions/2/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+<span class="n">food</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+
+<span class="n">red_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'apple.png'</span><span class="p">)</span>
+<span class="n">green_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'green.png'</span><span class="p">)</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">snake</span><span class="p">:</span>
+        <span class="n">green_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                        <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">food</span><span class="p">:</span>
+        <span class="n">red_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span>
+                        <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><p>Používáš-li detailnější obrázek, možná si všimneš, že má trošičku „zubaté“ hrany.
+To je dáno způsobem, jakým v Pygletu obrázek vykreslujeme.
+Úplné vysvětlení by zabralo příliš času, proto ukážu jen řešení.
+Až se naučíš grafiku víc do hloubky, pochopíš co se tu děje :)</p>
+<p>Do funkce <code>on_draw</code>, hned za <code>clear</code>, dej následující dva řádky:</p>
+<div class="highlight"><pre><span></span>    <span class="c1"># Lepší vykreslování (pro nás zatím kouzelné zaříkadlo)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glBlendFunc</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_ONE_MINUS_SRC_ALPHA</span><span class="p">)</span>
+</pre></div><h2>Načítání kousků hada</h2>
+<p>Teď, když umíš kreslit hada ze čtverců, zkusíme ho udělat hezčího.
+Stáhni si archiv <a href="/2018/snake-hradec/snake/drawing/static/snake-tiles.zip">snake-tiles.zip</a>
+a rozbal si ho tak, aby adresář <code>snake-tiles</code> s obrázky byl na stejné úrovni
+jako program s hrou.
+Struktura adresáře by měla vypadat takhle:</p>
+<p><span class="figure"><a href="/2018/snake-hradec/snake/drawing/static/screenshot-dir.png"><img src="/2018/snake-hradec/snake/drawing/static/screenshot-dir.png" alt="Adresářová struktura"></a></span></p>
+<p>V archivuje spousta „kousků“ hada, které můžeme vykreslovat místo zelených
+čtverečků.
+Kousky vypadají následovně.
+Všimni si pojmenování – každý kousek hada buď spojuje dvě strany obrázku,
+nebo stranu obrázku s hlavou či ocasem.
+Obrázek se jmenuje <var>odkud</var>-<var>kam</var>.png.</p>
+<p><span class="figure"><a href="/2018/snake-hradec/snake/drawing/static/snake-tiles.png"><img src="/2018/snake-hradec/snake/drawing/static/snake-tiles.png" alt="Kousky hada"></a></span></p>
+<div class="admonition note"><p>Co jsou taková ta divná „hadí vajíčka”?
+To je pro přímad, že by had byl jen jedno políčko dlouhý – a tedy měl hlavu
+i ocas na stejném políčku.
+V naší hře se do takového stavu nedostaneme (had bude začínat s délkou 2),
+ale může se stát, že se do něj dostaneš omylem při vývoji hry.
+Když jsou obrázky k dispozici, lépe pak zjišťuješ, co je špatně.</p>
+</div><p>Pojďme si teď tyhle obrázky <em>načíst</em>.
+Šlo by to dělat postupně, třeba takhle:</p>
+<div class="highlight"><pre><span></span><span class="n">bottom_left</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake-tiles/bottom-left.png'</span><span class="p">)</span>
+<span class="n">bottom_right</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake-tiles/bottom-right.png'</span><span class="p">)</span>
+<span class="n">bottom_top</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'snake-tiles/bottom-top.png'</span><span class="p">)</span>
+<span class="o">...</span>
+</pre></div><p>Ale obrázků je spousta, tímhle způsobem by to bylo zdlouhavé a nejspíš bys
+na některý zapomněl/a.</p>
+<p>Proto Pythonu řekneme, aby nám dal všechny soubory s koncovkou <code>.png</code> v daném
+adresáři.
+Na to se dá použít třída <code>Path</code> z modulu <a href="https://docs.python.org/3/library/pathlib.html"><code>pathlib</code></a>.
+Zkus si napsat (do nového souboru, třeba <code>experiment.py</code>) tento kód
+a spustit ho.
+Dokážeš vysvětlit, co dělá?</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">TILES_DIRECTORY</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'snake-tiles'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">TILES_DIRECTORY</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'*.png'</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</pre></div><p>My z každého souboru potřebujeme nejlépe jméno, tedy místo
+<code>snake-tiles/right-head.png</code> jenom <code>right-head</code>.
+Na to naštěstí existuje atribut <code>stem</code> (<em>kořen</em>, t.j. jméno bez přípony).
+Místo <code>print(path)</code> použij:</p>
+<div class="highlight"><pre><span></span>    <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+</pre></div><p>Funguje? Máš vypsané všechny možné kousky hada?</p>
+<p>Teď budeme chtít načíst obrázky do <em>slovníku</em>.
+<em>Klíče</em> slovníku, podle kterých budeme vyhledávat, budou jména, která jsi
+právě vypsal/a.
+<em>Hodnoty</em> pak budou pygletí obrázky, které ve hře můžeš rovnou vykreslit.</p>
+<p>Začni s prázdným slovníkem, <code>{}</code>, a v cyklu <code>for</code> do něj postupně přidávej
+záznamy.
+Pak slovník vypiš.</p>
+<p>Až to budeš mít, měl by výpis vypadat asi takhle:</p>
+<div class="highlight"><pre><code>{'right-tongue': &lt;ImageData 64x64&gt;, 'top-tongue': &lt;ImageData 64x64&gt;,
+ 'right-top': &lt;ImageData 64x64&gt;, 'left-bottom': &lt;ImageData 64x64&gt;,
+ 'tail-left': &lt;ImageData 64x64&gt;, 'bottom-tongue': &lt;ImageData 64x64&gt;,
+ 'left-top': &lt;ImageData 64x64&gt;, 'bottom-bottom': &lt;ImageData 64x64&gt;,
+ ...</code></pre></div><div class="solution" id="solution-3">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-hradec/snake/drawing/index/solutions/3/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILES_DIRECTORY</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'snake-tiles'</span><span class="p">)</span>
+
+<span class="n">snake_tiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">TILES_DIRECTORY</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'*.png'</span><span class="p">):</span>
+    <span class="n">snake_tiles</span><span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">snake_tiles</span><span class="p">)</span>
+</pre></div>
+    </div>
+</div><h2>Housenka</h2>
+<p>A teď zkus načtení obrázků začlenit do programu s hadem!</p>
+<p>Všechny importy patří nahoru, konstanty pod ně, a dál pak zbytek kódu.
+Vypisovat načtený slovník ve hře nemusíš, zato místo <code>green_image</code>
+pak ve vykreslovací funkci použij třeba <code>snake_tiles['tail-head']</code>.</p>
+<p>Místo čtverečků se teď objeví kuličky – místo hada budeš mít „housenku“.</p>
+<p><span class="figure"><a href="/2018/snake-hradec/snake/drawing/static/caterpillar.png"><img src="/2018/snake-hradec/snake/drawing/static/caterpillar.png" alt="Housenka"></a></span></p>
+<div class="solution" id="solution-4">
+    <h3>Řešení</h3>
+    <div class="solution-cover">
+        <a href="/2018/snake-hradec/snake/drawing/index/solutions/4/"><span class="link-text">Ukázat řešení</span></a>
+    </div>
+    <div class="solution-body" aria-hidden="true">
+        <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">pyglet</span>
+
+<span class="n">TILE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">TILES_DIRECTORY</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'snake-tiles'</span><span class="p">)</span>
+
+<span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+<span class="n">food</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+
+<span class="n">red_image</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'apple.png'</span><span class="p">)</span>
+<span class="n">snake_tiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">TILES_DIRECTORY</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'*.png'</span><span class="p">):</span>
+    <span class="n">snake_tiles</span><span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">event</span>
+<span class="k">def</span> <span class="nf">on_draw</span><span class="p">():</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">glBlendFunc</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_ONE_MINUS_SRC_ALPHA</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">snake</span><span class="p">:</span>
+        <span class="n">snake_tiles</span><span class="p">[</span><span class="s1">'tail-head'</span><span class="p">]</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">food</span><span class="p">:</span>
+        <span class="n">red_image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+    </div>
+</div><h2>Jak vybrat čtverečky?</h2>
+<p>Místo toho, aby byl všude stejný kousek hada,
+ale budeme chtít vybrat vždycky ten správný.</p>
+<p>Jak na to?</p>
+<p>Podle čeho ho vybrat?</p>
+<p>Vytvoř soubor <code>smery.py</code> a napiš do něj:</p>
+<div class="highlight"><pre><span></span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+
+<span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">snake</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div><p>Tenhle kód vypisuje souřadnice:</p>
+<div class="highlight"><pre><code>1 2
+2 2
+3 2
+3 3
+3 4
+3 5
+4 5</code></pre></div><p>Zkus vymyslet, jak by se tenhle kód dal změnit, aby vypisoval ke každé
+souřadnici <em>směr</em> k předchozímu a následujícímu políčku – tedy odkud a kam
+každý kousek hada „vede“.
+Takhle:</p>
+<div class="highlight"><pre><code>1 2 tail right
+2 2 left right
+3 2 left top
+3 3 bottom top
+3 4 bottom top
+3 5 bottom right
+4 5 left head</code></pre></div><p>Toto je <strong>těžký úkol</strong>.
+Nepředpokládám, že ho zvládneš vyřešit hned, i když všechny potřebné informace
+a nástroje k tomu znáš.
+Zkus nad tím ale přemýšlet, nech si to rozležet v hlavě třeba přes noc,
+vrať se k materiálům k předchozím lekcím (hlavně k úvodu do Pythonu),
+zkoušej a objevuj… A časem na to přijdeš.</p>
+<p>Až se to stane, zkus své řešení co nejvíc <em>zjednodušit</em> a pak ho zakomponovat
+do vykreslovací funkce.
+To by už nemělo být příliš složité:</p>
+<div class="highlight"><pre><span></span>    <span class="k">for</span> <span class="err">???</span> <span class="ow">in</span> <span class="err">???</span><span class="n">snake</span><span class="err">???</span><span class="p">:</span>
+        <span class="o">...</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="err">???</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="err">???</span>
+        <span class="n">odkud</span> <span class="o">=</span> <span class="err">???</span>
+        <span class="n">kam</span> <span class="o">=</span> <span class="err">???</span>
+        <span class="o">...</span>
+
+        <span class="n">snake_tiles</span><span class="p">[</span><span class="n">odkud</span> <span class="o">+</span> <span class="s1">'-'</span> <span class="o">+</span> <span class="n">kam</span><span class="p">]</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">TILE_SIZE</span><span class="p">)</span>
+</pre></div><p>Soubor <code>smery.py</code> po vyřešení nemaž, bude se ti pak hodit.</p>
+<p>Odměnou za vyřešení tohoto úkolu ti bude had místo housenky.</p>
+<p>Než na to přijdeš, zbytek programu ti neuteče.
+Housenka je úplně stejně hratelná jako had, jen jinak vypadá.
+Klidně přejdi na další část – logiku hry – s housenkou.</p>
+
+
+        </div>
+
+        
+        <hr class="lesson-end">
+
+        
+            <div class="alert alert-info">
+                Toto je stránka lekce z kurzu, který probíhá nebo proběhl naživo s instruktorem.
+                
+            </div>
+        
+
+
+        
+    <div class="row prev-next">
+        
+            
+                
+    <div class="col text-left">
+        <a href="/2018/snake-hradec/intro/pyglet/">← <span class="d-none d-sm-inline">Úvod do Pygletu (*)</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-left">
+        <a href="/2018/snake-hradec/sessions/workshop/">↑ <span class="d-none d-sm-inline">Lekce: Workshop</span></a>
+    </div>
+
+            
+            
+                
+    <div class="col text-right">
+        <a href="/2018/snake-hradec/snake/logic/"><span class="d-none d-sm-inline">Had – Logika hry</span> →</a>
+    </div>
+
+            
+        
+    </div>
+
+
+        
+
+    </div>
+</div>
+
+
+
+        <script type="text/javascript" src="/static/js/solutions.js"></script>
+
+        <div class="footer container">
+            <hr>
+            <div class="lesson-attribution">
+                
+                    <p>
+                        Uprav tuto stránku na
+                        <a href="https://github.com/pyvec/naucse.python.cz/blob/archive/2018-snake-hradec/lessons/snake/drawing/index.md">
+                            
+                                <svg class="icon icon-github" viewBox="0 0 64 64">
+<path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z" fill="currentColor" stroke-width="0"/>
+</svg>
+                            
+                          GitHubu
+                        </a>
+                    </p>
+                
+
+                
+    
+        <p>Pro PyLadies CZ napsal Petr Viktorin, 2018.</p>
+    
+
+                
+    <p>
+        Licence:
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            Creative Commons Attribution-ShareAlike 4.0 International
+        </a>
+    </p>
+    
+
+                
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        
+
+    </body>
+</html>
